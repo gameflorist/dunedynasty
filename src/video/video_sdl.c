@@ -6,7 +6,7 @@
 #include "types.h"
 #include "../os/error.h"
 
-#include "video.h"
+#include "video_sdl.h"
 
 #include "../file.h"
 #include "../gfx.h"
@@ -66,7 +66,7 @@ static uint8 s_SDL_keymap[] = {
 /**
  * Callback wrapper for mouse actions.
  */
-static void Video_Mouse_Callback(void)
+static void VideoSDL_Mouse_Callback(void)
 {
 	Mouse_EventHandler(s_mousePosX / SCREEN_MAGNIFICATION, s_mousePosY / SCREEN_MAGNIFICATION, s_mouseButtonLeft, s_mouseButtonRight);
 }
@@ -74,7 +74,7 @@ static void Video_Mouse_Callback(void)
 /**
  * Callback wrapper for key actions.
  */
-static void Video_Key_Callback(uint8 key)
+static void VideoSDL_Key_Callback(uint8 key)
 {
 	s_keyBufferLatest = key;
 	Input_EventHandler(key);
@@ -85,7 +85,7 @@ static void Video_Key_Callback(uint8 key)
  * @param x The new X-position of the mouse.
  * @param y The new Y-position of the mouse.
  */
-static void Video_Mouse_Move(uint16 x, uint16 y)
+static void VideoSDL_Mouse_Move(uint16 x, uint16 y)
 {
 	uint16 rx, ry;
 
@@ -106,7 +106,7 @@ static void Video_Mouse_Move(uint16 x, uint16 y)
 	s_mousePosX = rx;
 	s_mousePosY = ry;
 
-	Video_Mouse_Callback();
+	VideoSDL_Mouse_Callback();
 }
 
 /**
@@ -114,7 +114,7 @@ static void Video_Mouse_Move(uint16 x, uint16 y)
  * @param left True if the left button, otherwise the right button.
  * @param down True if the button is down, otherwise it is up.
  */
-static void Video_Mouse_Button(bool left, bool down)
+static void VideoSDL_Mouse_Button(bool left, bool down)
 {
 	if (left) {
 		s_mouseButtonLeft = down;
@@ -122,7 +122,7 @@ static void Video_Mouse_Button(bool left, bool down)
 		s_mouseButtonRight = down;
 	}
 
-	Video_Mouse_Callback();
+	VideoSDL_Mouse_Callback();
 }
 
 /**
@@ -130,7 +130,7 @@ static void Video_Mouse_Button(bool left, bool down)
  * @param x The new X-position of the mouse.
  * @param y The new Y-position of the mouse.
  */
-void Video_Mouse_SetPosition(uint16 x, uint16 y)
+void VideoSDL_Mouse_SetPosition(uint16 x, uint16 y)
 {
 	SDL_WarpMouse(x * SCREEN_MAGNIFICATION, y * SCREEN_MAGNIFICATION);
 }
@@ -142,7 +142,7 @@ void Video_Mouse_SetPosition(uint16 x, uint16 y)
  * @param minY The minimal Y-position.
  * @param maxY The maximal Y-position.
  */
-void Video_Mouse_SetRegion(uint16 minX, uint16 maxX, uint16 minY, uint16 maxY)
+void VideoSDL_Mouse_SetRegion(uint16 minX, uint16 maxX, uint16 minY, uint16 maxY)
 {
 	s_mouseMinX = minX * SCREEN_MAGNIFICATION;
 	s_mouseMaxX = maxX * SCREEN_MAGNIFICATION;
@@ -153,7 +153,7 @@ void Video_Mouse_SetRegion(uint16 minX, uint16 maxX, uint16 minY, uint16 maxY)
 /**
  * Initialize the video driver.
  */
-bool Video_Init(void)
+bool VideoSDL_Init(void)
 {
 	if (s_video_initialized) return true;
 
@@ -182,7 +182,7 @@ bool Video_Init(void)
 /**
  * Uninitialize the video driver.
  */
-void Video_Uninit(void)
+void VideoSDL_Uninit(void)
 {
 	s_video_initialized = false;
 	SDL_Quit();
@@ -194,7 +194,7 @@ void Video_Uninit(void)
  */
 #if defined(SCREEN_USE_SCALE2X)
 #	if SCREEN_MAGNIFICATION == 2
-static void Video_DrawScreen(void)
+static void VideoSDL_DrawScreen(void)
 {
 	uint8 *data = GFX_Screen_Get_ByIndex(0);
 	uint8 *gfx1 = s_gfx_screen;
@@ -271,7 +271,7 @@ static void Video_DrawScreen(void)
 	gfx1 = gfx2;
 }
 #	elif SCREEN_MAGNIFICATION == 3
-static void Video_DrawScreen(void)
+static void VideoSDL_DrawScreen(void)
 {
 	uint8 *data = GFX_Screen_Get_ByIndex(0);
 	uint8 *gfx1 = s_gfx_screen;
@@ -390,7 +390,7 @@ static void Video_DrawScreen(void)
 #	endif /* SCREEN_MAGNIFICATION */
 #else /* SCREEN_USE_SCALE2X */
 #	if SCREEN_MAGNIFICATION == 2
-static void Video_DrawScreen(void)
+static void VideoSDL_DrawScreen(void)
 {
 	uint8 *data = GFX_Screen_Get_ByIndex(0);
 	uint8 *gfx1 = s_gfx_screen;
@@ -410,7 +410,7 @@ static void Video_DrawScreen(void)
 	}
 }
 #	elif SCREEN_MAGNIFICATION == 3
-static void Video_DrawScreen(void)
+static void VideoSDL_DrawScreen(void)
 {
 	uint8 *data = GFX_Screen_Get_ByIndex(0);
 	uint8 *gfx1 = s_gfx_screen;
@@ -437,7 +437,7 @@ static void Video_DrawScreen(void)
 	}
 }
 #	else /* SCREEN_MAGNIFICATION != 2 != 3 */
-void Video_DrawScreen(void)
+void VideoSDL_DrawScreen(void)
 {
 	uint8 *data = GFX_Screen_Get_ByIndex(0);
 	uint8 *gfx  = s_gfx_screen;
@@ -463,7 +463,7 @@ void Video_DrawScreen(void)
 /**
  * Runs every tick to handle video driver updates.
  */
-void Video_Tick(void)
+void VideoSDL_Tick(void)
 {
 	SDL_Event event;
 
@@ -485,16 +485,16 @@ void Video_Tick(void)
 			} break;
 
 			case SDL_MOUSEMOTION:
-				Video_Mouse_Move(event.motion.x, event.motion.y);
+				VideoSDL_Mouse_Move(event.motion.x, event.motion.y);
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:
-				if (event.button.button == SDL_BUTTON_LEFT)  Video_Mouse_Button(true,  true);
-				if (event.button.button == SDL_BUTTON_RIGHT) Video_Mouse_Button(false, true);
+				if (event.button.button == SDL_BUTTON_LEFT)  VideoSDL_Mouse_Button(true,  true);
+				if (event.button.button == SDL_BUTTON_RIGHT) VideoSDL_Mouse_Button(false, true);
 				break;
 			case SDL_MOUSEBUTTONUP:
-				if (event.button.button == SDL_BUTTON_LEFT)  Video_Mouse_Button(true,  false);
-				if (event.button.button == SDL_BUTTON_RIGHT) Video_Mouse_Button(false, false);
+				if (event.button.button == SDL_BUTTON_LEFT)  VideoSDL_Mouse_Button(true,  false);
+				if (event.button.button == SDL_BUTTON_RIGHT) VideoSDL_Mouse_Button(false, false);
 				break;
 
 			case SDL_KEYDOWN:
@@ -507,7 +507,7 @@ void Video_Tick(void)
 					Error("ERROR: unhandled key %X\n", event.key.keysym.sym);
 					continue;
 				}
-				Video_Key_Callback(s_SDL_keymap[event.key.keysym.sym] | (keyup ? 0x80 : 0x0));
+				VideoSDL_Key_Callback(s_SDL_keymap[event.key.keysym.sym] | (keyup ? 0x80 : 0x0));
 			} break;
 		}
 	}
@@ -519,7 +519,7 @@ void Video_Tick(void)
 	}
 	memcpy(s_gfx_screen8, GFX_Screen_Get_ByIndex(0), SCREEN_WIDTH * SCREEN_HEIGHT);
 
-	Video_DrawScreen();
+	VideoSDL_DrawScreen();
 
 	SDL_UpdateRect(s_gfx_surface, 0, 0, 0, 0);
 
@@ -532,7 +532,7 @@ void Video_Tick(void)
  * @param from From which colour.
  * @param length The length of the palette (in colours).
  */
-void Video_SetPalette(void *palette, int from, int length)
+void VideoSDL_SetPalette(void *palette, int from, int length)
 {
 	SDL_Color paletteRGB[256];
 	uint8 *p = palette;

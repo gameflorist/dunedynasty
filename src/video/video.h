@@ -1,15 +1,13 @@
-/* $Id$ */
-
-/** @file src/video/video.h Definitions of a video driver. */
-
 #ifndef VIDEO_VIDEO_H
 #define VIDEO_VIDEO_H
 
-extern bool Video_Init(void);
-extern void Video_Uninit(void);
-extern void Video_Tick(void);
-extern void Video_SetPalette(void *palette, int from, int length);
-extern void Video_Mouse_SetPosition(uint16 x, uint16 y);
-extern void Video_Mouse_SetRegion(uint16 minX, uint16 maxX, uint16 minY, uint16 maxY);
+#include "video_sdl.h"
 
-#endif /* VIDEO_VIDEO_H */
+#define Video_Init                  VideoSDL_Init
+#define Video_Uninit                VideoSDL_Uninit
+#define Video_Tick                  VideoSDL_Tick
+#define Video_SetPalette            VideoSDL_SetPalette
+#define Video_Mouse_SetPosition     VideoSDL_Mouse_SetPosition
+#define Video_Mouse_SetRegion       VideoSDL_Mouse_SetRegion
+
+#endif
