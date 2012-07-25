@@ -8,6 +8,8 @@
 #include "types.h"
 #include "../os/strings.h"
 
+#include "security.h"
+
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
