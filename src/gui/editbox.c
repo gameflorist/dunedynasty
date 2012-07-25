@@ -12,6 +12,7 @@
 #include "../gfx.h"
 #include "../input/input.h"
 #include "../timer/timer.h"
+#include "../video/video.h"
 
 /**
  * Draw a blinking cursor, used inside the EditBox.
@@ -21,7 +22,7 @@
  */
 static void GUI_EditBox_BlinkCursor(uint16 positionX, bool resetBlink)
 {
-	static uint32 tickEditBox = 0;           /* Ticker for cursor blinking. */
+	static int64_t tickEditBox = 0;          /* Ticker for cursor blinking. */
 	static bool   editBoxShowCursor = false; /* Cursor is active. */
 
 	if (resetBlink) {
@@ -29,9 +30,9 @@ static void GUI_EditBox_BlinkCursor(uint16 positionX, bool resetBlink)
 		editBoxShowCursor = true;
 	}
 
-	if (tickEditBox > g_timerGUI) return;
+	if (tickEditBox > Timer_GetTicks()) return;
 	if (!resetBlink) {
-		tickEditBox = g_timerGUI + 20;
+		tickEditBox = Timer_GetTicks() + 20;
 	}
 
 	editBoxShowCursor = !editBoxShowCursor;
@@ -108,6 +109,7 @@ uint16 GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uin
 		uint16 keyWidth;
 		uint16 key;
 
+		Video_Tick();
 		if (tickProc != NULL) {
 			returnValue = tickProc();
 			if (returnValue != 0) break;

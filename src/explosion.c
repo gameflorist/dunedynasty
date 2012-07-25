@@ -199,7 +199,7 @@ static void Explosion_Func_Stop(Explosion *e, uint16 parameter)
  */
 static void Explosion_Func_SetTimeout(Explosion *e, uint16 value)
 {
-	e->timeOut = g_timerGUI + value;
+	e->timeOut = Timer_GetTicks() + value;
 }
 
 /**
@@ -209,7 +209,7 @@ static void Explosion_Func_SetTimeout(Explosion *e, uint16 value)
  */
 static void Explosion_Func_SetRandomTimeout(Explosion *e, uint16 value)
 {
-	e->timeOut = g_timerGUI + Tools_RandomRange(0, value);
+	e->timeOut = Timer_GetTicks() + Tools_RandomRange(0, value);
 }
 
 /**
@@ -278,7 +278,7 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 		e->spriteID = 0;
 		e->position = position;
 		e->isDirty  = false;
-		e->timeOut  = g_timerGUI;
+		e->timeOut  = Timer_GetTicks();
 		s_explosionTimer = 0;
 		g_map[packed].hasExplosion = true;
 
@@ -293,7 +293,7 @@ void Explosion_Tick(void)
 {
 	uint8 i;
 
-	if (s_explosionTimer > g_timerGUI) return;
+	if (s_explosionTimer > Timer_GetTicks()) return;
 	s_explosionTimer += 10000;
 
 	for (i = 0; i < EXPLOSION_MAX; i++) {
@@ -303,7 +303,7 @@ void Explosion_Tick(void)
 
 		if (e->commands == NULL) continue;
 
-		if (e->timeOut <= g_timerGUI) {
+		if (e->timeOut <= Timer_GetTicks()) {
 			uint16 parameter = e->commands[e->current].parameter;
 			uint16 command   = e->commands[e->current].command;
 

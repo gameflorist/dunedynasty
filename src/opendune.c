@@ -28,6 +28,7 @@
 #include "animation.h"
 #include "audio/driver.h"
 #include "audio/sound.h"
+#include "common_a5.h"
 #include "config.h"
 #include "crashlog/crashlog.h"
 #include "explosion.h"
@@ -72,7 +73,7 @@ GameMode g_gameMode = GM_NORMAL;
 uint16 g_campaignID = 0;
 uint16 g_scenarioID = 1;
 uint16 g_activeAction = 0xFFFF;      /*!< Action the controlled unit will do. */
-uint32 g_tickScenarioStart = 0;      /*!< The tick the scenario started in. */
+int64_t g_tickScenarioStart = 0;     /*!< The tick the scenario started in. */
 static uint32 s_tickGameTimeout = 0; /*!< The tick the game will timeout. */
 
 bool   g_debugGame = false;        /*!< When true, you can control the AI. */
@@ -100,7 +101,7 @@ typedef enum PalettePartDirection {
 } PalettePartDirection;
 
 static PalettePartDirection s_palettePartDirection;    /*!< Direction of change. @see PalettePartDirection */
-static uint32               s_paletteAnimationTimeout; /*!< Timeout value for the next palette change. */
+static int64_t              s_paletteAnimationTimeout; /*!< Timeout value for the next palette change. */
 static uint16               s_palettePartCount;        /*!< Number of steps left before the target palette is reached. */
 static uint8                s_palettePartTarget[18];   /*!< Target palette part (6 colours). */
 static uint8                s_palettePartCurrent[18];  /*!< Current value of the palette part (6 colours, updated each call to #GameLoop_PalettePart_Update). */
@@ -473,9 +474,9 @@ static uint16 GameLoop_PalettePart_Update(bool finishNow)
 
 	if (s_palettePartDirection == PPD_STOPPED) return 0;
 
-	if (s_paletteAnimationTimeout >= g_timerGUI && !finishNow) return s_palettePartDirection;
+	if (s_paletteAnimationTimeout >= Timer_GetTicks() && !finishNow) return s_palettePartDirection;
 
-	s_paletteAnimationTimeout = g_timerGUI + 7;
+	s_paletteAnimationTimeout = Timer_GetTicks() + 7;
 	if (--s_palettePartCount == 0 || finishNow) {
 		if (s_palettePartDirection == PPD_TO_NEW_PALETTE) {
 			memcpy(s_palettePartCurrent, s_palettePartTarget, 18);
@@ -513,24 +514,20 @@ static void GameLoop_PlayAnimation(void)
 	animation = s_houseAnimation_animation;
 
 	while (animation->duration != 0) {
+		const uint16 posX = ((animation->flags & 0x20) == 0) ? 8 : 0;
+		const uint16 posY = ((animation->flags & 0x20) == 0) ? 24 : 0;
+		const uint16 mode = animation->flags & 0x3;
+
 		uint16 loc04;
-		uint16 posX = 0;
-		uint16 posY = 0;
-		uint32 loc10 = g_timerGUI + animation->duration * 6;
-		uint32 loc14 = loc10 + 30;
-		uint32 loc18;
-		uint32 loc1C;
-		uint16 mode = animation->flags & 0x3;
+		int64_t loc10 = Timer_GetTicks() + animation->duration * 6;
+		int64_t loc14 = loc10 + 30;
+		int64_t loc18;
+		int64_t loc1C;
 		bool loc20;
 		uint32 loc24;
 		uint16 locdi;
 		uint16 frame;
 		void *wsa;
-
-		if ((animation->flags & 0x20) == 0) {
-			posX = 8;
-			posY = 24;
-		}
 
 		s_var_8068 = 0;
 
@@ -580,6 +577,7 @@ static void GameLoop_PlayAnimation(void)
 			GameLoop_PlaySubtitle(animationMode);
 			WSA_DisplayFrame(wsa, frame++, posX, posY, 0);
 			GameLoop_PalettePart_Update(true);
+			Video_Tick();
 
 			memcpy(&g_palette1[215 * 3], s_palettePartCurrent, 18);
 
@@ -600,7 +598,7 @@ static void GameLoop_PlayAnimation(void)
 			}
 		}
 
-		loc1C = loc10 - g_timerGUI;
+		loc1C = loc10 - Timer_GetTicks();
 		loc18 = 0;
 		loc04 = 1;
 
@@ -633,8 +631,8 @@ static void GameLoop_PlayAnimation(void)
 				exit(0);
 		}
 
-		while (loc10 > g_timerGUI) {
-			g_timerTimeout = loc18;
+		while (Timer_GetTicks() < loc10) {
+			const int64_t timeout = Timer_GetTicks() + loc18;
 
 			GameLoop_PlaySubtitle(animationMode);
 			WSA_DisplayFrame(wsa, frame++, posX, posY, 0);
@@ -652,8 +650,9 @@ static void GameLoop_PlayAnimation(void)
 
 			do {
 				GameLoop_PalettePart_Update(false);
-				sleepIdle();
-			} while (g_timerTimeout != 0 && loc10 > g_timerGUI);
+				Video_Tick();
+				Timer_Wait();
+			} while ((Timer_GetTicks() < timeout) && (Timer_GetTicks() < loc10));
 		}
 
 		if (mode == 2) {
@@ -661,6 +660,7 @@ static void GameLoop_PlayAnimation(void)
 			do {
 				GameLoop_PlaySubtitle(animationMode);
 				displayed = WSA_DisplayFrame(wsa, frame++, posX, posY, 0);
+				Video_Tick();
 			} while (displayed);
 		}
 
@@ -687,7 +687,7 @@ static void GameLoop_PlayAnimation(void)
 		animationMode++;
 		animation++;
 
-		while (loc14 > g_timerGUI) sleepIdle();
+		Timer_Sleep(loc14 - Timer_GetTicks());
 	}
 }
 
@@ -804,7 +804,6 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 {
 	uint16 loc02;
 	uint16 stringCount = 0;
-	uint32 loc0C;
 	uint16 spriteID = 514;
 	bool loc10 = false;
 	uint16 spriteX;
@@ -849,14 +848,13 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 	GameCredits_SwapScreen(g_curWidgetYBase, g_curWidgetHeight, memory, s_buffer_182E);
 
 	GFX_Screen_SetActive(0);
-	loc0C = g_timerSleep;
+	int64_t loc0C = Timer_GetTicks();
 
 	Input_History_Clear();
 
 	while (true) {
-		while (loc0C > g_timerSleep) sleepIdle();
-
-		loc0C = g_timerSleep + delay;
+		Timer_Sleep(loc0C - Timer_GetTicks());
+		loc0C = Timer_GetTicks() + delay;
 
 		while ((g_curWidgetHeight / 6) + 2 > stringCount && *data != 0) {
 			char *text = data;
@@ -991,6 +989,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 		if (loc10 && stage == 0) break;
 
 		if (Input_Keyboard_NextKey() != 0) break;
+		Video_Tick();
 	}
 
 	GUI_SetPaletteAnimated(g_palette2, 120);
@@ -1261,17 +1260,16 @@ static void Gameloop_Logos(void)
 
 	Music_Play(0x24);
 
-	g_timerTimeout = 360;
+	const int64_t timeout1 = 360 + Timer_GetTicks();
 
 	while (true) {
-		uint32 loc04;
 		bool displayed;
 
 		displayed = WSA_DisplayFrame(wsa, frame++, 0, 0, 0);
 		if (!displayed) break;
 
-		loc04 = g_timerGUI + 6;
-		while (loc04 > g_timerGUI) sleepIdle();
+		Video_Tick();
+		Timer_Sleep(6);
 	}
 
 	WSA_Unload(wsa);
@@ -1284,8 +1282,9 @@ static void Gameloop_Logos(void)
 		}
 	}
 
-	while (g_timerTimeout != 0) {
+	while (Timer_GetTicks() < timeout1) {
 		if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) {
+			Video_Tick();
 			sleepIdle();
 			continue;
 		}
@@ -1302,6 +1301,7 @@ static void Gameloop_Logos(void)
 
 	while (Driver_Music_IsPlaying()) sleepIdle();
 
+#if 0
 	while (g_timerTimeout != 0) {
 		if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) {
 			sleepIdle();
@@ -1317,6 +1317,7 @@ static void Gameloop_Logos(void)
 	}
 
 	GUI_SetPaletteAnimated(g_palette2, 60);
+#endif
 
 	GFX_ClearScreen();
 
@@ -1326,10 +1327,10 @@ static void Gameloop_Logos(void)
 
 	GUI_SetPaletteAnimated(g_palette_998A, 30);
 
-	g_timerTimeout = 60;
-	while (g_timerTimeout != 0) {
+	for (int timeout = 0; timeout < 60; timeout++) {
 		if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) {
-			sleepIdle();
+			Video_Tick();
+			Timer_Wait();
 			continue;
 		}
 
@@ -1351,10 +1352,10 @@ static void Gameloop_Logos(void)
 
 	GUI_SetPaletteAnimated(g_palette_998A, 30);
 
-	g_timerTimeout = 180;
-	while (g_timerTimeout != 0) {
+	for (int timeout = 0; timeout < 180; timeout++) {
 		if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) {
-			sleepIdle();
+			Video_Tick();
+			Timer_Wait();
 			continue;
 		}
 
@@ -1997,6 +1998,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 			if (stringID == STR_PLAY_A_GAME) break;
 
+			Video_Tick();
 			sleepIdle();
 		}
 	} else {
@@ -2128,7 +2130,7 @@ static void InGame_Numpad_Move(uint16 key)
  */
 static void GameLoop_Main(void)
 {
-	static uint32 l_timerNext = 0;
+	static int64_t l_timerNext = 0;
 	static uint32 l_timerUnitStatus = 0;
 	static int16  l_selectionState = -2;
 
@@ -2187,7 +2189,7 @@ static void GameLoop_Main(void)
 			GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 
 			Music_Play(Tools_RandomRange(0, 8) + 8);
-			l_timerNext = g_timerGUI + 300;
+			l_timerNext = Timer_GetTicks() + 300;
 		}
 
 		if (l_selectionState != g_selectionState) {
@@ -2203,14 +2205,14 @@ static void GameLoop_Main(void)
 				g_musicInBattle = 0;
 			} else if (g_musicInBattle > 0) {
 				Music_Play(Tools_RandomRange(0, 5) + 17);
-				l_timerNext = g_timerGUI + 300;
+				l_timerNext = Timer_GetTicks() + 300;
 				g_musicInBattle = -1;
 			} else {
 				g_musicInBattle = 0;
-				if (g_enableSoundMusic != 0 && g_timerGUI > l_timerNext) {
+				if (g_enableSoundMusic != 0 && Timer_GetTicks() > l_timerNext) {
 					if (!Driver_Music_IsPlaying()) {
 						Music_Play(Tools_RandomRange(0, 8) + 8);
-						l_timerNext = g_timerGUI + 300;
+						l_timerNext = Timer_GetTicks() + 300;
 					}
 				}
 			}
@@ -2238,6 +2240,8 @@ static void GameLoop_Main(void)
 
 			GUI_DrawCredits(g_playerHouseID, 0);
 
+			g_timerGame = Timer_GameTicks();
+
 			GameLoop_Team();
 			GameLoop_Unit();
 			GameLoop_Structure();
@@ -2254,6 +2258,7 @@ static void GameLoop_Main(void)
 
 		if (!g_var_38F8) break;
 
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -2274,15 +2279,9 @@ static void GameLoop_Main(void)
 
 static bool Unknown_25C4_000E(void)
 {
-	Timer_Init();
-
 	if (!Video_Init()) return false;
 
 	Mouse_Init();
-
-	/* Add the general tickers */
-	Timer_Add(Video_Tick, 1000000 / 60);
-	Timer_Add(Timer_Tick, 1000000 / 60);
 
 	g_var_7097 = -1;
 
@@ -2338,6 +2337,9 @@ int main(int argc, char **argv)
 	FreeConsole();
 #endif
 	CrashLog_Init();
+
+	if (A5_Init() == false)
+		exit(1);
 
 	VARIABLE_NOT_USED(argc);
 	VARIABLE_NOT_USED(argv);
@@ -2574,7 +2576,7 @@ void PrepareEnd(void)
 
 	if (g_mouseFileID != 0xFF) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, NULL);
 
-	Timer_Uninit();
 	GFX_Uninit();
 	Video_Uninit();
+	A5_Uninit();
 }

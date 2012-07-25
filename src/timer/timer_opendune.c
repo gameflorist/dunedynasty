@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/** @file src/timer.c Timer routines. */
+/** @file src/timer_opendune.c Timer routines. */
 
 #include <stdlib.h>
 #if !defined(_MSC_VER)
@@ -23,12 +23,11 @@
 
 
 uint32 g_timerGUI = 0;                                      /*!< Tick counter. Increases with 1 every tick when Timer 1 is enabled. Used for GUI. */
-uint32 g_timerGame = 0;                                     /*!< Tick counter. Increases with 1 every tick when Timer 2 is enabled. Used for game timing (units, ..). */
 uint32 g_timerInput = 0;                                    /*!< Tick counter. Increases with 1 every tick. Used for input timing. */
 uint32 g_timerSleep = 0;                                    /*!< Tick counter. Increases with 1 every tick. Used for sleeping. */
 uint32 g_timerTimeout = 0;                                  /*!< Tick counter. Decreases with 1 every tick when non-zero. Used to timeout. */
 
-uint16 s_timersActive = 0;
+static uint16 s_timersActive = 0;
 
 
 typedef struct TimerNode {
@@ -243,10 +242,10 @@ void TimerOpenDune_Remove(void (*callback)(void))
 /**
  * Handle game timers.
  */
-void TimerOpenDune_Tick(void)
+static void TimerOpenDune_Tick(void)
 {
-	if ((s_timersActive & TIMER_GUI)  != 0) g_timerGUI++;
-	if ((s_timersActive & TIMER_GAME) != 0) g_timerGame++;
+	if ((s_timersActive & (1 << TIMER_GUI))  != 0) g_timerGUI++;
+	if ((s_timersActive & (1 << TIMER_GAME)) != 0) g_timerGame++;
 	g_timerInput++;
 	g_timerSleep++;
 
@@ -260,13 +259,10 @@ void TimerOpenDune_Tick(void)
  * @param set True sets the timer on, false sets it off.
  * @return True if timer was set, false if it was not set.
  */
-bool TimerOpenDune_SetTimer(TimerType timer, bool set)
+bool TimerOpenDune_SetTimer(enum TimerType timer, bool set)
 {
-	uint8 t;
-	bool ret;
-
-	t = (1 << (timer - 1));
-	ret = (s_timersActive & t) != 0;
+	const uint8 t = (1 << timer);
+	const bool ret = (s_timersActive & t) != 0;
 
 	if (set) {
 		s_timersActive |= t;

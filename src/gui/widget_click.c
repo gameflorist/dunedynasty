@@ -34,6 +34,7 @@
 #include "../tile.h"
 #include "../timer/timer.h"
 #include "../unit.h"
+#include "../video/video.h"
 
 
 char g_savegameDesc[5][51];                                 /*!< Array of savegame descriptions for the SaveLoad window. */
@@ -626,6 +627,7 @@ static void GUI_Widget_GameControls_Click(Widget *w)
 		}
 
 		GUI_PaletteAnimate();
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -677,6 +679,7 @@ static bool GUI_YesNo(uint16 stringID)
 		}
 
 		GUI_PaletteAnimate();
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -782,6 +785,7 @@ bool GUI_Widget_Options_Click(Widget *w)
 		}
 
 		GUI_PaletteAnimate();
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -1034,6 +1038,7 @@ bool GUI_Widget_SaveLoad_Click(bool save)
 		}
 
 		GUI_PaletteAnimate();
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -1199,9 +1204,10 @@ static void GUI_FactoryWindow_FailScrollList(int16 step)
 bool GUI_Production_Down_Click(Widget *w)
 {
 	bool locdi = false;
+	int timeout = 0;
 
 	if (g_factoryWindowSelected < 3 && (g_factoryWindowSelected + 1) < g_factoryWindowTotal) {
-		g_timerTimeout = 10;
+		timeout = 10;
 		GUI_FactoryWindow_B495_0F30();
 		g_factoryWindowSelected++;
 
@@ -1210,7 +1216,7 @@ bool GUI_Production_Down_Click(Widget *w)
 		locdi = true;
 	} else {
 		if (g_factoryWindowBase + 4 < g_factoryWindowTotal) {
-			g_timerTimeout = 10;
+			timeout = 10;
 			g_factoryWindowBase++;
 			locdi = true;
 
@@ -1228,8 +1234,10 @@ bool GUI_Production_Down_Click(Widget *w)
 
 	do {
 		GUI_FactoryWindow_UpdateSelection(false);
-		sleepIdle();
-	} while (g_timerTimeout != 0);
+		Video_Tick();
+		Timer_Wait();
+		timeout--;
+	} while (timeout >= 0);
 
 	if (locdi) GUI_FactoryWindow_DrawDetails();
 
@@ -1246,9 +1254,10 @@ bool GUI_Production_Down_Click(Widget *w)
 bool GUI_Production_Up_Click(Widget *w)
 {
 	bool locdi = false;
+	int timeout = 0;
 
 	if (g_factoryWindowSelected != 0) {
-		g_timerTimeout = 10;
+		timeout = 10;
 		GUI_FactoryWindow_B495_0F30();
 		g_factoryWindowSelected--;
 
@@ -1257,7 +1266,7 @@ bool GUI_Production_Up_Click(Widget *w)
 		locdi = true;
 	} else {
 		if (g_factoryWindowBase != 0) {
-			g_timerTimeout = 10;
+			timeout = 10;
 			g_factoryWindowBase--;
 			locdi = true;
 
@@ -1275,8 +1284,10 @@ bool GUI_Production_Up_Click(Widget *w)
 
 	do {
 		GUI_FactoryWindow_UpdateSelection(false);
-		sleepIdle();
-	} while (g_timerTimeout != 0);
+		Video_Tick();
+		Timer_Wait();
+		timeout--;
+	} while (timeout >= 0);
 
 	if (locdi) GUI_FactoryWindow_DrawDetails();
 

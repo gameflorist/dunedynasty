@@ -15,5 +15,7 @@ set(SDL_CONFIG "sdl-config")
 EXEC_PROGRAM(${SDL_CONFIG} ARGS "--cflags" OUTPUT_VARIABLE SDL_CFLAGS)
 EXEC_PROGRAM(${SDL_CONFIG} ARGS "--libs" OUTPUT_VARIABLE SDL_LIBS)
 
+set(ALLEGRO_LIBS "-lallegro")
+
 add_definitions(${SDL_CFLAGS})
-target_link_libraries(bin/dunedynasty ${SDL_LIBS} -lasound)
+target_link_libraries(bin/dunedynasty ${ALLEGRO_LIBS} ${SDL_LIBS} -lasound)

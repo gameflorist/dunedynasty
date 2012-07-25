@@ -30,6 +30,7 @@
 #include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../tools.h"
+#include "../video/video.h"
 #include "../wsa.h"
 
 /**
@@ -53,7 +54,7 @@ static uint8 s_eyesTop;     /*!< Top of the changing eyes. */
 static uint8 s_eyesRight;   /*!< Right of the changing eyes. */
 static uint8 s_eyesBottom;  /*!< Bottom of the changing eyes. */
 
-uint32 g_interrogationTimer; /*!< Speaking time-out for security question. */
+int64_t g_interrogationTimer; /*!< Speaking time-out for security question. */
 static uint8 s_mouthLeft;   /*!< Left of the moving mouth. */
 static uint8 s_mouthTop;    /*!< Top of the moving mouth. */
 static uint8 s_mouthRight;  /*!< Right of the moving mouth. */
@@ -186,6 +187,7 @@ static void GUI_Mentat_HelpListLoop(void)
 
 		s_selectMentatHelp = false;
 
+		Video_Tick();
 		sleepIdle();
 	}
 }
@@ -437,6 +439,7 @@ uint16 GUI_Mentat_Show(char *stringBuffer, const char *wsaFilename, Widget *w, b
 			GUI_PaletteAnimate();
 			GUI_Mentat_Animation(0);
 
+			Video_Tick();
 			sleepIdle();
 		} while ((ret & 0x8000) == 0);
 	}
@@ -547,20 +550,20 @@ void GUI_Mentat_Display(const char *wsaFilename, uint8 houseID)
  */
 void GUI_Mentat_Animation(uint16 speakingMode)
 {
-	static uint32 movingEyesTimer = 0;      /* Timer when to change the eyes sprite. */
+	static int64_t movingEyesTimer = 0;      /* Timer when to change the eyes sprite. */
 	static uint16 movingEyesSprite = 0;     /* Index in _mentatSprites of the displayed moving eyes. */
 	static uint16 movingEyesNextSprite = 0; /* If not 0, it decides the movingEyesNextSprite */
 
-	static uint32 movingMouthTimer = 0;
+	static int64_t movingMouthTimer = 0;
 	static uint16 movingMouthSprite = 0;
 
-	static uint32 movingOtherTimer = 0;
+	static int64_t movingOtherTimer = 0;
 	static int16 otherSprite = 0;
 
 	bool partNeedsRedraw;
 	uint16 i;
 
-	if (movingOtherTimer < g_timerGUI && !g_disableOtherMovement) {
+	if (movingOtherTimer < Timer_GetTicks() && !g_disableOtherMovement) {
 		if (movingOtherTimer != 0) {
 			uint8 *sprite;
 
@@ -579,16 +582,16 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 
 		switch (g_playerHouseID) {
 			case HOUSE_HARKONNEN:
-				movingOtherTimer = g_timerGUI + 300 * 60;
+				movingOtherTimer = Timer_GetTicks() + 300 * 60;
 				break;
 			case HOUSE_ATREIDES:
-				movingOtherTimer = g_timerGUI + 60 * Tools_RandomRange(1,3);
+				movingOtherTimer = Timer_GetTicks() + 60 * Tools_RandomRange(1,3);
 				break;
 			case HOUSE_ORDOS:
 				if (otherSprite != 0) {
-					movingOtherTimer = g_timerGUI + 6;
+					movingOtherTimer = Timer_GetTicks() + 6;
 				} else {
-					movingOtherTimer = g_timerGUI + 60 * Tools_RandomRange(10, 19);
+					movingOtherTimer = Timer_GetTicks() + 60 * Tools_RandomRange(10, 19);
 				}
 				break;
 			default:
@@ -597,7 +600,7 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 	}
 
 	if (speakingMode == 1) {
-		if (movingMouthTimer < g_timerGUI) {
+		if (movingMouthTimer < Timer_GetTicks()) {
 			uint8 *sprite;
 
 			movingMouthSprite = Tools_RandomRange(0, 4);
@@ -609,15 +612,15 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 
 			switch (movingMouthSprite) {
 				case 0:
-					movingMouthTimer = g_timerGUI + Tools_RandomRange(7, 30);
+					movingMouthTimer = Timer_GetTicks() + Tools_RandomRange(7, 30);
 					break;
 				case 1:
 				case 2:
 				case 3:
-					movingMouthTimer = g_timerGUI + Tools_RandomRange(6, 10);
+					movingMouthTimer = Timer_GetTicks() + Tools_RandomRange(6, 10);
 					break;
 				case 4:
-					movingMouthTimer = g_timerGUI + Tools_RandomRange(5, 6);
+					movingMouthTimer = Timer_GetTicks() + Tools_RandomRange(5, 6);
 					break;
 				default:
 					break;
@@ -697,10 +700,10 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 			partNeedsRedraw = true;
 			movingEyesSprite = i;
 			movingEyesNextSprite = 0;
-			movingEyesTimer = g_timerGUI;
+			movingEyesTimer = Timer_GetTicks();
 		}
 	} else {
-		if (movingEyesTimer >= g_timerGUI) return;
+		if (movingEyesTimer >= Timer_GetTicks()) return;
 
 		partNeedsRedraw = true;
 		if (movingEyesNextSprite != 0) {
@@ -708,9 +711,9 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 			movingEyesNextSprite = 0;
 
 			if (movingEyesSprite != 4) {
-				movingEyesTimer = g_timerGUI + Tools_RandomRange(20, 180);
+				movingEyesTimer = Timer_GetTicks() + Tools_RandomRange(20, 180);
 			} else {
-				movingEyesTimer = g_timerGUI + Tools_RandomRange(12, 30);
+				movingEyesTimer = Timer_GetTicks() + Tools_RandomRange(12, 30);
 			}
 		} else {
 			i = 0;
@@ -756,18 +759,18 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 			if ((i == 2 && movingEyesSprite == 1) || (i == 1 && movingEyesSprite == 2)) {
 				movingEyesNextSprite = i;
 				movingEyesSprite = 0;
-				movingEyesTimer = g_timerGUI + Tools_RandomRange(1, 5);
+				movingEyesTimer = Timer_GetTicks() + Tools_RandomRange(1, 5);
 			} else {
 				if (i != movingEyesSprite && (i == 4 || movingEyesSprite == 4)) {
 					movingEyesNextSprite = i;
 					movingEyesSprite = 3;
-					movingEyesTimer = g_timerGUI;
+					movingEyesTimer = Timer_GetTicks();
 				} else {
 					movingEyesSprite = i;
 					if (i != 4) {
-						movingEyesTimer = g_timerGUI + Tools_RandomRange(15, 180);
+						movingEyesTimer = Timer_GetTicks() + Tools_RandomRange(15, 180);
 					} else {
-						movingEyesTimer = g_timerGUI + Tools_RandomRange(6, 60);
+						movingEyesTimer = Timer_GetTicks() + Tools_RandomRange(6, 60);
 					}
 				}
 			}
@@ -1064,10 +1067,9 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 	bool done;
 	bool textDone;
 	uint16 frame;
-	uint32 descTick;
 	uint16 mentatSpeakingMode;
 	uint16 result;
-	uint32 textTick;
+	int64_t textTick;
 	uint32 textDelay;
 	uint16 lines;
 	uint16 textLines;
@@ -1103,8 +1105,8 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 	mentatSpeakingMode = 2;
 	lines = 0;
 	frame = 0;
-	g_timerTimeout = 0;
-	descTick = g_timerGUI + 30;
+	int64_t timeout = Timer_GetTicks();
+	int64_t descTick = 30 + timeout;
 
 	Input_History_Clear();
 
@@ -1147,8 +1149,8 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 					lines = descLines;
 					dirty = true;
 				} else {
-					if (g_timerGUI > descTick) {
-						descTick = g_timerGUI + 15;
+					if (Timer_GetTicks() > descTick) {
+						descTick = Timer_GetTicks() + 15;
 						lines++;
 						dirty = true;
 					}
@@ -1170,7 +1172,7 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 				/* FALL-THROUGH */
 
 			case 3:
-				if (mentatSpeakingMode == 2 && textTick < g_timerGUI) key = 1;
+				if (mentatSpeakingMode == 2 && textTick < Timer_GetTicks()) key = 1;
 
 				if ((key != 0 && textDone) || result != 0) {
 					GUI_Mouse_Hide_InRegion(0, 0, SCREEN_WIDTH, 40);
@@ -1190,7 +1192,7 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 						GUI_DrawText_Wrapper(text, 4, 1, g_curWidgetFGColourBlink, 0, 0x32);
 						mentatSpeakingMode = 1;
 						textDelay = strlen(text) * 4;
-						textTick = g_timerGUI + textDelay;
+						textTick = Timer_GetTicks() + textDelay;
 
 						if (textLines != 0) {
 							while (*text++ != '\0') {}
@@ -1207,7 +1209,7 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 					break;
 				}
 
-				if (mentatSpeakingMode == 0 || textTick > g_timerGUI) break;
+				if (mentatSpeakingMode == 0 || textTick > Timer_GetTicks()) break;
 
 				mentatSpeakingMode = 2;
 				textTick += textDelay + textDelay / 2;
@@ -1227,8 +1229,8 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 
 		GUI_Mentat_Animation(mentatSpeakingMode);
 
-		if (wsa != NULL && g_timerTimeout == 0) {
-			g_timerTimeout = 7;
+		if (wsa != NULL && Timer_GetTicks() >= timeout) {
+			timeout = Timer_GetTicks() + 7;
 
 			do {
 				if (step == 0 && frame > 4) step = 1;
@@ -1248,6 +1250,7 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 		}
 
 		if (!dirty) {
+			Video_Tick();
 			sleepIdle();
 			continue;
 		}
@@ -1260,6 +1263,7 @@ uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text
 		GUI_Mouse_Show_InWidget();
 		dirty = false;
 
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -1321,7 +1325,7 @@ uint16 GUI_Mentat_SplitText(char *str, uint16 maxWidth)
 
 uint16 GUI_Mentat_Tick(void)
 {
-	GUI_Mentat_Animation((g_interrogationTimer < g_timerGUI) ? 0 : 1);
+	GUI_Mentat_Animation((g_interrogationTimer < Timer_GetTicks()) ? 0 : 1);
 
 	return 0;
 }

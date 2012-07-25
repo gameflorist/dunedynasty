@@ -7,6 +7,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/sound.c
 	src/codec/format40.c
 	src/codec/format80.c
+	src/common_a5.c
 	src/config.c
 	src/crashlog/crashlog_none.c
 	src/enhancement.c
@@ -73,7 +74,8 @@ set(DUNEDYNASTY_SRC_FILES
 	src/table/windowdesc.c
 	src/team.c
 	src/tile.c
-	src/timer/timer_opendune.c
+	src/timer/timer_a5.c
+	src/timer/timer_common.c
 	src/tools.c
 	src/unit.c
 	src/video/video_sdl.c
@@ -89,5 +91,6 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
 	src/os/error_win32.c
+	src/timer/timer_opendune.c
 	src/video/video_win32.c
 	)

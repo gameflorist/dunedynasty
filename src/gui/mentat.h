@@ -5,11 +5,14 @@
 #ifndef GUI_MENTAT_H
 #define GUI_MENTAT_H
 
+#include <inttypes.h>
+#include <stdbool.h>
+
 extern uint8 g_shoulderLeft;
 extern uint8 g_shoulderTop;
 extern bool g_disableOtherMovement;
 extern bool g_interrogation;
-extern uint32 g_interrogationTimer;
+extern int64_t g_interrogationTimer;
 
 struct Widget;
 

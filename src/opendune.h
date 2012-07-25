@@ -5,6 +5,8 @@
 #ifndef OPENDUNE_H
 #define OPENDUNE_H
 
+#include <inttypes.h>
+
 typedef enum GameMode {
 	GM_NORMAL    = 0,
 	GM_RESTART   = 1,
@@ -39,7 +41,7 @@ extern GameMode g_gameMode;
 extern uint16 g_campaignID;
 extern uint16 g_scenarioID;
 extern uint16 g_activeAction;
-extern uint32 g_tickScenarioStart;
+extern int64_t g_tickScenarioStart;
 extern bool   g_debugGame;
 extern bool   g_debugScenario;
 extern bool   g_debugSkipDialogs;

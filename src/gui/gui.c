@@ -108,9 +108,6 @@ static uint8 s_factoryWindowGraymapTbl[256];
 static Widget s_factoryWindowWidgets[13];
 static uint8 s_factoryWindowWsaBuffer[64000];
 static uint8 *s_palette1_houseColour;
-static uint32 s_tickCreditsAnimation = 0;                   /*!< Next tick when credits animation needs an update. */
-static uint32 s_arrowAnimationTimeout = 0;                  /*!< Timeout value for the next palette change in the animation of the arrows. */
-static uint16 s_arrowAnimationState = 0;                    /*!< State of the arrow animation. @see _arrowAnimationTimeout */
 static uint16 s_temporaryColourBorderSchema[5][4];          /*!< Temporary storage for the #s_colourBorderSchema. */
 uint16 g_productionStringID;                                /*!< Descriptive text of activity of the active structure. */
 bool g_textDisplayNeedsUpdate;                              /*!< If set, text display needs to be updated. */
@@ -238,7 +235,7 @@ void GUI_DrawFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, u
 void GUI_DisplayText(const char *str, int16 importance, ...)
 {
 	char buffer[80];                 /* Formatting buffer of new message. */
-	static uint32 displayTimer = 0;  /* Timeout value for next update of the display. */
+	static int64_t displayTimer = 0; /* Timeout value for next update of the display. */
 	static uint16 textOffset;        /* Vertical position of text being scrolled. */
 	static bool scrollInProgress;    /* Text is being scrolled (and partly visible to the user). */
 
@@ -295,7 +292,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 				line3Importance = importance;
 			}
 		}
-		if (displayTimer > g_timerGUI) return;
+		if (displayTimer > Timer_GetTicks()) return;
 
 		oldValue_07AE_0000 = Widget_SetCurrentWidget(7);
 
@@ -327,7 +324,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 
 		if (textOffset != 0) {
 			if (line3Importance <= line2Importance) {
-				displayTimer = g_timerGUI + 1;
+				displayTimer = Timer_GetTicks() + 1;
 			}
 			textOffset--;
 			return;
@@ -346,7 +343,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 
 		line3Importance = -1;
 		g_textDisplayNeedsUpdate = true;
-		displayTimer = g_timerGUI + (line2Importance <= line1Importance ? 900 : 1);
+		displayTimer = Timer_GetTicks() + (line2Importance <= line1Importance ? 900 : 1);
 		scrollInProgress = false;
 		return;
 	}
@@ -377,7 +374,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		if (displayLine1[0] == '\0' && displayLine2[0] == '\0') return;
 	}
 
-	if (line2Importance <= line1Importance && displayTimer >= g_timerGUI) return;
+	if (line2Importance <= line1Importance && displayTimer >= Timer_GetTicks()) return;
 
 	scrollInProgress = true;
 	textOffset = 10;
@@ -623,11 +620,11 @@ static bool GUI_Palette_2BA5_00A2(uint8 *palette, uint16 colour, uint16 referenc
  */
 void GUI_PaletteAnimate(void)
 {
-	static uint32 timerAnimation = 0;
-	static uint32 timerSelection = 0;
-	static uint32 timerToggle = 0;
+	static int64_t timerAnimation = 0;
+	static int64_t timerSelection = 0;
+	static int64_t timerToggle = 0;
 
-	if (timerAnimation < g_timerGUI) {
+	if (timerAnimation < Timer_GetTicks()) {
 		static bool animationToggle = false;
 
 		uint16 colour;
@@ -638,10 +635,10 @@ void GUI_PaletteAnimate(void)
 		GFX_SetPalette(g_palette1);
 
 		animationToggle = !animationToggle;
-		timerAnimation = g_timerGUI + 60;
+		timerAnimation = Timer_GetTicks() + 60;
 	}
 
-	if (timerSelection < g_timerGUI && g_selectionType != SELECTIONTYPE_MENTAT) {
+	if (timerSelection < Timer_GetTicks() && g_selectionType != SELECTIONTYPE_MENTAT) {
 		static uint16 selectionStateColour = 15;
 
 		GUI_Palette_2BA5_00A2(g_palette1, 255, selectionStateColour);
@@ -666,10 +663,10 @@ void GUI_PaletteAnimate(void)
 
 		GFX_SetPalette(g_palette1);
 
-		timerSelection = g_timerGUI + 3;
+		timerSelection = Timer_GetTicks() + 3;
 	}
 
-	if (timerToggle < g_timerGUI) {
+	if (timerToggle < Timer_GetTicks()) {
 		static uint16 toggleColour = 12;
 
 		GUI_Palette_2BA5_00A2(g_palette1, 223, toggleColour);
@@ -680,7 +677,7 @@ void GUI_PaletteAnimate(void)
 
 		GFX_SetPalette(g_palette1);
 
-		timerToggle = g_timerGUI + 5;
+		timerToggle = Timer_GetTicks() + 5;
 	}
 
 	Sound_StartSpeech();
@@ -799,10 +796,10 @@ uint16 GUI_DisplayModalMessage(char *str, uint16 spriteID, ...)
 
 	GUI_Mouse_Show_Safe();
 
-	g_timerTimeout = 30;
-	while (g_timerTimeout != 0) {
+	for (int timeout = 0; timeout < 30; timeout++) {
 		GUI_PaletteAnimate();
-		sleepIdle();
+		Video_Tick();
+		Timer_Wait();
 	}
 
 	Input_History_Clear();
@@ -1460,10 +1457,10 @@ static void GUI_HallOfFame_DrawBackground(uint16 score, bool hallOfFame)
 
 static void GUI_EndStats_Sleep(uint16 delay)
 {
-	g_timerTimeout = delay;
-	while (g_timerTimeout != 0) {
+	for (int timeout = 0; timeout < delay; timeout++) {
 		GUI_HallOfFame_Tick();
-		sleepIdle();
+		Video_Tick();
+		Timer_Wait();
 	}
 }
 
@@ -1579,7 +1576,7 @@ void GUI_EndStats_Show(uint16 killedAllied, uint16 killedEnemy, uint16 destroyed
 
 				GUI_HallOfFame_Tick();
 
-				g_timerTimeout = 1;
+				const int64_t timeout = 1 + Timer_GetTicks();
 
 				GUI_DrawLine(loc04, locdi, loc04, locdi + 5, colour);
 
@@ -1591,7 +1588,7 @@ void GUI_EndStats_Show(uint16 killedAllied, uint16 killedEnemy, uint16 destroyed
 
 				Driver_Sound_Play(52, 0xFF);
 
-				GUI_EndStats_Sleep(g_timerTimeout);
+				GUI_EndStats_Sleep(timeout - Timer_GetTicks());
 			}
 
 			GUI_DrawFilledRectangle(271, locdi, 303, locdi + 5, 226);
@@ -1615,6 +1612,7 @@ void GUI_EndStats_Show(uint16 killedAllied, uint16 killedEnemy, uint16 destroyed
 	while (true) {
 		GUI_HallOfFame_Tick();
 		if (Input_Keyboard_NextKey() != 0) break;
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -1695,6 +1693,7 @@ uint8 GUI_PickHouse(void)
 				default: break;
 			}
 
+			Video_Tick();
 			sleepIdle();
 		}
 
@@ -1746,6 +1745,8 @@ uint8 GUI_PickHouse(void)
 			yes_no = GUI_Mentat_Loop(House_GetWSAHouseFilename(houseID), NULL, NULL, true, w);
 
 			if ((yes_no & 0x8000) != 0) break;
+
+			Video_Tick();
 			sleepIdle();
 		}
 
@@ -1772,6 +1773,7 @@ uint8 GUI_PickHouse(void)
 
 		if (yes_no == 0x8001) break;
 
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -2021,6 +2023,7 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
  */
 void GUI_DrawCredits(uint8 houseID, uint16 mode)
 {
+	static int64_t l_tickCreditsAnimation = 0;    /*!< Next tick when credits animation needs an update. */
 	static uint16 creditsAnimation = 0;           /* How many credits are shown in current animation of credits. */
 	static int16  creditsAnimationOffset = 0;     /* Offset of the credits for the animation of credits. */
 
@@ -2035,8 +2038,8 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 	int16 creditsOld;
 	int16 offset;
 
-	if (s_tickCreditsAnimation > g_timerGUI && mode == 0) return;
-	s_tickCreditsAnimation = g_timerGUI + 1;
+	if (l_tickCreditsAnimation > Timer_GetTicks() && mode == 0) return;
+	l_tickCreditsAnimation = Timer_GetTicks() + 1;
 
 	h = House_Get_ByIndex(houseID);
 
@@ -2762,6 +2765,7 @@ FactoryResult GUI_DisplayFactoryWindow(bool isConstructionYard, bool isStarPort,
 		if (event == 0x6E) GUI_Production_ResumeGame_Click(NULL);
 
 		GUI_PaletteAnimate();
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -2828,8 +2832,11 @@ char *GUI_String_Get_ByIndex(int16 stringID)
 
 static void GUI_StrategicMap_AnimateArrows(void)
 {
-	if (s_arrowAnimationTimeout >= g_timerGUI) return;
-	s_arrowAnimationTimeout = g_timerGUI + 7;
+	static int64_t l_arrowAnimationTimeout = 0;
+	static int s_arrowAnimationState = 0;
+
+	if (l_arrowAnimationTimeout >= Timer_GetTicks()) return;
+	l_arrowAnimationTimeout = Timer_GetTicks() + 7;
 
 	s_arrowAnimationState = (s_arrowAnimationState + 1) % 4;
 
@@ -2894,10 +2901,10 @@ static void GUI_StrategicMap_AnimateSelected(uint16 selected, StrategicMapData *
 		GFX_Screen_Copy2((i % 2 == 0) ? 16 : 176, 16, x, y, width, height, 2, 0, false);
 		GUI_Mouse_Show_Safe();
 
-		g_timerTimeout = 20;
-		while (g_timerTimeout != 0) {
+		for (int timeout = 0; timeout < 20; timeout++) {
 			GUI_StrategicMap_AnimateArrows();
-			sleepIdle();
+			Video_Tick();
+			Timer_Wait();
 		}
 	}
 }
@@ -2955,7 +2962,7 @@ static bool GUI_StrategicMap_FastForwardToggleWithESC(void)
 
 static void GUI_StrategicMap_DrawText(char *string)
 {
-	static uint32 l_timerNext = 0;
+	static int64_t l_timerNext = 0;
 	uint16 oldScreenID;
 	uint16 y;
 
@@ -2967,20 +2974,19 @@ static void GUI_StrategicMap_DrawText(char *string)
 
 	GUI_DrawText_Wrapper(string, 64, 175, 12, 0, 0x12);
 
-	while (g_timerGUI + 90 < l_timerNext) sleepIdle();
+	Timer_Sleep(Timer_GetTicks() + 90 - l_timerNext);
 
 	for (y = 185; y > 172; y--) {
 		GUI_Screen_Copy(8, y, 8, 165, 24, 14, 2, 0);
 
-		g_timerTimeout = 3;
-
-		while (g_timerTimeout != 0) {
+		for (int timeout = 0; timeout < 3; timeout++) {
 			if (GUI_StrategicMap_FastForwardToggleWithESC()) break;
-			sleepIdle();
+			Video_Tick();
+			Timer_Wait();
 		}
 	}
 
-	l_timerNext = g_timerGUI + 90;
+	l_timerNext = Timer_GetTicks() + 90;
 
 	GFX_Screen_SetActive(oldScreenID);
 }
@@ -3044,6 +3050,7 @@ static uint16 GUI_StrategicMap_ScenarioSelection(uint16 campaignID)
 
 	while (loop) {
 		region = GUI_StrategicMap_ClickedRegion();
+		Video_Tick();
 
 		if (region == 0) {
 			sleepIdle();
@@ -3273,13 +3280,12 @@ uint16 GUI_StrategicMap_Show(uint16 campaignID, bool win)
 
 		Input_History_Clear();
 
-		g_timerTimeout = 120;
-
 		Sprites_CPS_LoadRegionClick();
 
-		while (g_timerTimeout != 0) {
+		for (int timeout = 0; timeout < 120; timeout++) {
 			if (GUI_StrategicMap_FastForwardToggleWithESC()) break;
-			sleepIdle();
+			Video_Tick();
+			Timer_Wait();
 		}
 
 		Sprites_LoadImage("DUNEMAP.CPS", 3 , g_palette_998A);
@@ -3288,11 +3294,10 @@ uint16 GUI_StrategicMap_Show(uint16 campaignID, bool win)
 
 		GUI_Screen_FadeIn2(8, 24, 304, 120, 2, 0, GUI_StrategicMap_FastForwardToggleWithESC() ? 0 : 1, false);
 
-		g_timerTimeout = 60;
-
-		while (g_timerTimeout != 0) {
+		for (int timeout = 0; timeout < 60; timeout++) {
 			if (GUI_StrategicMap_FastForwardToggleWithESC()) break;
-			sleepIdle();
+			Video_Tick();
+			Timer_Wait();
 		}
 
 		GUI_StrategicMap_DrawText(String_Get_ByIndex(STR_THAT_HAS_BECOME_DIVIDED));
@@ -3522,7 +3527,7 @@ void GUI_FactoryWindow_UpdateDetails(void)
  */
 void GUI_FactoryWindow_UpdateSelection(bool selectionChanged)
 {
-	static uint32 paletteChangeTimer;
+	static int64_t paletteChangeTimer;
 	static int8 paletteColour;
 	static int8 paletteChange;
 
@@ -3544,10 +3549,10 @@ void GUI_FactoryWindow_UpdateSelection(bool selectionChanged)
 		GUI_DrawWiredRectangle(72, y, 103, y + 23, 255);
 		GUI_Mouse_Show_Safe();
 	} else {
-		if (paletteChangeTimer > g_timerGUI) return;
+		if (paletteChangeTimer > Timer_GetTicks()) return;
 	}
 
-	paletteChangeTimer = g_timerGUI + 3;
+	paletteChangeTimer = Timer_GetTicks() + 3;
 	paletteColour += paletteChange;
 
 	if (paletteColour < 0 || paletteColour > 63) {
@@ -3626,7 +3631,6 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 	}
 
 	for (y = 0; y < height; y++) {
-		uint32 tick;
 		uint16 y2 = y;
 		for (x = 0; x < width; x++) {
 			uint16 offsetX, offsetY;
@@ -3642,8 +3646,8 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 
 		/* XXX -- This delays the system so you can in fact see the animation */
 		if ((y % 4) == 0) {
-			tick = g_timerSleep;
-			while (tick == g_timerSleep) sleepIdle();
+			Video_Tick();
+			Timer_Wait();
 		}
 	}
 
@@ -3743,7 +3747,6 @@ void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 scre
 
 	for (j = 0; j < height; j++) {
 		uint16 j2 = j;
-		uint32 tick;
 
 		for (i = 0; i < width; i++) {
 			uint8 colour;
@@ -3763,9 +3766,8 @@ void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 scre
 			GFX_PutPixel(curX, curY, colour);
 		}
 
-		tick = g_timerSleep + delay;
-
-		while (g_timerSleep < tick) sleepIdle();
+		Video_Tick();
+		Timer_Sleep(delay);
 	}
 
 	if (screenDst == 0) {
@@ -4079,11 +4081,11 @@ void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 heigh
 
 uint16 GUI_HallOfFame_Tick(void)
 {
-	static uint32 l_timerNext = 0;
+	static int64_t l_timerNext = 0;
 	static int16 colouringDirection = 1;
 
-	if (l_timerNext >= g_timerGUI) return 0;
-	l_timerNext = g_timerGUI + 2;
+	if (l_timerNext >= Timer_GetTicks()) return 0;
+	l_timerNext = Timer_GetTicks() + 2;
 
 	if (*s_palette1_houseColour >= 63) {
 		colouringDirection = -1;
@@ -4288,6 +4290,7 @@ void GUI_HallOfFame_Show(uint16 score)
 
 	while (!g_var_81E6) {
 		GUI_Widget_HandleEvents(w);
+		Video_Tick();
 		sleepIdle();
 	}
 
@@ -4512,9 +4515,9 @@ void GUI_DrawScreen(uint16 screenID)
 	g_minimapPosition = g_viewportPosition;
 	g_selectionRectanglePosition = g_selectionPosition;
 
-	if (g_viewportMessageCounter != 0 && s_timerViewportMessage < g_timerGUI) {
+	if (g_viewportMessageCounter != 0 && s_timerViewportMessage < Timer_GetTicks()) {
 		g_viewportMessageCounter--;
-		s_timerViewportMessage = g_timerGUI + 60;
+		s_timerViewportMessage = Timer_GetTicks() + 60;
 
 		for (xpos = 0; xpos < 14; xpos++) {
 			Map_Update(g_viewportPosition + xpos + 6 * 64, 0, true);
@@ -4543,7 +4546,6 @@ void GUI_SetPaletteAnimated(uint8 *palette, int16 ticksOfAnimation)
 	bool progress;
 	int16 diffPerTick;
 	int16 tickSlice;
-	uint32 timerCurrent;
 	int16 highestDiff;
 	int16 ticks;
 	uint16 tickCurrent;
@@ -4572,13 +4574,12 @@ void GUI_SetPaletteAnimated(uint8 *palette, int16 ticksOfAnimation)
 	}
 
 	tickCurrent = 0;
-	timerCurrent = g_timerSleep;
 
 	do {
 		progress = false;
 
 		tickCurrent  += (uint16)ticks;
-		timerCurrent += (uint32)(tickCurrent >> 8);
+		const int delay = tickCurrent >> 8;
 		tickCurrent  &= 0xFF;
 
 		for (i = 0; i < 256 * 3; i++) {
@@ -4603,7 +4604,8 @@ void GUI_SetPaletteAnimated(uint8 *palette, int16 ticksOfAnimation)
 		if (progress) {
 			GFX_SetPalette(data);
 
-			while (g_timerSleep < timerCurrent) sleepIdle();
+			Video_Tick();
+			Timer_Sleep(delay);
 		}
 	} while (progress);
 }

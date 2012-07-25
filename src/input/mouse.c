@@ -13,7 +13,6 @@
 #include "../gfx.h"
 #include "../gui/gui.h"
 #include "../input/input.h"
-#include "../timer/timer.h"
 #include "../tools.h"
 #include "../video/video.h"
 
@@ -214,7 +213,7 @@ void Mouse_SetMouseMode(uint8 mouseMode, const char *filename)
 			break;
 	}
 
-	g_timerInput = 0;
+	/* g_timerInput = 0; */
 	g_mouseMode = mouseMode;
 }
 
