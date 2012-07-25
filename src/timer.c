@@ -148,7 +148,7 @@ static void Timer_InterruptResume(void)
 /**
  * Initialize the timer.
  */
-void Timer_Init()
+void Timer_Init(void)
 {
 	s_timerLastTime = Timer_GetTime();
 
@@ -176,7 +176,7 @@ void Timer_Init()
 /**
  * Uninitialize the timer.
  */
-void Timer_Uninit()
+void Timer_Uninit(void)
 {
 	Timer_InterruptSuspend();
 #if defined(_WIN32)
@@ -243,7 +243,7 @@ void Timer_Remove(void (*callback)(void))
 /**
  * Handle game timers.
  */
-void Timer_Tick()
+void Timer_Tick(void)
 {
 	if ((s_timersActive & TIMER_GUI)  != 0) g_timerGUI++;
 	if ((s_timersActive & TIMER_GAME) != 0) g_timerGame++;

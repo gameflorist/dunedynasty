@@ -64,7 +64,7 @@ bool Config_Read(char *filename, DuneCfg *config)
  *
  * @return True if loading is successful.
  */
-bool GameOptions_Load()
+bool GameOptions_Load(void)
 {
 	if (!File_Exists("OPTIONS.CFG")) return false;
 
@@ -76,7 +76,7 @@ bool GameOptions_Load()
 /**
  * Saves the game options.
  */
-void GameOptions_Save()
+void GameOptions_Save(void)
 {
 	uint8 index;
 

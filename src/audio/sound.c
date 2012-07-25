@@ -276,7 +276,7 @@ void Voice_LoadVoices(uint16 voiceSet)
 /**
  * Unload voices.
  */
-void Voice_UnloadVoices()
+void Voice_UnloadVoices(void)
 {
 	uint16 voice;
 
@@ -373,7 +373,7 @@ void Sound_Output_Feedback(uint16 index)
  * Start a new speech fragment if possible.
  * @return Sound is produced.
  */
-bool Sound_StartSpeech()
+bool Sound_StartSpeech(void)
 {
 	if (g_gameConfig.sounds == 0) return false;
 

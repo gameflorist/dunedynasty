@@ -80,7 +80,7 @@ static void GUI_Security_NormaliseText(char *str)
  * @return True if and only if the user answered one of the three questions
  *   correct.
  */
-bool GUI_Security_Show()
+bool GUI_Security_Show(void)
 {
 	const char *wsaHouseFilename;
 	uint16 questionsCount;

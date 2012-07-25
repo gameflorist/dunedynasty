@@ -18,7 +18,8 @@ static int s_midiPort = -1;
 
 static char *s_midiCaption = "OpenDUNE MIDI Port";
 
-bool midi_init() {
+bool midi_init(void)
+{
 	snd_seq_addr_t sender, receiver;
 	snd_seq_port_info_t *pinfo;
 	snd_seq_client_info_t *cinfo;
@@ -105,7 +106,8 @@ bool midi_init() {
 	return true;
 }
 
-void midi_uninit() {
+void midi_uninit(void)
+{
 	if (s_midi == NULL) return;
 
 	snd_midi_event_free(s_midiCoder);
@@ -133,7 +135,7 @@ void midi_send(uint32 data)
 	snd_seq_drain_output(s_midi);
 }
 
-void midi_reset()
+void midi_reset(void)
 {
 	if (s_midi == NULL) return;
 

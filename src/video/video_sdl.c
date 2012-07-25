@@ -153,7 +153,7 @@ void Video_Mouse_SetRegion(uint16 minX, uint16 maxX, uint16 minY, uint16 maxY)
 /**
  * Initialize the video driver.
  */
-bool Video_Init()
+bool Video_Init(void)
 {
 	if (s_video_initialized) return true;
 
@@ -182,7 +182,7 @@ bool Video_Init()
 /**
  * Uninitialize the video driver.
  */
-void Video_Uninit()
+void Video_Uninit(void)
 {
 	s_video_initialized = false;
 	SDL_Quit();
@@ -463,7 +463,7 @@ void Video_DrawScreen(void)
 /**
  * Runs every tick to handle video driver updates.
  */
-void Video_Tick()
+void Video_Tick(void)
 {
 	SDL_Event event;
 

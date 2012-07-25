@@ -46,7 +46,7 @@ static void DSP_Callback(snd_async_handler_t *ahandler)
 	s_bufferLen -= len;
 }
 
-void DSP_Stop()
+void DSP_Stop(void)
 {
 	if (s_dsp == NULL) return;
 
@@ -57,7 +57,7 @@ void DSP_Stop()
 	s_playing = false;
 }
 
-void DSP_Uninit()
+void DSP_Uninit(void)
 {
 	if (!s_init) return;
 
@@ -69,7 +69,7 @@ void DSP_Uninit()
 	s_init = false;
 }
 
-bool DSP_Init()
+bool DSP_Init(void)
 {
 	s_init = true;
 	return true;
@@ -138,7 +138,7 @@ void DSP_Play(const uint8 *data)
 	s_playing = true;
 }
 
-uint8 DSP_GetStatus()
+uint8 DSP_GetStatus(void)
 {
 	if (!s_playing) return 0;
 

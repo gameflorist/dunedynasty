@@ -620,7 +620,7 @@ static bool GUI_Palette_2BA5_00A2(uint8 *palette, uint16 colour, uint16 referenc
 /**
  * Animate the palette. Only works for some colours or something
  */
-void GUI_PaletteAnimate()
+void GUI_PaletteAnimate(void)
 {
 	static uint32 timerAnimation = 0;
 	static uint32 timerSelection = 0;
@@ -689,7 +689,7 @@ void GUI_PaletteAnimate()
  * Sets the activity description to the correct string for the active structure.
  * @see g_productionStringID
  */
-void GUI_UpdateProductionStringID()
+void GUI_UpdateProductionStringID(void)
 {
 	Structure *s = NULL;
 
@@ -1631,7 +1631,7 @@ void GUI_EndStats_Show(uint16 killedAllied, uint16 killedEnemy, uint16 destroyed
 /**
  * Show pick house screen.
  */
-uint8 GUI_PickHouse()
+uint8 GUI_PickHouse(void)
 {
 	uint16 oldScreenID;
 	Widget *w = NULL;
@@ -3380,7 +3380,7 @@ void GUI_DrawText_Monospace(char *string, uint16 left, uint16 top, uint8 fgColou
 	}
 }
 
-void GUI_FactoryWindow_B495_0F30()
+void GUI_FactoryWindow_B495_0F30(void)
 {
 	GUI_Mouse_Hide_Safe();
 	GFX_Screen_Copy2(69, ((g_factoryWindowSelected + 1) * 32) + 5, 69, (g_factoryWindowSelected * 32) + 21, 38, 30, 2, 0, false);
@@ -3396,7 +3396,7 @@ FactoryWindowItem *GUI_FactoryWindow_GetItem(int16 offset)
 	return &g_factoryWindowItems[offset];
 }
 
-void GUI_FactoryWindow_DrawDetails()
+void GUI_FactoryWindow_DrawDetails(void)
 {
 	uint16 oldScreenID;
 	FactoryWindowItem *item = GUI_FactoryWindow_GetItem(g_factoryWindowSelected);
@@ -3499,7 +3499,7 @@ void GUI_FactoryWindow_DrawCaption(char *caption)
 	GFX_Screen_SetActive(oldScreenID);
 }
 
-void GUI_FactoryWindow_UpdateDetails()
+void GUI_FactoryWindow_UpdateDetails(void)
 {
 	FactoryWindowItem *item = GUI_FactoryWindow_GetItem(g_factoryWindowSelected);
 	ObjectInfo *oi = item->objectInfo;
@@ -3651,7 +3651,7 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 	}
 }
 
-void GUI_FactoryWindow_PrepareScrollList()
+void GUI_FactoryWindow_PrepareScrollList(void)
 {
 	FactoryWindowItem *item;
 
@@ -3778,7 +3778,7 @@ void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 scre
  * Show the mouse on the screen. Copy the screen behind the mouse in a safe
  *  buffer.
  */
-void GUI_Mouse_Show()
+void GUI_Mouse_Show(void)
 {
 	int left, top;
 
@@ -3808,7 +3808,7 @@ void GUI_Mouse_Show()
  * Hide the mouse from the screen. Do this by copying the mouse buffer back to
  *  the screen.
  */
-void GUI_Mouse_Hide()
+void GUI_Mouse_Hide(void)
 {
 	if (g_var_7097 == 1) return;
 
@@ -3827,7 +3827,7 @@ void GUI_Mouse_Hide()
  * The safe version of GUI_Mouse_Hide(). It waits for a mouselock before doing
  *  anything.
  */
-void GUI_Mouse_Hide_Safe()
+void GUI_Mouse_Hide_Safe(void)
 {
 	while (g_mouseLock != 0) msleep(0);
 	g_mouseLock++;
@@ -3846,7 +3846,7 @@ void GUI_Mouse_Hide_Safe()
  * The safe version of GUI_Mouse_Show(). It waits for a mouselock before doing
  *  anything.
  */
-void GUI_Mouse_Show_Safe()
+void GUI_Mouse_Show_Safe(void)
 {
 	while (g_mouseLock != 0) msleep(0);
 	g_mouseLock++;
@@ -3865,7 +3865,7 @@ void GUI_Mouse_Show_Safe()
  * Show the mouse if needed. Should be used in combination with
  *  #GUI_Mouse_Hide_InRegion().
  */
-void GUI_Mouse_Show_InRegion()
+void GUI_Mouse_Show_InRegion(void)
 {
 	uint8 counter;
 
@@ -3944,7 +3944,7 @@ void GUI_Mouse_Hide_InRegion(uint16 left, uint16 top, uint16 right, uint16 botto
  * Show the mouse if needed. Should be used in combination with
  *  GUI_Mouse_Hide_InWidget().
  */
-void GUI_Mouse_Show_InWidget()
+void GUI_Mouse_Show_InWidget(void)
 {
 	GUI_Mouse_Show_InRegion();
 }
@@ -4076,7 +4076,7 @@ void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 heigh
 	}
 }
 
-uint16 GUI_HallOfFame_Tick()
+uint16 GUI_HallOfFame_Tick(void)
 {
 	static uint32 l_timerNext = 0;
 	static int16 colouringDirection = 1;

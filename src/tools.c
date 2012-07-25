@@ -236,7 +236,7 @@ Object *Tools_Index_GetObject(uint16 encoded)
  *
  * @return The random value.
  */
-uint8 Tools_Random_256()
+uint8 Tools_Random_256(void)
 {
 	uint16 val16;
 	uint8 val8;

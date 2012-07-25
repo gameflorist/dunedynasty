@@ -2367,7 +2367,7 @@ int main(int argc, char **argv)
  * Prepare the map (after loading scenario or savegame). Does some basic
  *  sanity-check and corrects stuff all over the place.
  */
-void Game_Prepare()
+void Game_Prepare(void)
 {
 	PoolFindStruct find;
 	uint16 oldSelectionType;
@@ -2488,7 +2488,7 @@ void Game_Prepare()
  * Initialize a game, by setting most variables to zero, cleaning the map, etc
  *  etc.
  */
-void Game_Init()
+void Game_Init(void)
 {
 	Unit_Init();
 	Structure_Init();
@@ -2559,7 +2559,7 @@ void Game_LoadScenario(uint8 houseID, uint16 scenarioID)
  * Close down facilities used by the program. Always called just before the
  *  program terminates.
  */
-void PrepareEnd()
+void PrepareEnd(void)
 {
 	free(g_palette_998A); g_palette_998A = NULL;
 

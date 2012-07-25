@@ -115,7 +115,7 @@ static void Unit_MovementTick(Unit *unit)
 /**
  * Loop over all units, performing various of tasks.
  */
-void GameLoop_Unit()
+void GameLoop_Unit(void)
 {
 	PoolFindStruct find;
 	bool tickMovement  = false;
@@ -573,7 +573,7 @@ Team *Unit_GetTeam(Unit *u)
 /**
  * ?? Sorts unit array and count enemy/allied units.
  */
-void Unit_Sort()
+void Unit_Sort(void)
 {
 	House *h;
 	uint16 i;
