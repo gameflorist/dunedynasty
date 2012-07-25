@@ -50,6 +50,6 @@ extern Explosion g_explosions[];
 extern const ExplosionCommandStruct *g_table_explosion[];
 
 extern void Explosion_Start(uint16 explosionType, tile32 position);
-extern void Explosion_Tick();
+extern void Explosion_Tick(void);
 
 #endif /* EXPLOSION_H */
