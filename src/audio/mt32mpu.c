@@ -183,7 +183,7 @@ static void MPU_FlushChannel(uint8 channel)
 	}
 }
 
-static uint8 MPU_281A()
+static uint8 MPU_281A(void)
 {
 	uint8 i;
 	uint8 chan = 0xFF;

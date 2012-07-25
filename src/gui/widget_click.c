@@ -631,7 +631,7 @@ static void GUI_Widget_GameControls_Click(Widget *w)
 	GUI_Window_RestoreScreen(desc);
 }
 
-static void ShadeScreen()
+static void ShadeScreen(void)
 {
 	uint16 i;
 
@@ -644,7 +644,7 @@ static void ShadeScreen()
 	GFX_SetPalette(g_palette_998A);
 }
 
-static void UnshadeScreen()
+static void UnshadeScreen(void)
 {
 	memmove(g_palette1, g_palette_998A, 256 * 3);
 
@@ -807,7 +807,7 @@ bool GUI_Widget_Options_Click(Widget *w)
 	return false;
 }
 
-static uint16 GetSavegameCount()
+static uint16 GetSavegameCount(void)
 {
 	uint16 i;
 
@@ -1284,7 +1284,7 @@ bool GUI_Production_Up_Click(Widget *w)
 	return true;
 }
 
-static void GUI_Purchase_ShowInvoice()
+static void GUI_Purchase_ShowInvoice(void)
 {
 	Widget *w = g_widgetInvoiceTail;
 	uint16 oldScreenID = GFX_Screen_SetActive(2);

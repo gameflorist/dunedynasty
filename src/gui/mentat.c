@@ -111,7 +111,7 @@ static void GUI_Mentat_ShowDialog(uint8 houseID, uint16 stringID, const char *ws
 	if (musicID != 0xFFFF) Driver_Music_FadeOut();
 }
 
-static void GUI_Mentat_HelpListLoop()
+static void GUI_Mentat_HelpListLoop(void)
 {
 	uint16 key = 0;
 
@@ -901,7 +901,7 @@ void GUI_Mentat_Create_HelpScreen_Widgets()
 	GUI_Widget_Draw(g_widgetMentatFirst);
 }
 
-static void GUI_Mentat_ShowHelp()
+static void GUI_Mentat_ShowHelp(void)
 {
 	struct {
 		uint8  notused[8];

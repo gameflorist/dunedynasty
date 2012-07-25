@@ -50,7 +50,7 @@ static void GUI_Security_DrawText(char *text)
 	GFX_Screen_SetActive(oldScreenID);
 }
 
-static void GUI_Security_UndrawText()
+static void GUI_Security_UndrawText(void)
 {
 	GUI_Mouse_Hide_Safe();
 	GUI_Screen_Copy(0, 160, 0, 0, SCREEN_WIDTH / 8, 40, 4, 0);

@@ -67,7 +67,7 @@ static void Drivers_Uninit(Driver *driver)
 	driver->index = 0xFFFF;
 }
 
-static uint16 Driver_Install()
+static uint16 Driver_Install(void)
 {
 	uint16 index;
 
@@ -147,7 +147,7 @@ static bool Drivers_Voice_Init(bool enable)
 	return true;
 }
 
-static void Drivers_Reset()
+static void Drivers_Reset(void)
 {
 	memset(s_driverInstalled, 0, sizeof(s_driverInstalled));
 	memset(s_driverLoaded, 0, sizeof(s_driverLoaded));
@@ -343,7 +343,7 @@ char *Drivers_GenerateFilename(const char *name, Driver *driver)
 	return NULL;
 }
 
-static void Drivers_SoundMusic_Uninit()
+static void Drivers_SoundMusic_Uninit(void)
 {
 	Driver *sound = g_driverSound;
 	Driver *music = g_driverMusic;
@@ -389,7 +389,7 @@ static void Drivers_SoundMusic_Uninit()
 	MPU_Uninit();
 }
 
-static void Drivers_Voice_Uninit()
+static void Drivers_Voice_Uninit(void)
 {
 	Drivers_Uninit(g_driverVoice);
 

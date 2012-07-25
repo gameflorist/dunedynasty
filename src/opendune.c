@@ -130,7 +130,7 @@ int16 g_musicInBattle = 0; /*!< 0 = no battle, 1 = fight is going on, -1 = music
  *
  * @return True if and only if the level has come to an end.
  */
-static bool GameLoop_IsLevelFinished()
+static bool GameLoop_IsLevelFinished(void)
 {
 	bool finish = false;
 
@@ -199,7 +199,7 @@ static bool GameLoop_IsLevelFinished()
  *
  * @return True if and only if the level has been won by the human.
  */
-static bool GameLoop_IsLevelWon()
+static bool GameLoop_IsLevelWon(void)
 {
 	bool win = false;
 
@@ -312,7 +312,7 @@ static void Memory_ClearBlock(uint16 index)
 	memset(GFX_Screen_Get_ByIndex(index), 0, GFX_Screen_GetSize_ByIndex(index));
 }
 
-static void GameLoop_FinishAnimation()
+static void GameLoop_FinishAnimation(void)
 {
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x1);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x2);
@@ -505,7 +505,7 @@ static uint16 GameLoop_PalettePart_Update(bool finishNow)
 	return s_palettePartDirection;
 }
 
-static void GameLoop_PlayAnimation()
+static void GameLoop_PlayAnimation(void)
 {
 	const HouseAnimation_Animation *animation;
 	uint8 animationMode = 0;
@@ -691,7 +691,7 @@ static void GameLoop_PlayAnimation()
 	}
 }
 
-static void GameLoop_LevelEndAnimation()
+static void GameLoop_LevelEndAnimation(void)
 {
 	const HouseAnimation_Animation *animation;
 	const HouseAnimation_Subtitle *subtitle;
@@ -761,7 +761,7 @@ static void GameLoop_LevelEndAnimation()
 	GameLoop_FinishAnimation();
 }
 
-static void GameLoop_Uninit()
+static void GameLoop_Uninit(void)
 {
 	while (g_widgetLinkedListHead != NULL) {
 		Widget *w = g_widgetLinkedListHead;
@@ -1000,7 +1000,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 	GUI_ClearScreen(screenID);
 }
 
-static void GameCredits_LoadPalette()
+static void GameCredits_LoadPalette(void)
 {
 	uint16 i;
 	uint8 *p;
@@ -1030,7 +1030,7 @@ static void GameCredits_LoadPalette()
 /**
  * Shows the game credits.
  */
-static void GameLoop_GameCredits()
+static void GameLoop_GameCredits(void)
 {
 	static const uint8 colours[] = {0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -1108,7 +1108,7 @@ static void GameLoop_GameCredits()
 /**
  * Shows the end game "movie"
  */
-static void GameLoop_GameEndAnimation()
+static void GameLoop_GameEndAnimation(void)
 {
 	const HouseAnimation_Animation *animation;
 	const HouseAnimation_Subtitle *subtitle;
@@ -1158,7 +1158,7 @@ static void GameLoop_GameEndAnimation()
  * Checks if the level comes to an end. If so, it shows all end-level stuff,
  *  and prepares for the next level.
  */
-static void GameLoop_LevelEnd()
+static void GameLoop_LevelEnd(void)
 {
 	static uint32 levelEndTimer = 0;
 
@@ -1240,7 +1240,7 @@ static void GameLoop_LevelEnd()
 /**
  * Logos at begin of intro.
  */
-static void Gameloop_Logos()
+static void Gameloop_Logos(void)
 {
 	uint16 oldScreenID;
 	void *wsa;
@@ -1371,7 +1371,7 @@ static void Gameloop_Logos()
 /**
  * The Intro.
  */
-static void GameLoop_GameIntroAnimation()
+static void GameLoop_GameIntroAnimation(void)
 {
 	GUI_ChangeSelectionType(SELECTIONTYPE_INTRO);
 
@@ -1603,7 +1603,7 @@ static uint16 GameLoop_HandleEvents(uint16 arg06, char **strings, uint32 arg10, 
 	return result;
 }
 
-static void Window_WidgetClick_Create()
+static void Window_WidgetClick_Create(void)
 {
 	WidgetInfo *wi;
 
@@ -1743,7 +1743,7 @@ static void ReadProfileIni(char *filename)
 /**
  * Intro menu.
  */
-static void GameLoop_GameIntroAnimationMenu()
+static void GameLoop_GameIntroAnimationMenu(void)
 {
 	static const uint16 mainMenuStrings[][6] = {
 		{STR_PLAY_A_GAME, STR_REPLAY_INTRODUCTION, STR_EXIT_GAME, STR_NULL,         STR_NULL,         STR_NULL}, /* Neither HOF nor save. */
@@ -2126,7 +2126,7 @@ static void InGame_Numpad_Move(uint16 key)
 /**
  * Main game loop.
  */
-static void GameLoop_Main()
+static void GameLoop_Main(void)
 {
 	static uint32 l_timerNext = 0;
 	static uint32 l_timerUnitStatus = 0;
@@ -2272,7 +2272,7 @@ static void GameLoop_Main()
 	GUI_Screen_FadeIn(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, 0);
 }
 
-static bool Unknown_25C4_000E()
+static bool Unknown_25C4_000E(void)
 {
 	Timer_Init();
 

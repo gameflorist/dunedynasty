@@ -2517,7 +2517,7 @@ void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width
 	GFX_Screen_Copy(xSrc * 8, ySrc, xDst * 8, yDst, width * 8, height, screenSrc, screenDst);
 }
 
-static uint32 GUI_FactoryWindow_CreateWidgets()
+static uint32 GUI_FactoryWindow_CreateWidgets(void)
 {
 	uint16 i;
 	uint16 count = 0;
@@ -2570,7 +2570,7 @@ static uint32 GUI_FactoryWindow_CreateWidgets()
 	return count * sizeof(Widget);
 }
 
-static uint32 GUI_FactoryWindow_LoadGraymapTbl()
+static uint32 GUI_FactoryWindow_LoadGraymapTbl(void)
 {
 	uint8 fileID;
 
@@ -2596,7 +2596,7 @@ static int GUI_FactoryWindow_Sorter(const void *a, const void *b)
 	return pb->sortPriority - pa->sortPriority;
 }
 
-static void GUI_FactoryWindow_InitItems()
+static void GUI_FactoryWindow_InitItems(void)
 {
 	g_factoryWindowTotal = 0;
 	g_factoryWindowSelected = 0;
@@ -2661,7 +2661,7 @@ static void GUI_FactoryWindow_InitItems()
 	qsort(g_factoryWindowItems, g_factoryWindowTotal, sizeof(FactoryWindowItem), GUI_FactoryWindow_Sorter);
 }
 
-static void GUI_FactoryWindow_Init()
+static void GUI_FactoryWindow_Init(void)
 {
 	static uint8 xSrc[HOUSE_MAX] = { 0, 0, 16, 0, 0, 0 };
 	static uint8 ySrc[HOUSE_MAX] = { 8, 152, 48, 0, 0, 0 };
@@ -2825,7 +2825,7 @@ char *GUI_String_Get_ByIndex(int16 stringID)
 	return String_Get_ByIndex(stringID);
 }
 
-static void GUI_StrategicMap_AnimateArrows()
+static void GUI_StrategicMap_AnimateArrows(void)
 {
 	if (s_arrowAnimationTimeout >= g_timerGUI) return;
 	s_arrowAnimationTimeout = g_timerGUI + 7;
@@ -2925,7 +2925,7 @@ static void GUI_StrategicMap_SetRegion(uint16 region, bool set)
 	}
 }
 
-static int16 GUI_StrategicMap_ClickedRegion()
+static int16 GUI_StrategicMap_ClickedRegion(void)
 {
 	uint16 key;
 
@@ -2939,7 +2939,7 @@ static int16 GUI_StrategicMap_ClickedRegion()
 	return g_fileRgnclkCPS[(g_mouseClickY - 24) * 304 + g_mouseClickX - 8];
 }
 
-static bool GUI_StrategicMap_FastForwardToggleWithESC()
+static bool GUI_StrategicMap_FastForwardToggleWithESC(void)
 {
 	if (Input_Keyboard_NextKey() == 0) return s_strategicMapFastForward;
 

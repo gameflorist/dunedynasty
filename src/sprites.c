@@ -401,7 +401,7 @@ void Sprites_SetMouseSprite(uint16 hotSpotX, uint16 hotSpotY, uint8 *sprite)
 	g_mouseLock--;
 }
 
-static void InitRegions()
+static void InitRegions(void)
 {
 	uint16 *regions = g_regions;
 	uint16 i;

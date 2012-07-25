@@ -260,7 +260,7 @@ static uint16 Input_History_Add(uint16 value)
 }
 
 /** Read input event from file. */
-static void Input_ReadInputFromFile()
+static void Input_ReadInputFromFile(void)
 {
 	uint16 value;
 	uint16 mouseBuffer[2];
