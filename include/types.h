@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <stdbool.h>
+
 /** @file include/types.h Basic definitions and data types. */
 
 #if defined(__TINYC__)
@@ -111,9 +113,5 @@ typedef union tile32 {
 	uint32 tile;
 } tile32;
 assert_compile(sizeof(tile32) == 4);
-
-typedef unsigned char bool;
-#define false 0
-#define true 1
 
 #endif /* TYPES_H */
