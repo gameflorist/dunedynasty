@@ -2,6 +2,9 @@
 
 /** @file src/string.c String routines. */
 
+#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE_EXTENDED
+
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
