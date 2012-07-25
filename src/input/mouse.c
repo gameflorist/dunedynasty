@@ -13,7 +13,7 @@
 #include "../gfx.h"
 #include "../gui/gui.h"
 #include "../input/input.h"
-#include "../timer.h"
+#include "../timer/timer.h"
 #include "../tools.h"
 #include "../video/video.h"
 

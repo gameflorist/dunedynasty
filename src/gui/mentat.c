@@ -28,7 +28,7 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../table/strings.h"
-#include "../timer.h"
+#include "../timer/timer.h"
 #include "../tools.h"
 #include "../wsa.h"
 

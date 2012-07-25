@@ -15,7 +15,7 @@
 #include "mt32mpu.h"
 #include "../config.h"
 #include "../file.h"
-#include "../timer.h"
+#include "../timer/timer.h"
 
 static bool s_driverInstalled[16];
 static bool s_driverLoaded[16];

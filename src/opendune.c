@@ -57,7 +57,7 @@
 #include "table/widgetinfo.h"
 #include "team.h"
 #include "tile.h"
-#include "timer.h"
+#include "timer/timer.h"
 #include "tools.h"
 #include "unit.h"
 #include "video/video.h"

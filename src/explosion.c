@@ -16,7 +16,7 @@
 #include "sprites.h"
 #include "structure.h"
 #include "tile.h"
-#include "timer.h"
+#include "timer/timer.h"
 #include "tools.h"
 
 

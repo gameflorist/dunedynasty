@@ -11,8 +11,8 @@
 #include "audio/sound.h"
 #include "map.h"
 #include "tile.h"
+#include "timer/timer.h"
 #include "tools.h"
-#include "timer.h"
 #include "sprites.h"
 #include "structure.h"
 

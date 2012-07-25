@@ -32,7 +32,7 @@
 #include "../structure.h"
 #include "../table/strings.h"
 #include "../tile.h"
-#include "../timer.h"
+#include "../timer/timer.h"
 #include "../unit.h"
 
 

@@ -14,7 +14,7 @@
 #include "../gui/gui.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
-#include "../timer.h"
+#include "../timer/timer.h"
 
 static uint16 s_history[128];                /*!< History of input commands. */
 static uint16 s_historyHead = 0;             /*!< The current head inside the #s_history array. */

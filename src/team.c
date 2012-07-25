@@ -14,7 +14,7 @@
 #include "pool/pool.h"
 #include "pool/team.h"
 #include "pool/house.h"
-#include "timer.h"
+#include "timer/timer.h"
 #include "tools.h"
 
 static uint32 s_tickTeamGameLoop = 0; /*!< Indicates next time the GameLoop function is executed. */

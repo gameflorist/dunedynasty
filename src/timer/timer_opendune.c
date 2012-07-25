@@ -16,9 +16,9 @@
 	#include <signal.h>
 #endif /* _WIN32 */
 #include "types.h"
-#include "os/sleep.h"
+#include "../os/sleep.h"
 
-#include "timer.h"
+#include "timer_opendune.h"
 
 
 
@@ -54,7 +54,7 @@ static uint32 s_timerLastTime;
 const uint32 s_timerSpeed = 10000; /* Our timer runs at 100Hz */
 
 
-static uint32 Timer_GetTime(void)
+static uint32 TimerOpenDune_GetTime(void)
 {
 #if defined(_MSC_VER)
 	DWORD t;
@@ -70,7 +70,7 @@ static uint32 Timer_GetTime(void)
 /**
  * Run the timer interrupt handler.
  */
-static void Timer_InterruptRun(int _)
+static void TimerOpenDune_InterruptRun(int _)
 {
 	TimerNode *node;
 	uint32 new_time, usec_delta, delta;
@@ -83,7 +83,7 @@ static void Timer_InterruptRun(int _)
 	timerLock = true;
 
 	/* Calculate the time between calls */
-	new_time   = Timer_GetTime();
+	new_time   = TimerOpenDune_GetTime();
 	usec_delta = (new_time - s_timerLastTime) * 1000;
 	s_timerLastTime = new_time;
 
@@ -110,12 +110,12 @@ static void Timer_InterruptRun(int _)
 }
 
 #if defined(_WIN32)
-void CALLBACK Timer_InterruptWindows(LPVOID arg, BOOLEAN TimerOrWaitFired) {
+void CALLBACK TimerOpenDune_InterruptWindows(LPVOID arg, BOOLEAN TimerOrWaitFired) {
 	VARIABLE_NOT_USED(arg);
 	VARIABLE_NOT_USED(TimerOrWaitFired);
 
 	SuspendThread(s_timerMainThread);
-	Timer_InterruptRun();
+	TimerOpenDune_InterruptRun();
 	ResumeThread(s_timerMainThread);
 }
 #endif /* _WIN32 */
@@ -123,7 +123,7 @@ void CALLBACK Timer_InterruptWindows(LPVOID arg, BOOLEAN TimerOrWaitFired) {
 /**
  * Suspend the timer interrupt handling.
  */
-static void Timer_InterruptSuspend(void)
+static void TimerOpenDune_InterruptSuspend(void)
 {
 #if defined(_WIN32)
 	if (s_timerThread != NULL) DeleteTimerQueueTimer(NULL, s_timerThread, NULL);
@@ -136,10 +136,10 @@ static void Timer_InterruptSuspend(void)
 /**
  * Resume the timer interrupt handling.
  */
-static void Timer_InterruptResume(void)
+static void TimerOpenDune_InterruptResume(void)
 {
 #if defined(_WIN32)
-	CreateTimerQueueTimer(&s_timerThread, NULL, Timer_InterruptWindows, NULL, s_timerTime, s_timerTime, WT_EXECUTEINTIMERTHREAD);
+	CreateTimerQueueTimer(&s_timerThread, NULL, TimerOpenDune_InterruptWindows, NULL, s_timerTime, s_timerTime, WT_EXECUTEINTIMERTHREAD);
 #else
 	setitimer(ITIMER_REAL, &s_timerTime, NULL);
 #endif /* _WIN32 */
@@ -148,9 +148,9 @@ static void Timer_InterruptResume(void)
 /**
  * Initialize the timer.
  */
-void Timer_Init(void)
+void TimerOpenDune_Init(void)
 {
-	s_timerLastTime = Timer_GetTime();
+	s_timerLastTime = TimerOpenDune_GetTime();
 
 #if defined(_WIN32)
 	s_timerTime = s_timerSpeed / 1000;
@@ -165,20 +165,20 @@ void Timer_Init(void)
 		struct sigaction timerSignal;
 
 		sigemptyset(&timerSignal.sa_mask);
-		timerSignal.sa_handler = Timer_InterruptRun;
+		timerSignal.sa_handler = TimerOpenDune_InterruptRun;
 		timerSignal.sa_flags   = 0;
 		sigaction(SIGALRM, &timerSignal, NULL);
 	}
 #endif /* _WIN32 */
-	Timer_InterruptResume();
+	TimerOpenDune_InterruptResume();
 }
 
 /**
  * Uninitialize the timer.
  */
-void Timer_Uninit(void)
+void TimerOpenDune_Uninit(void)
 {
-	Timer_InterruptSuspend();
+	TimerOpenDune_InterruptSuspend();
 #if defined(_WIN32)
 	CloseHandle(s_timerMainThread);
 #endif /* _WIN32 */
@@ -193,7 +193,7 @@ void Timer_Uninit(void)
  * @param callback the callback for the timer.
  * @param usec_delay The interval of the timer.
  */
-void Timer_Add(void (*callback)(void), uint32 usec_delay)
+void TimerOpenDune_Add(void (*callback)(void), uint32 usec_delay)
 {
 	TimerNode *node;
 	if (s_timerNodeCount == s_timerNodeSize) {
@@ -212,7 +212,7 @@ void Timer_Add(void (*callback)(void), uint32 usec_delay)
  * @param callback The callback to change the timer of.
  * @param usec_delay The interval.
  */
-void Timer_Change(void (*callback)(void), uint32 usec_delay)
+void TimerOpenDune_Change(void (*callback)(void), uint32 usec_delay)
 {
 	int i;
 	TimerNode *node = s_timerNodes;
@@ -228,7 +228,7 @@ void Timer_Change(void (*callback)(void), uint32 usec_delay)
  * Remove a timer from the queue.
  * @param callback Which callback to remove.
  */
-void Timer_Remove(void (*callback)(void))
+void TimerOpenDune_Remove(void (*callback)(void))
 {
 	int i;
 	TimerNode *node = s_timerNodes;
@@ -243,7 +243,7 @@ void Timer_Remove(void (*callback)(void))
 /**
  * Handle game timers.
  */
-void Timer_Tick(void)
+void TimerOpenDune_Tick(void)
 {
 	if ((s_timersActive & TIMER_GUI)  != 0) g_timerGUI++;
 	if ((s_timersActive & TIMER_GAME) != 0) g_timerGame++;
@@ -260,7 +260,7 @@ void Timer_Tick(void)
  * @param set True sets the timer on, false sets it off.
  * @return True if timer was set, false if it was not set.
  */
-bool Timer_SetTimer(TimerType timer, bool set)
+bool TimerOpenDune_SetTimer(TimerType timer, bool set)
 {
 	uint8 t;
 	bool ret;
@@ -281,7 +281,7 @@ bool Timer_SetTimer(TimerType timer, bool set)
  * Sleep for an amount of ticks.
  * @param ticks The amount of ticks to sleep.
  */
-void Timer_Sleep(uint16 ticks)
+void TimerOpenDune_Sleep(uint16 ticks)
 {
 	uint32 tick = g_timerSleep + ticks;
 	while (tick >= g_timerSleep) sleepIdle();

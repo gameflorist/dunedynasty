@@ -31,7 +31,7 @@
 #include "table/strings.h"
 #include "team.h"
 #include "tile.h"
-#include "timer.h"
+#include "timer/timer.h"
 #include "tools.h"
 #include "unit.h"
 

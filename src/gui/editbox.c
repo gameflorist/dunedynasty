@@ -11,7 +11,7 @@
 #include "widget.h"
 #include "../gfx.h"
 #include "../input/input.h"
-#include "../timer.h"
+#include "../timer/timer.h"
 
 /**
  * Draw a blinking cursor, used inside the EditBox.

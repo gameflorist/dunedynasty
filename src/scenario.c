@@ -24,7 +24,7 @@
 #include "structure.h"
 #include "team.h"
 #include "tile.h"
-#include "timer.h"
+#include "timer/timer.h"
 #include "unit.h"
 #include "gui/gui.h"
 

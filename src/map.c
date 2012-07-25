@@ -27,7 +27,7 @@
 #include "sprites.h"
 #include "structure.h"
 #include "team.h"
-#include "timer.h"
+#include "timer/timer.h"
 #include "tools.h"
 #include "tile.h"
 #include "unit.h"
