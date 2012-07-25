@@ -615,7 +615,7 @@ make_compiler_cflags() {
 			exit 1
 		fi
 
-		flags="$flags -Wall -Wno-multichar -Wextra -ansi -pedantic"
+		flags="$flags -std=c99 -Wall -Wextra -Wno-multichar -pedantic"
 
 		if [ $enable_assert -eq 0 ]; then
 			# Do not warn about unused variables when building without asserts
