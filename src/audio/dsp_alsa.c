@@ -22,7 +22,7 @@ static uint32 s_dataLen = 0;
 
 static uint8 *s_buffer = NULL;
 static uint32 s_bufferLen = 0;
-static uint32 s_bufferDone = 0;
+static int32 s_bufferDone = 0;
 
 static void DSP_Callback(snd_async_handler_t *ahandler)
 {
