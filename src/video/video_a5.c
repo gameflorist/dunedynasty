@@ -6,6 +6,7 @@
 #include "video_a5.h"
 
 #include "../gfx.h"
+#include "../input/input_a5.h"
 
 static ALLEGRO_DISPLAY *display;
 static ALLEGRO_BITMAP *screen;
@@ -23,6 +24,8 @@ VideoA5_Init(void)
 	if (screen == NULL)
 		return false;
 
+	al_hide_mouse_cursor(display);
+
 	return true;
 }
 
@@ -36,6 +39,8 @@ VideoA5_Uninit(void)
 void
 VideoA5_Tick(void)
 {
+	InputA5_Tick();
+
 	const unsigned char *raw = GFX_Screen_Get_ByIndex(0);
 	ALLEGRO_LOCKED_REGION *reg;
 

@@ -3,7 +3,6 @@
 /** @file src/input/input.c Input routines. */
 
 #include <string.h>
-#include "types.h"
 #include "../os/common.h"
 #include "../os/sleep.h"
 

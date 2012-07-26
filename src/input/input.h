@@ -5,6 +5,8 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#include "types.h"
+
 /**
  * Several flags for input handling.
  */
