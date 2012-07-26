@@ -2224,6 +2224,8 @@ static void GameLoop_Main(void)
 
 		key = GUI_Widget_HandleEvents(g_widgetLinkedListHead);
 
+		GUI_DrawInterfaceAndRadar(0);
+
 		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE) {
 			if (g_unitSelected != NULL) {
 				if (l_timerUnitStatus < g_timerGame) {

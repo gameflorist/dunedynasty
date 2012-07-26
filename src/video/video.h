@@ -8,6 +8,8 @@
 #define Video_Tick              VideoA5_Tick
 #define Video_SetPalette        VideoA5_SetPalette
 
+#define Video_DrawIcon          VideoA5_DrawIcon
+
 #define Video_Mouse_SetPosition(x,y)    \
 	do { VARIABLE_NOT_USED(x); VARIABLE_NOT_USED(y); } while (false)
 #define Video_Mouse_SetRegion(l,r,t,b)  \

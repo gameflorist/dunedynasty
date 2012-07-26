@@ -118,6 +118,11 @@ uint16 GFX_Screen_SetActive(uint16 screenID)
  */
 void GFX_DrawSprite(uint16 spriteID, uint16 x, uint16 y, uint8 houseID)
 {
+	Video_DrawIcon(spriteID, houseID, x, y);
+}
+
+void GFX_DrawSprite_(uint16 spriteID, uint16 x, uint16 y, uint8 houseID)
+{
 	int i, j;
 	uint16 spacing;
 	uint16 height;

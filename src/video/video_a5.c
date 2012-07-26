@@ -11,7 +11,6 @@
 #include "../gfx.h"
 #include "../gui/gui.h"
 #include "../gui/widget.h"
-#include "../house.h"
 #include "../input/input_a5.h"
 #include "../sprites.h"
 
@@ -25,6 +24,7 @@ static ALLEGRO_COLOR paltoRGB[256];
 static unsigned char paletteRGB[3 * 256];
 
 static ALLEGRO_BITMAP *icon_texture;
+static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 
 bool
 VideoA5_Init(void)
@@ -53,6 +53,18 @@ VideoA5_Init(void)
 void
 VideoA5_Uninit(void)
 {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		for (uint16 iconID = 0; iconID < ICONID_MAX; iconID++) {
+			if (s_icon[iconID][houseID] != NULL) {
+				/* Don't destroy in the case of shared sub-bitmaps. */
+				if ((houseID + 1 == HOUSE_MAX) || (s_icon[iconID][houseID] != s_icon[iconID][houseID + 1]))
+					al_destroy_bitmap(s_icon[iconID][houseID]);
+
+				s_icon[iconID][houseID] = NULL;
+			}
+		}
+	}
+
 	al_destroy_bitmap(icon_texture);
 	icon_texture = NULL;
 
@@ -163,6 +175,9 @@ VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 			const uint16 iconID = g_iconMap[g_iconMap[group] + idx];
 			assert(iconID < ICONID_MAX);
 
+			if (s_icon[iconID][houseID] != NULL)
+				continue;
+
 			if ((idx >= num_common) || (houseID == HOUSE_HARKONNEN)) {
 				if (x + TILE_SIZE - 1 >= WINDOW_W) {
 					x = 0;
@@ -172,9 +187,15 @@ VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 						exit(1);
 				}
 
-				GFX_DrawSprite(iconID, x, y, houseID);
+				GFX_DrawSprite_(iconID, x, y, houseID);
+
+				s_icon[iconID][houseID] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
+				assert(s_icon[iconID][houseID] != NULL);
 
 				x += TILE_SIZE + 1;
+			}
+			else {
+				s_icon[iconID][houseID] = s_icon[iconID][HOUSE_HARKONNEN];
 			}
 		}
 	}
@@ -247,6 +268,18 @@ VideoA5_InitSprites(void)
 	al_save_bitmap("icons.png", icon_texture);
 #endif
 
+	al_set_target_backbuffer(display);
+
 	GFX_Screen_SetActive(old_screen);
 	Widget_SetCurrentWidget(old_widget);
+}
+
+void
+VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
+{
+	assert(iconID < ICONID_MAX);
+	assert(houseID < HOUSE_MAX);
+	assert(s_icon[iconID][houseID] != NULL);
+
+	al_draw_bitmap(s_icon[iconID][houseID], x, y, 0);
 }
