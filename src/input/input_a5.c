@@ -8,6 +8,7 @@
 #include "../common_a5.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
+#include "../opendune.h"
 #include "scancode.h"
 
 bool
@@ -94,6 +95,11 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event)
 	static bool rmb = false;
 
 	switch (event->type) {
+		case ALLEGRO_EVENT_DISPLAY_CLOSE:
+			PrepareEnd();
+			exit(0);
+			break;
+
 		case ALLEGRO_EVENT_MOUSE_AXES:
 			Mouse_EventHandler(event->mouse.x, event->mouse.y, lmb, rmb);
 			break;

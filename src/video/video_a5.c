@@ -5,6 +5,7 @@
 
 #include "video_a5.h"
 
+#include "../common_a5.h"
 #include "../gfx.h"
 #include "../input/input_a5.h"
 
@@ -24,6 +25,7 @@ VideoA5_Init(void)
 	if (screen == NULL)
 		return false;
 
+	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
 	al_hide_mouse_cursor(display);
 
 	return true;
