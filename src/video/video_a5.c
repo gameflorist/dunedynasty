@@ -13,10 +13,12 @@
 #include "../gui/gui.h"
 #include "../gui/widget.h"
 #include "../input/input_a5.h"
+#include "../input/mouse.h"
 #include "../sprites.h"
 
 #define OUTPUT_TEXTURES     false
 #define ICONID_MAX          512
+#define SHAPEID_MAX         640
 
 static ALLEGRO_DISPLAY *display;
 static ALLEGRO_DISPLAY *display2;
@@ -27,6 +29,7 @@ static unsigned char paletteRGB[3 * 256];
 static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
+static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 
 bool
 VideoA5_Init(void)
@@ -64,6 +67,15 @@ VideoA5_Uninit(void)
 					al_destroy_bitmap(s_icon[iconID][houseID]);
 
 				s_icon[iconID][houseID] = NULL;
+			}
+		}
+
+		for (uint16 shapeID = 0; shapeID < SHAPEID_MAX; shapeID++) {
+			if (s_shape[shapeID][houseID] != NULL) {
+				if ((houseID + 1 == HOUSE_MAX) || (s_shape[shapeID][houseID] != s_shape[shapeID][houseID + 1]))
+					al_destroy_bitmap(s_shape[shapeID][houseID]);
+
+				s_shape[shapeID][houseID] = NULL;
 			}
 		}
 	}
@@ -132,6 +144,7 @@ VideoA5_Tick(void)
 	InputA5_Tick();
 
 	al_set_target_backbuffer(display);
+	VideoA5_DrawShape(0, 0, g_mouseX, g_mouseY, 0);
 	al_flip_display();
 }
 
@@ -284,7 +297,7 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 
 /*--------------------------------------------------------------*/
 
-static void
+static ALLEGRO_BITMAP *
 VideoA5_ExportShape(uint16 shapeID, int x, int y, int row_h,
 		int *retx, int *rety, int *ret_row_h)
 {
@@ -293,6 +306,8 @@ VideoA5_ExportShape(uint16 shapeID, int x, int y, int row_h,
 	uint8 *const shape = g_sprites[shapeID];
 	const int w = Sprite_GetWidth(shape);
 	const int h = Sprite_GetHeight(shape);
+
+	ALLEGRO_BITMAP *bmp;
 
 	if (x + w - 1 >= WINDOW_W) {
 		x = 0;
@@ -303,11 +318,15 @@ VideoA5_ExportShape(uint16 shapeID, int x, int y, int row_h,
 			exit(1);
 	}
 
-	GUI_DrawSprite(0, shape, x, y, WINDOWID_RENDER_TEXTURE, 0x100, g_remap, 1);
+	GUI_DrawSprite_(0, shape, x, y, WINDOWID_RENDER_TEXTURE, 0x100, g_remap, 1);
+
+	bmp = al_create_sub_bitmap(shape_texture, x, y, w, h);
+	assert(bmp != NULL);
 
 	*retx = x + w + 1;
 	*rety = y;
 	*ret_row_h = max(row_h, h);
+	return bmp;
 }
 
 static void
@@ -361,12 +380,17 @@ VideoA5_InitShapes(unsigned char *buf)
 			continue;
 		}
 
-		for (enum HouseType house = HOUSE_HARKONNEN; house < HOUSE_MAX; house++) {
-			GUI_Palette_CreateRemap(house);
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+			GUI_Palette_CreateRemap(houseID);
 
-			for (int shapeID = shape_data[group].start; shapeID <= shape_data[group].end; shapeID++) {
-				if ((shape_data[group].remap) || (house == HOUSE_HARKONNEN)) {
-					VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h);
+			for (uint16 shapeID = shape_data[group].start; shapeID <= shape_data[group].end; shapeID++) {
+				assert(shapeID < SHAPEID_MAX);
+
+				if ((shape_data[group].remap) || (houseID == HOUSE_HARKONNEN)) {
+					s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h);
+				}
+				else {
+					s_shape[shapeID][houseID] = s_shape[shapeID][HOUSE_HARKONNEN];
 				}
 			}
 		}
@@ -380,6 +404,21 @@ VideoA5_InitShapes(unsigned char *buf)
 
 	File_ReadBlockFile("IBM.PAL", paletteRGB, 3 * 256);
 	VideoA5_SetPalette(paletteRGB, 0, 256);
+}
+
+void
+VideoA5_DrawShape(uint16 shapeID, enum HouseType houseID, int x, int y, int flags)
+{
+	assert(shapeID < SHAPEID_MAX);
+	assert(houseID < HOUSE_MAX);
+	assert(s_shape[shapeID][houseID] != NULL);
+
+	int al_flags = 0;
+
+	if (flags & 0x01) al_flags |= ALLEGRO_FLIP_HORIZONTAL;
+	if (flags & 0x02) al_flags |= ALLEGRO_FLIP_VERTICAL;
+
+	al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
 }
 
 /*--------------------------------------------------------------*/

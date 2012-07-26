@@ -879,11 +879,77 @@ uint16 GUI_SplitText(char *str, uint16 maxwidth, char delimiter)
  * @param windowID The ID of the window where the drawing is done.
  * @param flags The flags.
  * @param ... The extra args, flags dependant.
+ *
+ * flags  0x0001 = flip horizontal
+ *        0x0002 = flip vertical
+ *        0x0004 = ?
+ *        0x0100 = remap colours: uint8 remap[256], int16 remap_count
+ *        0x0200 = blur tile (sandworm, sonic tank)
+ *        0x1000 = ?: uint16
+ *        0x2000 = remap colours: uint8 remap[16]
+ *        0x4000 = position relative to window
+ *        0x8000 = centre sprite
  */
 void GUI_DrawSprite(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...)
 {
+	int16 x = posX;
+	int16 y = posY;
+	int spriteID = -1;
+	uint8 houseID = HOUSE_HARKONNEN;
+	VARIABLE_NOT_USED(screenID);
+
+	for (int i = 0; i < 512; i++) {
+		if (sprite == g_sprites[i]) {
+			spriteID = i;
+			break;
+		}
+	}
+
+	/* XXX: Attempt to find house by remap colour. */
+	{
+		va_list ap;
+
+		va_start(ap, flags);
+
+		if ((flags & 0x2000) != 0) {
+			uint8 *loc3E = va_arg(ap, uint8*);
+			for (int i = 15; i >= 0; i--) {
+				if ((loc3E[i] >= 0x90) && ((loc3E[i] - 0x90) % 16 <= 0x08)) {
+					houseID = (loc3E[i] - 0x90) / 16;
+					break;
+				}
+			}
+		}
+		else if (flags & 0x100) {
+			uint8 *remap = va_arg(ap, uint8*);
+
+			if (remap[0x90] >= 0x90)
+				houseID = (remap[0x90] - 0x90) / 16;
+		}
+
+		va_end(ap);
+	}
+
+	if (flags & 0x4000) {
+		x += g_widgetProperties[windowID].xBase*8;
+		y += g_widgetProperties[windowID].yBase;
+	}
+
+	if (flags & 0x8000) {
+		x -= Sprite_GetWidth(sprite) / 2;
+		y -= Sprite_GetHeight(sprite) / 2;
+	}
+
+	if (spriteID >= 0) {
+		Video_DrawShape(spriteID, houseID, x, y, flags & 0x03);
+	}
+}
+
+void GUI_DrawSprite_(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...)
+{
+	const uint16 s_variable_60[8]   = {1, 3, 2, 5, 4, 3, 2, 1};
+
 	static uint16 s_variable_5E     = 0;
-	static uint16 s_variable_60[8]  = {1, 3, 2, 5, 4, 3, 2, 1};
 	static uint16 s_variable_70     = 1;
 	static uint16 s_variable_72     = 0x8B55;
 	static uint16 s_variable_74     = 0x51EC;
