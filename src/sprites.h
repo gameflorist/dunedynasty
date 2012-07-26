@@ -5,6 +5,10 @@
 #ifndef SPRITES_H
 #define SPRITES_H
 
+enum {
+	TILE_SIZE   = 16
+};
+
 /**
  * The \c ICON.MAP contains indices only. An index can point either to another
  * index or to a spriteID in the tiles file, as follows.

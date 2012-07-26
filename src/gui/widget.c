@@ -35,7 +35,7 @@ Widget *g_widgetMentatScrollDown = NULL;
 Widget *g_widgetMentatScrollbar = NULL;
 
 /** Layout and other properties of the widgets. */
-WidgetProperties g_widgetProperties[22] = {
+WidgetProperties g_widgetProperties[WINDOWID_MAX] = {
 	/* x   y   w    h   p4  norm sel */
 	{ 0,   0, 40, 200,  15,  12,  0}, /*  0 */
 	{ 1,  75, 29,  70,  15,  15,  0}, /*  1 */
@@ -58,7 +58,8 @@ WidgetProperties g_widgetProperties[22] = {
 	{ 1,  72, 38,  52,   0,   0,  0}, /* 18 */
 	{ 0,   0,  0,   0,   0,   0,  0}, /* 19 */
 	{ 2,  24, 36, 152,  12,  12,  0}, /* 20 */
-	{ 1,   6, 12,   3,   0,  15,  6}  /* 21 */
+	{ 1,   6, 12,   3,   0,  15,  6}, /* 21 */
+	{ 0,0,1024/8,1024,   0,   0,  0}  /* 22: texture rendering pseudo-widget */
 };
 
 uint16 g_curWidgetIndex;          /*!< Index of the currently selected widget in #g_widgetProperties. */

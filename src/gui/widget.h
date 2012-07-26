@@ -20,6 +20,11 @@ typedef enum DrawMode {
 	DRAW_MODE_MAX             = 7
 } DrawMode;
 
+enum WindowID {
+	WINDOWID_RENDER_TEXTURE     = 22,
+	WINDOWID_MAX                = 23
+};
+
 struct Widget;
 
 /**
@@ -160,7 +165,7 @@ extern Widget *g_widgetMentatScrollUp;
 extern Widget *g_widgetMentatScrollDown;
 extern Widget *g_widgetMentatScrollbar;
 
-extern WidgetProperties g_widgetProperties[22];
+extern WidgetProperties g_widgetProperties[WINDOWID_MAX];
 extern uint16 g_curWidgetIndex;
 extern uint16 g_curWidgetXBase;
 extern uint16 g_curWidgetYBase;

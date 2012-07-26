@@ -2138,6 +2138,8 @@ static void GameLoop_Main(void)
 
 	String_Init();
 	Sprites_Init();
+	Sprites_LoadTiles();
+	VideoA5_InitSprites();
 
 	GameLoop_GameIntroAnimationMenu();
 
