@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include "../os/math.h"
 
 #include "video_a5.h"
 
@@ -24,6 +25,7 @@ static ALLEGRO_COLOR paltoRGB[256];
 static unsigned char paletteRGB[3 * 256];
 
 static ALLEGRO_BITMAP *icon_texture;
+static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 
 bool
@@ -39,7 +41,8 @@ VideoA5_Init(void)
 
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 	icon_texture = al_create_bitmap(w, h);
-	if (screen == NULL || icon_texture == NULL)
+	shape_texture = al_create_bitmap(w, h);
+	if (screen == NULL || icon_texture == NULL || shape_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -68,19 +71,27 @@ VideoA5_Uninit(void)
 	al_destroy_bitmap(icon_texture);
 	icon_texture = NULL;
 
+	al_destroy_bitmap(shape_texture);
+	shape_texture = NULL;
+
 	al_destroy_bitmap(screen);
 	screen = NULL;
 }
 
 static void
-VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, bool transparent)
+VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, bool writeonly)
 {
 	const int w = al_get_bitmap_width(dest);
 	const int h = al_get_bitmap_height(dest);
 
 	ALLEGRO_LOCKED_REGION *reg;
 
-	reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
+	if (writeonly) {
+		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
+	}
+	else {
+		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+	}
 
 	for (int y = 0; y < h; y++) {
 		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
@@ -88,11 +99,13 @@ VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, bool transpar
 		for (int x = 0; x < w; x++) {
 			const unsigned char c = raw[w*y + x];
 
-			if (transparent && (c == 0)) {
-				row[reg->pixel_size*x + 0] = 0x00;
-				row[reg->pixel_size*x + 1] = 0x00;
-				row[reg->pixel_size*x + 2] = 0x00;
-				row[reg->pixel_size*x + 3] = 0x00;
+			if (c == 0) {
+				if (writeonly) {
+					row[reg->pixel_size*x + 0] = 0x00;
+					row[reg->pixel_size*x + 1] = 0x00;
+					row[reg->pixel_size*x + 2] = 0x00;
+					row[reg->pixel_size*x + 3] = 0x00;
+				}
 			}
 			else {
 				row[reg->pixel_size*x + 0] = paletteRGB[3*c + 0];
@@ -204,8 +217,8 @@ VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 	*rety = y;
 }
 
-void
-VideoA5_InitSprites(void)
+static void
+VideoA5_InitIcons(unsigned char *buf)
 {
 	const struct {
 		int num_common;
@@ -242,20 +255,10 @@ VideoA5_InitSprites(void)
 		{  0, ICM_ICONGROUP_EOF }
 	};
 
-	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
-	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
-	const uint16 old_screen = GFX_Screen_SetActive(0);
-	const enum WindowID old_widget = Widget_SetCurrentWidget(WINDOWID_RENDER_TEXTURE);
-
-	unsigned char *buf = GFX_Screen_GetActive();
 	int x = 0, y = 0;
 
 	al_set_target_bitmap(icon_texture);
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
-	memset(buf, 0, w*h);
-
-	File_ReadBlockFile("IBM.PAL", paletteRGB, 3 * 256);
-	VideoA5_SetPalette(paletteRGB, 0, 256);
 
 	for (int i = 0; icon_data[i].group < ICM_ICONGROUP_EOF; i++) {
 		VideoA5_ExportIconGroup(icon_data[i].group, icon_data[i].num_common,
@@ -267,11 +270,6 @@ VideoA5_InitSprites(void)
 #if OUTPUT_TEXTURES
 	al_save_bitmap("icons.png", icon_texture);
 #endif
-
-	al_set_target_backbuffer(display);
-
-	GFX_Screen_SetActive(old_screen);
-	Widget_SetCurrentWidget(old_widget);
 }
 
 void
@@ -282,4 +280,131 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 	assert(s_icon[iconID][houseID] != NULL);
 
 	al_draw_bitmap(s_icon[iconID][houseID], x, y, 0);
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+VideoA5_ExportShape(uint16 shapeID, int x, int y, int row_h,
+		int *retx, int *rety, int *ret_row_h)
+{
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	uint8 *const shape = g_sprites[shapeID];
+	const int w = Sprite_GetWidth(shape);
+	const int h = Sprite_GetHeight(shape);
+
+	if (x + w - 1 >= WINDOW_W) {
+		x = 0;
+		y += row_h + 1;
+		row_h = 0;
+
+		if (y + h - 1 >= WINDOW_H)
+			exit(1);
+	}
+
+	GUI_DrawSprite(0, shape, x, y, WINDOWID_RENDER_TEXTURE, 0x100, g_remap, 1);
+
+	*retx = x + w + 1;
+	*rety = y;
+	*ret_row_h = max(row_h, h);
+}
+
+static void
+VideoA5_InitShapes(unsigned char *buf)
+{
+	/* Check Sprites_Init. */
+	const struct {
+		int start, end;
+		bool remap;
+	} shape_data[] = {
+		{   0,   6, false }, /* MOUSE.SHP */
+		{  12, 110, false }, /* SHAPES.SHP */
+		{   7,  11,  true }, /* BTTN */
+		{ 355, 372,  true }, /* CHOAM */
+		{ 111, 150,  true }, /* UNITS2.SHP */
+		{ 151, 161, false }, /* UNITS1.SHP */
+		{ 162, 167,  true }, /* UNITS1.SHP: tanks */
+		{ 168, 237, false }, /* UNITS1.SHP */
+		{ 238, 354,  true }, /* UNITS.SHP */
+		{ 373, 386, false }, /* MENTAT */
+		{ 387, 401, false }, /* MENSHPH.SHP */
+		{ 402, 416, false }, /* MENSHPA.SHP */
+		{ 417, 431, false }, /* MENSHPO.SHP */
+		/*477, 504,  true */ /* PIECES.SHP */
+		/*505, 513, false */ /* ARROWS.SHP */
+		/*514, 524, false */ /* CREDIT1.SHP .. CREDIT11.SHP */
+
+		/* BENE.PAL shapes. */
+		{  -2,   0, false },
+		/*432, 461, false */ /* MENSHPM.SHP: Fremen, Sardaukar */
+		{ 462, 476, false }, /* MENSHPM.SHP */
+
+		{  -1,   0, false }
+	};
+
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+
+	int x = 0, y = 0, row_h = 0;
+
+	al_set_target_bitmap(shape_texture);
+	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
+
+	for (int group = 0; shape_data[group].start != -1; group++) {
+		if (shape_data[group].start == -2) {
+			VideoA5_CopyBitmap(buf, shape_texture, true);
+			memset(buf, 0, WINDOW_W * WINDOW_H);
+
+			File_ReadBlockFile("BENE.PAL", paletteRGB, 3 * 256);
+			VideoA5_SetPalette(paletteRGB, 0, 256);
+			continue;
+		}
+
+		for (enum HouseType house = HOUSE_HARKONNEN; house < HOUSE_MAX; house++) {
+			GUI_Palette_CreateRemap(house);
+
+			for (int shapeID = shape_data[group].start; shapeID <= shape_data[group].end; shapeID++) {
+				if ((shape_data[group].remap) || (house == HOUSE_HARKONNEN)) {
+					VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h);
+				}
+			}
+		}
+	}
+
+	VideoA5_CopyBitmap(buf, shape_texture, false);
+
+#if OUTPUT_TEXTURES
+	al_save_bitmap("shapes.png", shape_texture);
+#endif
+
+	File_ReadBlockFile("IBM.PAL", paletteRGB, 3 * 256);
+	VideoA5_SetPalette(paletteRGB, 0, 256);
+}
+
+/*--------------------------------------------------------------*/
+
+void
+VideoA5_InitSprites(void)
+{
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	const uint16 old_screen = GFX_Screen_SetActive(0);
+	const enum WindowID old_widget = Widget_SetCurrentWidget(WINDOWID_RENDER_TEXTURE);
+
+	unsigned char *buf = GFX_Screen_GetActive();
+
+	File_ReadBlockFile("IBM.PAL", paletteRGB, 3 * 256);
+	VideoA5_SetPalette(paletteRGB, 0, 256);
+
+	memset(buf, 0, WINDOW_W * WINDOW_H);
+	VideoA5_InitIcons(buf);
+
+	memset(buf, 0, WINDOW_W * WINDOW_H);
+	VideoA5_InitShapes(buf);
+
+	al_set_target_backbuffer(display);
+
+	GFX_Screen_SetActive(old_screen);
+	Widget_SetCurrentWidget(old_widget);
 }

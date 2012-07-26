@@ -1096,7 +1096,12 @@ void GUI_DrawSprite(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint
 		loc22 += loc12 - 1;
 	}
 
-	buf += loc22 * SCREEN_WIDTH + posX;
+	if (windowID == WINDOWID_RENDER_TEXTURE) {
+		buf += width * loc22 + posX;
+	}
+	else {
+		buf += SCREEN_WIDTH * loc22 + posX;
+	}
 
 	if ((flags & 0x1) != 0) {
 		uint16 tmp = loc1E;
@@ -1138,6 +1143,9 @@ void GUI_DrawSprite(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint
 		}
 		loc38 = sprite;
 	}
+
+	if (windowID == WINDOWID_RENDER_TEXTURE)
+		loc3A = width;
 
 	while (true) {
 		loc1C = loc1A;
