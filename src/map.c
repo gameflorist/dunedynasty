@@ -26,6 +26,7 @@
 #include "scenario.h"
 #include "sprites.h"
 #include "structure.h"
+#include "table/widgetinfo.h"
 #include "team.h"
 #include "timer/timer.h"
 #include "tools.h"
@@ -448,6 +449,8 @@ bool Map_IsPositionUnveiled(uint16 position)
  */
 bool Map_IsPositionInViewport(tile32 position, uint16 *retX, uint16 *retY)
 {
+	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+
 	int16 x, y;
 
 	x = (position.s.x >> 4) - (Tile_GetPackedX(g_viewportPosition) << 4);
@@ -456,7 +459,7 @@ bool Map_IsPositionInViewport(tile32 position, uint16 *retX, uint16 *retY)
 	if (retX != NULL) *retX = x;
 	if (retY != NULL) *retY = y;
 
-	return x >= -16 && x <= 256 && y >= -16 && y <= 176;
+	return (-TILE_SIZE <= x && x < wi->width) && (-TILE_SIZE <= y && y < wi->height);
 }
 
 static bool Map_UpdateWall(uint16 packed)
