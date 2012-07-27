@@ -4038,6 +4038,8 @@ void GUI_Palette_CreateRemap(uint8 houseID)
  */
 void GUI_DrawScreen(uint16 screenID)
 {
+	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+
 	static uint32 s_timerViewportMessage = 0;
 	bool loc10;
 	uint16 oldScreenID;
@@ -4122,7 +4124,9 @@ void GUI_DrawScreen(uint16 screenID)
 		}
 	}
 
+	Video_SetClippingArea(wi->offsetX, wi->offsetY, wi->width, wi->height);
 	GUI_Widget_Viewport_Draw(g_viewport_forceRedraw, loc10, screenID != 0);
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
 	g_viewport_forceRedraw = false;
 

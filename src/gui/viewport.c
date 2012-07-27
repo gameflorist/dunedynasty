@@ -19,6 +19,7 @@
 #include "../house.h"
 #include "../input/mouse.h"
 #include "../map.h"
+#include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 #include "../pool/pool.h"
@@ -354,6 +355,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 	oldValue_07AE_0000 = Widget_SetCurrentWidget(2);
 
+#if 0
 	if (g_dirtyViewportCount != 0 || forceRedraw) {
 		for (y = 0; y < 10; y++) {
 			uint16 top = (y << 4) + 0x28;
@@ -396,6 +398,9 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		}
 		g_dirtyViewportCount = 0;
 	}
+#else
+	Viewport_DrawTiles();
+#endif
 
 	find.type    = UNIT_SANDWORM;
 	find.index   = 0xFFFF;
@@ -437,15 +442,12 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		uint16 x2 = x1 + (g_selectionWidth << 4) - 1;
 		uint16 y2 = y1 + (g_selectionHeight << 4) - 1;
 
-		Video_SetClippingArea(0, 40, 239, SCREEN_HEIGHT - 1);
 		GUI_DrawWiredRectangle(x1, y1, x2, y2, 0xFF);
 
 		if (g_selectionState == 0 && g_selectionType == SELECTIONTYPE_PLACE) {
 			GUI_DrawLine(x1, y1, x2, y2, 0xFF);
 			GUI_DrawLine(x2, y1, x1, y2, 0xFF);
 		}
-
-		Video_SetClippingArea(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
 
 		g_var_3A08 = 0;
 	}

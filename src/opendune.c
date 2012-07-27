@@ -1069,6 +1069,16 @@ static void InGame_Numpad_Move(uint16 key)
 	}
 }
 
+static void
+GameLoop_TweakWidgetDimensions(void)
+{
+	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width = TRUE_DISPLAY_WIDTH - 16 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].width;
+	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].height = TRUE_DISPLAY_HEIGHT - 40;
+
+	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT_FALLBACK].width = TRUE_DISPLAY_WIDTH;
+	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT_FALLBACK].height = TRUE_DISPLAY_HEIGHT;
+}
+
 /**
  * Main game loop.
  */
@@ -1084,6 +1094,7 @@ static void GameLoop_Main(void)
 	Sprites_Init();
 	Sprites_LoadTiles();
 	VideoA5_InitSprites();
+	GameLoop_TweakWidgetDimensions();
 
 	GameLoop_GameIntroAnimationMenu();
 

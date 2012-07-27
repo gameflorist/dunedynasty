@@ -5,6 +5,8 @@
 #ifndef GFX_H
 #define GFX_H
 
+#include "types.h"
+
 enum {
 	SCREEN_WIDTH  = 320, /*!< Width of Dune 2 screen in pixels. */
 	SCREEN_HEIGHT = 200  /*!< Height of Dune 2 screen in pixels. */

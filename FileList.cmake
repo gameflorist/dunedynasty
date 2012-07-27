@@ -32,6 +32,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/load.c
 	src/map.c
 	src/newui/menubar.c
+	src/newui/viewport.c
 	src/object.c
 	src/opendune.c
 	src/os/error.c

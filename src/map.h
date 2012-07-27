@@ -5,6 +5,12 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <stdio.h>
+
+enum {
+	MAP_SIZE_MAX = 64
+};
+
 /** Types of available landscapes. */
 typedef enum LandscapeType {
 	LST_NORMAL_SAND       =  0,                             /*<! Flat sand. */
