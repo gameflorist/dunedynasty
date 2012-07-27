@@ -6,34 +6,6 @@
 #define GUI_WIDGET_H
 
 /**
- * Types of WidgetClick available in the game.
- */
-typedef enum WidgetClickType {
-	WIDGET_CLICK_MENTAT         = 0,
-	WIDGET_CLICK_OPTIONS        = 1,
-	WIDGET_CLICK_NAME           = 2,
-	WIDGET_CLICK_PICTURE        = 3,
-	WIDGET_CLICK_REPAIR_UPGRADE = 4,
-	WIDGET_CLICK_BUILD_PLACE    = 5,
-	WIDGET_CLICK_CANCEL         = 6,
-	WIDGET_CLICK_UNIT_COMMAND_1 = 7,
-	WIDGET_CLICK_UNIT_COMMAND_2 = 8,
-	WIDGET_CLICK_UNIT_COMMAND_3 = 9,
-	WIDGET_CLICK_UNIT_COMMAND_4 = 10,
-	WIDGET_CLICK_VIEWPORT_1     = 11,
-	WIDGET_CLICK_VIEWPORT_2     = 12,
-	WIDGET_CLICK_VIEWPORT_3     = 13,
-	WIDGET_CLICK_VIEWPORT_4     = 14,
-	WIDGET_CLICK_VIEWPORT_5     = 15,
-	WIDGET_CLICK_VIEWPORT_6     = 16,
-	WIDGET_CLICK_VIEWPORT_7     = 17,
-
-	WIDGET_CLICK_MAX            = 18,
-	WIDGET_CLICK_INVALID        = 0xFFFF
-} WidgetClickType;
-
-
-/**
  * Types of DrawMode available in the game.
  */
 typedef enum DrawMode {
@@ -137,23 +109,6 @@ typedef struct WidgetScrollbar {
 	ScrollbarDrawProc *drawProc;                            /*!< Draw proc (called on every draw). Can be null. */
 } WidgetScrollbar;
 
-
-/**
- * Static information per WidgetClick type.
- */
-typedef struct WidgetInfo {
-	int16 index;                       /*!< ?? */
-	ClickProc *clickProc;              /*!< Function to execute when widget is pressed. */
-	int16 shortcut;                    /*!< ?? */
-	uint16 flags;                      /*!< ?? */
-	int16  spriteID;                   /*!< ?? */
-	uint16 offsetX;                    /*!< ?? */
-	uint16 offsetY;                    /*!< ?? */
-	uint16 width;                      /*!< ?? */
-	uint16 height;                     /*!< ?? */
-	uint16 stringID;                   /*!< ?? */
-} WidgetInfo;
-
 /**
  * Static information per WidgetClick type.
  */
@@ -183,9 +138,6 @@ typedef struct WidgetProperties {
 	uint8  fgColourNormal;                                  /*!< Foreground colour for 'normal'. */
 	uint8  fgColourSelected;                                /*!< Foreground colour when 'selected' */
 } WidgetProperties;
-
-extern WidgetInfo g_table_gameWidgetInfo[];
-extern WidgetInfo g_table_factoryWidgetInfo[];
 
 extern WindowDesc g_optionsWindowDesc;
 extern WindowDesc g_gameControlWindowDesc;

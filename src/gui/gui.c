@@ -41,6 +41,7 @@
 #include "../string.h"
 #include "../structure.h"
 #include "../table/strings.h"
+#include "../table/widgetinfo.h"
 #include "../tile.h"
 #include "../timer.h"
 #include "../tools.h"

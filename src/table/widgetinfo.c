@@ -3,14 +3,14 @@
 /** @file src/table/widgetclickinfo.c WindgetClickInfo file table. */
 
 #include <stdio.h>
-#include "types.h"
 
+#include "widgetinfo.h"
+
+#include "../gui/mentat.h"
 #include "../gui/widget.h"
 #include "strings.h"
 
-extern bool GUI_Widget_Mentat_Click(Widget *w);
-
-WidgetInfo g_table_gameWidgetInfo[] = {
+WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	{ /* 0 */
 		/* index       */ 1,
 		/* clickProc   */ &GUI_Widget_Mentat_Click,
@@ -241,7 +241,7 @@ WidgetInfo g_table_gameWidgetInfo[] = {
 	}
 };
 
-WidgetInfo g_table_factoryWidgetInfo[] = {
+WidgetInfo g_table_factoryWidgetInfo[FACTORY_WIDGET_MAX] = {
 	{ /* 0 */
 		/* index       */ -1,
 		/* clickProc   */ &GUI_Production_List_Click,
