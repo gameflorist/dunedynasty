@@ -304,6 +304,7 @@ void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 	}
 
 	if (packed != 0xFFFF && (packed != minimapPreviousPosition || forceUpdate)) {
+		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
 		const uint16 *m;
 		uint16 mapScale;
 		const MapInfo *mapInfo;
@@ -312,9 +313,9 @@ void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 		mapScale = g_scenario.mapScale;
 		mapInfo = &g_mapInfos[mapScale];
 
-		left   = (Tile_GetPackedX(packed) - mapInfo->minX) * (mapScale + 1) + 256;
+		left   = (Tile_GetPackedX(packed) - mapInfo->minX) * (mapScale + 1) + wi->offsetX;
 		right  = left + mapScale * 15 + 14;
-		top    = (Tile_GetPackedY(packed) - mapInfo->minY) * (mapScale + 1) + 136;
+		top    = (Tile_GetPackedY(packed) - mapInfo->minY) * (mapScale + 1) + wi->offsetY;
 		bottom = top + mapScale * 10 + 9;
 
 		GUI_DrawWiredRectangle(left, top, right, bottom, 15);

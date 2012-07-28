@@ -1092,11 +1092,18 @@ GameLoop_TweakWidgetDimensions(void)
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].width = TRUE_DISPLAY_WIDTH;
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height = 5;
 
+	g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX = TRUE_DISPLAY_WIDTH - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].width;
+	g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
+
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width = TRUE_DISPLAY_WIDTH - 16 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].width;
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].height = TRUE_DISPLAY_HEIGHT - 40;
 
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT_FALLBACK].width = TRUE_DISPLAY_WIDTH;
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT_FALLBACK].height = TRUE_DISPLAY_HEIGHT;
+
+	/* gui/widget.c */
+	g_widgetProperties[WINDOWID_MINIMAP].xBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX/8;
+	g_widgetProperties[WINDOWID_MINIMAP].yBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
 }
 
 /**

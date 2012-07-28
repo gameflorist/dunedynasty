@@ -122,14 +122,17 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		x =  x / 16 + Tile_GetPackedX(g_minimapPosition);
 		y = (y - 40) / 16 + Tile_GetPackedY(g_minimapPosition);
 	} else if (w->index == 44) {
+		const int x0 = w->offsetX;
+		const int y0 = w->offsetY;
+
 		uint16 mapScale;
 		const MapInfo *mapInfo;
 
 		mapScale = g_scenario.mapScale;
 		mapInfo = &g_mapInfos[mapScale];
 
-		x = min((max(x, 256) - 256) / (mapScale + 1), mapInfo->sizeX - 1) + mapInfo->minX;
-		y = min((max(y, 136) - 136) / (mapScale + 1), mapInfo->sizeY - 1) + mapInfo->minY;
+		x = min((max(x, x0) - x0) / (mapScale + 1), mapInfo->sizeX - 1) + mapInfo->minX;
+		y = min((max(y, y0) - y0) / (mapScale + 1), mapInfo->sizeY - 1) + mapInfo->minY;
 	}
 
 	packed = Tile_PackXY(x, y);
@@ -932,9 +935,13 @@ void GUI_Widget_Viewport_DrawTile(uint16 packed)
 	if (spriteID != 0xFFFF) {
 		x *= g_scenario.mapScale + 1;
 		y *= g_scenario.mapScale + 1;
-		GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], x, y, 3, 0x4000);
+		Shape_Draw(spriteID, x, y, 3, 0x4000);
 	} else {
-		GFX_PutPixel(x + 256, y + 136, colour & 0xFF);
+		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
+
+		x += wi->offsetX;
+		y += wi->offsetY;
+		GFX_PutPixel(x, y, colour & 0xFF);
 	}
 }
 
