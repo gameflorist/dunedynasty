@@ -20,6 +20,7 @@
 #include "../string.h"
 #include "../structure.h"
 #include "../table/strings.h"
+#include "../table/widgetinfo.h"
 #include "../tile.h"
 #include "../unit.h"
 #include "../video/video.h"
@@ -691,7 +692,11 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 			default: break;
 		}
 
-		if (stringID != STR_NULL) GUI_DrawText_Wrapper(String_Get_ByIndex(stringID), 288, 43, 29, 0, 0x111);
+		if (stringID != STR_NULL) {
+			const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_NAME];
+
+			GUI_DrawText_Wrapper(String_Get_ByIndex(stringID), wi->offsetX + wi->width/2, wi->offsetY + 1, 29, 0, 0x111);
+		}
 
 		switch (actionType) {
 			case 3: /* Structure */

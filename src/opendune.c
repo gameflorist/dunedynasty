@@ -1072,6 +1072,9 @@ static void InGame_Numpad_Move(uint16 key)
 static void
 GameLoop_TweakWidgetDimensions(void)
 {
+	for (int i = 2; i <= 10; i++)
+		g_table_gameWidgetInfo[i].offsetX += TRUE_DISPLAY_WIDTH - SCREEN_WIDTH;
+
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = 0;
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = TRUE_DISPLAY_WIDTH;
@@ -1104,6 +1107,8 @@ GameLoop_TweakWidgetDimensions(void)
 	/* gui/widget.c */
 	g_widgetProperties[WINDOWID_MINIMAP].xBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX/8;
 	g_widgetProperties[WINDOWID_MINIMAP].yBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
+	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].xBase = TRUE_DISPLAY_WIDTH/8 - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].width;
+	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].height = TRUE_DISPLAY_HEIGHT - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].yBase - 12 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
 }
 
 /**
