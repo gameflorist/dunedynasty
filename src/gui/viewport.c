@@ -29,6 +29,7 @@
 #include "../string.h"
 #include "../structure.h"
 #include "../table/strings.h"
+#include "../table/widgetinfo.h"
 #include "../tile.h"
 #include "../timer/timer.h"
 #include "../tools.h"
@@ -437,10 +438,11 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	}
 
 	if (g_unitSelected == NULL && (g_var_3A08 != 0 || arg08) && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
-		uint16 x1 = (Tile_GetPackedX(g_selectionRectanglePosition) - Tile_GetPackedX(g_minimapPosition)) << 4;
-		uint16 y1 = ((Tile_GetPackedY(g_selectionRectanglePosition) - Tile_GetPackedY(g_minimapPosition)) << 4) + 0x28;
-		uint16 x2 = x1 + (g_selectionWidth << 4) - 1;
-		uint16 y2 = y1 + (g_selectionHeight << 4) - 1;
+		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+		const int x1 = wi->offsetX + TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - Tile_GetPackedX(g_minimapPosition));
+		const int y1 = wi->offsetY + TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - Tile_GetPackedY(g_minimapPosition));
+		const int x2 = x1 + (TILE_SIZE * g_selectionWidth) - 1;
+		const int y2 = y1 + (TILE_SIZE * g_selectionHeight) - 1;
 
 		GUI_DrawWiredRectangle(x1, y1, x2, y2, 0xFF);
 
