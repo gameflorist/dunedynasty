@@ -103,7 +103,7 @@ extern uint16 g_variable_37B2;
 extern bool g_var_37B8;
 
 extern void GUI_DisplayText(const char *str, int16 importance, ...);
-extern void GUI_DrawChar(unsigned char c, int x, int y);
+extern void GUI_DrawChar_(unsigned char c, int x, int y);
 extern void GUI_DrawText(char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour);
 extern void GUI_DrawText_Wrapper(char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour, uint16 flags, ...);
 extern void GUI_PaletteAnimate(void);

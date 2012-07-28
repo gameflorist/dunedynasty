@@ -25,6 +25,7 @@
 #define OUTPUT_TEXTURES     false
 #define ICONID_MAX          512
 #define SHAPEID_MAX         640
+#define FONTID_MAX          5
 #define WINDTRAP_COLOUR     223
 
 static const uint8 font_palette[][8] = {
@@ -43,6 +44,7 @@ static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *font_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
+static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
 
 /* VideoA5_GetNextXY:
  *
@@ -179,6 +181,13 @@ VideoA5_Uninit(void)
 
 				s_shape[shapeID][houseID] = NULL;
 			}
+		}
+	}
+
+	for (int fnt = 0; fnt < FONTID_MAX; fnt++) {
+		for (int c = 0; c < 256; c++) {
+			al_destroy_bitmap(s_font[fnt][c]);
+			s_font[fnt][c] = NULL;
 		}
 	}
 
@@ -649,11 +658,51 @@ VideoA5_DrawShapeTint(enum ShapeID shapeID, int x, int y, unsigned char c, int f
 
 /*--------------------------------------------------------------*/
 
+static int
+VideoA5_FontIndex(const Font *font, const uint8 *pal)
+{
+	if (font == g_fontNew6p) {
+		/* 4 colour font. */
+		if (memcmp(pal+2, font_palette[0]+2, 2) == 0) return 0;
+		if (memcmp(pal+2, font_palette[1]+2, 2) == 0) return 1;
+	}
+	else if (font == g_fontNew8p) {
+		/* 4 colour font. */
+		if (memcmp(pal+2, font_palette[0]+2, 2) == 0) return 2;
+		if (memcmp(pal+2, font_palette[1]+2, 2) == 0) return 3;
+	}
+	else {
+		/* 7 colour font. */
+		assert(font == g_fontIntro);
+		if (memcmp(pal+2, font_palette[0]+2, 5) == 0) return 4;
+	}
+
+	{
+		const char *name =
+			(font == g_fontNew6p) ? "New6p" :
+			(font == g_fontNew8p) ? "New8p" : "Intro";
+
+		const int end = (font == g_fontIntro) ? 7 : 4;
+
+		fprintf(stderr, "Untreated palette for font g_font%s\n  { 0x00, 0xFF", name);
+
+		for (int i = 2; i < end; i++)
+			fprintf(stderr, ", 0x%02x", pal[i]);
+
+		for (int i = end; i < 8; i++)
+			fprintf(stderr, ", 0x00");
+
+		fprintf(stderr, " },\n");
+		exit(1);
+	}
+}
+
 static void
 VideoA5_ExportFont(Font *font, const uint8 *pal, int y, int *rety)
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	const int fnt = VideoA5_FontIndex(font, pal);
 
 	int x = 0;
 
@@ -666,7 +715,10 @@ VideoA5_ExportFont(Font *font, const uint8 *pal, int y, int *rety)
 			const int w = Font_GetCharWidth(c) + 1;
 
 			VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, font->height, font->height, &x, &y);
-			GUI_DrawChar(c, x, y);
+			GUI_DrawChar_(c, x, y);
+
+			s_font[fnt][c] = al_create_sub_bitmap(font_texture, x, y, w, font->height);
+			assert(s_font[fnt][c] != NULL);
 
 			x += w + 1;
 		}
@@ -691,6 +743,16 @@ VideoA5_InitFonts(unsigned char *buf)
 #if OUTPUT_TEXTURES
 	al_save_bitmap("fonts.png", font_texture);
 #endif
+}
+
+void
+VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y)
+{
+	const int fnt = VideoA5_FontIndex(g_fontCurrent, pal);
+	const ALLEGRO_COLOR fg = paltoRGB[pal[1]];
+
+	if (s_font[fnt][c] != NULL)
+		al_draw_tinted_bitmap(s_font[fnt][c], fg, x, y, 0);
 }
 
 /*--------------------------------------------------------------*/

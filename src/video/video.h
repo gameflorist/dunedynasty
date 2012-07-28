@@ -13,6 +13,7 @@
 #define Video_DrawShape         VideoA5_DrawShape
 #define Video_DrawShapeGrey     VideoA5_DrawShapeGrey
 #define Video_DrawShapeTint     VideoA5_DrawShapeTint
+#define Video_DrawChar          VideoA5_DrawChar
 
 #define GFX_PutPixel            VideoA5_PutPixel
 #define GUI_DrawLine            VideoA5_DrawLine
