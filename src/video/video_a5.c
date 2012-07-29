@@ -25,12 +25,14 @@
 #define OUTPUT_TEXTURES     false
 #define ICONID_MAX          512
 #define SHAPEID_MAX         640
-#define FONTID_MAX          5
+#define FONTID_MAX          8
 #define WINDTRAP_COLOUR     223
 
 static const uint8 font_palette[][8] = {
 	{ 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, /* No outline. */
 	{ 0x00, 0xFF, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00 }, /* Shadow. */
+	{ 0x00, 0xFF, 0x0C, 0x0C, 0x00, 0x00, 0x00, 0x00 }, /* Outline. */
+	{ 0x00, 0xFF, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0x00 }, /* Intro. */
 };
 
 static ALLEGRO_DISPLAY *display;
@@ -665,16 +667,19 @@ VideoA5_FontIndex(const Font *font, const uint8 *pal)
 		/* 4 colour font. */
 		if (memcmp(pal+2, font_palette[0]+2, 2) == 0) return 0;
 		if (memcmp(pal+2, font_palette[1]+2, 2) == 0) return 1;
+		if (memcmp(pal+2, font_palette[2]+2, 2) == 0) return 2;
 	}
 	else if (font == g_fontNew8p) {
 		/* 4 colour font. */
-		if (memcmp(pal+2, font_palette[0]+2, 2) == 0) return 2;
-		if (memcmp(pal+2, font_palette[1]+2, 2) == 0) return 3;
+		if (memcmp(pal+2, font_palette[0]+2, 2) == 0) return 3;
+		if (memcmp(pal+2, font_palette[1]+2, 2) == 0) return 4;
+		if (memcmp(pal+2, font_palette[2]+2, 2) == 0) return 5;
 	}
 	else {
 		/* 7 colour font. */
 		assert(font == g_fontIntro);
-		if (memcmp(pal+2, font_palette[0]+2, 5) == 0) return 4;
+		if (memcmp(pal+2, font_palette[0]+2, 5) == 0) return 6;
+		if (memcmp(pal+2, font_palette[3]+2, 5) == 0) return 7;
 	}
 
 	{
@@ -734,9 +739,12 @@ VideoA5_InitFonts(unsigned char *buf)
 
 	VideoA5_ExportFont(g_fontNew6p, font_palette[0], y, &y);
 	VideoA5_ExportFont(g_fontNew6p, font_palette[1], y, &y);
+	VideoA5_ExportFont(g_fontNew6p, font_palette[2], y, &y);
 	VideoA5_ExportFont(g_fontNew8p, font_palette[0], y, &y);
 	VideoA5_ExportFont(g_fontNew8p, font_palette[1], y, &y);
+	VideoA5_ExportFont(g_fontNew8p, font_palette[2], y, &y);
 	VideoA5_ExportFont(g_fontIntro, font_palette[0], y, &y);
+	VideoA5_ExportFont(g_fontIntro, font_palette[3], y, &y);
 
 	VideoA5_CopyBitmap(buf, font_texture, true);
 
