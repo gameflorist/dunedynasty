@@ -10,6 +10,7 @@
 #include "../gui/widget.h"
 #include "../input/scancode.h"
 #include "../newui/menubar.h"
+#include "../newui/viewport.h"
 #include "strings.h"
 
 WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
@@ -195,7 +196,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	},
 	{ /* 15 */
 		/* index       */ 43,
-		/* clickProc   */ &GUI_Widget_Viewport_Click,
+		/* clickProc   */ &Viewport_Click,
 		/* shortcut    */ 0,
 		/* flags       */ 20224,
 		/* spriteID    */ -1,
