@@ -517,12 +517,12 @@ static void GameLoop_GameIntroAnimationMenu(void)
 		{STR_PLAY_A_GAME, STR_REPLAY_INTRODUCTION, STR_LOAD_GAME, STR_EXIT_GAME,    STR_HALL_OF_FAME, STR_NULL}  /* Has a HOF and a save game. */
 	};
 
+	bool loc02 = false;
+
 	Input_Flags_ClearBits(INPUT_FLAG_KEY_RELEASE | INPUT_FLAG_UNKNOWN_0400 | INPUT_FLAG_UNKNOWN_0100 |
 	                      INPUT_FLAG_UNKNOWN_0080 | INPUT_FLAG_UNKNOWN_0040 | INPUT_FLAG_UNKNOWN_0020 |
 	                      INPUT_FLAG_UNKNOWN_0008 | INPUT_FLAG_UNKNOWN_0004 | INPUT_FLAG_UNKNOWN_0002);
 #endif
-
-	bool loc02 = false;
 
 	Timer_SetTimer(TIMER_GUI, true);
 
@@ -755,17 +755,6 @@ static void GameLoop_GameIntroAnimationMenu(void)
 		g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x4E20;
 		g_readBuffer = calloc(1, g_readBufferSize);
 	}
-#else
-	{
-		Music_Play(0);
-
-		free(g_readBuffer);
-		g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x6D60;
-		g_readBuffer = calloc(1, g_readBufferSize);
-
-		Menu_Run();
-	}
-#endif
 
 	GUI_DrawFilledRectangle(g_curWidgetXBase << 3, g_curWidgetYBase, (g_curWidgetXBase + g_curWidgetWidth) << 3, g_curWidgetYBase + g_curWidgetHeight, 12);
 
@@ -779,9 +768,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 	Input_History_Clear();
 
-#if 0
 	if (s_enableLog != 0) Mouse_SetMouseMode((uint8)s_enableLog, "DUNE.LOG");
-#endif
 
 	if (!loc02) {
 		if (g_playerHouseID == HOUSE_INVALID) {
@@ -810,6 +797,25 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 		GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
 	}
+#else
+	{
+		Music_Play(0);
+
+		free(g_readBuffer);
+		g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x6D60;
+		g_readBuffer = calloc(1, g_readBufferSize);
+
+		Menu_Run();
+
+		Sprites_UnloadTiles();
+		Sprites_LoadTiles();
+
+		GUI_Palette_CreateRemap(g_playerHouseID);
+		Voice_LoadVoices(g_playerHouseID);
+		Game_LoadScenario(g_playerHouseID, g_scenarioID);
+		GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
+	}
+#endif
 
 	GFX_SetPalette(g_palette1);
 

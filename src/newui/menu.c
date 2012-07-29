@@ -22,6 +22,7 @@
 
 enum MenuAction {
 	MENU_MAIN_MENU,
+	MENU_PICK_HOUSE,
 	MENU_PLAY_A_GAME,
 	MENU_EXIT_GAME,
 
@@ -32,6 +33,7 @@ static ALLEGRO_TRANSFORM identity_transform;
 static ALLEGRO_TRANSFORM menu_transform;
 
 static Widget *main_menu_widgets;
+static Widget *pick_house_widgets;
 
 /*--------------------------------------------------------------*/
 
@@ -125,9 +127,38 @@ MainMenu_InitWidgets(void)
 }
 
 static void
+PickHouse_InitWidgets(void)
+{
+	const struct {
+		int x, y;
+		enum Scancode shortcut;
+	} menuitem[3] = {
+		{ 208, 56, SCANCODE_H },
+		{  16, 56, SCANCODE_A },
+		{ 112, 56, SCANCODE_O },
+	};
+
+	for (enum HouseType house = HOUSE_HARKONNEN; house <= HOUSE_ORDOS; house++) {
+		Widget *w;
+
+		w = GUI_Widget_Allocate(house, menuitem[house].shortcut, menuitem[house].x, menuitem[house].y, SHAPE_INVALID, STR_NULL);
+
+		w->width = 96;
+		w->height = 104;
+		w->flags.all = 0x0;
+		w->flags.s.loseSelect = true;
+		w->flags.s.buttonFilterLeft = 1;
+		w->flags.s.buttonFilterRight = 1;
+
+		pick_house_widgets = GUI_Widget_Link(pick_house_widgets, w);
+	}
+}
+
+static void
 Menu_Init(void)
 {
 	MainMenu_InitWidgets();
+	PickHouse_InitWidgets();
 	Menu_InitTransform();
 }
 
@@ -152,7 +183,7 @@ MainMenu_Loop(void)
 
 	switch (widgetID) {
 		case 0x8000 | STR_PLAY_A_GAME:
-			return MENU_PLAY_A_GAME;
+			return MENU_PICK_HOUSE;
 
 		case 0x8000 | STR_REPLAY_INTRODUCTION:
 		case 0x8000 | STR_LOAD_GAME:
@@ -172,6 +203,38 @@ MainMenu_Loop(void)
 
 /*--------------------------------------------------------------*/
 
+static void
+PickHouse_Draw(void)
+{
+	Video_DrawCPS(String_GenerateFilename("HERALD"));
+
+	GUI_Widget_DrawAll(pick_house_widgets);
+}
+
+static int
+PickHouse_Loop(void)
+{
+	const int widgetID = GUI_Widget_HandleEvents(pick_house_widgets);
+
+	switch (widgetID) {
+		case SCANCODE_ESCAPE:
+			return MENU_MAIN_MENU;
+
+		case 0x8000 | HOUSE_HARKONNEN:
+		case 0x8000 | HOUSE_ATREIDES:
+		case 0x8000 | HOUSE_ORDOS:
+			g_playerHouseID = widgetID & (~0x8000);
+			return MENU_PLAY_A_GAME;
+
+		default:
+			break;
+	}
+
+	return MENU_PICK_HOUSE;
+}
+
+/*--------------------------------------------------------------*/
+
 void
 Menu_Run(void)
 {
@@ -187,7 +250,20 @@ Menu_Run(void)
 		if (redraw) {
 			redraw = false;
 			al_clear_to_color(al_map_rgb(0, 0, 0));
-			MainMenu_Draw();
+
+			switch (curr_menu) {
+				case MENU_MAIN_MENU:
+					MainMenu_Draw();
+					break;
+
+				case MENU_PICK_HOUSE:
+					PickHouse_Draw();
+					break;
+
+				default:
+					break;
+			}
+
 			Video_Tick();
 		}
 
@@ -206,6 +282,10 @@ Menu_Run(void)
 		switch (curr_menu) {
 			case MENU_MAIN_MENU:
 				res = MainMenu_Loop();
+				break;
+
+			case MENU_PICK_HOUSE:
+				res = PickHouse_Loop();
 				break;
 
 			case MENU_PLAY_A_GAME:
