@@ -5,6 +5,7 @@
 #ifndef UNIT_H
 #define UNIT_H
 
+#include <stdio.h>
 #include "object.h"
 
 enum {

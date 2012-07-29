@@ -2,7 +2,10 @@
 #define NEWUI_VIEWPORT_H
 
 #include "../gui/widget.h"
+#include "../unit.h"
 
+extern void Viewport_Target(Unit *u, enum ActionType action, uint16 packed);
+extern void Viewport_Place(void);
 extern void Viewport_DrawTiles(void);
 extern void Viewport_DrawSelectedUnit(int x, int y);
 extern void Viewport_DrawSelectionBox(void);

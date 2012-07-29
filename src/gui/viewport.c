@@ -137,10 +137,6 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 	packed = Tile_PackXY(x, y);
 
 	if (click && g_selectionType == SELECTIONTYPE_TARGET) {
-		Unit *u;
-		ActionType action;
-		uint16 encoded;
-
 		GUI_DisplayText(NULL, -1);
 
 		if (g_unitHouseMissile != NULL) {
@@ -148,43 +144,8 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 			return true;
 		}
 
-		u = g_unitActive;
-		for (u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
-
-		action = g_activeAction;
-
-		Object_Script_Variable4_Clear(&u->o);
-		u->targetAttack   = 0;
-		u->targetMove     = 0;
-		u->route[0] = 0xFF;
-
-		if (action != ACTION_MOVE && action != ACTION_HARVEST) {
-			encoded = Tools_Index_Encode(Unit_FindTargetAround(packed), IT_TILE);
-		} else {
-			encoded = Tools_Index_Encode(packed, IT_TILE);
-		}
-
-		Unit_SetAction(u, action);
-
-		if (action == ACTION_MOVE) {
-			Unit_SetDestination(u, encoded);
-		} else if (action == ACTION_HARVEST) {
-			u->targetMove = encoded;
-		} else {
-			Unit *target;
-
-			Unit_SetTarget(u, encoded);
-			target = Tools_Index_GetUnit(u->targetAttack);
-			if (target != NULL) target->blinkCounter = 8;
-		}
-
-		if (g_enableVoices == 0) {
-			Driver_Sound_Play(36, 0xFF);
-		} else if (g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT) {
-			Sound_StartSound(g_table_actionInfo[action].soundID);
-		} else {
-			Sound_StartSound(((Tools_Random_256() & 0x1) == 0) ? 20 : 17);
-		}
+		for (Unit *u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
+			Viewport_Target(u, g_activeAction, packed);
 		}
 
 		g_unitActive   = NULL;
@@ -195,64 +156,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 	}
 
 	if (click && g_selectionType == SELECTIONTYPE_PLACE) {
-		const StructureInfo *si;
-		Structure *s;
-		House *h;
-
-		s = g_structureActive;
-		si = &g_table_structureInfo[g_structureActiveType];
-		h = g_playerHouse;
-
-		if (Structure_Place(s, g_selectionPosition)) {
-			Voice_Play(20);
-
-			if (s->o.type == STRUCTURE_PALACE) House_Get_ByIndex(s->o.houseID)->palacePosition = s->o.position;
-
-			if (g_structureActiveType == STRUCTURE_REFINERY && g_var_38BC == 0) {
-				Unit *u;
-
-				g_var_38BC++;
-				u = Unit_CreateWrapper(g_playerHouseID, UNIT_HARVESTER, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
-				g_var_38BC--;
-
-				if (u == NULL) {
-					h->harvestersIncoming++;
-				} else {
-					u->originEncoded = Tools_Index_Encode(s->o.index, IT_STRUCTURE);
-				}
-			}
-
-			GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
-
-			s = Structure_Get_ByPackedTile(g_structureActivePosition);
-			if (s != NULL) {
-				if ((Structure_GetBuildable(s) & (1 << s->objectType)) == 0) Structure_BuildObject(s, 0xFFFE);
-			}
-
-			g_structureActiveType = 0xFFFF;
-			g_structureActive     = NULL;
-			g_selectionState      = 0; /* Invalid. */
-
-			GUI_DisplayHint(si->o.hintStringID, si->o.spriteID);
-
-			House_UpdateRadarState(h);
-
-			if (h->powerProduction < h->powerUsage) {
-				if ((h->structuresBuilt & (1 << STRUCTURE_OUTPOST)) != 0) {
-					GUI_DisplayText(String_Get_ByIndex(STR_NOT_ENOUGH_POWER_FOR_RADAR_BUILD_WINDTRAPS), 3);
-				}
-			}
-			return true;
-		}
-
-		Voice_Play(47);
-
-		if (g_structureActiveType == STRUCTURE_SLAB_1x1 || g_structureActiveType == STRUCTURE_SLAB_2x2) {
-			GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_FOUNDATION_HERE), 2);
-		} else {
-			GUI_DisplayHint(STR_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE, 0xFFFF);
-			GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_S_HERE), 2, String_Get_ByIndex(si->o.stringID_abbrev));
-		}
+		Viewport_Place();
 		return true;
 	}
 
