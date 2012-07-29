@@ -88,7 +88,7 @@ InputA5_KeycodeToScancode(int kc)
 	return -1;
 }
 
-static void
+void
 InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 {
 	enum Scancode mouse_event = 0;

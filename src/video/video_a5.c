@@ -164,6 +164,7 @@ VideoA5_Init(void)
 	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
 	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 
+	al_set_new_display_flags(ALLEGRO_GENERATE_EXPOSE_EVENTS);
 	display = al_create_display(TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 	display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
 	if (display == NULL || display2 == NULL)
@@ -250,7 +251,7 @@ VideoA5_Uninit(void)
 	screen = NULL;
 }
 
-static void
+void
 VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, bool writeonly)
 {
 	const int w = al_get_bitmap_width(dest);

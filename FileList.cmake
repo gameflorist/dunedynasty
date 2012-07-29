@@ -33,6 +33,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/map.c
 	src/newui/actionpanel.c
 	src/newui/mentat.c
+	src/newui/menu.c
 	src/newui/menubar.c
 	src/newui/viewport.c
 	src/object.c
@@ -97,6 +98,7 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/audio/midi_win32.c
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
+	src/gui/menu_opendune.c
 	src/input/input_opendune.c
 	src/input/mouse_opendune.c
 	src/os/error_win32.c

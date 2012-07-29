@@ -5,6 +5,8 @@
 
 #include "timer_a5.h"
 
+#include "../common_a5.h"
+
 static ALLEGRO_TIMER *s_timer[2];
 static ALLEGRO_EVENT_QUEUE *s_timer_queue;
 
@@ -20,6 +22,7 @@ TimerA5_Init(void)
 	if (s_timer_queue == NULL)
 		return false;
 
+	al_register_event_source(g_a5_input_queue, al_get_timer_event_source(s_timer[TIMER_GUI]));
 	return true;
 }
 

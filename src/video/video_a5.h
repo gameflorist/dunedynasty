@@ -4,8 +4,11 @@
 #include "video.h"
 #include "../shape.h"
 
+struct ALLEGRO_BITMAP;
+
 extern bool VideoA5_Init(void);
 extern void VideoA5_Uninit(void);
+extern void VideoA5_CopyBitmap(const unsigned char *raw, struct ALLEGRO_BITMAP *dest, bool writeonly);
 extern void VideoA5_Tick(void);
 extern void VideoA5_SetPalette(const uint8 *palette, int from, int length);
 extern void VideoA5_SetClippingArea(int x, int y, int w, int h);
