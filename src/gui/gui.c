@@ -1558,12 +1558,12 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 {
 	uint16 oldScreenID;
 
-	if (selectionType == SELECTIONTYPE_UNIT && g_unitSelected == NULL) {
+	if (selectionType == SELECTIONTYPE_UNIT && !Unit_AnySelected()) {
 		selectionType = SELECTIONTYPE_STRUCTURE;
 	}
 
-	if (selectionType == SELECTIONTYPE_STRUCTURE && g_unitSelected != NULL) {
-		g_unitSelected = NULL;
+	if (selectionType == SELECTIONTYPE_STRUCTURE && Unit_AnySelected()) {
+		Unit_UnselectAll();
 	}
 
 	oldScreenID = GFX_Screen_SetActive(2);
@@ -1587,9 +1587,10 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 				break;
 
 			case SELECTIONTYPE_UNIT:
-				if (g_unitSelected != NULL && selectionType != SELECTIONTYPE_TARGET && selectionType != SELECTIONTYPE_UNIT) {
-					Unit_UpdateMap(2, g_unitSelected);
-					g_unitSelected = NULL;
+				if (Unit_AnySelected() && selectionType != SELECTIONTYPE_TARGET && selectionType != SELECTIONTYPE_UNIT) {
+					/* Unit_UpdateMap(2, g_unitSelected); */
+					/* g_unitSelected = NULL; */
+					Unit_UnselectAll();
 				}
 				break;
 
@@ -1650,7 +1651,7 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 				break;
 
 			case SELECTIONTYPE_PLACE:
-				Unit_Select(NULL);
+				Unit_UnselectAll();
 				GUI_Widget_ActionPanel_Draw(true);
 
 				Map_SetSelectionSize(g_table_structureInfo[g_structureActiveType].layout);

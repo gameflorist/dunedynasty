@@ -7,6 +7,10 @@
 
 #include "object.h"
 
+enum {
+	MAX_SELECTABLE_UNITS  = 16
+};
+
 /**
  * Types of Units available in the game.
  */
@@ -185,12 +189,18 @@ extern UnitInfo g_table_unitInfo[];
 
 extern Unit *g_unitActive;
 extern Unit *g_unitHouseMissile;
-extern Unit *g_unitSelected;
 extern int16 g_starportAvailable[UNIT_MAX];
 
 extern uint16 g_var_39E6;
 extern uint16 g_var_39E8;
 
+extern Unit *Unit_FirstSelected(void);
+extern Unit *Unit_NextSelected(Unit *unit);
+extern bool Unit_IsSelected(const Unit *unit);
+extern bool Unit_AnySelected(void);
+extern void Unit_AddSelected(Unit *unit);
+extern void Unit_Unselect(const Unit *unit);
+extern void Unit_UnselectAll(void);
 
 extern void GameLoop_Unit(void);
 extern uint8 Unit_GetHouseID(Unit *u);

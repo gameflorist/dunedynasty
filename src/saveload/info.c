@@ -54,17 +54,17 @@ static uint32 SaveLoad_UnitSelected(void *object, uint32 value, bool loading)
 {
 	VARIABLE_NOT_USED(object);
 
+	Unit_UnselectAll();
+
 	if (loading) {
 		if ((uint16)value != 0xFFFF && value < UNIT_INDEX_MAX) {
-			g_unitSelected = Unit_Get_ByIndex((uint16)value);
-		} else {
-			g_unitSelected = NULL;
+			Unit_AddSelected(Unit_Get_ByIndex((uint16)value));
 		}
 		return 0;
 	}
 
-	if (g_unitSelected != NULL) {
-		return g_unitSelected->o.index;
+	if (Unit_AnySelected()) {
+		return Unit_FirstSelected()->o.index;
 	} else {
 		return 0xFFFF;
 	}
@@ -122,6 +122,8 @@ static uint32 SaveLoad_UnitHouseMissile(void *object, uint32 value, bool loading
 	}
 }
 
+static Unit *s_unitSelected; /* XXX: need to select this. */
+
 static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GSLD   (g_scenario,  g_saveScenario),
 	SLD_GENTRY (SLDT_UINT16, g_playerCreditsNoSilo),
@@ -131,7 +133,7 @@ static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GENTRY2(SLDT_INT8,   g_structureActiveType, SLDT_UINT16),
 	SLD_GENTRY (SLDT_UINT16, g_structureActivePosition),
 	SLD_GCALLB (SLDT_UINT16, g_structureActive, &SaveLoad_StructureActive),
-	SLD_GCALLB (SLDT_UINT16, g_unitSelected, &SaveLoad_UnitSelected),
+	SLD_GCALLB (SLDT_UINT16, s_unitSelected, &SaveLoad_UnitSelected),
 	SLD_GCALLB (SLDT_UINT16, g_unitActive, &SaveLoad_UnitActive),
 	SLD_GENTRY (SLDT_UINT16, g_activeAction),
 	SLD_GENTRY (SLDT_UINT32, g_strategicRegionBits),

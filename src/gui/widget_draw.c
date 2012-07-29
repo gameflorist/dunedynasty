@@ -90,10 +90,10 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 	if (w == NULL) return;
 
 	spriteID = 0;
-	if (g_unitSelected != NULL) {
+	if (Unit_AnySelected()) {
 		const UnitInfo *ui;
 
-		ui = &g_table_unitInfo[g_unitSelected->o.type];
+		ui = &g_table_unitInfo[Unit_FirstSelected()->o.type];
 
 		spriteID = ui->o.spriteID;
 	} else {
@@ -450,7 +450,7 @@ static uint16 GUI_Widget_ActionPanel_GetActionType(bool forceDraw)
 		if (displayedActionType != 7 || forceDraw) actionType = 7; /* Placement */
 	} else if (g_unitHouseMissile != NULL) {
 		if (displayedMissileCountdown != g_houseMissileCountdown || forceDraw) actionType = 8; /* House Missile */
-	} else if (g_unitSelected != NULL) {
+	} else if (Unit_AnySelected()) {
 		if (g_selectionType == SELECTIONTYPE_TARGET) {
 			uint16 activeAction = g_activeAction;
 
@@ -464,7 +464,7 @@ static uint16 GUI_Widget_ActionPanel_GetActionType(bool forceDraw)
 
 			if (actionType == displayedActionType && !forceDraw) actionType = 0;
 		} else {
-			u = g_unitSelected;
+			u = Unit_FirstSelected();
 
 			if (forceDraw
 				|| u->o.index     != displayedIndex
@@ -583,7 +583,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 
 	switch (actionType) {
 		case 2: { /* Unit */
-			u  = g_unitSelected;
+			u  = Unit_FirstSelected();
 			ui = &g_table_unitInfo[u->o.type];
 
 			o  = &u->o;

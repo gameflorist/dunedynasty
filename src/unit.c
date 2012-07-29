@@ -48,7 +48,7 @@ static int64_t s_tickUnitDeviation = 0; /*!< Indicates next time the Deviation f
 
 Unit *g_unitActive = NULL;
 Unit *g_unitHouseMissile = NULL;
-Unit *g_unitSelected = NULL;
+static Unit *g_unitSelected[MAX_SELECTABLE_UNITS];
 
 uint16 g_var_39E6 = 0;
 uint16 g_var_39E8 = 0;
@@ -58,6 +58,95 @@ uint16 g_var_39E8 = 0;
  * \c 0 means not available, \c -1 means \c 0 units, \c >0 means that number of units available.
  */
 int16 g_starportAvailable[UNIT_MAX];
+
+Unit *
+Unit_FirstSelected(void)
+{
+	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i])
+			return g_unitSelected[i];
+	}
+
+	return NULL;
+}
+
+Unit *
+Unit_NextSelected(Unit *unit)
+{
+	int i;
+
+	for (i = 0; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i] == unit) {
+			i++;
+			break;
+		}
+	}
+
+	for (; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i])
+			return g_unitSelected[i];
+	}
+
+	return NULL;
+}
+
+bool
+Unit_IsSelected(const Unit *unit)
+{
+	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i] == unit)
+			return true;
+	}
+
+	return false;
+}
+
+bool
+Unit_AnySelected(void)
+{
+	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i] != NULL)
+			return true;
+	}
+
+	return false;
+}
+
+void
+Unit_AddSelected(Unit *unit)
+{
+	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i] == NULL) {
+			g_unitSelected[i] = unit;
+			return;
+		}
+	}
+}
+
+void
+Unit_Unselect(const Unit *unit)
+{
+	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i] == unit) {
+			g_unitSelected[i] = NULL;
+			break;
+		}
+	}
+
+	if ((g_selectionType == SELECTIONTYPE_UNIT) && !Unit_AnySelected())
+		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+}
+
+void
+Unit_UnselectAll(void)
+{
+	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
+		g_unitSelected[i] = NULL;
+	}
+
+	if (g_selectionType == SELECTIONTYPE_UNIT)
+		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+}
 
 /**
  * Rotate a unit (or his top).
@@ -885,7 +974,7 @@ void Unit_Remove(Unit *u)
 	u->o.flags.s.allocated = true;
 	Unit_UntargetMe(u);
 
-	if (u == g_unitSelected) Unit_Select(NULL);
+	Unit_Unselect(u);
 
 	u->o.flags.s.bulletIsBig = true;
 	Unit_UpdateMap(0, u);
@@ -1312,8 +1401,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 
 		/* Driving over a foot unit */
 		if (u != NULL && g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT && u->o.flags.s.allocated) {
-			if (u == g_unitSelected) Unit_Select(NULL);
-
+			Unit_Unselect(u);
 			Unit_UntargetMe(u);
 			u->o.script.returnValue = 1;
 			Unit_SetAction(u, ACTION_DIE);
@@ -1665,7 +1753,10 @@ void Unit_SetOrientation(Unit *unit, int8 orientation, bool rotateInstantly, uin
  */
 void Unit_Select(Unit *unit)
 {
-	if (unit == g_unitSelected) return;
+	assert(unit != NULL);
+
+	if (Unit_IsSelected(unit))
+		return;
 
 	if (unit != NULL && !unit->o.flags.s.allocated && !g_debugGame) {
 		unit = NULL;
@@ -1675,10 +1766,9 @@ void Unit_Select(Unit *unit)
 		unit = NULL;
 	}
 
-	if (g_unitSelected != NULL) Unit_UpdateMap(2, g_unitSelected);
-
+	/* if (g_unitSelected != NULL) Unit_UpdateMap(2, g_unitSelected); */
 	if (unit == NULL) {
-		g_unitSelected = NULL;
+		Unit_UnselectAll();
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 		return;
@@ -1695,6 +1785,16 @@ void Unit_Select(Unit *unit)
 		GUI_DisplayHint(ui->o.hintStringID, ui->o.spriteID);
 	}
 
+	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i] == NULL) {
+			g_unitSelected[i] = unit;
+			Unit_DisplayStatusText(unit);
+			GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
+			break;
+		}
+	}
+
+#if 0
 	if (g_unitSelected != NULL) {
 		if (g_unitSelected != unit) Unit_DisplayStatusText(unit);
 
@@ -1707,8 +1807,9 @@ void Unit_Select(Unit *unit)
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
 	}
+#endif
 
-	Unit_UpdateMap(2, g_unitSelected);
+	/* Unit_UpdateMap(2, g_unitSelected); */
 
 	Map_SetSelectionObjectPosition(0xFFFF);
 }
@@ -2134,13 +2235,11 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 
 	if (unit == NULL || s == NULL) return;
 
-	if (unit == g_unitSelected) {
-		if (enhancement_fix_selection_after_entering_structure) {
+	if (Unit_IsSelected(unit)) {
+		Unit_Unselect(unit);
+
+		if (enhancement_fix_selection_after_entering_structure && !Unit_AnySelected())
 			Map_SetSelection(Tile_PackTile(s->o.position));
-		}
-		else {
-			Unit_Select(NULL);
-		}
 	}
 
 	ui = &g_table_unitInfo[unit->o.type];
@@ -2384,7 +2483,8 @@ void Unit_RemovePlayer(Unit *unit)
 	unit->o.flags.s.allocated = false;
 	Unit_RemoveFromTeam(unit);
 
-	if (unit != g_unitSelected) return;
+	if (!Unit_IsSelected(unit))
+		return;
 
 	if (g_selectionType == SELECTIONTYPE_TARGET) {
 		g_veiledSpriteID = 0;
@@ -2394,7 +2494,7 @@ void Unit_RemovePlayer(Unit *unit)
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 	}
 
-	Unit_Select(NULL);
+	Unit_Unselect(unit);
 }
 
 /**

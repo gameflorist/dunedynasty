@@ -1018,14 +1018,14 @@ void GameLoop_Main(bool new_game)
 		GUI_DrawInterfaceAndRadar(0);
 
 		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE) {
-			if (g_unitSelected != NULL) {
+			if (Unit_AnySelected()) {
 				if (l_timerUnitStatus < g_timerGame) {
-					Unit_DisplayStatusText(g_unitSelected);
+					/* Unit_DisplayStatusText(g_unitSelected); */
 					l_timerUnitStatus = g_timerGame + 300;
 				}
 
 				if (g_selectionType != SELECTIONTYPE_TARGET) {
-					g_selectionPosition = Tile_PackTile(Tile_Center(g_unitSelected->o.position));
+					g_selectionPosition = Tile_PackTile(Tile_Center(Unit_FirstSelected()->o.position));
 				}
 			}
 

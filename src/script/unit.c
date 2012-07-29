@@ -316,7 +316,7 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 			if (s == NULL) return 0;
 
 			/* Deselect the unit as it is about to be picked up */
-			if (u2 == g_unitSelected) Unit_Select(NULL);
+			Unit_Unselect(u2);
 
 			/* Pickup the unit */
 			u->o.linkedID = u2->o.index & 0xFF;

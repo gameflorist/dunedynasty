@@ -149,6 +149,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		}
 
 		u = g_unitActive;
+		for (u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
 
 		action = g_activeAction;
 
@@ -183,6 +184,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 			Sound_StartSound(g_table_actionInfo[action].soundID);
 		} else {
 			Sound_StartSound(((Tools_Random_256() & 0x1) == 0) ? 20 : 17);
+		}
 		}
 
 		g_unitActive   = NULL;
@@ -266,7 +268,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		if (g_map[position].overlaySpriteID != g_veiledSpriteID || g_debugScenario) {
 			if (Object_GetByPackedTile(position) != NULL || g_debugScenario) {
 				Map_SetSelection(position);
-				Unit_DisplayStatusText(g_unitSelected);
+				/* Unit_DisplayStatusText(g_unitSelected); */
 			}
 		}
 
@@ -432,14 +434,15 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 		if (Map_IsPositionInViewport(u->targetPreLast, &x, &y)) GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0xC000);
 
-		if (u != g_unitSelected) continue;
+		if (!Unit_IsSelected(u))
+			continue;
 
 		if (!Map_IsPositionInViewport(u->o.position, &x, &y)) continue;
 
 		Viewport_DrawSelectedUnit(x, y);
 	}
 
-	if (g_unitSelected == NULL && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
+	if (!Unit_AnySelected() && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
 		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 		const int x1 = wi->offsetX + TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - Tile_GetPackedX(g_minimapPosition));
 		const int y1 = wi->offsetY + TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - Tile_GetPackedY(g_minimapPosition));
@@ -601,7 +604,8 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 				GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], x, y - 14, 2, 0xC000);
 			}
 
-			if (u != g_unitSelected) continue;
+			if (!Unit_IsSelected(u))
+				continue;
 
 			Viewport_DrawSelectedUnit(x, y);
 		}

@@ -180,9 +180,7 @@ void Map_SetSelection(uint16 packed)
 					Unit_Select(u);
 				}
 			} else {
-				if (g_unitSelected != NULL) {
-					Unit_Select(NULL);
-				}
+				Unit_UnselectAll();
 			}
 		}
 		g_selectionPosition = packed;
@@ -1344,6 +1342,7 @@ uint16 Map_SearchSpice(uint16 packed, uint16 radius)
 	return (radius2 <= radius) ? packed2 : packed1;
 }
 
+#if 0
 void Map_SelectNext(bool getNext)
 {
 	PoolFindStruct find;
@@ -1446,6 +1445,7 @@ void Map_SelectNext(bool getNext)
 
 	Map_SetSelection(Tile_PackTile(selected->position));
 }
+#endif
 
 /**
  * After unveiling, check neighbour tiles. This function handles one neighbour.

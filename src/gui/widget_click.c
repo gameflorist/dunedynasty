@@ -238,17 +238,15 @@ bool GUI_Widget_Scrollbar_Click(Widget *w)
  * @param w The widget.
  * @return True, always.
  */
-bool GUI_Widget_TextButton_Click(Widget *w)
+static bool GUI_Widget_TextButton_Click_(Widget *w, Unit *u)
 {
 	const UnitInfo *ui;
 	const ActionInfo *ai;
 	const uint16 *actions;
 	ActionType action;
-	Unit *u;
 	uint16 *found;
 	ActionType unitAction;
 
-	u = g_unitSelected;
 	ui = &g_table_unitInfo[u->o.type];
 
 	actions = ui->o.actionsPlayer;
@@ -276,7 +274,7 @@ bool GUI_Widget_TextButton_Click(Widget *w)
 	ai = &g_table_actionInfo[action];
 
 	if (ai->selectionType != g_selectionType) {
-		g_unitActive = g_unitSelected;
+		g_unitActive = u;
 		g_activeAction = action;
 		GUI_ChangeSelectionType(ai->selectionType);
 
@@ -298,6 +296,15 @@ bool GUI_Widget_TextButton_Click(Widget *w)
 	if (found == NULL) return true;
 
 	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, found - actions + 8), false);
+
+	return true;
+}
+
+bool GUI_Widget_TextButton_Click(Widget *w)
+{
+	for (Unit *u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
+		GUI_Widget_TextButton_Click_(w, u);
+	}
 
 	return true;
 }
@@ -378,8 +385,8 @@ bool GUI_Widget_Picture_Click(Widget *w)
 
 	VARIABLE_NOT_USED(w);
 
-	if (g_unitSelected != NULL) {
-		Unit_DisplayStatusText(g_unitSelected);
+	if (Unit_AnySelected()) {
+		/* Unit_DisplayStatusText(g_unitSelected); */
 
 		return false;
 	}
