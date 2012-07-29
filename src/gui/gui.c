@@ -50,16 +50,6 @@
 #include "../wsa.h"
 
 MSVC_PACKED_BEGIN
-typedef struct ClippingArea {
-	/* 0000(2)   */ PACK uint16 left;                       /*!< ?? */
-	/* 0002(2)   */ PACK uint16 top;                        /*!< ?? */
-	/* 0004(2)   */ PACK uint16 right;                      /*!< ?? */
-	/* 0006(2)   */ PACK uint16 bottom;                     /*!< ?? */
-} GCC_PACKED ClippingArea;
-MSVC_PACKED_END
-assert_compile(sizeof(ClippingArea) == 0x08);
-
-MSVC_PACKED_BEGIN
 typedef struct StrategicMapData {
 	/* 0000(2)   */ PACK int16 index;      /*!< ?? */
 	/* 0002(2)   */ PACK int16 arrow;      /*!< ?? */
@@ -92,7 +82,6 @@ static const RankScore _rankScores[] = {
 };
 
 static uint8 g_colours[16];
-static ClippingArea g_clipping = { 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1 };
 uint8 *g_palette_998A = NULL;
 uint8 g_remap[256];
 FactoryWindowItem g_factoryWindowItems[25];
@@ -2307,22 +2296,8 @@ static void ClipBottom(int16 *x1, int16 *y1, int16 x2, int16 y2);
 static void ClipLeft(int16 *x1, int16 *y1, int16 x2, int16 y2);
 static void ClipRight(int16 *x1, int16 *y1, int16 x2, int16 y2);
 extern void GUI_DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
+extern void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bottom);
 #endif
-
-/**
- * Sets the clipping area.
- * @param left The left clipping.
- * @param top The top clipping.
- * @param right The right clipping.
- * @param bottom The bottom clipping.
- */
-void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bottom)
-{
-	g_clipping.left   = left;
-	g_clipping.top    = top;
-	g_clipping.right  = right;
-	g_clipping.bottom = bottom;
-}
 
 /**
  * Wrapper around GFX_Screen_Copy. Protects against wrong input values.

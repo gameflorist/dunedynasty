@@ -7,6 +7,7 @@ extern bool VideoA5_Init(void);
 extern void VideoA5_Uninit(void);
 extern void VideoA5_Tick(void);
 extern void VideoA5_SetPalette(const uint8 *palette, int from, int length);
+extern void VideoA5_SetClippingArea(int x, int y, int w, int h);
 
 extern void VideoA5_PutPixel(int x, int y, uint8 c);
 extern void VideoA5_DrawLine(int x1, int y1, int x2, int y2, uint8 c);

@@ -439,7 +439,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		uint16 x2 = x1 + (g_selectionWidth << 4) - 1;
 		uint16 y2 = y1 + (g_selectionHeight << 4) - 1;
 
-		GUI_SetClippingArea(0, 40, 239, SCREEN_HEIGHT - 1);
+		Video_SetClippingArea(0, 40, 239, SCREEN_HEIGHT - 1);
 		GUI_DrawWiredRectangle(x1, y1, x2, y2, 0xFF);
 
 		if (g_selectionState == 0 && g_selectionType == SELECTIONTYPE_PLACE) {
@@ -447,7 +447,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 			GUI_DrawLine(x2, y1, x1, y2, 0xFF);
 		}
 
-		GUI_SetClippingArea(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
+		Video_SetClippingArea(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
 
 		g_var_3A08 = 0;
 	}

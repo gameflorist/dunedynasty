@@ -286,6 +286,12 @@ VideoA5_SetPalette(const uint8 *palette, int from, int length)
 	}
 }
 
+void
+VideoA5_SetClippingArea(int x, int y, int w, int h)
+{
+	al_set_clipping_rectangle(x, y, w, h);
+}
+
 /*--------------------------------------------------------------*/
 
 void

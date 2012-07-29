@@ -18,6 +18,18 @@ void GFX_PutPixel(uint16 x, uint16 y, uint8 colour)
 
 /* gui/gui.c */
 
+MSVC_PACKED_BEGIN
+typedef struct ClippingArea {
+	/* 0000(2)   */ PACK uint16 left;                       /*!< ?? */
+	/* 0002(2)   */ PACK uint16 top;                        /*!< ?? */
+	/* 0004(2)   */ PACK uint16 right;                      /*!< ?? */
+	/* 0006(2)   */ PACK uint16 bottom;                     /*!< ?? */
+} GCC_PACKED ClippingArea;
+MSVC_PACKED_END
+assert_compile(sizeof(ClippingArea) == 0x08);
+
+static ClippingArea g_clipping = { 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1 };
+
 /**
  * Draw a wired rectangle.
  * @param left The left position of the rectangle.
@@ -258,4 +270,19 @@ void GUI_DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour)
 			}
 		}
 	}
+}
+
+/**
+ * Sets the clipping area.
+ * @param left The left clipping.
+ * @param top The top clipping.
+ * @param right The right clipping.
+ * @param bottom The bottom clipping.
+ */
+void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bottom)
+{
+	g_clipping.left   = left;
+	g_clipping.top    = top;
+	g_clipping.right  = right;
+	g_clipping.bottom = bottom;
 }
