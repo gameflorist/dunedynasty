@@ -1958,7 +1958,6 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 	g_viewport_forceRedraw = true;
 
 	MenuBar_Draw(g_playerHouseID);
-	GUI_DrawSprite(2, g_sprites[11], 192, 0, 0, 0); /* "Credits" */
 
 	g_textDisplayNeedsUpdate = true;
 
@@ -2002,22 +2001,11 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 		Unit_UpdateMap(1, u);
 	}
 
-	if (screenID == 0) {
-		GFX_Screen_SetActive(0);
-
-		GUI_Mouse_Hide_Safe();
-
-		GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2 ,0);
-		GUI_DrawCredits(g_playerHouseID, (g_playerCredits == 0xFFFF) ? 2 : 1);
-		GUI_SetPaletteAnimated(g_palette1, 15);
-
-		GUI_Mouse_Show_Safe();
-	}
+	GUI_DrawCredits(g_playerHouseID, (g_playerCredits == 0xFFFF) ? 2 : 1);
+	/* XXX: what is this for? */
+	/* GUI_SetPaletteAnimated(g_palette1, 15); */
 
 	GFX_Screen_SetActive(oldScreenID);
-
-	GUI_DrawCredits(g_playerHouseID, 2);
-
 	Input_History_Clear();
 }
 
@@ -2032,12 +2020,7 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 	static uint16 creditsAnimation = 0;           /* How many credits are shown in current animation of credits. */
 	static int16  creditsAnimationOffset = 0;     /* Offset of the credits for the animation of credits. */
 
-	uint16 oldScreenID;
-	uint16 oldValue_07AE_0000;
 	House *h;
-	char charCreditsOld[7];
-	char charCreditsNew[7];
-	int i;
 	int16 creditsDiff;
 	int16 creditsNew;
 	int16 creditsOld;
@@ -2054,10 +2037,6 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 	}
 
 	if (mode == 0 && h->credits == creditsAnimation && creditsAnimationOffset == 0) return;
-
-	oldScreenID = GFX_Screen_SetActive(2);
-
-	oldValue_07AE_0000 = Widget_SetCurrentWidget(4);
 
 	creditsDiff = h->credits - creditsAnimation;
 	if (creditsDiff != 0) {
@@ -2096,9 +2075,14 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 		creditsNew += 1;
 	}
 
-	GUI_DrawSprite(g_screenActiveID, g_sprites[12], 0, 0, 4, 0x4000);
-
 	g_playerCredits = creditsOld;
+
+#if 0
+	uint16 oldScreenID = GFX_Screen_SetActive(2);
+	uint16 oldValue_07AE_0000 = Widget_SetCurrentWidget(4);
+	char charCreditsOld[7];
+	char charCreditsNew[7];
+	int i;
 
 	snprintf(charCreditsOld, sizeof(charCreditsOld), "%6d", creditsOld);
 	snprintf(charCreditsNew, sizeof(charCreditsNew), "%6d", creditsNew);
@@ -2130,6 +2114,9 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 	GFX_Screen_SetActive(oldScreenID);
 
 	Widget_SetCurrentWidget(oldValue_07AE_0000);
+#else
+	MenuBar_DrawCredits(creditsNew, creditsOld, offset - creditsAnimationOffset);
+#endif
 }
 
 /**

@@ -4,6 +4,7 @@
 #include "../gui/widget.h"
 #include "../house.h"
 
+extern void MenuBar_DrawCredits(int credits_new, int credits_old, int offset);
 extern void MenuBar_Draw(enum HouseType houseID);
 
 #endif
