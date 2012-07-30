@@ -1400,7 +1400,7 @@ static bool Structure_CheckAvailableConcrete(uint16 structureType, uint8 houseID
  *
  * @param s The Structure.
  */
-static void Structure_CancelBuild(Structure *s)
+void Structure_CancelBuild(Structure *s)
 {
 	ObjectInfo *oi;
 
@@ -1560,7 +1560,7 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 
 			Timer_SetTimer(TIMER_GAME, false);
 
-			res = GUI_DisplayFactoryWindow(g_factoryWindowConstructionYard, s->o.type == STRUCTURE_STARPORT ? 1 : 0, upgradeCost);
+			res = GUI_DisplayFactoryWindow(s, upgradeCost);
 
 			Timer_SetTimer(TIMER_GAME, true);
 

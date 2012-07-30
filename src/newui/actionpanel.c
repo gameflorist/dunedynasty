@@ -8,7 +8,9 @@
 #include "../gui/font.h"
 #include "../gui/gui.h"
 #include "../gui/widget.h"
+#include "../input/mouse.h"
 #include "../pool/house.h"
+#include "../pool/structure.h"
 #include "../string.h"
 #include "../table/strings.h"
 #include "../unit.h"
@@ -177,4 +179,185 @@ ActionPanel_DrawMissileCountdown(uint8 fg, int count)
 		count = 0;
 
 	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_PICK_TARGETTMINUS_D), x0 + 259, y0 + 84, fg, 0, 0x11, count);
+}
+
+static void
+ActionPanel_ProductionButtonDimensions(const Widget *widget, int item,
+		int *x1, int *y1, int *x2, int *y2, int *w, int *h)
+{
+	const int height = 35;
+	const int y = widget->offsetY + (height + 1) * item;
+
+	if (x1 != NULL) *x1 = widget->offsetX;
+	if (y1 != NULL) *y1 = y;
+	if (x2 != NULL) *x2 = widget->offsetX + widget->width - 1;
+	if (y2 != NULL) *y2 = y + height - 1;
+	if (w != NULL) *w = widget->width;
+	if (h != NULL) *h = height;
+}
+
+bool
+ActionPanel_ClickFactory(const Widget *widget, Structure *s)
+{
+	int x1, y1, x2, h;
+	int item;
+
+	ActionPanel_ProductionButtonDimensions(widget, 0, &x1, &y1, &x2, NULL, NULL, &h);
+	if (!(x1 <= g_mouseX && g_mouseX <= x2))
+		return false;
+
+	Structure_GetBuildable(s);
+	GUI_FactoryWindow_InitItems(s->o.type);
+
+	item = (g_mouseY - y1) / (h + 1);
+	if (!(0 <= item && item < g_factoryWindowTotal))
+		return false;
+
+	if (g_factoryWindowItems[item].objectInfo->available <= 0)
+		return false;
+
+	const bool lmb = (widget->state.s.buttonState & 0x04);
+	const bool rmb = (widget->state.s.buttonState & 0x40);
+
+	switch (g_productionStringID) {
+		case STR_PLACE_IT:
+			if (s->objectType == g_factoryWindowItems[item].objectType) {
+				if (lmb) {
+					Structure *ns;
+
+					ns = Structure_Get_ByIndex(s->o.linkedID);
+					g_structureActive = ns;
+					g_structureActiveType = s->objectType;
+					g_selectionState = Structure_IsValidBuildLocation(g_selectionRectanglePosition, g_structureActiveType);
+					g_structureActivePosition = g_selectionPosition;
+					s->o.linkedID = STRUCTURE_INVALID;
+
+					GUI_ChangeSelectionType(SELECTIONTYPE_PLACE);
+				}
+				else if (rmb) {
+					Structure_CancelBuild(s);
+				}
+			}
+			break;
+
+		case STR_ON_HOLD:
+			if (s->objectType == g_factoryWindowItems[item].objectType) {
+				if (lmb) {
+					s->o.flags.s.repairing = false;
+					s->o.flags.s.onHold    = false;
+					s->o.flags.s.upgrading = false;
+				}
+				else if (rmb) {
+					Structure_CancelBuild(s);
+				}
+			}
+			break;
+
+		case STR_BUILD_IT:
+			if (lmb) {
+				s->objectType = g_factoryWindowItems[item].objectType;
+				Structure_BuildObject(s, s->objectType);
+			}
+			break;
+
+		case STR_D_DONE:
+			if (s->objectType == g_factoryWindowItems[item].objectType) {
+				if (rmb) {
+					s->o.flags.s.onHold = true;
+				}
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	return false;
+}
+
+static void
+ActionPanel_DrawStructureLayout(uint16 type, int x1, int y1)
+{
+	const StructureInfo *si = &g_table_structureInfo[type];
+	const int lw = g_table_structure_layoutSize[si->layout].width;
+	const int lh = g_table_structure_layoutSize[si->layout].height;
+	const int size = Shape_Width(SHAPE_STRUCTURE_LAYOUT_BLOCK) + 1;
+
+	/* XXX: when button down, need to invert colours? */
+	Shape_Draw(SHAPE_STRUCTURE_LAYOUT_OUTLINE, x1 + 37, y1 + 5, 0, 0);
+
+	for (int ly = 0; ly < lh; ly++) {
+		for (int lx = 0; lx < lw; lx++) {
+			Shape_Draw(SHAPE_STRUCTURE_LAYOUT_BLOCK, x1 + size*lx + 38, y1 + size*ly + 6, 0, 0);
+		}
+	}
+}
+
+void
+ActionPanel_DrawFactory(const Widget *widget, Structure *s)
+{
+	Structure_GetBuildable(s);
+	GUI_FactoryWindow_InitItems(s->o.type);
+
+	for (int item = 0; item < g_factoryWindowTotal; item++) {
+		const ObjectInfo *oi = g_factoryWindowItems[item].objectInfo;
+		const uint16 object_type = g_factoryWindowItems[item].objectType;
+		const int icon_w = Shape_Width(oi->spriteID);
+		const int icon_h = Shape_Height(oi->spriteID);
+
+		int x1, y1, x2, y2, w, h;
+		bool buttonDown = false;
+		int fg = 0xF;
+
+		ActionPanel_ProductionButtonDimensions(widget, item, &x1, &y1, &x2, &y2, &w, &h);
+
+		if ((x1 <= g_mouseX && g_mouseX <= x2) &&
+		    (y1 <= g_mouseY && g_mouseY <= y2) && (widget->state.s.hover2)) {
+			buttonDown = true;
+			fg = 0xE;
+		}
+
+		GUI_DrawWiredRectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 12);
+		GUI_DrawBorder(x1, y1, w, h, buttonDown ? 0 : 1, true);
+
+		if (oi->available < 0) {
+			Shape_DrawGrey(oi->spriteID, x1 + 2, y1 + 2, 0, 0);
+		}
+		else {
+			Shape_Draw(oi->spriteID, x1 + 2, y1 + 2, 0, 0);
+		}
+
+		/* Draw layout. */
+		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD)
+			ActionPanel_DrawStructureLayout(object_type, x1, y1);
+
+		/* Production Status. */
+		if (s->objectType == object_type) {
+			if (g_productionStringID == STR_D_DONE) {
+				int buildTime;
+
+				if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+					const StructureInfo *si = &g_table_structureInfo[s->objectType];
+
+					buildTime = si->o.buildTime;
+				}
+				else {
+					const UnitInfo *ui = &g_table_unitInfo[s->objectType];
+
+					buildTime = ui->o.buildTime;
+				}
+
+				const int timeLeft = buildTime - (s->countDown + 255) / 256;
+				const int percentDone = 100 * timeLeft / buildTime;
+
+				GUI_DrawText_Wrapper("%d%%", x1 + 2 + icon_w/2, y1 + icon_h/2, fg, 0, 0x121, percentDone);
+			}
+			else if (g_productionStringID != STR_BUILD_IT) {
+				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), x1 + w/2, y1 + icon_h/2, fg, 0, 0x121);
+			}
+		}
+
+		GUI_DrawText_Wrapper("%d", x1 + 2 + icon_w/2, y1 + h - 8, 29, 0, 0x111, oi->buildCredits);
+		GUI_DrawText_Wrapper("%d", x1 + w - 4, y1 + h - 9, fg, 0, 0x221, 0);
+	}
 }

@@ -23,6 +23,7 @@
 #include "../input/mouse.h"
 #include "../load.h"
 #include "../map.h"
+#include "../newui/actionpanel.h"
 #include "../opendune.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
@@ -36,7 +37,6 @@
 #include "../timer/timer.h"
 #include "../unit.h"
 #include "../video/video.h"
-
 
 char g_savegameDesc[5][51];                                 /*!< Array of savegame descriptions for the SaveLoad window. */
 static uint16 s_savegameIndexBase = 0;
@@ -88,38 +88,15 @@ bool GUI_Widget_SpriteTextButton_Click(Widget *w)
 		default: break;
 
 		case STR_PLACE_IT:
-			if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-				Structure *ns;
-
-				ns = Structure_Get_ByIndex(s->o.linkedID);
-				g_structureActive = ns;
-				g_structureActiveType = s->objectType;
-				g_selectionState = Structure_IsValidBuildLocation(g_selectionRectanglePosition, g_structureActiveType);
-				g_structureActivePosition = g_selectionPosition;
-				s->o.linkedID = STRUCTURE_INVALID;
-
-				GUI_ChangeSelectionType(SELECTIONTYPE_PLACE);
-			}
-			break;
-
 		case STR_ON_HOLD:
-			s->o.flags.s.repairing = false;
-			s->o.flags.s.onHold    = false;
-			s->o.flags.s.upgrading = false;
-			break;
-
 		case STR_BUILD_IT:
-			Structure_BuildObject(s, s->objectType);
-			break;
+		case STR_D_DONE:
+			return ActionPanel_ClickFactory(w, s);
 
 		case STR_LAUNCH:
 		case STR_FREMEN:
 		case STR_SABOTEUR:
 			Structure_ActivateSpecial(s);
-			break;
-
-		case STR_D_DONE:
-			s->o.flags.s.onHold = true;
 			break;
 	}
 	return false;

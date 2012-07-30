@@ -6,6 +6,7 @@
 #define GUI_GUI_H
 
 #include "types.h"
+#include "../structure.h"
 
 /**
  * Factory results.
@@ -118,7 +119,8 @@ extern void GUI_DrawCredits(uint8 houseID, uint16 mode);
 extern void GUI_ChangeSelectionType(uint16 selectionType);
 extern void GUI_InitColors(const uint8 *colors, uint8 first, uint8 last);
 extern void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, int16 memBlockSrc, int16 memBlockDst);
-extern FactoryResult GUI_DisplayFactoryWindow(bool isConstructionYard, bool isStarPort, uint16 upgradeCost);
+extern void GUI_FactoryWindow_InitItems(enum StructureType s);
+extern FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost);
 extern char *GUI_String_Get_ByIndex(int16 stringID);
 extern void GUI_ClearScreen(uint16 arg06);
 extern uint16 GUI_Get_Scrollbar_Position(struct Widget *w);

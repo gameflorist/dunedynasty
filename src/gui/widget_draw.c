@@ -26,7 +26,6 @@
 #include "../unit.h"
 #include "../video/video.h"
 
-
 /**
  * Draw a text button widget to the display, relative to its parent.
  *
@@ -141,6 +140,7 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
  */
 void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 {
+#if 0
 	uint16 oldScreenID;
 	Structure *s;
 	uint16 positionX, positionY;
@@ -292,6 +292,14 @@ void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 	GUI_Mouse_Show_InRegion();
 
 	GFX_Screen_SetActive(0);
+#else
+	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+
+	if (s == NULL)
+		return;
+
+	ActionPanel_DrawFactory(w, s);
+#endif
 }
 
 /**

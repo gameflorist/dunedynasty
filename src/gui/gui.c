@@ -1831,7 +1831,7 @@ static int GUI_FactoryWindow_Sorter(const void *a, const void *b)
 	return pb->sortPriority - pa->sortPriority;
 }
 
-static void GUI_FactoryWindow_InitItems(void)
+void GUI_FactoryWindow_InitItems(enum StructureType s)
 {
 	g_factoryWindowTotal = 0;
 	g_factoryWindowSelected = 0;
@@ -1839,7 +1839,7 @@ static void GUI_FactoryWindow_InitItems(void)
 
 	memset(g_factoryWindowItems, 0, 25 * sizeof(FactoryWindowItem));
 
-	if (g_factoryWindowStarport) {
+	if (s == STRUCTURE_STARPORT) {
 		uint16 seconds = (g_timerGame - g_tickScenarioStart) / 60;
 		uint16 seed = (seconds / 60) + g_scenarioID + g_playerHouseID;
 		seed *= seed;
@@ -1847,7 +1847,7 @@ static void GUI_FactoryWindow_InitItems(void)
 		srand(seed);
 	}
 
-	if (!g_factoryWindowConstructionYard) {
+	if (s != STRUCTURE_CONSTRUCTION_YARD) {
 		uint16 i;
 
 		for (i = 0; i < UNIT_MAX; i++) {
@@ -1858,7 +1858,7 @@ static void GUI_FactoryWindow_InitItems(void)
 			g_factoryWindowItems[g_factoryWindowTotal].objectInfo = oi;
 			g_factoryWindowItems[g_factoryWindowTotal].objectType = i;
 
-			if (g_factoryWindowStarport) {
+			if (s == STRUCTURE_STARPORT) {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = GUI_FactoryWindow_CalculateStarportPrice(oi->buildCredits);
 			} else {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
@@ -1896,7 +1896,7 @@ static void GUI_FactoryWindow_InitItems(void)
 	qsort(g_factoryWindowItems, g_factoryWindowTotal, sizeof(FactoryWindowItem), GUI_FactoryWindow_Sorter);
 }
 
-static void GUI_FactoryWindow_Init(void)
+static void GUI_FactoryWindow_Init(Structure *s)
 {
 	static uint8 xSrc[HOUSE_MAX] = { 0, 0, 16, 0, 0, 0 };
 	static uint8 ySrc[HOUSE_MAX] = { 8, 152, 48, 0, 0, 0 };
@@ -1917,7 +1917,7 @@ static void GUI_FactoryWindow_Init(void)
 
 	GUI_FactoryWindow_CreateWidgets();
 	GUI_FactoryWindow_LoadGraymapTbl();
-	GUI_FactoryWindow_InitItems();
+	GUI_FactoryWindow_InitItems(s->o.type);
 
 	for (i = g_factoryWindowTotal; i < 4; i++) GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(g_widgetInvoiceTail, i + 46));
 
@@ -1967,19 +1967,19 @@ static void GUI_FactoryWindow_Init(void)
  * @param var0A Unknown.
  * @return Unknown value.
  */
-FactoryResult GUI_DisplayFactoryWindow(bool isConstructionYard, bool isStarPort, uint16 upgradeCost)
+FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost)
 {
 	uint16 oldScreenID = GFX_Screen_SetActive(0);
 	uint8 backup[3];
 
 	memcpy(backup, g_palette1 + 255 * 3, 3);
 
-	g_factoryWindowConstructionYard = isConstructionYard;
-	g_factoryWindowStarport = isStarPort;
+	g_factoryWindowConstructionYard = (s->o.type == STRUCTURE_CONSTRUCTION_YARD);
+	g_factoryWindowStarport = (s->o.type == STRUCTURE_STARPORT);
 	g_factoryWindowUpgradeCost = upgradeCost;
 	g_factoryWindowOrdered = 0;
 
-	GUI_FactoryWindow_Init();
+	GUI_FactoryWindow_Init(s);
 
 	GUI_FactoryWindow_UpdateSelection(true);
 

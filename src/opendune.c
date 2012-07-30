@@ -871,6 +871,8 @@ GameLoop_TweakWidgetDimensions(void)
 	for (int i = 2; i <= 10; i++)
 		g_table_gameWidgetInfo[i].offsetX += TRUE_DISPLAY_WIDTH - SCREEN_WIDTH;
 
+	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - 14 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
+
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = 0;
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = TRUE_DISPLAY_WIDTH;
