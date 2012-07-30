@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <stdio.h>
 #include "../os/math.h"
 
 #include "video_a5.h"
@@ -14,6 +15,10 @@
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
 #include "../sprites.h"
+
+#include "dune2_16x16.xpm"
+/* #include "dune2_32x32.xpm" */
+/* #include "dune2_32x32a.xpm" */
 
 #define OUTPUT_TEXTURES     false
 #define ICONID_MAX          512
@@ -60,6 +65,60 @@ VideoA5_ReadPalette(const char *filename)
 	VideoA5_SetPalette(paletteRGB, 0, 256);
 }
 
+static void
+VideoA5_InitDisplayIcon(char **xpm, int w, int h, int colours)
+{
+	struct {
+		unsigned char r, g, b;
+	} map[256];
+
+	ALLEGRO_BITMAP *icon;
+	ALLEGRO_LOCKED_REGION *reg;
+
+	icon = al_create_bitmap(w, h);
+	if (icon == NULL)
+		return;
+
+	for (int ln = 2; ln < 1 + colours; ln++) {
+		unsigned char sym;
+		unsigned int c;
+
+		sscanf(xpm[ln], "%c c #%x", &sym, &c);
+
+		map[sym].r = (c >> 16);
+		map[sym].g = (c >> 8) & 0xFF;
+		map[sym].b = c & 0xFF;
+	}
+
+	reg = al_lock_bitmap(icon, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
+
+	for (int y = 0; y < h; y++) {
+		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
+
+		for (int x = 0; x < w; x++) {
+			const unsigned char c = xpm[1 + colours + y][x];
+
+			if (c == ' ') {
+				row[reg->pixel_size*x + 0] = 0x00;
+				row[reg->pixel_size*x + 1] = 0x00;
+				row[reg->pixel_size*x + 2] = 0x00;
+				row[reg->pixel_size*x + 3] = 0x00;
+			}
+			else {
+				row[reg->pixel_size*x + 0] = map[c].r;
+				row[reg->pixel_size*x + 1] = map[c].g;
+				row[reg->pixel_size*x + 2] = map[c].b;
+				row[reg->pixel_size*x + 3] = 0xFF;
+			}
+		}
+	}
+
+	al_unlock_bitmap(icon);
+
+	al_set_display_icon(display, icon);
+	al_destroy_bitmap(icon);
+}
+
 bool
 VideoA5_Init(void)
 {
@@ -70,6 +129,10 @@ VideoA5_Init(void)
 	display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
 	if (display == NULL || display2 == NULL)
 		return false;
+
+	VideoA5_InitDisplayIcon(dune2_16x16_xpm, 16, 16, 32);
+	/* VideoA5_InitDisplayIcon(dune2_32x32_xpm, 32, 32, 23); */
+	/* VideoA5_InitDisplayIcon(dune2_32x32a_xpm, 32, 32, 13); */
 
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 	icon_texture = al_create_bitmap(w, h);
