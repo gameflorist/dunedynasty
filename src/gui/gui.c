@@ -208,10 +208,9 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		displayLine3[0] = '\0';
 	}
 
-	if (scrollInProgress) {
-		uint16 oldValue_07AE_0000;
-		uint16 height;
+	MenuBar_DrawStatusBar(displayLine1, displayLine2, fgColour1, fgColour2, textOffset);
 
+	if (scrollInProgress) {
 		if (buffer[0] != '\0') {
 			if (strcasecmp(buffer, displayLine2) != 0 && importance >= line3Importance) {
 				strcpy(displayLine3, buffer);
@@ -220,7 +219,9 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		}
 		if (displayTimer > Timer_GetTicks()) return;
 
-		oldValue_07AE_0000 = Widget_SetCurrentWidget(7);
+#if 0
+		uint16 oldValue_07AE_0000 = Widget_SetCurrentWidget(7);
+		uint16 height;
 
 		if (g_textDisplayNeedsUpdate) {
 			uint16 oldScreenID = GFX_Screen_SetActive(2);
@@ -247,6 +248,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		GUI_Mouse_Show_InWidget();
 
 		Widget_SetCurrentWidget(oldValue_07AE_0000);
+#endif
 
 		if (textOffset != 0) {
 			if (line3Importance <= line2Importance) {

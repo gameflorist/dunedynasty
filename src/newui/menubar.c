@@ -6,6 +6,8 @@
 #include "menubar.h"
 
 #include "../gfx.h"
+#include "../gui/gui.h"
+#include "../gui/widget.h"
 #include "../video/video.h"
 
 void
@@ -37,6 +39,27 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 			if (char_new[i] != ' ')
 				Shape_Draw(shape_new, x, 5, 0, 0);
 		}
+	}
+
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+}
+
+void
+MenuBar_DrawStatusBar(const char *line1, const char *line2, uint8 fg1, uint8 fg2, int offset)
+{
+	const int x = g_widgetProperties[WINDOWID_STATUSBAR].xBase*8;
+	const int y = g_widgetProperties[WINDOWID_STATUSBAR].yBase;
+	const int w = g_widgetProperties[WINDOWID_STATUSBAR].width*8;
+	const int h = g_widgetProperties[WINDOWID_STATUSBAR].height;
+
+	Video_SetClippingArea(x, y, w, h);
+
+	if (offset == 0) {
+		GUI_DrawText_Wrapper(line1, x, y - offset + 2, fg1, 0, 0x012);
+	}
+	else {
+		GUI_DrawText_Wrapper(line2, x, y - offset + 2, fg2, 0, 0x012);
+		GUI_DrawText_Wrapper(line1, x, y - offset + 13, fg1, 0, 0x012);
 	}
 
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
