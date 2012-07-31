@@ -406,7 +406,7 @@ void GameLoop_Unit(void)
  * @param u Unit to get the HouseID of.
  * @return The HouseID of the unit, which might be deviated.
  */
-uint8 Unit_GetHouseID(Unit *u)
+uint8 Unit_GetHouseID(const Unit *u)
 {
 	if (u->deviated != 0) return HOUSE_ORDOS;
 	return u->o.houseID;

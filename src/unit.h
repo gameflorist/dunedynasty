@@ -207,7 +207,7 @@ extern void Unit_Unselect(const Unit *unit);
 extern void Unit_UnselectAll(void);
 
 extern void GameLoop_Unit(void);
-extern uint8 Unit_GetHouseID(Unit *u);
+extern uint8 Unit_GetHouseID(const Unit *u);
 extern uint8 Unit_StringToType(const char *name);
 extern uint8 Unit_ActionStringToType(const char *name);
 extern uint8 Unit_MovementStringToType(const char *name);

@@ -339,6 +339,53 @@ Viewport_Click(Widget *w)
 		selection_box_active = false;
 	}
 
+	/* 0x10, 0x20, 0x40, 0x80: rmb clicked, held, released, not held. */
+	if (((w->state.s.buttonState & 0x10) != 0) && (g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE)) {
+		const Unit *target_u = Unit_Get_ByPackedTile(packed);
+		const Structure *target_s = Structure_Get_ByPackedTile(packed);
+		const enum LandscapeType lst = Map_GetLandscapeType(packed);
+
+		bool attack = false;
+
+		if (target_u != NULL) {
+			if (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(target_u)))
+				attack = true;
+		}
+		else if (target_s != NULL) {
+			if (!House_AreAllied(g_playerHouseID, target_s->o.houseID))
+				attack = true;
+		}
+
+		for (Unit *u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
+			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
+			enum ActionType action = ACTION_INVALID;
+
+			if (Unit_GetHouseID(u) != g_playerHouseID)
+				continue;
+
+			for (int i = 0; (i < 4) && (action == ACTION_INVALID); i++) {
+				if ((oi->actionsPlayer[i] == ACTION_ATTACK) && attack) {
+					action = ACTION_ATTACK;
+				}
+				else if (oi->actionsPlayer[i] == ACTION_MOVE) {
+					action = ACTION_MOVE;
+				}
+
+				/* Harvesters return to work if ordered to crush a
+				 * soldier on sand.  Use move command instead if
+				 * ordered back to rock, e.g. to evade a worm attack.
+				 */
+				else if ((oi->actionsPlayer[i] == ACTION_HARVEST) && (g_table_landscapeInfo[lst].isSand)) {
+					action = ACTION_HARVEST;
+				}
+			}
+
+			if (action != ACTION_INVALID) {
+				Viewport_Target(u, action, packed);
+			}
+		}
+	}
+
 	if (g_selectionType == SELECTIONTYPE_TARGET) {
 		Map_SetSelection(Unit_FindTargetAround(packed));
 	}
