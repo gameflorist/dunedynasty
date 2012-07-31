@@ -385,6 +385,11 @@ Viewport_Click(Widget *w)
 			}
 		}
 	}
+	else if ((w->state.s.buttonState & 0x40) != 0) {
+		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE) {
+			GUI_Widget_Cancel_Click(NULL);
+		}
+	}
 
 	if (g_selectionType == SELECTIONTYPE_TARGET) {
 		Map_SetSelection(Unit_FindTargetAround(packed));
