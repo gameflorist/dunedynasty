@@ -221,11 +221,13 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 
 	const bool lmb = (widget->state.s.buttonState & 0x04);
 	const bool rmb = (widget->state.s.buttonState & 0x40);
+	const uint16 clicked_type = g_factoryWindowItems[item].objectType;
 
-	switch (g_productionStringID) {
-		case STR_PLACE_IT:
-			if (s->objectType == g_factoryWindowItems[item].objectType) {
-				if (lmb) {
+	if ((s->objectType == clicked_type) || (g_productionStringID == STR_BUILD_IT)) {
+		switch (g_productionStringID) {
+			case STR_PLACE_IT:
+			case STR_ON_HOLD:
+				if (lmb && (g_productionStringID == STR_PLACE_IT)) {
 					Structure *ns;
 
 					ns = Structure_Get_ByIndex(s->o.linkedID);
@@ -237,42 +239,52 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 
 					GUI_ChangeSelectionType(SELECTIONTYPE_PLACE);
 				}
-				else if (rmb) {
-					Structure_CancelBuild(s);
-				}
-			}
-			break;
-
-		case STR_ON_HOLD:
-			if (s->objectType == g_factoryWindowItems[item].objectType) {
-				if (lmb) {
+				else if (lmb && (g_productionStringID == STR_ON_HOLD)) {
 					s->o.flags.s.repairing = false;
 					s->o.flags.s.onHold    = false;
 					s->o.flags.s.upgrading = false;
 				}
 				else if (rmb) {
-					Structure_CancelBuild(s);
+					const uint16 next_type = BuildQueue_RemoveHead(&s->queue);
+
+					if (next_type == 0xFFFF) {
+						Structure_CancelBuild(s);
+					}
+					else if (s->objectType != next_type) {
+						Structure_BuildObject(s, next_type);
+						s->o.flags.s.onHold = true;
+					}
 				}
-			}
-			break;
+				break;
 
-		case STR_BUILD_IT:
-			if (lmb) {
-				s->objectType = g_factoryWindowItems[item].objectType;
-				Structure_BuildObject(s, s->objectType);
-			}
-			break;
+			case STR_BUILD_IT:
+				if (lmb) {
+					s->objectType = g_factoryWindowItems[item].objectType;
+					Structure_BuildObject(s, s->objectType);
+				}
+				break;
 
-		case STR_D_DONE:
-			if (s->objectType == g_factoryWindowItems[item].objectType) {
-				if (rmb) {
+			case STR_COMPLETED:
+			case STR_D_DONE:
+				if (lmb) {
+					BuildQueue_Add(&s->queue, clicked_type);
+				}
+				else if (rmb && (g_productionStringID == STR_D_DONE)) {
 					s->o.flags.s.onHold = true;
 				}
-			}
-			break;
+				break;
 
-		default:
-			break;
+			default:
+				break;
+		}
+	}
+	else {
+		if (lmb) {
+			BuildQueue_Add(&s->queue, clicked_type);
+		}
+		else if (rmb) {
+			BuildQueue_RemoveTail(&s->queue, clicked_type);
+		}
 	}
 
 	return false;
@@ -371,6 +383,16 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		}
 
 		GUI_DrawText_Wrapper("%d", x1 + 2 + icon_w/2, y1 + h - 8, 29, 0, 0x111, oi->buildCredits);
-		GUI_DrawText_Wrapper("%d", x1 + w - 4, y1 + h - 9, fg, 0, 0x221, 0);
+
+		int count = BuildQueue_Count(&s->queue, object_type);
+		if (count > 0) {
+			if (s->objectType == object_type) {
+				if (count >= 1)
+					GUI_DrawText_Wrapper("%d", x1 + w - 4, y1 + h - 9, fg, 0, 0x221, count+1);
+			}
+			else {
+				GUI_DrawText_Wrapper("%d", x1 + w - 4, y1 + h - 9, fg, 0, 0x221, count);
+			}
+		}
 	}
 }

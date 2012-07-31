@@ -161,6 +161,8 @@ void Structure_Free(Structure *s)
 {
 	int i;
 
+	BuildQueue_Free(&s->queue);
+
 	memset(&s->o.flags, 0, sizeof(s->o.flags));
 
 	Script_Reset(&s->o.script, g_scriptStructure);

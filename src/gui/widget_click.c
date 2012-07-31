@@ -88,6 +88,7 @@ bool GUI_Widget_SpriteTextButton_Click(Widget *w)
 		default: break;
 
 		case STR_PLACE_IT:
+		case STR_COMPLETED:
 		case STR_ON_HOLD:
 		case STR_BUILD_IT:
 		case STR_D_DONE:

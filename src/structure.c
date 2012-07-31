@@ -269,6 +269,25 @@ void GameLoop_Structure(void)
 					}
 				}
 
+				if (si->o.flags.factory) {
+					bool start_next = false;
+
+					if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+						if ((s->o.linkedID == 0xFF) && (g_selectionType != SELECTIONTYPE_PLACE))
+							start_next = true;
+					}
+					else if (s->state == STRUCTURE_STATE_IDLE) {
+						start_next = true;
+					}
+
+					if (start_next) {
+						uint16 object_type = BuildQueue_RemoveHead(&s->queue);
+
+						if (object_type != 0xFFFF)
+							Structure_BuildObject(s, object_type);
+					}
+				}
+
 				if (s->o.type == STRUCTURE_REPAIR) {
 					if (!s->o.flags.s.onHold && s->countDown != 0 && s->o.linkedID != 0xFF) {
 						const UnitInfo *ui;
@@ -387,6 +406,7 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 	s->o.position.tile      = 0;
 	s->o.linkedID           = 0xFF;
 	s->state                = (g_debugScenario) ? STRUCTURE_STATE_IDLE : STRUCTURE_STATE_JUSTBUILT;
+	BuildQueue_Init(&s->queue);
 
 	if (typeID == STRUCTURE_TURRET) {
 		s->rotationSpriteDiff = g_iconMap[g_iconMap[ICM_ICONGROUP_BASE_DEFENSE_TURRET] + 1];

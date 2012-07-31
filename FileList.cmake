@@ -5,6 +5,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/midi_alsa.c
 	src/audio/mt32mpu.c
 	src/audio/sound.c
+	src/buildqueue.c
 	src/codec/format40.c
 	src/codec/format80.c
 	src/common_a5.c

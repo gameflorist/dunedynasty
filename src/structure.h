@@ -6,6 +6,7 @@
 #define STRUCTURE_H
 
 #include <stdio.h>
+#include "buildqueue.h"
 #include "object.h"
 
 /**
@@ -92,7 +93,9 @@ typedef struct Structure {
 	uint16 buildCostRemainder;                              /*!< The remainder of the buildCost for next tick. */
 	 int16 state;                                           /*!< The state of the structure. @see StructureState. */
 	uint16 hitpointsMax;                                    /*!< Max amount of hitpoints. */
-}  Structure;
+
+	BuildQueue queue;
+} Structure;
 
 /**
  * Static information per Structure type.

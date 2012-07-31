@@ -53,6 +53,9 @@ bool Structure_Load(FILE *fp, uint32 length)
 
 		/* Copy over the data */
 		*s = sl;
+
+		/* Extra data. */
+		BuildQueue_Init(&s->queue);
 	}
 	if (length != 0) return false;
 
