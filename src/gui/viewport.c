@@ -517,6 +517,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		g_var_39E6 = 0;
 	}
 
+	Viewport_DrawRallyPoint();
 	Viewport_DrawSelectionBox();
 
 	for (i = 0; i < 32; i++) {

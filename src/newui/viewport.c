@@ -384,6 +384,11 @@ Viewport_Click(Widget *w)
 				Viewport_Target(u, action, packed);
 			}
 		}
+
+		Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+		if (s != NULL) {
+			Structure_SetRallyPoint(s, packed);
+		}
 	}
 	else if ((w->state.s.buttonState & 0x40) != 0) {
 		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE) {
@@ -440,6 +445,36 @@ Viewport_DrawTiles(void)
 	for (int y = y0, top = viewportY1; (y < MAP_SIZE_MAX) && (top <= viewportY2); y++, top += TILE_SIZE)
 		GUI_DrawText_Wrapper("%d", viewportX1, top, 6, 0, 0x21, y);
 #endif
+}
+
+void
+Viewport_DrawRallyPoint(void)
+{
+	if (g_selectionType != SELECTIONTYPE_STRUCTURE)
+		return;
+
+	const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+
+	if ((s == NULL) || (s->rallyPoint == 0xFFFF))
+		return;
+
+	if ((s->o.type == STRUCTURE_LIGHT_VEHICLE) ||
+	    (s->o.type == STRUCTURE_HEAVY_VEHICLE) ||
+	    (s->o.type == STRUCTURE_WOR_TROOPER) ||
+	    (s->o.type == STRUCTURE_BARRACKS) ||
+	    (s->o.type == STRUCTURE_STARPORT) ||
+	    (s->o.type == STRUCTURE_REPAIR)) {
+		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+		const int tx = Tile_GetPackedX(g_viewportPosition);
+		const int ty = Tile_GetPackedY(g_viewportPosition);
+		const int x1 = wi->offsetX + (TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - tx)) + (TILE_SIZE * g_selectionWidth)/2;
+		const int y1 = wi->offsetY + (TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - ty)) + (TILE_SIZE * g_selectionHeight)/2;
+		const int x2 = wi->offsetX + (TILE_SIZE * (Tile_GetPackedX(s->rallyPoint) - tx)) + TILE_SIZE/2;
+		const int y2 = wi->offsetY + (TILE_SIZE * (Tile_GetPackedY(s->rallyPoint) - ty)) + TILE_SIZE/2;
+
+		GUI_DrawLine(x1, y1, x2, y2, 14);
+		Shape_DrawTint(SHAPE_CURSOR_TARGET, x2, y2, 14, 0, 0x8000);
+	}
 }
 
 void

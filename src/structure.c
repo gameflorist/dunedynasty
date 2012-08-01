@@ -410,6 +410,7 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 	s->o.linkedID           = 0xFF;
 	s->state                = (g_debugScenario) ? STRUCTURE_STATE_IDLE : STRUCTURE_STATE_JUSTBUILT;
 	BuildQueue_Init(&s->queue);
+	s->rallyPoint = 0xFFFF;
 
 	if (typeID == STRUCTURE_TURRET) {
 		s->rotationSpriteDiff = g_iconMap[g_iconMap[ICM_ICONGROUP_BASE_DEFENSE_TURRET] + 1];
@@ -693,6 +694,24 @@ void Structure_SetState(Structure *s, int16 state)
 	s->state = state;
 
 	Structure_UpdateMap(s);
+}
+
+void Structure_SetRallyPoint(Structure *s, uint16 packed)
+{
+	const StructureInfo *si = &g_table_structureInfo[s->o.type];
+	const uint8 tx = Tile_GetPackedX(packed);
+	const uint8 ty = Tile_GetPackedY(packed);
+	const uint8 x1 = Tile_GetPosX(s->o.position);
+	const uint8 y1 = Tile_GetPosY(s->o.position);
+	const uint8 x2 = x1 + g_table_structure_layoutSize[si->layout].width - 1;
+	const uint8 y2 = y1 + g_table_structure_layoutSize[si->layout].height - 1;
+
+	if ((x1 <= tx && tx <= x2) && (y1 <= ty && ty <= y2)) {
+		s->rallyPoint = 0xFFFF;
+	}
+	else {
+		s->rallyPoint = packed;
+	}
 }
 
 /**

@@ -292,6 +292,13 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 	s->o.linkedID = u->o.linkedID;
 	u->o.linkedID = 0xFF;
 
+	if (s->rallyPoint != 0xFFFF) {
+		const int encoded = Tools_Index_Encode(s->rallyPoint, IT_TILE);
+
+		Unit_SetAction(u, ACTION_MOVE);
+		Unit_SetDestination(u, encoded);
+	}
+
 	Unit_SetOrientation(u, Tile_GetDirection(s->o.position, u->o.position) & 0xE0, true, 0);
 	Unit_SetOrientation(u, u->orientation[0].current, true, 1);
 

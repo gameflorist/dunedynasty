@@ -56,6 +56,7 @@ bool Structure_Load(FILE *fp, uint32 length)
 
 		/* Extra data. */
 		BuildQueue_Init(&s->queue);
+		s->rallyPoint = 0xFFFF;
 	}
 	if (length != 0) return false;
 
