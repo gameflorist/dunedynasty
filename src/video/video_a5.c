@@ -11,7 +11,6 @@
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
-#include "../gui/widget.h"
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
 #include "../sprites.h"
@@ -70,7 +69,7 @@ VideoA5_Uninit(void)
 			}
 		}
 
-		for (uint16 shapeID = 0; shapeID < SHAPEID_MAX; shapeID++) {
+		for (enum ShapeID shapeID = 0; shapeID < SHAPEID_MAX; shapeID++) {
 			if (s_shape[shapeID][houseID] != NULL) {
 				if ((houseID + 1 == HOUSE_MAX) || (s_shape[shapeID][houseID] != s_shape[shapeID][houseID + 1]))
 					al_destroy_bitmap(s_shape[shapeID][houseID]);
@@ -298,7 +297,7 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 /*--------------------------------------------------------------*/
 
 static ALLEGRO_BITMAP *
-VideoA5_ExportShape(uint16 shapeID, int x, int y, int row_h,
+VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 		int *retx, int *rety, int *ret_row_h)
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
@@ -407,7 +406,7 @@ VideoA5_InitShapes(unsigned char *buf)
 }
 
 void
-VideoA5_DrawShape(uint16 shapeID, enum HouseType houseID, int x, int y, int flags)
+VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags)
 {
 	assert(shapeID < SHAPEID_MAX);
 	assert(houseID < HOUSE_MAX);

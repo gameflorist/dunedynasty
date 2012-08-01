@@ -5,6 +5,8 @@
 #ifndef GUI_WIDGET_H
 #define GUI_WIDGET_H
 
+#include "types.h"
+
 /**
  * Types of DrawMode available in the game.
  */

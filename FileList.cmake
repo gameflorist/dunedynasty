@@ -53,6 +53,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/script/structure.c
 	src/script/team.c
 	src/script/unit.c
+	src/shape.c
 	src/sprites.c
 	src/string.c
 	src/structure.c

@@ -4,7 +4,6 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include "types.h"
 #include "../os/math.h"
 
 #include "widget.h"
