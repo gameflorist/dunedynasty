@@ -8,13 +8,14 @@
 
 #include "../gui/mentat.h"
 #include "../gui/widget.h"
+#include "../input/scancode.h"
 #include "strings.h"
 
 WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	{ /* 0 */
 		/* index       */ 1,
 		/* clickProc   */ &GUI_Widget_Mentat_Click,
-		/* shortcut    */ 112,
+		/* shortcut    */ SCANCODE_F1,
 		/* flags       */ 1237,
 		/* spriteID    */ 7,
 		/* offsetX     */ 16,
@@ -26,7 +27,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	{ /* 1 */
 		/* index       */ 2,
 		/* clickProc   */ &GUI_Widget_Options_Click,
-		/* shortcut    */ 113,
+		/* shortcut    */ SCANCODE_F2,
 		/* flags       */ 1237,
 		/* spriteID    */ 9,
 		/* offsetX     */ 104,
@@ -50,7 +51,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	{ /* 3 */
 		/* index       */ 6,
 		/* clickProc   */ &GUI_Widget_Picture_Click,
-		/* shortcut    */ 114,
+		/* shortcut    */ SCANCODE_F3,
 		/* flags       */ 17605,
 		/* spriteID    */ -4,
 		/* offsetX     */ 258,
@@ -86,7 +87,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	{ /* 6 */
 		/* index       */ 7,
 		/* clickProc   */ &GUI_Widget_Cancel_Click,
-		/* shortcut    */ 110,
+		/* shortcut    */ SCANCODE_ESCAPE,
 		/* flags       */ 17605,
 		/* spriteID    */ -2,
 		/* offsetX     */ 258,
