@@ -46,6 +46,7 @@
 #include "map.h"
 #include "newui/menu.h"
 #include "newui/menubar.h"
+#include "newui/viewport.h"
 #include "pool/pool.h"
 #include "pool/house.h"
 #include "pool/unit.h"
@@ -860,6 +861,19 @@ static void InGame_Numpad_Move(uint16 key)
 		case SCANCODE_KEYPAD_3: /* NUMPAD 3 / PAGE DOWN */
 			Map_MoveDirection(3);
 			return;
+
+		case SCANCODE_1:
+		case SCANCODE_2:
+		case SCANCODE_3:
+		case SCANCODE_4:
+		case SCANCODE_5:
+		case SCANCODE_6:
+		case SCANCODE_7:
+		case SCANCODE_8:
+		case SCANCODE_9:
+		case SCANCODE_0:
+			Viewport_Hotkey(key - SCANCODE_1 + SQUADID_1);
+			break;
 
 		default: return;
 	}

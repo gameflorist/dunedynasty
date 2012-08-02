@@ -6,6 +6,7 @@
 
 extern void Viewport_Target(Unit *u, enum ActionType action, uint16 packed);
 extern void Viewport_Place(void);
+extern void Viewport_Hotkey(enum SquadID squad);
 extern void Viewport_DrawTiles(void);
 extern void Viewport_DrawSelectedUnit(int x, int y);
 extern void Viewport_DrawRallyPoint(void);

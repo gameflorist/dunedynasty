@@ -82,6 +82,9 @@ bool Unit_Load(FILE *fp, uint32 length)
 
 		/* Copy over the data */
 		*u = ul;
+
+		/* Extra data. */
+		u->squadID = SQUADID_INVALID;
 	}
 	if (length != 0) return false;
 

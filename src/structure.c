@@ -409,6 +409,7 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 	s->o.position.tile      = 0;
 	s->o.linkedID           = 0xFF;
 	s->state                = (g_debugScenario) ? STRUCTURE_STATE_IDLE : STRUCTURE_STATE_JUSTBUILT;
+	s->squadID = SQUADID_INVALID;
 	BuildQueue_Init(&s->queue);
 	s->rallyPoint = 0xFFFF;
 

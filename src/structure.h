@@ -94,6 +94,7 @@ typedef struct Structure {
 	 int16 state;                                           /*!< The state of the structure. @see StructureState. */
 	uint16 hitpointsMax;                                    /*!< Max amount of hitpoints. */
 
+	enum SquadID squadID;
 	BuildQueue queue;
 	uint16 rallyPoint;
 } Structure;

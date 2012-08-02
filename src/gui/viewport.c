@@ -76,7 +76,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		Video_SetCursor(spriteID);
 	}
 
-	if (w->index == 45) return true;
+	if (w->index == 45) return false;
 
 	click = false;
 	drag = false;

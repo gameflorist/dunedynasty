@@ -127,6 +127,8 @@ typedef struct Unit {
 	uint8  team;                                            /*!< If non-zero, unit is part of team. Value 1 means team 0, etc. */
 	uint16 timer;                                           /*!< Timer used in animation, to count down when to do the next step. */
 	uint8  route[14];                                       /*!< The current route the Unit is following. */
+
+	enum SquadID squadID;
 } Unit;
 
 /**

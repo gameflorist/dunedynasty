@@ -8,6 +8,12 @@
 #include "types.h"
 #include "script/script.h"
 
+enum SquadID {
+	SQUADID_INVALID = 0,
+	SQUADID_1 = 1,
+	SQUADID_MAX = 10
+};
+
 /**
  * Data common to Structure and Unit.
  */

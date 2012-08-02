@@ -55,6 +55,7 @@ bool Structure_Load(FILE *fp, uint32 length)
 		*s = sl;
 
 		/* Extra data. */
+		s->squadID = SQUADID_INVALID;
 		BuildQueue_Init(&s->queue);
 		s->rallyPoint = 0xFFFF;
 	}

@@ -456,7 +456,131 @@ Viewport_Click(Widget *w)
 		Map_SetSelection(packed);
 	}
 
-	return true;
+	return false;
+}
+
+void
+Viewport_Hotkey(enum SquadID squad)
+{
+	if (!(SQUADID_1 <= squad && squad <= SQUADID_MAX))
+		return;
+
+	if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE) {
+		GUI_Widget_Cancel_Click(NULL);
+	}
+
+	const bool key_ctrl = Input_Test(SCANCODE_LCTRL); /* same as SCANCODE_RCTRL. */
+
+	bool centre_on_selection = Input_Test(SCANCODE_LALT); /* same as SCANCODE_RALT. */
+	int cx, cy, count;
+	PoolFindStruct find;
+
+	cx = 0;
+	cy = 0;
+	count = 0;
+
+	if (key_ctrl) {
+		find.houseID = HOUSE_INVALID;
+		find.type = 0xFFFF;
+		find.index = 0xFFFF;
+
+		Unit *u = Unit_Find(&find);
+		while (u != NULL) {
+			if ((Unit_GetHouseID(u) == g_playerHouseID) && Unit_IsSelected(u)) {
+				u->squadID = squad;
+
+				cx += Tile_GetX(u->o.position);
+				cy += Tile_GetY(u->o.position);
+				count++;
+			}
+			else if (u->squadID == squad) {
+				u->squadID = SQUADID_INVALID;
+			}
+
+			u = Unit_Find(&find);
+		}
+
+		find.houseID = g_playerHouseID;
+		find.type = 0xFFFF;
+		find.index = 0xFFFF;
+
+		const Structure *st = Structure_Get_ByPackedTile(g_selectionPosition);
+		if (st && (st->o.houseID != g_playerHouseID))
+			st = NULL;
+
+		Structure *s = Structure_Find(&find);
+		while (s != NULL) {
+			if (s == st) {
+				s->squadID = squad;
+			}
+			else if (s->squadID == squad) {
+				s->squadID = SQUADID_INVALID;
+			}
+
+			s = Structure_Find(&find);
+		}
+	}
+	else {
+		const bool key_shift = (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT));
+
+		bool modified_selection = false;
+
+		find.houseID = HOUSE_INVALID;
+		find.type = 0xFFFF;
+		find.index = 0xFFFF;
+
+		Unit *u = Unit_Find(&find);
+		while (u != NULL) {
+			const bool is_controllable = (Unit_GetHouseID(u) == g_playerHouseID);
+
+			if ((u->squadID == squad) && is_controllable) {
+				if (!Unit_IsSelected(u)) {
+					Unit_Select(u);
+					modified_selection = true;
+				}
+			}
+			else if (!key_shift || !is_controllable) {
+				if (Unit_IsSelected(u)) {
+					Unit_Unselect(u);
+					modified_selection = true;
+				}
+			}
+
+			if (Unit_IsSelected(u)) {
+				cx += Tile_GetPosX(u->o.position);
+				cy += Tile_GetPosY(u->o.position);
+				count++;
+			}
+
+			u = Unit_Find(&find);
+		}
+
+		if (!modified_selection)
+			centre_on_selection = true;
+
+		if (!Unit_AnySelected()) {
+			find.houseID = g_playerHouseID;
+			find.type = 0xFFFF;
+			find.index = 0xFFFF;
+
+			Structure *s = Structure_Find(&find);
+			while (s != NULL) {
+				if (s->squadID == squad) {
+					Map_SetSelection(Tile_PackTile(s->o.position));
+					cx = Tile_GetPosX(s->o.position);
+					cy = Tile_GetPosY(s->o.position);
+					count = 1;
+					break;
+				}
+
+				s = Structure_Find(&find);
+			}
+		}
+	}
+
+	if (centre_on_selection && (count > 0)) {
+		Map_SetViewportPosition(Tile_PackXY(cx / count, cy / count));
+	}
 }
 
 void
