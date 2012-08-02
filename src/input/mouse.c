@@ -3,7 +3,6 @@
 /** @file src/mouse.c Mouse routines. */
 
 #include <stdlib.h>
-#include "types.h"
 #include "../os/math.h"
 #include "../os/sleep.h"
 
@@ -54,6 +53,7 @@ uint16 g_var_7019;
 uint8 g_mouseMode;
 uint16 g_inputFlags;
 
+static enum Scancode Mouse_CheckButtons(uint16 newButtonState);
 
 /**
  * Initialize the mouse driver.
@@ -77,7 +77,7 @@ void Mouse_EventHandler(uint16 mousePosX, uint16 mousePosY, bool mouseButtonLeft
 
 	if (g_var_7097 == 0 && (g_mouseMode != INPUT_MOUSE_MODE_RECORD || g_fileOperation == 0)) {
 		if (g_mouseMode == INPUT_MOUSE_MODE_NORMAL && (g_inputFlags & 0x1000) == 0) {
-			Input_HandleInput(Mouse_CheckButtons(newButtonState));
+			Input_EventHandler(Mouse_CheckButtons(newButtonState));
 		}
 
 		if (g_mouseMode != INPUT_MOUSE_MODE_PLAY && g_mouseLock == 0) {
@@ -150,19 +150,22 @@ uint16 Mouse_InsideRegion(int16 left, int16 top, int16 right, int16 bottom)
 
 void Mouse_SetMouseMode(uint8 mouseMode, const char *filename)
 {
+	VARIABLE_NOT_USED(filename);
+
 	switch (mouseMode) {
 		default: break;
 
 		case INPUT_MOUSE_MODE_NORMAL:
 			g_mouseMode = mouseMode;
 			if (g_mouseFileID != 0xFF) {
-				Input_Flags_ClearBits(INPUT_FLAG_KEY_RELEASE);
+				/* Input_Flags_ClearBits(INPUT_FLAG_KEY_RELEASE); */
 				File_Close(g_mouseFileID);
 			}
 			g_mouseFileID = 0xFF;
 			g_var_701B = true;
 			break;
 
+#if 0
 		case INPUT_MOUSE_MODE_RECORD:
 			if (g_mouseFileID != 0xFF) break;
 
@@ -212,6 +215,7 @@ void Mouse_SetMouseMode(uint8 mouseMode, const char *filename)
 			}
 			g_var_701B = false;
 			break;
+#endif
 	}
 
 	/* g_timerInput = 0; */
@@ -224,31 +228,36 @@ void Mouse_SetMouseMode(uint8 mouseMode, const char *filename)
  * @return \c 0x2D if no change, \c 0x41 for change in first button state,
  *     \c 0x42 for change in second button state, bit 11 means 'button released'.
  */
-uint16 Mouse_CheckButtons(uint16 newButtonState)
+static enum Scancode Mouse_CheckButtons(uint16 newButtonState)
 {
 	uint8 change;
-	uint16 result;
+	enum Scancode result = 0;
 
 	newButtonState &= 0xFF;
 
-	result = 0x2D;
 	change = newButtonState ^ g_prevButtonState;
 	if (change == 0) return result;
 
 	g_prevButtonState = newButtonState & 0xFF;
 
 	if ((change & 0x2) != 0) {
-		result = 0x42;
+		result = MOUSE_RMB;
 		if ((newButtonState & 0x2) == 0) {
-			result |= 0x800;
+			result |= SCANCODE_RELEASE;
 		}
 	}
 
 	if ((change & 0x1) != 0) {
-		result = 0x41;
+		result = MOUSE_LMB;
 		if ((newButtonState & 0x1) == 0) {
-			result |= 0x800;
+			result |= SCANCODE_RELEASE;
 		}
+	}
+
+	/* XXX: do we really need g_mouseClickX? */
+	if (change && ((result & SCANCODE_RELEASE) == 0)) {
+		g_mouseClickX = g_mouseX;
+		g_mouseClickY = g_mouseY;
 	}
 
 	return result;
@@ -301,7 +310,7 @@ void Mouse_HandleMovement(uint16 newButtonState, uint16 mouseX, uint16 mouseY)
 	g_mouseX = mouseX;
 	g_mouseY = mouseY;
 	if (g_mouseMode != INPUT_MOUSE_MODE_PLAY && g_mouseMode != INPUT_MOUSE_MODE_NORMAL && (g_inputFlags & 0x1000) == 0) {
-		Input_HandleInput(Mouse_CheckButtons(newButtonState));
+		Input_EventHandler(Mouse_CheckButtons(newButtonState));
 	}
 
 	Mouse_CheckMovement(mouseX, mouseY);

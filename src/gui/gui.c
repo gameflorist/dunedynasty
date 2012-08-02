@@ -737,6 +737,7 @@ uint16 GUI_DisplayModalMessage(const char *str, uint16 spriteID, ...)
 
 	Input_History_Clear();
 
+#if 0
 	do {
 		GUI_PaletteAnimate();
 
@@ -745,6 +746,9 @@ uint16 GUI_DisplayModalMessage(const char *str, uint16 spriteID, ...)
 	} while (ret == 0 || (ret & 0x800) != 0);
 
 	Input_HandleInput(0x841);
+#else
+	ret = 0;
+#endif
 
 	GUI_Mouse_Hide_Safe();
 
@@ -1618,7 +1622,7 @@ void GUI_EndStats_Show(uint16 killedAllied, uint16 killedEnemy, uint16 destroyed
 
 	while (true) {
 		GUI_HallOfFame_Tick();
-		if (Input_Keyboard_NextKey() != 0) break;
+		if (Input_IsInputAvailable()) break;
 		Video_Tick();
 		sleepIdle();
 	}
@@ -1659,9 +1663,9 @@ uint8 GUI_PickHouse(void)
 		for (i = 0; i < 3; i++) {
 			static uint8 l_var_2BAC[3][3] = {
 				/* x, y, shortcut */
-				{ 16, 56, 31 },
-				{ 112, 56, 25 },
-				{ 208, 56, 36 },
+				{ 16, 56, SCANCODE_A },
+				{ 112, 56, SCANCODE_O },
+				{ 208, 56, SCANCODE_H },
 			};
 			Widget *w2;
 
@@ -2695,19 +2699,21 @@ static int16 GUI_StrategicMap_ClickedRegion(void)
 
 	GUI_StrategicMap_AnimateArrows();
 
-	if (Input_Keyboard_NextKey() == 0) return 0;
+	if (!Input_IsInputAvailable()) return 0;
 
-	key = Input_WaitForValidInput();
-	if (key != 0xC6 && key != 0xC7) return 0;
+	key = Input_GetNextKey();
+	if (key != MOUSE_LMB) return 0;
 
 	return g_fileRgnclkCPS[(g_mouseClickY - 24) * 304 + g_mouseClickX - 8];
 }
 
 static bool GUI_StrategicMap_FastForwardToggleWithESC(void)
 {
-	if (Input_Keyboard_NextKey() == 0) return s_strategicMapFastForward;
+	if (!Input_IsInputAvailable())
+		return s_strategicMapFastForward;
 
-	if (Input_WaitForValidInput() != 0x1B) return s_strategicMapFastForward;
+	if (Input_GetNextKey() != SCANCODE_ESCAPE)
+		return s_strategicMapFastForward;
 
 	s_strategicMapFastForward = !s_strategicMapFastForward;
 

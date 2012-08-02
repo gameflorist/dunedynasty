@@ -188,7 +188,7 @@ bool GUI_Security_Show(void)
 
 		/* ENHANCEMENT -- In Dune2, the + 120 is on the other side, causing the 'You are wrong! / Well done.' screen to appear very short (close to invisible, so to say) */
 		while (Timer_GetTicks() + (g_dune2_enhanced ? 0 : 120) < tickWaitTill + (g_dune2_enhanced ? 120 : 0)) {
-			if (Input_Keyboard_NextKey() != 0) break;
+			if (Input_IsInputAvailable()) break;
 
 			if (Timer_GetTicks() < tickWaitTill) {
 				GUI_Mentat_Animation(1);

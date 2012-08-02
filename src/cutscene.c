@@ -61,6 +61,25 @@ static uint8 s_palette10[3 * 256 * 10];
 
 /*--------------------------------------------------------------*/
 
+static bool
+Cutscene_InputSkipScene(void)
+{
+	Input_Tick();
+
+	while (Input_IsInputAvailable()) {
+		const int key = Input_PeekNextKey();
+
+		if (key == SCANCODE_ESCAPE ||
+			key == SCANCODE_SPACE ||
+			key == MOUSE_RMB)
+			return true;
+
+		Input_GetNextKey();
+	}
+
+	return false;
+}
+
 static uint8
 Cutscene_GetPixel(uint16 x, uint16 y)
 {
@@ -630,7 +649,7 @@ static void GameLoop_PlayAnimation(void)
 				if (mode == 3) frame--;
 			}
 
-			if (Input_Keyboard_NextKey() != 0) {
+			if (Cutscene_InputSkipScene()) {
 				WSA_Unload(wsa);
 				return;
 			}
@@ -955,7 +974,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 
 		if (loc10 && stage == 0) break;
 
-		if (Input_Keyboard_NextKey() != 0) break;
+		if (Cutscene_InputSkipScene()) break;
 		Video_Tick();
 	}
 
@@ -1053,7 +1072,7 @@ static void GameLoop_GameCredits(void)
 
 		GameCredits_Play(s_buffer_1832, 20, 2, 4, 6);
 
-		if (Input_Keyboard_NextKey() != 0) break;
+		if (Cutscene_InputSkipScene()) break;
 
 		Music_Play(33);
 		sleepIdle();
@@ -1153,11 +1172,11 @@ static void Gameloop_Logos(void)
 
 	WSA_Unload(wsa);
 
-	if (Input_Keyboard_NextKey() == 0)
+	if (!Cutscene_InputSkipScene())
 		Voice_LoadVoices(0xFFFF);
 
 	while (Timer_GetTicks() < timeout1) {
-		if (Input_Keyboard_NextKey() == 0) {
+		if (!Cutscene_InputSkipScene()) {
 			Video_Tick();
 			sleepIdle();
 			continue;
@@ -1189,9 +1208,9 @@ static void Gameloop_Logos(void)
 		GFX_Screen_SetActive(oldScreenID);
 		return;
 	}
+#endif
 
 	GUI_SetPaletteAnimated(g_palette2, 60);
-#endif
 
 	GFX_ClearScreen();
 
@@ -1202,7 +1221,7 @@ static void Gameloop_Logos(void)
 	GUI_SetPaletteAnimated(g_palette_998A, 30);
 
 	for (int timeout = 0; timeout < 60; timeout++) {
-		if (Input_Keyboard_NextKey() == 0) {
+		if (!Cutscene_InputSkipScene()) {
 			Video_Tick();
 			Timer_Wait();
 			continue;
@@ -1227,7 +1246,7 @@ static void Gameloop_Logos(void)
 	GUI_SetPaletteAnimated(g_palette_998A, 30);
 
 	for (int timeout = 0; timeout < 180; timeout++) {
-		if (Input_Keyboard_NextKey() == 0) {
+		if (!Cutscene_InputSkipScene()) {
 			Video_Tick();
 			Timer_Wait();
 			continue;
@@ -1252,7 +1271,7 @@ void GameLoop_GameIntroAnimation(void)
 
 	Gameloop_Logos();
 
-	if (Input_Keyboard_NextKey() == 0) {
+	if (!Cutscene_InputSkipScene()) {
 		const HouseAnimation_Animation   *animation   = g_table_houseAnimation_animation[HOUSEANIMATION_INTRO];
 		const HouseAnimation_Subtitle    *subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_INTRO];
 		const HouseAnimation_SoundEffect *soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_INTRO];

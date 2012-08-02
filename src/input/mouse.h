@@ -5,6 +5,8 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
+#include "types.h"
+
 extern uint16 g_mouseLock;
 extern bool   g_doubleWidth;
 extern uint16 g_mouseX;
@@ -32,7 +34,6 @@ extern void Mouse_Init(void);
 extern void Mouse_EventHandler(uint16 mousePosX, uint16 mousePosY, bool mouseButtonLeft, bool mouseButtonRight);
 extern uint16 Mouse_InsideRegion(int16 left, int16 top, int16 right, int16 bottom);
 extern void Mouse_SetMouseMode(uint8 mouseMode, const char *filename);
-extern uint16 Mouse_CheckButtons(uint16 newButtonState);
 extern void Mouse_HandleMovement(uint16 newButtonState, uint16 mouseX, uint16 mouseY);
 extern void Mouse_HandleMovementIfMoved(uint16 newButtonState);
 

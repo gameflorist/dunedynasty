@@ -474,8 +474,8 @@ static uint16 GameLoop_HandleEvents(uint16 arg06, char **strings, uint32 arg10, 
 	fgColourSelected = props->fgColourSelected;
 
 	key = 0;
-	if (Input_IsInputAvailable() != 0) {
-		key = Input_Wait() & 0x8FF;
+	if (Input_IsInputAvailable()) {
+		key = Input_GetNextKey();
 	}
 
 	if (g_var_7097 == 0) {
@@ -487,39 +487,41 @@ static uint16 GameLoop_HandleEvents(uint16 arg06, char **strings, uint32 arg10, 
 	}
 
 	switch (key) {
-		case 0x60: /* NUMPAD 8 / ARROW UP */
+		case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
 			if (current-- == 0) current = last;
 			break;
 
-		case 0x62: /* NUMPAD 2 / ARROW DOWN */
+		case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
 			if (current++ == last) current = 0;
 			break;
 
-		case 0x5B: /* NUMPAD 7 / HOME */
-		case 0x65: /* NUMPAD 9 / PAGE UP */
+		case SCANCODE_KEYPAD_7: /* NUMPAD 7 / HOME */
+		case SCANCODE_KEYPAD_9: /* NUMPAD 9 / PAGE UP */
 			current = 0;
 			break;
 
-		case 0x5D: /* NUMPAD 1 / END */
-		case 0x67: /* NUMPAD 3 / PAGE DOWN */
+		case SCANCODE_KEYPAD_1: /* NUMPAD 1 / END */
+		case SCANCODE_KEYPAD_3: /* NUMPAD 3 / PAGE DOWN */
 			current = last;
 			break;
 
-		case 0x41: /* MOUSE LEFT BUTTON */
-		case 0x42: /* MOUSE RIGHT BUTTON */
+		case MOUSE_LMB: /* MOUSE LEFT BUTTON */
+		case MOUSE_RMB: /* MOUSE RIGHT BUTTON */
 			if (GameLoop_IsInRange(g_mouseClickX, g_mouseClickY, minX, minY, maxX, maxY)) {
 				current = (g_mouseClickY - minY) / lineHeight;
 				result = current;
 			}
 			break;
 
-		case 0x2B: /* NUMPAD 5 / RETURN */
-		case 0x3D: /* SPACE */
-		case 0x61:
+		case SCANCODE_ENTER:
+		case SCANCODE_KEYPAD_5: /* NUMPAD 5 / RETURN */
+		case SCANCODE_SPACE: /* SPACE */
+		/* case 0x61: */
 			result = current;
 			break;
 
 		default: {
+#if 0
 			uint8 i;
 
 			for (i = 0; i < props->height; i++) {
@@ -535,6 +537,7 @@ static uint16 GameLoop_HandleEvents(uint16 arg06, char **strings, uint32 arg10, 
 					break;
 				}
 			}
+#endif
 		} break;
 	}
 
@@ -719,9 +722,11 @@ static void GameLoop_GameIntroAnimationMenu(void)
 	bool loc02 = false;
 	bool loc06;
 
+#if 0
 	Input_Flags_ClearBits(INPUT_FLAG_KEY_RELEASE | INPUT_FLAG_UNKNOWN_0400 | INPUT_FLAG_UNKNOWN_0100 |
 	                      INPUT_FLAG_UNKNOWN_0080 | INPUT_FLAG_UNKNOWN_0040 | INPUT_FLAG_UNKNOWN_0020 |
 	                      INPUT_FLAG_UNKNOWN_0008 | INPUT_FLAG_UNKNOWN_0004 | INPUT_FLAG_UNKNOWN_0002);
+#endif
 
 	Timer_SetTimer(TIMER_GUI, true);
 
@@ -1009,59 +1014,42 @@ static void InGame_Numpad_Move(uint16 key)
 	if (key == 0) return;
 
 	switch (key) {
-		case 0x0010: /* TAB */
+#if 0
+		case SCANCODE_TAB: /* TAB, SHIFT TAB */
 			Map_SelectNext(true);
-			return;
-
-		case 0x0110: /* SHIFT TAB */
 			Map_SelectNext(false);
 			return;
+#endif
 
-		case 0x005C: /* NUMPAD 4 / ARROW LEFT */
-		case 0x045C:
-		case 0x055C:
+		case SCANCODE_KEYPAD_4: /* NUMPAD 4 / ARROW LEFT */
 			Map_MoveDirection(6);
 			return;
 
-		case 0x0066: /* NUMPAD 6 / ARROW RIGHT */
-		case 0x0466:
-		case 0x0566:
+		case SCANCODE_KEYPAD_6: /* NUMPAD 6 / ARROW RIGHT */
 			Map_MoveDirection(2);
 			return;
 
-		case 0x0060: /* NUMPAD 8 / ARROW UP */
-		case 0x0460:
-		case 0x0560:
+		case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
 			Map_MoveDirection(0);
 			return;
 
-		case 0x0062: /* NUMPAD 2 / ARROW DOWN */
-		case 0x0462:
-		case 0x0562:
+		case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
 			Map_MoveDirection(4);
 			return;
 
-		case 0x005B: /* NUMPAD 7 / HOME */
-		case 0x045B:
-		case 0x055B:
+		case SCANCODE_KEYPAD_7: /* NUMPAD 7 / HOME */
 			Map_MoveDirection(7);
 			return;
 
-		case 0x005D: /* NUMPAD 1 / END */
-		case 0x045D:
-		case 0x055D:
+		case SCANCODE_KEYPAD_1: /* NUMPAD 1 / END */
 			Map_MoveDirection(5);
 			return;
 
-		case 0x0065: /* NUMPAD 9 / PAGE UP */
-		case 0x0465:
-		case 0x0565:
+		case SCANCODE_KEYPAD_9: /* NUMPAD 9 / PAGE UP */
 			Map_MoveDirection(1);
 			return;
 
-		case 0x0067: /* NUMPAD 3 / PAGE DOWN */
-		case 0x0467:
-		case 0x0567:
+		case SCANCODE_KEYPAD_3: /* NUMPAD 3 / PAGE DOWN */
 			Map_MoveDirection(3);
 			return;
 

@@ -65,9 +65,6 @@ uint16 GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uin
 
 	/* Initialize */
 	{
-		Input_Flags_SetBits(INPUT_FLAG_UNKNOWN_0002);
-		Input_Flags_ClearBits(INPUT_FLAG_UNKNOWN_2000);
-
 		oldScreenID = GFX_Screen_SetActive(0);
 
 		oldValue_07AE_0000 = Widget_SetCurrentWidget(unknown1);
@@ -155,7 +152,7 @@ uint16 GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uin
 			continue;
 		}
 
-		key = Input_Keyboard_HandleKeys(key) & 0xFF;
+		/* key = Input_Keyboard_HandleKeys(key) & 0xFF; */
 
 		/* Names can't start with a space, and should be alpha-numeric */
 		if ((key == 0x20 && textLength == 0) || key < 0x20 || key > 0x7E) {
@@ -193,9 +190,6 @@ uint16 GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uin
 
 	/* Deinitialize */
 	{
-		Input_Flags_ClearBits(INPUT_FLAG_UNKNOWN_0002);
-		Input_Flags_SetBits(INPUT_FLAG_UNKNOWN_2000);
-
 		Widget_SetCurrentWidget(oldValue_07AE_0000);
 
 		GFX_Screen_SetActive(oldScreenID);

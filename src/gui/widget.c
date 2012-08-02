@@ -256,13 +256,13 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 	uint16 mouseX, mouseY;
 	uint16 buttonState;
 	uint16 returnValue;
-	uint16 key;
+	enum Scancode key;
 	bool fakeClick;
 
 	/* Get the key from the buffer, if there was any key pressed */
 	key = 0;
-	if (Input_IsInputAvailable() != 0) {
-		key = Input_Wait();
+	if (Input_IsInputAvailable()) {
+		key = Input_GetNextKey();
 	}
 
 	if (w == NULL) return key & 0x7FFF;
@@ -275,10 +275,10 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 		s_widgetReset = false;
 
 		/* Check for left click */
-		if (Input_Test(0x41) != 0) l_widget_button_state |= 0x0200;
+		if (Input_Test(MOUSE_LMB)) l_widget_button_state |= 0x0200;
 
 		/* Check for right click */
-		if (Input_Test(0x42) != 0) l_widget_button_state |= 0x2000;
+		if (Input_Test(MOUSE_RMB)) l_widget_button_state |= 0x2000;
 
 		/* Draw all the widgets */
 		for (; w != NULL; w = GUI_Widget_GetNext(w)) {
@@ -295,15 +295,15 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 
 		/* See if the key was a mouse button action */
 		if ((key & 0x8000) != 0) {
-			if ((key & 0x00FF) == 0xC7) buttonStateChange = 0x1000;
-			if ((key & 0x00FF) == 0xC6) buttonStateChange = 0x0100;
+			/* if ((key & 0x00FF) == 0xC7) buttonStateChange = 0x1000; */
+			/* if ((key & 0x00FF) == 0xC6) buttonStateChange = 0x0100; */
 		} else {
-			if ((key & 0x00FF) == 0x42) buttonStateChange = 0x1000;
-			if ((key & 0x00FF) == 0x41) buttonStateChange = 0x0100;
+			if ((key & 0x007F) == MOUSE_RMB) buttonStateChange = 0x1000;
+			if ((key & 0x007F) == MOUSE_LMB) buttonStateChange = 0x0100;
 		}
 
 		/* Mouse button up */
-		if ((key & 0x0800) != 0) {
+		if ((key & SCANCODE_RELEASE) != 0) {
 			buttonStateChange <<= 2;
 		}
 
@@ -360,7 +360,7 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 		}
 
 		/* Check if there was a keypress for the widget */
-		if ((key & 0x7F) != 0 && ((key & 0x7F) == w->shortcut || (key & 0x7F) == w->shortcut2)) {
+		if ((key & 0x7F) != 0 && ((key & 0x7F) == w->shortcut || (key & 0x7F) == w->shortcut2) && !(key & SCANCODE_RELEASE)) {
 			widgetHover = true;
 			w->state.s.keySelected = true;
 			key = 0;

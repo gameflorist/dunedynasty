@@ -1294,6 +1294,7 @@ bool GUI_Production_Up_Click(Widget *w)
 
 static void GUI_Purchase_ShowInvoice(void)
 {
+#if 0
 	Widget *w = g_widgetInvoiceTail;
 	uint16 oldScreenID = GFX_Screen_SetActive(2);
 	uint16 y = 48;
@@ -1376,6 +1377,7 @@ static void GUI_Purchase_ShowInvoice(void)
 	}
 
 	if (g_factoryWindowResult == FACTORY_CONTINUE) GUI_FactoryWindow_DrawDetails();
+#endif
 }
 
 /**

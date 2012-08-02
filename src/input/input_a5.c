@@ -127,10 +127,7 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event)
 				if (event->type == ALLEGRO_EVENT_KEY_UP)
 					sc |= SCANCODE_RELEASE;
 
-				if (sc & SCANCODE_EXTENDED)
-					Input_EventHandler(0xE0);
-
-				Input_EventHandler(sc & 0xFF);
+				Input_EventHandler(sc);
 			}
 			break;
 	}

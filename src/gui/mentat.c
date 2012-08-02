@@ -317,7 +317,6 @@ static void GUI_Mentat_ShowHelpList(bool proceed)
 
 	oldScreenID = GFX_Screen_SetActive(2);
 
-	Input_Flags_SetBits(INPUT_FLAG_KEY_REPEAT);
 	Input_History_Clear();
 
 	GUI_Mentat_Display(NULL, g_playerHouseID);
@@ -348,8 +347,6 @@ static void GUI_Mentat_ShowHelpList(bool proceed)
 
 	free(g_widgetMentatScrollUp); g_widgetMentatScrollUp = NULL;
 	free(g_widgetMentatScrollDown); g_widgetMentatScrollDown = NULL;
-
-	Input_Flags_ClearBits(INPUT_FLAG_KEY_REPEAT);
 
 	GFX_Screen_SetActive(oldScreenID);
 }
@@ -628,7 +625,7 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 	} else {
 		partNeedsRedraw = false;
 
-		if (Input_Test(0x41) == 0 && Input_Test(0x42) == 0) {
+		if (Input_Test(MOUSE_LMB) == 0 && Input_Test(MOUSE_RMB) == 0) {
 			if (movingMouthSprite != 0) {
 				movingMouthSprite = 0;
 				movingMouthTimer = 0;
@@ -661,7 +658,7 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 
 	partNeedsRedraw = false;
 
-	if (Input_Test(0x41) != 0 || Input_Test(0x42) != 0) {
+	if (Input_Test(MOUSE_LMB) != 0 || Input_Test(MOUSE_RMB) != 0) {
 		if (Mouse_InsideRegion(s_eyesLeft, s_eyesTop, s_eyesRight, s_eyesBottom) != 0) {
 			if (movingEyesSprite != 0x4) {
 				partNeedsRedraw = true;
@@ -1024,8 +1021,10 @@ bool GUI_Mentat_List_Click(Widget *w)
 
 	GUI_Mentat_Draw(true);
 
+#if 0
 	Input_HandleInput(0x841);
 	Input_HandleInput(0x842);
+#endif
 	return false;
 }
 
