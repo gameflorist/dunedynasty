@@ -111,13 +111,12 @@ static uint16 s_mouseSpriteTop;
 static uint16 s_mouseSpriteWidth;
 static uint16 s_mouseSpriteHeight;
 
-uint16 g_mouseSpriteHotspotX;
-uint16 g_mouseSpriteHotspotY;
-uint16 g_mouseWidth;
-uint16 g_mouseHeight;
+static uint16 g_mouseSpriteHotspotX;
+static uint16 g_mouseSpriteHotspotY;
+static uint16 g_mouseWidth;
+static uint16 g_mouseHeight;
 
 uint16 g_cursorSpriteID;
-uint16 g_cursorDefaultSpriteID;
 
 uint16 g_variable_37B2;
 bool g_var_37B8;
@@ -2176,7 +2175,6 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 				Map_SetSelection(g_structureActivePosition);
 				/* Fall-through */
 			case SELECTIONTYPE_STRUCTURE:
-				g_cursorDefaultSpriteID = 0;
 				GUI_DisplayText(NULL, -1);
 				break;
 
@@ -2240,9 +2238,6 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 			case SELECTIONTYPE_TARGET:
 				g_structureActivePosition = g_selectionPosition;
 				GUI_Widget_ActionPanel_Draw(true);
-
-				g_cursorDefaultSpriteID = 5;
-
 				Timer_SetTimer(TIMER_GAME, true);
 				break;
 

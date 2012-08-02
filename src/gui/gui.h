@@ -91,13 +91,7 @@ extern uint16 g_selectionHeight;
 extern int16  g_selectionState;
 extern bool g_var_81E6;
 
-extern uint16 g_mouseSpriteHotspotX;
-extern uint16 g_mouseSpriteHotspotY;
-extern uint16 g_mouseWidth;
-extern uint16 g_mouseHeight;
-
 extern uint16 g_cursorSpriteID;
-extern uint16 g_cursorDefaultSpriteID;
 
 extern uint16 g_variable_37B2;
 extern bool g_var_37B8;

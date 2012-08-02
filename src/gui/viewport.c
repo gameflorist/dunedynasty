@@ -49,20 +49,24 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 {
 	uint16 direction;
 	uint16 x, y;
-	uint16 spriteID;
 	uint16 packed;
 	bool click, drag;
 
-	spriteID = g_cursorSpriteID;
+	enum ShapeID spriteID = g_cursorSpriteID;
 	switch (w->index) {
 		default: break;
-		case 39: spriteID = 1; break;
-		case 40: spriteID = 2; break;
-		case 41: spriteID = 4; break;
-		case 42: spriteID = 3; break;
-		case 43: spriteID = g_cursorDefaultSpriteID; break;
-		case 44: spriteID = g_cursorDefaultSpriteID; break;
-		case 45: spriteID = 0; break;
+		case 39: spriteID = SHAPE_CURSOR_UP; break;
+		case 40: spriteID = SHAPE_CURSOR_RIGHT; break;
+		case 41: spriteID = SHAPE_CURSOR_LEFT; break;
+		case 42: spriteID = SHAPE_CURSOR_DOWN; break;
+		case 43: case 44: case 45:
+			if (g_selectionType == SELECTIONTYPE_TARGET) {
+				spriteID = SHAPE_CURSOR_TARGET;
+			}
+			else {
+				spriteID = SHAPE_CURSOR_NORMAL;
+			}
+			break;
 	}
 
 	if (spriteID != g_cursorSpriteID) {
