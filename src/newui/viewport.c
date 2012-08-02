@@ -584,6 +584,45 @@ Viewport_Hotkey(enum SquadID squad)
 }
 
 void
+Viewport_Homekey(void)
+{
+	Structure *s;
+	bool centre_on_selection = false;
+
+	if (g_selectionType == SELECTIONTYPE_TARGET) {
+		GUI_Widget_Cancel_Click(NULL);
+	}
+	else if (g_selectionType == SELECTIONTYPE_PLACE) {
+		centre_on_selection = true;
+	}
+
+	PoolFindStruct find;
+
+	find.houseID = g_playerHouseID;
+	find.type = STRUCTURE_CONSTRUCTION_YARD;
+	find.index = 0xFFFF;
+
+	s = Structure_Find(&find);
+	if (s != NULL) {
+		if (g_selectionType != SELECTIONTYPE_PLACE) {
+			if (s == Structure_Get_ByPackedTile(g_selectionPosition)) {
+				centre_on_selection = true;
+			}
+			else {
+				Map_SetSelection(Tile_PackTile(s->o.position));
+			}
+		}
+
+		if (centre_on_selection) {
+			const int cx = Tile_GetPosX(s->o.position);
+			const int cy = Tile_GetPosY(s->o.position);
+
+			Map_SetViewportPosition(Tile_PackXY(cx, cy));
+		}
+	}
+}
+
+void
 Viewport_DrawTiles(void)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];

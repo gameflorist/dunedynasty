@@ -875,6 +875,10 @@ static void InGame_Numpad_Move(uint16 key)
 			Viewport_Hotkey(key - SCANCODE_1 + SQUADID_1);
 			break;
 
+		case SCANCODE_H:
+			Viewport_Homekey();
+			break;
+
 		default: return;
 	}
 }
