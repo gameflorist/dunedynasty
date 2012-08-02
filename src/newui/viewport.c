@@ -13,6 +13,7 @@
 #include "../gfx.h"
 #include "../gui/gui.h"
 #include "../house.h"
+#include "../input/input.h"
 #include "../input/mouse.h"
 #include "../map.h"
 #include "../opendune.h"
@@ -31,12 +32,25 @@
 #include "../unit.h"
 #include "../video/video.h"
 
+enum SelectionMode {
+	SELECTION_MODE_NONE,
+	SELECTION_MODE_CONTROLLABLE_UNIT,
+	SELECTION_MODE_UNCONTROLLABLE_UNIT,
+	SELECTION_MODE_STRUCTURE
+};
+
 /* Selection box is in screen coordinates. */
 static bool selection_box_active = false;
 static int selection_box_x1;
 static int selection_box_x2;
 static int selection_box_y1;
 static int selection_box_y2;
+
+static bool
+Map_InRange(int xy)
+{
+	return (0 <= xy && xy < MAP_SIZE_MAX);
+}
 
 static int
 Map_Clamp(int x)
@@ -78,6 +92,27 @@ Viewport_ClampSelectionBoxY(int y)
 	return y;
 }
 
+static enum SelectionMode
+Viewport_GetSelectionMode(void)
+{
+	if (Unit_AnySelected()) {
+		if (Unit_GetHouseID(Unit_FirstSelected()) == g_playerHouseID) {
+			return SELECTION_MODE_CONTROLLABLE_UNIT;
+		}
+		else {
+			return SELECTION_MODE_UNCONTROLLABLE_UNIT;
+		}
+	}
+	else {
+		if (Structure_Get_ByPackedTile(g_selectionPosition) != NULL) {
+			return SELECTION_MODE_STRUCTURE;
+		}
+		else {
+			return SELECTION_MODE_NONE;
+		}
+	}
+}
+
 static void
 Viewport_SelectRegion(Widget *w)
 {
@@ -86,30 +121,47 @@ Viewport_SelectRegion(Widget *w)
 	const int dy = selection_box_y2 - selection_box_y1;
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
+	const enum SelectionMode mode = Viewport_GetSelectionMode();
 
 	/* Select individual unit or structure. */
 	if (dx*dx + dy*dy < radius*radius) {
 		const int tilex = x0 + (selection_box_x2 - w->offsetX) / TILE_SIZE;
 		const int tiley = y0 + (selection_box_y2 - w->offsetY) / TILE_SIZE;
 
-		if (!(0 <= tilex && tilex < MAP_SIZE_MAX) &&
-		     (0 <= tiley && tiley < MAP_SIZE_MAX))
+		if (!(Map_InRange(tilex) && Map_InRange(tiley)))
 			return;
 
 		const uint16 packed = Tile_PackXY(tilex, tiley);
 
-		Map_SetSelection(packed);
+		if (mode == SELECTION_MODE_NONE) {
+			Map_SetSelection(packed);
+		}
+		else if (mode == SELECTION_MODE_CONTROLLABLE_UNIT || mode == SELECTION_MODE_UNCONTROLLABLE_UNIT) {
+			Unit *u = Unit_Get_ByPackedTile(packed);
+
+			if (u == NULL) {
+			}
+			else if (Unit_IsSelected(u)) {
+				Unit_Unselect(u);
+			}
+			else if (Unit_GetHouseID(u) == g_playerHouseID) {
+				Unit_Select(u);
+			}
+		}
+		else if (mode == SELECTION_MODE_STRUCTURE) {
+			if (Structure_Get_ByPackedTile(packed) == Structure_Get_ByPackedTile(g_selectionPosition))
+				Map_SetSelection(0xFFFF);
+		}
 	}
 
 	/* Box selection. */
-	else {
+	else if (mode == SELECTION_MODE_NONE || mode == SELECTION_MODE_CONTROLLABLE_UNIT) {
 		const int x1 = Map_Clamp(x0 + (selection_box_x1 - w->offsetX) / TILE_SIZE);
 		const int x2 = Map_Clamp(x0 + (selection_box_x2 - w->offsetX) / TILE_SIZE);
 		const int y1 = Map_Clamp(y0 + (selection_box_y1 - w->offsetY) / TILE_SIZE);
 		const int y2 = Map_Clamp(y0 + (selection_box_y2 - w->offsetY) / TILE_SIZE);
 
 		PoolFindStruct find;
-		bool added_units = false;
 
 		find.houseID = g_playerHouseID;
 		find.type = 0xFFFF;
@@ -122,16 +174,14 @@ Viewport_SelectRegion(Widget *w)
 			const int uy = Tile_GetPosY(u->o.position);
 
 			if ((x1 <= ux && ux <= x2) && (y1 <= uy && uy <= y2)) {
-				if (!Unit_IsSelected(u)) {
+				if (!Unit_IsSelected(u))
 					Unit_Select(u);
-					added_units = true;
-				}
 			}
 
 			u = Unit_Find(&find);
 		}
 
-		if (added_units)
+		if (Unit_AnySelected())
 			return;
 
 		find.index = 0xFFFF;
@@ -300,7 +350,10 @@ Viewport_Click(Widget *w)
 			selection_box_x1 = g_mouseX;
 			selection_box_y1 = g_mouseY;
 
-			Unit_UnselectAll();
+			if ((Input_Test(SCANCODE_LSHIFT) == false) && (Input_Test(SCANCODE_RSHIFT) == false)) {
+				Map_SetSelection(0xFFFF);
+				Unit_UnselectAll();
+			}
 		}
 
 		return true;
