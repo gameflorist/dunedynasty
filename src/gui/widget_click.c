@@ -25,6 +25,7 @@
 #include "../map.h"
 #include "../newui/actionpanel.h"
 #include "../opendune.h"
+#include "../pool/house.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
 #include "../save.h"
@@ -78,11 +79,21 @@ static void GUI_Widget_Scrollbar_Scroll(WidgetScrollbar *scrollbar, uint16 scrol
  */
 bool GUI_Widget_SpriteTextButton_Click(Widget *w)
 {
-	Structure *s;
+	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 
-	VARIABLE_NOT_USED(w);
+	if (s == NULL)
+		return false;
 
-	s = Structure_Get_ByPackedTile(g_selectionPosition);
+	if (s->o.type == STRUCTURE_STARPORT) {
+		const House *h = House_Get_ByIndex(s->o.houseID);
+
+		if (h->starportLinkedID == 0xFFFF) {
+			return ActionPanel_ClickStarport(w, s);
+		}
+		else {
+			return false;
+		}
+	}
 
 	switch (g_productionStringID) {
 		default: break;

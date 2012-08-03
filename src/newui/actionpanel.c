@@ -9,8 +9,10 @@
 #include "../gui/gui.h"
 #include "../gui/widget.h"
 #include "../input/mouse.h"
+#include "../opendune.h"
 #include "../pool/house.h"
 #include "../pool/structure.h"
+#include "../pool/unit.h"
 #include "../string.h"
 #include "../table/strings.h"
 #include "../unit.h"
@@ -134,7 +136,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATEARRIVAL_INTMINUS_D), x0 + 258, y0 + 88, 29, 0, 0x11, h->starportTimeLeft);
 			}
 			else {
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATE_INORBIT_ANDAWAITINGORDER), x0 + 258, y0 + 88, 29, 0, 0x11);
+				/* GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATE_INORBIT_ANDAWAITINGORDER), x0 + 258, y0 + 88, 29, 0, 0x11); */
 			}
 			break;
 
@@ -196,6 +198,18 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, int item,
 	if (h != NULL) *h = height;
 }
 
+static void
+ActionPanel_SendOrderButtonDimensions(const Widget *widget,
+		int *x1, int *y1, int *x2, int *y2, int *w, int *h)
+{
+	if (x1 != NULL)	*x1 = widget->offsetX;
+	if (y1 != NULL)	*y1 = widget->offsetY + widget->height - 10;
+	if (x2 != NULL)	*x2 = widget->offsetX + widget->width - 1;
+	if (y2 != NULL)	*y2 = widget->offsetY + widget->height - 1;
+	if (w != NULL) *w = widget->width;
+	if (h != NULL) *h = 10;
+}
+
 bool
 ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 {
@@ -209,7 +223,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if (!(x1 <= g_mouseX && g_mouseX <= x2))
 		return false;
 
-	Structure_GetBuildable(s);
+	Structure_PopulateBuildable(s, 0);
 	GUI_FactoryWindow_InitItems(s->o.type);
 
 	item = (g_mouseY - y1) / (h + 1);
@@ -267,7 +281,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			case STR_COMPLETED:
 			case STR_D_DONE:
 				if (lmb) {
-					BuildQueue_Add(&s->queue, clicked_type);
+					BuildQueue_Add(&s->queue, clicked_type, 0);
 				}
 				else if (rmb && (g_productionStringID == STR_D_DONE)) {
 					s->o.flags.s.onHold = true;
@@ -280,11 +294,126 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	}
 	else {
 		if (lmb) {
-			BuildQueue_Add(&s->queue, clicked_type);
+			BuildQueue_Add(&s->queue, clicked_type, 0);
 		}
 		else if (rmb) {
-			BuildQueue_RemoveTail(&s->queue, clicked_type);
+			BuildQueue_RemoveTail(&s->queue, clicked_type, NULL);
 		}
+	}
+
+	return false;
+}
+
+static void
+ActionPanel_ClickStarportOrder(Structure *s)
+{
+	uint16 objectType;
+	House *h = g_playerHouse;
+
+	while ((objectType = BuildQueue_RemoveHead(&s->queue)) != 0xFFFF) {
+		Unit *u;
+
+		g_var_38BC++;
+		{
+			tile32 tile;
+			tile.tile = 0xFFFFFFFF;
+			u = Unit_Create(UNIT_INDEX_INVALID, (uint8)objectType, s->o.houseID, tile, 0);
+		}
+		g_var_38BC--;
+
+		if (u == NULL) {
+			/* XXX: What is going on here? */
+			h->credits += g_table_unitInfo[UNIT_CARRYALL].o.buildCredits;
+			if (s->o.houseID != g_playerHouseID)
+				continue;
+
+			GUI_DisplayText(String_Get_ByIndex(STR_UNABLE_TO_CREATE_MORE), 2);
+			continue;
+		}
+
+		g_structureIndex = s->o.index;
+
+		if (h->starportTimeLeft == 0) h->starportTimeLeft = g_table_houseInfo[h->index].starportDeliveryTime;
+
+		u->o.linkedID = h->starportLinkedID & 0xFF;
+		h->starportLinkedID = u->o.index;
+	}
+}
+
+static void
+ActionPanel_ClickStarportPlus(Structure *s, int entry)
+{
+	const FactoryWindowItem *item = &g_factoryWindowItems[entry];
+	const uint16 type = item->objectType;
+
+	House *h = g_playerHouse;
+
+	if ((g_starportAvailable[type] > 0) && (item->credits <= h->credits)) {
+		BuildQueue_Add(&s->queue, item->objectType, item->credits);
+
+		if (g_starportAvailable[type] == 1) {
+			g_starportAvailable[type] = -1;
+		}
+		else {
+			g_starportAvailable[type]--;
+		}
+
+		h->credits -= item->credits;
+	}
+}
+
+static void
+ActionPanel_ClickStarportMinus(Structure *s, int entry)
+{
+	const FactoryWindowItem *item = &g_factoryWindowItems[entry];
+	const uint16 type = item->objectType;
+
+	House *h = g_playerHouse;
+	int credits;
+
+	if (BuildQueue_RemoveTail(&s->queue, type, &credits)) {
+		if (g_starportAvailable[type] == -1) {
+			g_starportAvailable[type] = 1;
+		}
+		else {
+			g_starportAvailable[type]++;
+		}
+
+		h->credits += credits;
+	}
+}
+
+bool
+ActionPanel_ClickStarport(const Widget *widget, Structure *s)
+{
+	const bool lmb = (widget->state.s.buttonState & 0x04);
+	const bool rmb = (widget->state.s.buttonState & 0x40);
+
+	int x1, y1, x2, y2, h;
+	int item;
+
+	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
+	if (Mouse_InRegion(x1, y1, x2, y2) && lmb) {
+		ActionPanel_ClickStarportOrder(s);
+		return true;
+	}
+
+	ActionPanel_ProductionButtonDimensions(widget, 0, &x1, &y1, &x2, NULL, NULL, &h);
+	if (!(x1 <= g_mouseX && g_mouseX <= x2))
+		return false;
+
+	Structure_PopulateBuildable(s, 0);
+	GUI_FactoryWindow_InitItems(STRUCTURE_STARPORT);
+
+	item = (g_mouseY - y1) / (h + 1);
+	if (!(0 <= item && item < g_factoryWindowTotal))
+		return false;
+
+	if (lmb) {
+		ActionPanel_ClickStarportPlus(s, item);
+	}
+	else if (rmb) {
+		ActionPanel_ClickStarportMinus(s, item);
 	}
 
 	return false;
@@ -308,6 +437,26 @@ ActionPanel_DrawStructureLayout(uint16 type, int x1, int y1)
 	}
 }
 
+static void
+ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
+{
+	int x1, y1, x2, y2, w, h;
+	bool buttonDown = false;
+
+	if (BuildQueue_IsEmpty(&s->queue))
+		return;
+
+	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, &w, &h);
+
+	if (Mouse_InRegion(x1, y1, x2, y2) && widget->state.s.hover2) {
+		buttonDown = true;
+	}
+
+	GUI_DrawWiredRectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 12);
+	GUI_DrawBorder(x1, y1, w, h, buttonDown ? 0 : 1, true);
+	GUI_DrawText_Wrapper("Send Order", x1 + w/2, y1 + 1, 16, 0, 0x121);
+}
+
 void
 ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 {
@@ -321,7 +470,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		return;
 	}
 
-	Structure_GetBuildable(s);
+	Structure_PopulateBuildable(s, 0);
 	GUI_FactoryWindow_InitItems(s->o.type);
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
@@ -336,8 +485,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 		ActionPanel_ProductionButtonDimensions(widget, item, &x1, &y1, &x2, &y2, &w, &h);
 
-		if ((x1 <= g_mouseX && g_mouseX <= x2) &&
-		    (y1 <= g_mouseY && g_mouseY <= y2) && (widget->state.s.hover2)) {
+		if (Mouse_InRegion(x1, y1, x2, y2) && widget->state.s.hover2) {
 			buttonDown = true;
 			fg = 0xE;
 		}
@@ -345,7 +493,13 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		GUI_DrawWiredRectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 12);
 		GUI_DrawBorder(x1, y1, w, h, buttonDown ? 0 : 1, true);
 
-		if (oi->available < 0) {
+		if ((s->o.type == STRUCTURE_STARPORT) && (g_starportAvailable[object_type] < 0)) {
+			Shape_DrawGrey(oi->spriteID, x1 + 2, y1 + 2, 0, 0);
+
+			GUI_DrawText_Wrapper("OUT OF", x1 + w/2, y1 + 4, 6, 0, 0x132);
+			GUI_DrawText_Wrapper("STOCK", x1 + w/2, y1 + 15, 6, 0, 0x132);
+		}
+		else if (oi->available < 0) {
 			Shape_DrawGrey(oi->spriteID, x1 + 2, y1 + 2, 0, 0);
 		}
 		else {
@@ -382,7 +536,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			}
 		}
 
-		GUI_DrawText_Wrapper("%d", x1 + 2 + icon_w/2, y1 + h - 8, 29, 0, 0x111, oi->buildCredits);
+		GUI_DrawText_Wrapper("%d", x1 + 2 + icon_w/2, y1 + h - 8, 29, 0, 0x111, g_factoryWindowItems[item].credits);
 
 		int count = BuildQueue_Count(&s->queue, object_type);
 		if (count > 0) {
@@ -395,4 +549,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			}
 		}
 	}
+
+	if (s->o.type == STRUCTURE_STARPORT)
+		ActionPanel_DrawStarportOrder(widget, s);
 }

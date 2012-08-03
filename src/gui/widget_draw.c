@@ -799,11 +799,11 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 						GUI_Widget_MakeNormal(widget24, false);
 					}
 
-					if (o->type != STRUCTURE_STARPORT) {
-						if (oi->flags.factory || (o->type == STRUCTURE_PALACE && s->countDown == 0)) {
-							GUI_Widget_MakeVisible(widget2C);
-							GUI_Widget_Draw(widget2C);
-						}
+					if ((oi->flags.factory && o->type != STRUCTURE_STARPORT) ||
+					    (o->type == STRUCTURE_STARPORT && (h->starportLinkedID == 0xFFFF)) ||
+					    (o->type == STRUCTURE_PALACE && s->countDown == 0)) {
+						GUI_Widget_MakeVisible(widget2C);
+						GUI_Widget_Draw(widget2C);
 					}
 
 					ActionPanel_DrawStructureDescription(s);

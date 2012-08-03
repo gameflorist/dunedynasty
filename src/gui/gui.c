@@ -1888,9 +1888,13 @@ void GUI_FactoryWindow_InitItems(enum StructureType s)
 	}
 
 	if (g_factoryWindowTotal == 0) {
+#if 0
 		GUI_DisplayModalMessage("ERROR: No items in construction list!", 0xFFFF);
 		PrepareEnd();
 		exit(0);
+#else
+		return;
+#endif
 	}
 
 	qsort(g_factoryWindowItems, g_factoryWindowTotal, sizeof(FactoryWindowItem), GUI_FactoryWindow_Sorter);

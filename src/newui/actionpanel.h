@@ -12,5 +12,6 @@ extern void ActionPanel_DrawActionDescription(uint16 stringID, int x, int y, uin
 extern void ActionPanel_DrawMissileCountdown(uint8 fg, int count);
 extern void ActionPanel_DrawFactory(const Widget *widget, Structure *s);
 extern bool ActionPanel_ClickFactory(const Widget *widget, Structure *s);
+extern bool ActionPanel_ClickStarport(const Widget *widget, Structure *s);
 
 #endif

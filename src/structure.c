@@ -276,6 +276,9 @@ void GameLoop_Structure(void)
 						if ((s->o.linkedID == 0xFF) && (g_selectionType != SELECTIONTYPE_PLACE))
 							start_next = true;
 					}
+					else if (s->o.type == STRUCTURE_STARPORT) {
+						start_next = false;
+					}
 					else if (s->state == STRUCTURE_STATE_IDLE) {
 						start_next = true;
 					}
@@ -1475,7 +1478,6 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 
 	if (objectType == 0xFFFF || objectType == 0xFFFE) {
 		uint16 upgradeCost = 0;
-		uint32 buildable;
 
 		if (Structure_IsUpgradable(s) && si->o.hitpoints == s->o.hitpoints) {
 			upgradeCost = (si->o.buildCredits + (si->o.buildCredits >> 15)) / 2;
@@ -1484,90 +1486,8 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 		if (upgradeCost != 0 && s->o.type == STRUCTURE_HIGH_TECH && s->o.houseID == HOUSE_HARKONNEN) upgradeCost = 0;
 		if (s->o.type == STRUCTURE_STARPORT) upgradeCost = 0;
 
-		buildable = Structure_GetBuildable(s);
-
-		if (buildable == 0) {
-			s->objectType = 0;
+		if (!Structure_PopulateBuildable(s, objectType))
 			return false;
-		}
-
-		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-			uint8 i;
-
-			g_factoryWindowConstructionYard = true;
-
-			for (i = 0; i < STRUCTURE_MAX; i++) {
-				if ((buildable & (1 << i)) == 0) continue;
-				g_table_structureInfo[i].o.available = 1;
-				if (objectType != 0xFFFE) continue;
-				s->objectType = i;
-				return false;
-			}
-		} else {
-			g_factoryWindowConstructionYard = false;
-
-			if (s->o.type == STRUCTURE_STARPORT) {
-				uint8 linkedID = 0xFF;
-				int16 loc60[UNIT_MAX];
-				Unit *u;
-				bool loop = true;
-
-				memset(loc60, 0, UNIT_MAX * 2);
-
-				while (loop) {
-					uint8 i;
-
-					loop = false;
-
-					for (i = 0; i < UNIT_MAX; i++) {
-						int16 unitsAtStarport = g_starportAvailable[i];
-
-						if (unitsAtStarport == 0) {
-							g_table_unitInfo[i].o.available = 0;
-							continue;
-						}
-
-						if (unitsAtStarport < 0) {
-							g_table_unitInfo[i].o.available = -1;
-							continue;
-						}
-
-						if (loc60[i] >= unitsAtStarport) continue;
-
-						g_var_38BC++;
-						u = Unit_Allocate(UNIT_INDEX_INVALID, i, s->o.houseID);
-						g_var_38BC--;
-
-						if (u != NULL) {
-							loop = true;
-							u->o.linkedID = linkedID;
-							linkedID = u->o.index & 0xFF;
-							loc60[i]++;
-							g_table_unitInfo[i].o.available = (int8)loc60[i];
-							continue;
-						}
-
-						if (loc60[i] == 0) g_table_unitInfo[i].o.available = -1;
-					}
-				}
-
-				while (linkedID != 0xFF) {
-					u = Unit_Get_ByIndex(linkedID);
-					linkedID = u->o.linkedID;
-					Unit_Free(u);
-				}
-			} else {
-				uint8 i;
-
-				for (i = 0; i < UNIT_MAX; i++) {
-					if ((buildable & (1 << i)) == 0) continue;
-					g_table_unitInfo[i].o.available = 1;
-					if (objectType != 0xFFFE) continue;
-					s->objectType = i;
-					return false;
-				}
-			}
-		}
 
 		if (objectType == 0xFFFF) {
 			FactoryResult res;
@@ -1955,6 +1875,99 @@ uint32 Structure_GetBuildable(Structure *s)
 		default:
 			return 0;
 	}
+}
+
+/**
+ * Fill in the available units array for the given structure.
+ */
+bool Structure_PopulateBuildable(Structure *s, uint16 objectType)
+{
+	uint32 buildable = Structure_GetBuildable(s);
+
+	if (buildable == 0) {
+		s->objectType = 0;
+		return false;
+	}
+
+	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		uint8 i;
+
+		g_factoryWindowConstructionYard = true;
+
+		for (i = 0; i < STRUCTURE_MAX; i++) {
+			if ((buildable & (1 << i)) == 0) continue;
+			g_table_structureInfo[i].o.available = 1;
+			if (objectType != 0xFFFE) continue;
+			s->objectType = i;
+			return false;
+		}
+	} else {
+		g_factoryWindowConstructionYard = false;
+
+		if (s->o.type == STRUCTURE_STARPORT) {
+			uint8 linkedID = 0xFF;
+			int16 loc60[UNIT_MAX];
+			Unit *u;
+			bool loop = true;
+
+			memset(loc60, 0, UNIT_MAX * 2);
+
+			while (loop) {
+				uint8 i;
+
+				loop = false;
+
+				for (i = 0; i < UNIT_MAX; i++) {
+					int16 unitsAtStarport = g_starportAvailable[i];
+
+					if (unitsAtStarport == 0) {
+						g_table_unitInfo[i].o.available = 0;
+						continue;
+					}
+
+					if (unitsAtStarport < 0) {
+						g_table_unitInfo[i].o.available = -1;
+						continue;
+					}
+
+					if (loc60[i] >= unitsAtStarport) continue;
+
+					g_var_38BC++;
+					u = Unit_Allocate(UNIT_INDEX_INVALID, i, s->o.houseID);
+					g_var_38BC--;
+
+					if (u != NULL) {
+						loop = true;
+						u->o.linkedID = linkedID;
+						linkedID = u->o.index & 0xFF;
+						loc60[i]++;
+						g_table_unitInfo[i].o.available = (int8)loc60[i];
+						continue;
+					}
+
+					if (loc60[i] == 0) g_table_unitInfo[i].o.available = -1;
+				}
+			}
+
+			while (linkedID != 0xFF) {
+				u = Unit_Get_ByIndex(linkedID);
+				linkedID = u->o.linkedID;
+				Unit_Free(u);
+			}
+		} else {
+			uint8 i;
+
+			for (i = 0; i < UNIT_MAX; i++) {
+				if ((buildable & (1 << i)) == 0) continue;
+				g_table_unitInfo[i].o.available = 1;
+				if (objectType != 0xFFFE) continue;
+				s->objectType = i;
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 /**

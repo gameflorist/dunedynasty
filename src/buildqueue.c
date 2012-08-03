@@ -29,7 +29,7 @@ BuildQueue_Free(BuildQueue *queue)
 }
 
 static BuildQueueItem *
-BuildQueue_AllocItem(uint16 objectType)
+BuildQueue_AllocItem(uint16 objectType, int credits)
 {
 	BuildQueueItem *e = malloc(sizeof(*e));
 	assert(e);
@@ -37,14 +37,15 @@ BuildQueue_AllocItem(uint16 objectType)
 	e->next = NULL;
 	e->prev = NULL;
 	e->objectType = objectType;
+	e->credits = credits;
 
 	return e;
 }
 
 void
-BuildQueue_Add(BuildQueue *queue, uint16 objectType)
+BuildQueue_Add(BuildQueue *queue, uint16 objectType, int credits)
 {
-	BuildQueueItem *e = BuildQueue_AllocItem(objectType);
+	BuildQueueItem *e = BuildQueue_AllocItem(objectType, credits);
 	
 	if (queue->first == NULL)
 		queue->first = e;
@@ -81,8 +82,8 @@ BuildQueue_RemoveHead(BuildQueue *queue)
 	return ret;
 }
 
-void
-BuildQueue_RemoveTail(BuildQueue *queue, uint16 objectType)
+bool
+BuildQueue_RemoveTail(BuildQueue *queue, uint16 objectType, int *credits)
 {
 	BuildQueueItem *e = queue->last;
 
@@ -100,13 +101,27 @@ BuildQueue_RemoveTail(BuildQueue *queue, uint16 objectType)
 			if (queue->last == e)
 				queue->last = e->prev;
 
+			if (credits != NULL)
+				*credits = e->credits;
+
 			free(e);
-			break;
+			return true;
 		}
 		else {
 			e = e->prev;
 		}
 	}
+
+	if (credits != NULL)
+		*credits = 0;
+
+	return false;
+}
+
+bool
+BuildQueue_IsEmpty(const BuildQueue *queue)
+{
+	return (queue->first == NULL);
 }
 
 int
