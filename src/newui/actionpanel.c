@@ -202,6 +202,9 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	int x1, y1, x2, h;
 	int item;
 
+	if (s->o.flags.s.upgrading)
+		return false;
+
 	ActionPanel_ProductionButtonDimensions(widget, 0, &x1, &y1, &x2, NULL, NULL, &h);
 	if (!(x1 <= g_mouseX && g_mouseX <= x2))
 		return false;
@@ -296,6 +299,16 @@ ActionPanel_DrawStructureLayout(uint16 type, int x1, int y1)
 void
 ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 {
+	if (g_productionStringID == STR_UPGRADINGD_DONE) {
+		const int percentDone = 100 - s->upgradeTimeLeft;
+		int x1, y1, h;
+
+		ActionPanel_ProductionButtonDimensions(widget, 0, &x1, &y1, NULL, NULL, NULL, &h);
+
+		GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), x1, y1 + h - 19, 0xF, 0, 0x021, percentDone);
+		return;
+	}
+
 	Structure_GetBuildable(s);
 	GUI_FactoryWindow_InitItems(s->o.type);
 
