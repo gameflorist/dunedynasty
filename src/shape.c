@@ -55,3 +55,10 @@ Shape_DrawRemap(enum ShapeID shapeID, enum HouseType houseID, int x, int y, enum
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
 	Video_DrawShape(shapeID, houseID, x, y, flags & 0x3);
 }
+
+void
+Shape_DrawGrey(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int flags)
+{
+	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
+	Video_DrawShapeGrey(shapeID, x, y, flags & 0x3);
+}

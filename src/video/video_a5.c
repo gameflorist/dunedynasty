@@ -320,7 +320,7 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 
 static ALLEGRO_BITMAP *
 VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
-		int *retx, int *rety, int *ret_row_h)
+		int *retx, int *rety, int *ret_row_h, unsigned char *remap)
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
@@ -330,7 +330,7 @@ VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 	ALLEGRO_BITMAP *bmp;
 
 	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, h, row_h, &x, &y);
-	GUI_DrawSprite_(0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0x100, g_remap, 1);
+	GUI_DrawSprite_(0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0x100, remap, 1);
 
 	bmp = al_create_sub_bitmap(shape_texture, x, y, w, h);
 	assert(bmp != NULL);
@@ -380,6 +380,13 @@ VideoA5_InitShapes(unsigned char *buf)
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 
 	int x = 0, y = 0, row_h = 0;
+	unsigned char greymap[256];
+
+	uint8 fileID = File_Open("GRAYRMAP.TBL", 1);
+	assert(fileID != FILE_INVALID);
+
+	File_Read(fileID, greymap, 256);
+	File_Close(fileID);
 
 	al_set_target_bitmap(shape_texture);
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
@@ -399,7 +406,13 @@ VideoA5_InitShapes(unsigned char *buf)
 				assert(shapeID < SHAPEID_MAX);
 
 				if ((shape_data[group].remap) || (houseID == HOUSE_HARKONNEN)) {
-					s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h);
+					s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
+
+					if (SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_FREMEN) {
+						const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
+
+						s_shape[greyID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, greymap);
+					}
 				}
 				else {
 					s_shape[shapeID][houseID] = s_shape[shapeID][HOUSE_HARKONNEN];
@@ -430,6 +443,15 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 	if (flags & 0x02) al_flags |= ALLEGRO_FLIP_VERTICAL;
 
 	al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
+}
+
+void
+VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags)
+{
+	const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
+	assert(SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_FREMEN);
+
+	VideoA5_DrawShape(greyID, HOUSE_HARKONNEN, x, y, flags);
 }
 
 /*--------------------------------------------------------------*/

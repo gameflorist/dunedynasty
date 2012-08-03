@@ -10,6 +10,7 @@
 
 #define Video_DrawIcon          VideoA5_DrawIcon
 #define Video_DrawShape         VideoA5_DrawShape
+#define Video_DrawShapeGrey     VideoA5_DrawShapeGrey
 
 #define Video_Mouse_SetPosition(x,y)    \
 	do { VARIABLE_NOT_USED(x); VARIABLE_NOT_USED(y); } while (false)
