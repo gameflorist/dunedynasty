@@ -255,8 +255,8 @@ StructureInfo g_table_structureInfo[] = {
 		/* [2]                  */ 16
 		},
 		{ /* buildableUnits */
-		/* [0]                  */ 13,
-		/* [1]                  */ 15,
+		/* [0]                  */ UNIT_TRIKE,
+		/* [1]                  */ UNIT_QUAD,
 		/* [2]                  */ -1,
 		/* [3]                  */ -1,
 		/* [4]                  */ -1,
@@ -320,14 +320,14 @@ StructureInfo g_table_structureInfo[] = {
 		/* [2]                  */ 13
 		},
 		{ /* buildableUnits */
-		/* [0]                  */ 10,
-		/* [1]                  */ 7,
-		/* [2]                  */ 16,
-		/* [3]                  */ 9,
-		/* [4]                  */ 11,
-		/* [5]                  */ 8,
-		/* [6]                  */ 17,
-		/* [7]                  */ 12,
+		/* [0]                  */ UNIT_SIEGE_TANK,
+		/* [1]                  */ UNIT_LAUNCHER,
+		/* [2]                  */ UNIT_HARVESTER,
+		/* [3]                  */ UNIT_TANK,
+		/* [4]                  */ UNIT_DEVASTATOR,
+		/* [5]                  */ UNIT_DEVIATOR,
+		/* [6]                  */ UNIT_MCV,
+		/* [7]                  */ UNIT_SONIC_TANK,
 		},
 		{ /* upgradeCampaign */
 		/* [0]                  */ 4,
@@ -385,8 +385,8 @@ StructureInfo g_table_structureInfo[] = {
 		/* [2]                  */ 10
 		},
 		{ /* buildableUnits */
-		/* [0]                  */ 0,
-		/* [1]                  */ 1,
+		/* [0]                  */ UNIT_CARRYALL,
+		/* [1]                  */ UNIT_ORNITHOPTER,
 		/* [2]                  */ -1,
 		/* [3]                  */ -1,
 		/* [4]                  */ -1,
@@ -515,8 +515,8 @@ StructureInfo g_table_structureInfo[] = {
 		/* [2]                  */ 21
 		},
 		{ /* buildableUnits */
-		/* [0]                  */ 5,
-		/* [1]                  */ 3,
+		/* [0]                  */ UNIT_TROOPER,
+		/* [1]                  */ UNIT_TROOPERS,
 		/* [2]                  */ -1,
 		/* [3]                  */ -1,
 		/* [4]                  */ -1,
@@ -710,8 +710,8 @@ StructureInfo g_table_structureInfo[] = {
 		/* [2]                  */ 28
 		},
 		{ /* buildableUnits */
-		/* [0]                  */ 4,
-		/* [1]                  */ 2,
+		/* [0]                  */ UNIT_SOLDIER,
+		/* [1]                  */ UNIT_INFANTRY,
 		/* [2]                  */ -1,
 		/* [3]                  */ -1,
 		/* [4]                  */ -1,
