@@ -8,6 +8,7 @@
 
 #include "menu.h"
 
+#include "mentat.h"
 #include "../common_a5.h"
 #include "../gfx.h"
 #include "../gui/font.h"
@@ -23,6 +24,7 @@
 enum MenuAction {
 	MENU_MAIN_MENU,
 	MENU_PICK_HOUSE,
+	MENU_BRIEFING,
 	MENU_PLAY_A_GAME,
 	MENU_EXIT_GAME,
 
@@ -34,6 +36,8 @@ static ALLEGRO_TRANSFORM menu_transform;
 
 static Widget *main_menu_widgets;
 static Widget *pick_house_widgets;
+static Widget *briefing_yes_no_widgets;
+static Widget *briefing_proceed_repeat_widgets;
 
 /*--------------------------------------------------------------*/
 
@@ -155,10 +159,29 @@ PickHouse_InitWidgets(void)
 }
 
 static void
+Briefing_InitWidgets(void)
+{
+	Widget *w;
+
+	w = GUI_Widget_Allocate(1, SCANCODE_Y, 168, 168, SHAPE_YES, STR_YES);
+	briefing_yes_no_widgets = GUI_Widget_Link(briefing_yes_no_widgets, w);
+
+	w = GUI_Widget_Allocate(2, SCANCODE_N, 240, 168, SHAPE_NO, STR_NO);
+	briefing_yes_no_widgets = GUI_Widget_Link(briefing_yes_no_widgets, w);
+
+	w = GUI_Widget_Allocate(3, SCANCODE_P, 168, 168, SHAPE_PROCEED, STR_PROCEED);
+	briefing_proceed_repeat_widgets = GUI_Widget_Link(briefing_proceed_repeat_widgets, w);
+
+	w = GUI_Widget_Allocate(4, SCANCODE_R, 240, 168, SHAPE_REPEAT, STR_REPEAT);
+	briefing_proceed_repeat_widgets = GUI_Widget_Link(briefing_proceed_repeat_widgets, w);
+}
+
+static void
 Menu_Init(void)
 {
 	MainMenu_InitWidgets();
 	PickHouse_InitWidgets();
+	Briefing_InitWidgets();
 	Menu_InitTransform();
 }
 
@@ -183,6 +206,7 @@ MainMenu_Loop(void)
 
 	switch (widgetID) {
 		case 0x8000 | STR_PLAY_A_GAME:
+			g_playerHouseID = HOUSE_MERCENARY;
 			return MENU_PICK_HOUSE;
 
 		case 0x8000 | STR_REPLAY_INTRODUCTION:
@@ -224,13 +248,43 @@ PickHouse_Loop(void)
 		case 0x8000 | HOUSE_ATREIDES:
 		case 0x8000 | HOUSE_ORDOS:
 			g_playerHouseID = widgetID & (~0x8000);
-			return MENU_PLAY_A_GAME;
+			return MENU_BRIEFING;
 
 		default:
 			break;
 	}
 
 	return MENU_PICK_HOUSE;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+Briefing_Draw(void)
+{
+	Mentat_DrawBackground(g_playerHouseID);
+	Mentat_Draw(g_playerHouseID);
+
+	GUI_Widget_DrawAll(briefing_proceed_repeat_widgets);
+}
+
+static enum MenuAction
+Briefing_Loop(void)
+{
+	const int widgetID = GUI_Widget_HandleEvents(briefing_proceed_repeat_widgets);
+
+	switch (widgetID) {
+		case 0x8003: /* proceed */
+			return MENU_PLAY_A_GAME;
+
+		case 0x8004: /* repeat. */
+			break;
+
+		default:
+			break;
+	}
+
+	return MENU_BRIEFING;
 }
 
 /*--------------------------------------------------------------*/
@@ -244,6 +298,7 @@ Menu_Run(void)
 	Menu_Init();
 
 	al_flush_event_queue(g_a5_input_queue);
+
 	while (curr_menu != MENU_EXIT_GAME) {
 		ALLEGRO_EVENT event;
 
@@ -258,6 +313,10 @@ Menu_Run(void)
 
 				case MENU_PICK_HOUSE:
 					PickHouse_Draw();
+					break;
+
+				case MENU_BRIEFING:
+					Briefing_Draw();
 					break;
 
 				default:
@@ -286,6 +345,10 @@ Menu_Run(void)
 
 			case MENU_PICK_HOUSE:
 				res = PickHouse_Loop();
+				break;
+
+			case MENU_BRIEFING:
+				res = Briefing_Loop();
 				break;
 
 			case MENU_PLAY_A_GAME:

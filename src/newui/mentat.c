@@ -5,8 +5,8 @@
 
 #include "mentat.h"
 
-#include "../shape.h"
 #include "../input/input.h"
+#include "../shape.h"
 #include "../video/video.h"
 
 static const struct {
