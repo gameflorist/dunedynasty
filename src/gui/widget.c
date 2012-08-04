@@ -494,6 +494,11 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 		}
 #endif
 
+		/* XXX: Always click hovered object on mouse wheel event. */
+		if (widgetHover && ((key & 0x7F) == MOUSE_ZAXIS)) {
+			widgetClick = true;
+		}
+
 		if (widgetClick) {
 			w->state.s.buttonState = buttonState >> 8;
 

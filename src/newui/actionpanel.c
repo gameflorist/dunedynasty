@@ -5,9 +5,11 @@
 
 #include "actionpanel.h"
 
+#include "../gfx.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
 #include "../gui/widget.h"
+#include "../input/input.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -17,6 +19,8 @@
 #include "../table/strings.h"
 #include "../unit.h"
 #include "../video/video.h"
+
+static int factoryOffsetY;
 
 void
 ActionPanel_DrawPortrait(uint16 action_type, enum ShapeID shapeID)
@@ -188,7 +192,7 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, int item,
 		int *x1, int *y1, int *x2, int *y2, int *w, int *h)
 {
 	const int height = 35;
-	const int y = widget->offsetY + (height + 1) * item;
+	const int y = widget->offsetY + factoryOffsetY + (height + 1) * item;
 
 	if (x1 != NULL) *x1 = widget->offsetX;
 	if (y1 != NULL) *y1 = y;
@@ -210,6 +214,25 @@ ActionPanel_SendOrderButtonDimensions(const Widget *widget,
 	if (h != NULL) *h = 10;
 }
 
+static void
+ActionPanel_ScrollFactory(const Widget *widget, int num_items, bool is_starport)
+{
+	const int SCROLL_SPEED = 16;
+	const int bottom = widget->offsetY + widget->height - (is_starport ? 12 : 2);
+
+	int y2, h;
+
+	factoryOffsetY += g_mouseDZ * SCROLL_SPEED;
+
+	ActionPanel_ProductionButtonDimensions(widget, num_items - 1, NULL, NULL, NULL, &y2, NULL, &h);
+
+	if (y2 < bottom)
+		factoryOffsetY += bottom - y2;
+
+	if (factoryOffsetY > 0)
+		factoryOffsetY = 0;
+}
+
 bool
 ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 {
@@ -226,8 +249,13 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	Structure_PopulateBuildable(s, 0);
 	GUI_FactoryWindow_InitItems(s->o.type);
 
+	if (g_mouseDZ != 0) {
+		ActionPanel_ScrollFactory(widget, g_factoryWindowTotal, false);
+		return true;
+	}
+
 	item = (g_mouseY - y1) / (h + 1);
-	if (!(0 <= item && item < g_factoryWindowTotal))
+	if ((g_mouseY < y1) || !(0 <= item && item < g_factoryWindowTotal))
 		return false;
 
 	if (g_factoryWindowItems[item].objectInfo->available <= 0)
@@ -405,8 +433,13 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	Structure_PopulateBuildable(s, 0);
 	GUI_FactoryWindow_InitItems(STRUCTURE_STARPORT);
 
+	if (g_mouseDZ != 0) {
+		ActionPanel_ScrollFactory(widget, g_factoryWindowTotal, true);
+		return true;
+	}
+
 	item = (g_mouseY - y1) / (h + 1);
-	if (!(0 <= item && item < g_factoryWindowTotal))
+	if ((g_mouseY < y1) || !(0 <= item && item < g_factoryWindowTotal))
 		return false;
 
 	if (lmb) {
@@ -472,6 +505,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 	Structure_PopulateBuildable(s, 0);
 	GUI_FactoryWindow_InitItems(s->o.type);
+	Video_SetClippingArea(widget->offsetX - 1, widget->offsetY - 1, widget->width + 2, widget->height + 2);
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
 		const ObjectInfo *oi = g_factoryWindowItems[item].objectInfo;
@@ -552,4 +586,6 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 	if (s->o.type == STRUCTURE_STARPORT)
 		ActionPanel_DrawStarportOrder(widget, s);
+
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
