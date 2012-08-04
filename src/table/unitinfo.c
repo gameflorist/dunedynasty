@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "types.h"
 
+#include "../structure.h"
 #include "../unit.h"
 #include "strings.h"
 
@@ -112,7 +113,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* buildCredits         */ 600,
 		/* buildTime            */ 96,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 64,
+		/* structuresRequired   */ FLAG_STRUCTURE_HOUSE_OF_IX,
 		/* sortPriority         */ 28,
 		/* upgradeLevelRequired */ 1,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -623,7 +624,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* buildCredits         */ 750,
 		/* buildTime            */ 80,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 64,
+		/* structuresRequired   */ FLAG_STRUCTURE_HOUSE_OF_IX,
 		/* sortPriority         */ 30,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -842,7 +843,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* buildCredits         */ 800,
 		/* buildTime            */ 104,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 64,
+		/* structuresRequired   */ FLAG_STRUCTURE_HOUSE_OF_IX,
 		/* sortPriority         */ 32,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_DESTRUCT, ACTION_GUARD },
@@ -915,7 +916,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* buildCredits         */ 600,
 		/* buildTime            */ 104,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 64,
+		/* structuresRequired   */ FLAG_STRUCTURE_HOUSE_OF_IX,
 		/* sortPriority         */ 34,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
