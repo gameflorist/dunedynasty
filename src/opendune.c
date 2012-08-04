@@ -16,7 +16,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#include "types.h"
 #include "os/common.h"
 #include "os/error.h"
 #include "os/math.h"
@@ -88,7 +87,9 @@ static bool  s_debugForceWin = false; /*!< When true, you immediately win the le
 
 static uint16 s_var_8052 = 0;
 
+#if 0
 static uint8 s_enableLog = 0; /*!< 0 = off, 1 = record game, 2 = playback game (stored in 'dune.log'). */
+#endif
 
 uint16 g_var_38BC = 0;
 bool g_var_38F8 = true;
@@ -478,7 +479,8 @@ static uint16 GameLoop_HandleEvents(uint16 arg06, char **strings, uint32 arg10, 
 		key = Input_GetNextKey();
 	}
 
-	if (g_var_7097 == 0) {
+	/* if (g_var_7097 == 0) */
+	{
 		uint16 y = g_mouseY;
 
 		if (GameLoop_IsInRange(g_mouseX, y, minX, minY, maxX, maxY)) {
@@ -777,9 +779,11 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 	Video_SetCursor(SHAPE_CURSOR_NORMAL);
 
+#if 0
 	while (g_mouseHiddenDepth > 1) {
 		GUI_Mouse_Show_Safe();
 	}
+#endif
 
 	Window_WidgetClick_Create();
 	GameOptions_Load();
@@ -974,7 +978,9 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 	Input_History_Clear();
 
+#if 0
 	if (s_enableLog != 0) Mouse_SetMouseMode((uint8)s_enableLog, "DUNE.LOG");
+#endif
 
 	if (!loc02) {
 		if (g_playerHouseID == HOUSE_INVALID) {
@@ -1243,7 +1249,9 @@ static void GameLoop_Main(void)
 
 	GUI_Mouse_Hide_Safe();
 
+#if 0
 	if (s_enableLog != 0) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, "DUNE.LOG");
+#endif
 
 	GUI_Mouse_Hide_Safe();
 
@@ -1262,7 +1270,7 @@ static bool Unknown_25C4_000E(void)
 
 	Mouse_Init();
 
-	g_var_7097 = -1;
+	/* g_var_7097 = -1; */
 
 	GFX_Init();
 	GFX_ClearScreen();
@@ -1334,7 +1342,7 @@ int main(int argc, char **argv)
 
 	if (!Unknown_25C4_000E()) exit(1);
 
-	g_var_7097 = 0;
+	/* g_var_7097 = 0; */
 
 	GameLoop_Main();
 
@@ -1551,7 +1559,9 @@ void PrepareEnd(void)
 
 	Drivers_All_Uninit();
 
+#if 0
 	if (g_mouseFileID != 0xFF) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, NULL);
+#endif
 
 	GFX_Uninit();
 	Video_Uninit();

@@ -91,8 +91,7 @@ InputA5_KeycodeToScancode(int kc)
 static void
 InputA5_ProcessEvent(ALLEGRO_EVENT *event)
 {
-	static bool lmb = false;
-	static bool rmb = false;
+	enum Scancode mouse_event = 0;
 
 	switch (event->type) {
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -100,20 +99,14 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event)
 			exit(0);
 			break;
 
-		case ALLEGRO_EVENT_MOUSE_AXES:
-			Mouse_EventHandler(event->mouse.x, event->mouse.y, lmb, rmb);
-			break;
-
-		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
 		case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-			if (event->mouse.button == 1) {
-				lmb = (event->type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) ? true : false;
-			}
-			else if (event->mouse.button == 2) {
-				rmb = (event->type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) ? true : false;
-			}
-
-			Mouse_EventHandler(event->mouse.x, event->mouse.y, lmb, rmb);
+			mouse_event |= SCANCODE_RELEASE;
+			/* Fall through. */
+		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+			mouse_event |= MOUSE_LMB - (event->mouse.button - 1);
+			/* Fall through. */
+		case ALLEGRO_EVENT_MOUSE_AXES:
+			Mouse_EventHandler(event->mouse.x, event->mouse.y, mouse_event);
 			break;
 
 		case ALLEGRO_EVENT_KEY_DOWN:

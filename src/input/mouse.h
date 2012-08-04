@@ -1,40 +1,16 @@
-/* $Id$ */
+#ifndef INPUT_MOUSE_H
+#define INPUT_MOUSE_H
 
-/** @file src/mouse.h Mouse definitions. */
+#include <stdbool.h>
+#include "scancode.h"
 
-#ifndef MOUSE_H
-#define MOUSE_H
-
-#include "types.h"
-
-extern uint16 g_mouseLock;
-extern bool   g_doubleWidth;
-extern uint16 g_mouseX;
-extern uint16 g_mouseY;
-extern uint16 g_mousePrevX;
-extern uint16 g_mousePrevY;
-extern uint8  g_prevButtonState;
-extern uint16 g_mouseClickX;
-extern uint16 g_mouseClickY;
-
-extern uint8 g_var_7097;
-extern uint8 g_mouseHiddenDepth;
-extern uint8 g_mouseFileID;
-extern bool g_var_701B;
-
-extern uint16 g_var_7013;
-extern uint16 g_var_7015;
-extern uint16 g_var_7017;
-extern uint16 g_var_7019;
-
-extern uint8 g_mouseMode;
-extern uint16 g_inputFlags;
+extern int g_mouseX;
+extern int g_mouseY;
+extern int g_mouseClickX;
+extern int g_mouseClickY;
 
 extern void Mouse_Init(void);
-extern void Mouse_EventHandler(uint16 mousePosX, uint16 mousePosY, bool mouseButtonLeft, bool mouseButtonRight);
-extern uint16 Mouse_InsideRegion(int16 left, int16 top, int16 right, int16 bottom);
-extern void Mouse_SetMouseMode(uint8 mouseMode, const char *filename);
-extern void Mouse_HandleMovement(uint16 newButtonState, uint16 mouseX, uint16 mouseY);
-extern void Mouse_HandleMovementIfMoved(uint16 newButtonState);
+extern void Mouse_EventHandler(int x, int y, enum Scancode state);
+extern bool Mouse_InRegion(int x1, int y1, int x2, int y2);
 
-#endif /* MOUSE_H */
+#endif

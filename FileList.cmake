@@ -97,6 +97,7 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
 	src/input/input_opendune.c
+	src/input/mouse_opendune.c
 	src/os/error_win32.c
 	src/timer/timer_opendune.c
 	src/video/video_opendune.c

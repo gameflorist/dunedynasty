@@ -631,7 +631,7 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 				movingMouthTimer = 0;
 				partNeedsRedraw = true;
 			}
-		} else if (Mouse_InsideRegion(s_mouthLeft, s_mouthTop, s_mouthRight, s_mouthBottom) != 0) {
+		} else if (Mouse_InRegion(s_mouthLeft, s_mouthTop, s_mouthRight, s_mouthBottom) != 0) {
 			if (movingMouthTimer != 0xFFFFFFFF) {
 				movingMouthTimer = 0xFFFFFFFF;
 				movingMouthSprite = Tools_RandomRange(1, 4);
@@ -659,7 +659,7 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 	partNeedsRedraw = false;
 
 	if (Input_Test(MOUSE_LMB) != 0 || Input_Test(MOUSE_RMB) != 0) {
-		if (Mouse_InsideRegion(s_eyesLeft, s_eyesTop, s_eyesRight, s_eyesBottom) != 0) {
+		if (Mouse_InRegion(s_eyesLeft, s_eyesTop, s_eyesRight, s_eyesBottom) != 0) {
 			if (movingEyesSprite != 0x4) {
 				partNeedsRedraw = true;
 				movingEyesSprite = (movingEyesSprite == 3) ? 4 : 3;
@@ -681,14 +681,14 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 		}
 	}
 
-	if (Mouse_InsideRegion((int16)s_eyesLeft - 16, (int16)s_eyesTop - 8, s_eyesRight + 16, s_eyesBottom + 24) != 0) {
-		if (Mouse_InsideRegion((int16)s_eyesLeft - 8, s_eyesBottom, s_eyesRight + 8, SCREEN_HEIGHT - 1) != 0) {
+	if (Mouse_InRegion((int)s_eyesLeft - 16, (int)s_eyesTop - 8, s_eyesRight + 16, s_eyesBottom + 24) != 0) {
+		if (Mouse_InRegion((int)s_eyesLeft - 8, s_eyesBottom, s_eyesRight + 8, SCREEN_HEIGHT - 1) != 0) {
 			i = 3;
 		} else {
-			if (Mouse_InsideRegion(s_eyesRight, (int16)s_eyesTop - 8, s_eyesRight + 16, s_eyesBottom + 8) != 0) {
+			if (Mouse_InRegion(s_eyesRight, (int)s_eyesTop - 8, s_eyesRight + 16, s_eyesBottom + 8) != 0) {
 				i = 2;
 			} else {
-				i = (Mouse_InsideRegion((int16)s_eyesLeft - 16, (int16)s_eyesTop - 8, s_eyesLeft, s_eyesBottom + 8) == 0) ? 0 : 1;
+				i = (Mouse_InRegion((int)s_eyesLeft - 16, (int)s_eyesTop - 8, s_eyesLeft, s_eyesBottom + 8) == 0) ? 0 : 1;
 			}
 		}
 

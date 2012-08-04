@@ -6,6 +6,7 @@
 #define OPENDUNE_H
 
 #include <inttypes.h>
+#include "types.h"
 
 typedef enum GameMode {
 	GM_NORMAL    = 0,
