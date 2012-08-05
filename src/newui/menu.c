@@ -26,6 +26,8 @@ enum MenuAction {
 	MENU_PICK_HOUSE,
 	MENU_CONFIRM_HOUSE,
 	MENU_BRIEFING,
+	MENU_BRIEFING_WIN,
+	MENU_BRIEFING_LOSE,
 	MENU_PLAY_A_GAME,
 	MENU_EXIT_GAME,
 
@@ -271,7 +273,12 @@ Briefing_Initialise(enum MenuAction menu)
 		MentatBriefing_InitText(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
 	}
 	else {
-		MentatBriefing_InitText(g_playerHouseID, g_campaignID, MENTAT_BRIEFING_ORDERS, mentat);
+		const enum BriefingEntry entry =
+			(menu == MENU_BRIEFING_WIN) ? MENTAT_BRIEFING_WIN :
+			(menu == MENU_BRIEFING_LOSE) ? MENTAT_BRIEFING_LOSE :
+			MENTAT_BRIEFING_ORDERS;
+
+		MentatBriefing_InitText(g_playerHouseID, g_campaignID, entry, mentat);
 	}
 
 	mentat->state = MENTAT_SHOW_TEXT;
@@ -388,6 +395,8 @@ Menu_Run(void)
 
 				case MENU_CONFIRM_HOUSE:
 				case MENU_BRIEFING:
+				case MENU_BRIEFING_WIN:
+				case MENU_BRIEFING_LOSE:
 					Briefing_Draw(curr_menu);
 					break;
 
@@ -421,6 +430,8 @@ Menu_Run(void)
 
 			case MENU_CONFIRM_HOUSE:
 			case MENU_BRIEFING:
+			case MENU_BRIEFING_WIN:
+			case MENU_BRIEFING_LOSE:
 				res = Briefing_Loop(curr_menu);
 				break;
 
@@ -439,6 +450,8 @@ Menu_Run(void)
 			switch (res & ~MENU_REDRAW) {
 				case MENU_CONFIRM_HOUSE:
 				case MENU_BRIEFING:
+				case MENU_BRIEFING_WIN:
+				case MENU_BRIEFING_LOSE:
 					Briefing_Initialise(res & ~MENU_REDRAW);
 					break;
 
