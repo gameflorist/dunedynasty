@@ -390,14 +390,9 @@ void GUI_Mentat_Display(const char *wsaFilename, uint8 houseID)
 void GUI_Mentat_Animation(uint16 speakingMode)
 {
 	static int64_t movingEyesTimer = 0;      /* Timer when to change the eyes sprite. */
-	static uint16 movingEyesSprite = 0;     /* Index in _mentatSprites of the displayed moving eyes. */
 	static uint16 movingEyesNextSprite = 0; /* If not 0, it decides the movingEyesNextSprite */
-
 	static int64_t movingMouthTimer = 0;
-	static uint16 movingMouthSprite = 0;
-
 	static int64_t movingOtherTimer = 0;
-	static int16 otherSprite = 0;
 
 	bool partNeedsRedraw;
 	uint16 i;

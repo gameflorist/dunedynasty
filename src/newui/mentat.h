@@ -26,11 +26,17 @@ typedef struct MentatState {
 	int lines0;
 	int lines;
 
+	int speaking_mode;
+	int64_t speaking_timer;
+
 	void *wsa;
 	int wsa_frame;
 	int64_t wsa_timer;
 } MentatState;
 
+extern int movingEyesSprite;
+extern int movingMouthSprite;
+extern int otherSprite;
 extern MentatState g_mentat_state;
 
 extern void Mentat_DrawBackground(enum HouseType houseID);

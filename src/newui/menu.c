@@ -16,6 +16,7 @@
 #include "../gfx.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
+#include "../gui/mentat.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
@@ -392,6 +393,12 @@ Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
 		mentat->wsa_frame += dt / 7;
 		redraw = true;
 	}
+
+	if (curr_ticks >= mentat->speaking_timer) {
+		mentat->speaking_mode = 0;
+	}
+
+	GUI_Mentat_Animation(mentat->speaking_mode);
 
 	if (mentat->state == MENTAT_IDLE) {
 		if (curr_menu == MENU_CONFIRM_HOUSE) {

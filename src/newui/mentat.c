@@ -34,9 +34,9 @@ static const struct {
 	{ 0x40,0x50, 0x38,0x60, 0x00,0x00, 0x00,0x00 },
 };
 
-static int movingEyesSprite;
-static int movingMouthSprite;
-static int otherSprite;
+int movingEyesSprite;
+int movingMouthSprite;
+int otherSprite;
 
 MentatState g_mentat_state;
 
@@ -108,6 +108,9 @@ MentatBriefing_SplitText(MentatState *mentat)
 
 	mentat->lines0 = GUI_Mentat_SplitText(mentat->text, 304);
 	mentat->lines = mentat->lines0;
+
+	mentat->speaking_mode = 1;
+	mentat->speaking_timer = Timer_GetTicks() + 4 * strlen(mentat->text);
 }
 
 void
@@ -150,6 +153,11 @@ MentatBriefing_AdvanceText(MentatState *mentat)
 
 	if (mentat->lines <= 0) {
 		mentat->state = MENTAT_IDLE;
+		mentat->speaking_mode = 0;
+	}
+	else {
+		mentat->speaking_mode = 1;
+		mentat->speaking_timer = Timer_GetTicks() + 4 * strlen(mentat->text);
 	}
 }
 
@@ -230,6 +238,12 @@ bool
 MentatHelp_Tick(enum HouseType houseID, MentatState *mentat)
 {
 	MentatHelp_Draw(houseID, mentat);
+
+	if (Timer_GetTicks() >= mentat->speaking_timer) {
+		mentat->speaking_mode = 0;
+	}
+
+	GUI_Mentat_Animation(mentat->speaking_mode);
 
 	if (mentat->state == MENTAT_SHOW_CONTENTS) {
 		const int widgetID = GUI_Widget_HandleEvents(g_widgetMentatTail);
