@@ -3,7 +3,6 @@
 /** @file src/house.c %House management routines. */
 
 #include <stdio.h>
-#include "types.h"
 #include "os/math.h"
 #include "os/strings.h"
 #include "os/sleep.h"

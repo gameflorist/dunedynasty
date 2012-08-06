@@ -6,6 +6,7 @@
 #define HOUSE_H
 
 #include <inttypes.h>
+#include "types.h"
 
 /**
  * Types of %Houses available in the game.
