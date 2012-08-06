@@ -1,18 +1,24 @@
 /* mentat.c */
 
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "mentat.h"
 
+#include "../file.h"
+#include "../gfx.h"
 #include "../gui/gui.h"
 #include "../gui/mentat.h"
+#include "../ini.h"
 #include "../input/input.h"
 #include "../shape.h"
 #include "../string.h"
 #include "../table/strings.h"
+#include "../timer/timer.h"
 #include "../video/video.h"
+#include "../wsa.h"
 
 static const struct {
 	int eyesX, eyesY;
@@ -144,6 +150,57 @@ MentatBriefing_AdvanceText(MentatState *mentat)
 
 	if (mentat->lines <= 0) {
 		mentat->state = MENTAT_IDLE;
+	}
+}
+
+/*--------------------------------------------------------------*/
+
+void
+MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntry entry, MentatState *mentat)
+{
+	const char *key[3] = { "BriefPicture", "WinPicture", "LosePicture" };
+	const char *def[3] = { "HARVEST.WSA", "WIN1.WSA", "LOSTBILD.WSA" };
+	assert(entry <= MENTAT_BRIEFING_ADVICE);
+
+	if (scenarioID <= 0) {
+		const char *wsaFilename = House_GetWSAHouseFilename(houseID);
+
+		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+	}
+	else {
+		char filename[16];
+		snprintf(filename, sizeof(filename), "SCEN%c%03d.INI", g_table_houseInfo[houseID].name[0], scenarioID);
+
+		char *buf = File_ReadWholeFile(filename);
+		if (buf == NULL) {
+			mentat->wsa = NULL;
+			return;
+		}
+
+		char wsaFilename[16];
+		Ini_GetString("BASIC", key[entry], def[entry], wsaFilename, sizeof(wsaFilename), buf);
+		free(buf);
+
+		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+	}
+
+	mentat->wsa_timer = Timer_GetTicks();
+	mentat->wsa_frame = 0;
+}
+
+void
+MentatBriefing_DrawWSA(MentatState *mentat)
+{
+	if (mentat->wsa == NULL)
+		return;
+
+	const int64_t curr_ticks = Timer_GetTicks();
+	const int frame = mentat->wsa_frame + (curr_ticks - mentat->wsa_timer) / 7;
+
+	if (!Video_DrawWSA(mentat->wsa, frame, 0, 0, 128, 48, 184, 112)) {
+		Video_DrawWSA(mentat->wsa, 0, 0, 0, 128, 48, 184, 112);
+		mentat->wsa_timer = curr_ticks;
+		mentat->wsa_frame = 0;
 	}
 }
 

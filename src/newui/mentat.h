@@ -1,6 +1,7 @@
 #ifndef NEWUI_MENTAT_H
 #define NEWUI_MENTAT_H
 
+#include <inttypes.h>
 #include "../house.h"
 
 enum BriefingState {
@@ -24,6 +25,10 @@ typedef struct MentatState {
 	char *text;
 	int lines0;
 	int lines;
+
+	void *wsa;
+	int wsa_frame;
+	int64_t wsa_timer;
 } MentatState;
 
 extern MentatState g_mentat_state;
@@ -34,6 +39,9 @@ extern void Mentat_Draw(enum HouseType houseID);
 extern void MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry, MentatState *mentat);
 extern void MentatBriefing_DrawText(MentatState *mentat);
 extern void MentatBriefing_AdvanceText(MentatState *mentat);
+
+extern void MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntry entry, MentatState *mentat);
+extern void MentatBriefing_DrawWSA(MentatState *mentat);
 
 extern bool MentatHelp_Tick(enum HouseType houseID, MentatState *mentat);
 

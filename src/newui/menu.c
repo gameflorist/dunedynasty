@@ -332,12 +332,11 @@ PickHouse_Loop(void)
 /*--------------------------------------------------------------*/
 
 static void
-Briefing_Initialise(enum MenuAction menu)
+Briefing_Initialise(enum MenuAction menu, MentatState *mentat)
 {
-	MentatState *mentat = &g_mentat_state;
-
 	if (menu == MENU_CONFIRM_HOUSE) {
 		MentatBriefing_InitText(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
+		MentatBriefing_InitWSA(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
 	}
 	else {
 		const enum BriefingEntry entry =
@@ -346,23 +345,23 @@ Briefing_Initialise(enum MenuAction menu)
 			MENTAT_BRIEFING_ORDERS;
 
 		MentatBriefing_InitText(g_playerHouseID, g_campaignID, entry, mentat);
+		MentatBriefing_InitWSA(g_playerHouseID, g_scenarioID, entry, mentat);
 	}
 
 	mentat->state = MENTAT_SHOW_TEXT;
 }
 
 static void
-Briefing_Draw(enum MenuAction curr_menu)
+Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 {
 	const enum HouseType houseID = (curr_menu == MENU_CONFIRM_HOUSE) ? HOUSE_MERCENARY : g_playerHouseID;
 
-	MentatState *mentat = &g_mentat_state;
-
 	Mentat_DrawBackground(houseID);
+	MentatBriefing_DrawWSA(mentat);
 	Mentat_Draw(houseID);
 
 	if (mentat->state == MENTAT_SHOW_TEXT) {
-		MentatBriefing_DrawText(&g_mentat_state);
+		MentatBriefing_DrawText(mentat);
 	}
 	else if (mentat->state == MENTAT_IDLE) {
 		if (curr_menu == MENU_CONFIRM_HOUSE) {
@@ -380,11 +379,19 @@ Briefing_Draw(enum MenuAction curr_menu)
 }
 
 static enum MenuAction
-Briefing_Loop(enum MenuAction curr_menu)
+Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
 {
-	MentatState *mentat = &g_mentat_state;
+	const int64_t curr_ticks = Timer_GetTicks();
+
 	bool redraw = false;
 	int widgetID = 0;
+
+	if (curr_ticks - mentat->wsa_timer >= 7) {
+		const int64_t dt = curr_ticks - mentat->wsa_timer;
+		mentat->wsa_timer = curr_ticks + dt % 7;
+		mentat->wsa_frame += dt / 7;
+		redraw = true;
+	}
 
 	if (mentat->state == MENTAT_IDLE) {
 		if (curr_menu == MENU_CONFIRM_HOUSE) {
@@ -406,6 +413,8 @@ Briefing_Loop(enum MenuAction curr_menu)
 			break;
 
 		case 0x8001: /* yes */
+			g_campaignID = 0;
+			g_scenarioID = 1;
 			return MENU_BRIEFING;
 
 		case 0x8002: /* no */
@@ -570,7 +579,7 @@ Menu_Run(void)
 				case MENU_BRIEFING:
 				case MENU_BRIEFING_WIN:
 				case MENU_BRIEFING_LOSE:
-					Briefing_Initialise(curr_menu & 0xFF);
+					Briefing_Initialise(curr_menu & 0xFF, &g_mentat_state);
 					break;
 
 				case MENU_STRATEGIC_MAP:
@@ -600,7 +609,7 @@ Menu_Run(void)
 				case MENU_BRIEFING:
 				case MENU_BRIEFING_WIN:
 				case MENU_BRIEFING_LOSE:
-					Briefing_Draw(curr_menu & 0xFF);
+					Briefing_Draw(curr_menu & 0xFF, &g_mentat_state);
 					break;
 
 				case MENU_LOAD_GAME:
@@ -665,7 +674,7 @@ Menu_Run(void)
 			case MENU_BRIEFING:
 			case MENU_BRIEFING_WIN:
 			case MENU_BRIEFING_LOSE:
-				res = Briefing_Loop(curr_menu);
+				res = Briefing_Loop(curr_menu, &g_mentat_state);
 				break;
 
 			case MENU_PLAY_A_GAME:
