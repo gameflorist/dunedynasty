@@ -797,7 +797,18 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 	if (flags & 0x01) al_flags |= ALLEGRO_FLIP_HORIZONTAL;
 	if (flags & 0x02) al_flags |= ALLEGRO_FLIP_VERTICAL;
 
-	al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
+	if (flags & 0x0100) {
+		/* Highlight. */
+		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
+
+		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ONE);
+		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
+		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+	}
+	else {
+		/* Normal. */
+		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
+	}
 }
 
 void
