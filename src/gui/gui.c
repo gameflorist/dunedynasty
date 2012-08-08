@@ -1974,6 +1974,7 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 2);
 	GUI_Widget_Draw(w);
 
+#if 0
 	find.houseID = HOUSE_INVALID;
 	find.index   = 0xFFFF;
 	find.type    = 0xFFFF;
@@ -1986,6 +1987,7 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 
 		Structure_UpdateMap(s);
 	}
+#endif
 
 	find.houseID = HOUSE_INVALID;
 	find.index   = 0xFFFF;
