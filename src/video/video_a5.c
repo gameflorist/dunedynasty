@@ -18,6 +18,7 @@
 #define OUTPUT_TEXTURES     false
 #define ICONID_MAX          512
 #define SHAPEID_MAX         640
+#define WINDTRAP_COLOUR     223
 
 static ALLEGRO_DISPLAY *display;
 static ALLEGRO_DISPLAY *display2;
@@ -159,6 +160,32 @@ VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, bool writeonl
 	al_unlock_bitmap(dest);
 }
 
+static void
+VideoA5_CreateWhiteMask(unsigned char *src, ALLEGRO_LOCKED_REGION *reg,
+		int src_stride, int sx, int sy, int dx, int dy, int w, int h, int ref)
+{
+	for (int y = 0; y < h; y++) {
+		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch * (dy + y)];
+
+		for (int x = 0; x < w; x++) {
+			const unsigned char c = src[src_stride * (sy + y) + (sx + x)];
+
+			if (c == ref) {
+				row[reg->pixel_size * (dx + x) + 0] = 0xFF;
+				row[reg->pixel_size * (dx + x) + 1] = 0xFF;
+				row[reg->pixel_size * (dx + x) + 2] = 0xFF;
+				row[reg->pixel_size * (dx + x) + 3] = 0xFF;
+			}
+			else {
+				row[reg->pixel_size * (dx + x) + 0] = 0x00;
+				row[reg->pixel_size * (dx + x) + 1] = 0x00;
+				row[reg->pixel_size * (dx + x) + 2] = 0x00;
+				row[reg->pixel_size * (dx + x) + 3] = 0x00;
+			}
+		}
+	}
+}
+
 void
 VideoA5_Tick(void)
 {
@@ -252,6 +279,30 @@ VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 }
 
 static void
+VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
+		int x, int y, int *retx, int *rety)
+{
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	const int idx = ICONID_MAX - (iconID - 304) - 1;
+	assert(304 <= iconID && iconID <= 308);
+	assert(s_icon[idx][HOUSE_HARKONNEN] == NULL);
+
+	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, TILE_SIZE, TILE_SIZE, TILE_SIZE, &x, &y);
+	GFX_DrawSprite_(iconID, x, y, HOUSE_HARKONNEN);
+
+	s_icon[idx][HOUSE_HARKONNEN] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
+	assert(s_icon[idx][HOUSE_HARKONNEN] != NULL);
+
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(s_icon[idx][HOUSE_HARKONNEN], ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
+	VideoA5_CreateWhiteMask(buf, reg, WINDOW_W, x, y, 0, 0, TILE_SIZE, TILE_SIZE, WINDTRAP_COLOUR);
+	al_unlock_bitmap(s_icon[idx][HOUSE_HARKONNEN]);
+
+	*retx = x + TILE_SIZE + 1;
+	*rety = y;
+}
+
+static void
 VideoA5_InitIcons(unsigned char *buf)
 {
 	const struct {
@@ -301,6 +352,11 @@ VideoA5_InitIcons(unsigned char *buf)
 
 	VideoA5_CopyBitmap(buf, icon_texture, true);
 
+	/* Windtraps. */
+	for (uint16 iconID = 304; iconID <= 308; iconID++) {
+		VideoA5_ExportWindtrapOverlay(buf, iconID, x, y, &x, &y);
+	}
+
 #if OUTPUT_TEXTURES
 	al_save_bitmap("icons.png", icon_texture);
 #endif
@@ -314,6 +370,14 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 	assert(s_icon[iconID][houseID] != NULL);
 
 	al_draw_bitmap(s_icon[iconID][houseID], x, y, 0);
+
+	/* Windtraps. */
+	if (304 <= iconID && iconID <= 308) {
+		const int idx = ICONID_MAX - (iconID - 304) - 1;
+		assert(s_icon[idx][HOUSE_HARKONNEN] != NULL);
+
+		al_draw_tinted_bitmap(s_icon[idx][HOUSE_HARKONNEN], paltoRGB[WINDTRAP_COLOUR], x, y, 0);
+	}
 }
 
 /*--------------------------------------------------------------*/
