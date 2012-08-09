@@ -46,14 +46,14 @@ void
 Shape_Draw(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int flags)
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
-	Video_DrawShape(shapeID, HOUSE_HARKONNEN, x, y, flags & 0x103);
+	Video_DrawShape(shapeID, HOUSE_HARKONNEN, x, y, flags & 0x303);
 }
 
 void
 Shape_DrawRemap(enum ShapeID shapeID, enum HouseType houseID, int x, int y, enum WindowID windowID, int flags)
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
-	Video_DrawShape(shapeID, houseID, x, y, flags & 0x103);
+	Video_DrawShape(shapeID, houseID, x, y, flags & 0x303);
 }
 
 void

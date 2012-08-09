@@ -713,7 +713,13 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 			sprite = GUI_Widget_Viewport_Draw_GetSprite(index, Unit_GetHouseID(u));
 
-			if (ui->o.flags.hasShadow) GUI_DrawSprite(g_screenActiveID, sprite, x + 1, y + 3, 2, (s_spriteFlags & 0xDFFF) | 0x300, g_paletteMapping1, 1);
+			if (ui->o.flags.hasShadow) {
+#if 0
+				GUI_DrawSprite(g_screenActiveID, sprite, x + 1, y + 3, 2, (s_spriteFlags & 0xDFFF) | 0x300, g_paletteMapping1, 1);
+#else
+				Shape_Draw(index, x + 1, y + 3, 2, (s_spriteFlags & 0xDFFF) | 0x300);
+#endif
+			}
 
 			if (ui->o.flags.blurTile) s_spriteFlags |= 0x200;
 
