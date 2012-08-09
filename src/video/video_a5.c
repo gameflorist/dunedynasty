@@ -25,6 +25,7 @@
 #include "../gui/gui.h"
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
+#include "../newui/viewport.h"
 #include "../sprites.h"
 #include "../tools.h"
 #include "../wsa.h"
@@ -1071,6 +1072,30 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ONE);
 		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
 		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+	}
+	else if ((flags & 0x300) == 0x200) {
+		/* Blur tile (sandworm, sonic wave). */
+		const int s_variable_60[8] = {1, 3, 2, 5, 4, 3, 2, 1};
+		static int effect = 0;
+
+		effect = (effect + 1) & 0x7;
+
+		ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
+		ALLEGRO_BITMAP *brush = s_shape[shapeID][houseID];
+
+		const int w = al_get_bitmap_width(brush);
+		const int h = al_get_bitmap_height(brush);
+
+		al_set_target_bitmap(screen);
+		Viewport_RenderBrush(x + s_variable_60[effect], y);
+
+		al_set_target_bitmap(brush);
+		al_set_separate_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, ALLEGRO_DEST_MINUS_SRC, ALLEGRO_ZERO, ALLEGRO_ONE);
+		al_draw_bitmap_region(screen, 0, 0, w, h, 0, 0, 0);
+
+		al_set_target_bitmap(old_target);
+		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+		al_draw_bitmap(brush, x, y, 0);
 	}
 	else if ((flags & 0x300) == 0x300) {
 		/* Shadow. */

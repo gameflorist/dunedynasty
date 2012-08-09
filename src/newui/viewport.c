@@ -733,6 +733,91 @@ Viewport_DrawSelectionBox(void)
 	GUI_DrawWiredRectangle(selection_box_x1, selection_box_y1, x2, y2, 0xFF);
 }
 
+/* Viewport_RenderBrush:
+ *
+ * A mini rendering routine used for the sandworm and sonic wave
+ * effects.  Renders the 3x3 tiles (the largest brush is 24x24)
+ * containing the wave with top-left corner (x, y) into the active
+ * buffer.
+ */
+void
+Viewport_RenderBrush(int x, int y)
+{
+	/* Top-left tile. */
+	const int tile_left = Tile_GetPackedX(g_viewportPosition);
+	const int tile_top  = Tile_GetPackedY(g_viewportPosition);
+
+	/* Make brush coordinates relative to viewport. */
+	x -= g_widgetProperties[WINDOWID_VIEWPORT].xBase*8;
+	y -= g_widgetProperties[WINDOWID_VIEWPORT].yBase;
+
+	/* Tile containing top-left corner of brush. */
+	const int tile_dx = x / TILE_SIZE;
+	const int tile_dy = y / TILE_SIZE;
+
+	/* Where the brush should be sourced. */
+	const int sx = x - tile_dx * TILE_SIZE;
+	const int sy = y - tile_dy * TILE_SIZE;
+
+	/* Draw tiles. */
+	for (int y = 0; y < 3; y++) {
+		const int cy = tile_top + tile_dy + y;
+		const int top = TILE_SIZE * y - sy;
+
+		for (int x = 0; x < 3; x++) {
+			const int cx = tile_left + tile_dx + x;
+			const int left = TILE_SIZE * x - sx;
+
+			if ((0 <= cx && cx < MAP_SIZE_MAX) && (0 <= cy && cy < MAP_SIZE_MAX)) {
+				const int curPos = Tile_PackXY(cx, cy);
+				const Tile *t = &g_map[curPos];
+
+				if (t->overlaySpriteID == g_veiledSpriteID)
+					continue;
+
+				Video_DrawIcon(t->groundSpriteID, t->houseID, left, top);
+
+				if (t->overlaySpriteID == 0)
+					continue;
+
+				Video_DrawIcon(t->overlaySpriteID, t->houseID, left, top);
+			}
+			else {
+				GUI_DrawFilledRectangle(left, top, left + TILE_SIZE - 1, top + TILE_SIZE - 1, 0);
+			}
+		}
+	}
+
+#if 0
+	/* Draw units. */
+	for (int y = 0; y < 3; y++) {
+		const int cy = tile_top + tile_dy + y;
+		const int top = TILE_SIZE * y - sy;
+
+		for (int x = 0; x < 3; x++) {
+			const int cx = tile_left + tile_dx + x;
+			const int left = TILE_SIZE * x - sx;
+
+			if (!((0 <= cx && cx < MAP_SIZE_MAX) && (0 <= cy && cy < MAP_SIZE_MAX)))
+				continue;
+
+			const int curPos = Tile_PackXY(cx, cy);
+			const Unit *u = Unit_Get_ByPackedTile(curPos);
+
+			if (u == NULL)
+				continue;
+
+			const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+
+			if (ui->o.flags.blurTile)
+				continue;
+		}
+	}
+
+	/* Render interface. */
+#endif
+}
+
 void
 Viewport_InterpolateMovement(const Unit *u, uint16 *x, uint16 *y)
 {

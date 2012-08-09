@@ -332,11 +332,20 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 		s_spriteFlags = 0x200;
 
+#if 0
 		if (Map_IsPositionInViewport(u->o.position, &x, &y)) GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0xC000);
-
 		if (Map_IsPositionInViewport(u->targetLast, &x, &y)) GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0xC000);
-
 		if (Map_IsPositionInViewport(u->targetPreLast, &x, &y)) GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0xC000);
+#else
+		if (Map_IsPositionInViewport(u->o.position, &x, &y))
+			Shape_Draw(g_table_unitInfo[u->o.type].groundSpriteID, x, y, 2, s_spriteFlags | 0xC000);
+
+		if (Map_IsPositionInViewport(u->targetLast, &x, &y))
+			Shape_Draw(g_table_unitInfo[u->o.type].groundSpriteID, x, y, 2, s_spriteFlags | 0xC000);
+
+		if (Map_IsPositionInViewport(u->targetPreLast, &x, &y))
+			Shape_Draw(g_table_unitInfo[u->o.type].groundSpriteID, x, y, 2, s_spriteFlags | 0xC000);
+#endif
 
 		if (!Unit_IsSelected(u))
 			continue;
@@ -638,7 +647,11 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 			if (ui->o.flags.blurTile) s_spriteFlags |= 0x200;
 
+#if 0
 			GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0x2000, s_paletteHouse);
+#else
+			Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, 2, s_spriteFlags | 0x2000);
+#endif
 		}
 
 		g_var_39E8 = 0;
