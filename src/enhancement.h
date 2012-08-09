@@ -13,6 +13,7 @@ extern bool enhancement_fix_ix_colour_remapping;
 extern bool enhancement_fix_selection_after_entering_structure;
 extern bool enhancement_i_mean_where_i_clicked;
 extern bool enhancement_insatiable_sandworms;
+extern bool enhancement_new_selection_cursor;
 extern bool enhancement_read_scenario_structure_health;
 extern bool enhancement_repeat_reinforcements;
 extern bool enhancement_special_trooper_portaits;

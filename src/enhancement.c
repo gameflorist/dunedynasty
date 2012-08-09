@@ -54,6 +54,12 @@ bool enhancement_i_mean_where_i_clicked = true;
 bool enhancement_insatiable_sandworms = true;
 
 /**
+ * The original selection cursor can be a little obstructive with
+ * multiple units selected.
+ */
+bool enhancement_new_selection_cursor = true;
+
+/**
  * The original game ignores all structures' health fields specified
  * in the scenario, giving them all full health instead.
  */

@@ -23,6 +23,7 @@ typedef enum DrawMode {
 } DrawMode;
 
 enum WindowID {
+	WINDOWID_VIEWPORT           = 2,
 	WINDOWID_RENDER_TEXTURE     = 22,
 	WINDOWID_MAX                = 23
 };

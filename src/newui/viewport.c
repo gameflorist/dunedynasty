@@ -4,6 +4,7 @@
 
 #include "viewport.h"
 
+#include "../enhancement.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
 #include "../house.h"
@@ -53,4 +54,32 @@ Viewport_DrawTiles(void)
 	for (int y = y0, top = viewportY1; (y < MAP_SIZE_MAX) && (top <= viewportY2); y++, top += TILE_SIZE)
 		GUI_DrawText_Wrapper("%d", viewportX1, top, 6, 0, 0x21, y);
 #endif
+}
+
+void
+Viewport_DrawSelectedUnit(int x, int y)
+{
+	if (enhancement_new_selection_cursor) {
+		const int x1 = x - TILE_SIZE/2 + 1 + g_widgetProperties[WINDOWID_VIEWPORT].xBase*8;
+		const int y1 = y - TILE_SIZE/2 + 1 + g_widgetProperties[WINDOWID_VIEWPORT].yBase;
+		const int x2 = x1 + TILE_SIZE - 3;
+		const int y2 = y1 + TILE_SIZE - 3;
+
+#if 0
+		/* 3 pixels long. */
+		GUI_DrawLine(x1, y1 + 2, x1 + 2 + 1, y1 - 1, 0xFF);
+		GUI_DrawLine(x2 - 2, y1, x2 + 1, y1 + 2 + 1, 0xFF);
+		GUI_DrawLine(x2 - 2, y2, x2 + 1, y2 - 2 - 1, 0xFF);
+		GUI_DrawLine(x1, y2 - 2, x1 + 2 + 1, y2 + 1, 0xFF);
+#else
+		/* 4 pixels long. */
+		GUI_DrawLine(x1, y1 + 3, x1 + 3 + 1, y1 - 1, 0xFF);
+		GUI_DrawLine(x2 - 3, y1, x2 + 1, y1 + 3 + 1, 0xFF);
+		GUI_DrawLine(x2 - 3, y2, x2 + 1, y2 - 3 - 1, 0xFF);
+		GUI_DrawLine(x1, y2 - 3, x1 + 3 + 1, y2 + 1, 0xFF);
+#endif
+	}
+	else {
+		Shape_DrawTint(SHAPE_SELECTED_UNIT, x, y, 0xFF, WINDOWID_VIEWPORT, 0xC000);
+	}
 }

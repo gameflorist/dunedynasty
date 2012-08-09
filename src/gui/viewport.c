@@ -434,7 +434,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 		if (!Map_IsPositionInViewport(u->o.position, &x, &y)) continue;
 
-		GUI_DrawSprite(g_screenActiveID, g_sprites[6], x, y, 2, 0xC000);
+		Viewport_DrawSelectedUnit(x, y);
 	}
 
 	if (g_unitSelected == NULL && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
@@ -601,7 +601,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 			if (u != g_unitSelected) continue;
 
-			GUI_DrawSprite(g_screenActiveID, g_sprites[6], x, y, 2, 0xC000);
+			Viewport_DrawSelectedUnit(x, y);
 		}
 
 		g_var_39E6 = 0;
