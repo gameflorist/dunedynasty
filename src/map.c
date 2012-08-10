@@ -3,6 +3,7 @@
 /** @file src/map.c Map routines. */
 
 #include <assert.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include "types.h"
@@ -261,6 +262,7 @@ uint16 Map_SetSelectionObjectPosition(uint16 packed)
  */
 void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 {
+#if 0
 	/* Border tiles of the viewport relative to the top-left. */
 	static const uint16 viewportBorder[] = {
 		0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E,
@@ -337,6 +339,28 @@ void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 	GFX_Screen_SetActive(oldScreenID);
 
 	minimapPreviousPosition = packed;
+#else
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+	const WidgetInfo *minimap = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
+	const WidgetInfo *viewport = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+	const int tx = Tile_GetPackedX(packed) - mapInfo->minX;
+	const int ty = Tile_GetPackedY(packed) - mapInfo->minY;
+	const int w = ceilf((float)viewport->width / TILE_SIZE);
+	const int h = ceilf((float)viewport->height / TILE_SIZE);
+	VARIABLE_NOT_USED(forceUpdate);
+
+	int x1 = minimap->offsetX + (float)tx * minimap->width / mapInfo->sizeX;
+	int y1 = minimap->offsetY + (float)ty * minimap->height / mapInfo->sizeY;
+	int x2 = minimap->offsetX + (float)(tx + w - 1) * minimap->width / mapInfo->sizeX - 1;
+	int y2 = minimap->offsetY + (float)(ty + h - 1) * minimap->height / mapInfo->sizeY - 1;
+
+	x1 = clamp(minimap->offsetX, x1, minimap->offsetX + minimap->width - 1);
+	x2 = clamp(minimap->offsetX, x2, minimap->offsetX + minimap->width - 1);
+	y1 = clamp(minimap->offsetY, y1, minimap->offsetY + minimap->height - 1);
+	y2 = clamp(minimap->offsetY, y2, minimap->offsetY + minimap->height - 1);
+
+	GUI_DrawWiredRectangle(x1, y1, x2, y2, 15);
+#endif
 }
 
 /**
@@ -907,17 +931,33 @@ void Map_ChangeSpiceAmount(uint16 packed, int16 dir)
 */
 void Map_SetViewportPosition(uint16 packed)
 {
-	int16 x;
-	int16 y;
-	const MapInfo *mapInfo;
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+	const int w = ceilf((float)wi->width / TILE_SIZE);
+	const int h = ceilf((float)wi->height / TILE_SIZE);
 
-	x = Tile_GetPackedX(packed) - 7;
-	y = Tile_GetPackedY(packed) - 5;
+	int x = Tile_GetPackedX(packed) - w / 2;
+	int y = Tile_GetPackedY(packed) - h / 2;
 
-	mapInfo = &g_mapInfos[g_scenario.mapScale];
+	x = max(x, mapInfo->minX);
+	y = max(y, mapInfo->minY);
 
-	x = max(mapInfo->minX, min(mapInfo->minX + mapInfo->sizeX - 15, x));
-	y = max(mapInfo->minY, min(mapInfo->minY + mapInfo->sizeY - 10, y));
+	if (x + w - 1 > mapInfo->minX + mapInfo->sizeX) {
+		x = mapInfo->minX + mapInfo->sizeX - w + 1;
+
+		if (x < mapInfo->minX)
+			x = (x + mapInfo->minX) / 2;
+	}
+
+	if (y + h - 1 > mapInfo->minY + mapInfo->sizeY) {
+		y = mapInfo->minY + mapInfo->sizeY - h + 1;
+
+		if (y < mapInfo->minY)
+			y = (y + mapInfo->minY) / 2;
+	}
+
+	if (x < 0) x = 0;
+	if (y < 0) y = 0;
 
 	g_viewportPosition = Tile_PackXY(x, y);
 }
