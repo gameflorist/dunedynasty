@@ -96,24 +96,40 @@ Map_InRangePacked(uint16 packed)
 */
 uint16 Map_MoveDirection(uint16 direction)
 {
-	static const XYPosition mapScrollOffset[] = {
+	const struct {
+		int dx, dy;
+	} mapScrollOffset[] = {
 		{ 0, -1}, { 1, -1}, { 1,  0}, { 1,  1},
 		{ 0,  1}, {-1,  1}, {-1,  0}, {-1, -1}
 	};
 
-	uint16 x, y;
-	const MapInfo *mapInfo;
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+	const int w = ceilf((float)wi->width / TILE_SIZE);
+	const int h = ceilf((float)wi->height / TILE_SIZE);
 
-	x = Tile_GetPackedX(g_minimapPosition) + mapScrollOffset[direction].x;
-	y = Tile_GetPackedY(g_minimapPosition) + mapScrollOffset[direction].y;
-
-	mapInfo = &g_mapInfos[g_scenario.mapScale];
+	int x = Tile_GetPackedX(g_viewportPosition) + mapScrollOffset[direction].dx;
+	int y = Tile_GetPackedY(g_viewportPosition) + mapScrollOffset[direction].dy;
 
 	x = max(x, mapInfo->minX);
 	y = max(y, mapInfo->minY);
 
-	x = min(x, mapInfo->minX + mapInfo->sizeX - 15);
-	y = min(y, mapInfo->minY + mapInfo->sizeY - 10);
+	if (x + w - 1 > mapInfo->minX + mapInfo->sizeX) {
+		x = mapInfo->minX + mapInfo->sizeX - w + 1;
+
+		if (x < mapInfo->minX)
+			x = (x + mapInfo->minX) / 2;
+	}
+
+	if (y + h - 1 > mapInfo->minY + mapInfo->sizeY) {
+		y = mapInfo->minY + mapInfo->sizeY - h + 1;
+
+		if (y < mapInfo->minY)
+			y = (y + mapInfo->minY) / 2;
+	}
+
+	if (x < 0) x = 0;
+	if (y < 0) y = 0;
 
 	g_viewportPosition = Tile_PackXY(x, y);
 	return g_viewportPosition;
