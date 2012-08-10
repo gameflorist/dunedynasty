@@ -44,4 +44,13 @@ Viewport_DrawTiles(void)
 			Video_DrawIcon(t->overlaySpriteID, t->houseID, left, top);
 		}
 	}
+
+#if 0
+	/* Debugging. */
+	for (int x = x0, left = viewportX1; (x < MAP_SIZE_MAX) && (left <= viewportX2); x++, left += TILE_SIZE)
+		GUI_DrawText_Wrapper("%d", left, viewportY1, 15, 0, 0x21, x);
+
+	for (int y = y0, top = viewportY1; (y < MAP_SIZE_MAX) && (top <= viewportY2); y++, top += TILE_SIZE)
+		GUI_DrawText_Wrapper("%d", viewportX1, top, 6, 0, 0x21, y);
+#endif
 }

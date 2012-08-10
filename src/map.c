@@ -62,6 +62,31 @@ const MapInfo g_mapInfos[3] = {
 	{21, 21, 21, 21}
 };
 
+static bool
+Map_InRangeX(int x)
+{
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+
+	return (mapInfo->minX <= x && x < mapInfo->minX + mapInfo->sizeX);
+}
+
+static bool
+Map_InRangeY(int y)
+{
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+
+	return (mapInfo->minY <= y && y < mapInfo->minY + mapInfo->sizeY);
+}
+
+static bool
+Map_InRangePacked(uint16 packed)
+{
+	const int x = Tile_GetPackedX(packed);
+	const int y = Tile_GetPackedY(packed);
+
+	return Map_InRangeX(x) && Map_InRangeY(y);
+}
+
 /**
  * Move the viewport position in the given direction.
  *
@@ -1373,7 +1398,7 @@ static void Map_UnveilTile_Neighbour(uint16 packed)
 	uint16 spriteID;
 	Tile *t;
 
-	if (Tile_IsOutOfMap(packed)) return;
+	if (!Map_InRangePacked(packed)) return;
 
 	t = &g_map[packed];
 
@@ -1389,7 +1414,7 @@ static void Map_UnveilTile_Neighbour(uint16 packed)
 			static const int16 mapOffset[] = {-64, 1, 64, -1};
 			uint16 neighbour = packed + mapOffset[i];
 
-			if (Tile_IsOutOfMap(neighbour)) {
+			if (!Map_InRangePacked(neighbour)) {
 				spriteID |= 1 << i;
 				continue;
 			}
