@@ -50,8 +50,16 @@
 #include <string.h>
 #include <math.h>
 
+#ifdef __USE_SDL__
 #include <SDL_mixer.h>
 #include <SDL_endian.h>
+#else
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_audio.h>
+#define AUDIO_S8	ALLEGRO_AUDIO_DEPTH_INT8
+#define AUDIO_U8	ALLEGRO_AUDIO_DEPTH_UINT8
+#define AUDIO_S16LSB	ALLEGRO_AUDIO_DEPTH_INT16
+#endif
 
 
 #include "fmopl.h"
@@ -2268,6 +2276,7 @@ const uint8 AdlibDriver::_unkTables[][32] = {
 //#pragma mark -
 
 
+#ifdef __USE_SDL__
 SoundAdlibPC::SoundAdlibPC(SDL_RWops* rwop, bool bMAME) : _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
 
@@ -2286,8 +2295,9 @@ SoundAdlibPC::SoundAdlibPC(SDL_RWops* rwop, bool bMAME) : _driver(0), _trackEntr
 
 	internalLoadFile(rwop);
 }
+#endif
 
-SoundAdlibPC::SoundAdlibPC(SDL_RWops* rwop, int freq, bool bMAME) : _driver(0), _trackEntries(), _soundDataPtr(0) {
+SoundAdlibPC::SoundAdlibPC(ALLEGRO_FILE* rwop, int freq, bool bMAME) : _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
 
 	m_freq = freq;
@@ -2366,6 +2376,10 @@ void SoundAdlibPC::playSoundEffect(uint8 track) {
 	play(track);
 }
 
+unsigned char SoundAdlibPC::getsampsize() {
+	return m_channels * (m_format == AUDIO_U8 || m_format == AUDIO_S8 ? 1 : 2);
+}
+
 void SoundAdlibPC::callback(void *userdata, Uint8 *audiobuf, int len)
 {
 	SoundAdlibPC *self = (SoundAdlibPC *)userdata;
@@ -2385,6 +2399,7 @@ void SoundAdlibPC::callback(void *userdata, Uint8 *audiobuf, int len)
 
 	// now convert to target format
 	switch(self->m_format) {
+#ifdef __USE_SDL__
 		case AUDIO_U8: {
 			Uint8* out = audiobuf;
 
@@ -2441,6 +2456,17 @@ void SoundAdlibPC::callback(void *userdata, Uint8 *audiobuf, int len)
 			for(int i=0;i<numSamples;i++) {
 				for(int j=0;j<self->m_channels;j++,out++) {
 					*out = SDL_SwapBE16(tmpBuf[i]/2);
+				}
+			}
+		} break;
+#endif
+
+		case AUDIO_S16LSB: {
+			int16_t* out = (int16_t*) audiobuf;
+
+			for (int i = 0; i < numSamples; i++) {
+				for (int j = 0; j < self->m_channels; j++, out++) {
+					*out = tmpBuf[i];
 				}
 			}
 		} break;
@@ -2503,32 +2529,48 @@ void SoundAdlibPC::beginFadeOut() {
 	playSoundEffect(1);
 }
 
-void SoundAdlibPC::internalLoadFile(SDL_RWops* rwop) {
+void SoundAdlibPC::internalLoadFile(ALLEGRO_FILE* rwop) {
   if(rwop == NULL) {
 	return;
   }
 
-  uint8 *file_data = 0; int file_size = 0;
+  uint8 *file_data = 0;
+  size_t file_size = 0;
 
+#ifdef __USE_SDL__
   if((file_size = SDL_RWseek(rwop,0,SEEK_END)) <= 0) {
 	fprintf(stderr,"SoundAdlibPC::internalLoadFile(): Cannot seek in SDL_RWop!\n");
 	return;
   }
+#else
+  if((file_size = al_fsize(rwop)) <= 0) {
+	return;
+  }
+#endif
 
 
   unk2();
   unk1();
 
+#ifdef __USE_SDL__
   if(SDL_RWseek(rwop,0,SEEK_SET) != 0) {
 	fprintf(stderr,"SoundAdlibPC::internalLoadFile(): Cannot seek in SDL_RWop!\n");
 	return;
   }
+#endif
 
   file_data = new uint8[file_size];
+#ifdef __USE_SDL__
   if(SDL_RWread(rwop,file_data,1,file_size) != file_size) {
 	fprintf(stderr,"SoundAdlibPC::internalLoadFile(): Cannot read from SDL_RWop!\n");
 	return;
   }
+#else
+  if(al_fread(rwop,file_data,file_size) != file_size) {
+	fprintf(stderr,"SoundAdlibPC::internalLoadFile(): Cannot read from SDL_RWop!\n");
+	return;
+  }
+#endif
 
 
   _driver->callback(8, int(-1));
@@ -2561,6 +2603,7 @@ void SoundAdlibPC::unk2() {
 	playSoundEffect(0);
 }
 
+#ifdef __USE_SDL__
 Mix_Chunk* SoundAdlibPC::getSubsong(int Num) {
 	Uint8*	buf = NULL;
 	int		bufSize = 0;
@@ -2594,3 +2637,5 @@ Mix_Chunk* SoundAdlibPC::getSubsong(int Num) {
 	myChunk->alen = bufSize;
 	return myChunk;
 }
+#endif
+

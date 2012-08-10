@@ -42,11 +42,17 @@
 #ifndef SOUND_ADLIB_H
 #define SOUND_ADLIB_H
 
+#ifdef __USE_SDL__
 #include <SDL_rwops.h>
+#else
+#include <allegro5/allegro.h>
+#endif
 #include <inttypes.h>
 #include <vector>
+#ifdef __USE_SDL__
 #include <SDL.h>
 #include <SDL_mixer.h>
+#endif
 
 class AdlibDriver;
 
@@ -63,8 +69,15 @@ class AdlibDriver;
  */
 class SoundAdlibPC {
 public:
+	typedef int8_t Sint8;
+	typedef uint8_t Uint8;
+	typedef int16_t Sint16;
+	typedef uint16_t Uint16;
+
+#ifdef __USE_SDL__
 	SoundAdlibPC(SDL_RWops* rwop, bool bMAME = true);
-	SoundAdlibPC(SDL_RWops* rwop, int freq, bool bMAME = true);
+#endif
+	SoundAdlibPC(ALLEGRO_FILE* rwop, int freq, bool bMAME = true);
 	~SoundAdlibPC();
 
 	static void callback(void *, Uint8 *, int);
@@ -83,9 +96,11 @@ public:
 
 	void beginFadeOut();
 
+#ifdef __USE_SDL__
 	Mix_Chunk* getSubsong(int Num);
+#endif
 private:
-	void internalLoadFile(SDL_RWops* rwop);
+	void internalLoadFile(ALLEGRO_FILE* rwop);
 
 	void play(uint8_t track);
 
@@ -104,9 +119,7 @@ private:
 	int _numSoundTriggers;
 	const int *_soundTriggers;
 
-	unsigned char getsampsize() {
-		return m_channels * (m_format == AUDIO_U8 || m_format == AUDIO_S8 ? 1 : 2);
-	}
+	unsigned char getsampsize();
 
 	int m_channels;
 	int m_freq;

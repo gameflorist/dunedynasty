@@ -36,9 +36,14 @@
 #include <assert.h>
 
 #include <math.h>
+#include <stdio.h>
 #include <string.h>
 
+#ifdef __USE_SDL__
 #include <SDL.h>
+#else
+#include <allegro5/allegro.h>
+#endif
 
 namespace OPL {
 namespace DOSBox {
@@ -92,7 +97,11 @@ bool Chip::write(uint32 reg, uint8 val) {
 		timer[1].counter = val;
 		return true;
 	case 0x04:
+#ifdef __USE_SDL__
 		double time = SDL_GetTicks() / 1000.0;
+#else
+		double time = al_get_time();
+#endif
 
 		if (val & 0x80) {
 			fprintf(stderr,"warning: timer reset is not implemented reliable\n");
@@ -129,7 +138,11 @@ bool Chip::write(uint32 reg, uint8 val) {
 }
 
 uint8 Chip::read() {
+#ifdef __USE_SDL__
 	double time = SDL_GetTicks() / 1000.0;
+#else
+	double time = al_get_time();
+#endif
 
 	fprintf(stderr,"warning: timer update is not implemented reliable\n");
 	timer[0].update(time);
