@@ -40,6 +40,16 @@ assert_compile(sizeof(ClippingArea) == 0x08);
 
 static ClippingArea g_clipping = { 0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1 };
 
+static uint16 s_mouseSpriteLeft;
+static uint16 s_mouseSpriteTop;
+static uint16 s_mouseSpriteWidth;
+static uint16 s_mouseSpriteHeight;
+
+static uint16 g_mouseSpriteHotspotX;
+static uint16 g_mouseSpriteHotspotY;
+static uint16 g_mouseWidth;
+static uint16 g_mouseHeight;
+
 /**
  * Draw a wired rectangle.
  * @param left The left position of the rectangle.
@@ -295,6 +305,200 @@ void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bottom)
 	g_clipping.top    = top;
 	g_clipping.right  = right;
 	g_clipping.bottom = bottom;
+}
+
+/**
+ * Show the mouse on the screen. Copy the screen behind the mouse in a safe
+ *  buffer.
+ */
+void GUI_Mouse_Show(void)
+{
+	int left, top;
+
+	if (g_var_7097 == 1) return;
+	if (g_mouseHiddenDepth == 0 || --g_mouseHiddenDepth != 0) return;
+
+	left = g_mouseX - g_mouseSpriteHotspotX;
+	top  = g_mouseY - g_mouseSpriteHotspotY;
+
+	s_mouseSpriteLeft = (left < 0) ? 0 : (left >> 3);
+	s_mouseSpriteTop = (top < 0) ? 0 : top;
+
+	s_mouseSpriteWidth = g_mouseWidth;
+	if ((left >> 3) + g_mouseWidth >= SCREEN_WIDTH / 8) s_mouseSpriteWidth -= (left >> 3) + g_mouseWidth - SCREEN_WIDTH / 8;
+
+	s_mouseSpriteHeight = g_mouseHeight;
+	if (top + g_mouseHeight >= SCREEN_HEIGHT) s_mouseSpriteHeight -= top + g_mouseHeight - SCREEN_HEIGHT;
+
+	if (g_mouseSpriteBuffer != NULL) {
+		GFX_CopyToBuffer(s_mouseSpriteLeft * 8, s_mouseSpriteTop, s_mouseSpriteWidth * 8, s_mouseSpriteHeight, g_mouseSpriteBuffer);
+	}
+
+	GUI_DrawSprite(0, g_mouseSprite, left, top, 0, 0);
+}
+
+/**
+ * Hide the mouse from the screen. Do this by copying the mouse buffer back to
+ *  the screen.
+ */
+void GUI_Mouse_Hide(void)
+{
+	if (g_var_7097 == 1) return;
+
+	if (g_mouseHiddenDepth == 0 && s_mouseSpriteWidth != 0) {
+		if (g_mouseSpriteBuffer != NULL) {
+			GFX_CopyFromBuffer(s_mouseSpriteLeft * 8, s_mouseSpriteTop, s_mouseSpriteWidth * 8, s_mouseSpriteHeight, g_mouseSpriteBuffer);
+		}
+
+		s_mouseSpriteWidth = 0;
+	}
+
+	g_mouseHiddenDepth++;
+}
+
+/**
+ * The safe version of GUI_Mouse_Hide(). It waits for a mouselock before doing
+ *  anything.
+ */
+void GUI_Mouse_Hide_Safe(void)
+{
+	while (g_mouseLock != 0) msleep(0);
+	g_mouseLock++;
+
+	if (g_var_7097 == 1) {
+		g_mouseLock--;
+		return;
+	}
+
+	GUI_Mouse_Hide();
+
+	g_mouseLock--;
+}
+
+/**
+ * The safe version of GUI_Mouse_Show(). It waits for a mouselock before doing
+ *  anything.
+ */
+void GUI_Mouse_Show_Safe(void)
+{
+	while (g_mouseLock != 0) msleep(0);
+	g_mouseLock++;
+
+	if (g_var_7097 == 1) {
+		g_mouseLock--;
+		return;
+	}
+
+	GUI_Mouse_Show();
+
+	g_mouseLock--;
+}
+
+/**
+ * Show the mouse if needed. Should be used in combination with
+ *  #GUI_Mouse_Hide_InRegion().
+ */
+void GUI_Mouse_Show_InRegion(void)
+{
+	uint8 counter;
+
+	while (g_mouseLock != 0) msleep(0);
+	g_mouseLock++;
+
+	counter = g_regionFlags & 0xFF;
+	if (counter == 0 || --counter != 0) {
+		g_regionFlags = (g_regionFlags & 0xFF00) | (counter & 0xFF);
+		g_mouseLock--;
+		return;
+	}
+
+	if ((g_regionFlags & 0x4000) != 0) {
+		GUI_Mouse_Show();
+	}
+
+	g_regionFlags = 0;
+	g_mouseLock--;
+}
+
+/**
+ * Hide the mouse when it is inside the specified region. Works with
+ *  #GUI_Mouse_Show_InRegion(), which only calls #GUI_Mouse_Show() when
+ *  mouse was really hidden.
+ */
+void GUI_Mouse_Hide_InRegion(uint16 left, uint16 top, uint16 right, uint16 bottom)
+{
+	int minx, miny;
+	int maxx, maxy;
+
+	minx = left - ((g_mouseWidth - 1) << 3) + g_mouseSpriteHotspotX;
+	if (minx < 0) minx = 0;
+
+	miny = top - g_mouseHeight + g_mouseSpriteHotspotY;
+	if (miny < 0) miny = 0;
+
+	maxx = right + g_mouseSpriteHotspotX;
+	if (maxx > SCREEN_WIDTH - 1) maxx = SCREEN_WIDTH - 1;
+
+	maxy = bottom + g_mouseSpriteHotspotY;
+	if (maxy > SCREEN_HEIGHT - 1) maxy = SCREEN_HEIGHT - 1;
+
+	while (g_mouseLock != 0) msleep(0);
+	g_mouseLock++;
+
+	if (g_regionFlags == 0) {
+		g_regionMinX = minx;
+		g_regionMinY = miny;
+		g_regionMaxX = maxx;
+		g_regionMaxY = maxy;
+	}
+
+	if (minx > g_regionMinX) g_regionMinX = minx;
+	if (miny > g_regionMinY) g_regionMinY = miny;
+	if (maxx < g_regionMaxX) g_regionMaxX = maxx;
+	if (maxy < g_regionMaxY) g_regionMaxY = maxy;
+
+	if ((g_regionFlags & 0x4000) == 0 &&
+	     g_mouseX >= g_regionMinX &&
+	     g_mouseX <= g_regionMaxX &&
+	     g_mouseY >= g_regionMinY &&
+	     g_mouseY <= g_regionMaxY) {
+		GUI_Mouse_Hide();
+
+		g_regionFlags |= 0x4000;
+	}
+
+	g_regionFlags |= 0x8000;
+	g_regionFlags = (g_regionFlags & 0xFF00) | (((g_regionFlags & 0x00FF) + 1) & 0xFF);
+
+	g_mouseLock--;
+}
+
+/**
+ * Show the mouse if needed. Should be used in combination with
+ *  GUI_Mouse_Hide_InWidget().
+ */
+void GUI_Mouse_Show_InWidget(void)
+{
+	GUI_Mouse_Show_InRegion();
+}
+
+/**
+ * Hide the mouse when it is inside the specified widget. Works with
+ *  #GUI_Mouse_Show_InWidget(), which only calls #GUI_Mouse_Show() when
+ *  mouse was really hidden.
+ * @param widgetIndex The index of the widget to check on.
+ */
+void GUI_Mouse_Hide_InWidget(uint16 widgetIndex)
+{
+	uint16 left, top;
+	uint16 width, height;
+
+	left   = g_widgetProperties[widgetIndex].xBase << 3;
+	top    = g_widgetProperties[widgetIndex].yBase;
+	width  = g_widgetProperties[widgetIndex].width << 3;
+	height = g_widgetProperties[widgetIndex].height;
+
+	GUI_Mouse_Hide_InRegion(left, top, left + width - 1, top + height - 1);
 }
 
 /* sprites.c */

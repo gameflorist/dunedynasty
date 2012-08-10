@@ -21,10 +21,17 @@
 #define GUI_DrawWiredRectangle  VideoA5_DrawRectangle
 #define GUI_DrawFilledRectangle VideoA5_DrawFilledRectangle
 
-#define Video_Mouse_SetPosition(x,y)    \
-	do { VARIABLE_NOT_USED(x); VARIABLE_NOT_USED(y); } while (false)
-#define Video_Mouse_SetRegion(l,r,t,b)  \
-	do { VARIABLE_NOT_USED(l); VARIABLE_NOT_USED(r); VARIABLE_NOT_USED(t); VARIABLE_NOT_USED(b); } while (false)
+#define GUI_Mouse_Show()
+#define GUI_Mouse_Hide()
+#define GUI_Mouse_Show_Safe()
+#define GUI_Mouse_Hide_Safe()
+#define GUI_Mouse_Show_InRegion()
+#define GUI_Mouse_Hide_InRegion(l,t,r,b)
+#define GUI_Mouse_Show_InWidget()   \
+	do {} while (false)
+#define GUI_Mouse_Hide_InWidget(w)
+#define Video_Mouse_SetPosition(x,y)
+#define Video_Mouse_SetRegion(l,r,t,b)
 
 #if 0
 #include "video_sdl.h"
