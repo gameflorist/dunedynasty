@@ -211,19 +211,10 @@ void GFX_Init_SpriteInfo(uint16 widthSize, uint16 heightSize)
 	}
 }
 
-/**
- * Put a pixel on the screen.
- * @param x The X-coordinate on the screen.
- * @param y The Y-coordinate on the screen.
- * @param colour The colour of the pixel to put on the screen.
- */
-void GFX_PutPixel(uint16 x, uint16 y, uint8 colour)
-{
-	if (y >= SCREEN_HEIGHT) return;
-	if (x >= SCREEN_WIDTH) return;
-
-	*((uint8 *)GFX_Screen_GetActive() + y * SCREEN_WIDTH + x) = colour;
-}
+#if 0
+/* Moved to video/video_opendune.c */
+extern void GFX_PutPixel(uint16 x, uint16 y, uint8 colour);
+#endif
 
 /**
  * Copy information from one screenbuffer to the other.

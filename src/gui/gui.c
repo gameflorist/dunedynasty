@@ -166,64 +166,11 @@ static const uint16 s_HOF_ColourBorderSchema[5][4] = {
 assert_compile(lengthof(s_colourBorderSchema) == lengthof(s_temporaryColourBorderSchema));
 assert_compile(lengthof(s_colourBorderSchema) == lengthof(s_HOF_ColourBorderSchema));
 
-/**
- * Draw a wired rectangle.
- * @param left The left position of the rectangle.
- * @param top The top position of the rectangle.
- * @param right The right position of the rectangle.
- * @param bottom The bottom position of the rectangle.
- * @param colour The colour of the rectangle.
- */
-void GUI_DrawWiredRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, uint8 colour)
-{
-	GUI_DrawLine(left, top, right, top, colour);
-	GUI_DrawLine(left, bottom, right, bottom, colour);
-	GUI_DrawLine(left, top, left, bottom, colour);
-	GUI_DrawLine(right, top, right, bottom, colour);
-}
-
-/**
- * Draw a filled rectangle.
- * @param left The left position of the rectangle.
- * @param top The top position of the rectangle.
- * @param right The right position of the rectangle.
- * @param bottom The bottom position of the rectangle.
- * @param colour The colour of the rectangle.
- */
-void GUI_DrawFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, uint8 colour)
-{
-	uint16 x;
-	uint16 y;
-	uint16 height;
-	uint16 width;
-
-	uint8 *screen = GFX_Screen_GetActive();
-
-	if (left >= SCREEN_WIDTH) return;
-	if (left < 0) left = 0;
-
-	if (top >= SCREEN_HEIGHT) return;
-	if (top < 0) top = 0;
-
-	if (right >= SCREEN_WIDTH) right = SCREEN_WIDTH - 1;
-	if (right < 0) right = 0;
-
-	if (bottom >= SCREEN_HEIGHT) bottom = SCREEN_HEIGHT - 1;
-	if (bottom < 0) bottom = 0;
-
-	if (left > right) return;
-	if (top > bottom) return;
-
-	screen += left + top * SCREEN_WIDTH;
-	width = right - left + 1;
-	height = bottom - top + 1;
-	for (y = 0; y < height; y++) {
-		for (x = 0; x < width; x++) {
-			*screen++ = colour;
-		}
-		screen += SCREEN_WIDTH - width;
-	}
-}
+#if 0
+/* Moved to video/video_opendune.c */
+extern void GUI_DrawWiredRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, uint8 colour);
+extern void GUI_DrawFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, uint8 colour);
+#endif
 
 /**
  * Display a text.
@@ -2352,188 +2299,15 @@ void GUI_InitColors(const uint8 *colours, uint8 first, uint8 last)
 	for (i = first; i < last + 1; i++) g_colours[i] = *colours++;
 }
 
-/**
- * Get how the given point must be clipped.
- * @param x The X-coordinate of the point.
- * @param y The Y-coordinate of the point.
- * @return A bitset.
- */
-static uint16 GetNeededClipping(int16 x, int16 y)
-{
-	uint16 flags = 0;
-
-	if (y < g_clipping.top)    flags |= 0x1;
-	if (y > g_clipping.bottom) flags |= 0x2;
-	if (x < g_clipping.left)   flags |= 0x4;
-	if (x > g_clipping.right)  flags |= 0x8;
-
-	return flags;
-}
-
-/**
- * Applies top clipping to a line.
- * @param x1 Pointer to the X-coordinate of the begin of the line.
- * @param y1 Pointer to the Y-coordinate of the begin of the line.
- * @param x2 The X-coordinate of the end of the line.
- * @param y2 The Y-coordinate of the end of the line.
- */
-static void ClipTop(int16 *x1, int16 *y1, int16 x2, int16 y2)
-{
-	*x1 += (x2 - *x1) * (g_clipping.top - *y1) / (y2 - *y1);
-	*y1 = g_clipping.top;
-}
-
-/**
- * Applies bottom clipping to a line.
- * @param x1 Pointer to the X-coordinate of the begin of the line.
- * @param y1 Pointer to the Y-coordinate of the begin of the line.
- * @param x2 The X-coordinate of the end of the line.
- * @param y2 The Y-coordinate of the end of the line.
- */
-static void ClipBottom(int16 *x1, int16 *y1, int16 x2, int16 y2)
-{
-	*x1 += (x2 - *x1) * (*y1 - g_clipping.bottom) / (*y1 - y2);
-	*y1 = g_clipping.bottom;
-}
-
-/**
- * Applies left clipping to a line.
- * @param x1 Pointer to the X-coordinate of the begin of the line.
- * @param y1 Pointer to the Y-coordinate of the begin of the line.
- * @param x2 The X-coordinate of the end of the line.
- * @param y2 The Y-coordinate of the end of the line.
- */
-static void ClipLeft(int16 *x1, int16 *y1, int16 x2, int16 y2)
-{
-	*y1 += (y2 - *y1) * (g_clipping.left - *x1) / (x2 - *x1);
-	*x1 = g_clipping.left;
-}
-
-/**
- * Applies right clipping to a line.
- * @param x1 Pointer to the X-coordinate of the begin of the line.
- * @param y1 Pointer to the Y-coordinate of the begin of the line.
- * @param x2 The X-coordinate of the end of the line.
- * @param y2 The Y-coordinate of the end of the line.
- */
-static void ClipRight(int16 *x1, int16 *y1, int16 x2, int16 y2)
-{
-	*y1 += (y2 - *y1) * (*x1 - g_clipping.right) / (*x1 - x2);
-	*x1 = g_clipping.right;
-}
-
-/**
- * Draws a line from (x1, y1) to (x2, y2) using given colour.
- * @param x1 The X-coordinate of the begin of the line.
- * @param y1 The Y-coordinate of the begin of the line.
- * @param x2 The X-coordinate of the end of the line.
- * @param y2 The Y-coordinate of the end of the line.
- * @param colour The colour to use to draw the line.
- */
-void GUI_DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour)
-{
-	uint8 *screen = GFX_Screen_GetActive();
-	int16 increment = 1;
-
-	if (x1 < g_clipping.left || x1 > g_clipping.right || y1 < g_clipping.top || y1 > g_clipping.bottom || x2 < g_clipping.left || x2 > g_clipping.right || y2 < g_clipping.top || y2 > g_clipping.bottom) {
-		while (true) {
-			uint16 clip1 = GetNeededClipping(x1, y1);
-			uint16 clip2 = GetNeededClipping(x2, y2);
-
-			if (clip1 == 0 && clip2 == 0) break;
-			if ((clip1 & clip2) != 0) return;
-
-			switch (clip1) {
-				case 1: case 9:  ClipTop(&x1, &y1, x2, y2); break;
-				case 2: case 6:  ClipBottom(&x1, &y1, x2, y2); break;
-				case 4: case 5:  ClipLeft(&x1, &y1, x2, y2); break;
-				case 8: case 10: ClipRight(&x1, &y1, x2, y2); break;
-				default:
-					switch (clip2) {
-						case 1: case 9:  ClipTop(&x2, &y2, x1, y1); break;
-						case 2: case 6:  ClipBottom(&x2, &y2, x1, y1); break;
-						case 4: case 5:  ClipLeft(&x2, &y2, x1, y1); break;
-						case 8: case 10: ClipRight(&x2, &y2, x1, y1); break;
-						default: break;
-					}
-			}
-		}
-	}
-
-	y2 -= y1;
-
-	if (y2 == 0) {
-		if (x1 >= x2) {
-			int16 x = x1;
-			x1 = x2;
-			x2 = x;
-		}
-
-		x2 -= x1 - 1;
-
-		screen += y1 * SCREEN_WIDTH + x1;
-
-		memset(screen, colour, x2);
-		return;
-	}
-
-	if (y2 < 0) {
-		int16 x = x1;
-		x1 = x2;
-		x2 = x;
-		y2 = -y2;
-		y1 -= y2;
-	}
-
-	screen += y1 * SCREEN_WIDTH;
-
-	x2 -= x1;
-	if (x2 == 0) {
-		screen += x1;
-
-		while (y2-- != 0) {
-			*screen = colour;
-			screen += SCREEN_WIDTH;
-		}
-
-		return;
-	}
-
-	if (x2 < 0) {
-		x2 = -x2;
-		increment = -1;
-	}
-
-	if (x2 < y2) {
-		int16 full = y2;
-		int16 half = y2 / 2;
-		screen += x1;
-		while (true) {
-			*screen = colour;
-			if (y2-- == 0) return;
-			screen += SCREEN_WIDTH;
-			half -= x2;
-			if (half < 0) {
-				half += full;
-				screen += increment;
-			}
-		}
-	} else {
-		int16 full = x2;
-		int16 half = x2 / 2;
-		screen += x1;
-		while (true) {
-			*screen = colour;
-			if (x2-- == 0) return;
-			screen += increment;
-			half -= y2;
-			if (half < 0) {
-				half += full;
-				screen += SCREEN_WIDTH;
-			}
-		}
-	}
-}
+#if 0
+/* Moved to video/video_opendune.c. */
+static uint16 GetNeededClipping(int16 x, int16 y);
+static void ClipTop(int16 *x1, int16 *y1, int16 x2, int16 y2);
+static void ClipBottom(int16 *x1, int16 *y1, int16 x2, int16 y2);
+static void ClipLeft(int16 *x1, int16 *y1, int16 x2, int16 y2);
+static void ClipRight(int16 *x1, int16 *y1, int16 x2, int16 y2);
+extern void GUI_DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
+#endif
 
 /**
  * Sets the clipping area.

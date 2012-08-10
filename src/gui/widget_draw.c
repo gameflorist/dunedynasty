@@ -22,6 +22,7 @@
 #include "../table/strings.h"
 #include "../tile.h"
 #include "../unit.h"
+#include "../video/video.h"
 
 
 /**

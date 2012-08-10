@@ -16,6 +16,7 @@
 #include "../string.h"
 #include "../sprites.h"
 #include "../table/strings.h"
+#include "../video/video.h"
 
 
 uint8 g_paletteActive[256 * 3];

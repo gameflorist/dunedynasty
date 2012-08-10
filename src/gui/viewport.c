@@ -32,6 +32,7 @@
 #include "../timer/timer.h"
 #include "../tools.h"
 #include "../unit.h"
+#include "../video/video.h"
 
 static uint32 s_tickCursor;                                 /*!< Stores last time Viewport changed the cursor spriteID. */
 static uint32 s_tickMapScroll;                              /*!< Stores last time Viewport ran MapScroll function. */

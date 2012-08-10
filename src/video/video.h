@@ -13,6 +13,11 @@
 #define Video_DrawShapeGrey     VideoA5_DrawShapeGrey
 #define Video_DrawShapeTint     VideoA5_DrawShapeTint
 
+#define GFX_PutPixel            VideoA5_PutPixel
+#define GUI_DrawLine            VideoA5_DrawLine
+#define GUI_DrawWiredRectangle  VideoA5_DrawRectangle
+#define GUI_DrawFilledRectangle VideoA5_DrawFilledRectangle
+
 #define Video_Mouse_SetPosition(x,y)    \
 	do { VARIABLE_NOT_USED(x); VARIABLE_NOT_USED(y); } while (false)
 #define Video_Mouse_SetRegion(l,r,t,b)  \

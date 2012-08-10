@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_primitives.h>
 #include <stdio.h>
 #include "../os/math.h"
 
@@ -144,6 +145,7 @@ VideoA5_Init(void)
 	al_hide_mouse_cursor(display);
 
 	al_init_image_addon();
+	al_init_primitives_addon();
 
 	return true;
 }
@@ -282,6 +284,40 @@ VideoA5_SetPalette(const uint8 *palette, int from, int length)
 		paletteRGB[3*i + 1] = g;
 		paletteRGB[3*i + 2] = b;
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+void
+VideoA5_PutPixel(int x, int y, uint8 c)
+{
+	al_draw_pixel(x + 0.5f, y + 0.5f, paltoRGB[c]);
+}
+
+void
+VideoA5_DrawLine(int x1, int y1, int x2, int y2, uint8 c)
+{
+	if (y1 == y2) {
+		al_draw_line(x1, y1 + 0.5f, x2 + 0.99f, y2 + 0.5f, paltoRGB[c], 1.0f);
+	}
+	else if (x1 == x2) {
+		al_draw_line(x1 + 0.5f, y1, x2 + 0.5f, y2 + 0.99f, paltoRGB[c], 1.0f);
+	}
+	else {
+		al_draw_line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, paltoRGB[c], 1.0f);
+	}
+}
+
+void
+VideoA5_DrawRectangle(int x1, int y1, int x2, int y2, uint8 c)
+{
+	al_draw_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, paltoRGB[c], 1.0f);
+}
+
+void
+VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c)
+{
+	al_draw_filled_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, paltoRGB[c]);
 }
 
 /*--------------------------------------------------------------*/

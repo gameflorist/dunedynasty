@@ -102,8 +102,6 @@ extern uint16 g_cursorDefaultSpriteID;
 extern uint16 g_variable_37B2;
 extern bool g_var_37B8;
 
-extern void GUI_DrawWiredRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, uint8 colour);
-extern void GUI_DrawFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, uint8 colour);
 extern void GUI_DisplayText(const char *str, int16 importance, ...);
 extern void GUI_DrawText(char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour);
 extern void GUI_DrawText_Wrapper(char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour, uint16 flags, ...);
@@ -123,7 +121,6 @@ extern void GUI_DrawInterfaceAndRadar(uint16 unknown);
 extern void GUI_DrawCredits(uint8 houseID, uint16 mode);
 extern void GUI_ChangeSelectionType(uint16 selectionType);
 extern void GUI_InitColors(const uint8 *colors, uint8 first, uint8 last);
-extern void GUI_DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color);
 extern void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bottom);
 extern void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, int16 memBlockSrc, int16 memBlockDst);
 extern FactoryResult GUI_DisplayFactoryWindow(bool isConstructionYard, bool isStarPort, uint16 upgradeCost);
