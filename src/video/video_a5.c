@@ -30,6 +30,28 @@ static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 
+/* VideoA5_GetNextXY:
+ *
+ * Returns (x, y) if the sprite will fit into the texture at (x, y).
+ * Otherwise, returns (0, y + row_h + 1), where row_h is the maximum
+ * height of any sprite in the same row.
+ */
+static void
+VideoA5_GetNextXY(int texture_width, int texture_height,
+		int x, int y, int w, int h, int row_h, int *retx, int *rety)
+{
+	if (x + w - 1 >= texture_width) {
+		x = 0;
+		y += row_h + 1;
+	}
+
+	if (y + h - 1 >= texture_height)
+		exit(1);
+
+	*retx = x;
+	*rety = y;
+}
+
 bool
 VideoA5_Init(void)
 {
@@ -204,14 +226,7 @@ VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 				continue;
 
 			if ((idx >= num_common) || (houseID == HOUSE_HARKONNEN)) {
-				if (x + TILE_SIZE - 1 >= WINDOW_W) {
-					x = 0;
-					y += TILE_SIZE + 1;
-
-					if (y + TILE_SIZE - 1 >= WINDOW_H)
-						exit(1);
-				}
-
+				VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, TILE_SIZE, TILE_SIZE, TILE_SIZE, &x, &y);
 				GFX_DrawSprite_(iconID, x, y, houseID);
 
 				s_icon[iconID][houseID] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
@@ -302,22 +317,13 @@ VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
-	uint8 *const shape = g_sprites[shapeID];
-	const int w = Sprite_GetWidth(shape);
-	const int h = Sprite_GetHeight(shape);
+	const int w = Shape_Width(shapeID);
+	const int h = Shape_Height(shapeID);
 
 	ALLEGRO_BITMAP *bmp;
 
-	if (x + w - 1 >= WINDOW_W) {
-		x = 0;
-		y += row_h + 1;
-		row_h = 0;
-
-		if (y + h - 1 >= WINDOW_H)
-			exit(1);
-	}
-
-	GUI_DrawSprite_(0, shape, x, y, WINDOWID_RENDER_TEXTURE, 0x100, g_remap, 1);
+	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, h, row_h, &x, &y);
+	GUI_DrawSprite_(0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0x100, g_remap, 1);
 
 	bmp = al_create_sub_bitmap(shape_texture, x, y, w, h);
 	assert(bmp != NULL);
