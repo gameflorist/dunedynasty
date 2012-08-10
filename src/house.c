@@ -16,6 +16,7 @@
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "map.h"
+#include "newui/menubar.h"
 #include "opendune.h"
 #include "pool/pool.h"
 #include "pool/house.h"
@@ -377,16 +378,13 @@ bool House_AreAllied(uint8 houseID1, uint8 houseID2)
  */
 bool House_UpdateRadarState(House *h)
 {
-	void *wsa;
-	uint16 frame;
-	uint16 frameCount;
-	bool activate;
-
 	if (h == NULL || h->index != g_playerHouseID) return false;
 
-	wsa = NULL;
-
-	activate = h->flags.radarActivated;
+#if 0
+	void *wsa = NULL;
+	bool activate = h->flags.radarActivated;
+	uint16 frame;
+	uint16 frameCount;
 
 	if (h->flags.radarActivated) {
 		/* Deactivate radar */
@@ -395,9 +393,13 @@ bool House_UpdateRadarState(House *h)
 		/* Activate radar */
 		if ((h->structuresBuilt & (1 << STRUCTURE_OUTPOST)) != 0 && h->powerProduction >= h->powerUsage) activate = true;
 	}
+#else
+	const bool activate = ((h->structuresBuilt & FLAG_STRUCTURE_OUTPOST) && (h->powerProduction >= h->powerUsage));
+#endif
 
 	if (h->flags.radarActivated == activate) return false;
 
+#if 0
 	wsa = WSA_LoadFile("STATIC.WSA", GFX_Screen_Get_ByIndex(3), GFX_Screen_GetSize_ByIndex(3), true);
 	frameCount = WSA_GetFrameCount(wsa);
 
@@ -406,11 +408,13 @@ bool House_UpdateRadarState(House *h)
 	GUI_Mouse_Hide_Safe();
 
 	while (Driver_Voice_IsPlaying()) sleepIdle();
+#endif
 
 	Voice_Play(62);
 
 	Sound_Output_Feedback(activate ? 28 : 29);
 
+#if 0
 	frameCount = WSA_GetFrameCount(wsa);
 
 	for (frame = 0; frame < frameCount; frame++) {
@@ -430,6 +434,10 @@ bool House_UpdateRadarState(House *h)
 	GUI_Mouse_Show_Safe();
 
 	GUI_Widget_Viewport_RedrawMap(0);
+#else
+	MenuBar_StartRadarAnimation(activate);
+	h->flags.radarActivated = activate;
+#endif
 
 	return activate;
 }

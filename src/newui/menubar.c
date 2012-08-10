@@ -13,6 +13,7 @@
 #include "../audio/driver.h"
 #include "../common_a5.h"
 #include "../config.h"
+#include "../enhancement.h"
 #include "../gfx.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
@@ -28,6 +29,19 @@
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
+
+enum {
+	RADAR_ANIMATION_FRAME_COUNT = 21,
+	RADAR_ANIMATION_DELAY = 3,
+};
+
+static enum {
+	RADAR_ANIMATION_NONE,
+	RADAR_ANIMATION_ACTIVATE,
+	RADAR_ANIMATION_DEACTIVATE
+} radar_animation_state;
+
+static int64_t radar_animation_timer;
 
 void
 MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
@@ -85,6 +99,31 @@ MenuBar_DrawStatusBar(const char *line1, const char *line2, uint8 fg1, uint8 fg2
 }
 
 void
+MenuBar_DrawRadarAnimation(void)
+{
+	if (radar_animation_state == RADAR_ANIMATION_NONE)
+		return;
+
+	const int64_t curr_ticks = Timer_GetTicks();
+
+	if (curr_ticks - radar_animation_timer >= RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
+		radar_animation_state = RADAR_ANIMATION_NONE;
+		return;
+	}
+
+	const int x = g_widgetProperties[WINDOWID_MINIMAP].xBase*8;
+	const int y = g_widgetProperties[WINDOWID_MINIMAP].yBase;
+
+	int frame = (curr_ticks - radar_animation_timer) / RADAR_ANIMATION_DELAY;
+	frame = clamp(0, frame, RADAR_ANIMATION_FRAME_COUNT);
+
+	if (radar_animation_state == RADAR_ANIMATION_ACTIVATE)
+		frame = RADAR_ANIMATION_FRAME_COUNT - frame - 1;
+
+	Video_DrawWSAStatic(frame, x, y);
+}
+
+void
 MenuBar_Draw(enum HouseType houseID)
 {
 	Widget *w;
@@ -118,6 +157,32 @@ MenuBar_Draw(enum HouseType houseID)
 	GUI_Widget_Draw(w);
 
 	Shape_DrawRemap(SHAPE_CREDITS_LABEL, houseID, TRUE_DISPLAY_WIDTH - 128, 0, 0, 0);
+
+	MenuBar_DrawRadarAnimation();
+}
+
+void
+MenuBar_StartRadarAnimation(bool activate)
+{
+	if (enhancement_nonblocking_radar_animation) {
+		radar_animation_state = activate ? RADAR_ANIMATION_ACTIVATE : RADAR_ANIMATION_DEACTIVATE;
+		radar_animation_timer = Timer_GetTicks();
+	}
+	else {
+		Timer_SetTimer(TIMER_GAME, false);
+
+		for (int frame = 0; frame < RADAR_ANIMATION_FRAME_COUNT; frame++) {
+			const int x = g_widgetProperties[WINDOWID_MINIMAP].xBase*8;
+			const int y = g_widgetProperties[WINDOWID_MINIMAP].yBase;
+
+			GUI_DrawInterfaceAndRadar(0);
+			Video_DrawWSAStatic(activate ? RADAR_ANIMATION_FRAME_COUNT - frame - 1 : frame, x, y);
+			Video_Tick();
+			Timer_Sleep(RADAR_ANIMATION_DELAY);
+		}
+
+		Timer_SetTimer(TIMER_GAME, true);
+	}
 }
 
 /*--------------------------------------------------------------*/

@@ -1434,6 +1434,8 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 	/* XXX: what is this for? */
 	/* GUI_SetPaletteAnimated(g_palette1, 15); */
 
+	MenuBar_DrawRadarAnimation();
+
 	GFX_Screen_SetActive(oldScreenID);
 	Input_History_Clear();
 }

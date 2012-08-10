@@ -60,6 +60,12 @@ bool enhancement_insatiable_sandworms = true;
 bool enhancement_new_selection_cursor = true;
 
 /**
+ * Do not pause game play when playing the radar activation and
+ * deactivation animation sequences.
+ */
+bool enhancement_nonblocking_radar_animation = true;
+
+/**
  * The original game ignores all structures' health fields specified
  * in the scenario, giving them all full health instead.
  */
