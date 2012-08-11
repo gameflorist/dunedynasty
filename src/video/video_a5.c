@@ -454,6 +454,19 @@ VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags)
 	VideoA5_DrawShape(greyID, HOUSE_HARKONNEN, x, y, flags);
 }
 
+void
+VideoA5_DrawShapeTint(enum ShapeID shapeID, int x, int y, unsigned char c, int flags)
+{
+	assert(s_shape[shapeID][HOUSE_HARKONNEN] != NULL);
+
+	int al_flags = 0;
+
+	if (flags & 0x01) al_flags |= ALLEGRO_FLIP_HORIZONTAL;
+	if (flags & 0x02) al_flags |= ALLEGRO_FLIP_VERTICAL;
+
+	al_draw_tinted_bitmap(s_shape[shapeID][HOUSE_HARKONNEN], paltoRGB[c], x, y, al_flags);
+}
+
 /*--------------------------------------------------------------*/
 
 void

@@ -62,3 +62,10 @@ Shape_DrawGrey(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int f
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
 	Video_DrawShapeGrey(shapeID, x, y, flags & 0x3);
 }
+
+void
+Shape_DrawTint(enum ShapeID shapeID, int x, int y, unsigned char c, enum WindowID windowID, int flags)
+{
+	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
+	Video_DrawShapeTint(shapeID, x, y, c, flags & 0x3);
+}
