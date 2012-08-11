@@ -324,8 +324,11 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
  * @param x The most left position where to draw the string.
  * @param y The most top position where to draw the string.
  */
-static void GUI_DrawChar(unsigned char c, uint16 x, uint16 y)
+void GUI_DrawChar(unsigned char c, int x, int y)
 {
+	const int width = (g_curWidgetIndex == WINDOWID_RENDER_TEXTURE) ? g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8 : SCREEN_WIDTH;
+	const int height = (g_curWidgetIndex == WINDOWID_RENDER_TEXTURE) ? g_widgetProperties[WINDOWID_RENDER_TEXTURE].height : SCREEN_WIDTH;
+
 	uint8 *screen = GFX_Screen_GetActive();
 
 	FontChar *fc;
@@ -339,11 +342,11 @@ static void GUI_DrawChar(unsigned char c, uint16 x, uint16 y)
 	fc = &g_fontCurrent->chars[c];
 	if (fc->data == NULL) return;
 
-	if (x >= SCREEN_WIDTH || (x + fc->width) > SCREEN_WIDTH) return;
-	if (y >= SCREEN_HEIGHT || (y + g_fontCurrent->height) > SCREEN_HEIGHT) return;
+	if (x >= width || (x + fc->width) > width) return;
+	if (y >= height || (y + g_fontCurrent->height) > height) return;
 
-	x += y * SCREEN_WIDTH;
-	remainingWidth = SCREEN_WIDTH - fc->width;
+	x += width * y;
+	remainingWidth = width - fc->width;
 
 	if (g_colours[0] != 0) {
 		for (j = 0; j < fc->unusedLines; j++) {
@@ -351,7 +354,7 @@ static void GUI_DrawChar(unsigned char c, uint16 x, uint16 y)
 			x += remainingWidth;
 		}
 	} else {
-		x += fc->unusedLines * SCREEN_WIDTH;
+		x += width * fc->unusedLines;
 	}
 
 	if (fc->usedLines == 0) return;

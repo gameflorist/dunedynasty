@@ -12,6 +12,7 @@
 #include "../common_a5.h"
 #include "../file.h"
 #include "../gfx.h"
+#include "../gui/font.h"
 #include "../gui/gui.h"
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
@@ -26,6 +27,11 @@
 #define SHAPEID_MAX         640
 #define WINDTRAP_COLOUR     223
 
+static const uint8 font_palette[][8] = {
+	{ 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, /* No outline. */
+	{ 0x00, 0xFF, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00 }, /* Shadow. */
+};
+
 static ALLEGRO_DISPLAY *display;
 static ALLEGRO_DISPLAY *display2;
 static ALLEGRO_BITMAP *screen;
@@ -34,6 +40,7 @@ static unsigned char paletteRGB[3 * 256];
 
 static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
+static ALLEGRO_BITMAP *font_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 
@@ -138,7 +145,8 @@ VideoA5_Init(void)
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
-	if (screen == NULL || icon_texture == NULL || shape_texture == NULL)
+	font_texture = al_create_bitmap(w, h);
+	if (screen == NULL || icon_texture == NULL || shape_texture == NULL || font_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -179,6 +187,9 @@ VideoA5_Uninit(void)
 
 	al_destroy_bitmap(shape_texture);
 	shape_texture = NULL;
+
+	al_destroy_bitmap(font_texture);
+	font_texture = NULL;
 
 	al_destroy_bitmap(screen);
 	screen = NULL;
@@ -638,6 +649,52 @@ VideoA5_DrawShapeTint(enum ShapeID shapeID, int x, int y, unsigned char c, int f
 
 /*--------------------------------------------------------------*/
 
+static void
+VideoA5_ExportFont(Font *font, const uint8 *pal, int y, int *rety)
+{
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+
+	int x = 0;
+
+	Font_Select(font);
+	GUI_InitColors(pal, 0, 15);
+
+	for (int c = 0; c < 256; c++) {
+		if ((c < font->count) && (font->chars[c].data != NULL)) {
+			/* Image width is Font_GetCharWidth(c) + 1. */
+			const int w = Font_GetCharWidth(c) + 1;
+
+			VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, font->height, font->height, &x, &y);
+			GUI_DrawChar(c, x, y);
+
+			x += w + 1;
+		}
+	}
+
+	*rety = y + font->height + 1;
+}
+
+static void
+VideoA5_InitFonts(unsigned char *buf)
+{
+	int y = 0;
+
+	VideoA5_ExportFont(g_fontNew6p, font_palette[0], y, &y);
+	VideoA5_ExportFont(g_fontNew6p, font_palette[1], y, &y);
+	VideoA5_ExportFont(g_fontNew8p, font_palette[0], y, &y);
+	VideoA5_ExportFont(g_fontNew8p, font_palette[1], y, &y);
+	VideoA5_ExportFont(g_fontIntro, font_palette[0], y, &y);
+
+	VideoA5_CopyBitmap(buf, font_texture, true);
+
+#if OUTPUT_TEXTURES
+	al_save_bitmap("fonts.png", font_texture);
+#endif
+}
+
+/*--------------------------------------------------------------*/
+
 void
 VideoA5_InitSprites(void)
 {
@@ -655,6 +712,9 @@ VideoA5_InitSprites(void)
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitShapes(buf);
+
+	memset(buf, 0, WINDOW_W * WINDOW_H);
+	VideoA5_InitFonts(buf);
 
 	al_set_target_backbuffer(display);
 
