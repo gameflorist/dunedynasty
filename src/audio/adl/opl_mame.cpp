@@ -31,7 +31,7 @@
 #include <stdarg.h>
 #include <math.h>
 
-#include <FileClasses/adl/opl_mame.h>
+#include "opl_mame.h"
 
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 

@@ -39,7 +39,7 @@
  *
  */
 
-#include <FileClasses/adl/sound_adlib.h>
+#include "sound_adlib.h"
 
 #include <algorithm>
 #include <inttypes.h>
@@ -54,7 +54,7 @@
 #include <SDL_endian.h>
 
 
-#include <FileClasses/adl/fmopl.h>
+#include "fmopl.h"
 
 // Basic Adlib Programming:
 // http://www.gamedev.net/reference/articles/article446.asp

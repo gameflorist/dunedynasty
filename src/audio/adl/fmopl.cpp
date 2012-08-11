@@ -24,10 +24,10 @@
 
 #include <assert.h>
 
-#include <FileClasses/adl/fmopl.h>
+#include "fmopl.h"
 
-#include <FileClasses/adl/opl_dosbox.h>
-#include <FileClasses/adl/opl_mame.h>
+#include "opl_dosbox.h"
+#include "opl_mame.h"
 
 namespace OPL {
 

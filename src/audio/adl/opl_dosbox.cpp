@@ -31,7 +31,7 @@
 
 #ifndef DISABLE_DOSBOX_OPL
 
-#include <FileClasses/adl/opl_dosbox.h>
+#include "opl_dosbox.h"
 
 #include <assert.h>
 
@@ -149,7 +149,7 @@ uint8 Chip::read() {
 }
 
 namespace OPL2 {
-#include <FileClasses/adl/opl_impl.h>
+#include "opl_impl.h"
 
 struct Handler : public DOSBox::Handler {
 	void writeReg(uint32 reg, uint8 val) {
@@ -172,7 +172,7 @@ struct Handler : public DOSBox::Handler {
 
 namespace OPL3 {
 #define OPLTYPE_IS_OPL3
-#include <FileClasses/adl/opl_impl.h>
+#include "opl_impl.h"
 
 struct Handler : public DOSBox::Handler {
 	void writeReg(uint32 reg, uint8 val) {
