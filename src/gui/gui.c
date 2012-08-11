@@ -392,8 +392,8 @@ void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uin
 
 	if (left < 0) left = 0;
 	if (top  < 0) top  = 0;
-	if (left > SCREEN_WIDTH) return;
-	if (top  > SCREEN_HEIGHT) return;
+	if (left > TRUE_DISPLAY_WIDTH) return;
+	if (top  > TRUE_DISPLAY_HEIGHT) return;
 
 	colours[0] = bgColour;
 	colours[1] = fgColour;
@@ -415,11 +415,11 @@ void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uin
 
 		width = Font_GetCharWidth(*s);
 
-		if (x + width > SCREEN_WIDTH) {
+		if (x + width > TRUE_DISPLAY_WIDTH) {
 			x = left;
 			y += g_fontCurrent->height;
 		}
-		if (y > SCREEN_HEIGHT) break;
+		if (y > TRUE_DISPLAY_HEIGHT) break;
 
 		GUI_DrawChar(*s, x, y);
 
