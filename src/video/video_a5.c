@@ -52,6 +52,13 @@ VideoA5_GetNextXY(int texture_width, int texture_height,
 	*rety = y;
 }
 
+static void
+VideoA5_ReadPalette(const char *filename)
+{
+	File_ReadBlockFile(filename, paletteRGB, 3 * 256);
+	VideoA5_SetPalette(paletteRGB, 0, 256);
+}
+
 bool
 VideoA5_Init(void)
 {
@@ -378,10 +385,8 @@ VideoA5_InitShapes(unsigned char *buf)
 	for (int group = 0; shape_data[group].start != -1; group++) {
 		if (shape_data[group].start == -2) {
 			VideoA5_CopyBitmap(buf, shape_texture, true);
+			VideoA5_ReadPalette("BENE.PAL");
 			memset(buf, 0, WINDOW_W * WINDOW_H);
-
-			File_ReadBlockFile("BENE.PAL", paletteRGB, 3 * 256);
-			VideoA5_SetPalette(paletteRGB, 0, 256);
 			continue;
 		}
 
@@ -407,8 +412,7 @@ VideoA5_InitShapes(unsigned char *buf)
 	al_save_bitmap("shapes.png", shape_texture);
 #endif
 
-	File_ReadBlockFile("IBM.PAL", paletteRGB, 3 * 256);
-	VideoA5_SetPalette(paletteRGB, 0, 256);
+	VideoA5_ReadPalette("IBM.PAL");
 }
 
 void
@@ -438,8 +442,7 @@ VideoA5_InitSprites(void)
 
 	unsigned char *buf = GFX_Screen_GetActive();
 
-	File_ReadBlockFile("IBM.PAL", paletteRGB, 3 * 256);
-	VideoA5_SetPalette(paletteRGB, 0, 256);
+	VideoA5_ReadPalette("IBM.PAL");
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitIcons(buf);
