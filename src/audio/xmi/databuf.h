@@ -22,8 +22,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DATABUF_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#ifdef __USE_SDL__
 #include <SDL.h>
 #include <SDL_rwops.h>
+#endif
 
 typedef char * charptr;
 
@@ -274,6 +277,7 @@ public:
 	unsigned char *getPtr() { return buf_ptr; };
 };
 
+#ifdef __USE_SDL__
 class SDLDataSource : public DataSource
 {
 private:
@@ -405,5 +409,6 @@ public:
 		return SDL_RWtell(rwop);
 	};
 };
+#endif
 
 #endif
