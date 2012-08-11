@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <stdio.h>
 #include <iostream>
 //#include "randgen.h"
-#include <FileClasses/xmidi/xmidi.h>
+#include "xmidi.h"
 
 using namespace std;
 
