@@ -139,7 +139,7 @@ VideoA5_Init(void)
 	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
 	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 
-	display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
+	display = al_create_display(TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 	display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
 	if (display == NULL || display2 == NULL)
 		return false;

@@ -16,6 +16,9 @@
 #include "sprites.h"
 #include "video/video.h"
 
+int TRUE_DISPLAY_WIDTH = 640;
+int TRUE_DISPLAY_HEIGHT = 480;
+
 static uint16 s_spriteSpacing  = 0;
 static uint16 s_spriteHeight   = 0;
 static uint16 s_spriteWidth    = 0;

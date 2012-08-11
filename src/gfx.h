@@ -6,9 +6,12 @@
 #define GFX_H
 
 enum {
-	SCREEN_WIDTH  = 320, /*!< Width of the screen in pixels. */
-	SCREEN_HEIGHT = 200  /*!< Height of the screen in pixels. */
+	SCREEN_WIDTH  = 320, /*!< Width of Dune 2 screen in pixels. */
+	SCREEN_HEIGHT = 200  /*!< Height of Dune 2 screen in pixels. */
 };
+
+extern int TRUE_DISPLAY_WIDTH;
+extern int TRUE_DISPLAY_HEIGHT;
 
 extern uint16 g_screenActiveID;
 
