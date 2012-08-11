@@ -11,6 +11,9 @@ pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-5.0)
 pkg_check_modules(ALLEGRO5_PRIMITIVES REQUIRED allegro_primitives-5.0)
 include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
 
+pkg_check_modules(FLUIDSYNTH fluidsynth)
+include_directories(SYSTEM ${FLUIDSYNTH_INCLUDE_DIRS})
+
 include(FileList.cmake)
 include_directories("include")
 
@@ -44,3 +47,15 @@ target_link_libraries(bin/dunedynasty
 #	${ALLEGRO5_LDFLAGS}
 #	${ALLEGRO5_AUDIO_LDFLAGS}
 #	)
+
+#if(FLUIDSYNTH_FOUND)
+#    add_executable(bin/allegro_midi
+#	src/audio/allegro_midi.cpp
+#	)
+#
+#    target_link_libraries(bin/allegro_midi
+#	${ALLEGRO5_LDFLAGS}
+#	${ALLEGRO5_AUDIO_LDFLAGS}
+#	${FLUIDSYNTH_LDFLAGS}
+#	)
+#endif(FLUIDSYNTH_FOUND)
