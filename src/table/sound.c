@@ -3,9 +3,8 @@
 /** @file src/table/sound.c Sound file tables. */
 
 #include <stdio.h>
-#include "types.h"
 
-#include "../audio/sound.h"
+#include "sound.h"
 
 /** Available voices. */
 const SoundData g_table_voices[NUM_VOICES] = {

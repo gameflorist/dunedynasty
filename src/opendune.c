@@ -52,6 +52,7 @@
 #include "sprites.h"
 #include "string.h"
 #include "structure.h"
+#include "table/sound.h"
 #include "table/strings.h"
 #include "table/widgetinfo.h"
 #include "team.h"

@@ -18,6 +18,7 @@
 #include "../house.h"
 #include "../opendune.h"
 #include "../string.h"
+#include "../table/sound.h"
 #include "../tile.h"
 
 
