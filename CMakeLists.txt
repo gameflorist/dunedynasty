@@ -51,6 +51,7 @@ target_link_libraries(bin/dunedynasty
 #if(FLUIDSYNTH_FOUND)
 #    add_executable(bin/allegro_midi
 #	src/audio/allegro_midi.cpp
+#	src/audio/xmi/xmidi.cpp
 #	)
 #
 #    target_link_libraries(bin/allegro_midi
