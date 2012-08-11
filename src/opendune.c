@@ -1167,6 +1167,7 @@ int main(int argc, char **argv)
 	Sprites_LoadTiles();
 	VideoA5_InitSprites();
 	GameLoop_TweakWidgetDimensions();
+	Sound_Output_Feedback(0xFFFE);
 	GameLoop_GameIntroAnimationMenu();
 
 	printf("%s\n", String_Get_ByIndex(STR_THANK_YOU_FOR_PLAYING_DUNE_II));

@@ -12,6 +12,7 @@
 #include "halloffame.h"
 #include "mentat.h"
 #include "strategicmap.h"
+#include "../audio/sound.h"
 #include "../common_a5.h"
 #include "../cutscene.h"
 #include "../enhancement.h"
@@ -25,6 +26,7 @@
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../string.h"
+#include "../table/sound.h"
 #include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
@@ -328,6 +330,13 @@ PickHouse_Loop(void)
 			g_playerHouseID = widgetID & (~0x8000);
 			g_campaignID = 0;
 			g_scenarioID = 1;
+
+			Voice_LoadVoices(HOUSE_MERCENARY);
+			Sound_Output_Feedback(VOICE_HARKONNEN + g_playerHouseID);
+
+			while (Sound_StartSpeech())
+				Timer_Wait();
+
 			return MENU_CONFIRM_HOUSE;
 
 		default:
