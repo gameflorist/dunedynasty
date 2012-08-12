@@ -10,6 +10,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/common_a5.c
 	src/config.c
 	src/crashlog/crashlog_none.c
+	src/cutscene.c
 	src/enhancement.c
 	src/explosion.c
 	src/file.c
