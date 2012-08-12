@@ -16,6 +16,16 @@ void GFX_PutPixel(uint16 x, uint16 y, uint8 colour)
 	*((uint8 *)GFX_Screen_GetActive() + y * SCREEN_WIDTH + x) = colour;
 }
 
+uint16 GFX_GetSize(int16 width, int16 height)
+{
+	if (width < 1) width = 1;
+	if (width > SCREEN_WIDTH) width = SCREEN_WIDTH;
+	if (height < 1) height = 1;
+	if (height > SCREEN_HEIGHT) height = SCREEN_HEIGHT;
+
+	return width * height;
+}
+
 /* gui/gui.c */
 
 MSVC_PACKED_BEGIN
@@ -285,4 +295,76 @@ void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bottom)
 	g_clipping.top    = top;
 	g_clipping.right  = right;
 	g_clipping.bottom = bottom;
+}
+
+/* sprites.c */
+
+void Sprites_SetMouseSprite(uint16 hotSpotX, uint16 hotSpotY, uint8 *sprite)
+{
+	uint16 size;
+
+	if (sprite == NULL || g_var_7097 != 0) return;
+
+	while (g_mouseLock != 0) msleep(0);
+
+	g_mouseLock++;
+
+	GUI_Mouse_Hide();
+
+	size = GFX_GetSize(*(uint16 *)(sprite + 3) + 16, sprite[5]);
+
+	if (s_mouseSpriteBufferSize < size) {
+		g_mouseSpriteBuffer = realloc(g_mouseSpriteBuffer, size);
+		s_mouseSpriteBufferSize = size;
+	}
+
+	size = *(uint16 *)(sprite + 8) + 10;
+	if ((*(uint16 *)sprite & 0x1) != 0) size += 16;
+
+	if (s_mouseSpriteSize < size) {
+		g_mouseSprite = realloc(g_mouseSprite, size);
+		s_mouseSpriteSize = size;
+	}
+
+	if ((*(uint16 *)sprite & 0x2) != 0) {
+		memcpy(g_mouseSprite, sprite, *(uint16 *)(sprite + 6) * 2);
+	} else {
+		uint8 *dst = (uint8 *)g_mouseSprite;
+		uint8 *buf = g_spriteBuffer;
+		uint16 flags = *(uint16 *)sprite | 0x2;
+
+		*(uint16 *)dst = flags;
+		dst += 2;
+		sprite += 2;
+
+		memcpy(dst, sprite, 6);
+		dst += 6;
+		sprite += 6;
+
+		size = *(uint16 *)sprite;
+		*(uint16 *)dst = size;
+		dst += 2;
+		sprite += 2;
+
+		if ((flags & 0x1) != 0) {
+			memcpy(dst, sprite, 16);
+			dst += 16;
+			sprite += 16;
+		}
+
+		Format80_Decode(buf, sprite, size);
+
+		memcpy(dst, buf, size);
+	}
+
+	g_mouseSpriteHotspotX = hotSpotX;
+	g_mouseSpriteHotspotY = hotSpotY;
+
+	sprite = g_mouseSprite;
+	g_mouseHeight = sprite[5];
+	g_mouseWidth = (*(uint16 *)(sprite + 3) >> 3) + 2;
+
+	GUI_Mouse_Show();
+
+	g_mouseLock--;
 }

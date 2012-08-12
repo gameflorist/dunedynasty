@@ -5,6 +5,7 @@
 #include "house.h"
 
 enum ShapeID {
+	SHAPE_CURSOR_NORMAL = 0,
 	SHAPE_CONCRETE_SLAB = 65,
 	SHAPE_FREMEN_SQUAD = 94,
 	SHAPE_SARDAUKAR = 95,

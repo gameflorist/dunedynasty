@@ -8,6 +8,7 @@
 #define Video_Tick              VideoA5_Tick
 #define Video_SetPalette        VideoA5_SetPalette
 #define Video_SetClippingArea   VideoA5_SetClippingArea
+#define Video_SetCursor         VideoA5_SetCursor
 
 #define Video_DrawIcon          VideoA5_DrawIcon
 #define Video_DrawShape         VideoA5_DrawShape

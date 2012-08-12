@@ -50,6 +50,7 @@
 #include "pool/structure.h"
 #include "pool/team.h"
 #include "scenario.h"
+#include "shape.h"
 #include "sprites.h"
 #include "string.h"
 #include "structure.h"
@@ -1166,9 +1167,7 @@ static void GameLoop_LevelEnd(void)
 	if (GameLoop_IsLevelFinished()) {
 		Music_Play(0);
 
-		g_cursorSpriteID = 0;
-
-		Sprites_SetMouseSprite(0, 0, g_sprites[0]);
+		Video_SetCursor(SHAPE_CURSOR_NORMAL);
 
 		Sound_Output_Feedback(0xFFFE);
 
@@ -1812,9 +1811,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 	GUI_Palette_CreateRemap(HOUSE_MERCENARY);
 
-	g_cursorSpriteID = 0;
-
-	Sprites_SetMouseSprite(0, 0, g_sprites[0]);
+	Video_SetCursor(SHAPE_CURSOR_NORMAL);
 
 	while (g_mouseHiddenDepth > 1) {
 		GUI_Mouse_Show_Safe();

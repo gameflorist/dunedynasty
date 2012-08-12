@@ -374,15 +374,10 @@ uint8 GFX_GetPixel(uint16 x, uint16 y)
 	return *((uint8 *)GFX_Screen_GetActive() + y * SCREEN_WIDTH + x);
 }
 
-uint16 GFX_GetSize(int16 width, int16 height)
-{
-	if (width < 1) width = 1;
-	if (width > SCREEN_WIDTH) width = SCREEN_WIDTH;
-	if (height < 1) height = 1;
-	if (height > SCREEN_HEIGHT) height = SCREEN_HEIGHT;
-
-	return width * height;
-}
+#if 0
+/* Moved to video/video_opendune.c. */
+extern uint16 GFX_GetSize(int16 width, int16 height);
+#endif
 
 /**
  * Copy information from a buffer to the screen.

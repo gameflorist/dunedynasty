@@ -717,8 +717,6 @@ uint16 GUI_DisplayModalMessage(const char *str, uint16 spriteID, ...)
 
 	Widget_SetCurrentWidget(1);
 
-	screenBackup = malloc(GFX_GetSize(g_curWidgetWidth * 8, g_curWidgetHeight));
-
 	if (screenBackup != NULL) {
 		GFX_CopyToBuffer(g_curWidgetXBase * 8, g_curWidgetYBase, g_curWidgetWidth * 8, g_curWidgetHeight, screenBackup);
 	}
@@ -2233,9 +2231,7 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 		switch (g_selectionType) {
 			case SELECTIONTYPE_MENTAT:
 				if (oldSelectionType != SELECTIONTYPE_INTRO) {
-					g_cursorSpriteID = 0;
-
-					Sprites_SetMouseSprite(0, 0, g_sprites[0]);
+					Video_SetCursor(SHAPE_CURSOR_NORMAL);
 				}
 
 				Widget_SetCurrentWidget(g_table_selectionType[selectionType].defaultWidget);

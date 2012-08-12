@@ -26,6 +26,7 @@
 #define ICONID_MAX          512
 #define SHAPEID_MAX         640
 #define FONTID_MAX          8
+#define CURSOR_MAX          6
 #define WINDTRAP_COLOUR     223
 
 static const uint8 font_palette[][8] = {
@@ -47,6 +48,7 @@ static ALLEGRO_BITMAP *font_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
+static ALLEGRO_MOUSE_CURSOR *s_cursor[CURSOR_MAX];
 
 /* VideoA5_GetNextXY:
  *
@@ -154,7 +156,6 @@ VideoA5_Init(void)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
-	al_hide_mouse_cursor(display);
 
 	al_init_image_addon();
 	al_init_primitives_addon();
@@ -191,6 +192,11 @@ VideoA5_Uninit(void)
 			al_destroy_bitmap(s_font[fnt][c]);
 			s_font[fnt][c] = NULL;
 		}
+	}
+
+	for (int i = 0; i < CURSOR_MAX; i++) {
+		al_destroy_mouse_cursor(s_cursor[i]);
+		s_cursor[i] = NULL;
 	}
 
 	al_destroy_bitmap(icon_texture);
@@ -281,12 +287,12 @@ VideoA5_Tick(void)
 	al_set_target_backbuffer(display2);
 	VideoA5_CopyBitmap(raw, screen, false);
 	al_draw_bitmap(screen, 0, 0, 0);
+	VideoA5_DrawShape(0, 0, g_mouseX, g_mouseY, 0);
 	al_flip_display();
 
 	InputA5_Tick();
 
 	al_set_target_backbuffer(display);
-	VideoA5_DrawShape(0, 0, g_mouseX, g_mouseY, 0);
 	al_flip_display();
 }
 
@@ -312,6 +318,15 @@ void
 VideoA5_SetClippingArea(int x, int y, int w, int h)
 {
 	al_set_clipping_rectangle(x, y, w, h);
+}
+
+void
+VideoA5_SetCursor(int spriteID)
+{
+	assert(spriteID < CURSOR_MAX);
+
+	g_cursorSpriteID = spriteID;
+	al_set_mouse_cursor(display, s_cursor[spriteID]);
 }
 
 /*--------------------------------------------------------------*/
@@ -765,6 +780,23 @@ VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y)
 
 /*--------------------------------------------------------------*/
 
+static void
+VideoA5_InitCursor(void)
+{
+	/* From gui/viewport.c */
+	const struct {
+		int x, y;
+	} focus[CURSOR_MAX] = {
+		{ 0, 0 }, { 5, 0 }, { 8, 5 }, { 5, 8 }, { 0, 5 }, { 8, 8 }
+	};
+
+	for (int i = 0; i < CURSOR_MAX; i++) {
+		s_cursor[i] = al_create_mouse_cursor(s_shape[i][HOUSE_HARKONNEN], focus[i].x, focus[i].y);
+	}
+
+	al_set_mouse_cursor(display, s_cursor[0]);
+}
+
 void
 VideoA5_InitSprites(void)
 {
@@ -785,6 +817,8 @@ VideoA5_InitSprites(void)
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitFonts(buf);
+
+	VideoA5_InitCursor();
 
 	al_set_target_backbuffer(display);
 
