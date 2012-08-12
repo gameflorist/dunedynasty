@@ -58,8 +58,6 @@ static uint8                s_palettePartChange[18];   /*!< Amount of change of 
 static void *s_buffer_182E = NULL;
 static void *s_buffer_1832 = NULL;
 
-bool s_var_37B4;
-
 /*--------------------------------------------------------------*/
 
 static uint8
@@ -631,7 +629,7 @@ static void GameLoop_PlayAnimation(void)
 				if (mode == 3) frame--;
 			}
 
-			if (Input_Keyboard_NextKey() != 0 && s_var_37B4) {
+			if (Input_Keyboard_NextKey() != 0) {
 				WSA_Unload(wsa);
 				return;
 			}
@@ -1155,16 +1153,11 @@ static void Gameloop_Logos(void)
 
 	WSA_Unload(wsa);
 
-	if (!s_var_37B4) {
+	if (Input_Keyboard_NextKey() == 0)
 		Voice_LoadVoices(0xFFFF);
-	} else {
-		if (Input_Keyboard_NextKey() == 0 && s_var_37B4) {
-			Voice_LoadVoices(0xFFFF);
-		}
-	}
 
 	while (Timer_GetTicks() < timeout1) {
-		if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) {
+		if (Input_Keyboard_NextKey() == 0) {
 			Video_Tick();
 			sleepIdle();
 			continue;
@@ -1209,7 +1202,7 @@ static void Gameloop_Logos(void)
 	GUI_SetPaletteAnimated(g_palette_998A, 30);
 
 	for (int timeout = 0; timeout < 60; timeout++) {
-		if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) {
+		if (Input_Keyboard_NextKey() == 0) {
 			Video_Tick();
 			Timer_Wait();
 			continue;
@@ -1234,7 +1227,7 @@ static void Gameloop_Logos(void)
 	GUI_SetPaletteAnimated(g_palette_998A, 30);
 
 	for (int timeout = 0; timeout < 180; timeout++) {
-		if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) {
+		if (Input_Keyboard_NextKey() == 0) {
 			Video_Tick();
 			Timer_Wait();
 			continue;
@@ -1259,7 +1252,7 @@ void GameLoop_GameIntroAnimation(void)
 
 	Gameloop_Logos();
 
-	if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) {
+	if (Input_Keyboard_NextKey() == 0) {
 		const HouseAnimation_Animation   *animation   = g_table_houseAnimation_animation[HOUSEANIMATION_INTRO];
 		const HouseAnimation_Subtitle    *subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_INTRO];
 		const HouseAnimation_SoundEffect *soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_INTRO];
