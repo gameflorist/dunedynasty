@@ -57,6 +57,7 @@ static uint8                s_palettePartChange[18];   /*!< Amount of change of 
 
 static void *s_buffer_182E = NULL;
 static void *s_buffer_1832 = NULL;
+static uint8 s_palette10[3 * 256 * 10];
 
 /*--------------------------------------------------------------*/
 
@@ -904,7 +905,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 				break;
 
 			case 3:
-				GFX_SetPalette(g_palette1 + 256 * 3 * counter);
+				GFX_SetPalette(s_palette10 + 256 * 3 * counter);
 
 				if (counter-- == 0) {
 					stage++;
@@ -913,7 +914,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 				break;
 
 			case 5:
-				GFX_SetPalette(g_palette1 + 256 * 3 * counter);
+				GFX_SetPalette(s_palette10 + 256 * 3 * counter);
 
 				if (counter++ >= 8) stage = 0;
 				break;
@@ -973,13 +974,12 @@ static void GameCredits_LoadPalette(void)
 	s_buffer_182E = GFX_Screen_Get_ByIndex(7);
 	s_buffer_1832 = (uint8 *)s_buffer_182E + SCREEN_WIDTH * g_curWidgetHeight;
 
-	g_palette1 = malloc(256 * 3 * 10);
-	g_palette2 = calloc(1, 256 * 3);
+	memset(g_palette2, 0, 3 * 256);
 
 	File_ReadBlockFile("IBM.PAL", g_palette1, 256 * 3);
 
 	/* Create 10 fadein/fadeout palettes */
-	p = g_palette1;
+	p = s_palette10;
 	for (i = 0; i < 10; i++) {
 		uint16 j;
 		uint8 *pr = g_palette1;

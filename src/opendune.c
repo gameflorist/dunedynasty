@@ -263,11 +263,6 @@ void GameLoop_Uninit(void)
 	Script_ClearInfo(g_scriptTeam);
 
 	free(g_readBuffer); g_readBuffer = NULL;
-
-	free(g_palette1); g_palette1 = NULL;
-	free(g_palette2); g_palette2 = NULL;
-	free(g_paletteMapping1); g_paletteMapping1 = NULL;
-	free(g_paletteMapping2); g_paletteMapping2 = NULL;
 }
 
 #if 0
@@ -741,8 +736,8 @@ static void GameLoop_GameIntroAnimationMenu(void)
 	g_selectionType = SELECTIONTYPE_MENTAT;
 	g_selectionTypeNew = SELECTIONTYPE_MENTAT;
 
-	g_palette1 = calloc(1, 256 * 3);
-	g_palette2 = calloc(1, 256 * 3);
+	memset(g_palette1, 0, 3 * 256);
+	memset(g_palette2, 0, 3 * 256);
 
 	g_readBufferSize = 0x2EE0;
 	g_readBuffer = calloc(1, g_readBufferSize);
@@ -757,13 +752,8 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 	GUI_ClearScreen(0);
 
-	Video_SetPalette(g_palette1, 0, 256);
-
 	GFX_SetPalette(g_palette1);
 	GFX_SetPalette(g_palette2);
-
-	g_paletteMapping1 = malloc(256);
-	g_paletteMapping2 = malloc(256);
 
 	GUI_Palette_CreateMapping(g_palette1, g_paletteMapping1, 0xC, 0x55);
 	g_paletteMapping1[0xFF] = 0xFF;
@@ -1260,7 +1250,7 @@ static bool Unknown_25C4_000E(void)
 
 	Font_Select(g_fontNew8p);
 
-	g_palette_998A = calloc(256 * 3, sizeof(uint8));
+	memset(g_palette_998A, 0, 3 * 256);
 
 	memset(&g_palette_998A[45], 63, 3);
 
@@ -1521,8 +1511,6 @@ void Game_LoadScenario(uint8 houseID, uint16 scenarioID)
  */
 void PrepareEnd(void)
 {
-	free(g_palette_998A); g_palette_998A = NULL;
-
 	GameLoop_Uninit();
 
 	String_Uninit();

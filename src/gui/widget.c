@@ -19,11 +19,11 @@
 #include "../video/video.h"
 
 
-uint8 g_paletteActive[256 * 3];
-uint8 *g_palette1 = NULL;
-uint8 *g_palette2 = NULL;
-uint8 *g_paletteMapping1 = NULL;
-uint8 *g_paletteMapping2 = NULL;
+uint8 g_paletteActive[3 * 256];
+uint8 g_palette1[3 * 256];
+uint8 g_palette2[3 * 256];
+uint8 g_paletteMapping1[256];
+uint8 g_paletteMapping2[256];
 
 Widget *g_widgetLinkedListHead = NULL;
 Widget *g_widgetLinkedListTail = NULL;

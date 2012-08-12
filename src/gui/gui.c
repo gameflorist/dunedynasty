@@ -82,7 +82,7 @@ static const RankScore _rankScores[] = {
 };
 
 static uint8 g_colours[16];
-uint8 *g_palette_998A = NULL;
+uint8 g_palette_998A[3 * 256];
 uint8 g_remap[256];
 FactoryWindowItem g_factoryWindowItems[25];
 uint16 g_factoryWindowOrdered = 0;
