@@ -3,23 +3,27 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "../os/math.h"
 #include "../os/sleep.h"
 
 #include "menubar.h"
 
+#include "mentat.h"
 #include "../audio/driver.h"
 #include "../common_a5.h"
 #include "../config.h"
 #include "../gfx.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
+#include "../gui/mentat.h"
 #include "../gui/widget.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
+#include "../sprites.h"
 #include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
@@ -114,6 +118,60 @@ MenuBar_Draw(enum HouseType houseID)
 	GUI_Widget_Draw(w);
 
 	Shape_DrawRemap(SHAPE_CREDITS_LABEL, houseID, TRUE_DISPLAY_WIDTH - 128, 0, 0, 0);
+}
+
+/*--------------------------------------------------------------*/
+
+bool
+MenuBar_ClickMentat(Widget *w)
+{
+	MentatState *mentat = &g_mentat_state;
+	VARIABLE_NOT_USED(w);
+
+	if (g_gameOverlay != GAMEOVERLAY_NONE)
+		return false;
+
+	g_gameOverlay = GAMEOVERLAY_MENTAT;
+	mentat->state = MENTAT_SHOW_CONTENTS;
+	Video_SetCursor(SHAPE_CURSOR_NORMAL);
+	Timer_SetTimer(TIMER_GAME, false);
+
+	g_widgetLinkedListTail = NULL;
+	g_widgetMentatFirst = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 200, 168, 377, 5);
+	GUI_Mentat_Create_HelpScreen_Widgets();
+	GUI_Mentat_LoadHelpSubjects(true);
+	return true;
+
+}
+
+void
+MenuBar_TickMentatOverlay(void)
+{
+	Video_ShadeScreen(128);
+	A5_UseMenuTransform();
+
+	if (MentatHelp_Tick(g_playerHouseID, &g_mentat_state)) {
+		free(g_widgetMentatFirst);
+		g_widgetMentatFirst = NULL;
+
+		GUI_Widget_Free_WithScrollbar(g_widgetMentatScrollbar);
+		g_widgetMentatScrollbar = NULL;
+
+		free(g_widgetMentatScrollUp);
+		g_widgetMentatScrollUp = NULL;
+
+		free(g_widgetMentatScrollDown);
+		g_widgetMentatScrollDown = NULL;
+
+		g_gameOverlay = GAMEOVERLAY_NONE;
+		Timer_SetTimer(TIMER_GAME, true);
+
+		/* XXX: fix this rubbish. */
+		Sprites_UnloadTiles();
+		Sprites_LoadTiles();
+	}
+
+	A5_UseIdentityTransform();
 }
 
 /*--------------------------------------------------------------*/

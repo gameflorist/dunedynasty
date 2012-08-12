@@ -4,6 +4,7 @@
 #include "../house.h"
 
 enum BriefingState {
+	MENTAT_SHOW_CONTENTS,
 	MENTAT_SHOW_TEXT,
 	MENTAT_IDLE
 };
@@ -19,6 +20,7 @@ typedef struct MentatState {
 	enum BriefingState state;
 
 	char buf[1024];
+	char *desc;
 	char *text;
 	int lines0;
 	int lines;
@@ -32,5 +34,7 @@ extern void Mentat_Draw(enum HouseType houseID);
 extern void MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry, MentatState *mentat);
 extern void MentatBriefing_DrawText(MentatState *mentat);
 extern void MentatBriefing_AdvanceText(MentatState *mentat);
+
+extern bool MentatHelp_Tick(enum HouseType houseID, MentatState *mentat);
 
 #endif

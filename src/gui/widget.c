@@ -45,7 +45,7 @@ WidgetProperties g_widgetProperties[WINDOWID_MAX] = {
 	{32,   4,  8,   9,  29, 116,  0}, /*  5 */
 	{32,  42,  8,  82,  15,  20,  0}, /*  6: action panel */
 	{ 1,  21, 38,  14,  12, 116,  0}, /*  7: status bar */
-	{16,  48, 23, 112,  15, 233,  0}, /*  8 */
+	{16,  48, 23, 112,  15, 233,  0}, /*  8: mentat picture */
 	{ 2, 176, 36,  11,  15,  20,  0}, /*  9 */
 	{ 0,  40, 40, 160,  29,  20,  0}, /* 10 */
 	{16,  48, 23, 112,  29,  20,  0}, /* 11 */
@@ -731,9 +731,10 @@ Widget *GUI_Widget_Allocate_WithScrollbar(uint16 index, uint16 parentID, uint16 
 
 	w->drawModeNormal   = DRAW_MODE_CUSTOM_PROC;
 	w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;
-
+	w->drawModeDown     = DRAW_MODE_CUSTOM_PROC;
 	w->drawParameterNormal.proc   = &GUI_Widget_Scrollbar_Draw;
 	w->drawParameterSelected.proc = &GUI_Widget_Scrollbar_Draw;
+	w->drawParameterDown.proc     = &GUI_Widget_Scrollbar_Draw;
 	w->clickProc                  = &GUI_Widget_Scrollbar_Click;
 
 	ws = (WidgetScrollbar *)calloc(1, sizeof(WidgetScrollbar));
@@ -928,7 +929,12 @@ uint16 GUI_Widget_Scrollbar_CalculateScrollPosition(WidgetScrollbar *scrollbar)
 	w = scrollbar->parent;
 	if (w == NULL) return 0xFFFF;
 
-	scrollbar->scrollPosition = scrollbar->position * (scrollbar->scrollMax - scrollbar->scrollPageSize) / (max(w->width, w->height) - 2 - scrollbar->size);
+	if (scrollbar->scrollMax - scrollbar->scrollPageSize <= 0) {
+		scrollbar->scrollPosition = 0;
+	}
+	else {
+		scrollbar->scrollPosition = scrollbar->position * (scrollbar->scrollMax - scrollbar->scrollPageSize) / (max(w->width, w->height) - 2 - scrollbar->size);
+	}
 
 	return scrollbar->scrollPosition;
 }

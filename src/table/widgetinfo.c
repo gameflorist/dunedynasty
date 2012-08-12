@@ -15,7 +15,7 @@
 WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	{ /* 0 */
 		/* index       */ 1,
-		/* clickProc   */ &GUI_Widget_Mentat_Click,
+		/* clickProc   */ &MenuBar_ClickMentat,
 		/* shortcut    */ SCANCODE_F1,
 		/* flags       */ 1237,
 		/* spriteID    */ 7,

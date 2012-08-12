@@ -23,6 +23,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../load.h"
+#include "../newui/mentat.h"
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../shape.h"
@@ -81,30 +82,24 @@ static uint16 s_numberHelpSubjects;
 static void GUI_Mentat_ShowDialog(uint8 houseID, uint16 stringID, const char *wsaFilename, uint16 musicID);
 #endif
 
-static void GUI_Mentat_HelpListLoop(void)
+void GUI_Mentat_HelpListLoop(int key)
 {
-	uint16 key = 0;
-
-	while (key != 0x8001) {
+	if (key != 0x8001) {
 		Widget *w = g_widgetMentatTail;
-
-		GUI_Mentat_Animation(0);
-
-		key = GUI_Widget_HandleEvents(w);
-
-		if ((key & 0x800) != 0) key = 0;
-
-		if (key == 0x8001) break;
-
-		key &= 0x80FF;
 
 		s_selectMentatHelp = true;
 
+		if ((key & 0x7F) == MOUSE_ZAXIS) {
+			if (g_mouseDZ < 0) {
+				key = SCANCODE_KEYPAD_2;
+			}
+			else if (g_mouseDZ > 0) {
+				key = SCANCODE_KEYPAD_8;
+			}
+		}
+
 		switch (key) {
-			case 0x0053:
-			case 0x0060: /* NUMPAD 8 / ARROW UP */
-			case 0x0453:
-			case 0x0460:
+			case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
 				if (s_selectedHelpSubject != 0) {
 					GUI_Mentat_List_Click(GUI_Widget_Get_ByIndex(w, s_selectedHelpSubject + 2));
 					break;
@@ -113,10 +108,7 @@ static void GUI_Mentat_HelpListLoop(void)
 				GUI_Widget_Scrollbar_ArrowUp_Click(g_widgetMentatScrollbar);
 				break;
 
-			case 0x0054:
-			case 0x0062: /* NUMPAD 2 / ARROW DOWN */
-			case 0x0454:
-			case 0x0462:
+			case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
 				if (s_selectedHelpSubject < 10) {
 					GUI_Mentat_List_Click(GUI_Widget_Get_ByIndex(w, s_selectedHelpSubject + 4));
 					break;
@@ -125,29 +117,22 @@ static void GUI_Mentat_HelpListLoop(void)
 				GUI_Widget_Scrollbar_ArrowDown_Click(g_widgetMentatScrollbar);
 				break;
 
-			case 0x0055:
-			case 0x0065: /* NUMPAD 9 / PAGE UP */
-			case 0x0455:
-			case 0x0465: {
-				uint8 i;
-				for (i = 0; i < 11; i++) GUI_Widget_Scrollbar_ArrowUp_Click(g_widgetMentatScrollbar);
-			} break;
-
-			case 0x0056:
-			case 0x0067: /* NUMPAD 3 / PAGE DOWN */
-			case 0x0456:
-			case 0x0467: {
-				uint8 i;
-				for (i = 0; i < 11; i++) GUI_Widget_Scrollbar_ArrowDown_Click(g_widgetMentatScrollbar);
-			} break;
-
-			case 0x0041: /* MOUSE LEFT BUTTON */
+			case SCANCODE_PGUP: /* NUMPAD 9 / PAGE UP */
+				for (int i = 0; i < 11; i++)
+					GUI_Widget_Scrollbar_ArrowUp_Click(g_widgetMentatScrollbar);
 				break;
 
-			case 0x002B: /* NUMPAD 5 / RETURN */
-			case 0x003D: /* SPACE */
-			case 0x042B:
-			case 0x043D:
+			case SCANCODE_PGDN: /* NUMPAD 3 / PAGE DOWN */
+				for (int i = 0; i < 11; i++)
+					GUI_Widget_Scrollbar_ArrowDown_Click(g_widgetMentatScrollbar);
+				break;
+
+			case MOUSE_LMB:
+				break;
+
+			case SCANCODE_ENTER:
+			case SCANCODE_KEYPAD_5:
+			case SCANCODE_SPACE:
 				GUI_Mentat_List_Click(GUI_Widget_Get_ByIndex(w, s_selectedHelpSubject + 3));
 				break;
 
@@ -155,13 +140,10 @@ static void GUI_Mentat_HelpListLoop(void)
 		}
 
 		s_selectMentatHelp = false;
-
-		Video_Tick();
-		sleepIdle();
 	}
 }
 
-static void GUI_Mentat_LoadHelpSubjects(bool init)
+void GUI_Mentat_LoadHelpSubjects(bool init)
 {
 	static uint8 *helpDataList = NULL;
 
@@ -213,25 +195,15 @@ static void GUI_Mentat_LoadHelpSubjects(bool init)
 	s_helpSubjects = helpSubjects;
 }
 
-static void GUI_Mentat_Draw(bool force)
+void GUI_Mentat_Draw(bool force)
 {
-	static uint16 displayedHelpSubject = 0;
-
-	uint16 oldScreenID;
 	Widget *line;
 	Widget *w = g_widgetMentatTail;
 	uint8 *helpSubjects = s_helpSubjects;
 	uint16 i;
-
-	if (!force && s_topHelpList == displayedHelpSubject) return;
-
-	displayedHelpSubject = s_topHelpList;
-
-	oldScreenID = GFX_Screen_SetActive(2);
+	VARIABLE_NOT_USED(force);
 
 	Widget_SetAndPaintCurrentWidget(8);
-
-	GUI_DrawSprite(2, g_sprites[397 + g_playerHouseID * 15], g_shoulderLeft, g_shoulderTop, 0, 0);
 
 	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECT_SUBJECT), (g_curWidgetXBase << 3) + 16, g_curWidgetYBase + 2, 12, 0, 0x12);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x11);
@@ -268,93 +240,13 @@ static void GUI_Mentat_Draw(bool force)
 
 	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 16));
 	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 17));
-
-	GUI_Mouse_Hide_Safe();
-	GUI_Screen_Copy(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, 0);
-	GUI_Mouse_Show_Safe();
-	GFX_Screen_SetActive(oldScreenID);
 }
 
-/**
- * Shows the Help window.
- * @param proceed Display a "Proceed" button if true, "Exit" otherwise.
- */
-static void GUI_Mentat_ShowHelpList(bool proceed)
-{
-	uint16 oldScreenID;
-
-	oldScreenID = GFX_Screen_SetActive(2);
-
-	Input_History_Clear();
-
-	GUI_Mentat_Display(NULL, g_playerHouseID);
-
-	g_widgetMentatFirst = GUI_Widget_Allocate(1, GUI_Widget_GetShortcut(*String_Get_ByIndex(STR_EXIT)), 200, 168, proceed ? 379 : 377, 5);
-	g_widgetMentatFirst->shortcut2 = 'n';
-
-	GUI_Mentat_Create_HelpScreen_Widgets();
-
-	GUI_Mouse_Hide_Safe();
-	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
-	GUI_Mouse_Show_Safe();
-
-	GUI_Mentat_LoadHelpSubjects(true);
-
-	GUI_Mentat_Draw(true);
-
-	GFX_Screen_SetActive(0);
-
-	GUI_Mentat_HelpListLoop();
-
-	free(g_widgetMentatFirst); g_widgetMentatFirst = NULL;
-
-	Load_Palette_Mercenaries();
-
-	GUI_Widget_Free_WithScrollbar(g_widgetMentatScrollbar);
-	g_widgetMentatScrollbar = NULL;
-
-	free(g_widgetMentatScrollUp); g_widgetMentatScrollUp = NULL;
-	free(g_widgetMentatScrollDown); g_widgetMentatScrollDown = NULL;
-
-	GFX_Screen_SetActive(oldScreenID);
-}
-
-/**
- * Handle clicks on the Mentat widget.
- * @return True, always.
- */
-bool GUI_Widget_Mentat_Click(Widget *w)
-{
-	VARIABLE_NOT_USED(w);
-
-	Video_SetCursor(SHAPE_CURSOR_NORMAL);
-
-	Sound_Output_Feedback(0xFFFE);
-
-	Driver_Voice_Play(NULL, 0xFF);
-
-	Music_Play(g_table_houseInfo[g_playerHouseID].musicBriefing);
-
-	Sprites_UnloadTiles();
-
-	Timer_SetTimer(TIMER_GAME, false);
-
-	GUI_Mentat_ShowHelpList(false);
-
-	Timer_SetTimer(TIMER_GAME, true);
-
-	Driver_Sound_Play(1, 0xFF);
-
-	Sprites_LoadTiles();
-
-	g_textDisplayNeedsUpdate = true;
-
-	GUI_DrawInterfaceAndRadar(0);
-
-	Music_Play(Tools_RandomRange(0, 5) + 8);
-
-	return true;
-}
+#if 0
+/* Moved to gui/menu_opendune.c */
+static void GUI_Mentat_ShowHelpList(bool proceed);
+extern bool GUI_Widget_Mentat_Click(Widget *w);
+#endif
 
 /**
  * Show the Mentat screen.
@@ -847,12 +739,12 @@ void GUI_Mentat_Create_HelpScreen_Widgets(void)
 	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatScrollUp);
 
 	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatFirst);
-
-	GUI_Widget_Draw(g_widgetMentatFirst);
 }
 
 static void GUI_Mentat_ShowHelp(void)
 {
+	MentatState *mentat = &g_mentat_state;
+
 	struct {
 		uint8  notused[8];
 		uint32 length;
@@ -882,7 +774,7 @@ static void GUI_Mentat_ShowHelp(void)
 	info.length = HTOBE32(info.length);
 
 	text = g_readBuffer;
-	compressedText = GFX_Screen_Get_ByIndex(3);
+	compressedText = malloc(info.length);
 
 	fileID = File_Open(s_mentatFilename, 1);
 	File_Seek(fileID, offset, 0);
@@ -915,6 +807,12 @@ static void GUI_Mentat_ShowHelp(void)
 		if (*text != '\0') *text++ = '\0';
 	}
 
+	free(compressedText);
+	mentat->state = MENTAT_SHOW_TEXT;
+	mentat->desc = desc;
+	mentat->text = text;
+
+#if 0
 	GUI_Mentat_Loop(picture, desc, text, loc12 ? 1 : 0, g_widgetMentatFirst);
 
 	GUI_Widget_MakeNormal(g_widgetMentatFirst, false);
@@ -924,6 +822,7 @@ static void GUI_Mentat_ShowHelp(void)
 	GUI_Mentat_Create_HelpScreen_Widgets();
 
 	GUI_Mentat_Draw(true);
+#endif
 }
 
 /**
@@ -947,15 +846,11 @@ bool GUI_Mentat_List_Click(Widget *w)
 		if (w2->stringID == 0x31) {
 			w2->fgColourDown   = 15;
 			w2->fgColourNormal = 15;
-
-			GUI_Widget_Draw(w2);
 		}
 
 		if (w->stringID == 0x31) {
 			w->fgColourDown   = 8;
 			w->fgColourNormal = 8;
-
-			GUI_Widget_Draw(w);
 		}
 
 		s_selectedHelpSubject = w->index - 3;
@@ -970,9 +865,9 @@ bool GUI_Mentat_List_Click(Widget *w)
 
 	GUI_Mentat_ShowHelp();
 
+#if 0
 	GUI_Mentat_Draw(true);
 
-#if 0
 	Input_HandleInput(0x841);
 	Input_HandleInput(0x842);
 #endif
@@ -982,7 +877,9 @@ bool GUI_Mentat_List_Click(Widget *w)
 void GUI_Mentat_ScrollBar_Draw(Widget *w)
 {
 	GUI_Mentat_SelectHelpSubject(GUI_Get_Scrollbar_Position(w) - s_topHelpList);
+#if 0
 	GUI_Mentat_Draw(false);
+#endif
 }
 
 static bool GUI_Mentat_DrawInfo(char *text, uint16 left, uint16 top, uint16 height, uint16 skip, int16 lines, uint16 flags)

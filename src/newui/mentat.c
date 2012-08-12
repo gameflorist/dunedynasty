@@ -95,6 +95,15 @@ Mentat_Draw(enum HouseType houseID)
 
 /*--------------------------------------------------------------*/
 
+static void
+MentatBriefing_SplitText(MentatState *mentat)
+{
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x32);
+
+	mentat->lines0 = GUI_Mentat_SplitText(mentat->text, 304);
+	mentat->lines = mentat->lines0;
+}
+
 void
 MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry,
 		MentatState *mentat)
@@ -104,17 +113,21 @@ MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEnt
 		+ (houseID * 40) + ((campaignID + 1) * 4) + entry;
 	assert(entry <= MENTAT_BRIEFING_ADVICE);
 
-	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x32);
-
 	strncpy(mentat->buf, String_Get_ByIndex(stringID), sizeof(mentat->buf));
-	mentat->lines0 = GUI_Mentat_SplitText(mentat->buf, 304);
+	mentat->desc = NULL;
 	mentat->text = mentat->buf;
-	mentat->lines = mentat->lines0;
+	MentatBriefing_SplitText(mentat);
 }
 
 void
 MentatBriefing_DrawText(MentatState *mentat)
 {
+	if (mentat->desc) {
+		const WidgetProperties *wi = &g_widgetProperties[WINDOWID_MENTAT_PICTURE];
+
+		GUI_DrawText_Wrapper(mentat->desc, wi->xBase*8 + 5, wi->yBase + 3, g_curWidgetFGColourBlink, 0, 0x31);
+	}
+
 	if (mentat->lines > 0)
 		GUI_DrawText_Wrapper(mentat->text, 4, 1, g_curWidgetFGColourBlink, 0, 0x32);
 }
@@ -132,4 +145,63 @@ MentatBriefing_AdvanceText(MentatState *mentat)
 	if (mentat->lines <= 0) {
 		mentat->state = MENTAT_IDLE;
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+MentatHelp_Draw(enum HouseType houseID, MentatState *mentat)
+{
+	Mentat_DrawBackground(houseID);
+
+	if (mentat->state == MENTAT_SHOW_CONTENTS) {
+		GUI_Mentat_Draw(true);
+	}
+	else {
+		MentatBriefing_DrawText(mentat);
+	}
+
+	if (mentat->state != MENTAT_SHOW_TEXT) {
+		GUI_Widget_Draw(g_widgetMentatFirst);
+	}
+
+	Mentat_Draw(houseID);
+}
+
+bool
+MentatHelp_Tick(enum HouseType houseID, MentatState *mentat)
+{
+	MentatHelp_Draw(houseID, mentat);
+
+	if (mentat->state == MENTAT_SHOW_CONTENTS) {
+		const int widgetID = GUI_Widget_HandleEvents(g_widgetMentatTail);
+
+		if (widgetID == 0x8001) {
+			return true;
+		}
+		else {
+			GUI_Mentat_HelpListLoop(widgetID);
+
+			if (mentat->state == MENTAT_SHOW_TEXT)
+				MentatBriefing_SplitText(mentat);
+		}
+	}
+	else if (mentat->state == MENTAT_SHOW_TEXT) {
+		if (Input_IsInputAvailable()) {
+			const int key = Input_GetNextKey();
+
+			if (key == SCANCODE_ESCAPE || key == SCANCODE_SPACE || key == MOUSE_LMB || key == MOUSE_RMB)
+				MentatBriefing_AdvanceText(mentat);
+		}
+	}
+	else {
+		const int widgetID = GUI_Widget_HandleEvents(g_widgetMentatFirst);
+
+		if (widgetID == 0x8001) {
+			mentat->state = MENTAT_SHOW_CONTENTS;
+			GUI_Mentat_LoadHelpSubjects(false);
+		}
+	}
+
+	return false;
 }

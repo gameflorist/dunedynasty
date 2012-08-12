@@ -1054,6 +1054,10 @@ void GameLoop_Main(bool new_game)
 		if (g_gameOverlay == GAMEOVERLAY_NONE) {
 			Input_Tick(false);
 		}
+		else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
+			Input_Tick(true);
+			MenuBar_TickMentatOverlay();
+		}
 		else {
 			Input_Tick(true);
 			MenuBar_TickOptionsOverlay();

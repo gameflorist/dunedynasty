@@ -16,7 +16,9 @@ extern int64_t g_interrogationTimer;
 
 struct Widget;
 
-extern bool GUI_Widget_Mentat_Click(struct Widget *w);
+extern void GUI_Mentat_LoadHelpSubjects(bool init);
+extern void GUI_Mentat_Draw(bool force);
+extern void GUI_Mentat_HelpListLoop(int key);
 extern uint16 GUI_Mentat_Show(char *stringBuffer, const char *wsaFilename, struct Widget *w, bool unknown);
 extern void GUI_Mentat_Display(const char *wsaFilename, uint8 houseID);
 extern void GUI_Mentat_Animation(uint16 speakingMode);

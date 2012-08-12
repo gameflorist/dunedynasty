@@ -215,6 +215,87 @@ static void GUI_Mentat_ShowDialog(uint8 houseID, uint16 stringID, const char *ws
 }
 
 /**
+ * Shows the Help window.
+ * @param proceed Display a "Proceed" button if true, "Exit" otherwise.
+ */
+static void GUI_Mentat_ShowHelpList(bool proceed)
+{
+	uint16 oldScreenID;
+
+	oldScreenID = GFX_Screen_SetActive(2);
+
+	Input_History_Clear();
+
+	GUI_Mentat_Display(NULL, g_playerHouseID);
+
+	g_widgetMentatFirst = GUI_Widget_Allocate(1, GUI_Widget_GetShortcut(*String_Get_ByIndex(STR_EXIT)), 200, 168, proceed ? 379 : 377, 5);
+	g_widgetMentatFirst->shortcut2 = 'n';
+
+	GUI_Mentat_Create_HelpScreen_Widgets();
+
+	GUI_Mouse_Hide_Safe();
+	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
+	GUI_Mouse_Show_Safe();
+
+	GUI_Mentat_LoadHelpSubjects(true);
+
+	GUI_Mentat_Draw(true);
+
+	GFX_Screen_SetActive(0);
+
+	GUI_Mentat_HelpListLoop();
+
+	free(g_widgetMentatFirst); g_widgetMentatFirst = NULL;
+
+	Load_Palette_Mercenaries();
+
+	GUI_Widget_Free_WithScrollbar(g_widgetMentatScrollbar);
+	g_widgetMentatScrollbar = NULL;
+
+	free(g_widgetMentatScrollUp); g_widgetMentatScrollUp = NULL;
+	free(g_widgetMentatScrollDown); g_widgetMentatScrollDown = NULL;
+
+	GFX_Screen_SetActive(oldScreenID);
+}
+
+/**
+ * Handle clicks on the Mentat widget.
+ * @return True, always.
+ */
+bool GUI_Widget_Mentat_Click(Widget *w)
+{
+	VARIABLE_NOT_USED(w);
+
+	Video_SetCursor(SHAPE_CURSOR_NORMAL);
+
+	Sound_Output_Feedback(0xFFFE);
+
+	Driver_Voice_Play(NULL, 0xFF);
+
+	Music_Play(g_table_houseInfo[g_playerHouseID].musicBriefing);
+
+	Sprites_UnloadTiles();
+
+	Timer_SetTimer(TIMER_GAME, false);
+
+	GUI_Mentat_ShowHelpList(false);
+
+	Timer_SetTimer(TIMER_GAME, true);
+
+	Driver_Sound_Play(1, 0xFF);
+
+	Sprites_LoadTiles();
+
+	g_textDisplayNeedsUpdate = true;
+
+	GUI_DrawInterfaceAndRadar(0);
+
+	Music_Play(Tools_RandomRange(0, 5) + 8);
+
+	return true;
+}
+
+/**
  * Show the briefing screen.
  */
 void GUI_Mentat_ShowBriefing(void)
