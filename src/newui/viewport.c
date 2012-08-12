@@ -144,7 +144,7 @@ Viewport_SelectRegion(Widget *w)
 			else if (Unit_IsSelected(u)) {
 				Unit_Unselect(u);
 			}
-			else if (Unit_GetHouseID(u) == g_playerHouseID) {
+			else if ((mode == SELECTION_MODE_CONTROLLABLE_UNIT) && (Unit_GetHouseID(u) == g_playerHouseID)) {
 				Unit_Select(u);
 			}
 		}

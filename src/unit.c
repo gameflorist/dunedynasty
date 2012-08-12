@@ -1766,7 +1766,12 @@ void Unit_Select(Unit *unit)
 		unit = NULL;
 	}
 
-	/* if (g_unitSelected != NULL) Unit_UpdateMap(2, g_unitSelected); */
+	if (Unit_AnySelected()) {
+		for (Unit *u = Unit_FirstSelected(); u != NULL; u = Unit_NextSelected(u)) {
+			Unit_UpdateMap(2, u);
+		}
+	}
+
 	if (unit == NULL) {
 		Unit_UnselectAll();
 
@@ -1809,7 +1814,9 @@ void Unit_Select(Unit *unit)
 	}
 #endif
 
-	/* Unit_UpdateMap(2, g_unitSelected); */
+	for (Unit *u = Unit_FirstSelected(); u != NULL; u = Unit_NextSelected(u)) {
+		Unit_UpdateMap(2, u);
+	}
 
 	Map_SetSelectionObjectPosition(0xFFFF);
 }
