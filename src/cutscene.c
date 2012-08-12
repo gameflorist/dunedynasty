@@ -81,6 +81,36 @@ Cutscene_PutPixel(uint16 x, uint16 y, uint8 colour)
 }
 
 static void
+Cutscene_DrawText(char *str, int left, int top, uint8 fg, uint8 bg)
+{
+	uint8 colours[2] = { bg, fg };
+	char *s = str;
+	int x = left;
+
+	GUI_InitColors(colours, 0, 1);
+
+	while (*s != '\0') {
+		GUI_DrawChar_(*s, x, top);
+		x += Font_GetCharWidth(*s);
+		s++;
+	}
+}
+
+static void
+Cutscene_DrawText_Wrapper(char *str, int x, int y)
+{
+	char *s = str;
+
+	x -= Font_GetStringWidth(str) / 2;
+
+	while (*s != '\0') {
+		GUI_DrawChar_(*s, x, y);
+		x += Font_GetCharWidth(*s);
+		s++;
+	}
+}
+
+static void
 Cutscene_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint16 width, uint16 height, uint16 screenSrc, uint16 screenDst)
 {
 	uint16 offsetsY[100];
@@ -305,11 +335,13 @@ static void GameLoop_DrawText(char *string, uint16 top)
 		s = NULL;
 	}
 
-	GUI_DrawText_Wrapper(string, 160, top, 215, 0, 0x100);
+	/* GUI_DrawText_Wrapper(string, 160, top, 215, 0, 0x100); */
+	Cutscene_DrawText_Wrapper(string, 160, top);
 
 	if (s == NULL) return;
 
-	GUI_DrawText_Wrapper(s, 160, top + 18, 215, 0, 0x100);
+	/* GUI_DrawText_Wrapper(s, 160, top + 18, 215, 0, 0x100); */
+	Cutscene_DrawText_Wrapper(s, 160, top + 18);
 
 	s[-1] = 0xD;
 }
@@ -361,7 +393,13 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 
 	s_subtitleActive = true;
 
-	GUI_DrawFilledRectangle(0, subtitle->top == 85 ? 0 : subtitle->top, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, 0);
+	/* GUI_DrawFilledRectangle(0, subtitle->top == 85 ? 0 : subtitle->top, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, 0); */
+	{
+		const int top = subtitle->top == 85 ? 0 : subtitle->top;
+		unsigned char *screen = GFX_Screen_Get_ByIndex(0);
+
+		memset(screen + SCREEN_WIDTH * top, 0, SCREEN_WIDTH * (SCREEN_HEIGHT - top));
+	}
 
 	if (g_enableVoices != 0 && s_var_8062 != 0xFFFF && s_houseAnimation_currentSubtitle != 0 && g_config.language == LANGUAGE_ENGLISH) {
 		uint16 loc06 = s_var_8062 + s_houseAnimation_currentSubtitle;
@@ -397,7 +435,9 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x21);
 
-	GUI_DrawText_Wrapper("Copyright (c) 1992 Westwood Studios, Inc.", 160, 189, 215, 0, 0x112);
+	/* GUI_DrawText_Wrapper("Copyright (c) 1992 Westwood Studios, Inc.", 160, 189, 215, 0, 0x112); */
+	GUI_DrawText_Wrapper(NULL, 160, 189, 215, 0, 0x112);
+	Cutscene_DrawText_Wrapper("Copyright (c) 1992 Westwood Studios, Inc.", 160, 189);
 
 	g_fontCharOffset = 0;
 
@@ -893,7 +933,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 
 				if (strings[loc02].charHeight != g_fontCurrent->height) Font_Select(g_fontNew6p);
 
-				GUI_DrawText(strings[loc02].text, strings[loc02].x, strings[loc02].y + g_curWidgetYBase, 255, 0);
+				Cutscene_DrawText(strings[loc02].text, strings[loc02].x, strings[loc02].y + g_curWidgetYBase, 255, 0);
 
 				GFX_Screen_SetActive(0);
 			}
