@@ -897,7 +897,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 			case 2:
 				if (spriteID == 525) spriteID = 514;
 
-				GUI_DrawSprite(memory, g_sprites[spriteID], positions[spritePos].x, positions[spritePos].y, windowID, 0x4000);
+				GUI_DrawSprite_(memory, g_sprites[spriteID], positions[spritePos].x, positions[spritePos].y, windowID, 0x4000);
 
 				counter = 8;
 				stage++;
