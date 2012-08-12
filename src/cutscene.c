@@ -27,6 +27,7 @@
 #include "table/sound.h"
 #include "table/strings.h"
 #include "timer/timer.h"
+#include "tools.h"
 #include "video/video.h"
 #include "wsa.h"
 
@@ -58,6 +59,150 @@ static void *s_buffer_182E = NULL;
 static void *s_buffer_1832 = NULL;
 
 bool s_var_37B4;
+
+/*--------------------------------------------------------------*/
+
+static uint8
+Cutscene_GetPixel(uint16 x, uint16 y)
+{
+	if (y >= SCREEN_HEIGHT) return 0;
+	if (x >= SCREEN_WIDTH) return 0;
+
+	return *((uint8 *)GFX_Screen_GetActive() + y * SCREEN_WIDTH + x);
+}
+
+static void
+Cutscene_PutPixel(uint16 x, uint16 y, uint8 colour)
+{
+	if (y >= SCREEN_HEIGHT) return;
+	if (x >= SCREEN_WIDTH) return;
+
+	*((uint8 *)GFX_Screen_GetActive() + y * SCREEN_WIDTH + x) = colour;
+}
+
+static void
+Cutscene_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint16 width, uint16 height, uint16 screenSrc, uint16 screenDst)
+{
+	uint16 offsetsY[100];
+	uint16 offsetsX[40];
+	int x, y;
+
+	height /= 2;
+
+	for (x = 0; x < width;  x++) offsetsX[x] = x;
+	for (y = 0; y < height; y++) offsetsY[y] = y;
+
+	for (x = 0; x < width; x++) {
+		uint16 index;
+		uint16 temp;
+
+		index = Tools_RandomRange(0, width - 1);
+
+		temp = offsetsX[index];
+		offsetsX[index] = offsetsX[x];
+		offsetsX[x] = temp;
+	}
+
+	for (y = 0; y < height; y++) {
+		uint16 index;
+		uint16 temp;
+
+		index = Tools_RandomRange(0, height - 1);
+
+		temp = offsetsY[index];
+		offsetsY[index] = offsetsY[y];
+		offsetsY[y] = temp;
+	}
+
+	for (y = 0; y < height; y++) {
+		uint16 y2 = y;
+		for (x = 0; x < width; x++) {
+			uint16 offsetX, offsetY;
+
+			offsetX = offsetsX[x];
+			offsetY = offsetsY[y2];
+
+			GUI_Screen_Copy(xSrc + offsetX, ySrc + offsetY * 2, xDst + offsetX, yDst + offsetY * 2, 1, 2, screenSrc, screenDst);
+
+			y2++;
+			if (y2 == height) y2 = 0;
+		}
+
+		/* XXX -- This delays the system so you can in fact see the animation */
+		if ((y % 4) == 0) {
+			Video_Tick();
+			Timer_Wait();
+		}
+	}
+}
+
+static void
+Cutscene_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, uint16 delay, bool skipNull)
+{
+	uint16 oldScreenID;
+	uint16 i;
+	uint16 j;
+
+	uint16 columns[SCREEN_WIDTH];
+	uint16 rows[SCREEN_HEIGHT];
+
+	assert(width <= SCREEN_WIDTH);
+	assert(height <= SCREEN_HEIGHT);
+
+	for (i = 0; i < width; i++)  columns[i] = i;
+	for (i = 0; i < height; i++) rows[i] = i;
+
+	for (i = 0; i < width; i++) {
+		uint16 tmp;
+
+		j = Tools_RandomRange(0, width - 1);
+
+		tmp = columns[j];
+		columns[j] = columns[i];
+		columns[i] = tmp;
+	}
+
+	for (i = 0; i < height; i++) {
+		uint16 tmp;
+
+		j = Tools_RandomRange(0, height - 1);
+
+		tmp = rows[j];
+		rows[j] = rows[i];
+		rows[i] = tmp;
+	}
+
+	oldScreenID = GFX_Screen_SetActive(screenDst);
+
+	for (j = 0; j < height; j++) {
+		uint16 j2 = j;
+
+		for (i = 0; i < width; i++) {
+			uint8 colour;
+			uint16 curX = x + columns[i];
+			uint16 curY = y + rows[j2];
+
+			if (++j2 >= height) j2 = 0;
+
+			GFX_Screen_SetActive(screenSrc);
+
+			colour = Cutscene_GetPixel(curX, curY);
+
+			GFX_Screen_SetActive(screenDst);
+
+			if (skipNull && colour == 0) continue;
+
+			Cutscene_PutPixel(curX, curY, colour);
+		}
+
+		Video_Tick();
+		Timer_Sleep(delay);
+	}
+
+	GFX_Screen_SetActive(oldScreenID);
+}
+
+/*--------------------------------------------------------------*/
 
 static void GameLoop_PrepareAnimation(const HouseAnimation_Animation *animation, const HouseAnimation_Subtitle *subtitle, uint16 arg_8062, const HouseAnimation_SoundEffect *soundEffect)
 {
@@ -394,9 +539,9 @@ static void GameLoop_PlayAnimation(void)
 				locdi++;
 
 				if ((animation->flags & 0x480) == 0x80) {
-					GUI_Screen_FadeIn2(8, 24, 304, 120, 2, 0, 1, false);
+					Cutscene_Screen_FadeIn2(8, 24, 304, 120, 2, 0, 1, false);
 				} else if ((animation->flags & 0x480) == 0x400) {
-					GUI_Screen_FadeIn(1, 24, 1, 24, 38, 120, 2, 0);
+					Cutscene_Screen_FadeIn(1, 24, 1, 24, 38, 120, 2, 0);
 				}
 			}
 		}
@@ -855,7 +1000,7 @@ static void GameLoop_GameCredits(void)
 
 	GUI_Palette_RemapScreen(g_curWidgetXBase << 3, g_curWidgetYBase, g_curWidgetWidth << 3, g_curWidgetHeight, 2, memory);
 
-	GUI_Screen_FadeIn2(g_curWidgetXBase << 3, g_curWidgetYBase, g_curWidgetWidth << 3, g_curWidgetHeight, 2, 0, 1, false);
+	Cutscene_Screen_FadeIn2(g_curWidgetXBase << 3, g_curWidgetYBase, g_curWidgetWidth << 3, g_curWidgetHeight, 2, 0, 1, false);
 
 	GameCredits_LoadPalette();
 
