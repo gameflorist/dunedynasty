@@ -146,6 +146,7 @@ Viewport_SelectRegion(Widget *w)
 			}
 			else if ((mode == SELECTION_MODE_CONTROLLABLE_UNIT) && (Unit_GetHouseID(u) == g_playerHouseID)) {
 				Unit_Select(u);
+				Unit_DisplayStatusText(u);
 			}
 		}
 		else if (mode == SELECTION_MODE_STRUCTURE) {
@@ -181,8 +182,10 @@ Viewport_SelectRegion(Widget *w)
 			u = Unit_Find(&find);
 		}
 
-		if (Unit_AnySelected())
+		if (Unit_AnySelected()) {
+			Unit_DisplayGroupStatusText();
 			return;
+		}
 
 		find.index = 0xFFFF;
 

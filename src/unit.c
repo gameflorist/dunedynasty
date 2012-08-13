@@ -1793,26 +1793,10 @@ void Unit_Select(Unit *unit)
 	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
 		if (g_unitSelected[i] == NULL) {
 			g_unitSelected[i] = unit;
-			Unit_DisplayStatusText(unit);
 			GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
 			break;
 		}
 	}
-
-#if 0
-	if (g_unitSelected != NULL) {
-		if (g_unitSelected != unit) Unit_DisplayStatusText(unit);
-
-		g_unitSelected = unit;
-
-		GUI_Widget_ActionPanel_Draw(true);
-	} else {
-		Unit_DisplayStatusText(unit);
-		g_unitSelected = unit;
-
-		GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
-	}
-#endif
 
 	for (Unit *u = Unit_FirstSelected(); u != NULL; u = Unit_NextSelected(u)) {
 		Unit_UpdateMap(2, u);
@@ -2107,7 +2091,7 @@ Unit *Unit_CreateBullet(tile32 position, UnitType type, uint8 houseID, uint16 da
  *
  * @param unit The Unit to display status text for.
  */
-void Unit_DisplayStatusText(Unit *unit)
+void Unit_DisplayStatusText(const Unit *unit)
 {
 	const UnitInfo *ui;
 	char buffer[81];
@@ -2158,6 +2142,35 @@ void Unit_DisplayStatusText(Unit *unit)
 
 	strcat(buffer, ".");
 	GUI_DisplayText(buffer, 2);
+}
+
+void Unit_DisplayGroupStatusText(void)
+{
+	if (!Unit_AnySelected())
+		return;
+
+	int highest_priority = -1;
+	Unit *best_candidate = NULL;
+	
+	Unit *u = Unit_FirstSelected();
+	while (u != NULL) {
+		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+		int priority = ui->o.priorityTarget;
+
+		/* Harvester status text contains important information! */
+		if (u->o.type == UNIT_HARVESTER)
+			priority = 1000 + u->amount;
+
+		if (highest_priority < priority) {
+			highest_priority = priority;
+			best_candidate = u;
+		}
+
+		u = Unit_NextSelected(u);
+	}
+
+	if (best_candidate != NULL)
+		Unit_DisplayStatusText(best_candidate);
 }
 
 /**

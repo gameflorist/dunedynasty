@@ -178,6 +178,7 @@ void Map_SetSelection(uint16 packed)
 			if (u != NULL) {
 				if (u->o.type != UNIT_CARRYALL) {
 					Unit_Select(u);
+					Unit_DisplayStatusText(u);
 				}
 			} else {
 				Unit_UnselectAll();
