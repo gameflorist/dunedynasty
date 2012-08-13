@@ -280,7 +280,7 @@ void Tile_RemoveFogInRadius(tile32 tile, uint16 radius)
 
 	x = Tile_GetPackedX(packed);
 	y = Tile_GetPackedY(packed);
-	tile.tile = Tile_GetSpecialXY(tile);
+	/* tile.tile = Tile_GetSpecialXY(tile); */
 
 	for (i = -radius; i <= radius; i++) {
 		for (j = -radius; j <= radius; j++) {
@@ -291,7 +291,8 @@ void Tile_RemoveFogInRadius(tile32 tile, uint16 radius)
 
 			packed = Tile_PackXY(x + i, y + j);
 
-			t.tile = Tile_GetSpecialXY(Tile_UnpackTile(packed));
+			/* t.tile = Tile_GetSpecialXY(Tile_UnpackTile(packed)); */
+			t = Tile_UnpackTile(packed);
 
 			if (Tile_GetDistanceRoundedUp(tile, t) > radius) continue;
 
