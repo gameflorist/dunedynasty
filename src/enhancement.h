@@ -15,6 +15,7 @@ extern bool enhancement_i_mean_where_i_clicked;
 extern bool enhancement_insatiable_sandworms;
 extern bool enhancement_read_scenario_structure_health;
 extern bool enhancement_repeat_reinforcements;
+extern bool enhancement_special_trooper_portaits;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 
 #endif

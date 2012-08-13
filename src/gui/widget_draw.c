@@ -9,6 +9,7 @@
 #include "gui.h"
 #include "widget.h"
 #include "../config.h"
+#include "../enhancement.h"
 #include "../opendune.h"
 #include "../gfx.h"
 #include "../house.h"
@@ -699,6 +700,21 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 				}
 				/* Fall through */
 			case 2: /* Unit */
+				if (enhancement_special_trooper_portaits && (u != NULL)) {
+					if ((u->o.houseID == HOUSE_FREMEN) && (u->o.type == UNIT_TROOPER)) {
+						spriteID = SHAPE_FREMEN;
+						break;
+					}
+					else if ((u->o.houseID == HOUSE_FREMEN) && (u->o.type == UNIT_TROOPERS)) {
+						spriteID = SHAPE_FREMEN_SQUAD;
+						break;
+					}
+					else if ((u->o.houseID == HOUSE_SARDAUKAR) && (u->o.type == UNIT_TROOPER || u->o.type == UNIT_TROOPERS)) {
+						spriteID = SHAPE_SARDAUKAR;
+						break;
+					}
+				}
+				/* Fall through */
 			case 7: /* Placement */
 				spriteID = oi->spriteID;
 				break;

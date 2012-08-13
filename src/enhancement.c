@@ -66,6 +66,12 @@ bool enhancement_read_scenario_structure_health = false;
 bool enhancement_repeat_reinforcements = true;
 
 /**
+ * Use the Fremen and Sardaukar portaits for troopers and trooper
+ * squads.
+ */
+bool enhancement_special_trooper_portaits = true;
+
+/**
  * Prevent structures built completely on concrete slabs from
  * degrading, as this seems in contrast with the idea of slabs.
  */
