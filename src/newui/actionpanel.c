@@ -589,3 +589,39 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
+
+void
+ActionPanel_DrawPalace(const Widget *w, Structure *s)
+{
+	const bool buttonDown = w->state.s.hover2;
+	const int positionX = w->offsetX;
+	const int positionY = w->offsetY;
+	const int width = w->width;
+	const int height = w->height;
+
+	enum ShapeID shapeID;
+	VARIABLE_NOT_USED(s);
+
+	switch (g_productionStringID) {
+		case STR_LAUNCH:
+			shapeID = 0x1E;
+			break;
+
+		case STR_FREMEN:
+			shapeID = 0x5E;
+			break;
+
+		case STR_SABOTEUR:
+			shapeID = 0x60;
+			break;
+
+		default:
+			return;
+	}
+
+	GUI_DrawWiredRectangle(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
+	GUI_DrawBorder(positionX, positionY, width, height, buttonDown ? 0 : 1, true);
+
+	Shape_Draw(shapeID, positionX + 2, positionY + 2, 0, 0);
+	GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), positionX + width / 2, positionY + height - 9, (buttonDown ? 0xE : 0xF), 0, 0x121);
+}

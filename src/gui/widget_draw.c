@@ -298,7 +298,12 @@ void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 	if (s == NULL)
 		return;
 
-	ActionPanel_DrawFactory(w, s);
+	if (s->o.type == STRUCTURE_PALACE) {
+		ActionPanel_DrawPalace(w, s);
+	}
+	else {
+		ActionPanel_DrawFactory(w, s);
+	}
 #endif
 }
 
