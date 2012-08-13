@@ -714,9 +714,11 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 
 		switch (actionType) {
 			case 3: /* Structure */
+#if 0
 				if (oi->flags.factory && !isNotPlayerOwned) {
 					GUI_Widget_MakeVisible(widget28);
 				}
+#endif
 				/* Fall through */
 			case 7: /* Placement */
 			case 2: /* Unit */
