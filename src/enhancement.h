@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 extern bool g_dune2_enhanced;
+extern bool enhancement_fix_enemy_approach_direction_warning;
 extern bool enhancement_fix_everlasting_unit_wobble;
 extern bool enhancement_fix_ix_colour_remapping;
 extern bool enhancement_read_scenario_structure_health;

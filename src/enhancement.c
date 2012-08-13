@@ -12,6 +12,12 @@
 bool g_dune2_enhanced = true;
 
 /**
+ * Fix the often incorrect warning message regarding the direction of
+ * incoming enemies in the early missions.
+ */
+bool enhancement_fix_enemy_approach_direction_warning = true;
+
+/**
  * In the original game, once a unit starts to wobble, it will never
  * stop wobbling.
  */
