@@ -36,6 +36,12 @@ bool enhancement_fix_firing_rates_and_ranges = true;
 bool enhancement_fix_ix_colour_remapping = true;
 
 /**
+ * When a unit enters a structure, the last tile the unit was on
+ * becomes selected rather than the entire structure.
+ */
+bool enhancement_fix_selection_after_entering_structure = true;
+
+/**
  * The original game ignores all structures' health fields specified
  * in the scenario, giving them all full health instead.
  */

@@ -2131,7 +2131,14 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 
 	if (unit == NULL || s == NULL) return;
 
-	if (unit == g_unitSelected) Unit_Select(NULL);
+	if (unit == g_unitSelected) {
+		if (enhancement_fix_selection_after_entering_structure) {
+			Map_SetSelection(Tile_PackTile(s->o.position));
+		}
+		else {
+			Unit_Select(NULL);
+		}
+	}
 
 	ui = &g_table_unitInfo[unit->o.type];
 	si = &g_table_structureInfo[s->o.type];
