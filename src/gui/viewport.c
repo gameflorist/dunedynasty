@@ -780,7 +780,11 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	}
 
 	if ((g_viewportMessageCounter & 1) != 0 && g_viewportMessageText != NULL && (minX[6] <= 14 || maxX[6] >= 0 || arg08 || forceRedraw)) {
-		GUI_DrawText_Wrapper(g_viewportMessageText, 112, 139, 15, 0, 0x132);
+		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+		const int x = wi->offsetX + wi->width / 2;
+		const int y = wi->offsetY + wi->height - 61;
+
+		GUI_DrawText_Wrapper(g_viewportMessageText, x, y, 15, 0, 0x132);
 		minX[6] = -1;
 		maxX[6] = 14;
 	}
