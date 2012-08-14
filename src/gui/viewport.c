@@ -13,6 +13,7 @@
 #include "../audio/driver.h"
 #include "../audio/sound.h"
 #include "../config.h"
+#include "../enhancement.h"
 #include "../explosion.h"
 #include "../gfx.h"
 #include "../house.h"

@@ -16,6 +16,7 @@
 #include "animation.h"
 #include "audio/sound.h"
 #include "config.h"
+#include "enhancement.h"
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "house.h"

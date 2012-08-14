@@ -9,6 +9,7 @@
 
 #include "gfx.h"
 
+#include "enhancement.h"
 #include "gui/widget.h"
 #include "house.h"
 #include "opendune.h"

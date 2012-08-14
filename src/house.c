@@ -12,6 +12,7 @@
 
 #include "audio/driver.h"
 #include "audio/sound.h"
+#include "enhancement.h"
 #include "gfx.h"
 #include "gui/gui.h"
 #include "gui/widget.h"

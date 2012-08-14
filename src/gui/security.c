@@ -10,6 +10,7 @@
 
 #include "security.h"
 
+#include "../enhancement.h"
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/gui.h"

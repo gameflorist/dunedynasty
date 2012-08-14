@@ -9,6 +9,7 @@
 #include "team.h"
 
 #include "opendune.h"
+#include "enhancement.h"
 #include "house.h"
 #include "pool/pool.h"
 #include "pool/team.h"

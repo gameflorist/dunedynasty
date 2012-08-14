@@ -10,6 +10,7 @@
 
 #include "scenario.h"
 
+#include "enhancement.h"
 #include "file.h"
 #include "house.h"
 #include "ini.h"

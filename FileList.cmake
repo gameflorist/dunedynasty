@@ -9,6 +9,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/codec/format80.c
 	src/config.c
 	src/crashlog/crashlog_none.c
+	src/enhancement.c
 	src/explosion.c
 	src/file.c
 	src/gfx.c
