@@ -6,5 +6,6 @@
 #include <stdbool.h>
 
 extern bool g_dune2_enhanced;
+extern bool enhancement_fix_ix_colour_remapping;
 
 #endif
