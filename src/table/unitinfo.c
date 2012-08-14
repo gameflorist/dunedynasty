@@ -155,7 +155,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 50,
 		/* damage               */ 50,
 		/* explosionType        */ 0,
-		/* bulletType           */ 22,
+		/* bulletType           */ UNIT_MISSILE_TROOPER,
 		/* bulletSound          */ 42
 	},
 
@@ -228,7 +228,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 2,
 		/* damage               */ 3,
 		/* explosionType        */ 0,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 58
 	},
 
@@ -301,7 +301,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 5,
 		/* damage               */ 5,
 		/* explosionType        */ 0,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 59
 	},
 
@@ -374,7 +374,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 2,
 		/* damage               */ 3,
 		/* explosionType        */ 0,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 58
 	},
 
@@ -447,7 +447,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 5,
 		/* damage               */ 5,
 		/* explosionType        */ 0,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 59
 	},
 
@@ -520,7 +520,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 2,
 		/* damage               */ 2,
 		/* explosionType        */ 0,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 58
 	},
 
@@ -593,7 +593,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 9,
 		/* damage               */ 75,
 		/* explosionType        */ 3,
-		/* bulletType           */ 19,
+		/* bulletType           */ UNIT_MISSILE_ROCKET,
 		/* bulletSound          */ -1
 	},
 
@@ -666,7 +666,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 7,
 		/* damage               */ 0,
 		/* explosionType        */ 3,
-		/* bulletType           */ 21,
+		/* bulletType           */ UNIT_MISSILE_DEVIATOR,
 		/* bulletSound          */ -1
 	},
 
@@ -739,7 +739,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 4,
 		/* damage               */ 25,
 		/* explosionType        */ 1,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 57
 	},
 
@@ -812,7 +812,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 5,
 		/* damage               */ 30,
 		/* explosionType        */ 1,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 57
 	},
 
@@ -885,7 +885,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 5,
 		/* damage               */ 40,
 		/* explosionType        */ 1,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 57
 	},
 
@@ -958,7 +958,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 8,
 		/* damage               */ 60,
 		/* explosionType        */ -1,
-		/* bulletType           */ 24,
+		/* bulletType           */ UNIT_SONIC_BLAST,
 		/* bulletSound          */ 43
 	},
 
@@ -1031,7 +1031,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 3,
 		/* damage               */ 5,
 		/* explosionType        */ 0,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 59
 	},
 
@@ -1104,7 +1104,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 3,
 		/* damage               */ 5,
 		/* explosionType        */ 0,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 59
 	},
 
@@ -1177,7 +1177,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 3,
 		/* damage               */ 7,
 		/* explosionType        */ 0,
-		/* bulletType           */ 23,
+		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ 59
 	},
 
@@ -1907,7 +1907,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* fireDistance         */ 0,
 		/* damage               */ 300,
 		/* explosionType        */ 13,
-		/* bulletType           */ 25,
+		/* bulletType           */ UNIT_SANDWORM,
 		/* bulletSound          */ 63
 	},
 
