@@ -559,8 +559,7 @@ bool Structure_Place(Structure *s, uint16 position)
 
 		s->o.flags.s.degrades = true;
 	} else {
-		/* ENHANCEMENT -- When you build a structure completely on slabs, it should not degrade */
-		if (!g_dune2_enhanced) {
+		if (!enhancement_structures_on_concrete_do_not_degrade) {
 			s->o.flags.s.degrades = true;
 		}
 	}

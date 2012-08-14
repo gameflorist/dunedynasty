@@ -16,3 +16,9 @@ bool g_dune2_enhanced = true;
  * graphical issues with the IX building.
  */
 bool enhancement_fix_ix_colour_remapping = true;
+
+/**
+ * Prevent structures built completely on concrete slabs from
+ * degrading, as this seems in contrast with the idea of slabs.
+ */
+bool enhancement_structures_on_concrete_do_not_degrade = true;
