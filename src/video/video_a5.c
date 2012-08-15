@@ -357,7 +357,9 @@ VideoA5_InitShapes(unsigned char *buf)
 		{ 151, 161, false }, /* UNITS1.SHP */
 		{ 162, 167,  true }, /* UNITS1.SHP: tanks */
 		{ 168, 237, false }, /* UNITS1.SHP */
-		{ 238, 354,  true }, /* UNITS.SHP */
+		{ 238, 257,  true }, /* UNITS.SHP: quad .. mcv */
+		{ 258, 282, false }, /* UNITS.SHP: rockets */
+		{ 283, 354,  true }, /* UNITS.SHP: carry-all .. landed ornithoper */
 		{ 373, 386, false }, /* MENTAT */
 		{ 387, 401, false }, /* MENSHPH.SHP */
 		{ 402, 416, false }, /* MENSHPA.SHP */
