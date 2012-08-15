@@ -1078,8 +1078,7 @@ bool Unit_StartMovement(Unit *unit)
 	if (unit->o.type == UNIT_SABOTEUR && type == LST_WALL) speed = 255;
 	unit->o.flags.s.isSmoking = false;
 
-	/* ENHANCEMENT: the flag is never set to false in original Dune2; in result, once the wobbling starts, it never stops. */
-	if (g_dune2_enhanced) {
+	if (enhancement_fix_everlasting_unit_wobble) {
 		unit->o.flags.s.isWobbling = g_table_landscapeInfo[type].letUnitWobble;
 	} else {
 		if (g_table_landscapeInfo[type].letUnitWobble) unit->o.flags.s.isWobbling = true;

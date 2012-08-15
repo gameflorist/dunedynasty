@@ -12,6 +12,12 @@
 bool g_dune2_enhanced = true;
 
 /**
+ * In the original game, once a unit starts to wobble, it will never
+ * stop wobbling.
+ */
+bool enhancement_fix_everlasting_unit_wobble = true;
+
+/**
  * Too many tile colours are remapped with house colours, causing
  * graphical issues with the IX building.
  */
