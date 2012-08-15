@@ -50,7 +50,6 @@ uint8 g_changedTilesMap[512];                               /*!< Bit array of ch
 static bool s_debugNoExplosionDamage = false;               /*!< When non-zero, explosions do no damage to their surrounding. */
 
 uint16 g_dirtyViewportCount = 0;
-uint16 g_var_3A08 = 0;
 
 /**
  * Map definitions.
@@ -710,7 +709,6 @@ void Map_Update(uint16 packed, uint16 type, bool ignoreInvisible)
 			for (i = 0; i < 9; i++) {
 				curPacked = (packed + offsets[i]) & 0xFFF;
 				BitArray_Set(g_dirtyViewport, curPacked);
-				if (BitArray_Test(g_displayedViewport, curPacked)) g_var_3A08 = 1;
 			}
 
 			BitArray_Set(g_dirtyMinimap, curPacked);

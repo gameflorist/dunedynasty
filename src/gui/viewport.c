@@ -437,7 +437,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		GUI_DrawSprite(g_screenActiveID, g_sprites[6], x, y, 2, 0xC000);
 	}
 
-	if (g_unitSelected == NULL && (g_var_3A08 != 0 || arg08) && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
+	if (g_unitSelected == NULL && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
 		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 		const int x1 = wi->offsetX + TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - Tile_GetPackedX(g_minimapPosition));
 		const int y1 = wi->offsetY + TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - Tile_GetPackedY(g_minimapPosition));
@@ -450,8 +450,6 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 			GUI_DrawLine(x1, y1, x2, y2, 0xFF);
 			GUI_DrawLine(x2, y1, x1, y2, 0xFF);
 		}
-
-		g_var_3A08 = 0;
 	}
 
 	if (g_var_39E6 != 0 || forceRedraw || updateDisplay) {
