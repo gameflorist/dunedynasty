@@ -517,6 +517,23 @@ static void Scenario_Load_Chunk(const char *category, void (*ptr)(const char *ke
 	}
 }
 
+static void Scenario_CentreViewport(uint8 houseID)
+{
+	PoolFindStruct find;
+
+	find.houseID = houseID;
+	find.type = STRUCTURE_CONSTRUCTION_YARD;
+	find.index = 0xFFFF;
+
+	Structure *s = Structure_Find(&find);
+	if (s != NULL) {
+		const int cx = Tile_GetPosX(s->o.position);
+		const int cy = Tile_GetPosY(s->o.position);
+
+		Map_SetViewportPosition(Tile_PackXY(cx, cy));
+	}
+}
+
 bool Scenario_Load(uint16 scenarioID, uint8 houseID)
 {
 	char filename[14];
@@ -554,6 +571,7 @@ bool Scenario_Load(uint16 scenarioID, uint8 houseID)
 	Scenario_Load_MapParts("Field", Scenario_Load_Map_Field);
 	Scenario_Load_MapParts("Special", Scenario_Load_Map_Special);
 
+	Scenario_CentreViewport(houseID);
 	g_tickScenarioStart = g_timerGame;
 
 	free(s_scenarioBuffer); s_scenarioBuffer = NULL;
