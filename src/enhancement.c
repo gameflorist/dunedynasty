@@ -18,6 +18,12 @@ bool g_dune2_enhanced = true;
 bool enhancement_fix_ix_colour_remapping = true;
 
 /**
+ * A mistake in reading the scenario script causes reinforcements to
+ * only be sent once.
+ */
+bool enhancement_repeat_reinforcements = true;
+
+/**
  * Prevent structures built completely on concrete slabs from
  * degrading, as this seems in contrast with the idea of slabs.
  */

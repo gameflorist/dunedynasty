@@ -391,7 +391,7 @@ static void Scenario_Load_Reinforcement(const char *key, char *settings)
 	timeBetween = atoi(settings) * 6 + 1;
 	repeat = (settings[strlen(settings) - 1] == '+') ? true : false;
 	/* ENHANCEMENT -- Dune2 makes a mistake in reading the '+', causing repeat to be always false */
-	if (!g_dune2_enhanced) repeat = false;
+	if (!enhancement_repeat_reinforcements) repeat = false;
 
 	position.s.x = 0xFFFF;
 	position.s.y = 0xFFFF;
