@@ -20,6 +20,15 @@ typedef enum HouseType {
 	HOUSE_INVALID   = 0xFF
 } HouseType;
 
+enum HouseFlag {
+	FLAG_HOUSE_HARKONNEN    = 1 << HOUSE_HARKONNEN, /* 0x01 */
+	FLAG_HOUSE_ATREIDES     = 1 << HOUSE_ATREIDES,  /* 0x02 */
+	FLAG_HOUSE_ORDOS        = 1 << HOUSE_ORDOS,     /* 0x04 */
+	FLAG_HOUSE_FREMEN       = 1 << HOUSE_FREMEN,    /* 0x08 */
+	FLAG_HOUSE_SARDAUKAR    = 1 << HOUSE_SARDAUKAR, /* 0x10 */
+	FLAG_HOUSE_MERCENARY    = 1 << HOUSE_MERCENARY  /* 0x20 */
+};
+
 /**
  * Types of special %House Weapons available in the game.
  */
