@@ -101,7 +101,6 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		if (!click && !drag) {
 			if (s_tickMapScroll + 10 >= g_timerGame || s_tickCursor + 20 >= g_timerGame) return true;
 			if (g_gameConfig.autoScroll == 0) return true;
-			if (g_selectionType == SELECTIONTYPE_STRUCTURE || g_selectionType == SELECTIONTYPE_UNIT) return true;
 		}
 
 		s_tickMapScroll = g_timerGame;
