@@ -29,6 +29,13 @@
 #define CURSOR_MAX          6
 #define WINDTRAP_COLOUR     223
 
+typedef struct CPSStore {
+	struct CPSStore *next;
+
+	char filename[16];
+	ALLEGRO_BITMAP *bmp;
+} CPSStore;
+
 static const uint8 font_palette[][8] = {
 	{ 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, /* No outline. */
 	{ 0x00, 0xFF, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00 }, /* Shadow. */
@@ -42,6 +49,7 @@ static ALLEGRO_BITMAP *screen;
 static ALLEGRO_COLOR paltoRGB[256];
 static unsigned char paletteRGB[3 * 256];
 
+static CPSStore *s_cps;
 static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *font_texture;
@@ -197,6 +205,15 @@ VideoA5_Uninit(void)
 	for (int i = 0; i < CURSOR_MAX; i++) {
 		al_destroy_mouse_cursor(s_cursor[i]);
 		s_cursor[i] = NULL;
+	}
+
+	while (s_cps != NULL) {
+		CPSStore *next = s_cps->next;
+
+		al_destroy_bitmap(s_cps->bmp);
+		free(s_cps);
+
+		s_cps = next;
 	}
 
 	al_destroy_bitmap(icon_texture);
@@ -361,6 +378,47 @@ void
 VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c)
 {
 	al_draw_filled_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, paltoRGB[c]);
+}
+
+/*--------------------------------------------------------------*/
+
+static CPSStore *
+VideoA5_ExportCPS(const char *filename, unsigned char *buf)
+{
+	CPSStore *cps = malloc(sizeof(*cps));
+	assert(cps != NULL);
+
+	cps->next = NULL;
+	strncpy(cps->filename, filename, sizeof(cps->filename));
+
+	cps->bmp = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
+	assert(cps->bmp != NULL);
+
+	bool use_benepal = false;
+	if ((strncmp(cps->filename, "MENTATM.CPS", sizeof(cps->filename)) == 0) ||
+	    (strncmp(cps->filename, "MISC", sizeof(cps->filename)) == 0)) {
+		use_benepal = true;
+	}
+
+	VideoA5_ReadPalette(use_benepal ? "BENE.PAL" : "IBM.PAL");
+	memset(buf, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+	Sprites_LoadImage(filename, 0, NULL);
+	VideoA5_CopyBitmap(buf, cps->bmp, true);
+	VideoA5_ReadPalette("IBM.PAL");
+
+	return cps;
+}
+
+static void
+VideoA5_InitCPS(unsigned char *buf)
+{
+	s_cps = VideoA5_ExportCPS("MENTATM.CPS", buf);
+	s_cps->next = VideoA5_ExportCPS("SCREEN.CPS", buf);
+
+#if OUTPUT_TEXTURES
+	al_save_bitmap("mentatm_cps.png", s_cps->bmp);
+	al_save_bitmap("screen_cps.png", s_cps->next->bmp);
+#endif
 }
 
 /*--------------------------------------------------------------*/
@@ -808,6 +866,9 @@ VideoA5_InitSprites(void)
 	unsigned char *buf = GFX_Screen_GetActive();
 
 	VideoA5_ReadPalette("IBM.PAL");
+
+	memset(buf, 0, WINDOW_W * WINDOW_H);
+	VideoA5_InitCPS(buf);
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitIcons(buf);
