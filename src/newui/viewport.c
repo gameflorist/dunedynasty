@@ -328,6 +328,33 @@ Viewport_Click(Widget *w)
 	const int tiley = Map_Clamp(y0 + (g_mouseY - w->offsetY) / TILE_SIZE);
 	const uint16 packed = Tile_PackXY(tilex, tiley);
 
+	if ((w->state.s.buttonState & 0x04) != 0) {
+		if (!selection_box_active)
+			return true;
+
+		selection_box_active = false;
+		selection_box_x2 = Viewport_ClampSelectionBoxX(g_mouseX);
+		selection_box_y2 = Viewport_ClampSelectionBoxY(g_mouseY);
+
+		if (selection_box_x1 > selection_box_x2) {
+			const int swap = selection_box_x1;
+			selection_box_x1 = selection_box_x2;
+			selection_box_x2 = swap;
+		}
+
+		if (selection_box_y1 > selection_box_y2) {
+			const int swap = selection_box_y1;
+			selection_box_y1 = selection_box_y2;
+			selection_box_y2 = swap;
+		}
+
+		Viewport_SelectRegion(w);
+		return true;
+	}
+
+	if (w->index == 45)
+		return true;
+
 	/* 0x01, 0x02, 0x04, 0x08: lmb clicked, held, released, not held. */
 	if ((w->state.s.buttonState & 0x01) != 0) {
 		if (g_selectionType == SELECTIONTYPE_TARGET) {
@@ -369,27 +396,6 @@ Viewport_Click(Widget *w)
 		return true;
 	}
 	else if ((w->state.s.buttonState & 0x04) != 0) {
-		if (!selection_box_active)
-			return true;
-
-		selection_box_active = false;
-		selection_box_x2 = Viewport_ClampSelectionBoxX(g_mouseX);
-		selection_box_y2 = Viewport_ClampSelectionBoxY(g_mouseY);
-
-		if (selection_box_x1 > selection_box_x2) {
-			const int swap = selection_box_x1;
-			selection_box_x1 = selection_box_x2;
-			selection_box_x2 = swap;
-		}
-
-		if (selection_box_y1 > selection_box_y2) {
-			const int swap = selection_box_y1;
-			selection_box_y1 = selection_box_y2;
-			selection_box_y2 = swap;
-		}
-
-		Viewport_SelectRegion(w);
-		return true;
 	}
 	else {
 		selection_box_active = false;
@@ -458,6 +464,10 @@ Viewport_Click(Widget *w)
 	else if (g_selectionType == SELECTIONTYPE_PLACE) {
 		Map_SetSelection(packed);
 	}
+
+	const enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
+	if (cursorID != g_cursorSpriteID)
+		Video_SetCursor(cursorID);
 
 	return false;
 }
