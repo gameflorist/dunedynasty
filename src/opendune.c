@@ -1072,6 +1072,26 @@ static void InGame_Numpad_Move(uint16 key)
 static void
 GameLoop_TweakWidgetDimensions(void)
 {
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = 0;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = TRUE_DISPLAY_WIDTH;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height = 5;
+
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetX = TRUE_DISPLAY_WIDTH - 5;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetY = 0;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width = 5;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].height = TRUE_DISPLAY_HEIGHT;
+
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].offsetX = 0;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].offsetY = 0;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].width = 5;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].height = TRUE_DISPLAY_HEIGHT;
+
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetX = 0;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetY = TRUE_DISPLAY_HEIGHT - 5;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].width = TRUE_DISPLAY_WIDTH;
+	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height = 5;
+
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width = TRUE_DISPLAY_WIDTH - 16 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].width;
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].height = TRUE_DISPLAY_HEIGHT - 40;
 
