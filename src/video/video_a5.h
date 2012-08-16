@@ -1,6 +1,7 @@
 #ifndef VIDEO_VIDEOA5_H
 #define VIDEO_VIDEOA5_H
 
+#include "video.h"
 #include "../shape.h"
 
 extern bool VideoA5_Init(void);
@@ -16,6 +17,7 @@ extern void VideoA5_DrawRectangle(int x1, int y1, int x2, int y2, uint8 c);
 extern void VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c);
 
 extern void VideoA5_InitSprites(void);
+extern void VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags);
 extern void VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags);

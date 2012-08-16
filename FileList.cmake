@@ -31,6 +31,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/input/mouse.c
 	src/load.c
 	src/map.c
+	src/newui/menubar.c
 	src/object.c
 	src/opendune.c
 	src/os/error.c

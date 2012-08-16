@@ -9,7 +9,6 @@
 
 #include "video_a5.h"
 
-#include "video.h"
 #include "../common_a5.h"
 #include "../file.h"
 #include "../gfx.h"
@@ -488,6 +487,29 @@ VideoA5_InitCPS(unsigned char *buf)
 	VideoA5_FreeCPS(cps_screen);
 	s_cps = cps_mapmach;
 	cps_mapmach->next = cps_fame;
+}
+
+void
+VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y)
+{
+	const struct CPSSpecialCoord *coord = &cps_special_coord[cpsID];
+	assert(houseID < HOUSE_MAX);
+
+	int sx = coord->tx;
+	int sy = coord->ty;
+
+	if (CPS_SIDEBAR_TOP <= cpsID && cpsID <= CPS_SIDEBAR_BOTTOM) {
+		sx += 17 * houseID;
+
+		if (cpsID == CPS_SIDEBAR_BOTTOM) {
+			sy += 20 * houseID;
+		}
+		else {
+			sy += 3 * houseID;
+		}
+	}
+
+	al_draw_bitmap_region(cps_special_texture, sx, sy, coord->w, coord->h, x, y, 0);
 }
 
 /*--------------------------------------------------------------*/

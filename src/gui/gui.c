@@ -32,6 +32,7 @@
 #include "../input/mouse.h"
 #include "../load.h"
 #include "../map.h"
+#include "../newui/menubar.h"
 #include "../opendune.h"
 #include "../pool/pool.h"
 #include "../pool/house.h"
@@ -1956,11 +1957,8 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 
 	g_viewport_forceRedraw = true;
 
-	Sprites_LoadImage("SCREEN.CPS", 3, NULL);
+	MenuBar_Draw(g_playerHouseID);
 	GUI_DrawSprite(2, g_sprites[11], 192, 0, 0, 0); /* "Credits" */
-
-	GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 2, g_remap);
-
 
 	g_textDisplayNeedsUpdate = true;
 
