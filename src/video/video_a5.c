@@ -9,6 +9,7 @@
 
 #include "video_a5.h"
 
+#include "video.h"
 #include "../common_a5.h"
 #include "../file.h"
 #include "../gfx.h"
@@ -36,6 +37,22 @@ typedef struct CPSStore {
 	ALLEGRO_BITMAP *bmp;
 } CPSStore;
 
+static const struct CPSSpecialCoord {
+	int cx, cy; /* coordinates in cps. */
+	int tx, ty; /* coordinates in texture. */
+	int w, h;
+} cps_special_coord[CPS_SPECIAL_MAX] = {
+	{   0,   0,   0,   0, 184, 17 }, /* CPS_MENUBAR_LEFT */
+	{  -1,  -1,   0,  18, 320, 17 }, /* CPS_MENUBAR_MIDDLE */
+	{ 184,   0, 185,   0, 136, 17 }, /* CPS_MENUBAR_RIGHT */
+	{   0,  17,   0,  36,   8, 23 }, /* CPS_STATUSBAR_LEFT */
+	{  -1,  -1,   9,  36, 425, 23 }, /* CPS_STATUSBAR_MIDDLE */
+	{ 312,  17, 435,  36,   8, 23 }, /* CPS_STATUSBAR_RIGHT */
+	{ 240,  40,   0,  60,  80, 17 }, /* CPS_SIDEBAR_TOP */
+	{ 240,  65,   0,  78,  16, 52 }, /* CPS_SIDEBAR_MIDDLE */
+	{ 240, 117,   0, 146,  80, 83 }, /* CPS_SIDEBAR_BOTTOM */
+};
+
 static const uint8 font_palette[][8] = {
 	{ 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, /* No outline. */
 	{ 0x00, 0xFF, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00 }, /* Shadow. */
@@ -50,6 +67,7 @@ static ALLEGRO_COLOR paltoRGB[256];
 static unsigned char paletteRGB[3 * 256];
 
 static CPSStore *s_cps;
+static ALLEGRO_BITMAP *cps_special_texture;
 static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *font_texture;
@@ -157,10 +175,11 @@ VideoA5_Init(void)
 	/* VideoA5_InitDisplayIcon(dune2_32x32a_xpm, 32, 32, 13); */
 
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
+	cps_special_texture = al_create_bitmap(w, h);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
 	font_texture = al_create_bitmap(w, h);
-	if (screen == NULL || icon_texture == NULL || shape_texture == NULL || font_texture == NULL)
+	if (screen == NULL || cps_special_texture == NULL || icon_texture == NULL || shape_texture == NULL || font_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -215,6 +234,9 @@ VideoA5_Uninit(void)
 
 		s_cps = next;
 	}
+
+	al_destroy_bitmap(cps_special_texture);
+	cps_special_texture = NULL;
 
 	al_destroy_bitmap(icon_texture);
 	icon_texture = NULL;
@@ -410,15 +432,62 @@ VideoA5_ExportCPS(const char *filename, unsigned char *buf)
 }
 
 static void
+VideoA5_FreeCPS(CPSStore *cps)
+{
+	al_destroy_bitmap(cps->bmp);
+	free(cps);
+}
+
+static void
 VideoA5_InitCPS(unsigned char *buf)
 {
-	s_cps = VideoA5_ExportCPS("MENTATM.CPS", buf);
-	s_cps->next = VideoA5_ExportCPS("SCREEN.CPS", buf);
+	const struct CPSSpecialCoord *coord;
+	CPSStore *cps_screen = VideoA5_ExportCPS("SCREEN.CPS", buf);
+	CPSStore *cps_fame = VideoA5_ExportCPS("FAME.CPS", buf);
+	CPSStore *cps_mapmach = VideoA5_ExportCPS("MAPMACH.CPS", buf);
+
+	al_set_target_bitmap(cps_special_texture);
+
+	for (enum CPSID cpsID = CPS_MENUBAR_LEFT; cpsID <= CPS_STATUSBAR_RIGHT; cpsID++) {
+		coord = &cps_special_coord[cpsID];
+
+		if (coord->cx < 0 || coord->cy < 0)
+			continue;
+
+		al_draw_bitmap_region(cps_screen->bmp, coord->cx, coord->cy, coord->w, coord->h, coord->tx, coord->ty, 0);
+	}
+
+	coord = &cps_special_coord[CPS_STATUSBAR_MIDDLE];
+	al_draw_bitmap_region(cps_screen->bmp,  8, 17, 304, coord->h, coord->tx, coord->ty, 0);
+	al_draw_bitmap_region(cps_screen->bmp, 55, 17, 121, coord->h, coord->tx + 304, coord->ty, 0);
+
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		Sprites_LoadImage("SCREEN.CPS", 0, NULL);
+		GUI_Palette_CreateRemap(houseID);
+		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, g_remap);
+		VideoA5_CopyBitmap(buf, cps_screen->bmp, true);
+
+		coord = &cps_special_coord[CPS_SIDEBAR_TOP];
+		al_draw_bitmap_region(cps_screen->bmp, coord->cx, coord->cy, coord->w, coord->h, coord->tx + 17 * houseID, coord->ty + 3 * houseID, 0);
+
+		coord = &cps_special_coord[CPS_SIDEBAR_MIDDLE];
+		al_draw_bitmap_region(cps_screen->bmp, coord->cx, coord->cy, coord->w, coord->h, coord->tx + 17 * houseID, coord->ty + 3 * houseID, 0);
+
+		coord = &cps_special_coord[CPS_SIDEBAR_BOTTOM];
+		al_draw_bitmap_region(cps_screen->bmp, coord->cx, coord->cy, coord->w, coord->h, coord->tx + 17 * houseID, coord->ty + 20 * houseID, 0);
+	}
+
+	coord = &cps_special_coord[CPS_MENUBAR_MIDDLE];
+	al_draw_bitmap_region(cps_fame->bmp, 135, 37, 109, coord->h, coord->tx, coord->ty, 0);
+	al_draw_bitmap_region(cps_mapmach->bmp, 55, 183, 211, coord->h, coord->tx + 109, coord->ty, 0);
 
 #if OUTPUT_TEXTURES
-	al_save_bitmap("mentatm_cps.png", s_cps->bmp);
-	al_save_bitmap("screen_cps.png", s_cps->next->bmp);
+	al_save_bitmap("cps_special.png", cps_special_texture);
 #endif
+
+	VideoA5_FreeCPS(cps_screen);
+	s_cps = cps_mapmach;
+	cps_mapmach->next = cps_fame;
 }
 
 /*--------------------------------------------------------------*/
