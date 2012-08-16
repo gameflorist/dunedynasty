@@ -99,7 +99,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 
 	if (direction != 0xFFFF) {
 		if (!click && !drag) {
-			if (s_tickMapScroll + 10 >= g_timerGame || s_tickCursor + 20 >= g_timerGame) return true;
+			if (s_tickMapScroll + g_autoScrollDelay >= g_timerGame) return true;
 			if (g_gameConfig.autoScroll == 0) return true;
 		}
 

@@ -12,10 +12,11 @@
 #include "audio/sound.h"
 #include "file.h"
 
-GameCfg g_gameConfig = { 1, 1, 2, 1, 0 };
+GameCfg g_gameConfig = { 1, 1, 2, 1, 1 };
 DuneCfg g_config;
 bool g_enableSoundMusic = true;
 bool g_enableVoices = true;
+int g_autoScrollDelay = 5; /* Default was 10. */
 
 /**
  * Reads and decode the config.

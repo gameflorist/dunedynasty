@@ -45,6 +45,7 @@ extern DuneCfg g_config;
 
 extern bool g_enableSoundMusic;
 extern bool g_enableVoices;
+extern int g_autoScrollDelay;
 
 extern bool Config_Read(char *filename, DuneCfg *config);
 extern bool GameOptions_Load(void);
