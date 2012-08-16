@@ -1,0 +1,15 @@
+.svn/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+Makefile.am
+bin/
+cmake_install.cmake
+config.cache
+config.cache.pwd
+config.cache.source.list
+config.log
+config.pwd
+objs/
+tags
+*.swp
