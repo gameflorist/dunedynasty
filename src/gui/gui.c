@@ -391,12 +391,12 @@ void GUI_DrawChar_(unsigned char c, int x, int y)
  * @param fgColour The foreground colour of the text.
  * @param bgColour The background colour of the text.
  */
-void GUI_DrawText(char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour)
+void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour)
 {
 	uint8 colours[2];
 	uint16 x;
 	uint16 y;
-	char *s;
+	const char *s;
 
 	if (g_fontCurrent == NULL) return;
 
@@ -448,7 +448,7 @@ void GUI_DrawText(char *string, int16 left, int16 top, uint8 fgColour, uint8 bgC
  * @param bgColour The background colour of the text.
  * @param flags The flags of the string.
  */
-void GUI_DrawText_Wrapper(char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour, uint16 flags, ...)
+void GUI_DrawText_Wrapper(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour, uint16 flags, ...)
 {
 	static char textBuffer[240];
 	static uint16 displayedarg12low = -1;
@@ -691,7 +691,7 @@ static void GUI_Widget_SetProperties(uint16 index, uint16 xpos, uint16 ypos, uin
  * @param ... The args for the text.
  * @return ??
  */
-uint16 GUI_DisplayModalMessage(char *str, uint16 spriteID, ...)
+uint16 GUI_DisplayModalMessage(const char *str, uint16 spriteID, ...)
 {
 	static char textBuffer[768];
 
@@ -1362,7 +1362,7 @@ static uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvest
  * @param string The string to draw.
  * @param top The most top position where to draw the string.
  */
-static void GUI_DrawTextOnFilledRectangle(char *string, uint16 top)
+static void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top)
 {
 	uint16 halfWidth;
 
@@ -2791,7 +2791,7 @@ static bool GUI_StrategicMap_FastForwardToggleWithESC(void)
 	return s_strategicMapFastForward;
 }
 
-static void GUI_StrategicMap_DrawText(char *string)
+static void GUI_StrategicMap_DrawText(const char *string)
 {
 	static int64_t l_timerNext = 0;
 	uint16 oldScreenID;
@@ -3206,7 +3206,7 @@ void GUI_ClearScreen(uint16 screenID)
  * @param bgColour The background colour of the text.
  * @param charWidth The width of a char.
  */
-void GUI_DrawText_Monospace(char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth)
+void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth)
 {
 	char s[2] = " ";
 
@@ -3303,7 +3303,7 @@ void GUI_FactoryWindow_DrawDetails(void)
 	GUI_FactoryWindow_DrawCaption(NULL);
 }
 
-void GUI_FactoryWindow_DrawCaption(char *caption)
+void GUI_FactoryWindow_DrawCaption(const char *caption)
 {
 	uint16 oldScreenID;
 
