@@ -6,8 +6,9 @@
 
 /* "Scancodes" for mouse events, stored from 0x7F backwards. */
 enum {
-	MOUSE_LMB = 0x7F,
-	MOUSE_RMB = 0x7E,
+	MOUSE_ZAXIS = 0x7F,
+	MOUSE_LMB = 0x7E,
+	MOUSE_RMB = 0x7D
 };
 
 enum InputMouseMode {

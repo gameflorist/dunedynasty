@@ -11,6 +11,7 @@ float g_mouse_transform_offx;
 float g_mouse_transform_offy;
 int g_mouseX;
 int g_mouseY;
+int g_mouseDZ;
 int g_mouseClickX;
 int g_mouseClickY;
 
@@ -23,7 +24,7 @@ Mouse_Init(void)
 }
 
 void
-Mouse_EventHandler(bool apply_transform, int x, int y, enum Scancode state)
+Mouse_EventHandler(bool apply_transform, int x, int y, int dz, enum Scancode state)
 {
 	if (apply_transform) {
 		x = ((float)x - g_mouse_transform_offx) / g_mouse_transform_scale;
@@ -32,6 +33,10 @@ Mouse_EventHandler(bool apply_transform, int x, int y, enum Scancode state)
 
 	g_mouseX = x;
 	g_mouseY = y;
+	g_mouseDZ = dz;
+
+	if (dz != 0)
+		Input_EventHandler(SCANCODE_RELEASE | MOUSE_ZAXIS);
 
 	if (state == 0)
 		return;
