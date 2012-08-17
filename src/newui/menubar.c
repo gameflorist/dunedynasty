@@ -45,6 +45,8 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 void
 MenuBar_Draw(enum HouseType houseID)
 {
+	Widget *w;
+
 	for (int y = TRUE_DISPLAY_HEIGHT - 83 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
 		Video_DrawCPSSpecial(CPS_SIDEBAR_MIDDLE, houseID, TRUE_DISPLAY_WIDTH - 80, y);
 	}
@@ -64,6 +66,14 @@ MenuBar_Draw(enum HouseType houseID)
 	Video_DrawCPSSpecial(CPS_SIDEBAR_TOP, houseID, TRUE_DISPLAY_WIDTH - 80, 40);
 	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, TRUE_DISPLAY_WIDTH - 80, TRUE_DISPLAY_HEIGHT - 83);
 	GUI_DrawFilledRectangle(TRUE_DISPLAY_WIDTH - 64, TRUE_DISPLAY_HEIGHT - 64, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT, 0);
+
+	/* Mentat. */
+	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 1);
+	GUI_Widget_Draw(w);
+
+	/* Options. */
+	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 2);
+	GUI_Widget_Draw(w);
 
 	Shape_DrawRemap(SHAPE_CREDITS_LABEL, houseID, TRUE_DISPLAY_WIDTH - 128, 0, 0, 0);
 }

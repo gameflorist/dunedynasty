@@ -1951,7 +1951,6 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 {
 	PoolFindStruct find;
 	uint16 oldScreenID;
-	Widget *w;
 
 	oldScreenID = GFX_Screen_SetActive((screenID == 0) ? 2 : screenID);
 
@@ -1966,12 +1965,6 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 	GUI_DrawScreen(g_screenActiveID);
 
 	GUI_Widget_ActionPanel_Draw(true);
-
-	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 1);
-	GUI_Widget_Draw(w);
-
-	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 2);
-	GUI_Widget_Draw(w);
 
 #if 0
 	find.houseID = HOUSE_INVALID;
