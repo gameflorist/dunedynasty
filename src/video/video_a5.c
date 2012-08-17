@@ -19,6 +19,7 @@
 #define ICONID_MAX          512
 
 static ALLEGRO_DISPLAY *display;
+static ALLEGRO_DISPLAY *display2;
 static ALLEGRO_BITMAP *screen;
 static ALLEGRO_COLOR paltoRGB[256];
 static unsigned char paletteRGB[3 * 256];
@@ -32,7 +33,8 @@ VideoA5_Init(void)
 	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 
 	display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
-	if (display == NULL)
+	display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
+	if (display == NULL || display2 == NULL)
 		return false;
 
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -97,13 +99,14 @@ VideoA5_Tick(void)
 {
 	const unsigned char *raw = GFX_Screen_Get_ByIndex(0);
 
+	al_set_target_backbuffer(display2);
+	VideoA5_CopyBitmap(raw, screen, false);
+	al_draw_bitmap(screen, 0, 0, 0);
+	al_flip_display();
+
 	InputA5_Tick();
 
-	VideoA5_CopyBitmap(raw, screen, false);
-
 	al_set_target_backbuffer(display);
-	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
-	al_draw_bitmap(screen, 0, 0, 0);
 	al_flip_display();
 }
 
