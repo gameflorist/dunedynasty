@@ -18,6 +18,8 @@ extern void VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c)
 extern void VideoA5_ShadeScreen(int alpha);
 
 extern void VideoA5_InitSprites(void);
+extern void VideoA5_DrawCPS(const char *filename);
+extern void VideoA5_DrawCPSRegion(const char *filename, int sx, int sy, int dx, int dy, int w, int h);
 extern void VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags);

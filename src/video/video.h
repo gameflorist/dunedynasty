@@ -24,6 +24,8 @@ enum CPSID {
 #define Video_SetClippingArea   VideoA5_SetClippingArea
 #define Video_SetCursor         VideoA5_SetCursor
 
+#define Video_DrawCPS           VideoA5_DrawCPS
+#define Video_DrawCPSRegion     VideoA5_DrawCPSRegion
 #define Video_DrawCPSSpecial    VideoA5_DrawCPSSpecial
 #define Video_DrawIcon          VideoA5_DrawIcon
 #define Video_DrawShape         VideoA5_DrawShape

@@ -438,6 +438,26 @@ VideoA5_ExportCPS(const char *filename, unsigned char *buf)
 	return cps;
 }
 
+static CPSStore *
+VideoA5_LoadCPS(const char *filename)
+{
+	CPSStore *cps;
+
+	cps = s_cps;
+	while (cps != NULL) {
+		if (strncmp(cps->filename, filename, sizeof(cps->filename)) == 0)
+			return cps;
+
+		cps = cps->next;
+	}
+
+	cps = VideoA5_ExportCPS(filename, GFX_Screen_Get_ByIndex(0));
+	cps->next = s_cps;
+	s_cps = cps;
+
+	return cps;
+}
+
 static void
 VideoA5_FreeCPS(CPSStore *cps)
 {
@@ -450,8 +470,8 @@ VideoA5_InitCPS(unsigned char *buf)
 {
 	const struct CPSSpecialCoord *coord;
 	CPSStore *cps_screen = VideoA5_ExportCPS("SCREEN.CPS", buf);
-	CPSStore *cps_fame = VideoA5_ExportCPS("FAME.CPS", buf);
-	CPSStore *cps_mapmach = VideoA5_ExportCPS("MAPMACH.CPS", buf);
+	CPSStore *cps_fame = VideoA5_LoadCPS("FAME.CPS");
+	CPSStore *cps_mapmach = VideoA5_LoadCPS("MAPMACH.CPS");
 
 	al_set_target_bitmap(cps_special_texture);
 
@@ -493,8 +513,22 @@ VideoA5_InitCPS(unsigned char *buf)
 #endif
 
 	VideoA5_FreeCPS(cps_screen);
-	s_cps = cps_mapmach;
-	cps_mapmach->next = cps_fame;
+}
+
+void
+VideoA5_DrawCPS(const char *filename)
+{
+	CPSStore *cps = VideoA5_LoadCPS(filename);
+
+	al_draw_bitmap(cps->bmp, 0, 0, 0);
+}
+
+void
+VideoA5_DrawCPSRegion(const char *filename, int sx, int sy, int dx, int dy, int w, int h)
+{
+	CPSStore *cps = VideoA5_LoadCPS(filename);
+
+	al_draw_bitmap_region(cps->bmp, sx, sy, w, h, dx, dy, 0);
 }
 
 void
