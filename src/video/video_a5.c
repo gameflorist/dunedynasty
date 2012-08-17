@@ -401,6 +401,14 @@ VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c)
 	al_draw_filled_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, paltoRGB[c]);
 }
 
+void
+VideoA5_ShadeScreen(int alpha)
+{
+	alpha = clamp(0x00, alpha, 0xFF);
+
+	al_draw_filled_rectangle(0.0f, 0.0f, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT, al_map_rgba(0, 0, 0, alpha));
+}
+
 /*--------------------------------------------------------------*/
 
 static CPSStore *

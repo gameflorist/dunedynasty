@@ -15,6 +15,7 @@ extern void VideoA5_PutPixel(int x, int y, uint8 c);
 extern void VideoA5_DrawLine(int x1, int y1, int x2, int y2, uint8 c);
 extern void VideoA5_DrawRectangle(int x1, int y1, int x2, int y2, uint8 c);
 extern void VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c);
+extern void VideoA5_ShadeScreen(int alpha);
 
 extern void VideoA5_InitSprites(void);
 extern void VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y);
