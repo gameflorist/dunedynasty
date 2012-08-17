@@ -703,49 +703,32 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 			case 3: /* Structure */
 				if (oi->flags.factory && !isNotPlayerOwned) {
 					GUI_Widget_MakeVisible(widget28);
-					break;
-				}
-				/* Fall through */
-			case 2: /* Unit */
-				if (enhancement_special_trooper_portaits && (u != NULL)) {
-					if ((u->o.houseID == HOUSE_FREMEN) && (u->o.type == UNIT_TROOPER)) {
-						spriteID = SHAPE_FREMEN;
-						break;
-					}
-					else if ((u->o.houseID == HOUSE_FREMEN) && (u->o.type == UNIT_TROOPERS)) {
-						spriteID = SHAPE_FREMEN_SQUAD;
-						break;
-					}
-					else if ((u->o.houseID == HOUSE_SARDAUKAR) && (u->o.type == UNIT_TROOPER || u->o.type == UNIT_TROOPERS)) {
-						spriteID = SHAPE_SARDAUKAR;
-						break;
-					}
 				}
 				/* Fall through */
 			case 7: /* Placement */
+			case 2: /* Unit */
 				spriteID = oi->spriteID;
-				break;
-
+				if (enhancement_special_trooper_portaits && (u != NULL)) {
+					if ((u->o.houseID == HOUSE_FREMEN) && (u->o.type == UNIT_TROOPER)) {
+						spriteID = SHAPE_FREMEN;
+					}
+					else if ((u->o.houseID == HOUSE_FREMEN) && (u->o.type == UNIT_TROOPERS)) {
+						spriteID = SHAPE_FREMEN_SQUAD;
+					}
+					else if ((u->o.houseID == HOUSE_SARDAUKAR) && (u->o.type == UNIT_TROOPER || u->o.type == UNIT_TROOPERS)) {
+						spriteID = SHAPE_SARDAUKAR;
+					}
+				}
+				/* Fall through */
+			case 4: /* Attack */
 			case 5: /* Movement */
 			case 6: /* Harvest */
-				spriteID = 0x1D;
-				break;
-
-			case 4: /* Attack */
-				spriteID = 0x1C;
-				break;
-
 			case 8: /* House Missile */
-				spriteID = 0x1E;
+				ActionPanel_DrawPortrait(actionType, spriteID);
 				break;
 
 			default:
-				spriteID = 0xFFFF;
 				break;
-		}
-
-		if (spriteID != 0xFFFF) {
-			GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], 258, 51, 0, 0);
 		}
 
 		/* Unit / Structure */

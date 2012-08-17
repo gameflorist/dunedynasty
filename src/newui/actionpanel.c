@@ -12,6 +12,35 @@
 #include "../video/video.h"
 
 void
+ActionPanel_DrawPortrait(uint16 action_type, enum ShapeID shapeID)
+{
+	switch (action_type) {
+		case 2: /* Unit */
+		case 3: /* Structure */
+		case 7: /* Placement. */
+			break;
+
+		case 4: /* Attack */
+			shapeID = SHAPE_ATTACK;
+			break;
+
+		case 5: /* Movement */
+		case 6: /* Harvest */
+			shapeID = SHAPE_MOVE;
+			break;
+
+		case 8: /* House Missile */
+			shapeID = SHAPE_DEATH_HAND;
+			break;
+
+		default:
+			return;
+	}
+
+	Shape_Draw(shapeID, 2, 9, WINDOWID_ACTIONPANEL_FRAME, 0x4000);
+}
+
+void
 ActionPanel_DrawHealthBar(int curr, int max)
 {
 	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
