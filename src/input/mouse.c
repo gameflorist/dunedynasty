@@ -27,16 +27,19 @@ uint8  g_prevButtonState;    /*!< Previous mouse button state. */
 uint16 g_mouseClickX;        /*!< X position of last mouse click. */
 uint16 g_mouseClickY;        /*!< Y position of last mouse click. */
 
-uint16 g_regionFlags;        /*!< Flags: 0x4000 - Mouse still inside region, 0x8000 - Region check. 0x00FF - Countdown to showing. */
-uint16 g_mouseRegionLeft;    /*!< Region mouse can be in - left position. */
-uint16 g_mouseRegionRight;   /*!< Region mouse can be in - right position. */
-uint16 g_mouseRegionTop;     /*!< Region mouse can be in - top position. */
-uint16 g_mouseRegionBottom;  /*!< Region mouse can be in - bottom position. */
+static uint16 g_regionFlags;        /*!< Flags: 0x4000 - Mouse still inside region, 0x8000 - Region check. 0x00FF - Countdown to showing. */
 
-uint16 g_regionMinX;         /*!< Region - minimum value for X position. */
-uint16 g_regionMinY;         /*!< Region - minimum value for Y position. */
-uint16 g_regionMaxX;         /*!< Region - maximum value for X position. */
-uint16 g_regionMaxY;         /*!< Region - maximum value for Y position. */
+#if 0
+static uint16 g_mouseRegionLeft;    /*!< Region mouse can be in - left position. */
+static uint16 g_mouseRegionRight;   /*!< Region mouse can be in - right position. */
+static uint16 g_mouseRegionTop;     /*!< Region mouse can be in - top position. */
+static uint16 g_mouseRegionBottom;  /*!< Region mouse can be in - bottom position. */
+#endif
+
+static uint16 g_regionMinX;  /*!< Region - minimum value for X position. */
+static uint16 g_regionMinY;  /*!< Region - minimum value for Y position. */
+static uint16 g_regionMaxX;  /*!< Region - maximum value for X position. */
+static uint16 g_regionMaxY;  /*!< Region - maximum value for Y position. */
 
 uint8 g_var_7097;
 uint8 g_mouseHiddenDepth;
@@ -61,12 +64,8 @@ void Mouse_Init(void)
 	g_mouseY = SCREEN_HEIGHT / 2;
 	g_mouseHiddenDepth = 1;
 	g_regionFlags = 0;
-	g_mouseRegionRight = SCREEN_WIDTH - 1;
-	g_mouseRegionBottom = SCREEN_HEIGHT - 1;
 
 	g_var_7097 = true;
-
-	Video_Mouse_SetPosition(g_mouseX, g_mouseY);
 }
 
 /**
@@ -96,6 +95,7 @@ void Mouse_EventHandler(uint16 mousePosX, uint16 mousePosY, bool mouseButtonLeft
  * @param right The right side of the region.
  * @param bottom The bottom side of the region.
  */
+#if 0
 void Mouse_SetRegion(uint16 left, uint16 top, uint16 right, uint16 bottom)
 {
 	if (left > right) {
@@ -121,6 +121,7 @@ void Mouse_SetRegion(uint16 left, uint16 top, uint16 right, uint16 bottom)
 
 	Video_Mouse_SetRegion(left, right, top, bottom);
 }
+#endif
 
 /**
  * Test whether the mouse cursor is at the border or inside the given rectangle.

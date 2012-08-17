@@ -30,8 +30,6 @@
 #define GUI_Mouse_Show_InWidget()   \
 	do {} while (false)
 #define GUI_Mouse_Hide_InWidget(w)
-#define Video_Mouse_SetPosition(x,y)
-#define Video_Mouse_SetRegion(l,r,t,b)
 
 #if 0
 #include "video_sdl.h"

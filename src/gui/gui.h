@@ -133,7 +133,6 @@ extern void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst
 extern void GUI_FactoryWindow_PrepareScrollList(void);
 extern void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, uint16 arg12, bool arg14);
 extern void GUI_DrawBlockedRectangle(int16 left, int16 top, int16 width, int16 height, uint8 colour);
-extern void GUI_Mouse_SetPosition(uint16 x, uint16 y);
 extern void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 height, uint16 screenID, uint8 *remap);
 extern uint16 GUI_HallOfFame_Tick(void);
 extern void GUI_HallOfFame_Show(uint16 score);

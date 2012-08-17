@@ -501,6 +501,35 @@ void GUI_Mouse_Hide_InWidget(uint16 widgetIndex)
 	GUI_Mouse_Hide_InRegion(left, top, left + width - 1, top + height - 1);
 }
 
+/**
+ * Set the mouse to the given position on the screen.
+ *
+ * @param x The new X-position of the mouse.
+ * @param y The new Y-position of the mouse.
+ */
+void GUI_Mouse_SetPosition(uint16 x, uint16 y)
+{
+	while (g_mouseLock != 0) msleep(0);
+	g_mouseLock++;
+
+	if (x < g_mouseRegionLeft)   x = g_mouseRegionLeft;
+	if (x > g_mouseRegionRight)  x = g_mouseRegionRight;
+	if (y < g_mouseRegionTop)    y = g_mouseRegionTop;
+	if (y > g_mouseRegionBottom) y = g_mouseRegionBottom;
+
+	g_mouseX = x;
+	g_mouseY = y;
+
+	Video_Mouse_SetPosition(x, y);
+
+	if (g_mouseX != g_mousePrevX || g_mouseY != g_mousePrevY) {
+		GUI_Mouse_Hide();
+		GUI_Mouse_Show();
+	}
+
+	g_mouseLock--;
+}
+
 /* sprites.c */
 
 void Sprites_SetMouseSprite(uint16 hotSpotX, uint16 hotSpotY, uint8 *sprite)

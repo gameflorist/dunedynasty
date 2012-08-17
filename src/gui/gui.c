@@ -3027,10 +3027,6 @@ uint16 GUI_StrategicMap_Show(uint16 campaignID, bool win)
 
 	GUI_SetPaletteAnimated(palette, 15);
 
-	Mouse_SetRegion(8, 24, 311, 143);
-
-	GUI_Mouse_SetPosition(160, 84);
-
 	Sprites_LoadImage("MAPMACH.CPS", 5, g_palette_998A);
 
 	GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 5, g_remap);
@@ -3146,8 +3142,6 @@ uint16 GUI_StrategicMap_Show(uint16 campaignID, bool win)
 	Driver_Music_FadeOut();
 
 	GFX_Screen_SetActive(oldScreenID);
-
-	Mouse_SetRegion(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1);
 
 	Input_History_Clear();
 
@@ -3656,34 +3650,10 @@ void GUI_DrawBlockedRectangle(int16 left, int16 top, int16 width, int16 height, 
 	}
 }
 
-/**
- * Set the mouse to the given position on the screen.
- *
- * @param x The new X-position of the mouse.
- * @param y The new Y-position of the mouse.
- */
-void GUI_Mouse_SetPosition(uint16 x, uint16 y)
-{
-	while (g_mouseLock != 0) msleep(0);
-	g_mouseLock++;
-
-	if (x < g_mouseRegionLeft)   x = g_mouseRegionLeft;
-	if (x > g_mouseRegionRight)  x = g_mouseRegionRight;
-	if (y < g_mouseRegionTop)    y = g_mouseRegionTop;
-	if (y > g_mouseRegionBottom) y = g_mouseRegionBottom;
-
-	g_mouseX = x;
-	g_mouseY = y;
-
-	Video_Mouse_SetPosition(x, y);
-
-	if (g_mouseX != g_mousePrevX || g_mouseY != g_mousePrevY) {
-		GUI_Mouse_Hide();
-		GUI_Mouse_Show();
-	}
-
-	g_mouseLock--;
-}
+#if 0
+/* Moved to video/video_opendune.c. */
+extern void GUI_Mouse_SetPosition(uint16 x, uint16 y);
+#endif
 
 /**
  * Remap all the colours in the region with the ones indicated by the remap palette.
