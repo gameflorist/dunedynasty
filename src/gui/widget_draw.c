@@ -774,7 +774,6 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 				} break;
 
 				case 3: /* Structure */
-				{
 					GUI_Widget_MakeVisible(widget34);
 
 					if (o->flags.s.upgrading) {
@@ -808,100 +807,32 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 						}
 					}
 
-					switch (o->type) {
-						case STRUCTURE_SLAB_1x1: break;
-						case STRUCTURE_SLAB_2x2: break;
-						case STRUCTURE_PALACE: break;
-						case STRUCTURE_LIGHT_VEHICLE: break;
-						case STRUCTURE_HEAVY_VEHICLE: break;
-						case STRUCTURE_HIGH_TECH: break;
-						case STRUCTURE_HOUSE_OF_IX: break;
-						case STRUCTURE_WOR_TROOPER: break;
-						case STRUCTURE_CONSTRUCTION_YARD: break;
-						case STRUCTURE_BARRACKS: break;
-						case STRUCTURE_WALL: break;
-						case STRUCTURE_TURRET: break;
-						case STRUCTURE_ROCKET_TURRET: break;
-
-						case STRUCTURE_REPAIR: {
-							uint16 percent;
-							uint16 steps;
-							Unit *u;
-
-							u = Structure_GetLinkedUnit(s);
-							if (u == NULL) break;
-
-							GUI_DrawSprite(g_screenActiveID, g_sprites[g_table_unitInfo[u->o.type].o.spriteID], 260, 89, 0, 0);
-
-							steps = g_table_unitInfo[u->o.type].o.buildTime / 4;
-							percent = (steps - (s->countDown >> 8)) * 100 / steps;
-
-							GUI_DrawText_Wrapper(String_Get_ByIndex(STR_D_DONE), 258, 116, 29, 0, 0x11, percent);
-						} break;
-
-						case STRUCTURE_WINDTRAP: {
-							uint16 powerOutput = o->hitpoints * -si->powerUsage / oi->hitpoints;
-							uint16 powerAverage = (h->windtrapCount == 0) ? 0 : h->powerUsage / h->windtrapCount;
-
-							GUI_DrawLine(261, 95, 312, 95, 16);
-							GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), 258, 88, 29, 0, 0x11);
-							GUI_DrawText_Wrapper("%d", 302, g_fontCurrent->height * 2 + 80, 29, 0, 0x11, powerAverage);
-							GUI_DrawText_Wrapper("%d", 302, g_fontCurrent->height * 3 + 80, (powerOutput >= powerAverage) ? 29 : 6, 0, 0x11, powerOutput);
-						} break;
-
-						case STRUCTURE_STARPORT: {
-							if (h->starportLinkedID != 0xFFFF) {
-								GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATEARRIVAL_INTMINUS_D), 258, 88, 29, 0, 0x11, h->starportTimeLeft);
-							} else {
-								GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATE_INORBIT_ANDAWAITINGORDER), 258, 88, 29, 0, 0x11);
-							}
-						} break;
-
-						case STRUCTURE_REFINERY:
-						case STRUCTURE_SILO: {
-							uint16 creditsStored;
-
-							creditsStored = h->credits * si->creditsStorage / h->creditsStorage;
-							if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
-
-							GUI_DrawLine(261, 95, 312, 95, 16);
-							GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), 258, 88, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
-						} break;
-
-						case STRUCTURE_OUTPOST: {
-							GUI_DrawLine(261, 95, 312, 95, 16);
-							GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), 258, 88, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
-						} break;
-					}
-				} break;
+					ActionPanel_DrawStructureDescription(s);
+					break;
 
 				case 4: /* Attack */
 					GUI_Widget_MakeVisible(widget30);
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECTTARGET), 259, 76, g_curWidgetFGColourBlink, 0, 0x11);
+					ActionPanel_DrawActionDescription(STR_SELECTTARGET, 259, 76, g_curWidgetFGColourBlink);
 					break;
 
 				case 5: /* Movement */
 					GUI_Widget_MakeVisible(widget30);
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECTDESTINATION), 259, 76, g_curWidgetFGColourBlink, 0, 0x11);
+					ActionPanel_DrawActionDescription(STR_SELECTDESTINATION, 259, 76, g_curWidgetFGColourBlink);
 					break;
 
 				case 6: /* Harvest */
 					GUI_Widget_MakeVisible(widget30);
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECTPLACE_TOHARVEST), 259, 76, g_curWidgetFGColourBlink, 0, 0x11);
+					ActionPanel_DrawActionDescription(STR_SELECTPLACE_TOHARVEST, 259, 76, g_curWidgetFGColourBlink);
 					break;
 
 				case 7: /* Placement */
 					GUI_Widget_MakeVisible(widget30);
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECTLOCATION_TOBUILD), 259, 84, g_curWidgetFGColourBlink, 0, 0x11);
+					ActionPanel_DrawActionDescription(STR_SELECTLOCATION_TOBUILD, 259, 84, g_curWidgetFGColourBlink);
 					break;
 
 				case 8: /* House Missile */
-				{
-					int16 count = (int16)g_houseMissileCountdown - 1;
-					if (count <= 0) count = 0;
-
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_PICK_TARGETTMINUS_D), 259, 84, g_curWidgetFGColourBlink, 0, 0x11, count);
-				} break;
+					ActionPanel_DrawMissileCountdown(g_curWidgetFGColourBlink, (int)g_houseMissileCountdown - 1);
+					break;
 
 				default:
 					break;

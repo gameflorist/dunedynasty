@@ -3,7 +3,6 @@
 /** @file src/object.c %Object routines. */
 
 #include <stdio.h>
-#include "types.h"
 
 #include "object.h"
 

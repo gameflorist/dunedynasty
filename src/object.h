@@ -5,6 +5,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "types.h"
 #include "script/script.h"
 
 /**

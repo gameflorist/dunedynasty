@@ -3,7 +3,6 @@
 /** @file src/structure.c %Structure handling routines. */
 
 #include <assert.h>
-#include <stdio.h>
 #include <string.h>
 #include "types.h"
 #include "os/math.h"
