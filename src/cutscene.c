@@ -64,7 +64,7 @@ static uint8 s_palette10[3 * 256 * 10];
 static bool
 Cutscene_InputSkipScene(void)
 {
-	Input_Tick();
+	Input_Tick(true);
 
 	while (Input_IsInputAvailable()) {
 		const int key = Input_PeekNextKey();

@@ -89,7 +89,7 @@ InputA5_KeycodeToScancode(int kc)
 }
 
 static void
-InputA5_ProcessEvent(ALLEGRO_EVENT *event)
+InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 {
 	enum Scancode mouse_event = 0;
 
@@ -106,7 +106,7 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event)
 			mouse_event |= MOUSE_LMB - (event->mouse.button - 1);
 			/* Fall through. */
 		case ALLEGRO_EVENT_MOUSE_AXES:
-			Mouse_EventHandler(event->mouse.x, event->mouse.y, mouse_event);
+			Mouse_EventHandler(apply_mouse_transform, event->mouse.x, event->mouse.y, mouse_event);
 			break;
 
 		case ALLEGRO_EVENT_KEY_DOWN:
@@ -127,12 +127,12 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event)
 }
 
 void
-InputA5_Tick(void)
+InputA5_Tick(bool apply_mouse_transform)
 {
 	while (!al_is_event_queue_empty(g_a5_input_queue)) {
 		ALLEGRO_EVENT event;
 
 		al_get_next_event(g_a5_input_queue, &event);
-		InputA5_ProcessEvent(&event);
+		InputA5_ProcessEvent(&event, apply_mouse_transform);
 	}
 }

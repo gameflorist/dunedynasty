@@ -6,6 +6,9 @@
 
 #include "input.h"
 
+float g_mouse_transform_scale;
+float g_mouse_transform_offx;
+float g_mouse_transform_offy;
 int g_mouseX;
 int g_mouseY;
 int g_mouseClickX;
@@ -14,11 +17,19 @@ int g_mouseClickY;
 void
 Mouse_Init(void)
 {
+	g_mouse_transform_scale = 1.0f;
+	g_mouse_transform_offx = 0.0f;
+	g_mouse_transform_offy = 0.0f;
 }
 
 void
-Mouse_EventHandler(int x, int y, enum Scancode state)
+Mouse_EventHandler(bool apply_transform, int x, int y, enum Scancode state)
 {
+	if (apply_transform) {
+		x = ((float)x - g_mouse_transform_offx) / g_mouse_transform_scale;
+		y = ((float)y - g_mouse_transform_offy) / g_mouse_transform_scale;
+	}
+
 	g_mouseX = x;
 	g_mouseY = y;
 

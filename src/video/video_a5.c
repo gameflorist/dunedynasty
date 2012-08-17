@@ -328,7 +328,7 @@ VideoA5_Tick(void)
 	VideoA5_DrawShape(0, 0, g_mouseX, g_mouseY, 0);
 	al_flip_display();
 
-	InputA5_Tick();
+	InputA5_Tick(false);
 
 	al_set_target_backbuffer(display);
 	al_flip_display();

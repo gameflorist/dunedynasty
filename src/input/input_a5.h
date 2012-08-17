@@ -5,6 +5,6 @@
 
 extern bool InputA5_Init(void);
 extern void InputA5_Uninit(void);
-extern void InputA5_Tick(void);
+extern void InputA5_Tick(bool apply_mouse_transform);
 
 #endif
