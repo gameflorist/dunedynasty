@@ -5,6 +5,8 @@
 #ifndef GUI_GUI_H
 #define GUI_GUI_H
 
+#include "types.h"
+
 /**
  * Factory results.
  */
@@ -111,7 +113,6 @@ extern uint8 GUI_PickHouse(void);
 extern void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colors, uint8 reference, uint8 intensity);
 extern void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill);
 extern uint16 GUI_DisplayHint(uint16 stringID, uint16 spriteID);
-extern void GUI_DrawProgressbar(uint16 current, uint16 max);
 extern void GUI_DrawInterfaceAndRadar(uint16 unknown);
 extern void GUI_DrawCredits(uint8 houseID, uint16 mode);
 extern void GUI_ChangeSelectionType(uint16 selectionType);

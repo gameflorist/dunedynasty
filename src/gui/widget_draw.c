@@ -14,6 +14,7 @@
 #include "../gfx.h"
 #include "../house.h"
 #include "../map.h"
+#include "../newui/actionpanel.h"
 #include "../pool/house.h"
 #include "../pool/unit.h"
 #include "../sprites.h"
@@ -749,9 +750,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 
 		/* Unit / Structure */
 		if (actionType == 2 || actionType == 3) {
-			GUI_DrawProgressbar(o->hitpoints, oi->hitpoints);
-			GUI_DrawSprite(g_screenActiveID, g_sprites[27], 292, 60, 0, 0);
-			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_DMG), 296, 65, 29, 0, 0x11);
+			ActionPanel_DrawHealthBar(o->hitpoints, oi->hitpoints);
 		}
 
 		if (!isNotPlayerOwned || g_debugGame) {

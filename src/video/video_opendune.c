@@ -109,6 +109,48 @@ void GUI_DrawFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, u
 	}
 }
 
+void GUI_DrawProgressbar(uint16 current, uint16 max)
+{
+	static uint16 l_info[11] = { 293, 52, 24, 7, 1, 0, 0, 0, 4, 5, 8 };
+
+	uint16 width;
+	uint16 height;
+	uint16 colour;
+
+	l_info[7] = max;
+	l_info[6] = current;
+
+	if (current > max) current = max;
+	if (max < 1) max = 1;
+
+	width  = l_info[2];
+	height = l_info[3];
+
+	/* 0 = Horizontal, 1 = Vertial */
+	if (l_info[5] == 0) {
+		width = current * width / max;
+		if (width < 1) width = 1;
+	} else {
+		height = current * height / max;
+		if (height < 1) height = 1;
+	}
+
+	colour = l_info[8];
+	if (current <= max / 2) colour = l_info[9];
+	if (current <= max / 4) colour = l_info[10];
+
+	if (current != 0 && width  == 0) width = 1;
+	if (current != 0 && height == 0) height = 1;
+
+	if (height != 0) {
+		GUI_DrawBorder(l_info[0] - 1, l_info[1] - 1, l_info[2] + 2, l_info[3] + 2, 1, true);
+	}
+
+	if (width != 0) {
+		GUI_DrawFilledRectangle(l_info[0], l_info[1] + l_info[3] - height, l_info[0] + width - 1, l_info[1] + l_info[3] - 1, (uint8)colour);
+	}
+}
+
 /**
  * Get how the given point must be clipped.
  * @param x The X-coordinate of the point.
