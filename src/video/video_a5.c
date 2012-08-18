@@ -27,6 +27,7 @@
 #define SHAPEID_MAX         640
 #define FONTID_MAX          8
 #define CURSOR_MAX          6
+#define CONQUEST_COLOUR     146
 #define WINDTRAP_COLOUR     223
 
 typedef struct CPSStore {
@@ -50,6 +51,9 @@ static const struct CPSSpecialCoord {
 	{ 240,  40,   0,  60,  80, 17 }, /* CPS_SIDEBAR_TOP */
 	{ 240,  65,   0,  78,  16, 52 }, /* CPS_SIDEBAR_MIDDLE */
 	{ 240, 117,   0, 146,  80, 83 }, /* CPS_SIDEBAR_BOTTOM */
+	{   8,   0, 192,  60, 304, 24 }, /* CPS_CONQUEST_EN */
+	{   8,  96, 192, 110, 304, 24 }, /* CPS_CONQUEST_FR */
+	{   8, 120, 192, 160, 304, 24 }, /* CPS_CONQUEST_DE */
 };
 
 static const uint8 font_palette[][8] = {
@@ -251,7 +255,7 @@ VideoA5_Uninit(void)
 	screen = NULL;
 }
 
-void
+static void
 VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, bool writeonly)
 {
 	const int w = al_get_bitmap_width(dest);
@@ -509,6 +513,22 @@ VideoA5_InitCPS(unsigned char *buf)
 	al_draw_bitmap_region(cps_fame->bmp, 135, 37, 109, coord->h, coord->tx, coord->ty, 0);
 	al_draw_bitmap_region(cps_mapmach->bmp, 55, 183, 211, coord->h, coord->tx + 109, coord->ty, 0);
 
+	coord = &cps_special_coord[CPS_CONQUEST_EN];
+	assert(coord->cx == cps_special_coord[CPS_CONQUEST_FR].cx);
+	assert(coord->cx == cps_special_coord[CPS_CONQUEST_DE].cx);
+	assert(coord->tx == cps_special_coord[CPS_CONQUEST_FR].tx);
+	assert(coord->tx == cps_special_coord[CPS_CONQUEST_DE].tx);
+	al_draw_bitmap_region(cps_mapmach->bmp, coord->cx, cps_special_coord[CPS_CONQUEST_EN].cy, coord->w, coord->h, coord->tx, cps_special_coord[CPS_CONQUEST_EN].ty, 0);
+	al_draw_bitmap_region(cps_mapmach->bmp, coord->cx, cps_special_coord[CPS_CONQUEST_FR].cy, coord->w, coord->h, coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty, 0);
+	al_draw_bitmap_region(cps_mapmach->bmp, coord->cx, cps_special_coord[CPS_CONQUEST_DE].cy, coord->w, coord->h, coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty, 0);
+
+	Sprites_LoadImage("MAPMACH.CPS", 0, NULL);
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(cps_special_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_EN].cy, coord->tx, cps_special_coord[CPS_CONQUEST_EN].ty + 25, coord->w, coord->h, CONQUEST_COLOUR);
+	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_FR].cy, coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty + 25, coord->w, coord->h, CONQUEST_COLOUR);
+	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_DE].cy, coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty + 25, coord->w, coord->h, CONQUEST_COLOUR);
+	al_unlock_bitmap(cps_special_texture);
+
 #if OUTPUT_TEXTURES
 	al_save_bitmap("cps_special.png", cps_special_texture);
 #endif
@@ -535,11 +555,24 @@ VideoA5_DrawCPSRegion(const char *filename, int sx, int sy, int dx, int dy, int 
 void
 VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y)
 {
-	const struct CPSSpecialCoord *coord = &cps_special_coord[cpsID];
+	const unsigned char tint[HOUSE_MAX][3] = {
+		{ 0x98, 0x00, 0x00 }, { 0x28, 0x3C, 0x98 }, { 0x24, 0x98, 0x24 }, { 0x98, 0x4C, 0x04 }, { 0xA8, 0x30, 0xA8 }, { 0x98, 0x68, 0x00 }
+	};
+	assert(cpsID < CPS_SPECIAL_MAX);
 	assert(houseID < HOUSE_MAX);
+
+	const struct CPSSpecialCoord *coord = &cps_special_coord[cpsID];
 
 	int sx = coord->tx;
 	int sy = coord->ty;
+
+	if (CPS_CONQUEST_EN <= cpsID && cpsID <= CPS_CONQUEST_DE) {
+		const ALLEGRO_COLOR col = al_map_rgb(tint[houseID][0], tint[houseID][1], tint[houseID][2]);
+
+		al_draw_bitmap_region(cps_special_texture, sx, sy, coord->w, coord->h, x, y, 0);
+		al_draw_tinted_bitmap_region(cps_special_texture, col, sx, sy + 25, coord->w, coord->h, x, y, 0);
+		return;
+	}
 
 	if (CPS_SIDEBAR_TOP <= cpsID && cpsID <= CPS_SIDEBAR_BOTTOM) {
 		sx += 17 * houseID;

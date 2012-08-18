@@ -9,6 +9,7 @@
 #include "menu.h"
 
 #include "mentat.h"
+#include "strategicmap.h"
 #include "../common_a5.h"
 #include "../gfx.h"
 #include "../gui/font.h"
@@ -29,6 +30,7 @@ enum MenuAction {
 	MENU_BRIEFING_WIN,
 	MENU_BRIEFING_LOSE,
 	MENU_PLAY_A_GAME,
+	MENU_STRATEGIC_MAP,
 	MENU_EXIT_GAME,
 
 	MENU_REDRAW = 0x8000
@@ -367,6 +369,23 @@ Briefing_Loop(enum MenuAction curr_menu)
 
 /*--------------------------------------------------------------*/
 
+static void
+StrategicMap_Draw(void)
+{
+	const enum HouseType houseID = g_playerHouseID;
+
+	StrategicMap_DrawBackground(houseID);
+	Video_DrawCPSRegion("DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
+}
+
+static enum MenuAction
+StrategicMap_Loop(void)
+{
+	return MENU_STRATEGIC_MAP;
+}
+
+/*--------------------------------------------------------------*/
+
 void
 Menu_Run(void)
 {
@@ -398,6 +417,10 @@ Menu_Run(void)
 				case MENU_BRIEFING_WIN:
 				case MENU_BRIEFING_LOSE:
 					Briefing_Draw(curr_menu);
+					break;
+
+				case MENU_STRATEGIC_MAP:
+					StrategicMap_Draw();
 					break;
 
 				default:
@@ -437,6 +460,10 @@ Menu_Run(void)
 
 			case MENU_PLAY_A_GAME:
 				goto play_a_game;
+
+			case MENU_STRATEGIC_MAP:
+				res = StrategicMap_Loop();
+				break;
 
 			case MENU_EXIT_GAME:
 			case MENU_REDRAW:
