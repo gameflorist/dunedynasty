@@ -24,6 +24,7 @@
 enum MenuAction {
 	MENU_MAIN_MENU,
 	MENU_PICK_HOUSE,
+	MENU_CONFIRM_HOUSE,
 	MENU_BRIEFING,
 	MENU_PLAY_A_GAME,
 	MENU_EXIT_GAME,
@@ -248,7 +249,9 @@ PickHouse_Loop(void)
 		case 0x8000 | HOUSE_ATREIDES:
 		case 0x8000 | HOUSE_ORDOS:
 			g_playerHouseID = widgetID & (~0x8000);
-			return MENU_BRIEFING;
+			g_campaignID = 0;
+			g_scenarioID = 1;
+			return MENU_CONFIRM_HOUSE;
 
 		default:
 			break;
@@ -260,44 +263,79 @@ PickHouse_Loop(void)
 /*--------------------------------------------------------------*/
 
 static void
-Briefing_Initialise(void)
+Briefing_Initialise(enum MenuAction menu)
 {
 	MentatState *mentat = &g_mentat_state;
 
-	MentatBriefing_InitText(g_playerHouseID, g_campaignID, MENTAT_BRIEFING_ORDERS, mentat);
+	if (menu == MENU_CONFIRM_HOUSE) {
+		MentatBriefing_InitText(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
+	}
+	else {
+		MentatBriefing_InitText(g_playerHouseID, g_campaignID, MENTAT_BRIEFING_ORDERS, mentat);
+	}
+
 	mentat->state = MENTAT_SHOW_TEXT;
 }
 
 static void
-Briefing_Draw(void)
+Briefing_Draw(enum MenuAction curr_menu)
 {
+	const enum HouseType houseID = (curr_menu == MENU_CONFIRM_HOUSE) ? HOUSE_MERCENARY : g_playerHouseID;
+
 	MentatState *mentat = &g_mentat_state;
 
-	Mentat_DrawBackground(g_playerHouseID);
-	Mentat_Draw(g_playerHouseID);
+	Mentat_DrawBackground(houseID);
+	Mentat_Draw(houseID);
 
 	if (mentat->state == MENTAT_SHOW_TEXT) {
 		MentatBriefing_DrawText(&g_mentat_state);
 	}
 	else if (mentat->state == MENTAT_IDLE) {
-		GUI_Widget_DrawAll(briefing_proceed_repeat_widgets);
+		if (curr_menu == MENU_CONFIRM_HOUSE) {
+			const char *misc = String_GenerateFilename("MISC");
+
+			Video_DrawCPSRegion(misc, 0, 0, 0, 0, 26*8, 24);
+			Video_DrawCPSRegion(misc, 0, 24 * (g_playerHouseID + 1), 26*8, 0, 13*8, 24);
+
+			GUI_Widget_DrawAll(briefing_yes_no_widgets);
+		}
+		else {
+			GUI_Widget_DrawAll(briefing_proceed_repeat_widgets);
+		}
 	}
 }
 
 static enum MenuAction
-Briefing_Loop(void)
+Briefing_Loop(enum MenuAction curr_menu)
 {
 	MentatState *mentat = &g_mentat_state;
 	bool redraw = false;
-	int widgetID;
+	int widgetID = 0;
 
-	widgetID = GUI_Widget_HandleEvents(briefing_proceed_repeat_widgets);
+	if (mentat->state == MENTAT_IDLE) {
+		if (curr_menu == MENU_CONFIRM_HOUSE) {
+			widgetID = GUI_Widget_HandleEvents(briefing_yes_no_widgets);
+		}
+		else {
+			widgetID = GUI_Widget_HandleEvents(briefing_proceed_repeat_widgets);
+		}
+	}
+	else if (Input_IsInputAvailable()) {
+		widgetID = Input_GetNextKey();
+	}
+
 	if ((!(widgetID & 0x8000)) && (widgetID & SCANCODE_RELEASE))
 		widgetID = 0;
 
 	switch (widgetID) {
 		case 0:
 			break;
+
+		case 0x8001: /* yes */
+			return MENU_BRIEFING;
+
+		case 0x8002: /* no */
+			return MENU_PICK_HOUSE;
 
 		case 0x8003: /* proceed */
 			return MENU_PLAY_A_GAME;
@@ -317,7 +355,7 @@ Briefing_Loop(void)
 			break;
 	}
 
-	return (redraw ? MENU_REDRAW : 0) | MENU_BRIEFING;
+	return (redraw ? MENU_REDRAW : 0) | curr_menu;
 }
 
 /*--------------------------------------------------------------*/
@@ -348,8 +386,9 @@ Menu_Run(void)
 					PickHouse_Draw();
 					break;
 
+				case MENU_CONFIRM_HOUSE:
 				case MENU_BRIEFING:
-					Briefing_Draw();
+					Briefing_Draw(curr_menu);
 					break;
 
 				default:
@@ -380,8 +419,9 @@ Menu_Run(void)
 				res = PickHouse_Loop();
 				break;
 
+			case MENU_CONFIRM_HOUSE:
 			case MENU_BRIEFING:
-				res = Briefing_Loop();
+				res = Briefing_Loop(curr_menu);
 				break;
 
 			case MENU_PLAY_A_GAME:
@@ -397,8 +437,9 @@ Menu_Run(void)
 
 		if ((curr_menu & ~MENU_REDRAW) != (res & ~MENU_REDRAW)) {
 			switch (res & ~MENU_REDRAW) {
+				case MENU_CONFIRM_HOUSE:
 				case MENU_BRIEFING:
-					Briefing_Initialise();
+					Briefing_Initialise(res & ~MENU_REDRAW);
 					break;
 
 				default:
