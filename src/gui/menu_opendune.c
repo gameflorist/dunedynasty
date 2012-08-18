@@ -230,6 +230,31 @@ void GUI_Mentat_ShowLose(void)
 
 /* gui/menu_opendune.c. */
 
+static void GUI_Widget_Undraw(Widget *w, uint8 colour)
+{
+	uint16 offsetX;
+	uint16 offsetY;
+	uint16 width;
+	uint16 height;
+
+	if (w == NULL) return;
+
+	offsetX = w->offsetX + (g_widgetProperties[w->parentID].xBase << 3);
+	offsetY = w->offsetY + g_widgetProperties[w->parentID].yBase;
+	width = w->width;
+	height = w->height;
+
+	if (g_screenActiveID == 0) {
+		GUI_Mouse_Hide_InRegion(offsetX, offsetY, offsetX + width, offsetY + height);
+	}
+
+	GUI_DrawFilledRectangle(offsetX, offsetY, offsetX + width, offsetY + height, colour);
+
+	if (g_screenActiveID == 0) {
+		GUI_Mouse_Show_InRegion();
+	}
+}
+
 /**
  * Handles Click event for "Game controls" button.
  *

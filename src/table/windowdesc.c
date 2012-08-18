@@ -282,7 +282,7 @@ WindowDesc g_saveLoadWindowDesc = {
 		/* width         */ 96,
 		/* height        */ 15,
 		/* labelStringID */ STR_NULL,
-		/* shortcut2     */ 110,
+		/* shortcut2     */ SCANCODE_ESCAPE,
 		},
 		{ /* 6 */
 		/* stringID      */ STR_NULL,

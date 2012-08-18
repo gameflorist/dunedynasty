@@ -411,30 +411,10 @@ bool GUI_Widget_RepairUpgrade_Click(Widget *w)
 	return false;
 }
 
-static void GUI_Widget_Undraw(Widget *w, uint8 colour)
-{
-	uint16 offsetX;
-	uint16 offsetY;
-	uint16 width;
-	uint16 height;
-
-	if (w == NULL) return;
-
-	offsetX = w->offsetX + (g_widgetProperties[w->parentID].xBase << 3);
-	offsetY = w->offsetY + g_widgetProperties[w->parentID].yBase;
-	width = w->width;
-	height = w->height;
-
-	if (g_screenActiveID == 0) {
-		GUI_Mouse_Hide_InRegion(offsetX, offsetY, offsetX + width, offsetY + height);
-	}
-
-	GUI_DrawFilledRectangle(offsetX, offsetY, offsetX + width, offsetY + height, colour);
-
-	if (g_screenActiveID == 0) {
-		GUI_Mouse_Show_InRegion();
-	}
-}
+#if 0
+/* Moved to gui/menu_opendune.c. */
+static void GUI_Widget_Undraw(Widget *w, uint8 colour);
+#endif
 
 void GUI_Window_Create(WindowDesc *desc)
 {
@@ -498,7 +478,6 @@ void GUI_Window_Create(WindowDesc *desc)
 
 		GUI_Widget_MakeNormal(w, false);
 		GUI_Widget_MakeInvisible(w);
-		GUI_Widget_Undraw(w, 233);
 
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 
@@ -512,7 +491,6 @@ void GUI_Window_Create(WindowDesc *desc)
 
 		GUI_Widget_MakeNormal(w, false);
 		GUI_Widget_MakeInvisible(w);
-		GUI_Widget_Undraw(w, 233);
 
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 	}
@@ -714,7 +692,6 @@ static void UpdateArrows(bool save, bool force)
 		GUI_Widget_MakeVisible(w);
 	} else {
 		GUI_Widget_MakeInvisible(w);
-		GUI_Widget_Undraw(w, 233);
 	}
 
 	w = &g_table_windowWidgets[7];
@@ -722,20 +699,12 @@ static void UpdateArrows(bool save, bool force)
 		GUI_Widget_MakeVisible(w);
 	} else {
 		GUI_Widget_MakeInvisible(w);
-		GUI_Widget_Undraw(w, 233);
 	}
 }
 
-/**
- * Handles Click event for "Save Game" or "Load Game" button.
- *
- * @param save Wether to save or load.
- * @return True if a game has been saved or loaded, False otherwise.
- */
-bool GUI_Widget_SaveLoad_Click(bool save)
+void GUI_Widget_InitSaveLoad(bool save)
 {
 	WindowDesc *desc = &g_saveLoadWindowDesc;
-	bool loop;
 
 	s_savegameCountOnDisk = GetSavegameCount();
 
@@ -745,80 +714,67 @@ bool GUI_Widget_SaveLoad_Click(bool save)
 
 	desc->stringID = save ? STR_SELECT_A_POSITION_TO_SAVE_TO : STR_SELECT_A_SAVED_GAME_TO_LOAD;
 
-	GUI_Window_BackupScreen(desc);
-
 	GUI_Window_Create(desc);
 
 	UpdateArrows(save, true);
+}
 
-	loop = true;
+/* return values:
+ * -2: game was loaded.
+ * -1: cancel clicked.
+ *  0: stay in save/load game loop.
+ * 1+: begin save game entry.
+ */
+int GUI_Widget_SaveLoad_Click(bool save)
+{
+	WindowDesc *desc = &g_saveLoadWindowDesc;
+	Widget *w = g_widgetLinkedListTail;
+	uint16 key = GUI_Widget_HandleEvents(w);
 
-	while (loop) {
-		Widget *w = g_widgetLinkedListTail;
-		uint16 key = GUI_Widget_HandleEvents(w);
+	UpdateArrows(save, false);
+	if (key & 0x8000) {
+		Widget *w2;
 
-		UpdateArrows(save, false);
+		key &= 0x7FFF;
+		w2 = GUI_Widget_Get_ByIndex(w, key);
 
-		if ((key & 0x8000) != 0) {
-			Widget *w2;
+		switch (key) {
+			case 0x25: /* Up */
+				s_savegameIndexBase = min(s_savegameCountOnDisk - (save ? 0 : 1), s_savegameIndexBase + 1);
+				FillSavegameDesc(save);
+				break;
 
-			key &= 0x7FFF;
-			w2 = GUI_Widget_Get_ByIndex(w, key);
+			case 0x26: /* Down */
+				s_savegameIndexBase = max(0, s_savegameIndexBase - 1);
+				FillSavegameDesc(save);
+				break;
 
-			switch (key) {
-				case 0x25:
-					s_savegameIndexBase = min(s_savegameCountOnDisk - (save ? 0 : 1), s_savegameIndexBase + 1);
+			case 0x23: /* Cancel */
+				return -1;
 
-					FillSavegameDesc(save);
+			default:
+				key -= 0x1E;
 
-					GUI_Widget_DrawAll(w);
-					break;
+				if (!save) {
+					LoadFile(GenerateSavegameFilename(s_savegameIndexBase - key));
+					return -2;
+				}
 
-				case 0x26:
-					s_savegameIndexBase = max(0, s_savegameIndexBase - 1);
+				if (GUI_Widget_Savegame_Click(key))
+					return 1;
 
-					FillSavegameDesc(save);
+				UpdateArrows(save, true);
 
-					GUI_Widget_DrawAll(w);
-					break;
+				GUI_Window_Create(desc);
 
-				case 0x23:
-					loop = false;
-					break;
-
-				default: {
-					GUI_Window_RestoreScreen(desc);
-
-					key -= 0x1E;
-
-					if (!save) {
-						LoadFile(GenerateSavegameFilename(s_savegameIndexBase - key));
-						return true;
-					}
-
-					if (GUI_Widget_Savegame_Click(key)) return true;
-
-					GUI_Window_BackupScreen(desc);
-
-					UpdateArrows(save, true);
-
-					GUI_Window_Create(desc);
-
-					UpdateArrows(save, true);
-				} break;
-			}
-
-			GUI_Widget_MakeNormal(w2, false);
+				UpdateArrows(save, true);
+				break;
 		}
 
-		GUI_PaletteAnimate();
-		Video_Tick();
-		sleepIdle();
+		GUI_Widget_MakeNormal(w2, false);
 	}
 
-	GUI_Window_RestoreScreen(desc);
-
-	return false;
+	return 0;
 }
 
 /**

@@ -137,6 +137,10 @@ MenuBar_TickOptions(void)
 	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_LOAD_A_GAME */
+			g_gameOverlay = GAMEOVERLAY_LOAD_GAME;
+			GUI_Widget_InitSaveLoad(false);
+			break;
+
 		case 0x8000 | 31: /* STR_SAVE_THIS_GAME */
 			break;
 
@@ -164,11 +168,24 @@ MenuBar_TickOptions(void)
 		default:
 			break;
 	}
+}
 
-	if (g_gameOverlay == GAMEOVERLAY_NONE) {
-		Timer_SetTimer(TIMER_GAME, true);
-		Structure_Recount();
-		Unit_Recount();
+static void
+MenuBar_TickLoadGame(void)
+{
+	const WindowDesc *desc = &g_saveLoadWindowDesc;
+
+	Video_ShadeScreen(128);
+	GUI_Widget_DrawWindow(desc);
+	GUI_Widget_DrawAll(g_widgetLinkedListTail);
+
+	const int ret = GUI_Widget_SaveLoad_Click(false);
+	if (ret == -1) {
+		g_gameOverlay = GAMEOVERLAY_OPTIONS;
+		GUI_Window_Create(&g_optionsWindowDesc);
+	}
+	else if (ret == -2) {
+		g_gameOverlay = GAMEOVERLAY_NONE;
 	}
 }
 
@@ -229,6 +246,10 @@ MenuBar_TickOptionsOverlay(void)
 			MenuBar_TickOptions();
 			break;
 
+		case GAMEOVERLAY_LOAD_GAME:
+			MenuBar_TickLoadGame();
+			break;
+
 		case GAMEOVERLAY_GAME_CONTROLS:
 			MenuBar_TickGameControls();
 			break;
@@ -238,4 +259,10 @@ MenuBar_TickOptionsOverlay(void)
 	}
 
 	A5_UseIdentityTransform();
+
+	if (g_gameOverlay == GAMEOVERLAY_NONE) {
+		Timer_SetTimer(TIMER_GAME, true);
+		Structure_Recount();
+		Unit_Recount();
+	}
 }
