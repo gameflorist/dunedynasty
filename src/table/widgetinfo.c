@@ -9,6 +9,7 @@
 #include "../gui/mentat.h"
 #include "../gui/widget.h"
 #include "../input/scancode.h"
+#include "../newui/menubar.h"
 #include "strings.h"
 
 WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
@@ -26,7 +27,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	},
 	{ /* 1 */
 		/* index       */ 2,
-		/* clickProc   */ &GUI_Widget_Options_Click,
+		/* clickProc   */ &MenuBar_ClickOptions,
 		/* shortcut    */ SCANCODE_F2,
 		/* flags       */ 1237,
 		/* spriteID    */ 9,

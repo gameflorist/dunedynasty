@@ -228,6 +228,215 @@ void GUI_Mentat_ShowLose(void)
 	GUI_Mentat_ShowDialog(g_playerHouseID, g_campaignID * 4 + 6, g_scenario.pictureLose, g_table_houseInfo[g_playerHouseID].musicLose);
 }
 
+/* gui/menu_opendune.c. */
+
+/**
+ * Handles Click event for "Game controls" button.
+ *
+ * @param w The widget.
+ */
+static void GUI_Widget_GameControls_Click(Widget *w)
+{
+	WindowDesc *desc = &g_gameControlWindowDesc;
+	bool loop;
+
+	GUI_Window_BackupScreen(desc);
+
+	GUI_Window_Create(desc);
+
+	loop = true;
+	while (loop) {
+		Widget *w2 = g_widgetLinkedListTail;
+		uint16 key = GUI_Widget_HandleEvents(w2);
+
+		if ((key & 0x8000) != 0) {
+			w = GUI_Widget_Get_ByIndex(w2, key & 0x7FFF);
+
+			switch ((key & 0x7FFF) - 0x1E) {
+				case 0:
+					g_gameConfig.music ^= 0x1;
+					if (g_gameConfig.music == 0) Driver_Music_Stop();
+					break;
+
+				case 1:
+					g_gameConfig.sounds ^= 0x1;
+					if (g_gameConfig.sounds == 0) Driver_Sound_Stop();
+					break;
+
+				case 2:
+					if (++g_gameConfig.gameSpeed >= 5) g_gameConfig.gameSpeed = 0;
+					break;
+
+				case 3:
+					g_gameConfig.hints ^= 0x1;
+					break;
+
+				case 4:
+					g_gameConfig.autoScroll ^= 0x1;
+					break;
+
+				case 5:
+					loop = false;
+					break;
+
+				default: break;
+			}
+
+			GUI_Widget_MakeNormal(w, false);
+
+			GUI_Widget_Draw(w);
+		}
+
+		GUI_PaletteAnimate();
+		Video_Tick();
+		sleepIdle();
+	}
+
+	GUI_Window_RestoreScreen(desc);
+}
+
+static void ShadeScreen(void)
+{
+	uint16 i;
+
+	memmove(g_palette_998A, g_palette1, 256 * 3);
+
+	for (i = 0; i < 256 * 3; i++) g_palette1[i] = g_palette1[i] / 2;
+
+	for (i = 0; i < 8; i++) memmove(g_palette1 + ((231 + i) * 3), &g_palette_998A[(231 + i) * 3], 3);
+
+	GFX_SetPalette(g_palette_998A);
+}
+
+static void UnshadeScreen(void)
+{
+	memmove(g_palette1, g_palette_998A, 256 * 3);
+
+	GFX_SetPalette(g_palette1);
+}
+
+/**
+ * Handles Click event for "Options" button.
+ *
+ * @param w The widget.
+ * @return False, always.
+ */
+bool GUI_Widget_Options_Click(Widget *w)
+{
+	const uint16 cursor = g_cursorSpriteID;
+
+	WindowDesc *desc = &g_optionsWindowDesc;
+	bool loop;
+
+	Video_SetCursor(SHAPE_CURSOR_NORMAL);
+
+	Sprites_UnloadTiles();
+
+	memmove(g_palette_998A, g_paletteActive, 256 * 3);
+
+	Driver_Voice_Play(NULL, 0xFF);
+
+	Timer_SetTimer(TIMER_GAME, false);
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
+
+	ShadeScreen();
+
+	GUI_Window_BackupScreen(desc);
+
+	GUI_Window_Create(desc);
+
+	loop = true;
+
+	while (loop) {
+		Widget *w2 = g_widgetLinkedListTail;
+		uint16 key = GUI_Widget_HandleEvents(w2);
+
+		if ((key & 0x8000) != 0) {
+			w = GUI_Widget_Get_ByIndex(w2, key);
+
+			GUI_Window_RestoreScreen(desc);
+
+			switch ((key & 0x7FFF) - 0x1E) {
+				case 0:
+					if (GUI_Widget_SaveLoad_Click(false)) loop = false;
+					break;
+
+				case 1:
+					if (GUI_Widget_SaveLoad_Click(true)) loop = false;
+					break;
+
+				case 2:
+					GUI_Widget_GameControls_Click(w);
+					break;
+
+				case 3:
+					/* "Are you sure you wish to restart?" */
+					if (!GUI_YesNo(0x76)) break;
+
+					loop = false;
+					g_gameMode = GM_RESTART;
+					break;
+
+				case 4:
+					/* "Are you sure you wish to pick a new house?" */
+					if (!GUI_YesNo(0x77)) break;
+
+					loop = false;
+					Driver_Music_FadeOut();
+					g_gameMode = GM_PICKHOUSE;
+					break;
+
+				case 5:
+					loop = false;
+					break;
+
+				case 6:
+					/* "Are you sure you want to quit playing?" */
+					loop = !GUI_YesNo(0x65);
+					g_var_38F8 = loop;
+
+					Sound_Output_Feedback(0xFFFE);
+
+					while (Driver_Voice_IsPlaying()) sleepIdle();
+					break;
+
+				default: break;
+			}
+
+			if (g_var_38F8 && loop) {
+				GUI_Window_BackupScreen(desc);
+
+				GUI_Window_Create(desc);
+			}
+		}
+
+		GUI_PaletteAnimate();
+		Video_Tick();
+		sleepIdle();
+	}
+
+	g_textDisplayNeedsUpdate = true;
+
+	Sprites_LoadTiles();
+	GUI_DrawInterfaceAndRadar(0);
+
+	UnshadeScreen();
+
+	GUI_Widget_MakeSelected(w, false);
+
+	Timer_SetTimer(TIMER_GAME, true);
+
+	GameOptions_Save();
+
+	Structure_Recount();
+	Unit_Recount();
+
+	Video_SetCursor(cursor);
+
+	return false;
+}
+
 /* opendune.c */
 
 static uint16 s_var_8052 = 0;

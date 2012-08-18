@@ -5,9 +5,14 @@
 
 #include "menubar.h"
 
+#include "../common_a5.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
 #include "../gui/widget.h"
+#include "../opendune.h"
+#include "../pool/structure.h"
+#include "../pool/unit.h"
+#include "../timer/timer.h"
 #include "../video/video.h"
 
 void
@@ -99,4 +104,81 @@ MenuBar_Draw(enum HouseType houseID)
 	GUI_Widget_Draw(w);
 
 	Shape_DrawRemap(SHAPE_CREDITS_LABEL, houseID, TRUE_DISPLAY_WIDTH - 128, 0, 0, 0);
+}
+
+/*--------------------------------------------------------------*/
+
+bool
+MenuBar_ClickOptions(Widget *w)
+{
+	VARIABLE_NOT_USED(w);
+
+	if (g_gameOverlay != GAMEOVERLAY_NONE)
+		return false;
+
+	g_gameOverlay = GAMEOVERLAY_OPTIONS;
+	Video_SetCursor(SHAPE_CURSOR_NORMAL);
+	Timer_SetTimer(TIMER_GAME, false);
+	GUI_Window_Create(&g_optionsWindowDesc);
+	return true;
+}
+
+static void
+MenuBar_TickOptions(void)
+{
+	const WindowDesc *desc = &g_optionsWindowDesc;
+
+	Video_ShadeScreen(128);
+	GUI_Widget_DrawWindow(desc);
+	GUI_Widget_DrawAll(g_widgetLinkedListTail);
+
+	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
+	switch (widgetID) {
+		case 0x8000 | 30: /* STR_LOAD_A_GAME */
+		case 0x8000 | 31: /* STR_SAVE_THIS_GAME */
+		case 0x8000 | 32: /* STR_GAME_CONTROLS */
+			break;
+
+		case 0x8000 | 33: /* STR_RESTART_SCENARIO */
+			g_gameMode = GM_RESTART;
+			break;
+
+		case 0x8000 | 34: /* STR_PICK_ANOTHER_HOUSE */
+			g_gameMode = GM_PICKHOUSE;
+			break;
+
+		case 0x8000 | 35: /* STR_CONTINUE_GAME */
+			g_gameOverlay = GAMEOVERLAY_NONE;
+			break;
+
+		case 0x8000 | 36: /* STR_QUIT_PLAYING */
+			g_gameMode = GM_QUITGAME;
+			break;
+
+		default:
+			break;
+	}
+
+	if (g_gameOverlay == GAMEOVERLAY_NONE) {
+		Timer_SetTimer(TIMER_GAME, true);
+		Structure_Recount();
+		Unit_Recount();
+	}
+}
+
+void
+MenuBar_TickOptionsOverlay(void)
+{
+	A5_UseMenuTransform();
+
+	switch (g_gameOverlay) {
+		case GAMEOVERLAY_OPTIONS:
+			MenuBar_TickOptions();
+			break;
+
+		default:
+			break;
+	}
+
+	A5_UseIdentityTransform();
 }

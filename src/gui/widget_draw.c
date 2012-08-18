@@ -889,6 +889,23 @@ void GUI_Widget_DrawBorder(uint16 widgetIndex, uint16 borderType, bool pressed)
 	}
 }
 
+void
+GUI_Widget_DrawWindow(const WindowDesc *desc)
+{
+	const WidgetProperties *wi = &g_widgetProperties[desc->index];
+	const char *title = GUI_String_Get_ByIndex(desc->stringID);
+
+	GUI_Widget_DrawBorder(desc->index, 2, true);
+
+	if (title != NULL) {
+		GUI_DrawText_Wrapper(title, wi->xBase*8 + wi->width*8 / 2, wi->yBase + 6 + ((desc == &g_yesNoWindowDesc) ? 2 : 0), 238, 0, 0x122);
+	}
+
+	if (GUI_String_Get_ByIndex(desc->widgets[0].stringID) == NULL) {
+		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_THERE_ARE_NO_SAVED_GAMES_TO_LOAD), (wi->xBase + 2) << 3, wi->yBase + 42, 232, 0, 0x22);
+	}
+}
+
 /**
  * Draw all widgets, starting with the one given by the parameters.
  * @param w First widget of the chain to draw.

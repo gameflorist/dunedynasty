@@ -4,8 +4,9 @@
 
 #include "types.h"
 
-#include "../gui/widget.h"
 #include "strings.h"
+#include "../gui/widget.h"
+#include "../input/scancode.h"
 
 WindowDesc g_optionsWindowDesc = {
 	/* index       */ 16,
@@ -65,7 +66,7 @@ WindowDesc g_optionsWindowDesc = {
 		/* width         */ 104,
 		/* height        */ 15,
 		/* labelStringID */ STR_NULL,
-		/* shortcut2     */ 110,
+		/* shortcut2     */ SCANCODE_ESCAPE,
 		},
 		{ /* 6 */
 		/* stringID      */ STR_QUIT_PLAYING,

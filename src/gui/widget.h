@@ -224,7 +224,7 @@ extern bool GUI_Widget_Name_Click(Widget *w);
 extern bool GUI_Widget_Cancel_Click(Widget *w);
 extern bool GUI_Widget_Picture_Click(Widget *w);
 extern bool GUI_Widget_RepairUpgrade_Click(Widget *w);
-extern bool GUI_Widget_Options_Click(Widget *w);
+extern void GUI_Window_Create(WindowDesc *desc);
 extern bool GUI_Widget_SaveLoad_Click(bool save);
 extern bool GUI_Widget_HOF_ClearList_Click(Widget *w);
 extern bool GUI_Widget_HOF_Resume_Click(Widget *w);
@@ -246,6 +246,7 @@ extern void GUI_Widget_TextButton2_Draw(Widget *w);
 extern void GUI_Widget_Scrollbar_Draw(Widget *w);
 extern void GUI_Widget_ActionPanel_Draw(bool forceDraw);
 extern void GUI_Widget_DrawBorder(uint16 widgetIndex, uint16 borderType, bool pressed);
+extern void GUI_Widget_DrawWindow(const WindowDesc *desc);
 extern void GUI_Widget_DrawAll(Widget *w);
 
 #endif /* GUI_WIDGET_H */

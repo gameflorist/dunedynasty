@@ -17,6 +17,11 @@ typedef enum GameMode {
 	GM_QUITGAME  = 5
 } GameMode;
 
+enum GameOverlay {
+	GAMEOVERLAY_NONE,
+	GAMEOVERLAY_OPTIONS,
+};
+
 /**
  * Types of Language available in the game.
  */
@@ -42,6 +47,7 @@ extern char *window_caption;
 extern uint32 g_hintsShown1;
 extern uint32 g_hintsShown2;
 extern GameMode g_gameMode;
+extern enum GameOverlay g_gameOverlay;
 extern uint16 g_campaignID;
 extern uint16 g_scenarioID;
 extern uint16 g_activeAction;

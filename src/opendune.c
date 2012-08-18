@@ -45,6 +45,7 @@
 #include "input/mouse.h"
 #include "map.h"
 #include "newui/menu.h"
+#include "newui/menubar.h"
 #include "pool/pool.h"
 #include "pool/house.h"
 #include "pool/unit.h"
@@ -71,6 +72,7 @@ char *window_caption = "OpenDUNE - Pre v0.8";
 uint32 g_hintsShown1 = 0;          /*!< A bit-array to indicate which hints has been show already (0-31). */
 uint32 g_hintsShown2 = 0;          /*!< A bit-array to indicate which hints has been show already (32-63). */
 GameMode g_gameMode = GM_NORMAL;
+enum GameOverlay g_gameOverlay;
 uint16 g_campaignID = 0;
 uint16 g_scenarioID = 1;
 uint16 g_activeAction = 0xFFFF;      /*!< Action the controlled unit will do. */
@@ -929,6 +931,7 @@ void GameLoop_Main(void)
 	Music_Play(Tools_RandomRange(0, 5) + 8);
 
 	g_gameMode = GM_NORMAL;
+	g_gameOverlay = GAMEOVERLAY_NONE;
 	while (g_gameMode == GM_NORMAL) {
 #if 0
 		if (g_gameMode == GM_PICKHOUSE) {
@@ -1002,7 +1005,12 @@ void GameLoop_Main(void)
 
 		GFX_Screen_SetActive(0);
 
-		key = GUI_Widget_HandleEvents(g_widgetLinkedListHead);
+		if (g_gameOverlay == GAMEOVERLAY_NONE) {
+			key = GUI_Widget_HandleEvents(g_widgetLinkedListHead);
+		}
+		else {
+			key = 0;
+		}
 
 		GUI_DrawInterfaceAndRadar(0);
 
@@ -1038,6 +1046,14 @@ void GameLoop_Main(void)
 
 		if (g_var_38F8 && !g_debugScenario) {
 			GameLoop_LevelEnd();
+		}
+
+		if (g_gameOverlay == GAMEOVERLAY_NONE) {
+			Input_Tick(false);
+		}
+		else {
+			Input_Tick(true);
+			MenuBar_TickOptionsOverlay();
 		}
 
 		if (!g_var_38F8) break;
