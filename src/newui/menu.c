@@ -260,31 +260,64 @@ PickHouse_Loop(void)
 /*--------------------------------------------------------------*/
 
 static void
+Briefing_Initialise(void)
+{
+	MentatState *mentat = &g_mentat_state;
+
+	MentatBriefing_InitText(g_playerHouseID, g_campaignID, MENTAT_BRIEFING_ORDERS, mentat);
+	mentat->state = MENTAT_SHOW_TEXT;
+}
+
+static void
 Briefing_Draw(void)
 {
+	MentatState *mentat = &g_mentat_state;
+
 	Mentat_DrawBackground(g_playerHouseID);
 	Mentat_Draw(g_playerHouseID);
 
-	GUI_Widget_DrawAll(briefing_proceed_repeat_widgets);
+	if (mentat->state == MENTAT_SHOW_TEXT) {
+		MentatBriefing_DrawText(&g_mentat_state);
+	}
+	else if (mentat->state == MENTAT_IDLE) {
+		GUI_Widget_DrawAll(briefing_proceed_repeat_widgets);
+	}
 }
 
 static enum MenuAction
 Briefing_Loop(void)
 {
-	const int widgetID = GUI_Widget_HandleEvents(briefing_proceed_repeat_widgets);
+	MentatState *mentat = &g_mentat_state;
+	bool redraw = false;
+	int widgetID;
+
+	widgetID = GUI_Widget_HandleEvents(briefing_proceed_repeat_widgets);
+	if ((!(widgetID & 0x8000)) && (widgetID & SCANCODE_RELEASE))
+		widgetID = 0;
 
 	switch (widgetID) {
+		case 0:
+			break;
+
 		case 0x8003: /* proceed */
 			return MENU_PLAY_A_GAME;
 
-		case 0x8004: /* repeat. */
+		case 0x8004: /* repeat */
+			mentat->state = MENTAT_SHOW_TEXT;
+			mentat->text = mentat->buf;
+			mentat->lines = mentat->lines0;
+			redraw = true;
 			break;
 
 		default:
+			if (mentat->state == MENTAT_SHOW_TEXT) {
+				MentatBriefing_AdvanceText(mentat);
+				redraw = true;
+			}
 			break;
 	}
 
-	return MENU_BRIEFING;
+	return (redraw ? MENU_REDRAW : 0) | MENU_BRIEFING;
 }
 
 /*--------------------------------------------------------------*/
@@ -361,6 +394,17 @@ Menu_Run(void)
 
 		if (curr_menu != res)
 			redraw = true;
+
+		if ((curr_menu & ~MENU_REDRAW) != (res & ~MENU_REDRAW)) {
+			switch (res & ~MENU_REDRAW) {
+				case MENU_BRIEFING:
+					Briefing_Initialise();
+					break;
+
+				default:
+					break;
+			}
+		}
 
 		curr_menu = (res & ~MENU_REDRAW);
 	}

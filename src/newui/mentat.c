@@ -2,11 +2,16 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "mentat.h"
 
+#include "../gui/gui.h"
+#include "../gui/mentat.h"
 #include "../input/input.h"
 #include "../shape.h"
+#include "../string.h"
+#include "../table/strings.h"
 #include "../video/video.h"
 
 static const struct {
@@ -26,6 +31,8 @@ static const struct {
 static int movingEyesSprite;
 static int movingMouthSprite;
 static int otherSprite;
+
+MentatState g_mentat_state;
 
 void
 Mentat_DrawBackground(enum HouseType houseID)
@@ -84,4 +91,45 @@ Mentat_Draw(enum HouseType houseID)
 	Mentat_DrawMouth(houseID);
 	Mentat_DrawShoulder(houseID);
 	Mentat_DrawAccessory(houseID);
+}
+
+/*--------------------------------------------------------------*/
+
+void
+MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry,
+		MentatState *mentat)
+{
+	const int stringID
+		= STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER
+		+ (houseID * 40) + ((campaignID + 1) * 4) + entry;
+	assert(entry <= MENTAT_BRIEFING_ADVICE);
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x32);
+
+	strncpy(mentat->buf, String_Get_ByIndex(stringID), sizeof(mentat->buf));
+	mentat->lines0 = GUI_Mentat_SplitText(mentat->buf, 304);
+	mentat->text = mentat->buf;
+	mentat->lines = mentat->lines0;
+}
+
+void
+MentatBriefing_DrawText(MentatState *mentat)
+{
+	if (mentat->lines > 0)
+		GUI_DrawText_Wrapper(mentat->text, 4, 1, g_curWidgetFGColourBlink, 0, 0x32);
+}
+
+void
+MentatBriefing_AdvanceText(MentatState *mentat)
+{
+	while (mentat->text[0] != '\0') {
+		mentat->text++;
+	}
+
+	mentat->text++;
+	mentat->lines--;
+
+	if (mentat->lines <= 0) {
+		mentat->state = MENTAT_IDLE;
+	}
 }
