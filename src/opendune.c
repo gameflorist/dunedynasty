@@ -232,15 +232,7 @@ static bool GameLoop_IsLevelWon(void)
 #if 0
 /* Moved to cutscene.c. */
 static void GameLoop_PrepareAnimation(const HouseAnimation_Animation *animation, const HouseAnimation_Subtitle *subtitle, uint16 arg_8062, const HouseAnimation_SoundEffect *soundEffect);
-#endif
-
-static void Memory_ClearBlock(uint16 index)
-{
-	memset(GFX_Screen_Get_ByIndex(index), 0, GFX_Screen_GetSize_ByIndex(index));
-}
-
-#if 0
-/* Moved to cutscene.c. */
+static void Memory_ClearBlock(uint16 index);
 static void GameLoop_FinishAnimation(void);
 static void GameLoop_PlaySoundEffect(uint8 animation);
 static void GameLoop_DrawText(char *string, uint16 top);
@@ -296,7 +288,7 @@ static void GameLoop_LevelEnd(void)
 			Sound_Output_Feedback(40);
 
 			GUI_DisplayModalMessage(String_Get_ByIndex(STR_YOU_HAVE_SUCCESSFULLY_COMPLETED_YOUR_MISSION), 0xFFFF);
-
+#if 0
 			GUI_Mentat_ShowWin();
 
 			Sprites_UnloadTiles();
@@ -331,24 +323,33 @@ static void GameLoop_LevelEnd(void)
 					exit(0);
 				}
 			}
+#else
+			g_gameMode = GM_WIN;
+#endif
 		} else {
 			Sound_Output_Feedback(41);
 
 			GUI_DisplayModalMessage(String_Get_ByIndex(STR_YOU_HAVE_FAILED_YOUR_MISSION), 0xFFFF);
-
+#if 0
 			GUI_Mentat_ShowLose();
 
 			Sprites_UnloadTiles();
 
 			g_scenarioID = GUI_StrategicMap_Show(g_campaignID, false);
+#else
+			g_gameMode = GM_LOSE;
+#endif
 		}
 
 		g_playerHouse->flags.doneFullScaleAttack = false;
 
+#if 0
 		Sprites_LoadTiles();
 
 		g_gameMode = GM_RESTART;
+#endif
 		s_debugForceWin = false;
+		return;
 	}
 
 	levelEndTimer = g_timerGame + 300;
@@ -806,14 +807,6 @@ static void GameLoop_GameIntroAnimationMenu(void)
 		g_readBuffer = calloc(1, g_readBufferSize);
 
 		Menu_Run();
-
-		Sprites_UnloadTiles();
-		Sprites_LoadTiles();
-
-		GUI_Palette_CreateRemap(g_playerHouseID);
-		Voice_LoadVoices(g_playerHouseID);
-		Game_LoadScenario(g_playerHouseID, g_scenarioID);
-		GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
 	}
 #endif
 
@@ -915,7 +908,7 @@ GameLoop_TweakWidgetDimensions(void)
 /**
  * Main game loop.
  */
-static void GameLoop_Main(void)
+void GameLoop_Main(void)
 {
 	static int64_t l_timerNext = 0;
 	static uint32 l_timerUnitStatus = 0;
@@ -923,28 +916,26 @@ static void GameLoop_Main(void)
 
 	uint16 key;
 
-	String_Init();
-	Sprites_Init();
+	Sprites_UnloadTiles();
 	Sprites_LoadTiles();
-	VideoA5_InitSprites();
-	GameLoop_TweakWidgetDimensions();
 
-	GameLoop_GameIntroAnimationMenu();
+	GUI_Palette_CreateRemap(g_playerHouseID);
+	Voice_LoadVoices(g_playerHouseID);
+	Game_LoadScenario(g_playerHouseID, g_scenarioID);
+	GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
 
 	Timer_SetTimer(TIMER_GAME, true);
 
-	GUI_Mouse_Show_Safe();
-
 	Music_Play(Tools_RandomRange(0, 5) + 8);
 
-	while (true) {
+	g_gameMode = GM_NORMAL;
+	while (g_gameMode == GM_NORMAL) {
+#if 0
 		if (g_gameMode == GM_PICKHOUSE) {
 			Music_Play(28);
 
 			g_playerHouseID = HOUSE_MERCENARY;
 			g_playerHouseID = GUI_PickHouse();
-
-			GUI_Mouse_Hide_Safe();
 
 			Memory_ClearBlock(1);
 
@@ -954,13 +945,12 @@ static void GameLoop_Main(void)
 
 			Voice_LoadVoices(g_playerHouseID);
 
-			GUI_Mouse_Show_Safe();
-
 			g_gameMode = GM_RESTART;
 			g_scenarioID = 1;
 			g_campaignID = 0;
 			g_strategicRegionBits = 0;
 		}
+#endif
 
 		if (g_selectionTypeNew != g_selectionType) {
 			GUI_ChangeSelectionType(g_selectionTypeNew);
@@ -968,6 +958,7 @@ static void GameLoop_Main(void)
 
 		GUI_PaletteAnimate();
 
+#if 0
 		if (g_gameMode == GM_RESTART) {
 			GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
 
@@ -981,6 +972,7 @@ static void GameLoop_Main(void)
 			Music_Play(Tools_RandomRange(0, 8) + 8);
 			l_timerNext = Timer_GetTicks() + 300;
 		}
+#endif
 
 		if (l_selectionState != g_selectionState) {
 			Map_SetSelectionObjectPosition(0xFFFF);
@@ -1054,13 +1046,9 @@ static void GameLoop_Main(void)
 		sleepIdle();
 	}
 
-	GUI_Mouse_Hide_Safe();
-
 #if 0
 	if (s_enableLog != 0) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, "DUNE.LOG");
 #endif
-
-	GUI_Mouse_Hide_Safe();
 
 	Widget_SetCurrentWidget(0);
 
@@ -1151,7 +1139,12 @@ int main(int argc, char **argv)
 
 	/* g_var_7097 = 0; */
 
-	GameLoop_Main();
+	String_Init();
+	Sprites_Init();
+	Sprites_LoadTiles();
+	VideoA5_InitSprites();
+	GameLoop_TweakWidgetDimensions();
+	GameLoop_GameIntroAnimationMenu();
 
 	printf("%s\n", String_Get_ByIndex(STR_THANK_YOU_FOR_PLAYING_DUNE_II));
 

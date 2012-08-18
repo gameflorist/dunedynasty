@@ -401,6 +401,40 @@ StrategicMap_Loop(void)
 
 /*--------------------------------------------------------------*/
 
+static enum MenuAction
+StartGame_Loop(void)
+{
+	al_use_transform(&identity_transform);
+
+	GameLoop_Main();
+
+	al_use_transform(&menu_transform);
+
+	switch (g_gameMode) {
+		case GM_NORMAL:
+			break;
+
+		case GM_RESTART:
+			return MENU_BRIEFING;
+
+		case GM_PICKHOUSE:
+			return MENU_PICK_HOUSE;
+
+		case GM_WIN:
+			return MENU_BRIEFING_WIN;
+
+		case GM_LOSE:
+			return MENU_BRIEFING_LOSE;
+
+		case GM_QUITGAME:
+			return MENU_EXIT_GAME;
+	}
+
+	return MENU_MAIN_MENU;
+}
+
+/*--------------------------------------------------------------*/
+
 void
 Menu_Run(void)
 {
@@ -474,7 +508,8 @@ Menu_Run(void)
 				break;
 
 			case MENU_PLAY_A_GAME:
-				goto play_a_game;
+				res = StartGame_Loop();
+				break;
 
 			case MENU_STRATEGIC_MAP:
 				res = StrategicMap_Loop();
@@ -508,12 +543,4 @@ Menu_Run(void)
 
 		curr_menu = (res & ~MENU_REDRAW);
 	}
-
-	PrepareEnd();
-	exit(0);
-
-play_a_game:
-
-	al_use_transform(&identity_transform);
-	return;
 }

@@ -76,42 +76,10 @@ static uint16 s_topHelpList;
 static uint16 s_selectedHelpSubject;
 static uint16 s_numberHelpSubjects;
 
-/**
- * Show the Mentat screen with a dialog (Proceed / Repeat).
- * @param houseID The house to show the mentat of.
- * @param stringID The string to show.
- * @param wsaFilename The WSA to show.
- * @param musicID The Music to play.
- */
-static void GUI_Mentat_ShowDialog(uint8 houseID, uint16 stringID, const char *wsaFilename, uint16 musicID)
-{
-	Widget *w1, *w2;
-
-	if (g_debugSkipDialogs) return;
-
-	w1 = GUI_Widget_Allocate(1, GUI_Widget_GetShortcut(String_Get_ByIndex(STR_PROCEED)[0]), 168, 168, 379, 0);
-	w2 = GUI_Widget_Allocate(2, GUI_Widget_GetShortcut(String_Get_ByIndex(STR_REPEAT)[0]), 240, 168, 381, 0);
-
-	w1 = GUI_Widget_Link(w1, w2);
-
-	Sound_Output_Feedback(0xFFFE);
-
-	Driver_Voice_Play(NULL, 0xFF);
-
-	Music_Play(musicID);
-
-	stringID += STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER + houseID * 40;
-
-	do {
-		strncpy(g_readBuffer, String_Get_ByIndex(stringID), g_readBufferSize);
-		sleepIdle();
-	} while (GUI_Mentat_Show(g_readBuffer, wsaFilename, w1, true) == 0x8002);
-
-	free(w2);
-	free(w1);
-
-	if (musicID != 0xFFFF) Driver_Music_FadeOut();
-}
+#if 0
+/* Moved to gui/menu_opendune.c. */
+static void GUI_Mentat_ShowDialog(uint8 houseID, uint16 stringID, const char *wsaFilename, uint16 musicID);
+#endif
 
 static void GUI_Mentat_HelpListLoop(void)
 {
@@ -450,29 +418,12 @@ uint16 GUI_Mentat_Show(char *stringBuffer, const char *wsaFilename, Widget *w, b
 	return ret;
 }
 
-/**
- * Show the briefing screen.
- */
-void GUI_Mentat_ShowBriefing(void)
-{
-	GUI_Mentat_ShowDialog(g_playerHouseID, g_campaignID * 4 + 4, g_scenario.pictureBriefing, g_table_houseInfo[g_playerHouseID].musicBriefing);
-}
-
-/**
- * Show the win screen.
- */
-void GUI_Mentat_ShowWin(void)
-{
-	GUI_Mentat_ShowDialog(g_playerHouseID, g_campaignID * 4 + 5, g_scenario.pictureWin, g_table_houseInfo[g_playerHouseID].musicWin);
-}
-
-/**
- * Show the lose screen.
- */
-void GUI_Mentat_ShowLose(void)
-{
-	GUI_Mentat_ShowDialog(g_playerHouseID, g_campaignID * 4 + 6, g_scenario.pictureLose, g_table_houseInfo[g_playerHouseID].musicLose);
-}
+#if 0
+/* Moved to gui/menu_opendune.c. */
+extern void GUI_Mentat_ShowBriefing(void);
+extern void GUI_Mentat_ShowWin(void);
+extern void GUI_Mentat_ShowLose(void);
+#endif
 
 /**
  * Display a mentat.

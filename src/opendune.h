@@ -11,7 +11,10 @@
 typedef enum GameMode {
 	GM_NORMAL    = 0,
 	GM_RESTART   = 1,
-	GM_PICKHOUSE = 2
+	GM_PICKHOUSE = 2,
+	GM_WIN       = 3,
+	GM_LOSE      = 4,
+	GM_QUITGAME  = 5
 } GameMode;
 
 /**
@@ -61,6 +64,7 @@ extern uint32 g_readBufferSize;
 
 extern void Main(void);
 extern void GameLoop_Uninit(void);
+extern void GameLoop_Main(void);
 extern void Game_Prepare(void);
 extern void Game_Init(void);
 extern void Game_LoadScenario(uint8 houseID, uint16 scenarioID);

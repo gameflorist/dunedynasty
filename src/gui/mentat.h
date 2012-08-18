@@ -18,9 +18,6 @@ struct Widget;
 
 extern bool GUI_Widget_Mentat_Click(struct Widget *w);
 extern uint16 GUI_Mentat_Show(char *stringBuffer, const char *wsaFilename, struct Widget *w, bool unknown);
-extern void GUI_Mentat_ShowBriefing(void);
-extern void GUI_Mentat_ShowWin(void);
-extern void GUI_Mentat_ShowLose(void);
 extern void GUI_Mentat_Display(const char *wsaFilename, uint8 houseID);
 extern void GUI_Mentat_Animation(uint16 speakingMode);
 extern void GUI_Mentat_SelectHelpSubject(int16 difference);
