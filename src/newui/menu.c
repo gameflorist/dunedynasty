@@ -36,47 +36,12 @@ enum MenuAction {
 	MENU_REDRAW = 0x8000
 };
 
-static ALLEGRO_TRANSFORM identity_transform;
-static ALLEGRO_TRANSFORM menu_transform;
-
 static Widget *main_menu_widgets;
 static Widget *pick_house_widgets;
 static Widget *briefing_yes_no_widgets;
 static Widget *briefing_proceed_repeat_widgets;
 
 /*--------------------------------------------------------------*/
-
-static void
-Menu_InitTransform(void)
-{
-	const double preferred_aspect = (double)SCREEN_WIDTH / SCREEN_HEIGHT;
-	const double w = TRUE_DISPLAY_WIDTH;
-	const double h = TRUE_DISPLAY_HEIGHT;
-	const double aspect = w/h;
-
-	float scale = 1.0f;
-	float offx = 0.0f;
-	float offy = 0.0f;
-
-	if (aspect < preferred_aspect - 0.001) {
-		const double newh = w / preferred_aspect;
-		offy = (h - newh) / 2;
-		scale = newh / SCREEN_HEIGHT;
-	}
-	else if (aspect > preferred_aspect + 0.001) {
-		const double neww = h * preferred_aspect;
-		offx = (w - neww) / 2;
-		scale = neww / SCREEN_WIDTH;
-	}
-
-	g_mouse_transform_scale = scale;
-	g_mouse_transform_offx = offx;
-	g_mouse_transform_offy = offy;
-
-	al_identity_transform(&identity_transform);
-	al_build_transform(&menu_transform, offx, offy, scale, scale, 0.0f);
-	al_use_transform(&menu_transform);
-}
 
 static void
 MainMenu_InitWidgets(void)
@@ -188,7 +153,7 @@ Menu_Init(void)
 	PickHouse_InitWidgets();
 	Briefing_InitWidgets();
 	StrategicMap_Init();
-	Menu_InitTransform();
+	A5_UseMenuTransform();
 }
 
 /*--------------------------------------------------------------*/
@@ -404,11 +369,9 @@ StrategicMap_Loop(void)
 static enum MenuAction
 StartGame_Loop(void)
 {
-	al_use_transform(&identity_transform);
-
+	A5_UseIdentityTransform();
 	GameLoop_Main();
-
-	al_use_transform(&menu_transform);
+	A5_UseMenuTransform();
 
 	switch (g_gameMode) {
 		case GM_NORMAL:
