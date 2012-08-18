@@ -187,6 +187,7 @@ Menu_Init(void)
 	MainMenu_InitWidgets();
 	PickHouse_InitWidgets();
 	Briefing_InitWidgets();
+	StrategicMap_Init();
 	Menu_InitTransform();
 }
 
@@ -370,12 +371,23 @@ Briefing_Loop(enum MenuAction curr_menu)
 /*--------------------------------------------------------------*/
 
 static void
+StrategicMap_Initialise(void)
+{
+	StrategicMapData *map = &g_strategic_map;
+
+	StrategicMap_ReadOwnership(g_campaignID, map);
+	StrategicMap_ReadProgression(g_playerHouseID, g_campaignID, map);
+}
+
+static void
 StrategicMap_Draw(void)
 {
 	const enum HouseType houseID = g_playerHouseID;
 
 	StrategicMap_DrawBackground(houseID);
 	Video_DrawCPSRegion("DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
+
+	StrategicMap_DrawRegions(&g_strategic_map);
 }
 
 static enum MenuAction
@@ -480,6 +492,10 @@ Menu_Run(void)
 				case MENU_BRIEFING_WIN:
 				case MENU_BRIEFING_LOSE:
 					Briefing_Initialise(res & ~MENU_REDRAW);
+					break;
+
+				case MENU_STRATEGIC_MAP:
+					StrategicMap_Initialise();
 					break;
 
 				default:

@@ -73,6 +73,7 @@ static CPSStore *s_cps;
 static ALLEGRO_BITMAP *cps_special_texture;
 static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
+static ALLEGRO_BITMAP *region_texture;
 static ALLEGRO_BITMAP *font_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
@@ -182,8 +183,9 @@ VideoA5_Init(void)
 	cps_special_texture = al_create_bitmap(w, h);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
+	region_texture = al_create_bitmap(w, h);
 	font_texture = al_create_bitmap(w, h);
-	if (screen == NULL || cps_special_texture == NULL || icon_texture == NULL || shape_texture == NULL || font_texture == NULL)
+	if (screen == NULL || cps_special_texture == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || font_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -247,6 +249,9 @@ VideoA5_Uninit(void)
 
 	al_destroy_bitmap(shape_texture);
 	shape_texture = NULL;
+
+	al_destroy_bitmap(region_texture);
+	region_texture = NULL;
 
 	al_destroy_bitmap(font_texture);
 	font_texture = NULL;
@@ -763,7 +768,7 @@ VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, h, row_h, &x, &y);
 	GUI_DrawSprite_(0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0x100, remap, 1);
 
-	bmp = al_create_sub_bitmap(shape_texture, x, y, w, h);
+	bmp = al_create_sub_bitmap(al_get_target_bitmap(), x, y, w, h);
 	assert(bmp != NULL);
 
 	*retx = x + w + 1;
@@ -795,14 +800,16 @@ VideoA5_InitShapes(unsigned char *buf)
 		{ 387, 401, false }, /* MENSHPH.SHP */
 		{ 402, 416, false }, /* MENSHPA.SHP */
 		{ 417, 431, false }, /* MENSHPO.SHP */
-		/*477, 504,  true */ /* PIECES.SHP */
-		/*505, 513, false */ /* ARROWS.SHP */
 		/*514, 524, false */ /* CREDIT1.SHP .. CREDIT11.SHP */
 
 		/* BENE.PAL shapes. */
-		{  -2,   0, false },
+		{  -3,   0, false },
 		/*432, 461, false */ /* MENSHPM.SHP: Fremen, Sardaukar */
 		{ 462, 476, false }, /* MENSHPM.SHP */
+
+		{  -2,   0, false },
+		{ 477, 504,  true }, /* PIECES.SHP */
+		{ 505, 513, false }, /* ARROWS.SHP */
 
 		{  -1,   0, false }
 	};
@@ -823,10 +830,19 @@ VideoA5_InitShapes(unsigned char *buf)
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 
 	for (int group = 0; shape_data[group].start != -1; group++) {
-		if (shape_data[group].start == -2) {
+		if (shape_data[group].start == -3) {
 			VideoA5_CopyBitmap(buf, shape_texture, true);
 			VideoA5_ReadPalette("BENE.PAL");
 			memset(buf, 0, WINDOW_W * WINDOW_H);
+			continue;
+		}
+		else if (shape_data[group].start == -2) {
+			VideoA5_CopyBitmap(buf, shape_texture, false);
+			VideoA5_ReadPalette("IBM.PAL");
+			memset(buf, 0, WINDOW_W * WINDOW_H);
+
+			al_set_target_bitmap(region_texture);
+			x = 0, y = 0, row_h = 0;
 			continue;
 		}
 
@@ -852,13 +868,12 @@ VideoA5_InitShapes(unsigned char *buf)
 		}
 	}
 
-	VideoA5_CopyBitmap(buf, shape_texture, false);
+	VideoA5_CopyBitmap(buf, region_texture, true);
 
 #if OUTPUT_TEXTURES
 	al_save_bitmap("shapes.png", shape_texture);
+	al_save_bitmap("regions.png", region_texture);
 #endif
-
-	VideoA5_ReadPalette("IBM.PAL");
 }
 
 void
