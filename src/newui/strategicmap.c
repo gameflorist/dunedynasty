@@ -85,6 +85,27 @@ StrategicMap_DrawRegions(const StrategicMapData *map)
 }
 
 void
+StrategicMap_DrawArrows(enum HouseType houseID, const StrategicMapData *map)
+{
+	for (int i = 0; i < STRATEGIC_MAP_MAX_ARROWS; i++) {
+		if (map->arrow[i].index < 0)
+			break;
+
+		const enum ShapeID shapeID = map->arrow[i].shapeID;
+		const enum ShapeID tintID = SHAPE_ARROW_TINT + 4 * (shapeID - SHAPE_ARROW);
+		const int x = map->arrow[i].x;
+		const int y = map->arrow[i].y;
+		const uint8 c = 144 + houseID * 16;
+
+		Shape_Draw(shapeID, x, y, 0, 0);
+		Shape_DrawTint(tintID + 0, x, y, c + 0, 0, 0);
+		Shape_DrawTint(tintID + 1, x, y, c + 1, 0, 0);
+		Shape_DrawTint(tintID + 2, x, y, c + 2, 0, 0);
+		Shape_DrawTint(tintID + 3, x, y, c + 3, 0, 0);
+	}
+}
+
+void
 StrategicMap_ReadOwnership(int campaignID, StrategicMapData *map)
 {
 	for (int region = 0; region <= STRATEGIC_MAP_MAX_REGIONS; region++) {
@@ -162,5 +183,41 @@ StrategicMap_ReadProgression(enum HouseType houseID, int campaignID, StrategicMa
 	for (; count < STRATEGIC_MAP_MAX_PROGRESSION; count++) {
 		map->progression[count].houseID = HOUSE_INVALID;
 		map->progression[count].region = -1;
+	}
+}
+
+void
+StrategicMap_ReadArrows(int campaignID, StrategicMapData *map)
+{
+	char category[16];
+	int count = 0;
+
+	snprintf(category, sizeof(category), "GROUP%d", campaignID);
+
+	for (int i = 0; i < 5; i++) {
+		char key[8];
+		char buf[128];
+		int index, shapeID, x, y;
+
+		snprintf(key, sizeof(key), "REG%d", i + 1);
+
+		if (Ini_GetString(category, key, NULL, buf, sizeof(buf), g_fileRegionINI) == NULL)
+			break;
+
+		if (sscanf(buf, "%d,%d,%d,%d", &index, &shapeID, &x, &y) != 4)
+			continue;
+
+		assert(count < STRATEGIC_MAP_MAX_ARROWS);
+
+		map->arrow[count].index = index;
+		map->arrow[count].shapeID = SHAPE_ARROW + shapeID;
+		map->arrow[count].x = x;
+		map->arrow[count].y = y;
+		count++;
+	}
+
+	for (; count < STRATEGIC_MAP_MAX_ARROWS; count++) {
+		map->arrow[count].index = -1;
+		map->arrow[count].shapeID = SHAPE_INVALID;
 	}
 }

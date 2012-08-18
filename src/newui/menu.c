@@ -377,17 +377,20 @@ StrategicMap_Initialise(void)
 
 	StrategicMap_ReadOwnership(g_campaignID, map);
 	StrategicMap_ReadProgression(g_playerHouseID, g_campaignID, map);
+	StrategicMap_ReadArrows(g_campaignID, map);
 }
 
 static void
 StrategicMap_Draw(void)
 {
 	const enum HouseType houseID = g_playerHouseID;
+	StrategicMapData *map = &g_strategic_map;
 
 	StrategicMap_DrawBackground(houseID);
 	Video_DrawCPSRegion("DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
 
-	StrategicMap_DrawRegions(&g_strategic_map);
+	StrategicMap_DrawRegions(map);
+	StrategicMap_DrawArrows(houseID, map);
 }
 
 static enum MenuAction

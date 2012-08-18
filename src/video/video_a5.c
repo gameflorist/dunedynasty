@@ -29,6 +29,7 @@
 #define CURSOR_MAX          6
 #define CONQUEST_COLOUR     146
 #define WINDTRAP_COLOUR     223
+#define ARROW_COLOUR        251
 
 typedef struct CPSStore {
 	struct CPSStore *next;
@@ -869,6 +870,28 @@ VideoA5_InitShapes(unsigned char *buf)
 	}
 
 	VideoA5_CopyBitmap(buf, region_texture, true);
+	memset(buf, 0, WINDOW_W * WINDOW_H);
+
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(region_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+	for (int shapeID = SHAPE_ARROW; shapeID <= SHAPE_ARROW_FINAL; shapeID++) {
+		const int tintID = SHAPE_ARROW_TINT + 4 * (shapeID - SHAPE_ARROW);
+		const int w = Shape_Width(shapeID);
+		const int h = Shape_Height(shapeID);
+
+		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 4 * w, h, row_h, &x, &y);
+		GUI_DrawSprite_(0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0);
+
+		for (int i = 0; i < 4; i++) {
+			s_shape[tintID + i][0] = al_create_sub_bitmap(region_texture, x + i * w, y, w, h);
+			assert(s_shape[tintID + i][0] != NULL);
+
+			VideoA5_CreateWhiteMask(buf, reg, WINDOW_W, x, y, x + i * w, y, w, h, ARROW_COLOUR + i);
+		}
+
+		x += 4 * w + 1;
+		row_h = max(row_h, h);
+	}
+	al_unlock_bitmap(region_texture);
 
 #if OUTPUT_TEXTURES
 	al_save_bitmap("shapes.png", shape_texture);
