@@ -904,6 +904,17 @@ GUI_Widget_DrawWindow(const WindowDesc *desc)
 	if (GUI_String_Get_ByIndex(desc->widgets[0].stringID) == NULL) {
 		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_THERE_ARE_NO_SAVED_GAMES_TO_LOAD), (wi->xBase + 2) << 3, wi->yBase + 42, 232, 0, 0x22);
 	}
+
+	for (int i = 0; i < desc->widgetCount; i++) {
+		const Widget *w = &g_table_windowWidgets[i];
+
+		if (g_config.language == LANGUAGE_FRENCH) {
+			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), wi->xBase*8 + 40, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
+		}
+		else {
+			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), w->offsetX + wi->xBase*8 - 10, w->offsetY + wi->yBase + 3, 232, 0, 0x222);
+		}
+	}
 }
 
 /**

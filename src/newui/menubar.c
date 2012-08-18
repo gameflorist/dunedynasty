@@ -5,7 +5,9 @@
 
 #include "menubar.h"
 
+#include "../audio/driver.h"
 #include "../common_a5.h"
+#include "../config.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
 #include "../gui/widget.h"
@@ -136,7 +138,11 @@ MenuBar_TickOptions(void)
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_LOAD_A_GAME */
 		case 0x8000 | 31: /* STR_SAVE_THIS_GAME */
+			break;
+
 		case 0x8000 | 32: /* STR_GAME_CONTROLS */
+			g_gameOverlay = GAMEOVERLAY_GAME_CONTROLS;
+			GUI_Window_Create(&g_gameControlWindowDesc);
 			break;
 
 		case 0x8000 | 33: /* STR_RESTART_SCENARIO */
@@ -166,6 +172,53 @@ MenuBar_TickOptions(void)
 	}
 }
 
+static void
+MenuBar_TickGameControls(void)
+{
+	const WindowDesc *desc = &g_gameControlWindowDesc;
+
+	Video_ShadeScreen(128);
+	GUI_Widget_DrawWindow(desc);
+	GUI_Widget_DrawAll(g_widgetLinkedListTail);
+
+	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
+	switch (widgetID) {
+		case 0x8000 | 30: /* STR_MUSIC_IS */
+			g_gameConfig.music ^= 0x1;
+			if (g_gameConfig.music == 0)
+				Driver_Music_Stop();
+			break;
+
+		case 0x8000 | 31: /* STR_SOUNDS_ARE */
+			g_gameConfig.sounds ^= 0x1;
+			if (g_gameConfig.sounds == 0)
+				Driver_Sound_Stop();
+			break;
+
+		case 0x8000 | 32: /* STR_GAME_SPEED */
+			if (++g_gameConfig.gameSpeed >= 5)
+				g_gameConfig.gameSpeed = 0;
+			break;
+
+		case 0x8000 | 33: /* STR_HINTS_ARE */
+			g_gameConfig.hints ^= 0x1;
+			break;
+
+		case 0x8000 | 34: /* STR_AUTO_SCROLL_IS */
+			g_gameConfig.autoScroll ^= 0x1;
+			break;
+
+		case 0x8000 | 35: /* STR_PREVIOUS */
+			g_gameOverlay = GAMEOVERLAY_OPTIONS;
+			GUI_Window_Create(&g_optionsWindowDesc);
+			GameOptions_Save();
+			break;
+
+		default:
+			break;
+	}
+}
+
 void
 MenuBar_TickOptionsOverlay(void)
 {
@@ -174,6 +227,10 @@ MenuBar_TickOptionsOverlay(void)
 	switch (g_gameOverlay) {
 		case GAMEOVERLAY_OPTIONS:
 			MenuBar_TickOptions();
+			break;
+
+		case GAMEOVERLAY_GAME_CONTROLS:
+			MenuBar_TickGameControls();
 			break;
 
 		default:

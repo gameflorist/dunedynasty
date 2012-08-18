@@ -485,14 +485,6 @@ void GUI_Window_Create(WindowDesc *desc)
 
 		GUI_Widget_MakeVisible(w);
 		GUI_Widget_MakeNormal(w, false);
-
-#if 0
-		if (g_config.language == LANGUAGE_FRENCH) {
-			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), (g_widgetProperties[w->parentID].xBase << 3) + 40, w->offsetY + g_widgetProperties[w->parentID].yBase + 3, 232, 0, 0x22);
-		} else {
-			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), w->offsetX + (g_widgetProperties[w->parentID].xBase << 3) - 10, w->offsetY + g_widgetProperties[w->parentID].yBase + 3, 232, 0, 0x222);
-		}
-#endif
 	}
 
 	if (s_savegameCountOnDisk >= 5 && desc->addArrows) {

@@ -20,6 +20,7 @@ typedef enum GameMode {
 enum GameOverlay {
 	GAMEOVERLAY_NONE,
 	GAMEOVERLAY_OPTIONS,
+	GAMEOVERLAY_GAME_CONTROLS,
 };
 
 /**
