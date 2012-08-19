@@ -910,7 +910,7 @@ GameLoop_TweakWidgetDimensions(void)
 /**
  * Main game loop.
  */
-void GameLoop_Main(void)
+void GameLoop_Main(bool new_game)
 {
 	static int64_t l_timerNext = 0;
 	static uint32 l_timerUnitStatus = 0;
@@ -923,7 +923,10 @@ void GameLoop_Main(void)
 
 	GUI_Palette_CreateRemap(g_playerHouseID);
 	Voice_LoadVoices(g_playerHouseID);
-	Game_LoadScenario(g_playerHouseID, g_scenarioID);
+
+	if (new_game)
+		Game_LoadScenario(g_playerHouseID, g_scenarioID);
+
 	GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
 
 	Timer_SetTimer(TIMER_GAME, true);

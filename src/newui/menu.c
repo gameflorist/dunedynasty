@@ -30,6 +30,7 @@ enum MenuAction {
 	MENU_BRIEFING_WIN,
 	MENU_BRIEFING_LOSE,
 	MENU_PLAY_A_GAME,
+	MENU_LOAD_GAME,
 	MENU_STRATEGIC_MAP,
 	MENU_EXIT_GAME,
 
@@ -181,7 +182,12 @@ MainMenu_Loop(void)
 			return MENU_PICK_HOUSE;
 
 		case 0x8000 | STR_REPLAY_INTRODUCTION:
+			break;
+
 		case 0x8000 | STR_LOAD_GAME:
+			GUI_Widget_InitSaveLoad(false);
+			return MENU_LOAD_GAME;
+
 		case 0x8000 | STR_HALL_OF_FAME:
 			break;
 
@@ -367,10 +373,10 @@ StrategicMap_Loop(void)
 /*--------------------------------------------------------------*/
 
 static enum MenuAction
-StartGame_Loop(void)
+StartGame_Loop(bool new_game)
 {
 	A5_UseIdentityTransform();
-	GameLoop_Main();
+	GameLoop_Main(new_game);
 	A5_UseMenuTransform();
 
 	switch (g_gameMode) {
@@ -394,6 +400,30 @@ StartGame_Loop(void)
 	}
 
 	return MENU_MAIN_MENU;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+LoadGame_Draw(void)
+{
+	GUI_Widget_DrawWindow(&g_saveLoadWindowDesc);
+	GUI_Widget_DrawAll(g_widgetLinkedListTail);
+}
+
+static enum MenuAction
+LoadGame_Loop(void)
+{
+	const int ret = GUI_Widget_SaveLoad_Click(false);
+
+	if (ret == -1) {
+		return MENU_MAIN_MENU;
+	}
+	else if (ret == -2) {
+		return StartGame_Loop(false);
+	}
+
+	return MENU_REDRAW | MENU_LOAD_GAME;
 }
 
 /*--------------------------------------------------------------*/
@@ -429,6 +459,10 @@ Menu_Run(void)
 				case MENU_BRIEFING_WIN:
 				case MENU_BRIEFING_LOSE:
 					Briefing_Draw(curr_menu);
+					break;
+
+				case MENU_LOAD_GAME:
+					LoadGame_Draw();
 					break;
 
 				case MENU_STRATEGIC_MAP:
@@ -471,7 +505,11 @@ Menu_Run(void)
 				break;
 
 			case MENU_PLAY_A_GAME:
-				res = StartGame_Loop();
+				res = StartGame_Loop(true);
+				break;
+
+			case MENU_LOAD_GAME:
+				res = LoadGame_Loop();
 				break;
 
 			case MENU_STRATEGIC_MAP:
