@@ -32,6 +32,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/load.c
 	src/map.c
 	src/newui/actionpanel.c
+	src/newui/halloffame.c
 	src/newui/mentat.c
 	src/newui/menu.c
 	src/newui/menubar.c

@@ -189,7 +189,9 @@ MainMenu_Loop(void)
 			return MENU_LOAD_GAME;
 
 		case 0x8000 | STR_HALL_OF_FAME:
-			break;
+			g_playerHouseID = HOUSE_MERCENARY;
+			GUI_HallOfFame_Show(0xFFFF);
+			return MENU_REDRAW | MENU_MAIN_MENU;
 
 		case SCANCODE_ESCAPE:
 		case 0x8000 | STR_EXIT_GAME:

@@ -500,67 +500,14 @@ void GUI_Window_Create(WindowDesc *desc)
 	GFX_Screen_SetActive(0);
 }
 
-static void GUI_Window_BackupScreen(WindowDesc *desc)
-{
-	Widget_SetCurrentWidget(desc->index);
-
-	GUI_Mouse_Hide_Safe();
-	GFX_CopyToBuffer(g_curWidgetXBase * 8, g_curWidgetYBase, g_curWidgetWidth * 8, g_curWidgetHeight, GFX_Screen_Get_ByIndex(5));
-	GUI_Mouse_Show_Safe();
-}
-
-static void GUI_Window_RestoreScreen(WindowDesc *desc)
-{
-	Widget_SetCurrentWidget(desc->index);
-
-	GUI_Mouse_Hide_Safe();
-	GFX_CopyFromBuffer(g_curWidgetXBase * 8, g_curWidgetYBase, g_curWidgetWidth * 8, g_curWidgetHeight, GFX_Screen_Get_ByIndex(5));
-	GUI_Mouse_Show_Safe();
-}
-
 #if 0
 /* Moved to gui/menu_opendune.c. */
+static void GUI_Window_BackupScreen(WindowDesc *desc);
+static void GUI_Window_RestoreScreen(WindowDesc *desc);
 static void GUI_Widget_GameControls_Click(Widget *w);
 static void ShadeScreen(void);
 static void UnshadeScreen(void);
-#endif
-
-static bool GUI_YesNo(uint16 stringID)
-{
-	WindowDesc *desc = &g_yesNoWindowDesc;
-	bool loop = true;
-	bool ret = false;
-
-	desc->stringID = stringID;
-
-	GUI_Window_BackupScreen(desc);
-
-	GUI_Window_Create(desc);
-
-	while (loop) {
-		uint16 key = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
-
-		if ((key & 0x8000) != 0) {
-			switch (key & 0x7FFF) {
-				case 0x1E: ret = true; break;
-				case 0x1F: ret = false; break;
-				default: break;
-			}
-			loop = false;
-		}
-
-		GUI_PaletteAnimate();
-		Video_Tick();
-		sleepIdle();
-	}
-
-	GUI_Window_RestoreScreen(desc);
-
-	return ret;
-}
-
-#if 0
-/* Moved to gui/menu_opendune.c. */
+static bool GUI_YesNo(uint16 stringID);
 extern bool GUI_Widget_Options_Click(Widget *w);
 #endif
 
@@ -750,10 +697,17 @@ int GUI_Widget_SaveLoad_Click(bool save)
  * @param w The widget.
  * @return True, always.
  */
-bool GUI_Widget_HOF_ClearList_Click(Widget *w)
+/* return values:
+ * -1: cancel clicked.
+ *  0: stay in loop.
+ *  1: clear clicked.
+ */
+int GUI_Widget_HOF_ClearList_Click(Widget *w)
 {
+	const int ret = GUI_Widget_HandleEvents(w);
+
 	/* "Are you sure you want to clear the high scores?" */
-	if (GUI_YesNo(0x148)) {
+	if (ret == (0x8000 | 30)) { /* Yes */
 		HallOfFameStruct *data = w->data;
 
 		memset(data, 0, 128);
@@ -761,28 +715,21 @@ bool GUI_Widget_HOF_ClearList_Click(Widget *w)
 		if (File_Exists("SAVEFAME.DAT")) File_Delete("SAVEFAME.DAT");
 
 		GUI_HallOfFame_DrawData(data, true);
-
-		g_var_81E6 = true;
+		return 1;
+	}
+	else if (ret == (0x8000 | 31)) { /* No */
+		return -1;
 	}
 
 	GUI_Widget_MakeNormal(w, false);
 
-	return true;
+	return 0;
 }
 
-/**
- * Handles Click event for "Resume Game" button.
- *
- * @return True, always.
- */
-bool GUI_Widget_HOF_Resume_Click(Widget *w)
-{
-	VARIABLE_NOT_USED(w);
-
-	g_var_81E6 = true;
-
-	return true;
-}
+#if 0
+/* Moved to gui/menu_opendune.c. */
+extern bool GUI_Widget_HOF_Resume_Click(Widget *w);
+#endif
 
 /**
  * Handles Click event for the list in production window.

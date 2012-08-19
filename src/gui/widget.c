@@ -56,7 +56,7 @@ WidgetProperties g_widgetProperties[WINDOWID_MAX] = {
 	{ 5,  48, 30, 134,   0,   0,  0}, /* 16: options menu */
 	{ 3,  36, 36, 148,   0,   0,  0}, /* 17: save/load game */
 	{ 1,  72, 38,  52,   0,   0,  0}, /* 18: yes/no dialog */
-	{ 0,   0,  0,   0,   0,   0,  0}, /* 19 */
+	{ 0,   0,  0,   0,   0,   0,  0}, /* 19: hall of fame */
 	{ 2,  24, 36, 152,  12,  12,  0}, /* 20 */
 	{ 1,   6, 12,   3,   0,  15,  6}, /* 21: main menu item */
 	{ 0,0,1024/8,1024,   0,   0,  0}  /* 22: texture rendering pseudo-widget */

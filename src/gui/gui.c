@@ -31,6 +31,7 @@
 #include "../input/mouse.h"
 #include "../load.h"
 #include "../map.h"
+#include "../newui/halloffame.h"
 #include "../newui/menubar.h"
 #include "../opendune.h"
 #include "../pool/pool.h"
@@ -102,7 +103,6 @@ uint16 g_productionStringID;                                /*!< Descriptive tex
 bool g_textDisplayNeedsUpdate;                              /*!< If set, text display needs to be updated. */
 uint32 g_strategicRegionBits;                               /*!< Region bits at the map. */
 static uint32 s_ticksPlayed;
-bool g_var_81E6;
 static uint8 s_var_81BA[24];
 static bool s_strategicMapFastForward;
 
@@ -1390,28 +1390,12 @@ static void GUI_HallOfFame_DrawRank(uint16 score, bool fadeIn)
 static void GUI_HallOfFame_DrawBackground(uint16 score, bool hallOfFame)
 {
 	uint16 oldScreenID;
-	uint16 xSrc;
 	uint16 colour;
 	uint16 offset;
 
 	oldScreenID = GFX_Screen_SetActive(2);;
 
-	Sprites_LoadImage("FAME.CPS", 3, g_palette_998A);
-
-	xSrc = 1;
-	if (g_playerHouseID <= HOUSE_ORDOS) {
-		xSrc = (g_playerHouseID * 56 + 8) / 8;
-	}
-
-	GUI_Screen_Copy(xSrc, 136, 0, 8, 7, 56, 2, 2);
-
-	if (g_playerHouseID > HOUSE_ORDOS) {
-		xSrc += 7;
-	}
-
-	GUI_Screen_Copy(xSrc, 136, 33, 8, 7, 56, 2, 2);
-
-	GUI_DrawFilledRectangle(8, 136, 175, 191, 116);
+	HallOfFame_DrawBackground(g_playerHouseID);
 
 	if (hallOfFame) {
 		GUI_DrawFilledRectangle(8, 80, 311, 191, 116);
@@ -3512,7 +3496,6 @@ static Widget *GUI_HallOfFame_CreateButtons(HallOfFameStruct *data)
 	wClear = GUI_Widget_Allocate(100, *clearString, 160 - width - 18, 180, 0xFFFE, 0x147);
 	wClear->width     = width;
 	wClear->height    = 10;
-	wClear->clickProc = &GUI_Widget_HOF_ClearList_Click;
 	wClear->flags.all = 0x44C5;
 	wClear->data      = data;
 
@@ -3520,7 +3503,6 @@ static Widget *GUI_HallOfFame_CreateButtons(HallOfFameStruct *data)
 	wResume = GUI_Widget_Allocate(101, *resumeString, 178, 180, 0xFFFE, 0x146);
 	wResume->width     = width;
 	wResume->height    = 10;
-	wResume->clickProc = &GUI_Widget_HOF_Resume_Click;
 	wResume->flags.all = 0x44C5;
 	wResume->data      = data;
 
@@ -3583,11 +3565,8 @@ void GUI_HallOfFame_Show(uint16 score)
 	uint8 fileID;
 	HallOfFameStruct *data;
 
-	GUI_Mouse_Hide_Safe();
-
 	if (score == 0xFFFF) {
 		if (!File_Exists("SAVEFAME.DAT")) {
-			GUI_Mouse_Show_Safe();
 			return;
 		}
 		s_ticksPlayed = 0;
@@ -3622,8 +3601,6 @@ void GUI_HallOfFame_Show(uint16 score)
 	}
 
 	width = GUI_HallOfFame_DrawData(data, false);
-
-	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
 
 	if (editLine != 0) {
 		WidgetProperties backupProperties;
@@ -3670,18 +3647,44 @@ void GUI_HallOfFame_Show(uint16 score)
 		File_Close(fileID);
 	}
 
-	GUI_Mouse_Show_Safe();
-
 	w = GUI_HallOfFame_CreateButtons(data);
 
 	Input_History_Clear();
 
 	GFX_Screen_SetActive(0);
 
-	g_var_81E6 = false;
+	g_yesNoWindowDesc.stringID = STR_ARE_YOU_SURE_YOU_WANT_TO_CLEAR_THE_HIGH_SCORES;
+	GUI_Window_Create(&g_yesNoWindowDesc);
 
-	while (!g_var_81E6) {
-		GUI_Widget_HandleEvents(w);
+	bool confirm_clear = false;
+	while (true) {
+		if (confirm_clear) {
+			GUI_Widget_DrawWindow(&g_yesNoWindowDesc);
+			GUI_Widget_DrawAll(g_widgetLinkedListTail);
+
+			const int ret = GUI_Widget_HOF_ClearList_Click(g_widgetLinkedListTail);
+
+			if (ret == -1) {
+				confirm_clear = false;
+				GUI_HallOfFame_DrawBackground(score, true);
+				GUI_HallOfFame_DrawData(data, true);
+			}
+			else if (ret == 1) {
+				break;
+			}
+		}
+		else {
+			const uint16 key = GUI_Widget_HandleEvents(w);
+
+			if (key == (0x8000 | 100)) { /* Clear list */
+				confirm_clear = true;
+			}
+			else if (key == (0x8000 | 101)) { /* Resume */
+				break;
+			}
+		}
+
+		Input_Tick(true);
 		Video_Tick();
 		sleepIdle();
 	}
@@ -3697,6 +3700,8 @@ void GUI_HallOfFame_Show(uint16 score)
 
 uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 {
+	VARIABLE_NOT_USED(show);
+
 	uint16 oldScreenID;
 	char *scoreString;
 	char *battleString;
@@ -3746,12 +3751,6 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 		GUI_DrawText_Wrapper("%u.", 24, offsetY, 15, 0, 0x222, i + 1);
 		GUI_DrawText_Wrapper("%u", battleX, offsetY, 15, 0, 0x122, data[i].campaignID);
 		GUI_DrawText_Wrapper("%u", scoreX, offsetY, 15, 0, 0x122, data[i].score);
-	}
-
-	if (show) {
-		GUI_Mouse_Hide_Safe();
-		GUI_Screen_Copy(1, 80, 1, 80, 38, 100, 2, 0);
-		GUI_Mouse_Show_Safe();
 	}
 
 	GFX_Screen_SetActive(oldScreenID);
