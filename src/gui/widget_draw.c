@@ -832,9 +832,15 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 	}
 
 	if (actionType != 0) {
-		GUI_Mouse_Hide_InWidget(6);
-		GUI_Screen_Copy(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, g_screenActiveID, 0);
-		GUI_Mouse_Show_InWidget();
+		GUI_Widget_Draw(widget24);
+		GUI_Widget_Draw(widget28);
+		GUI_Widget_Draw(widget2C);
+		GUI_Widget_Draw(widget30);
+		GUI_Widget_Draw(widget34);
+
+		for (i = 0; i < 4; i++) {
+			GUI_Widget_Draw(buttons[i]);
+		}
 	}
 
 	if (actionType > 1) {

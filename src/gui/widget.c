@@ -126,8 +126,6 @@ void GUI_Widget_MakeInvisible(Widget *w)
 {
 	if (w == NULL || w->flags.s.invisible) return;
 	w->flags.s.invisible = true;
-
-	GUI_Widget_Draw(w);
 }
 
 /**
@@ -138,8 +136,6 @@ void GUI_Widget_MakeVisible(Widget *w)
 {
 	if (w == NULL || !w->flags.s.invisible) return;
 	w->flags.s.invisible = false;
-
-	GUI_Widget_Draw(w);
 }
 
 /**
@@ -280,10 +276,12 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 		/* Check for right click */
 		if (Input_Test(MOUSE_RMB)) l_widget_button_state |= 0x2000;
 
+#if 0
 		/* Draw all the widgets */
 		for (; w != NULL; w = GUI_Widget_GetNext(w)) {
 			GUI_Widget_Draw(w);
 		}
+#endif
 	}
 
 	mouseX = g_mouseX;
@@ -466,6 +464,10 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 			}
 		}
 
+		if ((!widgetHover) && (buttonState & 0x2200) != 0) {
+			w->state.s.selected = false;
+		}
+
 		/* Check if we are not pressing a button */
 		if ((buttonState & 0x8800) == 0x8800) {
 			l_widget_selected = NULL;
@@ -480,6 +482,7 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 			l_widget_selected = NULL;
 		}
 
+#if 0
 		/* When the state changed, redraw */
 		if (w->state.s.selected != w->state.s.selectedLast || w->state.s.hover1 != w->state.s.hover1Last) {
 			GUI_Widget_Draw(w);
@@ -489,6 +492,7 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 		if (fakeClick) {
 			w->state.s.selected = false;
 		}
+#endif
 
 		if (widgetClick) {
 			w->state.s.buttonState = buttonState >> 8;
@@ -809,8 +813,6 @@ void GUI_Widget_MakeSelected(Widget *w, bool clickProc)
 
 	w->state.s.selected = true;
 
-	GUI_Widget_Draw(w);
-
 	if (!clickProc || w->clickProc == NULL) return;
 
 	w->clickProc(w);
@@ -832,8 +834,6 @@ void GUI_Widget_MakeNormal(Widget *w, bool clickProc)
 	w->state.s.selected = false;
 	w->state.s.hover1 = false;
 	w->state.s.hover2 = false;;
-
-	GUI_Widget_Draw(w);
 
 	if (!clickProc || w->clickProc == NULL) return;
 
