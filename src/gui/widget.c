@@ -55,7 +55,7 @@ WidgetProperties g_widgetProperties[WINDOWID_MAX] = {
 	{ 4, 110, 32,  12, 232, 235,  0}, /* 15: save game edit box */
 	{ 5,  48, 30, 134,   0,   0,  0}, /* 16: options menu */
 	{ 3,  36, 36, 148,   0,   0,  0}, /* 17: save/load game */
-	{ 1,  72, 38,  52,   0,   0,  0}, /* 18 */
+	{ 1,  72, 38,  52,   0,   0,  0}, /* 18: yes/no dialog */
 	{ 0,   0,  0,   0,   0,   0,  0}, /* 19 */
 	{ 2,  24, 36, 152,  12,  12,  0}, /* 20 */
 	{ 1,   6, 12,   3,   0,  15,  6}, /* 21: main menu item */

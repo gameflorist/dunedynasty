@@ -14,6 +14,7 @@
 #include "../opendune.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
+#include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
 
@@ -152,11 +153,15 @@ MenuBar_TickOptions(void)
 			break;
 
 		case 0x8000 | 33: /* STR_RESTART_SCENARIO */
-			g_gameMode = GM_RESTART;
+			g_gameOverlay = GAMEOVERLAY_CONFIRM_RESTART;
+			g_yesNoWindowDesc.stringID = STR_ARE_YOU_SURE_YOU_WISH_TO_RESTART;
+			GUI_Window_Create(&g_yesNoWindowDesc);
 			break;
 
 		case 0x8000 | 34: /* STR_PICK_ANOTHER_HOUSE */
-			g_gameMode = GM_PICKHOUSE;
+			g_gameOverlay = GAMEOVERLAY_CONFIRM_PICK_HOUSE;
+			g_yesNoWindowDesc.stringID = STR_ARE_YOU_SURE_YOU_WISH_TO_PICK_A_NEW_HOUSE;
+			GUI_Window_Create(&g_yesNoWindowDesc);
 			break;
 
 		case 0x8000 | 35: /* STR_CONTINUE_GAME */
@@ -164,7 +169,9 @@ MenuBar_TickOptions(void)
 			break;
 
 		case 0x8000 | 36: /* STR_QUIT_PLAYING */
-			g_gameMode = GM_QUITGAME;
+			g_gameOverlay = GAMEOVERLAY_CONFIRM_QUIT;
+			g_yesNoWindowDesc.stringID = STR_ARE_YOU_SURE_YOU_WANT_TO_QUIT_PLAYING;
+			GUI_Window_Create(&g_yesNoWindowDesc);
 			break;
 
 		default:
@@ -266,6 +273,39 @@ MenuBar_TickGameControls(void)
 	}
 }
 
+static void
+MenuBar_TickConfirmation(enum GameOverlay overlay)
+{
+	const WindowDesc *desc = &g_yesNoWindowDesc;
+
+	Video_ShadeScreen(128);
+	GUI_Widget_DrawWindow(desc);
+	GUI_Widget_DrawAll(g_widgetLinkedListTail);
+
+	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
+	switch (widgetID) {
+		case 0x8000 | 30: /* Yes */
+			if (overlay == GAMEOVERLAY_CONFIRM_RESTART) {
+				g_gameMode = GM_RESTART;
+			}
+			else if (overlay == GAMEOVERLAY_CONFIRM_PICK_HOUSE) {
+				g_gameMode = GM_PICKHOUSE;
+			}
+			else {
+				g_gameMode = GM_QUITGAME;
+			}
+			break;
+
+		case 0x8000 | 31: /* No */
+			g_gameOverlay = GAMEOVERLAY_OPTIONS;
+			GUI_Window_Create(&g_optionsWindowDesc);
+			break;
+
+		default:
+			break;
+	}
+}
+
 void
 MenuBar_TickOptionsOverlay(void)
 {
@@ -284,6 +324,12 @@ MenuBar_TickOptionsOverlay(void)
 
 		case GAMEOVERLAY_GAME_CONTROLS:
 			MenuBar_TickGameControls();
+			break;
+
+		case GAMEOVERLAY_CONFIRM_RESTART:
+		case GAMEOVERLAY_CONFIRM_PICK_HOUSE:
+		case GAMEOVERLAY_CONFIRM_QUIT:
+			MenuBar_TickConfirmation(g_gameOverlay);
 			break;
 
 		default:
