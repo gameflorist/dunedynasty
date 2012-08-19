@@ -11,4 +11,6 @@ extern void MenuBar_Draw(enum HouseType houseID);
 extern bool MenuBar_ClickOptions(Widget *w);
 extern void MenuBar_TickOptionsOverlay(void);
 
+extern uint16 GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...);
+
 #endif

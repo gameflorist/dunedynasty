@@ -23,6 +23,7 @@ typedef enum DrawMode {
 } DrawMode;
 
 enum WindowID {
+	WINDOWID_MODAL_MESSAGE      = 1,
 	WINDOWID_VIEWPORT           = 2,
 	WINDOWID_MINIMAP            = 3,
 	WINDOWID_ACTIONPANEL_FRAME  = 6,

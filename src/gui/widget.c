@@ -38,7 +38,7 @@ Widget *g_widgetMentatScrollbar = NULL;
 WidgetProperties g_widgetProperties[WINDOWID_MAX] = {
 	/* x   y   w    h   p4  norm sel */
 	{ 0,   0, 40, 200,  15,  12,  0}, /*  0 */
-	{ 1,  75, 29,  70,  15,  15,  0}, /*  1 */
+	{ 1,  75, 29,  70,  15,  15,  0}, /*  1: modal message */
 	{ 0,  40, 30, 160,  15,  20,  0}, /*  2: viewport */
 	{32, 136,  8,  64,  15,  12,  0}, /*  3: minimap */
 	{32,  44,  8,   9,  29, 116,  0}, /*  4: credits */

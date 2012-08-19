@@ -2,6 +2,16 @@
 
 /* gui/gui.c */
 
+static void GUI_Widget_SetProperties(uint16 index, uint16 xpos, uint16 ypos, uint16 width, uint16 height)
+{
+	g_widgetProperties[index].xBase  = xpos;
+	g_widgetProperties[index].yBase  = ypos;
+	g_widgetProperties[index].width  = width;
+	g_widgetProperties[index].height = height;
+
+	if (g_curWidgetIndex == index) Widget_SetCurrentWidget(index);
+}
+
 /**
  * Show pick house screen.
  */

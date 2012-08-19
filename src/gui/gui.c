@@ -32,6 +32,7 @@
 #include "../load.h"
 #include "../map.h"
 #include "../newui/halloffame.h"
+#include "../newui/menu.h"
 #include "../newui/menubar.h"
 #include "../opendune.h"
 #include "../pool/pool.h"
@@ -665,117 +666,11 @@ void GUI_UpdateProductionStringID(void)
 	g_productionStringID = STR_COMPLETED;
 }
 
-static void GUI_Widget_SetProperties(uint16 index, uint16 xpos, uint16 ypos, uint16 width, uint16 height)
-{
-	g_widgetProperties[index].xBase  = xpos;
-	g_widgetProperties[index].yBase  = ypos;
-	g_widgetProperties[index].width  = width;
-	g_widgetProperties[index].height = height;
-
-	if (g_curWidgetIndex == index) Widget_SetCurrentWidget(index);
-}
-
-/**
- * Displays a message and waits for a user action.
- * @param str The text to display.
- * @param spriteID The sprite to draw (0xFFFF for none).
- * @param ... The args for the text.
- * @return ??
- */
-uint16 GUI_DisplayModalMessage(const char *str, uint16 spriteID, ...)
-{
-	static char textBuffer[768];
-
-	va_list ap;
-	uint16 oldValue_07AE_0000;
-	uint16 ret;
-	uint16 oldScreenID;
-	uint8 *screenBackup = NULL;
-
-	va_start(ap, spriteID);
-	vsnprintf(textBuffer, sizeof(textBuffer), str, ap);
-	va_end(ap);
-
-	GUI_Mouse_Hide_Safe();
-
-	oldScreenID = GFX_Screen_SetActive(0);
-
-	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
-
-	oldValue_07AE_0000 = Widget_SetCurrentWidget(1);
-
-	g_widgetProperties[1].height = g_fontCurrent->height * max(GUI_SplitText(textBuffer, ((g_curWidgetWidth - ((spriteID == 0xFFFF) ? 2 : 7)) << 3) - 6, '\r'), 3) + 18;
-
-	Widget_SetCurrentWidget(1);
-
-	if (screenBackup != NULL) {
-		GFX_CopyToBuffer(g_curWidgetXBase * 8, g_curWidgetYBase, g_curWidgetWidth * 8, g_curWidgetHeight, screenBackup);
-	}
-
-	GUI_Widget_DrawBorder(1, 1, 1);
-
-	if (spriteID != 0xFFFF) {
-		GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], 7, 8, 1, 0x4000);
-		GUI_Widget_SetProperties(1, g_curWidgetXBase + 5, g_curWidgetYBase + 8, g_curWidgetWidth - 7, g_curWidgetHeight - 16);
-	} else {
-		GUI_Widget_SetProperties(1, g_curWidgetXBase + 1, g_curWidgetYBase + 8, g_curWidgetWidth - 2, g_curWidgetHeight - 16);
-	}
-
-	g_curWidgetFGColourNormal = 0;
-
-	GUI_DrawText(textBuffer, g_curWidgetXBase << 3, g_curWidgetYBase, g_curWidgetFGColourBlink, g_curWidgetFGColourNormal);
-
-	GFX_SetPalette(g_palette1);
-
-	GUI_Mouse_Show_Safe();
-
-	for (int timeout = 0; timeout < 30; timeout++) {
-		GUI_PaletteAnimate();
-		Video_Tick();
-		Timer_Wait();
-	}
-
-	Input_History_Clear();
-
 #if 0
-	do {
-		GUI_PaletteAnimate();
-
-		ret = Input_WaitForValidInput();
-		sleepIdle();
-	} while (ret == 0 || (ret & 0x800) != 0);
-
-	Input_HandleInput(0x841);
-#else
-	ret = 0;
+/* Moved to gui/menu_opendune.c. */
+static void GUI_Widget_SetProperties(uint16 index, uint16 xpos, uint16 ypos, uint16 width, uint16 height);
+extern uint16 GUI_DisplayModalMessage(const char *str, uint16 spriteID, ...);
 #endif
-
-	GUI_Mouse_Hide_Safe();
-
-	if (spriteID != 0xFFFF) {
-		GUI_Widget_SetProperties(1, g_curWidgetXBase - 5, g_curWidgetYBase - 8, g_curWidgetWidth + 7, g_curWidgetHeight + 16);
-	} else {
-		GUI_Widget_SetProperties(1, g_curWidgetXBase - 1, g_curWidgetYBase - 8, g_curWidgetWidth + 2, g_curWidgetHeight + 16);
-	}
-
-	if (screenBackup != NULL) {
-		GFX_CopyFromBuffer(g_curWidgetXBase * 8, g_curWidgetYBase, g_curWidgetWidth * 8, g_curWidgetHeight, screenBackup);
-	}
-
-	Widget_SetCurrentWidget(oldValue_07AE_0000);
-
-	if (screenBackup != NULL) {
-		free(screenBackup);
-	} else {
-		g_viewport_forceRedraw = true;
-	}
-
-	GFX_Screen_SetActive(oldScreenID);
-
-	GUI_Mouse_Show_Safe();
-
-	return ret;
-}
 
 /**
  * Splits the given text in lines of maxwidth width using the given delimiter.
