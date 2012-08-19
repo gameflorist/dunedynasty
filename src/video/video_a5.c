@@ -1,4 +1,13 @@
-/* video_a5.c */
+/* video_a5.c
+ *
+ * Notes:
+ *
+ * CPS rendered by opendune on screen 2/3 (once).
+ * WSA rendered by opendune on screen 0/1 (every frame).
+ * WSA loaded in screen 4/5.
+ *
+ * This avoids clashes with each other and mentat.
+ */
 
 #include <assert.h>
 #include <allegro5/allegro.h>
@@ -446,7 +455,7 @@ VideoA5_ExportCPS(const char *filename, unsigned char *buf)
 
 	VideoA5_ReadPalette(use_benepal ? "BENE.PAL" : "IBM.PAL");
 	memset(buf, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
-	Sprites_LoadImage(filename, 0, NULL);
+	Sprites_LoadImage(filename, 2, NULL);
 	VideoA5_CopyBitmap(buf, cps->bmp, BLACK_COLOUR_0);
 	VideoA5_ReadPalette("IBM.PAL");
 
@@ -466,7 +475,7 @@ VideoA5_LoadCPS(const char *filename)
 		cps = cps->next;
 	}
 
-	cps = VideoA5_ExportCPS(filename, GFX_Screen_Get_ByIndex(0));
+	cps = VideoA5_ExportCPS(filename, GFX_Screen_Get_ByIndex(2));
 	cps->next = s_cps;
 	s_cps = cps;
 
@@ -481,9 +490,10 @@ VideoA5_FreeCPS(CPSStore *cps)
 }
 
 static void
-VideoA5_InitCPS(unsigned char *buf)
+VideoA5_InitCPS(void)
 {
 	const struct CPSSpecialCoord *coord;
+	unsigned char *buf = GFX_Screen_Get_ByIndex(2);
 	CPSStore *cps_screen = VideoA5_ExportCPS("SCREEN.CPS", buf);
 	CPSStore *cps_fame = VideoA5_LoadCPS("FAME.CPS");
 	CPSStore *cps_mapmach = VideoA5_LoadCPS("MAPMACH.CPS");
@@ -504,9 +514,9 @@ VideoA5_InitCPS(unsigned char *buf)
 	al_draw_bitmap_region(cps_screen->bmp, 55, 17, 121, coord->h, coord->tx + 304, coord->ty, 0);
 
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		Sprites_LoadImage("SCREEN.CPS", 0, NULL);
+		Sprites_LoadImage("SCREEN.CPS", 2, NULL);
 		GUI_Palette_CreateRemap(houseID);
-		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, g_remap);
+		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 2, g_remap);
 		VideoA5_CopyBitmap(buf, cps_screen->bmp, TRANSPARENT_COLOUR_0);
 
 		coord = &cps_special_coord[CPS_SIDEBAR_TOP];
@@ -532,7 +542,7 @@ VideoA5_InitCPS(unsigned char *buf)
 	al_draw_bitmap_region(cps_mapmach->bmp, coord->cx, cps_special_coord[CPS_CONQUEST_FR].cy, coord->w, coord->h, coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty, 0);
 	al_draw_bitmap_region(cps_mapmach->bmp, coord->cx, cps_special_coord[CPS_CONQUEST_DE].cy, coord->w, coord->h, coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty, 0);
 
-	Sprites_LoadImage("MAPMACH.CPS", 0, NULL);
+	Sprites_LoadImage("MAPMACH.CPS", 2, NULL);
 	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(cps_special_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_EN].cy, coord->tx, cps_special_coord[CPS_CONQUEST_EN].ty + 25, coord->w, coord->h, CONQUEST_COLOUR);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_FR].cy, coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty + 25, coord->w, coord->h, CONQUEST_COLOUR);
@@ -1091,8 +1101,7 @@ VideoA5_InitSprites(void)
 
 	VideoA5_ReadPalette("IBM.PAL");
 
-	memset(buf, 0, WINDOW_W * WINDOW_H);
-	VideoA5_InitCPS(buf);
+	VideoA5_InitCPS();
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitIcons(buf);
