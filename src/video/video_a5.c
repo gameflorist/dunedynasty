@@ -31,6 +31,12 @@
 #define WINDTRAP_COLOUR     223
 #define ARROW_COLOUR        251
 
+enum BitmapCopyMode {
+	TRANSPARENT_COLOUR_0,
+	BLACK_COLOUR_0,
+	SKIP_COLOUR_0
+};
+
 typedef struct CPSStore {
 	struct CPSStore *next;
 
@@ -262,18 +268,18 @@ VideoA5_Uninit(void)
 }
 
 static void
-VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, bool writeonly)
+VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCopyMode mode)
 {
 	const int w = al_get_bitmap_width(dest);
 	const int h = al_get_bitmap_height(dest);
 
 	ALLEGRO_LOCKED_REGION *reg;
 
-	if (writeonly) {
-		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
+	if (mode == SKIP_COLOUR_0) {
+		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 	}
 	else {
-		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
 	}
 
 	for (int y = 0; y < h; y++) {
@@ -283,11 +289,11 @@ VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, bool writeonl
 			const unsigned char c = raw[w*y + x];
 
 			if (c == 0) {
-				if (writeonly) {
+				if (mode != SKIP_COLOUR_0) {
 					row[reg->pixel_size*x + 0] = 0x00;
 					row[reg->pixel_size*x + 1] = 0x00;
 					row[reg->pixel_size*x + 2] = 0x00;
-					row[reg->pixel_size*x + 3] = 0x00;
+					row[reg->pixel_size*x + 3] = (mode == TRANSPARENT_COLOUR_0) ? 0x00 : 0xFF;
 				}
 			}
 			else {
@@ -334,7 +340,7 @@ VideoA5_Tick(void)
 	const unsigned char *raw = GFX_Screen_Get_ByIndex(0);
 
 	al_set_target_backbuffer(display2);
-	VideoA5_CopyBitmap(raw, screen, false);
+	VideoA5_CopyBitmap(raw, screen, BLACK_COLOUR_0);
 	al_draw_bitmap(screen, 0, 0, 0);
 	VideoA5_DrawShape(0, 0, g_mouseX, g_mouseY, 0);
 	al_flip_display();
@@ -441,7 +447,7 @@ VideoA5_ExportCPS(const char *filename, unsigned char *buf)
 	VideoA5_ReadPalette(use_benepal ? "BENE.PAL" : "IBM.PAL");
 	memset(buf, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
 	Sprites_LoadImage(filename, 0, NULL);
-	VideoA5_CopyBitmap(buf, cps->bmp, true);
+	VideoA5_CopyBitmap(buf, cps->bmp, BLACK_COLOUR_0);
 	VideoA5_ReadPalette("IBM.PAL");
 
 	return cps;
@@ -501,7 +507,7 @@ VideoA5_InitCPS(unsigned char *buf)
 		Sprites_LoadImage("SCREEN.CPS", 0, NULL);
 		GUI_Palette_CreateRemap(houseID);
 		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, g_remap);
-		VideoA5_CopyBitmap(buf, cps_screen->bmp, true);
+		VideoA5_CopyBitmap(buf, cps_screen->bmp, TRANSPARENT_COLOUR_0);
 
 		coord = &cps_special_coord[CPS_SIDEBAR_TOP];
 		al_draw_bitmap_region(cps_screen->bmp, coord->cx, coord->cy, coord->w, coord->h, coord->tx + 17 * houseID, coord->ty + 3 * houseID, 0);
@@ -721,7 +727,7 @@ VideoA5_InitIcons(unsigned char *buf)
 				x, y, &x, &y);
 	}
 
-	VideoA5_CopyBitmap(buf, icon_texture, true);
+	VideoA5_CopyBitmap(buf, icon_texture, TRANSPARENT_COLOUR_0);
 
 	/* Windtraps. */
 	for (uint16 iconID = 304; iconID <= 308; iconID++) {
@@ -830,13 +836,13 @@ VideoA5_InitShapes(unsigned char *buf)
 
 	for (int group = 0; shape_data[group].start != -1; group++) {
 		if (shape_data[group].start == -3) {
-			VideoA5_CopyBitmap(buf, shape_texture, true);
+			VideoA5_CopyBitmap(buf, shape_texture, TRANSPARENT_COLOUR_0);
 			VideoA5_ReadPalette("BENE.PAL");
 			memset(buf, 0, WINDOW_W * WINDOW_H);
 			continue;
 		}
 		else if (shape_data[group].start == -2) {
-			VideoA5_CopyBitmap(buf, shape_texture, false);
+			VideoA5_CopyBitmap(buf, shape_texture, SKIP_COLOUR_0);
 			VideoA5_ReadPalette("IBM.PAL");
 			memset(buf, 0, WINDOW_W * WINDOW_H);
 
@@ -867,7 +873,7 @@ VideoA5_InitShapes(unsigned char *buf)
 		}
 	}
 
-	VideoA5_CopyBitmap(buf, region_texture, true);
+	VideoA5_CopyBitmap(buf, region_texture, TRANSPARENT_COLOUR_0);
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 
 	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(region_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
@@ -1037,7 +1043,7 @@ VideoA5_InitFonts(unsigned char *buf)
 	VideoA5_ExportFont(g_fontIntro, font_palette[0], y, &y);
 	VideoA5_ExportFont(g_fontIntro, font_palette[3], y, &y);
 
-	VideoA5_CopyBitmap(buf, font_texture, true);
+	VideoA5_CopyBitmap(buf, font_texture, TRANSPARENT_COLOUR_0);
 
 #if OUTPUT_TEXTURES
 	al_save_bitmap("fonts.png", font_texture);
