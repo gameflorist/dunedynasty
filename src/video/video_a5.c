@@ -26,6 +26,7 @@
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
 #include "../sprites.h"
+#include "../wsa.h"
 
 #include "dune2_16x16.xpm"
 /* #include "dune2_32x32.xpm" */
@@ -91,6 +92,7 @@ static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *region_texture;
 static ALLEGRO_BITMAP *font_texture;
+static ALLEGRO_BITMAP *wsa_special_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
@@ -201,7 +203,8 @@ VideoA5_Init(void)
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
 	font_texture = al_create_bitmap(w, h);
-	if (screen == NULL || cps_special_texture == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || font_texture == NULL)
+	wsa_special_texture = al_create_bitmap(w, h);
+	if (screen == NULL || cps_special_texture == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || font_texture == NULL || wsa_special_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -271,6 +274,9 @@ VideoA5_Uninit(void)
 
 	al_destroy_bitmap(font_texture);
 	font_texture = NULL;
+
+	al_destroy_bitmap(wsa_special_texture);
+	wsa_special_texture = NULL;
 
 	al_destroy_bitmap(screen);
 	screen = NULL;
@@ -1073,6 +1079,40 @@ VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y)
 /*--------------------------------------------------------------*/
 
 static void
+VideoA5_InitWSA(unsigned char *buf)
+{
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+
+	void *wsa = WSA_LoadFile("STATIC.WSA", GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), true);
+	assert(wsa != NULL);
+
+	const int num_frames = WSA_GetFrameCount(wsa);
+
+	int x = 0, y = 0;
+
+	al_set_target_bitmap(wsa_special_texture);
+
+	for (int frame = 0; frame < num_frames; frame++) {
+		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 64, 64, 64, &x, &y);
+		WSA_DisplayFrame(wsa, frame, 0, 0, 0);
+
+		VideoA5_CopyBitmap(buf, screen, BLACK_COLOUR_0);
+		al_draw_bitmap_region(screen, 0, 0, 64, 64, x, y, 0);
+
+		x += 64 + 1;
+	}
+
+#if OUTPUT_TEXTURES
+	al_save_bitmap("wsa_special.png", wsa_special_texture);
+#endif
+
+	WSA_Unload(wsa);
+}
+
+/*--------------------------------------------------------------*/
+
+static void
 VideoA5_InitCursor(void)
 {
 	/* From gui/viewport.c */
@@ -1111,6 +1151,9 @@ VideoA5_InitSprites(void)
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitFonts(buf);
+
+	memset(buf, 0, WINDOW_W * WINDOW_H);
+	VideoA5_InitWSA(buf);
 
 	VideoA5_InitCursor();
 
