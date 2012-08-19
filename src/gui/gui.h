@@ -143,6 +143,6 @@ extern void GUI_DrawScreen(uint16 screenID);
 extern void GUI_SetPaletteAnimated(uint8 *palette, int16 ticksOfAnimation);
 
 /* editbox.c */
-extern uint16 GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, struct Widget *w, uint16 (*tickProc)(void), uint16 unknown4);
+extern int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, struct Widget *w, uint16 (*tickProc)(void), uint16 unknown4);
 
 #endif /* GUI_GUI_H */

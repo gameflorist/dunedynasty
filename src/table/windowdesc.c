@@ -309,7 +309,7 @@ WindowDesc g_savegameNameWindowDesc = {
 		/* width         */ 72,
 		/* height        */ 15,
 		/* labelStringID */ STR_NULL,
-		/* shortcut2     */ 43,
+		/* shortcut2     */ SCANCODE_ENTER,
 		},
 		{ /* 1 */
 		/* stringID      */ STR_CANCEL,
@@ -318,7 +318,7 @@ WindowDesc g_savegameNameWindowDesc = {
 		/* width         */ 72,
 		/* height        */ 15,
 		/* labelStringID */ STR_NULL,
-		/* shortcut2     */ 110,
+		/* shortcut2     */ SCANCODE_ESCAPE,
 		},
 		{ /* 2 */
 		/* stringID      */ STR_NULL,

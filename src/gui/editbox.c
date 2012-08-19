@@ -14,6 +14,32 @@
 #include "../timer/timer.h"
 #include "../video/video.h"
 
+static unsigned char
+GUI_EditBox_ScancodeToChar(enum Scancode key)
+{
+	const unsigned char char_10[] = "1234567890-";
+	const unsigned char char_qp[] = "qwertyuiop";
+	const unsigned char char_al[] = "asdfghjkl";
+	const unsigned char char_zm[] = "zxcvbnm,.";
+
+	if (SCANCODE_1 <= key && key <= SCANCODE_MINUS)
+		return char_10[key - SCANCODE_1];
+
+	if (SCANCODE_Q <= key && key <= SCANCODE_P)
+		return char_qp[key - SCANCODE_Q];
+
+	if (SCANCODE_A <= key && key <= SCANCODE_L)
+		return char_al[key - SCANCODE_A];
+
+	if (SCANCODE_Z <= key && key <= SCANCODE_FULLSTOP)
+		return char_zm[key - SCANCODE_Z];
+
+	if (key == SCANCODE_SPACE)
+		return ' ';
+
+	return '\0';
+}
+
 /**
  * Draw a blinking cursor, used inside the EditBox.
  *
@@ -26,20 +52,15 @@ static void GUI_EditBox_BlinkCursor(uint16 positionX, bool resetBlink)
 	static bool   editBoxShowCursor = false; /* Cursor is active. */
 
 	if (resetBlink) {
-		tickEditBox = 0;
+		tickEditBox = Timer_GetTicks() + 20;
 		editBoxShowCursor = true;
 	}
-
-	if (tickEditBox > Timer_GetTicks()) return;
-	if (!resetBlink) {
+	else if (Timer_GetTicks() >= tickEditBox) {
 		tickEditBox = Timer_GetTicks() + 20;
+		editBoxShowCursor = !editBoxShowCursor;
 	}
 
-	editBoxShowCursor = !editBoxShowCursor;
-
-	GUI_Mouse_Hide_Safe();
 	GUI_DrawFilledRectangle(positionX, g_curWidgetYBase, positionX + Font_GetCharWidth('W'), g_curWidgetYBase + g_curWidgetHeight - 1, (editBoxShowCursor) ? g_curWidgetFGColourBlink : g_curWidgetFGColourNormal);
-	GUI_Mouse_Show_Safe();
 }
 
 /**
@@ -50,27 +71,22 @@ static void GUI_EditBox_BlinkCursor(uint16 positionX, bool resetBlink)
  * @param w The widget this editbox is attached to.
  * @param tickProc The function to call every tick, for animation etc.
  * @param unknown4 Unknown.
- * @return Unknown.
+ *
+ * Return:
+ * -1: cancel
+ *  0: continue editting
+ * 1+: other events (key/widgetID)
  */
-uint16 GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16 (*tickProc)(void), uint16 unknown4)
+int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16 (*tickProc)(void), uint16 unknown4)
 {
-	uint16 oldScreenID;
-	uint16 oldValue_07AE_0000;
+	VARIABLE_NOT_USED(unknown1);
+
 	uint16 positionX;
 	uint16 maxWidth;
 	uint16 textWidth;
 	uint16 textLength;
-	uint16 returnValue;
+	uint16 returnValue = 0x0;
 	char *t;
-
-	/* Initialize */
-	{
-		oldScreenID = GFX_Screen_SetActive(0);
-
-		oldValue_07AE_0000 = Widget_SetCurrentWidget(unknown1);
-
-		returnValue = 0x0;
-	}
 
 	positionX = g_curWidgetXBase << 3;
 
@@ -92,108 +108,69 @@ uint16 GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uin
 		unknown4 |= 0x4;
 	}
 
-	GUI_Mouse_Hide_Safe();
-
 	if ((unknown4 & 0x4) != 0) Widget_PaintCurrentWidget();
 
 	GUI_DrawText_Wrapper(text, positionX, g_curWidgetYBase, g_curWidgetFGColourBlink, g_curWidgetFGColourNormal, 0);
-
 	GUI_EditBox_BlinkCursor(positionX + textWidth, false);
 
-	GUI_Mouse_Show_Safe();
-
-	while (true) {
+	while (Input_IsInputAvailable()) {
 		uint16 keyWidth;
 		uint16 key;
 
-		Video_Tick();
 		if (tickProc != NULL) {
 			returnValue = tickProc();
-			if (returnValue != 0) break;
+			if (returnValue != 0)
+				return returnValue;
 		}
 
 		key = GUI_Widget_HandleEvents(w);
 
-		GUI_EditBox_BlinkCursor(positionX + textWidth, false);
-
-		if (key == 0x0) {
-			sleepIdle();
+		if (key == 0x0)
 			continue;
-		}
-		if ((key & 0x8000) != 0) {
-			returnValue = key;
-			break;
-		}
-		if (key == 0x2B) {
-			returnValue = 0x2B;
-			break;
-		}
+
+		if ((key & 0x8000) != 0)
+			return key;
+
+		if (key == 0x2B)
+			return 0x2B;
+
 		if (key == 0x6E) {
 			*t = '\0';
-			returnValue = 0x6B;
-			break;
+			return 0x6B;
 		}
 
 		/* Handle backspace */
-		if (key == 0x0F) {
-			if (textLength == 0) {
-				sleepIdle();
+		if (key == SCANCODE_BACKSPACE) {
+			if (textLength == 0)
 				continue;
-			}
-
-			GUI_EditBox_BlinkCursor(positionX + textWidth, true);
 
 			textWidth -= Font_GetCharWidth(*(t - 1));
 			textLength--;
 			*(--t) = '\0';
 
-			GUI_EditBox_BlinkCursor(positionX + textWidth, false);
-			sleepIdle();
+			GUI_EditBox_BlinkCursor(positionX + textWidth, true);
 			continue;
 		}
-
-		/* key = Input_Keyboard_HandleKeys(key) & 0xFF; */
 
 		/* Names can't start with a space, and should be alpha-numeric */
-		if ((key == 0x20 && textLength == 0) || key < 0x20 || key > 0x7E) {
-			sleepIdle();
+		if (key == SCANCODE_SPACE && textLength == 0)
 			continue;
-		}
 
-		keyWidth = Font_GetCharWidth(key & 0xFF);
-
-		if (textWidth + keyWidth >= maxWidth || textLength >= maxLength) {
-			sleepIdle();
+		key = GUI_EditBox_ScancodeToChar(key);
+		if (key == '\0')
 			continue;
-		}
+
+		keyWidth = Font_GetCharWidth(key);
+		if (textWidth + keyWidth >= maxWidth || textLength >= maxLength)
+			continue;
 
 		/* Add char to the text */
 		*t = key & 0xFF;
 		*(++t) = '\0';
 		textLength++;
 
-		GUI_Mouse_Hide_Safe();
-
 		GUI_EditBox_BlinkCursor(positionX + textWidth, true);
-
-		/* Draw new character */
-		GUI_DrawText_Wrapper(text + textLength - 1, positionX + textWidth, g_curWidgetYBase, g_curWidgetFGColourBlink, g_curWidgetFGColourNormal, 0x020);
-
-		GUI_Mouse_Show_Safe();
-
-		textWidth += keyWidth;
-
-		GUI_EditBox_BlinkCursor(positionX + textWidth, false);
-
-		sleepIdle();
 	}
 
-	/* Deinitialize */
-	{
-		Widget_SetCurrentWidget(oldValue_07AE_0000);
-
-		GFX_Screen_SetActive(oldScreenID);
-	}
-
-	return returnValue;
+	return 0;
 }

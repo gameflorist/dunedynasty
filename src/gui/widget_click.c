@@ -604,30 +604,18 @@ static void FillSavegameDesc(bool save)
 	}
 }
 
-
-/**
- * Handles Click event for savegame button.
- *
- * @param key The index of the clicked button.
- * @return True if a game has been saved, False otherwise.
+/* return values:
+ * -2: game was saved.
+ * -1: cancel clicked.
+ *  0: stay in save game loop.
  */
-static bool GUI_Widget_Savegame_Click(uint16 key)
+int GUI_Widget_Savegame_Click(uint16 key)
 {
-	WindowDesc *desc = &g_savegameNameWindowDesc;
-	bool loop;
 	char *saveDesc = g_savegameDesc[key];
 	uint16 loc08;
-	uint16 loc0A;
-	bool ret;
 
 	if (*saveDesc == '[') *saveDesc = 0;
 
-	GUI_Window_BackupScreen(desc);
-
-	GUI_Window_Create(desc);
-
-	ret = false;
-	loop = true;
 	loc08 = 1;
 
 	if (*saveDesc == '[') key = s_savegameCountOnDisk;
@@ -636,19 +624,16 @@ static bool GUI_Widget_Savegame_Click(uint16 key)
 
 	Widget_SetCurrentWidget(15);
 
-	GUI_Mouse_Hide_Safe();
-	GUI_DrawBorder((g_curWidgetXBase << 3) - 1, g_curWidgetYBase - 1, (g_curWidgetWidth << 3) + 2, g_curWidgetHeight + 2, 4, false);
-	GUI_Mouse_Show_Safe();
-
-	while (loop) {
+	{
 		Widget *w = g_widgetLinkedListTail;
 
 		GUI_DrawText_Wrapper(NULL, 0, 0, 232, 235, 0x22);
 
-		loc0A = GUI_EditBox(saveDesc, 50, 15, g_widgetLinkedListTail, NULL, loc08);
+		int loc0A = GUI_EditBox(saveDesc, 50, 15, g_widgetLinkedListTail, NULL, loc08);
 		loc08 = 2;
 
-		if ((loc0A & 0x8000) == 0) continue;
+		if ((loc0A & 0x8000) == 0)
+			return 0;
 
 		GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(w, loc0A & 0x7FFF), false);
 
@@ -657,25 +642,17 @@ static bool GUI_Widget_Savegame_Click(uint16 key)
 				if (*saveDesc == 0) break;
 
 				SaveFile(GenerateSavegameFilename(s_savegameIndexBase - key), saveDesc);
-				loop = false;
-				ret = true;
-				break;
+				return -2;
 
 			case 0x1F:
-				loop = false;
-				ret = false;
-				FillSavegameDesc(true);
+				return -1;
+
+			default:
 				break;
-
-			default: break;
 		}
-
-		sleepIdle();
 	}
 
-	GUI_Window_RestoreScreen(desc);
-
-	return ret;
+	return 0;
 }
 
 static void UpdateArrows(bool save, bool force)
@@ -727,7 +704,6 @@ void GUI_Widget_InitSaveLoad(bool save)
  */
 int GUI_Widget_SaveLoad_Click(bool save)
 {
-	WindowDesc *desc = &g_saveLoadWindowDesc;
 	Widget *w = g_widgetLinkedListTail;
 	uint16 key = GUI_Widget_HandleEvents(w);
 
@@ -753,22 +729,13 @@ int GUI_Widget_SaveLoad_Click(bool save)
 				return -1;
 
 			default:
-				key -= 0x1E;
-
 				if (!save) {
-					LoadFile(GenerateSavegameFilename(s_savegameIndexBase - key));
+					LoadFile(GenerateSavegameFilename(s_savegameIndexBase - (key - 0x1E)));
 					return -2;
 				}
-
-				if (GUI_Widget_Savegame_Click(key))
-					return 1;
-
-				UpdateArrows(save, true);
-
-				GUI_Window_Create(desc);
-
-				UpdateArrows(save, true);
-				break;
+				else {
+					return key;
+				}
 		}
 
 		GUI_Widget_MakeNormal(w2, false);

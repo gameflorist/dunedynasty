@@ -142,6 +142,8 @@ MenuBar_TickOptions(void)
 			break;
 
 		case 0x8000 | 31: /* STR_SAVE_THIS_GAME */
+			g_gameOverlay = GAMEOVERLAY_SAVE_GAME;
+			GUI_Widget_InitSaveLoad(true);
 			break;
 
 		case 0x8000 | 32: /* STR_GAME_CONTROLS */
@@ -171,21 +173,49 @@ MenuBar_TickOptions(void)
 }
 
 static void
-MenuBar_TickLoadGame(void)
+MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 {
-	const WindowDesc *desc = &g_saveLoadWindowDesc;
+	static int l_save_entry;
 
 	Video_ShadeScreen(128);
-	GUI_Widget_DrawWindow(desc);
-	GUI_Widget_DrawAll(g_widgetLinkedListTail);
 
-	const int ret = GUI_Widget_SaveLoad_Click(false);
-	if (ret == -1) {
-		g_gameOverlay = GAMEOVERLAY_OPTIONS;
-		GUI_Window_Create(&g_optionsWindowDesc);
+	if (overlay == GAMEOVERLAY_SAVE_ENTRY) {
+		const WindowDesc *desc = &g_savegameNameWindowDesc;
+
+		GUI_Widget_DrawWindow(desc);
+		GUI_Widget_DrawAll(g_widgetLinkedListTail);
+
+		const int ret = GUI_Widget_Savegame_Click(l_save_entry);
+
+		if (ret == -1) {
+			g_gameOverlay = GAMEOVERLAY_OPTIONS;
+			GUI_Window_Create(&g_optionsWindowDesc);
+		}
+		else if (ret == -2) {
+			g_gameOverlay = GAMEOVERLAY_NONE;
+		}
 	}
-	else if (ret == -2) {
-		g_gameOverlay = GAMEOVERLAY_NONE;
+	else {
+		const WindowDesc *desc = &g_saveLoadWindowDesc;
+
+		GUI_Widget_DrawWindow(desc);
+		GUI_Widget_DrawAll(g_widgetLinkedListTail);
+
+		const bool save = (overlay == GAMEOVERLAY_SAVE_GAME);
+		const int ret = GUI_Widget_SaveLoad_Click(save);
+
+		if (ret == -1) {
+			g_gameOverlay = GAMEOVERLAY_OPTIONS;
+			GUI_Window_Create(&g_optionsWindowDesc);
+		}
+		else if (ret == -2) {
+			g_gameOverlay = GAMEOVERLAY_NONE;
+		}
+		else if (ret > 0) {
+			g_gameOverlay = GAMEOVERLAY_SAVE_ENTRY;
+			GUI_Window_Create(&g_savegameNameWindowDesc);
+			l_save_entry = ret - 0x1E;
+		}
 	}
 }
 
@@ -247,7 +277,9 @@ MenuBar_TickOptionsOverlay(void)
 			break;
 
 		case GAMEOVERLAY_LOAD_GAME:
-			MenuBar_TickLoadGame();
+		case GAMEOVERLAY_SAVE_GAME:
+		case GAMEOVERLAY_SAVE_ENTRY:
+			MenuBar_TickSaveLoadGame(g_gameOverlay);
 			break;
 
 		case GAMEOVERLAY_GAME_CONTROLS:
