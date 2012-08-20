@@ -35,6 +35,8 @@ enum CPSID {
 #define Video_DrawShapeGrey     VideoA5_DrawShapeGrey
 #define Video_DrawShapeTint     VideoA5_DrawShapeTint
 #define Video_DrawChar          VideoA5_DrawChar
+#define Video_DrawWSA           VideoA5_DrawWSA
+#define Video_DrawWSAStatic     VideoA5_DrawWSAStatic
 
 #define GFX_PutPixel            VideoA5_PutPixel
 #define GUI_DrawLine            VideoA5_DrawLine

@@ -1110,6 +1110,34 @@ VideoA5_InitWSA(unsigned char *buf)
 	WSA_Unload(wsa);
 }
 
+bool
+VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int h)
+{
+	if (!WSA_DisplayFrame(wsa, frame, 0, 0, 0))
+		return false;
+
+	const unsigned char *buf = GFX_Screen_Get_ByIndex(0);
+
+	VideoA5_CopyBitmap(buf, screen, BLACK_COLOUR_0);
+	al_draw_bitmap_region(screen, sx, sy, w, h, dx, dy, 0);
+
+	return true;
+}
+
+void
+VideoA5_DrawWSAStatic(int frame, int x, int y)
+{
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	const int tx = frame % (WINDOW_W / 65);
+	const int ty = frame / (WINDOW_H / 65);
+	const int sx = 65 * tx;
+	const int sy = 65 * ty;
+	assert(0 <= frame && frame < 21);
+
+	al_draw_bitmap_region(wsa_special_texture, sx, sy, 64, 64, x, y, 0);
+}
+
 /*--------------------------------------------------------------*/
 
 static void

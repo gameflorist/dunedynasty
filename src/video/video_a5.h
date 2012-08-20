@@ -26,5 +26,7 @@ extern void VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int 
 extern void VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags);
 extern void VideoA5_DrawShapeTint(enum ShapeID shapeID, int x, int y, unsigned char c, int flags);
 extern void VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y);
+extern bool VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int h);
+extern void VideoA5_DrawWSAStatic(int frame, int x, int y);
 
 #endif
