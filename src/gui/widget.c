@@ -563,6 +563,9 @@ GUI_Widget_SetShortcuts(Widget *w)
 			/* H is used to go to construction yard. */
 			w->shortcut = SCANCODE_A;
 			break;
+		case STR_EXIT_GAME:
+			w->shortcut2 = SCANCODE_ESCAPE;
+			break;
 		case STR_CANCEL:
 			w->shortcut2 = SCANCODE_ESCAPE;
 			break;

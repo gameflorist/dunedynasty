@@ -11,6 +11,7 @@
 #include "mentat.h"
 #include "strategicmap.h"
 #include "../common_a5.h"
+#include "../file.h"
 #include "../gfx.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
@@ -99,9 +100,12 @@ MainMenu_InitWidgets(void)
 		w->drawParameterNormal.text = String_Get_ByIndex(menuitem[i]);
 		w->drawParameterSelected.text = w->drawParameterNormal.text;
 		w->drawParameterDown.text = w->drawParameterNormal.text;
-		w->fgColourSelected = prop21->fgColourNormal;
+		w->fgColourSelected = prop21->fgColourSelected;
 		w->fgColourDown = prop21->fgColourSelected;
-		w->flags.s.requiresClick = true;
+		w->flags.s.clickAsHover = false;
+
+		w->stringID = menuitem[i];
+		GUI_Widget_SetShortcuts(w);
 
 		GUI_Widget_MakeNormal(main_menu_widgets, false);
 		main_menu_widgets = GUI_Widget_Link(main_menu_widgets, w);
@@ -178,6 +182,19 @@ Menu_Init(void)
 /*--------------------------------------------------------------*/
 
 static void
+MainMenu_Initialise(void)
+{
+	File_ReadBlockFile("IBM.PAL", g_palette1, 3 * 256);
+	Video_SetPalette(g_palette1, 0, 256);
+
+	Widget *w = main_menu_widgets;
+	while (w != NULL) {
+		GUI_Widget_MakeNormal(w, false);
+		w = GUI_Widget_GetNext(w);
+	}
+}
+
+static void
 MainMenu_Draw(void)
 {
 	Video_DrawCPS(String_GenerateFilename("TITLE"));
@@ -189,37 +206,90 @@ MainMenu_Draw(void)
 	GUI_DrawText_Wrapper("v1.07", SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x222);
 }
 
+static void
+MainMenu_SetupBlink(int widgetID)
+{
+	Widget *w = main_menu_widgets;
+
+	widgetID &= ~0x8000;
+
+	while (w != NULL) {
+		if (w->index == widgetID) {
+			GUI_Widget_MakeSelected(w, false);
+		}
+		else {
+			GUI_Widget_MakeNormal(w, false);
+		}
+
+		w = GUI_Widget_GetNext(w);
+	}
+}
+
 static enum MenuAction
 MainMenu_Loop(void)
 {
 	const int widgetID = GUI_Widget_HandleEvents(main_menu_widgets);
+	bool redraw = false;
 
 	switch (widgetID) {
 		case 0x8000 | STR_PLAY_A_GAME:
 			g_playerHouseID = HOUSE_MERCENARY;
-			return MENU_PICK_HOUSE;
+			MainMenu_SetupBlink(widgetID);
+			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
 		case 0x8000 | STR_REPLAY_INTRODUCTION:
 			break;
 
 		case 0x8000 | STR_LOAD_GAME:
 			GUI_Widget_InitSaveLoad(false);
-			return MENU_LOAD_GAME;
+			MainMenu_SetupBlink(widgetID);
+			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
 
 		case 0x8000 | STR_HALL_OF_FAME:
 			g_playerHouseID = HOUSE_MERCENARY;
 			GUI_HallOfFame_Show(0xFFFF);
+			MainMenu_SetupBlink(widgetID);
 			return MENU_REDRAW | MENU_MAIN_MENU;
 
-		case SCANCODE_ESCAPE:
 		case 0x8000 | STR_EXIT_GAME:
-			return MENU_EXIT_GAME;
+			MainMenu_SetupBlink(widgetID);
+			return MENU_BLINK_CONFIRM | MENU_EXIT_GAME;
 
 		default:
 			break;
 	}
 
-	return MENU_MAIN_MENU;
+	Widget *w = main_menu_widgets;
+	while (w != NULL) {
+		if (w->state.s.hover1 != w->state.s.hover1Last) {
+			redraw = true;
+			break;
+		}
+
+		w = GUI_Widget_GetNext(w);
+	}
+
+	return (redraw ? MENU_REDRAW : 0) | MENU_MAIN_MENU;
+}
+
+static bool
+MainMenu_BlinkLoop(int64_t blink_start)
+{
+	const unsigned char blink_col[2][3] = {
+		{ 0xFF, 0x00, 0x00 },
+		{ 0xFF, 0xFF, 0xFF }
+	};
+
+	const int64_t ticks = Timer_GetTicks() - blink_start;
+
+	if (ticks >= 20) {
+		Video_SetPalette(blink_col[1], 6, 1);
+		return true;
+	}
+	else {
+		Video_SetPalette(blink_col[(ticks / 3) & 0x1], 6, 1);
+		return false;
+	}
 }
 
 /*--------------------------------------------------------------*/
@@ -489,6 +559,10 @@ Menu_Run(void)
 			initialise_menu = false;
 
 			switch (curr_menu & 0xFF) {
+				case MENU_MAIN_MENU:
+					MainMenu_Initialise();
+					break;
+
 				case MENU_CONFIRM_HOUSE:
 				case MENU_BRIEFING:
 				case MENU_BRIEFING_WIN:
@@ -541,7 +615,7 @@ Menu_Run(void)
 			if (curr_menu & MENU_FADE_IN) {
 				Menu_DrawFadeIn(fade_start);
 			}
-			else if (curr_menu & MENU_FADE_OUT) {
+			else if ((curr_menu & (MENU_BLINK_CONFIRM | MENU_FADE_OUT)) == MENU_FADE_OUT) {
 				Menu_DrawFadeOut(fade_start);
 			}
 
@@ -562,10 +636,17 @@ Menu_Run(void)
 				break;
 		}
 
+		curr_menu = (curr_menu & ~MENU_REDRAW);
+
 		enum MenuAction res = curr_menu;
-		switch (curr_menu) {
+		switch ((int)curr_menu) {
 			case MENU_MAIN_MENU:
 				res = MainMenu_Loop();
+				break;
+
+			case MENU_MAIN_MENU | MENU_BLINK_CONFIRM | MENU_FADE_OUT:
+				if (MainMenu_BlinkLoop(fade_start))
+					res &= ~MENU_BLINK_CONFIRM;
 				break;
 
 			case MENU_PICK_HOUSE:
@@ -598,22 +679,16 @@ Menu_Run(void)
 			default:
 				if (curr_menu & MENU_FADE_OUT) {
 					if (Timer_GetTicks() >= fade_start + MENU_FADE_TICKS) {
-						fade_start = Timer_GetTicks();
-						curr_menu = next_menu;
-						res = curr_menu;
+						curr_menu = MENU_FADE_OUT | next_menu;
+						res = next_menu;
 						initialise_menu = true;
 					}
-
-					redraw = true;
 				}
 				else if (curr_menu & MENU_FADE_IN) {
 					if (Timer_GetTicks() >= fade_start + MENU_FADE_TICKS) {
-						curr_menu &= ~MENU_FADE_IN;
-						res = curr_menu;
+						res &= ~MENU_FADE_IN;
 						Input_History_Clear();
 					}
-
-					redraw = true;
 				}
 				break;
 		}
@@ -624,18 +699,28 @@ Menu_Run(void)
 
 			if (res & MENU_NO_TRANSITION) {
 				curr_menu = (res & 0xFF);
-				next_menu = curr_menu;
 				initialise_menu = true;
 			}
 			else {
+				if (res & MENU_BLINK_CONFIRM)
+					curr_menu |= MENU_BLINK_CONFIRM;
+
 				curr_menu = MENU_FADE_OUT | curr_menu;
 				next_menu = MENU_FADE_IN | (res & 0xFF);
 				fade_start = Timer_GetTicks();
 			}
 		}
-		else if (res & MENU_REDRAW) {
-			curr_menu = (res & ~MENU_REDRAW);
+		else if ((curr_menu^res) & (MENU_BLINK_CONFIRM | MENU_FADE_OUT | MENU_FADE_IN)) {
 			redraw = true;
+
+			curr_menu = (res & ~MENU_REDRAW);
+			fade_start = Timer_GetTicks();
+		}
+		else {
+			if (res & (MENU_REDRAW | MENU_BLINK_CONFIRM | MENU_FADE_OUT | MENU_FADE_IN))
+				redraw = true;
+
+			curr_menu = (res & ~MENU_REDRAW);
 		}
 	}
 }
