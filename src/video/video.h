@@ -18,6 +18,8 @@ enum CPSID {
 	CPS_SPECIAL_MAX
 };
 
+struct FadeInAux;
+
 #include "video_a5.h"
 
 #define Video_Init()            true
@@ -37,6 +39,11 @@ enum CPSID {
 #define Video_DrawChar          VideoA5_DrawChar
 #define Video_DrawWSA           VideoA5_DrawWSA
 #define Video_DrawWSAStatic     VideoA5_DrawWSAStatic
+
+#define Video_DrawFadeIn        VideoA5_DrawFadeIn
+#define Video_TickFadeIn        VideoA5_TickFadeIn
+#define Video_InitFadeInCPS     VideoA5_InitFadeInCPS
+#define Video_InitFadeInShape   VideoA5_InitFadeInShape
 
 #define GFX_PutPixel            VideoA5_PutPixel
 #define GUI_DrawLine            VideoA5_DrawLine

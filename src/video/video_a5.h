@@ -29,4 +29,9 @@ extern void VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y);
 extern bool VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int h);
 extern void VideoA5_DrawWSAStatic(int frame, int x, int y);
 
+extern void VideoA5_DrawFadeIn(const struct FadeInAux *aux, int x, int y);
+extern bool VideoA5_TickFadeIn(struct FadeInAux *aux);
+extern struct FadeInAux *VideoA5_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fade_in);
+extern struct FadeInAux *VideoA5_InitFadeInShape(enum ShapeID shapeID, enum HouseType houseID);
+
 #endif

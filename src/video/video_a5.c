@@ -26,6 +26,7 @@
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
 #include "../sprites.h"
+#include "../tools.h"
 #include "../wsa.h"
 
 #include "dune2_16x16.xpm"
@@ -53,6 +54,17 @@ typedef struct CPSStore {
 	char filename[16];
 	ALLEGRO_BITMAP *bmp;
 } CPSStore;
+
+typedef struct FadeInAux {
+	bool fade_in;   /* false to fade out. */
+	int frame;      /* 0 <= frame < height. */
+	int width;
+	int height;
+
+	/* Persistent random data. */
+	int cols[SCREEN_WIDTH];
+	int rows[SCREEN_HEIGHT];
+} FadeInAux;
 
 static const struct CPSSpecialCoord {
 	int cx, cy; /* coordinates in cps. */
@@ -97,6 +109,8 @@ static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
 static ALLEGRO_MOUSE_CURSOR *s_cursor[CURSOR_MAX];
+
+static FadeInAux s_fadeInAux;
 
 /* VideoA5_GetNextXY:
  *
@@ -441,6 +455,101 @@ VideoA5_ShadeScreen(int alpha)
 
 /*--------------------------------------------------------------*/
 
+static FadeInAux *
+VideoA5_InitFadeInSprite(int w, int h, bool fade_in)
+{
+	FadeInAux *aux = &s_fadeInAux;
+	assert(w < SCREEN_WIDTH);
+	assert(h < SCREEN_HEIGHT);
+
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap_region(screen, 0, 0, w, h, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+	for (int y = 0; y < h; y++) {
+		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
+
+		for (int x = 0; x < w; x++) {
+			row[reg->pixel_size*x + 3] = fade_in ? 0x00 : 0xFF;
+		}
+	}
+	al_unlock_bitmap(screen);
+
+	for (int i = 0; i < w; i++) {
+		aux->cols[i] = i;
+	}
+
+	for (int i = 0; i < h; i++) {
+		aux->rows[i] = i;
+	}
+
+	for (int i = 0; i < w; i++) {
+		const int j = Tools_RandomRange(0, w - 1);
+		const int swap = aux->cols[j];
+
+		aux->cols[j] = aux->cols[i];
+		aux->cols[i] = swap;
+	}
+
+	for (int i = 0; i < h; i++) {
+		const int j = Tools_RandomRange(0, h - 1);
+		const int swap = aux->rows[j];
+
+		aux->rows[j] = aux->rows[i];
+		aux->rows[i] = swap;
+	}
+
+	aux->fade_in = fade_in;
+	aux->frame = 0;
+	aux->width = w;
+	aux->height = h;
+	return aux;
+}
+
+void
+VideoA5_DrawFadeIn(const FadeInAux *aux, int x, int y)
+{
+	al_draw_bitmap_region(screen, 0, 0, aux->width, aux->height, x, y, 0);
+}
+
+bool
+VideoA5_TickFadeIn(FadeInAux *aux)
+{
+	assert(0 <= aux->frame && aux->frame <= aux->height);
+
+	if (aux->frame >= aux->height)
+		return true;
+
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap_region(screen, 0, 0, aux->width, aux->height, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+
+	int j = aux->frame;
+	for (int i = 0; i < aux->width; i++) {
+		const int x = aux->cols[i];
+		const int y = aux->rows[j];
+
+		if (++j >= aux->height)
+			j = 0;
+
+		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
+
+		if ((row[reg->pixel_size*x + 0] == 0x00) &&
+		    (row[reg->pixel_size*x + 1] == 0x00) &&
+		    (row[reg->pixel_size*x + 2] == 0x00))
+			continue;
+
+		if (aux->fade_in) {
+			row[reg->pixel_size*x + 3] = 0xFF;
+		}
+		else {
+			row[reg->pixel_size*x + 3] = 0x00;
+		}
+	}
+
+	al_unlock_bitmap(screen);
+
+	aux->frame++;
+	return false;
+}
+
+/*--------------------------------------------------------------*/
+
 static CPSStore *
 VideoA5_ExportCPS(const char *filename, unsigned char *buf)
 {
@@ -612,6 +721,19 @@ VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y)
 	}
 
 	al_draw_bitmap_region(cps_special_texture, sx, sy, coord->w, coord->h, x, y, 0);
+}
+
+FadeInAux *
+VideoA5_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fade_in)
+{
+	ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
+	CPSStore *cps = VideoA5_LoadCPS(filename);
+
+	al_set_target_bitmap(screen);
+	al_draw_bitmap_region(cps->bmp, x, y, w, h, 0, 0, 0);
+	al_set_target_bitmap(old_target);
+
+	return VideoA5_InitFadeInSprite(w, h, fade_in);
 }
 
 /*--------------------------------------------------------------*/
@@ -961,6 +1083,7 @@ VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags)
 void
 VideoA5_DrawShapeTint(enum ShapeID shapeID, int x, int y, unsigned char c, int flags)
 {
+	assert(shapeID < SHAPEID_MAX);
 	assert(s_shape[shapeID][HOUSE_HARKONNEN] != NULL);
 
 	int al_flags = 0;
@@ -969,6 +1092,24 @@ VideoA5_DrawShapeTint(enum ShapeID shapeID, int x, int y, unsigned char c, int f
 	if (flags & 0x02) al_flags |= ALLEGRO_FLIP_VERTICAL;
 
 	al_draw_tinted_bitmap(s_shape[shapeID][HOUSE_HARKONNEN], paltoRGB[c], x, y, al_flags);
+}
+
+FadeInAux *
+VideoA5_InitFadeInShape(enum ShapeID shapeID, enum HouseType houseID)
+{
+	assert(shapeID < SHAPEID_MAX);
+	assert(houseID < HOUSE_MAX);
+	assert(s_shape[shapeID][houseID] != NULL);
+
+	ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
+	ALLEGRO_BITMAP *bmp = s_shape[shapeID][houseID];
+
+	al_set_target_bitmap(screen);
+	al_clear_to_color(al_map_rgba(0x00, 0x00, 0x00, 0x00));
+	al_draw_bitmap(bmp, 0, 0, 0);
+	al_set_target_bitmap(old_target);
+
+	return VideoA5_InitFadeInSprite(al_get_bitmap_width(bmp), al_get_bitmap_height(bmp), true);
 }
 
 /*--------------------------------------------------------------*/
@@ -1186,6 +1327,7 @@ VideoA5_InitSprites(void)
 	VideoA5_InitCursor();
 
 	al_set_target_backbuffer(display);
+	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
 
 	GFX_Screen_SetActive(old_screen);
 	Widget_SetCurrentWidget(old_widget);
