@@ -22,6 +22,20 @@
 #include "../timer/timer.h"
 #include "../video/video.h"
 
+enum {
+	MENU_FADE_TICKS = 10
+};
+
+/* Menu loops can return a MenuAction to transition between screens,
+ * or return itself to stay in the same menu.
+ *
+ * Return (MENU_REDRAW | curr_menu) to force a redraw.
+ * Return next_menu to fade in and out.
+ * Return (MENU_NOTRANSITION | next_menu) to skip fading.
+ * Return (MENU_BLINK_CONFIRM | next_menu) to blink before fading.
+ *
+ * MENU_FADE_IN and MENU_FADE_OUT are used internally.
+ */
 enum MenuAction {
 	MENU_MAIN_MENU,
 	MENU_PICK_HOUSE,
@@ -34,6 +48,10 @@ enum MenuAction {
 	MENU_STRATEGIC_MAP,
 	MENU_EXIT_GAME,
 
+	MENU_NO_TRANSITION = 0x0100,
+	MENU_FADE_IN = 0x0200,
+	MENU_FADE_OUT = 0x0400,
+	MENU_BLINK_CONFIRM = 0x0800,
 	MENU_REDRAW = 0x8000
 };
 
@@ -430,10 +448,35 @@ LoadGame_Loop(void)
 
 /*--------------------------------------------------------------*/
 
+static void
+Menu_DrawFadeIn(int64_t fade_start)
+{
+	int alpha = 0xFF - 0xFF * (Timer_GetTicks() - fade_start) / MENU_FADE_TICKS;
+
+	if (alpha <= 0)
+		return;
+
+	Video_ShadeScreen(alpha);
+}
+
+static void
+Menu_DrawFadeOut(int64_t fade_start)
+{
+	int alpha = 0xFF * (Timer_GetTicks() - fade_start) / MENU_FADE_TICKS;
+
+	if (alpha >= 0xFF)
+		alpha = 0xFF;
+
+	Video_ShadeScreen(alpha);
+}
+
 void
 Menu_Run(void)
 {
-	enum MenuAction curr_menu = MENU_MAIN_MENU;
+	enum MenuAction curr_menu = MENU_FADE_IN | MENU_MAIN_MENU;
+	enum MenuAction next_menu = curr_menu;
+	int64_t fade_start = Timer_GetTicks();
+	bool initialise_menu = true;
 	bool redraw = true;
 
 	Menu_Init();
@@ -441,13 +484,33 @@ Menu_Run(void)
 	al_flush_event_queue(g_a5_input_queue);
 
 	while (curr_menu != MENU_EXIT_GAME) {
-		ALLEGRO_EVENT event;
+		/* Initialise. */
+		if (initialise_menu) {
+			initialise_menu = false;
 
+			switch (curr_menu & 0xFF) {
+				case MENU_CONFIRM_HOUSE:
+				case MENU_BRIEFING:
+				case MENU_BRIEFING_WIN:
+				case MENU_BRIEFING_LOSE:
+					Briefing_Initialise(curr_menu & 0xFF);
+					break;
+
+				case MENU_STRATEGIC_MAP:
+					StrategicMap_Initialise();
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		/* Draw. */
 		if (redraw) {
 			redraw = false;
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 
-			switch (curr_menu) {
+			switch (curr_menu & 0xFF) {
 				case MENU_MAIN_MENU:
 					MainMenu_Draw();
 					break;
@@ -460,7 +523,7 @@ Menu_Run(void)
 				case MENU_BRIEFING:
 				case MENU_BRIEFING_WIN:
 				case MENU_BRIEFING_LOSE:
-					Briefing_Draw(curr_menu);
+					Briefing_Draw(curr_menu & 0xFF);
 					break;
 
 				case MENU_LOAD_GAME:
@@ -475,8 +538,18 @@ Menu_Run(void)
 					break;
 			}
 
+			if (curr_menu & MENU_FADE_IN) {
+				Menu_DrawFadeIn(fade_start);
+			}
+			else if (curr_menu & MENU_FADE_OUT) {
+				Menu_DrawFadeOut(fade_start);
+			}
+
 			Video_Tick();
 		}
+
+		/* Menu input. */
+		ALLEGRO_EVENT event;
 
 		al_wait_for_event(g_a5_input_queue, &event);
 		switch (event.type) {
@@ -521,29 +594,48 @@ Menu_Run(void)
 			case MENU_EXIT_GAME:
 			case MENU_REDRAW:
 				break;
+
+			default:
+				if (curr_menu & MENU_FADE_OUT) {
+					if (Timer_GetTicks() >= fade_start + MENU_FADE_TICKS) {
+						fade_start = Timer_GetTicks();
+						curr_menu = next_menu;
+						res = curr_menu;
+						initialise_menu = true;
+					}
+
+					redraw = true;
+				}
+				else if (curr_menu & MENU_FADE_IN) {
+					if (Timer_GetTicks() >= fade_start + MENU_FADE_TICKS) {
+						curr_menu &= ~MENU_FADE_IN;
+						res = curr_menu;
+						Input_History_Clear();
+					}
+
+					redraw = true;
+				}
+				break;
 		}
 
-		if (curr_menu != res)
+		/* Menu transition. */
+		if ((curr_menu & 0xFF) != (res & 0xFF)) {
 			redraw = true;
 
-		if ((curr_menu & ~MENU_REDRAW) != (res & ~MENU_REDRAW)) {
-			switch (res & ~MENU_REDRAW) {
-				case MENU_CONFIRM_HOUSE:
-				case MENU_BRIEFING:
-				case MENU_BRIEFING_WIN:
-				case MENU_BRIEFING_LOSE:
-					Briefing_Initialise(res & ~MENU_REDRAW);
-					break;
-
-				case MENU_STRATEGIC_MAP:
-					StrategicMap_Initialise();
-					break;
-
-				default:
-					break;
+			if (res & MENU_NO_TRANSITION) {
+				curr_menu = (res & 0xFF);
+				next_menu = curr_menu;
+				initialise_menu = true;
+			}
+			else {
+				curr_menu = MENU_FADE_OUT | curr_menu;
+				next_menu = MENU_FADE_IN | (res & 0xFF);
+				fade_start = Timer_GetTicks();
 			}
 		}
-
-		curr_menu = (res & ~MENU_REDRAW);
+		else if (res & MENU_REDRAW) {
+			curr_menu = (res & ~MENU_REDRAW);
+			redraw = true;
+		}
 	}
 }
