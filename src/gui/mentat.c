@@ -682,9 +682,7 @@ void GUI_Mentat_Create_HelpScreen_Widgets(void)
 	g_widgetMentatTail = NULL;
 	ypos = 8;
 
-	w = (Widget *)GFX_Screen_Get_ByIndex(5);
-
-	memset(w, 0, 13 * sizeof(Widget));
+	w = calloc(13, sizeof(Widget));
 
 	for (i = 0; i < 13; i++) {
 		w->index = i + 2;
@@ -811,6 +809,10 @@ static void GUI_Mentat_ShowHelp(void)
 	mentat->state = MENTAT_SHOW_TEXT;
 	mentat->desc = desc;
 	mentat->text = text;
+
+	mentat->wsa = WSA_LoadFile(picture, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+	mentat->wsa_timer = Timer_GetTicks();
+	mentat->wsa_frame = 0;
 
 #if 0
 	GUI_Mentat_Loop(picture, desc, text, loc12 ? 1 : 0, g_widgetMentatFirst);

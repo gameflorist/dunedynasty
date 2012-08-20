@@ -133,6 +133,7 @@ MenuBar_ClickMentat(Widget *w)
 
 	g_gameOverlay = GAMEOVERLAY_MENTAT;
 	mentat->state = MENTAT_SHOW_CONTENTS;
+	mentat->wsa = NULL;
 	Video_SetCursor(SHAPE_CURSOR_NORMAL);
 	Timer_SetTimer(TIMER_GAME, false);
 
@@ -153,6 +154,9 @@ MenuBar_TickMentatOverlay(void)
 	if (MentatHelp_Tick(g_playerHouseID, &g_mentat_state)) {
 		free(g_widgetMentatFirst);
 		g_widgetMentatFirst = NULL;
+
+		free(g_widgetMentatTail);
+		g_widgetMentatTail = NULL;
 
 		GUI_Widget_Free_WithScrollbar(g_widgetMentatScrollbar);
 		g_widgetMentatScrollbar = NULL;

@@ -210,6 +210,7 @@ static void
 MentatHelp_Draw(enum HouseType houseID, MentatState *mentat)
 {
 	Mentat_DrawBackground(houseID);
+	MentatBriefing_DrawWSA(mentat);
 
 	if (mentat->state == MENTAT_SHOW_CONTENTS) {
 		GUI_Mentat_Draw(true);
@@ -256,6 +257,7 @@ MentatHelp_Tick(enum HouseType houseID, MentatState *mentat)
 
 		if (widgetID == 0x8001) {
 			mentat->state = MENTAT_SHOW_CONTENTS;
+			mentat->wsa = NULL;
 			GUI_Mentat_LoadHelpSubjects(false);
 		}
 	}
