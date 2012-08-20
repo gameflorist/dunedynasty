@@ -1257,8 +1257,10 @@ VideoA5_InitWSA(unsigned char *buf)
 bool
 VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int h)
 {
-	if (!WSA_DisplayFrame(wsa, frame, 0, 0, 0))
-		return false;
+	if (wsa != NULL) {
+		if (!WSA_DisplayFrame(wsa, frame, 0, 0, 0))
+			return false;
+	}
 
 	const unsigned char *buf = GFX_Screen_Get_ByIndex(0);
 

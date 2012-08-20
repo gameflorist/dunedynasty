@@ -80,6 +80,13 @@ Cutscene_InputSkipScene(void)
 	return false;
 }
 
+static void
+Cutscene_CopyScreen(void)
+{
+	Video_DrawWSA(NULL, 0, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	Video_Tick();
+}
+
 static uint8
 Cutscene_GetPixel(uint16 x, uint16 y)
 {
@@ -178,7 +185,7 @@ Cutscene_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 
 		/* XXX -- This delays the system so you can in fact see the animation */
 		if ((y % 4) == 0) {
-			Video_Tick();
+			Cutscene_CopyScreen();
 			Timer_Wait();
 		}
 	}
@@ -243,11 +250,81 @@ Cutscene_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 scre
 			Cutscene_PutPixel(curX, curY, colour);
 		}
 
-		Video_Tick();
+		Cutscene_CopyScreen();
 		Timer_Sleep(delay);
 	}
 
 	GFX_Screen_SetActive(oldScreenID);
+}
+
+static void
+Cutscene_SetPaletteAnimated(uint8 *palette, int16 ticksOfAnimation)
+{
+	bool progress;
+	int16 diffPerTick;
+	int16 tickSlice;
+	int16 highestDiff;
+	int16 ticks;
+	uint16 tickCurrent;
+	uint8 data[256 * 3];
+	int i;
+
+	if (g_paletteActive == NULL || palette == NULL) return;
+
+	memcpy(data, g_paletteActive, 256 * 3);
+
+	highestDiff = 0;
+	for (i = 0; i < 256 * 3; i++) {
+		int16 diff = (int16)palette[i] - (int16)data[i];
+		highestDiff = max(highestDiff, abs(diff));
+	}
+
+	ticks = ticksOfAnimation << 8;
+	if (highestDiff != 0) ticks /= highestDiff;
+
+	/* Find a nice value to change every timeslice */
+	tickSlice = ticks;
+	diffPerTick = 1;
+	while (diffPerTick <= highestDiff && ticks < (2 << 8)) {
+		ticks += tickSlice;
+		diffPerTick++;
+	}
+
+	tickCurrent = 0;
+
+	do {
+		progress = false;
+
+		tickCurrent  += (uint16)ticks;
+		const int delay = tickCurrent >> 8;
+		tickCurrent  &= 0xFF;
+
+		for (i = 0; i < 256 * 3; i++) {
+			int16 current = palette[i];
+			int16 goal = data[i];
+
+			if (goal == current) continue;
+
+			if (goal < current) {
+				goal = min(goal + diffPerTick, current);
+				progress = true;
+			}
+
+			if (goal > current) {
+				goal = max(goal - diffPerTick, current);
+				progress = true;
+			}
+
+			data[i] = goal & 0xFF;
+		}
+
+		if (progress) {
+			GFX_SetPalette(data);
+
+			Cutscene_CopyScreen();
+			Timer_Sleep(delay);
+		}
+	} while (progress);
 }
 
 /*--------------------------------------------------------------*/
@@ -314,7 +391,7 @@ static void GameLoop_FinishAnimation(void)
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x1);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x2);
 
-	GUI_SetPaletteAnimated(g_palette2, 60);
+	Cutscene_SetPaletteAnimated(g_palette2, 60);
 
 	GUI_ClearScreen(0);
 
@@ -583,11 +660,11 @@ static void GameLoop_PlayAnimation(void)
 			GameLoop_PlaySubtitle(animationMode);
 			WSA_DisplayFrame(wsa, frame++, posX, posY, 0);
 			GameLoop_PalettePart_Update(true);
-			Video_Tick();
+			Cutscene_CopyScreen();
 
 			memcpy(&g_palette1[215 * 3], s_palettePartCurrent, 18);
 
-			GUI_SetPaletteAnimated(g_palette1, 45);
+			Cutscene_SetPaletteAnimated(g_palette1, 45);
 
 			locdi++;
 		} else {
@@ -656,7 +733,7 @@ static void GameLoop_PlayAnimation(void)
 
 			do {
 				GameLoop_PalettePart_Update(false);
-				Video_Tick();
+				Cutscene_CopyScreen();
 				Timer_Wait();
 			} while ((Timer_GetTicks() < timeout) && (Timer_GetTicks() < loc10));
 		}
@@ -666,7 +743,7 @@ static void GameLoop_PlayAnimation(void)
 			do {
 				GameLoop_PlaySubtitle(animationMode);
 				displayed = WSA_DisplayFrame(wsa, frame++, posX, posY, 0);
-				Video_Tick();
+				Cutscene_CopyScreen();
 			} while (displayed);
 		}
 
@@ -675,7 +752,7 @@ static void GameLoop_PlayAnimation(void)
 
 			memcpy(&g_palette_998A[215 * 3], s_palettePartCurrent, 18);
 
-			GUI_SetPaletteAnimated(g_palette_998A, 15);
+			Cutscene_SetPaletteAnimated(g_palette_998A, 15);
 
 			memcpy(g_palette_998A, g_palette1, 256 * 3);
 		}
@@ -685,7 +762,7 @@ static void GameLoop_PlayAnimation(void)
 
 			memcpy(&g_palette_998A[215 * 3], s_palettePartCurrent, 18);
 
-			GUI_SetPaletteAnimated(g_palette_998A, 45);
+			Cutscene_SetPaletteAnimated(g_palette_998A, 45);
 		}
 
 		WSA_Unload(wsa);
@@ -975,10 +1052,10 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 		if (loc10 && stage == 0) break;
 
 		if (Cutscene_InputSkipScene()) break;
-		Video_Tick();
+		Cutscene_CopyScreen();
 	}
 
-	GUI_SetPaletteAnimated(g_palette2, 120);
+	Cutscene_SetPaletteAnimated(g_palette2, 120);
 
 	GUI_ClearScreen(0);
 	GUI_ClearScreen(memory);
@@ -1029,11 +1106,7 @@ static void GameLoop_GameCredits(void)
 
 	GUI_Screen_Copy(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, 0);
 
-	GUI_SetPaletteAnimated(g_palette_998A, 60);
-
-	Music_Play(0);
-
-	GameLoop_Uninit();
+	Cutscene_SetPaletteAnimated(g_palette_998A, 60);
 
 	Music_Play(33);
 
@@ -1078,7 +1151,7 @@ static void GameLoop_GameCredits(void)
 		sleepIdle();
 	}
 
-	GUI_SetPaletteAnimated(g_palette2, 60);
+	Cutscene_SetPaletteAnimated(g_palette2, 60);
 
 	Driver_Music_FadeOut();
 
@@ -1154,7 +1227,7 @@ static void Gameloop_Logos(void)
 	wsa = WSA_LoadFile("WESTWOOD.WSA", GFX_Screen_Get_ByIndex(3), GFX_Screen_GetSize_ByIndex(3) + GFX_Screen_GetSize_ByIndex(5) + GFX_Screen_GetSize_ByIndex(6), true);
 	WSA_DisplayFrame(wsa, frame++, 0, 0, 0);
 
-	GUI_SetPaletteAnimated(g_palette_998A, 60);
+	Cutscene_SetPaletteAnimated(g_palette_998A, 60);
 
 	Music_Play(0x24);
 
@@ -1166,7 +1239,7 @@ static void Gameloop_Logos(void)
 		displayed = WSA_DisplayFrame(wsa, frame++, 0, 0, 0);
 		if (!displayed) break;
 
-		Video_Tick();
+		Cutscene_CopyScreen();
 		Timer_Sleep(6);
 	}
 
@@ -1177,12 +1250,12 @@ static void Gameloop_Logos(void)
 
 	while (Timer_GetTicks() < timeout1) {
 		if (!Cutscene_InputSkipScene()) {
-			Video_Tick();
+			Cutscene_CopyScreen();
 			sleepIdle();
 			continue;
 		}
 
-		GUI_SetPaletteAnimated(g_palette2, 30);
+		Cutscene_SetPaletteAnimated(g_palette2, 30);
 
 		GUI_ClearScreen(0);
 
@@ -1190,7 +1263,7 @@ static void Gameloop_Logos(void)
 		return;
 	}
 
-	GUI_SetPaletteAnimated(g_palette2, 60);
+	Cutscene_SetPaletteAnimated(g_palette2, 60);
 
 	while (Driver_Music_IsPlaying()) sleepIdle();
 
@@ -1210,7 +1283,7 @@ static void Gameloop_Logos(void)
 	}
 #endif
 
-	GUI_SetPaletteAnimated(g_palette2, 60);
+	Cutscene_SetPaletteAnimated(g_palette2, 60);
 
 	GFX_ClearScreen();
 
@@ -1218,16 +1291,16 @@ static void Gameloop_Logos(void)
 
 	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
 
-	GUI_SetPaletteAnimated(g_palette_998A, 30);
+	Cutscene_SetPaletteAnimated(g_palette_998A, 30);
 
 	for (int timeout = 0; timeout < 60; timeout++) {
 		if (!Cutscene_InputSkipScene()) {
-			Video_Tick();
+			Cutscene_CopyScreen();
 			Timer_Wait();
 			continue;
 		}
 
-		GUI_SetPaletteAnimated(g_palette2, 30);
+		Cutscene_SetPaletteAnimated(g_palette2, 30);
 
 		GUI_ClearScreen(0);
 
@@ -1235,7 +1308,7 @@ static void Gameloop_Logos(void)
 		return;
 	}
 
-	GUI_SetPaletteAnimated(g_palette2, 30);
+	Cutscene_SetPaletteAnimated(g_palette2, 30);
 
 	GUI_ClearScreen(0);
 
@@ -1243,11 +1316,11 @@ static void Gameloop_Logos(void)
 
 	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
 
-	GUI_SetPaletteAnimated(g_palette_998A, 30);
+	Cutscene_SetPaletteAnimated(g_palette_998A, 30);
 
 	for (int timeout = 0; timeout < 180; timeout++) {
 		if (!Cutscene_InputSkipScene()) {
-			Video_Tick();
+			Cutscene_CopyScreen();
 			Timer_Wait();
 			continue;
 		}
@@ -1255,7 +1328,7 @@ static void Gameloop_Logos(void)
 		break;
 	}
 
-	GUI_SetPaletteAnimated(g_palette2, 30);
+	Cutscene_SetPaletteAnimated(g_palette2, 30);
 
 	GUI_ClearScreen(0);
 

@@ -11,6 +11,7 @@
 #include "mentat.h"
 #include "strategicmap.h"
 #include "../common_a5.h"
+#include "../cutscene.h"
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/font.h"
@@ -38,6 +39,7 @@ enum {
  * MENU_FADE_IN and MENU_FADE_OUT are used internally.
  */
 enum MenuAction {
+	MENU_INTRODUCTION,
 	MENU_MAIN_MENU,
 	MENU_PICK_HOUSE,
 	MENU_CONFIRM_HOUSE,
@@ -238,7 +240,8 @@ MainMenu_Loop(void)
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
 		case 0x8000 | STR_REPLAY_INTRODUCTION:
-			break;
+			MainMenu_SetupBlink(widgetID);
+			return MENU_BLINK_CONFIRM | MENU_INTRODUCTION;
 
 		case 0x8000 | STR_LOAD_GAME:
 			GUI_Widget_InitSaveLoad(false);
@@ -640,6 +643,11 @@ Menu_Run(void)
 
 		enum MenuAction res = curr_menu;
 		switch ((int)curr_menu) {
+			case MENU_INTRODUCTION:
+				GameLoop_GameIntroAnimation();
+				res = MENU_MAIN_MENU;
+				break;
+
 			case MENU_MAIN_MENU:
 				res = MainMenu_Loop();
 				break;
