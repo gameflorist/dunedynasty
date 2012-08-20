@@ -51,19 +51,8 @@ static const uint8 s_unknownHouseData[6][8] = {
 static uint8 *s_mentatSprites[3][5];
 
 bool g_interrogation;      /*!< Asking a security question (changes mentat eye movement). */
-static uint8 s_eyesLeft;    /*!< Left of the changing eyes. */
-static uint8 s_eyesTop;     /*!< Top of the changing eyes. */
-static uint8 s_eyesRight;   /*!< Right of the changing eyes. */
-static uint8 s_eyesBottom;  /*!< Bottom of the changing eyes. */
-
 int64_t g_interrogationTimer; /*!< Speaking time-out for security question. */
-static uint8 s_mouthLeft;   /*!< Left of the moving mouth. */
-static uint8 s_mouthTop;    /*!< Top of the moving mouth. */
-static uint8 s_mouthRight;  /*!< Right of the moving mouth. */
-static uint8 s_mouthBottom; /*!< Bottom of the moving mouth. */
 
-static uint8 s_otherLeft; /*!< Left of the other object (ring of Ordos mentat, book of atreides mentat). */
-static uint8 s_otherTop;  /*!< Top of the other object (ring of Ordos mentat, book of atreides mentat). */
 bool g_disableOtherMovement; /*!< Disable moving of the other object. */
 
 uint8 g_shoulderLeft; /*!< Left of the right shoulder of the house mentats (to put them in front of the display in the background). */
@@ -246,76 +235,29 @@ void GUI_Mentat_Draw(bool force)
 /* Moved to gui/menu_opendune.c */
 static void GUI_Mentat_ShowHelpList(bool proceed);
 extern bool GUI_Widget_Mentat_Click(Widget *w);
-#endif
-
-/**
- * Show the Mentat screen.
- * @param spriteBuffer The buffer of the strings.
- * @param wsaFilename The WSA to show.
- * @param w The widgets to handle. Can be NULL for no widgets.
- * @param unknown A boolean.
- * @return Return value of GUI_Widget_HandleEvents() or f__B4DA_0AB8_002A_AAB2() (latter when no widgets).
- */
-uint16 GUI_Mentat_Show(char *stringBuffer, const char *wsaFilename, Widget *w, bool unknown)
-{
-	uint16 ret;
-
-	Sprites_UnloadTiles();
-
-	GUI_Mentat_Display(wsaFilename, g_playerHouseID);
-
-	GFX_Screen_SetActive(2);
-
-	Widget_SetAndPaintCurrentWidget(8);
-
-	if (wsaFilename != NULL) {
-		void *wsa;
-
-		wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
-		WSA_DisplayFrame(wsa, 0, g_curWidgetXBase * 8, g_curWidgetYBase, 2);
-		WSA_Unload(wsa);
-	}
-
-	GUI_DrawSprite(2, g_sprites[397 + g_playerHouseID * 15], g_shoulderLeft, g_shoulderTop, 0, 0);
-	GFX_Screen_SetActive(0);
-
-	GUI_Mouse_Hide_Safe();
-	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
-	GUI_Mouse_Show_Safe();
-
-	GUI_SetPaletteAnimated(g_palette1, 15);
-
-	ret = GUI_Mentat_Loop(wsaFilename, NULL, stringBuffer, true, NULL);
-
-	if (w != NULL) {
-		do {
-			GUI_Widget_DrawAll(w);
-			ret = GUI_Widget_HandleEvents(w);
-
-			GUI_PaletteAnimate();
-			GUI_Mentat_Animation(0);
-
-			Video_Tick();
-			sleepIdle();
-		} while ((ret & 0x8000) == 0);
-	}
-
-	Input_History_Clear();
-
-	if (unknown) {
-		Load_Palette_Mercenaries();
-		Sprites_LoadTiles();
-	}
-
-	return ret;
-}
-
-#if 0
-/* Moved to gui/menu_opendune.c. */
+extern uint16 GUI_Mentat_Show(char *stringBuffer, const char *wsaFilename, Widget *w, bool unknown);
 extern void GUI_Mentat_ShowBriefing(void);
 extern void GUI_Mentat_ShowWin(void);
 extern void GUI_Mentat_ShowLose(void);
 #endif
+
+static void
+GUI_Mentat_SetSprites(enum HouseType houseID)
+{
+	memset(s_mentatSprites, 0, sizeof(s_mentatSprites));
+
+	for (int i = 0; i < 5; i++) {
+		s_mentatSprites[0][i] = g_sprites[387 + houseID * 15 + i];
+	}
+
+	for (int i = 0; i < 5; i++) {
+		s_mentatSprites[1][i] = g_sprites[392 + houseID * 15 + i];
+	}
+
+	for (int i = 0; i < 4; i++) {
+		s_mentatSprites[2][i] = g_sprites[398 + houseID * 15 + i];
+	}
+}
 
 /**
  * Display a mentat.
@@ -326,7 +268,6 @@ void GUI_Mentat_Display(const char *wsaFilename, uint8 houseID)
 {
 	char textBuffer[16];
 	uint16 oldScreenID;
-	int i;
 
 	snprintf(textBuffer, sizeof(textBuffer), "MENTAT%c.CPS", g_table_houseInfo[houseID].name[0]);
 	Sprites_LoadImage(textBuffer, 3, g_palette_998A);
@@ -337,34 +278,7 @@ void GUI_Mentat_Display(const char *wsaFilename, uint8 houseID)
 		File_ReadBlockFile("BENE.PAL", g_palette1, 256 * 3);
 	}
 
-	memset(s_mentatSprites, 0, sizeof(s_mentatSprites));
-
-	s_eyesLeft = s_eyesRight  = s_unknownHouseData[houseID][0];
-	s_eyesTop  = s_eyesBottom = s_unknownHouseData[houseID][1];
-
-	for (i = 0; i < 5; i++) {
-		s_mentatSprites[0][i] = g_sprites[387 + houseID * 15 + i];
-	}
-
-	s_eyesRight  += Sprite_GetWidth(s_mentatSprites[0][0]);
-	s_eyesBottom += Sprite_GetHeight(s_mentatSprites[0][0]);
-
-	s_mouthLeft = s_mouthRight  = s_unknownHouseData[houseID][2];
-	s_mouthTop  = s_mouthBottom = s_unknownHouseData[houseID][3];
-
-	for (i = 0; i < 5; i++) {
-		s_mentatSprites[1][i] = g_sprites[392 + houseID * 15 + i];
-	}
-
-	s_mouthRight  += Sprite_GetWidth(s_mentatSprites[1][0]);
-	s_mouthBottom += Sprite_GetHeight(s_mentatSprites[1][0]);
-
-	s_otherLeft = s_unknownHouseData[houseID][4];
-	s_otherTop  = s_unknownHouseData[houseID][5];
-
-	for (i = 0; i < 4; i++) {
-		s_mentatSprites[2][i] = g_sprites[398 + houseID * 15 + i];
-	}
+	GUI_Mentat_SetSprites(houseID);
 
 	g_shoulderLeft = s_unknownHouseData[houseID][6];
 	g_shoulderTop  = s_unknownHouseData[houseID][7];
@@ -394,24 +308,22 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 	static int64_t movingMouthTimer = 0;
 	static int64_t movingOtherTimer = 0;
 
-	bool partNeedsRedraw;
+	int s_eyesLeft, s_eyesTop, s_eyesRight, s_eyesBottom;
+	int s_mouthLeft, s_mouthTop, s_mouthRight, s_mouthBottom;
+
+	GUI_Mentat_SetSprites(g_playerHouseID);
+	Mentat_GetEyePositions(g_playerHouseID, &s_eyesLeft, &s_eyesTop, &s_eyesRight, &s_eyesBottom);
+	Mentat_GetMouthPositions(g_playerHouseID, &s_mouthLeft, &s_mouthTop, &s_mouthRight, &s_mouthBottom);
+
 	uint16 i;
 
 	if (movingOtherTimer < Timer_GetTicks() && !g_disableOtherMovement) {
 		if (movingOtherTimer != 0) {
-			uint8 *sprite;
-
 			if (s_mentatSprites[2][1 + abs(otherSprite)] == NULL) {
 				otherSprite = 1 - otherSprite;
 			} else {
 				otherSprite++;
 			}
-
-			sprite = s_mentatSprites[2][abs(otherSprite)];
-
-			GUI_Mouse_Hide_InRegion(s_otherLeft, s_otherTop, s_otherLeft + Sprite_GetWidth(sprite), s_otherTop + Sprite_GetHeight(sprite));
-			GUI_DrawSprite(0, sprite, s_otherLeft, s_otherTop, 0, 0);
-			GUI_Mouse_Show_InRegion();
 		}
 
 		switch (g_playerHouseID) {
@@ -461,58 +373,30 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 			}
 		}
 	} else {
-		partNeedsRedraw = false;
-
 		if (Input_Test(MOUSE_LMB) == 0 && Input_Test(MOUSE_RMB) == 0) {
 			if (movingMouthSprite != 0) {
 				movingMouthSprite = 0;
 				movingMouthTimer = 0;
-				partNeedsRedraw = true;
 			}
 		} else if (Mouse_InRegion(s_mouthLeft, s_mouthTop, s_mouthRight, s_mouthBottom) != 0) {
 			if (movingMouthTimer != 0xFFFFFFFF) {
 				movingMouthTimer = 0xFFFFFFFF;
 				movingMouthSprite = Tools_RandomRange(1, 4);
-				partNeedsRedraw = true;
 			}
 		} else {
 			if (movingMouthSprite != 0) {
 				movingMouthSprite = 0;
 				movingMouthTimer = 0;
-				partNeedsRedraw = true;
 			}
 		}
-
-		if (partNeedsRedraw) {
-			uint8 *sprite;
-
-			sprite = s_mentatSprites[1][movingMouthSprite];
-
-			GUI_Mouse_Hide_InRegion(s_mouthLeft, s_mouthTop, s_mouthLeft + Sprite_GetWidth(sprite), s_mouthTop + Sprite_GetHeight(sprite));
-			GUI_DrawSprite(0, sprite, s_mouthLeft, s_mouthTop, 0, 0);
-			GUI_Mouse_Show_InRegion();
-		}
 	}
-
-	partNeedsRedraw = false;
 
 	if (Input_Test(MOUSE_LMB) != 0 || Input_Test(MOUSE_RMB) != 0) {
 		if (Mouse_InRegion(s_eyesLeft, s_eyesTop, s_eyesRight, s_eyesBottom) != 0) {
 			if (movingEyesSprite != 0x4) {
-				partNeedsRedraw = true;
 				movingEyesSprite = (movingEyesSprite == 3) ? 4 : 3;
 				movingEyesNextSprite = 0;
 				movingEyesTimer = 0;
-			}
-
-			if (partNeedsRedraw) {
-				uint8 *sprite;
-
-				sprite = s_mentatSprites[0][movingEyesSprite];
-
-				GUI_Mouse_Hide_InRegion(s_eyesLeft, s_eyesTop, s_eyesLeft + Sprite_GetWidth(sprite), s_eyesTop + Sprite_GetHeight(sprite));
-				GUI_DrawSprite(0, sprite, s_eyesLeft, s_eyesTop, 0, 0);
-				GUI_Mouse_Show_InRegion();
 			}
 
 			return;
@@ -531,7 +415,6 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 		}
 
 		if (i != movingEyesSprite) {
-			partNeedsRedraw = true;
 			movingEyesSprite = i;
 			movingEyesNextSprite = 0;
 			movingEyesTimer = Timer_GetTicks();
@@ -539,7 +422,6 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 	} else {
 		if (movingEyesTimer >= Timer_GetTicks()) return;
 
-		partNeedsRedraw = true;
 		if (movingEyesNextSprite != 0) {
 			movingEyesSprite = movingEyesNextSprite;
 			movingEyesNextSprite = 0;
@@ -611,16 +493,6 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 
 			if (g_interrogation && movingEyesSprite == 0) movingEyesSprite = 3;
 		}
-	}
-
-	if (partNeedsRedraw) {
-		uint8 *sprite;
-
-		sprite = s_mentatSprites[0][movingEyesSprite];
-
-		GUI_Mouse_Hide_InRegion(s_eyesLeft, s_eyesTop, s_eyesLeft + Sprite_GetWidth(sprite), s_eyesTop + Sprite_GetHeight(sprite));
-		GUI_DrawSprite(0, sprite, s_eyesLeft, s_eyesTop, 0, 0);
-		GUI_Mouse_Show_InRegion();
 	}
 }
 

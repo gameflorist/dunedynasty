@@ -41,6 +41,30 @@ int otherSprite;
 MentatState g_mentat_state;
 
 void
+Mentat_GetEyePositions(enum HouseType houseID, int *left, int *top, int *right, int *bottom)
+{
+	const enum ShapeID shapeID = SHAPE_MENTAT_EYES + houseID * 15;
+	assert(houseID < HOUSE_MAX);
+
+	*left = mentat_data[houseID].eyesX;
+	*top = mentat_data[houseID].eyesY;
+	*right = *left + Shape_Width(shapeID);
+	*bottom = *top + Shape_Height(shapeID);
+}
+
+void
+Mentat_GetMouthPositions(enum HouseType houseID, int *left, int *top, int *right, int *bottom)
+{
+	const enum ShapeID shapeID = SHAPE_MENTAT_MOUTH + houseID * 15;
+	assert(houseID < HOUSE_MAX);
+
+	*left = mentat_data[houseID].mouthX;
+	*top = mentat_data[houseID].mouthY;
+	*right = *left + Shape_Width(shapeID);
+	*bottom = *top + Shape_Height(shapeID);
+}
+
+void
 Mentat_DrawBackground(enum HouseType houseID)
 {
 	const char *mentat_background[HOUSE_MAX] = {

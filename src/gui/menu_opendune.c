@@ -296,6 +296,68 @@ bool GUI_Widget_Mentat_Click(Widget *w)
 }
 
 /**
+ * Show the Mentat screen.
+ * @param spriteBuffer The buffer of the strings.
+ * @param wsaFilename The WSA to show.
+ * @param w The widgets to handle. Can be NULL for no widgets.
+ * @param unknown A boolean.
+ * @return Return value of GUI_Widget_HandleEvents() or f__B4DA_0AB8_002A_AAB2() (latter when no widgets).
+ */
+uint16 GUI_Mentat_Show(char *stringBuffer, const char *wsaFilename, Widget *w, bool unknown)
+{
+	uint16 ret;
+
+	Sprites_UnloadTiles();
+
+	GUI_Mentat_Display(wsaFilename, g_playerHouseID);
+
+	GFX_Screen_SetActive(2);
+
+	Widget_SetAndPaintCurrentWidget(8);
+
+	if (wsaFilename != NULL) {
+		void *wsa;
+
+		wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+		WSA_DisplayFrame(wsa, 0, g_curWidgetXBase * 8, g_curWidgetYBase, 2);
+		WSA_Unload(wsa);
+	}
+
+	GUI_DrawSprite(2, g_sprites[397 + g_playerHouseID * 15], g_shoulderLeft, g_shoulderTop, 0, 0);
+	GFX_Screen_SetActive(0);
+
+	GUI_Mouse_Hide_Safe();
+	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
+	GUI_Mouse_Show_Safe();
+
+	GUI_SetPaletteAnimated(g_palette1, 15);
+
+	ret = GUI_Mentat_Loop(wsaFilename, NULL, stringBuffer, true, NULL);
+
+	if (w != NULL) {
+		do {
+			GUI_Widget_DrawAll(w);
+			ret = GUI_Widget_HandleEvents(w);
+
+			GUI_PaletteAnimate();
+			GUI_Mentat_Animation(0);
+
+			Video_Tick();
+			sleepIdle();
+		} while ((ret & 0x8000) == 0);
+	}
+
+	Input_History_Clear();
+
+	if (unknown) {
+		Load_Palette_Mercenaries();
+		Sprites_LoadTiles();
+	}
+
+	return ret;
+}
+
+/**
  * Show the briefing screen.
  */
 void GUI_Mentat_ShowBriefing(void)
