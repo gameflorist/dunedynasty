@@ -50,6 +50,19 @@ StrategicMap_Init(void)
 }
 
 static void
+StrategicMap_DrawPlanet(const StrategicMapData *map)
+{
+	const char *cps[3] = { "PLANET.CPS", "PLANET.CPS", "DUNERGN.CPS" };
+	const int idx = map->state - STRATEGIC_MAP_SHOW_PLANET;
+	assert(0 <= idx && idx < 3);
+
+	Video_DrawCPSRegion(cps[idx], 8, 24, 8, 24, 304, 120);
+
+	if (map->region_aux != NULL)
+		Video_DrawFadeIn(map->region_aux, 8, 24);
+}
+
+static void
 StrategicMap_DrawEmblem(enum HouseType houseID)
 {
 	const struct {
@@ -262,6 +275,18 @@ StrategicMap_AdvanceText(StrategicMapData *map, bool force)
 	const char *str = NULL;
 
 	switch (map->state) {
+		case STRATEGIC_MAP_SHOW_PLANET:
+			str = String_Get_ByIndex(STR_THREE_HOUSES_HAVE_COME_TO_DUNE);
+			break;
+
+		case STRATEGIC_MAP_SHOW_SURFACE:
+			str = String_Get_ByIndex(STR_TO_TAKE_CONTROL_OF_THE_LAND);
+			break;
+
+		case STRATEGIC_MAP_SHOW_DIVISION:
+			str = String_Get_ByIndex(STR_THAT_HAS_BECOME_DIVIDED);
+			break;
+
 		case STRATEGIC_MAP_SHOW_TEXT:
 			str = map->progression[map->curr_progression].text;
 			break;
@@ -271,7 +296,6 @@ StrategicMap_AdvanceText(StrategicMapData *map, bool force)
 			break;
 
 		case STRATEGIC_MAP_SHOW_PROGRESSION:
-		default:
 			str = NULL;
 			break;
 	}
@@ -308,7 +332,7 @@ StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData
 	StrategicMap_ReadProgression(houseID, campaignID, map);
 	StrategicMap_ReadArrows(campaignID, map);
 
-	map->state = STRATEGIC_MAP_SHOW_TEXT;
+	map->state = (campaignID == 1) ? STRATEGIC_MAP_SHOW_PLANET : STRATEGIC_MAP_SHOW_TEXT;
 	map->curr_progression = 0;
 	map->region_aux = NULL;
 
@@ -321,8 +345,14 @@ void
 StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map)
 {
 	StrategicMap_DrawBackground(houseID);
-	Video_DrawCPSRegion("DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
 
+	if (map->state < STRATEGIC_MAP_SHOW_TEXT) {
+		StrategicMap_DrawPlanet(map);
+		StrategicMap_DrawText(map);
+		return;
+	}
+
+	Video_DrawCPSRegion("DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
 	StrategicMap_DrawRegions(map);
 	StrategicMap_DrawText(map);
 
@@ -341,6 +371,30 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 	bool redraw = true;
 
 	switch (map->state) {
+		case STRATEGIC_MAP_SHOW_PLANET:
+			if (curr_ticks - map->text_timer >= 120) {
+				map->region_aux = Video_InitFadeInCPS("DUNEMAP.CPS", 8, 24, 304, 120, true);
+				map->state++;
+				StrategicMap_AdvanceText(map, false);
+			}
+			break;
+
+		case STRATEGIC_MAP_SHOW_SURFACE:
+		case STRATEGIC_MAP_SHOW_DIVISION:
+			Video_TickFadeIn(map->region_aux);
+			if (curr_ticks - map->text_timer >= 120 + 60) {
+				if (map->state == STRATEGIC_MAP_SHOW_SURFACE) {
+					map->region_aux = Video_InitFadeInCPS("DUNEMAP.CPS", 8, 24, 304, 120, false);
+				}
+				else {
+					map->region_aux = NULL;
+				}
+
+				map->state++;
+				StrategicMap_AdvanceText(map, false);
+			}
+			break;
+
 		case STRATEGIC_MAP_SHOW_TEXT:
 			if (curr_ticks - map->text_timer >= 12 * 3) {
 				const enum ShapeID shapeID = SHAPE_MAP_PIECE + map->progression[map->curr_progression].region;
