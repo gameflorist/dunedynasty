@@ -12,6 +12,267 @@ static void GUI_Widget_SetProperties(uint16 index, uint16 xpos, uint16 ypos, uin
 	if (g_curWidgetIndex == index) Widget_SetCurrentWidget(index);
 }
 
+uint16 GUI_HallOfFame_Tick(void)
+{
+	static int64_t l_timerNext = 0;
+	static int16 colouringDirection = 1;
+
+	if (l_timerNext >= Timer_GetTicks()) return 0;
+	l_timerNext = Timer_GetTicks() + 2;
+
+	if (*s_palette1_houseColour >= 63) {
+		colouringDirection = -1;
+	} else if (*s_palette1_houseColour <= 35) {
+		colouringDirection = 1;
+	}
+
+	*s_palette1_houseColour += colouringDirection;
+
+	GFX_SetPalette(g_palette1);
+
+	return 0;
+}
+
+static void GUI_HallOfFame_DrawRank(uint16 score, bool fadeIn)
+{
+	GUI_DrawText_Wrapper(String_Get_ByIndex(_rankScores[GUI_HallOfFame_GetRank(score)].rankString), SCREEN_WIDTH / 2, 49, 6, 0, 0x122);
+
+	if (!fadeIn) return;
+
+	GUI_Screen_FadeIn(10, 49, 10, 49, 20, 12, 2, 0);
+}
+
+static void GUI_HallOfFame_DrawBackground(uint16 score, bool hallOfFame)
+{
+	uint16 oldScreenID;
+	uint16 colour;
+	uint16 offset;
+
+	oldScreenID = GFX_Screen_SetActive(2);;
+
+	HallOfFame_DrawBackground(g_playerHouseID, hallOfFame);
+
+	if (hallOfFame) {
+		if (score != 0xFFFF) GUI_HallOfFame_DrawRank(score, false);
+	}
+
+	if (score != 0xFFFF) {
+		char buffer[64];
+		snprintf(buffer, sizeof(buffer), String_Get_ByIndex(STR_TIME_DH_DM), s_ticksPlayed / 60, s_ticksPlayed % 60);
+
+		if (s_ticksPlayed < 60) {
+			char *hours = strchr(buffer, '0');
+			while (*hours != ' ') memmove(hours, hours + 1, strlen(hours));
+		}
+
+		/* "Score: %d" */
+		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SCORE_D), 72, 15, 15, 0, 0x22, score);
+		GUI_DrawText_Wrapper(buffer, 248, 15, 15, 0, 0x222);
+		/* "You have attained the rank of" */
+		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_YOU_HAVE_ATTAINED_THE_RANK_OF), SCREEN_WIDTH / 2, 38, 15, 0, 0x122);
+	} else {
+		/* "Hall of Fame" */
+		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_HALL_OF_FAME2), SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
+	}
+
+	switch (g_playerHouseID) {
+		case HOUSE_HARKONNEN:
+			colour = 149;
+			offset = 0;
+			break;
+
+		default:
+			colour = 165;
+			offset = 2;
+			break;
+
+		case HOUSE_ORDOS:
+			colour = 181;
+			offset = 1;
+			break;
+	}
+
+	s_palette1_houseColour = g_palette1 + 255 * 3;
+	memcpy(s_palette1_houseColour, g_palette1 + colour * 3, 3);
+	s_palette1_houseColour += offset;
+
+	if (!hallOfFame) GUI_HallOfFame_Tick();
+
+	GFX_Screen_SetActive(oldScreenID);
+}
+
+static void GUI_EndStats_Sleep(uint16 delay)
+{
+	for (int timeout = 0; timeout < delay; timeout++) {
+		GUI_HallOfFame_Tick();
+		Video_Tick();
+		Timer_Wait();
+	}
+}
+
+/**
+ * Shows the stats at end of scenario.
+ * @param killedAllied The amount of destroyed allied units.
+ * @param killedEnemy The amount of destroyed enemy units.
+ * @param destroyedAllied The amount of destroyed allied structures.
+ * @param destroyedEnemy The amount of destroyed enemy structures.
+ * @param harvestedAllied The amount of spice harvested by allies.
+ * @param harvestedEnemy The amount of spice harvested by enemies.
+ * @param score The base score.
+ * @param houseID The houseID of the player.
+ */
+void GUI_EndStats_Show(uint16 killedAllied, uint16 killedEnemy, uint16 destroyedAllied, uint16 destroyedEnemy, uint16 harvestedAllied, uint16 harvestedEnemy, int16 score, uint8 houseID)
+{
+	uint16 loc06;
+	uint16 oldScreenID;
+	uint16 loc16;
+	uint16 loc18;
+	uint16 loc1A;
+	uint16 loc32[3][2][2];
+	uint16 i;
+
+	s_ticksPlayed = ((g_timerGame - g_tickScenarioStart) / 3600) + 1;
+
+	score = Update_Score(score, &harvestedAllied, &harvestedEnemy, houseID);
+
+	loc16 = (g_scenarioID == 1) ? 2 : 3;
+
+	GUI_Mouse_Hide_Safe();
+
+	GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
+
+	oldScreenID = GFX_Screen_SetActive(2);
+
+	GUI_HallOfFame_DrawBackground(score, false);
+
+	GUI_DrawTextOnFilledRectangle(String_Get_ByIndex(STR_SPICE_HARVESTED_BY), 83);
+	GUI_DrawTextOnFilledRectangle(String_Get_ByIndex(STR_UNITS_DESTROYED_BY), 119);
+	if (g_scenarioID != 1) GUI_DrawTextOnFilledRectangle(String_Get_ByIndex(STR_BUILDINGS_DESTROYED_BY), 155);
+
+	loc06 = max(Font_GetStringWidth(String_Get_ByIndex(STR_YOU)), Font_GetStringWidth(String_Get_ByIndex(STR_ENEMY)));
+
+	loc18 = loc06 + 19;
+	loc1A = 261 - loc18;
+
+	for (i = 0; i < loc16; i++) {
+		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_YOU), loc18 - 4,  92 + (i * 36), 0xF, 0, 0x221);
+		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_ENEMY), loc18 - 4, 101 + (i * 36), 0xF, 0, 0x221);
+	}
+
+	Music_Play(17 + Tools_RandomRange(0, 5));
+
+	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
+
+	Input_History_Clear();
+
+	loc32[0][0][0] = harvestedAllied;
+	loc32[0][1][0] = harvestedEnemy;
+	loc32[1][0][0] = killedEnemy;
+	loc32[1][1][0] = killedAllied;
+	loc32[2][0][0] = destroyedEnemy;
+	loc32[2][1][0] = destroyedAllied;
+
+	for (i = 0; i < loc16; i++) {
+		uint16 loc08 = loc32[i][0][0];
+		uint16 loc0A = loc32[i][1][0];
+
+		if (loc08 >= 65000) loc08 = 65000;
+		if (loc0A >= 65000) loc0A = 65000;
+
+		loc32[i][0][0] = loc08;
+		loc32[i][1][0] = loc0A;
+
+		loc06 = max(loc08, loc0A);
+
+		loc32[i][0][1] = 1 + ((loc06 > loc1A) ? (loc06 / loc1A) : 0);
+		loc32[i][1][1] = 1 + ((loc06 > loc1A) ? (loc06 / loc1A) : 0);
+	}
+
+	GUI_EndStats_Sleep(45);
+	GUI_HallOfFame_DrawRank(score, true);
+	GUI_EndStats_Sleep(45);
+
+	for (i = 0; i < loc16; i++) {
+		uint16 loc02;
+
+		GUI_HallOfFame_Tick();
+
+		for (loc02 = 0; loc02 < 2; loc02++) {
+			uint8 colour;
+			uint16 loc04;
+			uint16 locdi;
+			uint16 loc0E;
+			uint16 loc10;
+			uint16 loc0C;
+
+			GUI_HallOfFame_Tick();
+
+			colour = (loc02 == 0) ? 255 : 209;
+			loc04 = loc18;
+
+			locdi = 93 + (i * 36) + (loc02 * 9);
+
+			loc0E = loc32[i][loc02][0];
+			loc10 = loc32[i][loc02][1];
+
+			for (loc0C = 0; loc0C < loc0E; loc0C += loc10) {
+				GUI_DrawFilledRectangle(271, locdi, 303, locdi + 5, 226);
+
+				GUI_DrawText_Wrapper("%u", 287, locdi - 1, 0x14, 0, 0x121, loc0C);
+
+				GUI_HallOfFame_Tick();
+
+				const int64_t timeout = 1 + Timer_GetTicks();
+
+				GUI_DrawLine(loc04, locdi, loc04, locdi + 5, colour);
+
+				loc04++;
+
+				GUI_DrawLine(loc04, locdi + 1, loc04, locdi + 6, 12);
+
+				GFX_Screen_Copy2(loc18, locdi, loc18, locdi, 304, 7, 2, 0, false);
+
+				Driver_Sound_Play(52, 0xFF);
+
+				GUI_EndStats_Sleep(timeout - Timer_GetTicks());
+			}
+
+			GUI_DrawFilledRectangle(271, locdi, 303, locdi + 5, 226);
+
+			GUI_DrawText_Wrapper("%u", 287, locdi - 1, 0xF, 0, 0x121, loc0E);
+
+			GFX_Screen_Copy2(loc18, locdi, loc18, locdi, 304, 7, 2, 0, false);
+
+			Driver_Sound_Play(38, 0xFF);
+
+			GUI_EndStats_Sleep(12);
+		}
+
+		GUI_EndStats_Sleep(60);
+	}
+
+	GUI_Mouse_Show_Safe();
+
+	Input_History_Clear();
+
+	while (true) {
+		GUI_HallOfFame_Tick();
+		if (Input_IsInputAvailable()) break;
+		Video_Tick();
+		sleepIdle();
+	}
+
+	Input_History_Clear();
+
+	GUI_HallOfFame_Show(score);
+
+	memset(g_palette1 + 255 * 3, 0, 3);
+
+	GFX_Screen_SetActive(oldScreenID);
+
+	Driver_Music_FadeOut();
+}
+
 /**
  * Show pick house screen.
  */
