@@ -20,7 +20,9 @@ enum StrategicMapState {
 	STRATEGIC_MAP_SHOW_DIVISION,
 	STRATEGIC_MAP_SHOW_TEXT,
 	STRATEGIC_MAP_SHOW_PROGRESSION,
-	STRATEGIC_MAP_SELECT_REGION
+	STRATEGIC_MAP_SELECT_REGION,
+	STRATEGIC_MAP_BLINK_REGION,
+	STRATEGIC_MAP_BLINK_END
 };
 
 typedef struct StrategicMapData {
@@ -48,13 +50,18 @@ typedef struct StrategicMapData {
 
 	int arrow_frame;
 	int64_t arrow_timer;
+
+	int blink_scenario;
 } StrategicMapData;
 
 extern StrategicMapData g_strategic_map_state;
 
 extern void StrategicMap_Init(void);
+extern void StrategicMap_AdvanceText(StrategicMapData *map, bool force);
 extern void StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData *map);
-extern void StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map);
+extern void StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map, int64_t fade_start);
 extern bool StrategicMap_TimerLoop(StrategicMapData *map);
+extern int StrategicMap_SelectRegion(const StrategicMapData *map, int x, int y);
+extern bool StrategicMap_BlinkLoop(StrategicMapData *map, int64_t blink_start);
 
 #endif

@@ -110,6 +110,12 @@ StrategicMap_DrawText(const StrategicMapData *map)
 }
 
 static void
+StrategicMap_DrawRegion(enum HouseType houseID, int region)
+{
+	Shape_DrawRemap(SHAPE_MAP_PIECE + region, houseID, region_data[region].x, region_data[region].y, 0, 0);
+}
+
+static void
 StrategicMap_DrawRegions(const StrategicMapData *map)
 {
 	for (int region = 1; region <= STRATEGIC_MAP_MAX_REGIONS; region++) {
@@ -118,7 +124,7 @@ StrategicMap_DrawRegions(const StrategicMapData *map)
 		if (houseID == HOUSE_INVALID)
 			continue;
 
-		Shape_DrawRemap(SHAPE_MAP_PIECE + region, houseID, region_data[region].x, region_data[region].y, 0, 0);
+		StrategicMap_DrawRegion(houseID, region);
 	}
 }
 
@@ -132,23 +138,32 @@ StrategicMap_DrawRegionFadeIn(const StrategicMapData *map)
 }
 
 static void
+StrategicMap_DrawArrow(enum HouseType houseID, int scenario, const StrategicMapData *map)
+{
+	const int64_t curr_ticks = Timer_GetTicks();
+	const int frame = map->arrow_frame + (curr_ticks - map->arrow_timer) / STRATEGIC_MAP_ARROW_ANIMATION_DELAY;
+
+	const enum ShapeID shapeID = map->arrow[scenario].shapeID;
+	const enum ShapeID tintID = SHAPE_ARROW_TINT + 4 * (shapeID - SHAPE_ARROW);
+	const int x = map->arrow[scenario].x;
+	const int y = map->arrow[scenario].y;
+	const uint8 c = 144 + houseID * 16;
+
+	Shape_Draw(shapeID, x, y, 0, 0);
+	Shape_DrawTint(tintID + 0, x, y, c + ((frame + 0) & 0x3), 0, 0);
+	Shape_DrawTint(tintID + 1, x, y, c + ((frame + 1) & 0x3), 0, 0);
+	Shape_DrawTint(tintID + 2, x, y, c + ((frame + 2) & 0x3), 0, 0);
+	Shape_DrawTint(tintID + 3, x, y, c + ((frame + 3) & 0x3), 0, 0);
+}
+
+static void
 StrategicMap_DrawArrows(enum HouseType houseID, const StrategicMapData *map)
 {
 	for (int i = 0; i < STRATEGIC_MAP_MAX_ARROWS; i++) {
 		if (map->arrow[i].index < 0)
 			break;
 
-		const enum ShapeID shapeID = map->arrow[i].shapeID;
-		const enum ShapeID tintID = SHAPE_ARROW_TINT + 4 * (shapeID - SHAPE_ARROW);
-		const int x = map->arrow[i].x;
-		const int y = map->arrow[i].y;
-		const uint8 c = 144 + houseID * 16;
-
-		Shape_Draw(shapeID, x, y, 0, 0);
-		Shape_DrawTint(tintID + 0, x, y, c + ((map->arrow_frame + 0) & 0x3), 0, 0);
-		Shape_DrawTint(tintID + 1, x, y, c + ((map->arrow_frame + 1) & 0x3), 0, 0);
-		Shape_DrawTint(tintID + 2, x, y, c + ((map->arrow_frame + 2) & 0x3), 0, 0);
-		Shape_DrawTint(tintID + 3, x, y, c + ((map->arrow_frame + 3) & 0x3), 0, 0);
+		StrategicMap_DrawArrow(houseID, i, map);
 	}
 }
 
@@ -269,7 +284,7 @@ StrategicMap_ReadArrows(int campaignID, StrategicMapData *map)
 	}
 }
 
-static void
+void
 StrategicMap_AdvanceText(StrategicMapData *map, bool force)
 {
 	const char *str = NULL;
@@ -296,7 +311,8 @@ StrategicMap_AdvanceText(StrategicMapData *map, bool force)
 			break;
 
 		case STRATEGIC_MAP_SHOW_PROGRESSION:
-			str = NULL;
+		case STRATEGIC_MAP_BLINK_REGION:
+		case STRATEGIC_MAP_BLINK_END:
 			break;
 	}
 
@@ -342,7 +358,7 @@ StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData
 }
 
 void
-StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map)
+StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map, int64_t fade_start)
 {
 	StrategicMap_DrawBackground(houseID);
 
@@ -361,6 +377,17 @@ StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map)
 	}
 	else if (map->state == STRATEGIC_MAP_SELECT_REGION) {
 		StrategicMap_DrawArrows(houseID, map);
+	}
+	else if (map->state == STRATEGIC_MAP_BLINK_REGION) {
+		const int64_t curr_ticks = Timer_GetTicks();
+
+		if ((((curr_ticks - fade_start) / 20) & 0x1) == 0)
+			StrategicMap_DrawRegion(houseID, map->arrow[map->blink_scenario].index);
+
+		StrategicMap_DrawArrow(houseID, map->blink_scenario, map);
+	}
+	else if (map->state == STRATEGIC_MAP_BLINK_END) {
+		StrategicMap_DrawArrow(houseID, map->blink_scenario, map);
 	}
 }
 
@@ -418,6 +445,8 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 				else {
 					map->state = STRATEGIC_MAP_SELECT_REGION;
 					map->region_aux = NULL;
+					map->arrow_frame = 0;
+					map->arrow_timer = curr_ticks;
 				}
 
 				StrategicMap_AdvanceText(map, false);
@@ -425,13 +454,53 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 			break;
 
 		case STRATEGIC_MAP_SELECT_REGION:
+			if (curr_ticks - map->text_timer >= 3 * 12)
+				redraw = false;
+			break;
+
+		case STRATEGIC_MAP_BLINK_REGION:
+		case STRATEGIC_MAP_BLINK_END:
 			break;
 	}
 
 	if (curr_ticks - map->arrow_timer >= STRATEGIC_MAP_ARROW_ANIMATION_DELAY) {
-		map->arrow_frame++;
-		map->arrow_timer = curr_ticks;
+		const int64_t dt = curr_ticks - map->arrow_timer;
+		map->arrow_timer = curr_ticks + dt % STRATEGIC_MAP_ARROW_ANIMATION_DELAY;
+		map->arrow_frame += dt / STRATEGIC_MAP_ARROW_ANIMATION_DELAY;
+		redraw = true;
 	}
 
 	return redraw;
+}
+
+int
+StrategicMap_SelectRegion(const StrategicMapData *map, int x, int y)
+{
+	x = x - 8;
+	y = y - 24;
+
+	if (!((0 <= x && x < 304) && (0 <= y && y < 120)))
+		return -1;
+
+	const int region = g_fileRgnclkCPS[304*y + x];
+
+	for (int i = 0; i < STRATEGIC_MAP_MAX_ARROWS; i++) {
+		if (map->arrow[i].index == region)
+			return i;
+	}
+
+	return -1;
+}
+
+bool
+StrategicMap_BlinkLoop(StrategicMapData *map, int64_t blink_start)
+{
+	const int64_t ticks = Timer_GetTicks() - blink_start;
+
+	if (ticks >= 4 * 20) {
+		map->state = STRATEGIC_MAP_BLINK_END;
+		return true;
+	}
+
+	return false;
 }

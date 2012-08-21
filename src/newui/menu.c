@@ -656,6 +656,31 @@ BattleSummary_InputLoop(HallOfFameData *fame)
 
 /*--------------------------------------------------------------*/
 
+static enum MenuAction
+StrategicMap_InputLoop(int campaignID, StrategicMapData *map)
+{
+	if (map->state == STRATEGIC_MAP_SELECT_REGION) {
+		int scenario = StrategicMap_SelectRegion(map, g_mouseClickX, g_mouseClickY);
+
+		if (scenario >= 0) {
+			map->blink_scenario = scenario;
+			scenario = scenario + 3 * (campaignID - 1) + 2;
+
+			if (campaignID > 7) scenario--;
+			if (campaignID > 8) scenario--;
+
+			g_scenarioID = scenario;
+			map->state = STRATEGIC_MAP_BLINK_REGION;
+			StrategicMap_AdvanceText(map, true);
+			return MENU_BLINK_CONFIRM | MENU_BRIEFING;
+		}
+	}
+
+	return MENU_STRATEGIC_MAP;
+}
+
+/*--------------------------------------------------------------*/
+
 static void
 Menu_DrawFadeIn(int64_t fade_start)
 {
@@ -751,7 +776,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_STRATEGIC_MAP:
-					StrategicMap_Draw(g_playerHouseID, &g_strategic_map_state);
+					StrategicMap_Draw(g_playerHouseID, &g_strategic_map_state, fade_start);
 					break;
 
 				default:
@@ -844,6 +869,14 @@ Menu_Run(void)
 					if (StrategicMap_TimerLoop(&g_strategic_map_state))
 						res |= MENU_REDRAW;
 				}
+				else {
+					res = StrategicMap_InputLoop(g_campaignID, &g_strategic_map_state);
+				}
+				break;
+
+			case MENU_STRATEGIC_MAP | MENU_BLINK_CONFIRM | MENU_FADE_OUT:
+				if (StrategicMap_BlinkLoop(&g_strategic_map_state, fade_start))
+					res &=~ MENU_BLINK_CONFIRM;
 				break;
 
 			case MENU_EXIT_GAME:
