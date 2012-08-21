@@ -8,6 +8,7 @@
 
 #include "menu.h"
 
+#include "halloffame.h"
 #include "mentat.h"
 #include "strategicmap.h"
 #include "../common_a5.h"
@@ -20,6 +21,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
+#include "../scenario.h"
 #include "../string.h"
 #include "../table/strings.h"
 #include "../timer/timer.h"
@@ -49,6 +51,7 @@ enum MenuAction {
 	MENU_BRIEFING_LOSE,
 	MENU_PLAY_A_GAME,
 	MENU_LOAD_GAME,
+	MENU_BATTLE_SUMMARY,
 	MENU_STRATEGIC_MAP,
 	MENU_EXIT_GAME,
 
@@ -428,6 +431,13 @@ Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
 			return MENU_PICK_HOUSE;
 
 		case 0x8003: /* proceed */
+			if (curr_menu == MENU_BRIEFING_WIN) {
+				return MENU_NO_TRANSITION | MENU_BATTLE_SUMMARY;
+			}
+			else if (curr_menu == MENU_BRIEFING_LOSE) {
+				return MENU_STRATEGIC_MAP;
+			}
+
 			return MENU_PLAY_A_GAME;
 
 		case 0x8004: /* repeat */
@@ -538,6 +548,143 @@ LoadGame_Loop(void)
 /*--------------------------------------------------------------*/
 
 static void
+BattleSummary_Initialise(enum HouseType houseID, HallOfFameData *fame)
+{
+	uint16 harvestedAllied = g_scenario.harvestedAllied;
+	uint16 harvestedEnemy = g_scenario.harvestedEnemy;
+	uint16 score = Update_Score(g_scenario.score, &harvestedAllied, &harvestedEnemy, houseID);
+
+	fame->state = HALLOFFAME_PAUSE_START;
+	fame->pause_timer = Timer_GetTicks() + 45;
+	fame->score = score;
+	fame->time = ((g_timerGame - g_tickScenarioStart) / 3600) + 1;
+
+	HallOfFame_InitRank(fame->score, fame);
+
+	fame->meter[0].max = harvestedAllied;
+	fame->meter[1].max = harvestedEnemy;
+	fame->meter[2].max = g_scenario.killedEnemy;
+	fame->meter[3].max = g_scenario.killedAllied;
+	fame->meter[4].max = g_scenario.destroyedEnemy;
+	fame->meter[5].max = g_scenario.destroyedAllied;
+
+	for (int i = 0; i < 6; i += 2) {
+		const int ally = fame->meter[i + 0].max;
+		const int enemy = fame->meter[i + 1].max;
+		const int maxval = max(ally, enemy);
+		const int maxwidth = 205;
+		const int inc = 1 + ((maxval > maxwidth) ? (maxval / maxwidth) : 0);
+
+		fame->meter[i + 0].inc = inc;
+		fame->meter[i + 1].inc = inc;
+		fame->meter[i + 0].width = 0;
+		fame->meter[i + 1].width = 0;
+	}
+
+	fame->curr_meter_idx = 0;
+	fame->curr_meter_val = 0;
+	fame->meter_colour_dir = true;
+	fame->meter_colour_timer = Timer_GetTicks();
+}
+
+static void
+BattleSummary_Draw(enum HouseType houseID, int scenarioID, HallOfFameData *fame)
+{
+	HallOfFame_DrawBackground(houseID, false);
+	HallOfFame_DrawScoreTime(fame->score, fame->time);
+
+	if (fame->state >= HALLOFFAME_SHOW_RANK)
+		HallOfFame_DrawRank(fame);
+
+	HallOfFame_DrawSpiceHarvested(houseID, fame);
+	HallOfFame_DrawUnitsDestroyed(houseID, fame);
+	HallOfFame_DrawBuildingsDestroyed(houseID, scenarioID, fame);
+}
+
+static enum MenuAction
+BattleSummary_TimerLoop(int scenarioID, HallOfFameData *fame)
+{
+	const int64_t curr_ticks = Timer_GetTicks();
+
+	if (curr_ticks - fame->meter_colour_timer >= (64 - 35) * 3) {
+		fame->meter_colour_timer = curr_ticks;
+		fame->meter_colour_dir = !fame->meter_colour_dir;
+	}
+
+	switch (fame->state) {
+		case HALLOFFAME_PAUSE_START:
+		case HALLOFFAME_PAUSE_RANK:
+			if (curr_ticks >= fame->pause_timer)
+				fame->state++;
+			break;
+
+		case HALLOFFAME_SHOW_RANK:
+			if (VideoA5_TickFadeIn(fame->rank_aux)) {
+				fame->state = HALLOFFAME_PAUSE_RANK;
+				fame->pause_timer = curr_ticks + 45;
+			}
+			break;
+
+		case HALLOFFAME_SHOW_METER:
+			fame->curr_meter_val += fame->meter[fame->curr_meter_idx].inc;
+			if (fame->curr_meter_val >= fame->meter[fame->curr_meter_idx].max) {
+				if ((fame->curr_meter_idx & 0x1) == 0) {
+					fame->state = HALLOFFAME_PAUSE_METER;
+					fame->pause_timer = curr_ticks + 12;
+				}
+				else {
+					fame->state = HALLOFFAME_PAUSE_METER;
+					fame->pause_timer = curr_ticks + 60 + 12;
+				}
+			}
+			else {
+				fame->meter[fame->curr_meter_idx].width++;
+			}
+			break;
+
+		case HALLOFFAME_PAUSE_METER:
+			if (curr_ticks >= fame->pause_timer) {
+				fame->curr_meter_idx++;
+				fame->curr_meter_val = 0;
+
+				if ((fame->curr_meter_idx >= 6) || (scenarioID == 1 && fame->curr_meter_idx >= 4)) {
+					fame->state = HALLOFFAME_WAIT_FOR_INPUT;
+					Input_History_Clear();
+				}
+				else {
+					fame->state = HALLOFFAME_SHOW_METER;
+				}
+			}
+			break;
+
+		case HALLOFFAME_WAIT_FOR_INPUT:
+			break;
+	}
+
+	return MENU_REDRAW | MENU_BATTLE_SUMMARY;
+}
+
+static enum MenuAction
+BattleSummary_InputLoop(HallOfFameData *fame)
+{
+	switch (fame->state) {
+		case HALLOFFAME_WAIT_FOR_INPUT:
+			if (Input_IsInputAvailable()) {
+				return MENU_STRATEGIC_MAP;
+			}
+
+			break;
+
+		default:
+			break;
+	}
+
+	return MENU_BATTLE_SUMMARY;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
 Menu_DrawFadeIn(int64_t fade_start)
 {
 	int alpha = 0xFF - 0xFF * (Timer_GetTicks() - fade_start) / MENU_FADE_TICKS;
@@ -589,6 +736,10 @@ Menu_Run(void)
 					Briefing_Initialise(curr_menu & 0xFF, &g_mentat_state);
 					break;
 
+				case MENU_BATTLE_SUMMARY:
+					BattleSummary_Initialise(g_playerHouseID, &g_hall_of_fame_state);
+					break;
+
 				case MENU_STRATEGIC_MAP:
 					StrategicMap_Initialise();
 					break;
@@ -621,6 +772,10 @@ Menu_Run(void)
 
 				case MENU_LOAD_GAME:
 					LoadGame_Draw();
+					break;
+
+				case MENU_BATTLE_SUMMARY:
+					BattleSummary_Draw(g_playerHouseID, g_scenarioID, &g_hall_of_fame_state);
 					break;
 
 				case MENU_STRATEGIC_MAP:
@@ -690,6 +845,15 @@ Menu_Run(void)
 
 			case MENU_LOAD_GAME:
 				res = LoadGame_Loop();
+				break;
+
+			case MENU_BATTLE_SUMMARY:
+				if (event.type == ALLEGRO_EVENT_TIMER) {
+					res = BattleSummary_TimerLoop(g_scenarioID, &g_hall_of_fame_state);
+				}
+				else {
+					res = BattleSummary_InputLoop(&g_hall_of_fame_state);
+				}
 				break;
 
 			case MENU_STRATEGIC_MAP:

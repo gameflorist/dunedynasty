@@ -449,6 +449,14 @@ VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c)
 }
 
 void
+VideoA5_DrawFilledRectRGBA(int x1, int y1, int x2, int y2, unsigned char r, unsigned char g, unsigned char b, int alpha)
+{
+	alpha = clamp(0x00, alpha, 0xFF);
+
+	al_draw_filled_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, al_map_rgba(r, g, b, alpha));
+}
+
+void
 VideoA5_ShadeScreen(int alpha)
 {
 	alpha = clamp(0x00, alpha, 0xFF);

@@ -1182,7 +1182,7 @@ void GUI_DrawSprite_(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uin
  * @param harvestedEnemy Pointer to the total amount of spice harvested by enemies.
  * @param houseID The houseID of the player.
  */
-static uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvestedEnemy, uint8 houseID)
+uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvestedEnemy, uint8 houseID)
 {
 	PoolFindStruct find;
 	uint16 locdi = 0;
@@ -1250,7 +1250,7 @@ static uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvest
  * @param string The string to draw.
  * @param top The most top position where to draw the string.
  */
-static void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top)
+void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top)
 {
 	uint16 halfWidth;
 
@@ -1290,14 +1290,10 @@ static void GUI_HallOfFame_DrawBackground(uint16 score, bool hallOfFame)
 
 	oldScreenID = GFX_Screen_SetActive(2);;
 
-	HallOfFame_DrawBackground(g_playerHouseID);
+	HallOfFame_DrawBackground(g_playerHouseID, hallOfFame);
 
 	if (hallOfFame) {
-		GUI_DrawFilledRectangle(8, 80, 311, 191, 116);
 		if (score != 0xFFFF) GUI_HallOfFame_DrawRank(score, false);
-	} else {
-		GFX_Screen_Copy2(8, 80, 8, 116, 304, 36, 2, 2, false);
-		if (g_scenarioID != 1) GFX_Screen_Copy2(8, 80, 8, 152, 304, 36, 2, 2, false);
 	}
 
 	if (score != 0xFFFF) {

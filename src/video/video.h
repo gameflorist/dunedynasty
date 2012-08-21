@@ -49,6 +49,7 @@ struct FadeInAux;
 #define GUI_DrawLine            VideoA5_DrawLine
 #define GUI_DrawWiredRectangle  VideoA5_DrawRectangle
 #define GUI_DrawFilledRectangle VideoA5_DrawFilledRectangle
+#define GUI_DrawFilledRectRGBA  VideoA5_DrawFilledRectRGBA
 #define Video_ShadeScreen       VideoA5_ShadeScreen
 
 #define GUI_Mouse_Show()
