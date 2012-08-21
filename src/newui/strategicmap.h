@@ -6,6 +6,8 @@
 #include "../shape.h"
 
 enum {
+	STRATEGIC_MAP_ARROW_ANIMATION_DELAY = 7,
+
 	/* Note: region numbers start from 1. */
 	STRATEGIC_MAP_MAX_REGIONS       = 27,
 	STRATEGIC_MAP_MAX_PROGRESSION   = 20,
@@ -43,6 +45,9 @@ typedef struct StrategicMapData {
 		enum ShapeID shapeID;
 		int x, y;
 	} arrow[STRATEGIC_MAP_MAX_ARROWS];
+
+	int arrow_frame;
+	int64_t arrow_timer;
 } StrategicMapData;
 
 extern StrategicMapData g_strategic_map_state;

@@ -145,10 +145,10 @@ StrategicMap_DrawArrows(enum HouseType houseID, const StrategicMapData *map)
 		const uint8 c = 144 + houseID * 16;
 
 		Shape_Draw(shapeID, x, y, 0, 0);
-		Shape_DrawTint(tintID + 0, x, y, c + 0, 0, 0);
-		Shape_DrawTint(tintID + 1, x, y, c + 1, 0, 0);
-		Shape_DrawTint(tintID + 2, x, y, c + 2, 0, 0);
-		Shape_DrawTint(tintID + 3, x, y, c + 3, 0, 0);
+		Shape_DrawTint(tintID + 0, x, y, c + ((map->arrow_frame + 0) & 0x3), 0, 0);
+		Shape_DrawTint(tintID + 1, x, y, c + ((map->arrow_frame + 1) & 0x3), 0, 0);
+		Shape_DrawTint(tintID + 2, x, y, c + ((map->arrow_frame + 2) & 0x3), 0, 0);
+		Shape_DrawTint(tintID + 3, x, y, c + ((map->arrow_frame + 3) & 0x3), 0, 0);
 	}
 }
 
@@ -426,6 +426,11 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 
 		case STRATEGIC_MAP_SELECT_REGION:
 			break;
+	}
+
+	if (curr_ticks - map->arrow_timer >= STRATEGIC_MAP_ARROW_ANIMATION_DELAY) {
+		map->arrow_frame++;
+		map->arrow_timer = curr_ticks;
 	}
 
 	return redraw;
