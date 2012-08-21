@@ -28,6 +28,7 @@ enum StrategicMapState {
 typedef struct StrategicMapData {
 	enum StrategicMapState state;
 	enum HouseType owner[1 + STRATEGIC_MAP_MAX_REGIONS];
+	bool fast_forward;
 
 	const char *text1;
 	const char *text2;

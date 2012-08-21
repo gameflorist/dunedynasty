@@ -675,6 +675,14 @@ StrategicMap_InputLoop(int campaignID, StrategicMapData *map)
 			return MENU_BLINK_CONFIRM | MENU_BRIEFING;
 		}
 	}
+	else {
+		if (Input_IsInputAvailable()) {
+			const int key = Input_GetNextKey();
+
+			if (key == SCANCODE_ESCAPE || key == SCANCODE_SPACE || key == MOUSE_LMB || key == MOUSE_RMB)
+				map->fast_forward = true;
+		}
+	}
 
 	return MENU_STRATEGIC_MAP;
 }

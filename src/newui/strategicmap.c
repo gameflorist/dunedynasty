@@ -349,6 +349,7 @@ StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData
 	StrategicMap_ReadArrows(campaignID, map);
 
 	map->state = (campaignID == 1) ? STRATEGIC_MAP_SHOW_PLANET : STRATEGIC_MAP_SHOW_TEXT;
+	map->fast_forward = false;
 	map->curr_progression = 0;
 	map->region_aux = NULL;
 
@@ -399,7 +400,7 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 
 	switch (map->state) {
 		case STRATEGIC_MAP_SHOW_PLANET:
-			if (curr_ticks - map->text_timer >= 120) {
+			if (map->fast_forward || (curr_ticks - map->text_timer >= 120)) {
 				map->region_aux = Video_InitFadeInCPS("DUNEMAP.CPS", 8, 24, 304, 120, true);
 				map->state++;
 				StrategicMap_AdvanceText(map, false);
@@ -409,7 +410,7 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 		case STRATEGIC_MAP_SHOW_SURFACE:
 		case STRATEGIC_MAP_SHOW_DIVISION:
 			Video_TickFadeIn(map->region_aux);
-			if (curr_ticks - map->text_timer >= 120 + 60) {
+			if (map->fast_forward || (curr_ticks - map->text_timer >= 120 + 60)) {
 				if (map->state == STRATEGIC_MAP_SHOW_SURFACE) {
 					map->region_aux = Video_InitFadeInCPS("DUNEMAP.CPS", 8, 24, 304, 120, false);
 				}
@@ -423,7 +424,7 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 			break;
 
 		case STRATEGIC_MAP_SHOW_TEXT:
-			if (curr_ticks - map->text_timer >= 12 * 3) {
+			if (map->fast_forward || (curr_ticks - map->text_timer >= 12 * 3)) {
 				const enum ShapeID shapeID = SHAPE_MAP_PIECE + map->progression[map->curr_progression].region;
 				const enum HouseType houseID = map->progression[map->curr_progression].houseID;
 
@@ -433,7 +434,7 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 			break;
 
 		case STRATEGIC_MAP_SHOW_PROGRESSION:
-			if (Video_TickFadeIn(map->region_aux)) {
+			if (map->fast_forward || Video_TickFadeIn(map->region_aux)) {
 				const int curr = map->curr_progression;
 
 				map->owner[map->progression[curr].region] = map->progression[curr].houseID;
@@ -444,6 +445,7 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 				}
 				else {
 					map->state = STRATEGIC_MAP_SELECT_REGION;
+					map->fast_forward = false;
 					map->region_aux = NULL;
 					map->arrow_frame = 0;
 					map->arrow_timer = curr_ticks;
