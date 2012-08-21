@@ -616,20 +616,19 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 		curPos = Tile_PackTile(e->position);
 
-		if (BitArray_Test(g_dirtyViewport, curPos)) e->isDirty = true;
-
 		if (e->commands == NULL) continue;
-		if (!e->isDirty && !forceRedraw) continue;
 		if (e->spriteID == 0) continue;
-
-		e->isDirty = false;
 
 		if (!g_map[curPos].isUnveiled && !g_debugScenario) continue;
 		if (!Map_IsPositionInViewport(e->position, &x, &y)) continue;
 
 		s_spriteFlags = 0xC000;
 
+#if 0
 		GUI_DrawSprite(g_screenActiveID, GUI_Widget_Viewport_Draw_GetSprite(e->spriteID, e->houseID), x, y, 2, s_spriteFlags, s_paletteHouse);
+#else
+		Shape_Draw(e->spriteID, x, y, 2, s_spriteFlags);
+#endif
 	}
 
 	if (g_var_39E8 != 0 || forceRedraw || updateDisplay) {
