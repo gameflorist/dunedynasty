@@ -93,7 +93,7 @@ static const uint8 font_palette[][8] = {
 };
 
 static ALLEGRO_DISPLAY *display;
-static ALLEGRO_DISPLAY *display2;
+/* static ALLEGRO_DISPLAY *display2; */
 static ALLEGRO_BITMAP *screen;
 static ALLEGRO_COLOR paltoRGB[256];
 static unsigned char paletteRGB[3 * 256];
@@ -203,8 +203,8 @@ VideoA5_Init(void)
 
 	al_set_new_display_flags(ALLEGRO_GENERATE_EXPOSE_EVENTS);
 	display = al_create_display(TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
-	display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
-	if (display == NULL || display2 == NULL)
+	/* display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT); */
+	if (display == NULL)
 		return false;
 
 	VideoA5_InitDisplayIcon(dune2_16x16_xpm, 16, 16, 32);
@@ -366,6 +366,7 @@ VideoA5_CreateWhiteMask(unsigned char *src, ALLEGRO_LOCKED_REGION *reg,
 void
 VideoA5_Tick(void)
 {
+#if 0
 	const unsigned char *raw = GFX_Screen_Get_ByIndex(0);
 
 	al_set_target_backbuffer(display2);
@@ -375,7 +376,9 @@ VideoA5_Tick(void)
 	al_flip_display();
 
 	al_set_target_backbuffer(display);
+#endif
 	al_flip_display();
+	al_clear_to_color(paltoRGB[0]);
 }
 
 void
