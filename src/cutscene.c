@@ -398,6 +398,10 @@ static void GameLoop_FinishAnimation(void)
 	Input_History_Clear();
 
 	Memory_ClearBlock(7);
+
+	File_ReadBlockFile("IBM.PAL", g_palette1, 3 * 256);
+	memcpy(g_palette_998A, g_palette1, 3 * 256);
+	Video_SetPalette(g_palette1, 0, 256);
 }
 
 static void GameLoop_PlaySoundEffect(uint8 animation)

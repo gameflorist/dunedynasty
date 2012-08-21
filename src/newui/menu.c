@@ -52,6 +52,7 @@ enum MenuAction {
 	MENU_PLAY_A_GAME,
 	MENU_LOAD_GAME,
 	MENU_BATTLE_SUMMARY,
+	MENU_CUTSCENE,
 	MENU_STRATEGIC_MAP,
 	MENU_EXIT_GAME,
 
@@ -671,7 +672,8 @@ BattleSummary_InputLoop(HallOfFameData *fame)
 		case HALLOFFAME_WAIT_FOR_INPUT:
 			if (Input_IsInputAvailable()) {
 				GUI_HallOfFame_Show(fame->score);
-				return MENU_STRATEGIC_MAP;
+				g_campaignID++;
+				return MENU_NO_TRANSITION | MENU_CUTSCENE;
 			}
 
 			break;
@@ -854,6 +856,17 @@ Menu_Run(void)
 				}
 				else {
 					res = BattleSummary_InputLoop(&g_hall_of_fame_state);
+				}
+				break;
+
+			case MENU_CUTSCENE:
+				if (g_campaignID == 9) {
+					GameLoop_GameEndAnimation();
+					res = MENU_MAIN_MENU;
+				}
+				else {
+					GameLoop_LevelEndAnimation();
+					res = MENU_STRATEGIC_MAP;
 				}
 				break;
 
