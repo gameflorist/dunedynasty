@@ -461,37 +461,6 @@ Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
 
 /*--------------------------------------------------------------*/
 
-static void
-StrategicMap_Initialise(void)
-{
-	StrategicMapData *map = &g_strategic_map;
-
-	StrategicMap_ReadOwnership(g_campaignID, map);
-	StrategicMap_ReadProgression(g_playerHouseID, g_campaignID, map);
-	StrategicMap_ReadArrows(g_campaignID, map);
-}
-
-static void
-StrategicMap_Draw(void)
-{
-	const enum HouseType houseID = g_playerHouseID;
-	StrategicMapData *map = &g_strategic_map;
-
-	StrategicMap_DrawBackground(houseID);
-	Video_DrawCPSRegion("DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
-
-	StrategicMap_DrawRegions(map);
-	StrategicMap_DrawArrows(houseID, map);
-}
-
-static enum MenuAction
-StrategicMap_Loop(void)
-{
-	return MENU_STRATEGIC_MAP;
-}
-
-/*--------------------------------------------------------------*/
-
 static enum MenuAction
 StartGame_Loop(bool new_game)
 {
@@ -620,7 +589,7 @@ BattleSummary_TimerLoop(int scenarioID, HallOfFameData *fame)
 			break;
 
 		case HALLOFFAME_SHOW_RANK:
-			if (VideoA5_TickFadeIn(fame->rank_aux)) {
+			if (Video_TickFadeIn(fame->rank_aux)) {
 				fame->state = HALLOFFAME_PAUSE_RANK;
 				fame->pause_timer = curr_ticks + 45;
 			}
@@ -744,7 +713,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_STRATEGIC_MAP:
-					StrategicMap_Initialise();
+					StrategicMap_Initialise(g_playerHouseID, g_campaignID, &g_strategic_map_state);
 					break;
 
 				default:
@@ -782,7 +751,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_STRATEGIC_MAP:
-					StrategicMap_Draw();
+					StrategicMap_Draw(g_playerHouseID, &g_strategic_map_state);
 					break;
 
 				default:
@@ -871,7 +840,10 @@ Menu_Run(void)
 				break;
 
 			case MENU_STRATEGIC_MAP:
-				res = StrategicMap_Loop();
+				if (event.type == ALLEGRO_EVENT_TIMER) {
+					if (StrategicMap_TimerLoop(&g_strategic_map_state))
+						res |= MENU_REDRAW;
+				}
 				break;
 
 			case MENU_EXIT_GAME:

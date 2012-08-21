@@ -4,21 +4,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../os/math.h"
 
 #include "strategicmap.h"
 
-#include "../ini.h"
 #include "../config.h"
+#include "../gfx.h"
+#include "../gui/gui.h"
+#include "../ini.h"
+#include "../input/mouse.h"
 #include "../opendune.h"
 #include "../sprites.h"
 #include "../string.h"
+#include "../table/strings.h"
+#include "../timer/timer.h"
 #include "../video/video.h"
 
 static struct {
 	int x, y;
 } region_data[1 + STRATEGIC_MAP_MAX_REGIONS];
 
-StrategicMapData g_strategic_map;
+StrategicMapData g_strategic_map_state;
 
 void
 StrategicMap_Init(void)
@@ -57,7 +63,7 @@ StrategicMap_DrawEmblem(enum HouseType houseID)
 	Video_DrawCPSRegion("MAPMACH.CPS", emblem[houseID].x, emblem[houseID].y, emblem[HOUSE_ATREIDES].x, emblem[HOUSE_ATREIDES].y, 7*8, 40);
 }
 
-void
+static void
 StrategicMap_DrawBackground(enum HouseType houseID)
 {
 	const enum CPSID conquest =
@@ -70,7 +76,27 @@ StrategicMap_DrawBackground(enum HouseType houseID)
 	Video_DrawCPSSpecial(conquest, houseID, 8, 0);
 }
 
-void
+static void
+StrategicMap_DrawText(const StrategicMapData *map)
+{
+	const int64_t dt = Timer_GetTicks() - map->text_timer;
+	const int offset = min(dt/3.0 + (175 - 185), (175 - 172 - 1));
+	const float scale = g_mouse_transform_scale;
+	const float offx = g_mouse_transform_offx;
+	const float offy = g_mouse_transform_offy;
+
+	Video_SetClippingArea(8*8 * scale + offx, 165 * scale + offy, 24*8 * scale, 14 * scale);
+
+	if (map->text1 != NULL)
+		GUI_DrawText_Wrapper(map->text1, 64, 165 + offset, 12, 0, 0x12);
+
+	if (map->text2 != NULL)
+		GUI_DrawText_Wrapper(map->text2, 64, 177 + offset, 12, 0, 0x12);
+
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+}
+
+static void
 StrategicMap_DrawRegions(const StrategicMapData *map)
 {
 	for (int region = 1; region <= STRATEGIC_MAP_MAX_REGIONS; region++) {
@@ -79,12 +105,20 @@ StrategicMap_DrawRegions(const StrategicMapData *map)
 		if (houseID == HOUSE_INVALID)
 			continue;
 
-		assert(houseID < HOUSE_MAX);
 		Shape_DrawRemap(SHAPE_MAP_PIECE + region, houseID, region_data[region].x, region_data[region].y, 0, 0);
 	}
 }
 
-void
+static void
+StrategicMap_DrawRegionFadeIn(const StrategicMapData *map)
+{
+	const int region = map->progression[map->curr_progression].region;
+
+	if (map->region_aux != NULL)
+		Video_DrawFadeIn(map->region_aux, region_data[region].x, region_data[region].y);
+}
+
+static void
 StrategicMap_DrawArrows(enum HouseType houseID, const StrategicMapData *map)
 {
 	for (int i = 0; i < STRATEGIC_MAP_MAX_ARROWS; i++) {
@@ -105,7 +139,7 @@ StrategicMap_DrawArrows(enum HouseType houseID, const StrategicMapData *map)
 	}
 }
 
-void
+static void
 StrategicMap_ReadOwnership(int campaignID, StrategicMapData *map)
 {
 	for (int region = 0; region <= STRATEGIC_MAP_MAX_REGIONS; region++) {
@@ -141,7 +175,7 @@ StrategicMap_ReadOwnership(int campaignID, StrategicMapData *map)
 	}
 }
 
-void
+static void
 StrategicMap_ReadProgression(enum HouseType houseID, int campaignID, StrategicMapData *map)
 {
 	int count = 0;
@@ -186,7 +220,7 @@ StrategicMap_ReadProgression(enum HouseType houseID, int campaignID, StrategicMa
 	}
 }
 
-void
+static void
 StrategicMap_ReadArrows(int campaignID, StrategicMapData *map)
 {
 	char category[16];
@@ -220,4 +254,125 @@ StrategicMap_ReadArrows(int campaignID, StrategicMapData *map)
 		map->arrow[count].index = -1;
 		map->arrow[count].shapeID = SHAPE_INVALID;
 	}
+}
+
+static void
+StrategicMap_AdvanceText(StrategicMapData *map, bool force)
+{
+	const char *str = NULL;
+
+	switch (map->state) {
+		case STRATEGIC_MAP_SHOW_TEXT:
+			str = map->progression[map->curr_progression].text;
+			break;
+
+		case STRATEGIC_MAP_SELECT_REGION:
+			str = String_Get_ByIndex(STR_SELECT_YOUR_NEXT_REGION);
+			break;
+
+		case STRATEGIC_MAP_SHOW_PROGRESSION:
+		default:
+			str = NULL;
+			break;
+	}
+
+	if (force || (str != NULL && str[0] != '\0')) {
+		map->text2 = map->text1;
+		map->text1 = str;
+		map->text_timer = Timer_GetTicks();
+	}
+}
+
+static bool
+StrategicMap_GetNextProgression(StrategicMapData *map)
+{
+	for (int i = map->curr_progression + 1; i < STRATEGIC_MAP_MAX_PROGRESSION; i++) {
+		if (map->progression[i].houseID != HOUSE_INVALID) {
+			map->curr_progression = i;
+			return true;
+		}
+	}
+
+	map->curr_progression = 0;
+	return false;
+}
+
+/*--------------------------------------------------------------*/
+
+void
+StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData *map)
+{
+	g_playerHouseID = houseID;
+	Sprites_CPS_LoadRegionClick();
+	StrategicMap_ReadOwnership(campaignID, map);
+	StrategicMap_ReadProgression(houseID, campaignID, map);
+	StrategicMap_ReadArrows(campaignID, map);
+
+	map->state = STRATEGIC_MAP_SHOW_TEXT;
+	map->curr_progression = 0;
+	map->region_aux = NULL;
+
+	map->text1 = NULL;
+	map->text2 = NULL;
+	StrategicMap_AdvanceText(map, true);
+}
+
+void
+StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map)
+{
+	StrategicMap_DrawBackground(houseID);
+	Video_DrawCPSRegion("DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
+
+	StrategicMap_DrawRegions(map);
+	StrategicMap_DrawText(map);
+
+	if (map->state == STRATEGIC_MAP_SHOW_PROGRESSION) {
+		StrategicMap_DrawRegionFadeIn(map);
+	}
+	else if (map->state == STRATEGIC_MAP_SELECT_REGION) {
+		StrategicMap_DrawArrows(houseID, map);
+	}
+}
+
+bool
+StrategicMap_TimerLoop(StrategicMapData *map)
+{
+	const int64_t curr_ticks = Timer_GetTicks();
+	bool redraw = true;
+
+	switch (map->state) {
+		case STRATEGIC_MAP_SHOW_TEXT:
+			if (curr_ticks - map->text_timer >= 12 * 3) {
+				const enum ShapeID shapeID = SHAPE_MAP_PIECE + map->progression[map->curr_progression].region;
+				const enum HouseType houseID = map->progression[map->curr_progression].houseID;
+
+				map->state = STRATEGIC_MAP_SHOW_PROGRESSION;
+				map->region_aux = Video_InitFadeInShape(shapeID, houseID);
+			}
+			break;
+
+		case STRATEGIC_MAP_SHOW_PROGRESSION:
+			if (Video_TickFadeIn(map->region_aux)) {
+				const int curr = map->curr_progression;
+
+				map->owner[map->progression[curr].region] = map->progression[curr].houseID;
+
+				if (StrategicMap_GetNextProgression(map)) {
+					map->state = STRATEGIC_MAP_SHOW_TEXT;
+					map->region_aux = NULL;
+				}
+				else {
+					map->state = STRATEGIC_MAP_SELECT_REGION;
+					map->region_aux = NULL;
+				}
+
+				StrategicMap_AdvanceText(map, false);
+			}
+			break;
+
+		case STRATEGIC_MAP_SELECT_REGION:
+			break;
+	}
+
+	return redraw;
 }
