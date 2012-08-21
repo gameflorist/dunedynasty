@@ -713,15 +713,13 @@ int GUI_Widget_HOF_ClearList_Click(Widget *w)
 		memset(data, 0, 128);
 
 		if (File_Exists("SAVEFAME.DAT")) File_Delete("SAVEFAME.DAT");
-
-		GUI_HallOfFame_DrawData(data, true);
+		GUI_Widget_MakeNormal(w, false);
 		return 1;
 	}
 	else if (ret == (0x8000 | 31)) { /* No */
+		GUI_Widget_MakeNormal(w, false);
 		return -1;
 	}
-
-	GUI_Widget_MakeNormal(w, false);
 
 	return 0;
 }

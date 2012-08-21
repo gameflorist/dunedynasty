@@ -670,6 +670,7 @@ BattleSummary_InputLoop(HallOfFameData *fame)
 	switch (fame->state) {
 		case HALLOFFAME_WAIT_FOR_INPUT:
 			if (Input_IsInputAvailable()) {
+				GUI_HallOfFame_Show(fame->score);
 				return MENU_STRATEGIC_MAP;
 			}
 

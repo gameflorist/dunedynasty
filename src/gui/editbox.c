@@ -134,9 +134,9 @@ int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16
 		if (key == 0x2B)
 			return 0x2B;
 
-		if (key == 0x6E) {
+		if (key == SCANCODE_ENTER) {
 			*t = '\0';
-			return 0x6B;
+			return SCANCODE_ENTER;
 		}
 
 		/* Handle backspace */

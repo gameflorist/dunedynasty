@@ -3450,6 +3450,9 @@ static uint16 GUI_HallOfFame_InsertScore(HallOfFameStruct *data, uint16 score)
 
 void GUI_HallOfFame_Show(uint16 score)
 {
+	HallOfFameData *fame = &g_hall_of_fame_state;
+	const uint16 old_widget = g_curWidgetIndex;
+
 	uint16 width;
 	uint16 editLine;
 	Widget *w;
@@ -3483,8 +3486,6 @@ void GUI_HallOfFame_Show(uint16 score)
 
 	GUI_HallOfFame_Decode(data);
 
-	GUI_HallOfFame_DrawBackground(score, true);
-
 	if (score == 0xFFFF) {
 		editLine = 0;
 	} else {
@@ -3510,7 +3511,7 @@ void GUI_HallOfFame_Show(uint16 score)
 
 		GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 
-		while (*name == '\0') {
+		while (true) {
 			char *nameEnd;
 			uint16 oldScreenID;
 
@@ -3518,24 +3519,40 @@ void GUI_HallOfFame_Show(uint16 score)
 			Widget_SetAndPaintCurrentWidget(19);
 			GFX_Screen_SetActive(oldScreenID);
 
-			GUI_EditBox(name, 5, 19, NULL, &GUI_HallOfFame_Tick, 0);
+			HallOfFame_DrawBackground(g_playerHouseID, true);
+			HallOfFame_DrawScoreTime(fame->score, fame->time);
+			HallOfFame_DrawRank(fame);
 
-			if (*name == '\0') continue;
+			const char backup = name[0];
+			name[0] = '\0';
+			GUI_HallOfFame_DrawData(data, false);
+			name[0] = backup;
 
-			nameEnd = name + strlen(name) - 1;
+			Input_Tick(true);
+			int ret = GUI_EditBox(name, 5, 19, NULL, NULL, 0);
+			if (ret == SCANCODE_ENTER) {
+				if (*name == '\0')
+					continue;
 
-			while (*nameEnd <= ' ' && nameEnd >= name) *nameEnd-- = '\0';
+				nameEnd = name + strlen(name) - 1;
+
+				while (*nameEnd <= ' ' && nameEnd >= name)
+					*nameEnd-- = '\0';
+
+				break;
+			}
+
+			Video_Tick();
+			sleepIdle();
 		}
 
 		memcpy(&g_widgetProperties[19], &backupProperties, sizeof(WidgetProperties));
 
-		GUI_HallOfFame_DrawData(data, true);
-
 		GUI_HallOfFame_Encode(data);
-
 		fileID = File_Open("SAVEFAME.DAT", 2);
 		File_Write(fileID, data, 128);
 		File_Close(fileID);
+		GUI_HallOfFame_Decode(data);
 	}
 
 	w = GUI_HallOfFame_CreateButtons(data);
@@ -3546,19 +3563,24 @@ void GUI_HallOfFame_Show(uint16 score)
 
 	g_yesNoWindowDesc.stringID = STR_ARE_YOU_SURE_YOU_WANT_TO_CLEAR_THE_HIGH_SCORES;
 	GUI_Window_Create(&g_yesNoWindowDesc);
+	GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 30)->data = data;
 
 	bool confirm_clear = false;
 	while (true) {
+		HallOfFame_DrawBackground(g_playerHouseID, true);
+		HallOfFame_DrawScoreTime(fame->score, fame->time);
+		HallOfFame_DrawRank(fame);
+		GUI_HallOfFame_DrawData(data, true);
+
+		Input_Tick(true);
 		if (confirm_clear) {
+			const int ret = GUI_Widget_HOF_ClearList_Click(g_widgetLinkedListTail);
+
 			GUI_Widget_DrawWindow(&g_yesNoWindowDesc);
 			GUI_Widget_DrawAll(g_widgetLinkedListTail);
 
-			const int ret = GUI_Widget_HOF_ClearList_Click(g_widgetLinkedListTail);
-
 			if (ret == -1) {
 				confirm_clear = false;
-				GUI_HallOfFame_DrawBackground(score, true);
-				GUI_HallOfFame_DrawData(data, true);
 			}
 			else if (ret == 1) {
 				break;
@@ -3575,7 +3597,8 @@ void GUI_HallOfFame_Show(uint16 score)
 			}
 		}
 
-		Input_Tick(true);
+		GUI_Widget_DrawAll(w);
+
 		Video_Tick();
 		sleepIdle();
 	}
@@ -3583,6 +3606,7 @@ void GUI_HallOfFame_Show(uint16 score)
 	GUI_HallOfFame_DeleteButtons(w);
 
 	Input_History_Clear();
+	Widget_SetCurrentWidget(old_widget);
 
 	if (score == 0xFFFF) return;
 
