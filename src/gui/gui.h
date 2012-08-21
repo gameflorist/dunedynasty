@@ -120,7 +120,6 @@ extern void GUI_InitColors(const uint8 *colors, uint8 first, uint8 last);
 extern void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, int16 memBlockSrc, int16 memBlockDst);
 extern FactoryResult GUI_DisplayFactoryWindow(bool isConstructionYard, bool isStarPort, uint16 upgradeCost);
 extern char *GUI_String_Get_ByIndex(int16 stringID);
-extern uint16 GUI_StrategicMap_Show(uint16 campaignID, bool win);
 extern void GUI_ClearScreen(uint16 arg06);
 extern uint16 GUI_Get_Scrollbar_Position(struct Widget *w);
 extern void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth);
