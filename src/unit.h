@@ -5,6 +5,7 @@
 #ifndef UNIT_H
 #define UNIT_H
 
+#include <inttypes.h>
 #include <stdio.h>
 #include "object.h"
 
@@ -181,6 +182,8 @@ typedef struct ActionInfo {
 
 struct Team;
 struct Structure;
+
+extern int64_t g_tickUnitUnknown1;
 
 extern const char *g_table_movementTypeName[];
 

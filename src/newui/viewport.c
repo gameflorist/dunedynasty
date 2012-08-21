@@ -1,6 +1,8 @@
 /* viewport.c */
 
 #include <assert.h>
+#include <stdlib.h>
+#include "../os/math.h"
 
 #include "viewport.h"
 
@@ -24,6 +26,7 @@
 #include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../tile.h"
+#include "../timer/timer.h"
 #include "../tools.h"
 #include "../unit.h"
 #include "../video/video.h"
@@ -425,4 +428,32 @@ Viewport_DrawSelectionBox(void)
 	const int y2 = Viewport_ClampSelectionBoxY(g_mouseY);
 
 	GUI_DrawWiredRectangle(selection_box_x1, selection_box_y1, x2, y2, 0xFF);
+}
+
+void
+Viewport_InterpolateMovement(const Unit *u, uint16 *x, uint16 *y)
+{
+	const int frame = clamp(0, (3 + g_timerGame - g_tickUnitUnknown1), 2);
+
+	tile32 origin;
+	origin.s.x = *x;
+	origin.s.y = *y;
+
+	float speed = u->speedRemainder;
+	speed += Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false) * frame / 3.0f;
+
+	uint16 destx;
+	uint16 desty;
+	Map_IsPositionInViewport(u->currentDestination, &destx, &desty);
+
+	const int dx = abs(destx - *x);
+	const int dy = abs(desty - *y);
+
+	int dist = max(dx, dy) + min(dx, dy) / 2;
+	dist = min(u->speed * speed / 256.0f, dist);
+
+	const tile32 pos = Tile_MoveByDirection(origin, u->orientation[0].current, dist);
+
+	*x = pos.s.x;
+	*y = pos.s.y;
 }

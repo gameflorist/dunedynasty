@@ -24,6 +24,7 @@ extern bool enhancement_nonblocking_radar_animation;
 extern bool enhancement_read_scenario_structure_health;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
+extern bool enhancement_smooth_bullet_movement;
 extern bool enhancement_special_trooper_portaits;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 

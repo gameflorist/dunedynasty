@@ -84,6 +84,12 @@ bool enhancement_repeat_reinforcements = true;
 enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ACCEPT_ALL;
 
 /**
+ * Render bullets as if they move every frame, rather than every third
+ * frame, for smoother bullet movement.
+ */
+bool enhancement_smooth_bullet_movement = true;
+
+/**
  * Use the Fremen and Sardaukar portaits for troopers and trooper
  * squads.
  */

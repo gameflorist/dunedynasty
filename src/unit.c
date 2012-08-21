@@ -38,7 +38,7 @@
 #include "tools.h"
 
 
-static int64_t s_tickUnitUnknown1  = 0; /*!< Indicates next time the Unknown1 function is executed. */
+int64_t g_tickUnitUnknown1  = 0;        /*!< Indicates next time the Unknown1 function is executed. */
 static int64_t s_tickUnitUnknown2  = 0; /*!< Indicates next time the Unknown2 function is executed. */
 static int64_t s_tickUnitBlinking  = 0; /*!< Indicates next time the Blinking function is executed. */
 static int64_t s_tickUnitUnknown4  = 0; /*!< Indicates next time the Unknown4 function is executed. */
@@ -219,9 +219,9 @@ void GameLoop_Unit(void)
 
 	if (g_debugScenario) return;
 
-	if (s_tickUnitUnknown1 <= g_timerGame) {
+	if (g_tickUnitUnknown1 <= g_timerGame) {
 		tickMovement = true;
-		s_tickUnitUnknown1 = g_timerGame + 3;
+		g_tickUnitUnknown1 = g_timerGame + 3;
 	}
 
 	if (s_tickUnitUnknown2 <= g_timerGame) {

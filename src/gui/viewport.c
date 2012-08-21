@@ -575,6 +575,9 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 			if (!Map_IsPositionInViewport(u->o.position, &x, &y)) continue;
 
+			if (enhancement_smooth_bullet_movement)
+				Viewport_InterpolateMovement(u, &x, &y);
+
 			index = ui->groundSpriteID;
 			orientation = u->orientation[0].current;
 			s_spriteFlags = 0xC000;
