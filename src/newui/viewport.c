@@ -358,6 +358,10 @@ Viewport_Click(Widget *w)
 		return true;
 	}
 
+	const enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
+	if (cursorID != g_cursorSpriteID)
+		Video_SetCursor(cursorID);
+
 	if (w->index == 45)
 		return true;
 
@@ -470,10 +474,6 @@ Viewport_Click(Widget *w)
 	else if (g_selectionType == SELECTIONTYPE_PLACE) {
 		Map_SetSelection(packed);
 	}
-
-	const enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
-	if (cursorID != g_cursorSpriteID)
-		Video_SetCursor(cursorID);
 
 	return false;
 }
