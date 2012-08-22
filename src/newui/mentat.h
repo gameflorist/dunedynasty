@@ -6,6 +6,8 @@
 
 enum BriefingState {
 	MENTAT_SHOW_CONTENTS,
+	MENTAT_PAUSE_DESCRIPTION,
+	MENTAT_SHOW_DESCRIPTION,
 	MENTAT_SHOW_TEXT,
 	MENTAT_IDLE
 };
@@ -21,7 +23,11 @@ typedef struct MentatState {
 	enum BriefingState state;
 
 	char buf[1024];
+
 	char *desc;
+	int desc_lines;
+	int64_t desc_timer;
+
 	char *text;
 	int lines0;
 	int lines;
@@ -43,7 +49,7 @@ extern void Mentat_DrawBackground(enum HouseType houseID);
 extern void Mentat_Draw(enum HouseType houseID);
 
 extern void MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry, MentatState *mentat);
-extern void MentatBriefing_DrawText(MentatState *mentat);
+extern void MentatBriefing_DrawText(const MentatState *mentat);
 extern void MentatBriefing_AdvanceText(MentatState *mentat);
 
 extern void MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntry entry, MentatState *mentat);

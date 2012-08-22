@@ -102,6 +102,15 @@ Mentat_Draw(enum HouseType houseID)
 /*--------------------------------------------------------------*/
 
 static void
+MentatBriefing_SplitDesc(MentatState *mentat)
+{
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x31);
+
+	mentat->desc_lines = GUI_SplitText(mentat->desc, 184 + 10, '\0');
+	mentat->desc_timer = Timer_GetTicks() + 15;
+}
+
+static void
 MentatBriefing_SplitText(MentatState *mentat)
 {
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x32);
@@ -128,17 +137,42 @@ MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEnt
 	MentatBriefing_SplitText(mentat);
 }
 
-void
-MentatBriefing_DrawText(MentatState *mentat)
+static void
+MentatBriefing_DrawDescription(const MentatState *mentat)
 {
 	if (mentat->desc) {
 		const WidgetProperties *wi = &g_widgetProperties[WINDOWID_MENTAT_PICTURE];
 
 		GUI_DrawText_Wrapper(mentat->desc, wi->xBase*8 + 5, wi->yBase + 3, g_curWidgetFGColourBlink, 0, 0x31);
 	}
+}
 
+void
+MentatBriefing_DrawText(const MentatState *mentat)
+{
 	if (mentat->lines > 0)
 		GUI_DrawText_Wrapper(mentat->text, 4, 1, g_curWidgetFGColourBlink, 0, 0x32);
+}
+
+static void
+MentatBriefing_AdvanceDesc(MentatState *mentat)
+{
+	if (mentat->desc_lines > 1) {
+		mentat->desc_timer = Timer_GetTicks() + 15;
+		mentat->desc_lines--;
+
+		char *c = mentat->desc;
+		while (*c != '\0') {
+			c++;
+		}
+
+		*c = '\n';
+	}
+
+	if (mentat->desc_lines <= 1) {
+		mentat->state = MENTAT_SHOW_TEXT;
+		MentatBriefing_SplitText(mentat);
+	}
 }
 
 void
@@ -224,10 +258,14 @@ MentatHelp_Draw(enum HouseType houseID, MentatState *mentat)
 		GUI_Mentat_Draw(true);
 	}
 	else {
-		MentatBriefing_DrawText(mentat);
+		if (mentat->state >= MENTAT_SHOW_DESCRIPTION)
+			MentatBriefing_DrawDescription(mentat);
+
+		if (mentat->state >= MENTAT_SHOW_TEXT)
+			MentatBriefing_DrawText(mentat);
 	}
 
-	if (mentat->state != MENTAT_SHOW_TEXT) {
+	if (mentat->state == MENTAT_SHOW_CONTENTS || mentat->state == MENTAT_IDLE) {
 		GUI_Widget_Draw(g_widgetMentatFirst);
 	}
 
@@ -254,9 +292,27 @@ MentatHelp_Tick(enum HouseType houseID, MentatState *mentat)
 		else {
 			GUI_Mentat_HelpListLoop(widgetID);
 
-			if (mentat->state == MENTAT_SHOW_TEXT)
-				MentatBriefing_SplitText(mentat);
+			if (mentat->state == MENTAT_PAUSE_DESCRIPTION)
+				mentat->desc_timer = Timer_GetTicks() + 30;
 		}
+	}
+	else if (mentat->state == MENTAT_PAUSE_DESCRIPTION) {
+		if (Timer_GetTicks() >= mentat->desc_timer) {
+			MentatBriefing_SplitDesc(mentat);
+
+			if (mentat->desc_lines == 1) {
+				mentat->state = MENTAT_SHOW_TEXT;
+				MentatBriefing_SplitText(mentat);
+			}
+			else {
+				mentat->state = MENTAT_SHOW_DESCRIPTION;
+				mentat->desc_timer = Timer_GetTicks() + 15;
+			}
+		}
+	}
+	else if (mentat->state == MENTAT_SHOW_DESCRIPTION) {
+		if (Timer_GetTicks() >= mentat->desc_timer)
+			MentatBriefing_AdvanceDesc(mentat);
 	}
 	else if (mentat->state == MENTAT_SHOW_TEXT) {
 		if (Input_IsInputAvailable()) {

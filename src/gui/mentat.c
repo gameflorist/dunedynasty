@@ -801,7 +801,7 @@ static void GUI_Mentat_ShowHelp(void)
 	}
 
 	free(compressedText);
-	mentat->state = MENTAT_SHOW_TEXT;
+	mentat->state = MENTAT_PAUSE_DESCRIPTION;
 	mentat->desc = desc;
 	mentat->text = text;
 
