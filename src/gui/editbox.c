@@ -20,7 +20,7 @@ GUI_EditBox_ScancodeToChar(enum Scancode key)
 	const unsigned char char_10[] = "1234567890-";
 	const unsigned char char_qp[] = "qwertyuiop";
 	const unsigned char char_al[] = "asdfghjkl";
-	const unsigned char char_zm[] = "zxcvbnm,.";
+	const unsigned char char_zm[] = "zxcvbnm,./";
 
 	if (SCANCODE_1 <= key && key <= SCANCODE_MINUS)
 		return char_10[key - SCANCODE_1];
@@ -31,7 +31,7 @@ GUI_EditBox_ScancodeToChar(enum Scancode key)
 	if (SCANCODE_A <= key && key <= SCANCODE_L)
 		return char_al[key - SCANCODE_A];
 
-	if (SCANCODE_Z <= key && key <= SCANCODE_FULLSTOP)
+	if (SCANCODE_Z <= key && key <= SCANCODE_SLASH)
 		return char_zm[key - SCANCODE_Z];
 
 	if (key == SCANCODE_SPACE)

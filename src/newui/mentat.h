@@ -9,7 +9,8 @@ enum BriefingState {
 	MENTAT_PAUSE_DESCRIPTION,
 	MENTAT_SHOW_DESCRIPTION,
 	MENTAT_SHOW_TEXT,
-	MENTAT_IDLE
+	MENTAT_IDLE,
+	MENTAT_SECURITY_INCORRECT
 };
 
 enum BriefingEntry {
@@ -38,6 +39,10 @@ typedef struct MentatState {
 	void *wsa;
 	int wsa_frame;
 	int64_t wsa_timer;
+
+	char security_prompt[128];
+	int security_question;
+	int security_lives;
 } MentatState;
 
 extern int movingEyesSprite;
@@ -50,12 +55,18 @@ extern void Mentat_GetMouthPositions(enum HouseType houseID, int *left, int *top
 extern void Mentat_DrawBackground(enum HouseType houseID);
 extern void Mentat_Draw(enum HouseType houseID);
 
+extern void MentatBriefing_SplitText(MentatState *mentat);
 extern void MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry, MentatState *mentat);
 extern void MentatBriefing_DrawText(const MentatState *mentat);
 extern void MentatBriefing_AdvanceText(MentatState *mentat);
 
 extern void MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntry entry, MentatState *mentat);
 extern void MentatBriefing_DrawWSA(MentatState *mentat);
+
+extern void MentatSecurity_Initialise(enum HouseType houseID, MentatState *mentat);
+extern void MentatSecurity_PrepareQuestion(bool pick_new_question, MentatState *mentat);
+extern void MentatSecurity_Draw(MentatState *mentat);
+extern bool MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start);
 
 extern bool MentatHelp_Tick(enum HouseType houseID, MentatState *mentat);
 

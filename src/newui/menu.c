@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <allegro5/allegro.h>
+#include <strings.h>
 #include "types.h"
 #include "../os/math.h"
 #include "../os/sleep.h"
@@ -13,6 +14,7 @@
 #include "strategicmap.h"
 #include "../common_a5.h"
 #include "../cutscene.h"
+#include "../enhancement.h"
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/font.h"
@@ -46,6 +48,7 @@ enum MenuAction {
 	MENU_MAIN_MENU,
 	MENU_PICK_HOUSE,
 	MENU_CONFIRM_HOUSE,
+	MENU_SECURITY,
 	MENU_BRIEFING,
 	MENU_BRIEFING_WIN,
 	MENU_BRIEFING_LOSE,
@@ -336,12 +339,48 @@ PickHouse_Loop(void)
 
 /*--------------------------------------------------------------*/
 
+static enum MenuAction
+Security_InputLoop(enum HouseType houseID, MentatState *mentat)
+{
+	const int res = GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, 9, NULL, NULL, 0);
+
+	if (res == SCANCODE_ENTER) {
+		const char *answer = String_Get_ByIndex(mentat->security_question + 2);
+
+		if ((enhancement_security_question == SECURITY_QUESTION_ACCEPT_ALL) ||
+			(strcasecmp(mentat->security_prompt, answer) == 0)) {
+			mentat->state = MENTAT_SHOW_TEXT;
+			strncpy(mentat->buf, String_Get_ByIndex(STR_SECURITY_CORRECT_HARKONNEN + houseID * 3), sizeof(mentat->buf));
+			mentat->text = mentat->buf;
+			MentatBriefing_SplitText(mentat);
+
+			return MENU_BLINK_CONFIRM | MENU_BRIEFING;
+		}
+		else {
+			mentat->state = MENTAT_SECURITY_INCORRECT;
+			strncpy(mentat->buf, String_Get_ByIndex(STR_SECURITY_WRONG_HARKONNEN + houseID * 3), sizeof(mentat->buf));
+			mentat->text = mentat->buf;
+			MentatBriefing_SplitText(mentat);
+			mentat->security_lives--;
+
+			if (mentat->security_lives <= 0) {
+				return MENU_EXIT_GAME;
+			}
+		}
+	}
+
+	return MENU_REDRAW | MENU_SECURITY;
+}
+
 static void
 Briefing_Initialise(enum MenuAction menu, MentatState *mentat)
 {
 	if (menu == MENU_CONFIRM_HOUSE) {
 		MentatBriefing_InitText(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
 		MentatBriefing_InitWSA(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
+	}
+	else if (menu == MENU_SECURITY) {
+		MentatSecurity_Initialise(g_playerHouseID, mentat);
 	}
 	else {
 		const enum BriefingEntry entry =
@@ -365,7 +404,7 @@ Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 	MentatBriefing_DrawWSA(mentat);
 	Mentat_Draw(houseID);
 
-	if (mentat->state == MENTAT_SHOW_TEXT) {
+	if (mentat->state == MENTAT_SHOW_TEXT || mentat->state == MENTAT_SECURITY_INCORRECT) {
 		MentatBriefing_DrawText(mentat);
 	}
 	else if (mentat->state == MENTAT_IDLE) {
@@ -376,6 +415,9 @@ Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 			Video_DrawCPSRegion(misc, 0, 24 * (g_playerHouseID + 1), 26*8, 0, 13*8, 24);
 
 			GUI_Widget_DrawAll(briefing_yes_no_widgets);
+		}
+		else if (curr_menu == MENU_SECURITY) {
+			MentatSecurity_Draw(mentat);
 		}
 		else {
 			GUI_Widget_DrawAll(briefing_proceed_repeat_widgets);
@@ -408,6 +450,9 @@ Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
 		if (curr_menu == MENU_CONFIRM_HOUSE) {
 			widgetID = GUI_Widget_HandleEvents(briefing_yes_no_widgets);
 		}
+		else if (curr_menu == MENU_SECURITY) {
+			return Security_InputLoop(g_playerHouseID, mentat);
+		}
 		else {
 			widgetID = GUI_Widget_HandleEvents(briefing_proceed_repeat_widgets);
 		}
@@ -439,7 +484,7 @@ Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
 				return MENU_STRATEGIC_MAP;
 			}
 
-			return MENU_PLAY_A_GAME;
+			return MENU_NO_TRANSITION | MENU_PLAY_A_GAME;
 
 		case 0x8004: /* repeat */
 			mentat->state = MENTAT_SHOW_TEXT;
@@ -451,6 +496,15 @@ Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
 		default:
 			if (mentat->state == MENTAT_SHOW_TEXT) {
 				MentatBriefing_AdvanceText(mentat);
+
+				if (curr_menu == MENU_SECURITY && mentat->state == MENTAT_IDLE)
+					MentatSecurity_PrepareQuestion(false, mentat);
+
+				redraw = true;
+			}
+			else if (mentat->state == MENTAT_SECURITY_INCORRECT) {
+				MentatSecurity_PrepareQuestion(true, mentat);
+				mentat->state = MENTAT_IDLE;
 				redraw = true;
 			}
 			break;
@@ -479,10 +533,10 @@ StartGame_Loop(bool new_game)
 			return MENU_PICK_HOUSE;
 
 		case GM_WIN:
-			return MENU_BRIEFING_WIN;
+			return MENU_NO_TRANSITION | MENU_BRIEFING_WIN;
 
 		case GM_LOSE:
-			return MENU_BRIEFING_LOSE;
+			return MENU_NO_TRANSITION | MENU_BRIEFING_LOSE;
 
 		case GM_QUITGAME:
 			return MENU_EXIT_GAME;
@@ -672,7 +726,13 @@ StrategicMap_InputLoop(int campaignID, StrategicMapData *map)
 			g_scenarioID = scenario;
 			map->state = STRATEGIC_MAP_BLINK_REGION;
 			StrategicMap_AdvanceText(map, true);
-			return MENU_BLINK_CONFIRM | MENU_BRIEFING;
+
+			if ((enhancement_security_question != SECURITY_QUESTION_SKIP) && (campaignID == 1 || campaignID == 7)) {
+				return MENU_BLINK_CONFIRM | MENU_SECURITY;
+			}
+			else {
+				return MENU_BLINK_CONFIRM | MENU_BRIEFING;
+			}
 		}
 	}
 	else {
@@ -735,6 +795,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_CONFIRM_HOUSE:
+				case MENU_SECURITY:
 				case MENU_BRIEFING:
 				case MENU_BRIEFING_WIN:
 				case MENU_BRIEFING_LOSE:
@@ -769,6 +830,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_CONFIRM_HOUSE:
+				case MENU_SECURITY:
 				case MENU_BRIEFING:
 				case MENU_BRIEFING_WIN:
 				case MENU_BRIEFING_LOSE:
@@ -835,6 +897,15 @@ Menu_Run(void)
 
 			case MENU_PICK_HOUSE:
 				res = PickHouse_Loop();
+				break;
+
+			case MENU_SECURITY:
+				res = Briefing_Loop(curr_menu, &g_mentat_state);
+				break;
+
+			case MENU_SECURITY | MENU_BLINK_CONFIRM | MENU_FADE_OUT:
+				if (MentatSecurity_CorrectLoop(&g_mentat_state, fade_start))
+					res = MENU_NO_TRANSITION | MENU_BRIEFING;
 				break;
 
 			case MENU_CONFIRM_HOUSE:

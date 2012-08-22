@@ -17,6 +17,7 @@
 #include "../string.h"
 #include "../table/strings.h"
 #include "../timer/timer.h"
+#include "../tools.h"
 #include "../video/video.h"
 #include "../wsa.h"
 
@@ -134,7 +135,7 @@ MentatBriefing_SplitDesc(MentatState *mentat)
 	mentat->desc_timer = Timer_GetTicks() + 15;
 }
 
-static void
+void
 MentatBriefing_SplitText(MentatState *mentat)
 {
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x32);
@@ -268,6 +269,82 @@ MentatBriefing_DrawWSA(MentatState *mentat)
 		mentat->wsa_timer = curr_ticks;
 		mentat->wsa_frame = 0;
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+MentatSecurity_PickQuestion(MentatState *mentat)
+{
+	const int questionsCount = atoi(String_Get_ByIndex(STR_SECURITY_COUNT));
+
+	mentat->security_question = Tools_RandomRange(0, questionsCount - 1) * 3 + STR_SECURITY_QUESTIONS;
+	mentat->wsa = WSA_LoadFile(String_Get_ByIndex(mentat->security_question + 1), GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+
+#if 0
+	printf("Correct answer is: %s.\n", String_Get_ByIndex(mentat->security_question + 2));
+#endif
+}
+
+void
+MentatSecurity_Initialise(enum HouseType houseID, MentatState *mentat)
+{
+	g_disableOtherMovement = true;
+	g_interrogation = true;
+	mentat->security_lives = 3;
+
+	strncpy(mentat->buf, String_Get_ByIndex(STR_SECURITY_TEXT_HARKONNEN + houseID * 3), sizeof(mentat->buf));
+	mentat->text = mentat->buf;
+	MentatBriefing_SplitText(mentat);
+
+	MentatSecurity_PickQuestion(mentat);
+}
+
+void
+MentatSecurity_PrepareQuestion(bool pick_new_question, MentatState *mentat)
+{
+	if (pick_new_question)
+		MentatSecurity_PickQuestion(mentat);
+
+	strncpy(mentat->buf, String_Get_ByIndex(mentat->security_question), sizeof(mentat->buf));
+	mentat->text = mentat->buf;
+	MentatBriefing_SplitText(mentat);
+
+	mentat->security_prompt[0] = '\0';
+}
+
+void
+MentatSecurity_Draw(MentatState *mentat)
+{
+	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_MENTAT_EDIT_BOX];
+	const uint16 old_widget = Widget_SetCurrentWidget(WINDOWID_MENTAT_EDIT_BOX);
+
+	MentatBriefing_DrawText(mentat);
+
+	GUI_DrawBorder(wi->xBase*8 - 6, wi->yBase - 6, wi->width*8 + 12, wi->height + 12, 1, true);
+	GUI_DrawBorder(wi->xBase*8 - 2, wi->yBase - 2, wi->width*8 + 4, wi->height + 4, 2, false);
+
+	GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, 9, NULL, NULL, 0);
+	Widget_SetCurrentWidget(old_widget);
+}
+
+bool
+MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start)
+{
+	const int64_t curr_ticks = Timer_GetTicks();
+
+	if (curr_ticks >= mentat->speaking_timer)
+		mentat->speaking_mode = 0;
+
+	GUI_Mentat_Animation(mentat->speaking_mode);
+
+	if (curr_ticks - blink_start >= 120) {
+		g_disableOtherMovement = false;
+		g_interrogation = false;
+		return true;
+	}
+
+	return false;
 }
 
 /*--------------------------------------------------------------*/

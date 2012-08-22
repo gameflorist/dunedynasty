@@ -5,6 +5,12 @@
 
 #include <stdbool.h>
 
+enum SecurityQuestionMode {
+	SECURITY_QUESTION_ENABLE,
+	SECURITY_QUESTION_ACCEPT_ALL,
+	SECURITY_QUESTION_SKIP
+};
+
 extern bool g_dune2_enhanced;
 extern bool enhancement_fix_enemy_approach_direction_warning;
 extern bool enhancement_fix_everlasting_unit_wobble;
@@ -16,6 +22,7 @@ extern bool enhancement_insatiable_sandworms;
 extern bool enhancement_new_selection_cursor;
 extern bool enhancement_read_scenario_structure_health;
 extern bool enhancement_repeat_reinforcements;
+extern enum SecurityQuestionMode enhancement_security_question;
 extern bool enhancement_special_trooper_portaits;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 

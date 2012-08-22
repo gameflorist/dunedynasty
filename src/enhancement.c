@@ -72,6 +72,12 @@ bool enhancement_read_scenario_structure_health = false;
 bool enhancement_repeat_reinforcements = true;
 
 /**
+ * Enable the security question, accept any answer (default), or skip
+ * it entirely.
+ */
+enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ACCEPT_ALL;
+
+/**
  * Use the Fremen and Sardaukar portaits for troopers and trooper
  * squads.
  */
