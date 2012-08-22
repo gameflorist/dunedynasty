@@ -1647,13 +1647,25 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 		tile32 tile;
 		tile.tile = 0xFFFFFFFF;
 
-		oi = &g_table_unitInfo[objectType].o;
-		o = &Unit_Create(UNIT_INDEX_INVALID, (uint8)objectType, s->o.houseID, tile, 0)->o;
-		str = String_Get_ByIndex(g_table_unitInfo[objectType].o.stringID_full);
+		Unit *u = Unit_Create(UNIT_INDEX_INVALID, (uint8)objectType, s->o.houseID, tile, 0);
+		if (u != NULL) {
+			o = &u->o;
+			oi = &g_table_unitInfo[objectType].o;
+			str = String_Get_ByIndex(g_table_unitInfo[objectType].o.stringID_full);
+		}
+		else {
+			o = NULL;
+		}
 	} else {
-		oi = &g_table_structureInfo[objectType].o;
-		o = &Structure_Create(STRUCTURE_INDEX_INVALID, (uint8)objectType, s->o.houseID, 0xFFFF)->o;
-		str = String_Get_ByIndex(g_table_structureInfo[objectType].o.stringID_full);
+		Structure *st = Structure_Create(STRUCTURE_INDEX_INVALID, (uint8)objectType, s->o.houseID, 0xFFFF);
+		if (st != NULL) {
+			o = &st->o;
+			oi = &g_table_structureInfo[objectType].o;
+			str = String_Get_ByIndex(g_table_structureInfo[objectType].o.stringID_full);
+		}
+		else {
+			o = NULL;
+		}
 	}
 
 	s->o.flags.s.onHold = false;
