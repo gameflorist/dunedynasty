@@ -114,7 +114,7 @@ Viewport_GetSelectionMode(void)
 }
 
 static void
-Viewport_SelectRegion(Widget *w)
+Viewport_SelectRegion(void)
 {
 	const int radius = 5;
 	const int dx = selection_box_x2 - selection_box_x1;
@@ -122,6 +122,8 @@ Viewport_SelectRegion(Widget *w)
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
 	const enum SelectionMode mode = Viewport_GetSelectionMode();
+	const Widget *w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 43);
+	assert(w != NULL);
 
 	/* Select individual unit or structure. */
 	if (dx*dx + dy*dy < radius*radius) {
@@ -157,10 +159,10 @@ Viewport_SelectRegion(Widget *w)
 
 	/* Box selection. */
 	else if (mode == SELECTION_MODE_NONE || mode == SELECTION_MODE_CONTROLLABLE_UNIT) {
-		const int x1 = Map_Clamp(x0 + (selection_box_x1 - w->offsetX) / TILE_SIZE);
-		const int x2 = Map_Clamp(x0 + (selection_box_x2 - w->offsetX) / TILE_SIZE);
-		const int y1 = Map_Clamp(y0 + (selection_box_y1 - w->offsetY) / TILE_SIZE);
-		const int y2 = Map_Clamp(y0 + (selection_box_y2 - w->offsetY) / TILE_SIZE);
+		const int x1 = selection_box_x1 - w->offsetX;
+		const int x2 = selection_box_x2 - w->offsetX;
+		const int y1 = selection_box_y1 - w->offsetY;
+		const int y2 = selection_box_y2 - w->offsetY;
 
 		PoolFindStruct find;
 
@@ -171,8 +173,9 @@ Viewport_SelectRegion(Widget *w)
 		/* Try to find own units. */
 		Unit *u = Unit_Find(&find);
 		while (u != NULL) {
-			const int ux = Tile_GetPosX(u->o.position);
-			const int uy = Tile_GetPosY(u->o.position);
+			uint16 ux, uy;
+
+			Map_IsPositionInViewport(u->o.position, &ux, &uy);
 
 			if ((x1 <= ux && ux <= x2) && (y1 <= uy && uy <= y2)) {
 				if (!Unit_IsSelected(u))
@@ -195,10 +198,12 @@ Viewport_SelectRegion(Widget *w)
 			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 			const int sx = Tile_GetPosX(s->o.position);
 			const int sy = Tile_GetPosY(s->o.position);
-			const int sw = g_table_structure_layoutSize[si->layout].width;
-			const int sh = g_table_structure_layoutSize[si->layout].height;
+			const int xx = TILE_SIZE * (Tile_GetPosX(s->o.position) - x0);
+			const int yy = TILE_SIZE * (Tile_GetPosY(s->o.position) - y0);
+			const int sw = TILE_SIZE * g_table_structure_layoutSize[si->layout].width;
+			const int sh = TILE_SIZE * g_table_structure_layoutSize[si->layout].height;
 
-			if ((x1 <= sx + sw && sx <= x2) && (y1 <= sy + sh && sy <= y2)) {
+			if ((x1 <= xx + sw && xx <= x2) && (y1 <= yy + sh && yy <= y2)) {
 				const uint16 packed = Tile_PackXY(sx, sy);
 				Map_SetSelection(packed);
 				return;
@@ -348,7 +353,7 @@ Viewport_Click(Widget *w)
 			selection_box_y2 = swap;
 		}
 
-		Viewport_SelectRegion(w);
+		Viewport_SelectRegion();
 		return true;
 	}
 
