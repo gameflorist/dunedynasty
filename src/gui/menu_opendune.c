@@ -1170,7 +1170,298 @@ void GUI_Mentat_ShowLose(void)
 	GUI_Mentat_ShowDialog(g_playerHouseID, g_campaignID * 4 + 6, g_scenario.pictureLose, g_table_houseInfo[g_playerHouseID].musicLose);
 }
 
-/* gui/menu_opendune.c. */
+/**
+ * Display a mentat.
+ * @param houseFilename Filename of the house.
+ * @param houseID ID of the house.
+ */
+void GUI_Mentat_Display(const char *wsaFilename, uint8 houseID)
+{
+	char textBuffer[16];
+	uint16 oldScreenID;
+
+	snprintf(textBuffer, sizeof(textBuffer), "MENTAT%c.CPS", g_table_houseInfo[houseID].name[0]);
+	Sprites_LoadImage(textBuffer, 3, g_palette_998A);
+
+	oldScreenID = GFX_Screen_SetActive(2);
+
+	if (houseID == HOUSE_MERCENARY) {
+		File_ReadBlockFile("BENE.PAL", g_palette1, 256 * 3);
+	}
+
+	GUI_Mentat_SetSprites(houseID);
+
+	g_shoulderLeft = s_unknownHouseData[houseID][6];
+	g_shoulderTop  = s_unknownHouseData[houseID][7];
+
+	Widget_SetAndPaintCurrentWidget(8);
+
+	if (wsaFilename != NULL) {
+		void *wsa;
+
+		wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+		WSA_DisplayFrame(wsa, 0, g_curWidgetXBase * 8, g_curWidgetYBase, 2);
+		WSA_Unload(wsa);
+	}
+
+	GUI_DrawSprite(2, g_sprites[397 + houseID * 15], g_shoulderLeft, g_shoulderTop, 0, 0);
+	GFX_Screen_SetActive(oldScreenID);
+}
+
+static bool GUI_Mentat_DrawInfo(char *text, uint16 left, uint16 top, uint16 height, uint16 skip, int16 lines, uint16 flags)
+{
+	uint16 oldScreenID;
+
+	if (lines <= 0) return false;
+
+	oldScreenID = GFX_Screen_SetActive(4);
+
+	while (skip-- != 0) text += strlen(text) + 1;
+
+	while (lines-- != 0) {
+		if (*text != '\0') GUI_DrawText_Wrapper(text, left, top, g_curWidgetFGColourBlink, 0, flags);
+		top += height;
+		text += strlen(text) + 1;
+	}
+
+	GFX_Screen_SetActive(oldScreenID);
+
+	return true;
+}
+
+uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text, bool arg12, Widget *w)
+{
+	uint16 oldScreenID;
+	uint16 old07AE;
+	void *wsa;
+	uint16 descLines;
+	bool dirty;
+	bool done;
+	bool textDone;
+	uint16 frame;
+	uint16 mentatSpeakingMode;
+	uint16 result;
+	int64_t textTick;
+	uint32 textDelay;
+	uint16 lines;
+	uint16 textLines;
+	uint16 step;
+
+	dirty = false;
+	textTick = 0;
+	textDelay = 0;
+
+	old07AE = Widget_SetCurrentWidget(8);
+	oldScreenID = GFX_Screen_SetActive(4);
+
+	wsa = NULL;
+
+	if (wsaFilename != NULL) {
+		wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(3), GFX_Screen_GetSize_ByIndex(3), false);
+	}
+
+	step = 0;
+	if (wsa == NULL) {
+		Widget_PaintCurrentWidget();
+		step = 1;
+	}
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x31);
+
+	descLines = GUI_SplitText(pictureDetails, (g_curWidgetWidth << 3) + 10, '\0');
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x32);
+
+	textLines = GUI_Mentat_SplitText(text, 304);
+
+	mentatSpeakingMode = 2;
+	lines = 0;
+	frame = 0;
+	int64_t timeout = Timer_GetTicks();
+	int64_t descTick = 30 + timeout;
+
+	Input_History_Clear();
+
+	textDone = false;
+	done = false;
+	result = 0;
+	while (!done) {
+		uint16 key;
+
+		GFX_Screen_SetActive(0);
+
+		key = GUI_Widget_HandleEvents(w);
+
+		GUI_PaletteAnimate();
+
+		if (key != 0) {
+			if ((key & 0x800) == 0) {
+				if (w != NULL) {
+					if ((key & 0x8000) != 0 && result == 0) result = key;
+				} else {
+					if (textDone) result = key;
+				}
+			} else {
+				key = 0;
+			}
+		}
+
+		switch (step) {
+			case 0:
+				if (key == 0) break;
+				step = 1;
+				/* FALL-THROUGH */
+
+			case 1:
+				if (key != 0) {
+					if (result != 0) {
+						step = 5;
+						break;
+					}
+					lines = descLines;
+					dirty = true;
+				} else {
+					if (Timer_GetTicks() > descTick) {
+						descTick = Timer_GetTicks() + 15;
+						lines++;
+						dirty = true;
+					}
+				}
+
+				if (lines < descLines && lines <= 12) break;
+
+				step = (text != NULL) ? 2 : 4;
+				lines = descLines;
+				break;
+
+			case 2:
+				GUI_Mouse_Hide_InRegion(0, 0, SCREEN_WIDTH, 40);
+				GUI_Screen_Copy(0, 0, 0, 160, SCREEN_WIDTH / 8, 40, 0, 4);
+				GUI_Mouse_Show_InRegion();
+
+				step = 3;
+				key = 1;
+				/* FALL-THROUGH */
+
+			case 3:
+				if (mentatSpeakingMode == 2 && textTick < Timer_GetTicks()) key = 1;
+
+				if ((key != 0 && textDone) || result != 0) {
+					GUI_Mouse_Hide_InRegion(0, 0, SCREEN_WIDTH, 40);
+					GUI_Screen_Copy(0, 160, 0, 0, SCREEN_WIDTH / 8, 40, 4, 0);
+					GUI_Mouse_Show_InRegion();
+
+					step = 4;
+					mentatSpeakingMode = 0;
+					break;
+				}
+
+				if (key != 0) {
+					GUI_Screen_Copy(0, 160, 0, 0, SCREEN_WIDTH / 8, 40, 4, 4);
+
+					if (textLines-- != 0) {
+						GFX_Screen_SetActive(4);
+						GUI_DrawText_Wrapper(text, 4, 1, g_curWidgetFGColourBlink, 0, 0x32);
+						mentatSpeakingMode = 1;
+						textDelay = strlen(text) * 4;
+						textTick = Timer_GetTicks() + textDelay;
+
+						if (textLines != 0) {
+							while (*text++ != '\0') {}
+						} else {
+							textDone = true;
+						}
+
+						GFX_Screen_SetActive(0);
+					}
+
+					GUI_Mouse_Hide_InRegion(0, 0, SCREEN_WIDTH, 40);
+					GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, 40, 4, 0);
+					GUI_Mouse_Show_InRegion();
+					break;
+				}
+
+				if (mentatSpeakingMode == 0 || textTick > Timer_GetTicks()) break;
+
+				mentatSpeakingMode = 2;
+				textTick += textDelay + textDelay / 2;
+				break;
+
+			case 4:
+				if (result != 0 || w == NULL) step = 5;
+				break;
+
+			case 5:
+				dirty = true;
+				done = true;
+				break;
+
+			default: break;
+		}
+
+		GUI_Mentat_Animation(mentatSpeakingMode);
+
+		if (wsa != NULL && Timer_GetTicks() >= timeout) {
+			timeout = Timer_GetTicks() + 7;
+
+			do {
+				if (step == 0 && frame > 4) step = 1;
+
+				if (!WSA_DisplayFrame(wsa, frame++, g_curWidgetXBase << 3, g_curWidgetYBase, 4)) {
+					if (step == 0) step = 1;
+
+					if (arg12 != 0) {
+						frame = 0;
+					} else {
+						WSA_Unload(wsa);
+						wsa = NULL;
+					}
+				}
+			} while (frame == 0);
+			dirty = true;
+		}
+
+		if (!dirty) {
+			Video_Tick();
+			sleepIdle();
+			continue;
+		}
+
+		GUI_Mentat_DrawInfo(pictureDetails, (g_curWidgetXBase << 3) + 5, g_curWidgetYBase + 3, 8, 0, lines, 0x31);
+
+		GUI_DrawSprite(4, g_sprites[397 + g_playerHouseID * 15], g_shoulderLeft, g_shoulderTop, 0, 0);
+		GUI_Mouse_Hide_InWidget(g_curWidgetIndex);
+		GUI_Screen_Copy(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 4, 0);
+		GUI_Mouse_Show_InWidget();
+		dirty = false;
+
+		Video_Tick();
+		sleepIdle();
+	}
+
+	if (wsa != NULL) WSA_Unload(wsa);
+
+	GFX_Screen_SetActive(4);
+	GUI_DrawSprite(4, g_sprites[397 + g_playerHouseID * 15], g_shoulderLeft, g_shoulderTop, 0, 0);
+	GUI_Mouse_Hide_InWidget(g_curWidgetIndex);
+	GUI_Screen_Copy(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 4, 0);
+	GUI_Mouse_Show_InWidget();
+	Widget_SetCurrentWidget(old07AE);
+	GFX_Screen_SetActive(oldScreenID);
+
+	Input_History_Clear();
+
+	return result;
+}
+
+uint16 GUI_Mentat_Tick(void)
+{
+	GUI_Mentat_Animation((g_interrogationTimer < Timer_GetTicks()) ? 0 : 1);
+
+	return 0;
+}
+
+/* gui/widget.c. */
 
 static void GUI_Widget_Undraw(Widget *w, uint8 colour)
 {

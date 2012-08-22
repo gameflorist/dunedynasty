@@ -19,7 +19,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/gui/font.c
 	src/gui/gui.c
 	src/gui/mentat.c
-	src/gui/security.c
 	src/gui/viewport.c
 	src/gui/widget.c
 	src/gui/widget_click.c
@@ -101,6 +100,7 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
 	src/gui/menu_opendune.c
+	src/gui/security.c
 	src/input/input_opendune.c
 	src/input/mouse_opendune.c
 	src/os/error_win32.c
