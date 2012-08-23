@@ -7,7 +7,7 @@
 #include "sound.h"
 
 /** Available voices. */
-const SoundData g_table_voices[NUM_VOICES] = {
+const SoundData g_table_voices[SAMPLEID_MAX] = {
 	{"+VSCREAM1.VOC",  11}, /*   0 */
 	{"+EXSAND.VOC",    10}, /*   1 */
 	{"+ROCKET.VOC",    11}, /*   2 */
