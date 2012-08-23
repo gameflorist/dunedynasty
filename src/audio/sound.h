@@ -6,8 +6,8 @@
 #define SOUND_H
 
 extern void Music_Play(uint16 musicID);
-extern void Voice_PlayAtTile(int16 voiceID, tile32 position);
-extern void Voice_Play(int16 voiceID);
+extern void Voice_PlayAtTile(uint16 voiceID, tile32 position);
+extern void Voice_Play(uint16 voiceID);
 extern void Voice_LoadVoices(uint16 voiceSet);
 extern void Voice_UnloadVoices(void);
 

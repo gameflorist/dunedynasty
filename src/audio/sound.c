@@ -10,6 +10,7 @@
 
 #include "sound.h"
 
+#include "audio.h"
 #include "driver.h"
 #include "mt32mpu.h"
 #include "../config.h"
@@ -23,10 +24,17 @@
 
 
 static void *g_variable_3E54[NUM_VOICES];
+
+#if 0
 static uint32 g_variable_3E54_size[NUM_VOICES];
+#endif
+
 static const char *s_currentMusic = NULL;        /*!< Currently loaded music file. */
+
+#if 0
 static uint16 s_spokenWords[NUM_SPEECH_PARTS];   /*!< Buffer with speech to play. */
 static uint16 s_variable_4060;
+#endif
 
 static void Driver_Music_Play(int16 index, uint16 volume)
 {
@@ -104,8 +112,9 @@ void Music_Play(uint16 musicID)
  * @param voiceID Which voice to play.
  * @param position Which position to play it on.
  */
-void Voice_PlayAtTile(int16 voiceID, tile32 position)
+void Voice_PlayAtTile(uint16 voiceID, tile32 position)
 {
+#if 0
 	uint16 index;
 	uint16 volume;
 
@@ -130,18 +139,25 @@ void Voice_PlayAtTile(int16 voiceID, tile32 position)
 	} else {
 		Driver_Sound_Play(voiceID, volume);
 	}
+#else
+	Audio_PlaySoundAtTile(voiceID, position);
+#endif
 }
 
 /**
  * Play a voice.
  * @param voiceID The voice to play.
  */
-void Voice_Play(int16 voiceID)
+void Voice_Play(uint16 voiceID)
 {
+#if 0
 	tile32 tile;
 
 	tile.tile = 0;
 	Voice_PlayAtTile(voiceID, tile);
+#else
+	Audio_PlaySound(voiceID);
+#endif
 }
 
 /**
@@ -150,6 +166,7 @@ void Voice_Play(int16 voiceID)
  */
 void Voice_LoadVoices(uint16 voiceSet)
 {
+#if 0
 	static uint16 currentVoiceSet = 0xFFFE;
 	uint16 i;
 	uint16 voice;
@@ -272,6 +289,9 @@ void Voice_LoadVoices(uint16 voiceSet)
 		}
 	}
 	currentVoiceSet = voiceSet;
+#else
+	Audio_LoadSampleSet(voiceSet);
+#endif
 }
 
 /**
@@ -293,6 +313,7 @@ void Voice_UnloadVoices(void)
  */
 void Sound_StartSound(uint16 index)
 {
+#if 0
 	if (index == 0xFFFF || g_gameConfig.sounds == 0 || (int16)g_table_voices[index].variable_04 < (int16)s_variable_4060) return;
 
 	s_variable_4060 = g_table_voices[index].variable_04;
@@ -312,6 +333,9 @@ void Sound_StartSound(uint16 index)
 			Driver_Voice_Play(g_readBuffer, 0xFF);
 		}
 	}
+#else
+	Audio_PlaySample(index, 255, 0.0);
+#endif
 }
 
 /**
@@ -321,6 +345,7 @@ void Sound_StartSound(uint16 index)
  */
 void Sound_Output_Feedback(uint16 index)
 {
+#if 0
 	if (index == 0xFFFF) return;
 
 	if (index == 0xFFFE) {
@@ -367,6 +392,9 @@ void Sound_Output_Feedback(uint16 index)
 	}
 
 	Sound_StartSpeech();
+#else
+	Audio_PlayVoice(index);
+#endif
 }
 
 /**
@@ -376,6 +404,7 @@ void Sound_Output_Feedback(uint16 index)
  */
 bool Sound_StartSpeech(void)
 {
+#if 0
 	if (g_gameConfig.sounds == 0) return false;
 
 	if (Driver_Voice_IsPlaying()) return true;
@@ -390,6 +419,9 @@ bool Sound_StartSpeech(void)
 	s_spokenWords[lengthof(s_spokenWords) - 1] = 0xFFFF;
 
 	return true;
+#else
+	return Audio_Poll();
+#endif
 }
 
 /**

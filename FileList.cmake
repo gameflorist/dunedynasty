@@ -3,7 +3,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/audio.c
 	src/audio/audio_a5.c
 	src/audio/driver.c
-	src/audio/dsp_alsa.c
 	src/audio/midi_alsa.c
 	src/audio/mt32mpu.c
 	src/audio/sound.c
@@ -95,6 +94,7 @@ set(DUNEDYNASTY_SRC_FILES
 	)
 
 set(OPENDUNE_UNUSED_SRC_FILES
+	src/audio/dsp_alsa.c
 	src/audio/dsp_none.c
 	src/audio/dsp_sdl.c
 	src/audio/dsp_win32.c
