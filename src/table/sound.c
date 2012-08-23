@@ -211,7 +211,7 @@ const SoundData g_table_musics[] = {
 /**
  * Mapping soundID -> voice.
  */
-const uint16 g_table_voiceMapping[] = {
+const enum SampleID g_table_voiceMapping[SOUNDID_MAX] = {
 	0xFFFF, /*   0 */
 	0xFFFF, /*   1 */
 	0xFFFF, /*   2 */

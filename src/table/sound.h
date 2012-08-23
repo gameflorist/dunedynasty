@@ -152,6 +152,43 @@ enum SampleID {
 	SAMPLE_INVALID = 0xFFFF
 };
 
+enum SoundID {
+	EFFECT_FADE_OUT = 1,
+	SOUND_PLACEMENT = 20,
+	EFFECT_WORM_SIGN_OUR_BASE_IS_UNDER_ATTACK = 23,
+	SOUND_DROP_LOAD = 24,
+	SOUND_SCREAM1 = 30,
+	SOUND_SCREAM5 = 31,
+	SOUND_SCREAM2 = 32,
+	SOUND_SCREAM3 = 33,
+	SOUND_SCREAM4 = 34,
+	SOUND_SQUISH = 35,
+	EFFECT_SET_TARGET = 36,
+	EFFECT_HALL_OF_FAME_END_METER = 38,
+	SOUND_ROCKET = 42,
+	EFFECT_SONIC_BLAST = 43,
+	SOUND_STRUCTURE_DESTROYED = 44,
+	EFFECT_COUNT_DOWN_TICK = 46,
+	EFFECT_ERROR_OCCURRED = 47,
+	EFFECT_CREDITS_INCREASE = 52,
+	EFFECT_CREDITS_DECREASE = 53,
+	SOUND_TANK = 57,
+	SOUND_GUN = 58,
+	SOUND_MACHINE_GUN = 59,
+	SOUND_CONSTRUCTION_COMPLETE = 60,
+	SOUND_RADAR_STATIC = 62,
+	SOUND_SANDWORM = 63,
+	SOUND_MINI_ROCKET = 64,
+	SOUND_END_GAME_BLASTER = 65,
+	SOUND_END_GAME_GLASS = 66,
+	SOUND_END_GAME_LIZARD = 67,
+	SOUND_END_GAME_FLESH = 68,
+	SOUND_END_GAME_CLICK = 69,
+
+	SOUNDID_MAX = 120,
+	SOUND_INVALID = 0xFFFF
+};
+
 /** Information about sound files. */
 typedef struct SoundData {
 	const char *string; /*!< Pointer to a string. */
@@ -167,7 +204,7 @@ typedef struct Feedback {
 
 extern const SoundData g_table_voices[SAMPLEID_MAX];
 extern const SoundData g_table_musics[];
-extern const uint16 g_table_voiceMapping[];
+extern const enum SampleID g_table_voiceMapping[SOUNDID_MAX];
 extern const Feedback g_feedback[];
 extern const uint16 g_translatedVoice[][NUM_SPEECH_PARTS];
 
