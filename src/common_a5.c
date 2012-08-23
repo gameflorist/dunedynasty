@@ -5,6 +5,7 @@
 
 #include "common_a5.h"
 
+#include "audio/audio_a5.h"
 #include "gfx.h"
 #include "input/input_a5.h"
 #include "input/mouse.h"
@@ -68,6 +69,7 @@ A5_Init(void)
 	if (TimerA5_Init() != true)
 		return false;
 
+	AudioA5_Init();
 	A5_InitTransform();
 
 	return true;
@@ -76,6 +78,7 @@ A5_Init(void)
 void
 A5_Uninit(void)
 {
+	AudioA5_Uninit();
 	TimerA5_Uninit();
 	VideoA5_Uninit();
 	InputA5_Uninit();

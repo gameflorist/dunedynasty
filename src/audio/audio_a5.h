@@ -1,0 +1,11 @@
+#ifndef AUDIO_AUDIOA5_H
+#define AUDIO_AUDIOA5_H
+
+#include "types.h"
+#include "../table/sound.h"
+
+extern void AudioA5_Init(void);
+extern void AudioA5_Uninit(void);
+extern void AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size);
+
+#endif

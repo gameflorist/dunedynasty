@@ -1,5 +1,7 @@
 set(DUNEDYNASTY_SRC_FILES
 	src/animation.c
+	src/audio/audio.c
+	src/audio/audio_a5.c
 	src/audio/driver.c
 	src/audio/dsp_alsa.c
 	src/audio/midi_alsa.c
