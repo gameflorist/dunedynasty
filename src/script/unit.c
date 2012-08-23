@@ -12,6 +12,7 @@
 #include "script.h"
 
 #include "../animation.h"
+#include "../audio/audio.h"
 #include "../audio/sound.h"
 #include "../config.h"
 #include "../enhancement.h"
@@ -674,7 +675,13 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 			bullet->originEncoded = Tools_Index_Encode(u->o.index, IT_UNIT);
 
-			Voice_PlayAtTile(ui->bulletSound, u->o.position);
+			/* Play trooper missile sound. */
+			if ((u->o.type == UNIT_TROOPERS || u->o.type == UNIT_TROOPER) && (typeID == UNIT_MISSILE_TROOPER)) {
+				Audio_PlaySoundAtTile(SOUND_MINI_ROCKET, u->o.position);
+			}
+			else {
+				Audio_PlaySoundAtTile(ui->bulletSound, u->o.position);
+			}
 
 			Unit_Deviation_Decrease(u, 20);
 		} break;

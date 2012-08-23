@@ -1690,7 +1690,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 0,
 		/* explosionType        */ 18,
 		/* bulletType           */ -1,
-		/* bulletSound          */ 64
+		/* bulletSound          */ -1
 	},
 
 	{ /* 23 */
