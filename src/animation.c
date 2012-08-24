@@ -8,7 +8,7 @@
 
 #include "animation.h"
 
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "map.h"
 #include "tile.h"
 #include "timer/timer.h"
@@ -191,7 +191,7 @@ static void Animation_Func_SetIconGroup(Animation *animation, int16 parameter)
  */
 static void Animation_Func_PlayVoice(Animation *animation, int16 parameter)
 {
-	Voice_PlayAtTile(parameter, animation->tile);
+	Audio_PlaySoundAtTile(parameter, animation->tile);
 }
 
 /**

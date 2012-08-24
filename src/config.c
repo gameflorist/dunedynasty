@@ -9,7 +9,7 @@
 
 #include "config.h"
 
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "file.h"
 
 GameCfg g_gameConfig = { 1, 1, 2, 1, 1 };
@@ -87,5 +87,6 @@ void GameOptions_Save(void)
 
 	File_Close(index);
 
-	if (g_gameConfig.music == 0) Music_Play(0);
+	if (g_gameConfig.music == 0)
+		Audio_PlayMusic(MUSIC_STOP);
 }

@@ -10,7 +10,7 @@
 #include "menubar.h"
 
 #include "mentat.h"
-#include "../audio/driver.h"
+#include "../audio/audio.h"
 #include "../common_a5.h"
 #include "../config.h"
 #include "../enhancement.h"
@@ -373,14 +373,12 @@ MenuBar_TickGameControls(void)
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_MUSIC_IS */
 			g_gameConfig.music ^= 0x1;
-			if (g_gameConfig.music == 0)
-				Driver_Music_Stop();
+			/* if (g_gameConfig.music == 0) Driver_Music_Stop(); */
 			break;
 
 		case 0x8000 | 31: /* STR_SOUNDS_ARE */
 			g_gameConfig.sounds ^= 0x1;
-			if (g_gameConfig.sounds == 0)
-				Driver_Sound_Stop();
+			/* if (g_gameConfig.sounds == 0) Driver_Sound_Stop(); */
 			break;
 
 		case 0x8000 | 32: /* STR_GAME_SPEED */

@@ -6,8 +6,7 @@
 
 #include "viewport.h"
 
-#include "../audio/driver.h"
-#include "../audio/sound.h"
+#include "../audio/audio.h"
 #include "../config.h"
 #include "../enhancement.h"
 #include "../gfx.h"
@@ -250,13 +249,15 @@ Viewport_Target(Unit *u, enum ActionType action, uint16 packed)
 	}
 
 	if (g_enableVoices == 0) {
-		Driver_Sound_Play(36, 0xFF);
+		Audio_PlayEffect(EFFECT_SET_TARGET);
 	}
 	else if (g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT) {
-		Sound_StartSound(g_table_actionInfo[action].soundID);
+		Audio_PlaySample(g_table_actionInfo[action].soundID, 255, 0.0);
 	}
 	else {
-		Sound_StartSound(((Tools_Random_256() & 0x1) == 0) ? 20 : 17);
+		const enum SampleID sampleID = (((Tools_Random_256() & 0x1) == 0) ? SAMPLE_ACKNOWLEDGED : SAMPLE_AFFIRMATIVE);
+
+		Audio_PlaySample(sampleID, 255, 0.0);
 	}
 }
 
@@ -269,7 +270,7 @@ Viewport_Place(void)
 	House *h = g_playerHouse;
 
 	if (Structure_Place(s, g_selectionPosition)) {
-		Voice_Play(20);
+		Audio_PlaySound(SOUND_PLACEMENT);
 
 		if (s->o.type == STRUCTURE_PALACE)
 			House_Get_ByIndex(s->o.houseID)->palacePosition = s->o.position;
@@ -314,7 +315,7 @@ Viewport_Place(void)
 		return;
 	}
 
-	Voice_Play(47);
+	Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 
 	if (g_structureActiveType == STRUCTURE_SLAB_1x1 || g_structureActiveType == STRUCTURE_SLAB_2x2) {
 		GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_FOUNDATION_HERE), 2);

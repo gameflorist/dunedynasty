@@ -11,7 +11,7 @@
 #include "structure.h"
 
 #include "animation.h"
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "enhancement.h"
 #include "gfx.h"
 #include "gui/gui.h"
@@ -226,7 +226,7 @@ void GameLoop_Structure(void)
 
 									GUI_DisplayText("%s %s", 0, String_Get_ByIndex(oi->stringID_full), String_Get_ByIndex(stringID));
 
-									Sound_Output_Feedback(0);
+									Audio_PlayVoice(VOICE_CONSTRUCTION_COMPLETE);
 								}
 							} else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 								/* An AI immediatly places the structure when it is done building */
@@ -317,7 +317,8 @@ void GameLoop_Structure(void)
 
 								Structure_SetState(s, STRUCTURE_STATE_READY);
 
-								if (s->o.houseID == g_playerHouseID) Sound_Output_Feedback(g_playerHouseID + 55);
+								if (s->o.houseID == g_playerHouseID)
+									Audio_PlayVoice(VOICE_HARKONNEN_VEHICLE_REPAIRED + g_playerHouseID);
 							}
 						}
 					} else if (h->credits != 0) {
@@ -1021,7 +1022,7 @@ static void Structure_Destroy(Structure *s)
 	Script_Reset(&s->o.script, g_scriptStructure);
 	Script_Load(&s->o.script, s->o.type);
 
-	Voice_PlayAtTile(44, s->o.position);
+	Audio_PlaySoundAtTile(SOUND_STRUCTURE_DESTROYED, s->o.position);
 
 	linkedID = s->o.linkedID;
 
@@ -1093,18 +1094,9 @@ bool Structure_Damage(Structure *s, uint16 damage, uint16 range)
 		Structure_Destroy(s);
 
 		if (g_playerHouseID == s->o.houseID) {
-			uint16 index;
-
-			switch (s->o.houseID) {
-				case HOUSE_HARKONNEN: index = 22; break;
-				case HOUSE_ATREIDES:  index = 23; break;
-				case HOUSE_ORDOS:     index = 24; break;
-				default: index = 0xFFFF; break;
-			}
-
-			Sound_Output_Feedback(index);
+			Audio_PlayVoice(VOICE_HARKONNEN_STRUCTURE_DESTROYED + g_playerHouseID);
 		} else {
-			Sound_Output_Feedback(21);
+			Audio_PlayVoice(VOICE_ENEMY_STRUCTURE_DESTROYED);
 		}
 
 		Structure_UntargetMe(s);
@@ -2007,7 +1999,7 @@ void Structure_HouseUnderAttack(uint8 houseID)
 	if (h->flags.human) {
 		if (h->timerStructureAttack != 0) return;
 
-		Sound_Output_Feedback(48);
+		Audio_PlayVoice(VOICE_OUR_BASE_IS_UNDER_ATTACK);
 
 		h->timerStructureAttack = 8;
 		return;

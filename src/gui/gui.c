@@ -18,8 +18,7 @@
 #include "mentat.h"
 #include "widget.h"
 #include "../animation.h"
-#include "../audio/driver.h"
-#include "../audio/sound.h"
+#include "../audio/audio.h"
 #include "../codec/format80.h"
 #include "../config.h"
 #include "../explosion.h"
@@ -603,7 +602,7 @@ void GUI_PaletteAnimate(void)
 		timerToggle = Timer_GetTicks() + 5;
 	}
 
-	Sound_StartSpeech();
+	/* Sound_StartSpeech(); */
 }
 
 /**
@@ -1481,7 +1480,7 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 	}
 
 	if (creditsDiff != 0 && (creditsAnimationOffset < -7 || creditsAnimationOffset > 7)) {
-		Driver_Sound_Play(creditsDiff > 0 ? 52 : 53, 0xFF);
+		Audio_PlayEffect(creditsDiff > 0 ? EFFECT_CREDITS_INCREASE : EFFECT_CREDITS_DECREASE);
 	}
 
 	if (creditsAnimationOffset < 0 && creditsAnimation == 0) creditsAnimationOffset = 0;

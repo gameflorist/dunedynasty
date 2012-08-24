@@ -8,7 +8,7 @@
 
 #include "script.h"
 
-#include "../audio/sound.h"
+#include "../audio/audio.h"
 #include "../gui/gui.h"
 #include "../map.h"
 #include "../pool/pool.h"
@@ -311,7 +311,7 @@ uint16 Script_General_VoicePlay(ScriptEngine *script)
 
 	position = g_scriptCurrentObject->position;
 
-	Voice_PlayAtTile(STACK_PEEK(1), position);
+	Audio_PlaySoundAtTile(STACK_PEEK(1), position);
 
 	return 0;
 }

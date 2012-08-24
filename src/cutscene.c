@@ -12,8 +12,7 @@
 
 #include "cutscene.h"
 
-#include "audio/driver.h"
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "config.h"
 #include "file.h"
 #include "gfx.h"
@@ -410,7 +409,7 @@ static void GameLoop_PlaySoundEffect(uint8 animation)
 
 	if (soundEffect->animationID > animation || soundEffect->wait > s_var_8068) return;
 
-	Voice_Play(soundEffect->voiceID);
+	Audio_PlaySound(soundEffect->voiceID);
 
 	s_houseAnimation_currentSoundEffect++;
 }
@@ -503,7 +502,7 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 	if (g_enableVoices != 0 && s_var_8062 != 0xFFFF && s_houseAnimation_currentSubtitle != 0 && g_config.language == LANGUAGE_ENGLISH) {
 		uint16 loc06 = s_var_8062 + s_houseAnimation_currentSubtitle;
 
-		Sound_Output_Feedback(loc06);
+		Audio_PlayVoice(loc06);
 
 		if (g_feedback[loc06].messageId != 0) {
 			GameLoop_DrawText(String_Get_ByIndex(subtitle->stringID), subtitle->top);
@@ -557,7 +556,7 @@ static void GameLoop_PlaySubtitle(uint8 animation)
  */
 static uint16 GameLoop_PalettePart_Update(bool finishNow)
 {
-	Sound_StartSpeech();
+	Audio_Poll();
 
 	if (s_palettePartDirection == PPD_STOPPED) return 0;
 
@@ -839,11 +838,11 @@ void GameLoop_LevelEndAnimation(void)
 
 	GameLoop_PrepareAnimation(animation, subtitle, 0xFFFF, soundEffect);
 
-	Music_Play(0x22);
+	Audio_PlayMusic(MUSIC_CUTSCENE);
 
 	GameLoop_PlayAnimation();
 
-	Driver_Music_FadeOut();
+	Audio_PlayEffect(EFFECT_FADE_OUT);
 
 	GameLoop_FinishAnimation();
 }
@@ -1112,7 +1111,7 @@ static void GameLoop_GameCredits(void)
 
 	Cutscene_SetPaletteAnimated(g_palette_998A, 60);
 
-	Music_Play(33);
+	Audio_PlayMusic(MUSIC_CREDITS);
 
 	memory = GFX_Screen_Get_ByIndex(5);
 
@@ -1151,13 +1150,13 @@ static void GameLoop_GameCredits(void)
 
 		if (Cutscene_InputSkipScene()) break;
 
-		Music_Play(33);
+		Audio_PlayMusic(MUSIC_CREDITS);
 		sleepIdle();
 	}
 
 	Cutscene_SetPaletteAnimated(g_palette2, 60);
 
-	Driver_Music_FadeOut();
+	Audio_PlayEffect(EFFECT_FADE_OUT);
 
 	GFX_ClearScreen();
 }
@@ -1170,16 +1169,16 @@ void GameLoop_GameEndAnimation(void)
 	const HouseAnimation_Animation *animation;
 	const HouseAnimation_Subtitle *subtitle;
 	const HouseAnimation_SoundEffect *soundEffect;
-	uint16 sound;
+	enum MusicID musicID;
 
-	Voice_LoadVoices(0xFFFE);
+	Audio_LoadSampleSet(HOUSE_MERCENARY);
 
 	switch (g_playerHouseID) {
 		case HOUSE_HARKONNEN:
 			animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL9_HARKONNEN];
 			subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL9_HARKONNEN];
 			soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL9_HARKONNEN];
-			sound       = 0x1E;
+			musicID     = MUSIC_END_GAME_HARKONNEN;
 			break;
 
 		default:
@@ -1187,24 +1186,24 @@ void GameLoop_GameEndAnimation(void)
 			animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL9_ARTREIDES];
 			subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL9_ARTREIDES];
 			soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL9_ARTREIDES];
-			sound       = 0x1F;
+			musicID     = MUSIC_END_GAME_ATREIDES;
 			break;
 
 		case HOUSE_ORDOS:
 			animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL9_ORDOS];
 			subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL9_ORDOS];
 			soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL9_ORDOS];
-			sound       = 0x20;
+			musicID     = MUSIC_END_GAME_ORDOS;
 			break;
 	}
 
 	GameLoop_PrepareAnimation(animation, subtitle, 0xFFFF, soundEffect);
 
-	Music_Play(sound);
+	Audio_PlayMusic(musicID);
 
 	GameLoop_PlayAnimation();
 
-	Driver_Music_FadeOut();
+	Audio_PlayEffect(EFFECT_FADE_OUT);
 
 	GameLoop_FinishAnimation();
 
@@ -1233,7 +1232,7 @@ static void Gameloop_Logos(void)
 
 	Cutscene_SetPaletteAnimated(g_palette_998A, 60);
 
-	Music_Play(0x24);
+	Audio_PlayMusic(MUSIC_LOGOS);
 
 	const int64_t timeout1 = 360 + Timer_GetTicks();
 
@@ -1249,8 +1248,7 @@ static void Gameloop_Logos(void)
 
 	WSA_Unload(wsa);
 
-	if (!Cutscene_InputSkipScene())
-		Voice_LoadVoices(0xFFFF);
+	/* Voice_LoadVoices(0xFFFF); */
 
 	while (Timer_GetTicks() < timeout1) {
 		if (!Cutscene_InputSkipScene()) {
@@ -1269,7 +1267,10 @@ static void Gameloop_Logos(void)
 
 	Cutscene_SetPaletteAnimated(g_palette2, 60);
 
-	while (Driver_Music_IsPlaying()) sleepIdle();
+	while (Audio_MusicIsPlaying()) {
+		Audio_PollMusic();
+		sleepIdle();
+	}
 
 #if 0
 	while (g_timerTimeout != 0) {
@@ -1348,18 +1349,20 @@ void GameLoop_GameIntroAnimation(void)
 
 	Gameloop_Logos();
 
+	Audio_LoadSampleSet(HOUSE_MERCENARY);
+
 	if (!Cutscene_InputSkipScene()) {
 		const HouseAnimation_Animation   *animation   = g_table_houseAnimation_animation[HOUSEANIMATION_INTRO];
 		const HouseAnimation_Subtitle    *subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_INTRO];
 		const HouseAnimation_SoundEffect *soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_INTRO];
 
-		Music_Play(0x1B);
+		Audio_PlayMusic(MUSIC_INTRO);
 
 		GameLoop_PrepareAnimation(animation, subtitle, 0x4A, soundEffect);
 
 		GameLoop_PlayAnimation();
 
-		Driver_Music_FadeOut();
+		Audio_PlayEffect(EFFECT_FADE_OUT);
 
 		GameLoop_FinishAnimation();
 	}

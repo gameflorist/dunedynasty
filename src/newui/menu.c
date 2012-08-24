@@ -12,7 +12,7 @@
 #include "halloffame.h"
 #include "mentat.h"
 #include "strategicmap.h"
-#include "../audio/sound.h"
+#include "../audio/audio.h"
 #include "../common_a5.h"
 #include "../cutscene.h"
 #include "../enhancement.h"
@@ -331,10 +331,10 @@ PickHouse_Loop(void)
 			g_campaignID = 0;
 			g_scenarioID = 1;
 
-			Voice_LoadVoices(HOUSE_MERCENARY);
-			Sound_Output_Feedback(VOICE_HARKONNEN + g_playerHouseID);
+			Audio_LoadSampleSet(HOUSE_MERCENARY);
+			Audio_PlayVoice(VOICE_HARKONNEN + g_playerHouseID);
 
-			while (Sound_StartSpeech())
+			while (Audio_Poll())
 				Timer_Wait();
 
 			return MENU_CONFIRM_HOUSE;

@@ -13,7 +13,6 @@
 
 #include "../animation.h"
 #include "../audio/audio.h"
-#include "../audio/sound.h"
 #include "../config.h"
 #include "../enhancement.h"
 #include "../gui/gui.h"
@@ -153,7 +152,7 @@ uint16 Script_Unit_TransportDeliver(ScriptEngine *script)
 
 				Unit_UpdateMap(2, u);
 
-				Voice_PlayAtTile(24, u->o.position);
+				Audio_PlaySoundAtTile(SOUND_DROP_LOAD, u->o.position);
 
 				Structure_SetState(s, STRUCTURE_STATE_READY);
 
@@ -167,7 +166,7 @@ uint16 Script_Unit_TransportDeliver(ScriptEngine *script)
 		}
 
 		if ((s->state == STRUCTURE_STATE_IDLE || (si->o.flags.busyStateIsIncoming && s->state == STRUCTURE_STATE_BUSY)) && s->o.linkedID == 0xFF) {
-			Voice_PlayAtTile(24, u->o.position);
+			Audio_PlaySoundAtTile(SOUND_DROP_LOAD, u->o.position);
 
 			Unit_EnterStructure(Unit_Get_ByIndex(u->o.linkedID), s);
 
@@ -196,7 +195,7 @@ uint16 Script_Unit_TransportDeliver(ScriptEngine *script)
 	if (!Unit_SetPosition(u2, Tile_Center(u->o.position))) return 0;
 
 	if (u2->o.houseID == g_playerHouseID) {
-		Voice_PlayAtTile(24, u->o.position);
+		Audio_PlaySoundAtTile(SOUND_DROP_LOAD, u->o.position);
 	}
 
 	Unit_SetOrientation(u2, u->orientation[0].current, true, 0);
@@ -646,7 +645,7 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 			Map_MakeExplosion(ui->explosionType, u->o.position, 0, 0);
 
-			Voice_PlayAtTile(63, u->o.position);
+			Audio_PlaySoundAtTile(SOUND_SANDWORM, u->o.position);
 
 			Unit_UpdateMap(1, u);
 

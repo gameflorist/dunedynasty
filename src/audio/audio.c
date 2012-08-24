@@ -230,6 +230,9 @@ Audio_PlayVoice(enum VoiceID voiceID)
 	assert(voiceID < VOICEID_MAX);
 	const Feedback *s = &g_feedback[voiceID];
 
+	if (s->soundId != 0xFFFF)
+		Audio_PlayEffect(s->soundId);
+
 	for (int i = 0; i < NUM_SPEECH_PARTS; i++) {
 		const enum SampleID sampleID = s->voiceId[i];
 

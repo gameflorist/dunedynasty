@@ -27,7 +27,6 @@ target_link_libraries(bin/dunedynasty
 	${ALLEGRO5_MEMFILE_LDFLAGS}
 	${ALLEGRO5_PRIMITIVES_LDFLAGS}
 	${ALLEGRO5_LDFLAGS}
-	-lasound
 	)
 
 

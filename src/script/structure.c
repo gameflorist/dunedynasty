@@ -7,7 +7,7 @@
 
 #include "script.h"
 
-#include "../audio/sound.h"
+#include "../audio/audio.h"
 #include "../config.h"
 #include "../enhancement.h"
 #include "../gui/gui.h"
@@ -275,7 +275,8 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 		if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
 		Object_Script_Variable4_Clear(&s->o);
 
-		if (s->o.houseID == g_playerHouseID) Sound_Output_Feedback(g_playerHouseID + 49);
+		if (s->o.houseID == g_playerHouseID)
+			Audio_PlayVoice(VOICE_HARKONNEN_UNIT_LAUNCHED + g_playerHouseID);
 
 		return 1;
 	}
@@ -312,7 +313,7 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 	if (s->o.houseID != g_playerHouseID) return 1;
 	if (s->o.type == STRUCTURE_REPAIR) return 1;
 
-	Sound_Output_Feedback(g_playerHouseID + ((u->o.type == UNIT_HARVESTER) ? 68 : 30));
+	Audio_PlayVoice(g_playerHouseID + ((u->o.type == UNIT_HARVESTER) ? VOICE_HARKONNEN_HARVESTER_DEPLOYED : VOICE_HARKONNEN_UNIT_DEPLOYED));
 
 	return 1;
 }
@@ -506,7 +507,7 @@ uint16 Script_Structure_VoicePlay(ScriptEngine *script)
 
 	if (s->o.houseID != g_playerHouseID) return 0;
 
-	Voice_PlayAtTile(STACK_PEEK(1), s->o.position);
+	Audio_PlaySoundAtTile(STACK_PEEK(1), s->o.position);
 
 	return 0;
 }

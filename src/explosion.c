@@ -10,7 +10,7 @@
 #include "explosion.h"
 
 #include "animation.h"
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "house.h"
 #include "map.h"
 #include "sprites.h"
@@ -107,7 +107,7 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
  */
 static void Explosion_Func_PlayVoice(Explosion *e, uint16 voiceID)
 {
-	Voice_PlayAtTile(voiceID, e->position);
+	Audio_PlaySoundAtTile(voiceID, e->position);
 }
 
 /**

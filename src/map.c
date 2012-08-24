@@ -13,7 +13,7 @@
 #include "map.h"
 
 #include "animation.h"
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "explosion.h"
 #include "gfx.h"
 #include "gui/gui.h"
@@ -808,7 +808,8 @@ void Map_Bloom_ExplodeSpice(uint16 packed, uint8 houseID)
 		Map_MakeExplosion(19, Tile_UnpackTile(packed), 0, 0);
 	}
 
-	if (houseID == g_playerHouseID) Sound_Output_Feedback(36);
+	if (houseID == g_playerHouseID)
+		Audio_PlayVoice(VOICE_SPICE_BLOOM_LOCATED);
 
 	Map_FillCircleWithSpice(packed, 5);
 }

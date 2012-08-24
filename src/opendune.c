@@ -26,8 +26,6 @@
 
 #include "animation.h"
 #include "audio/audio.h"
-#include "audio/driver.h"
-#include "audio/sound.h"
 #include "common_a5.h"
 #include "config.h"
 #include "crashlog/crashlog.h"
@@ -280,16 +278,15 @@ static void GameLoop_LevelEnd(void)
 	if (levelEndTimer >= g_timerGame && !s_debugForceWin) return;
 
 	if (GameLoop_IsLevelFinished()) {
-		Music_Play(0);
+		Audio_PlayMusic(MUSIC_STOP);
+		Audio_PlayVoice(VOICE_STOP);
 
 		Video_SetCursor(SHAPE_CURSOR_NORMAL);
-
-		Sound_Output_Feedback(0xFFFE);
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
 
 		if (GameLoop_IsLevelWon()) {
-			Sound_Output_Feedback(40);
+			Audio_PlayVoice(VOICE_YOUR_MISSION_IS_COMPLETE);
 
 			GUI_DisplayModalMessage(String_Get_ByIndex(STR_YOU_HAVE_SUCCESSFULLY_COMPLETED_YOUR_MISSION), 0xFFFF);
 #if 0
@@ -331,7 +328,7 @@ static void GameLoop_LevelEnd(void)
 			g_gameMode = GM_WIN;
 #endif
 		} else {
-			Sound_Output_Feedback(41);
+			Audio_PlayVoice(VOICE_YOU_HAVE_FAILED_YOUR_MISSION);
 
 			GUI_DisplayModalMessage(String_Get_ByIndex(STR_YOU_HAVE_FAILED_YOUR_MISSION), 0xFFFF);
 #if 0
@@ -754,7 +751,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 			sleepIdle();
 		}
 	} else {
-		Music_Play(0);
+		Audio_PlayMusic(MUSIC_STOP);
 
 		free(g_readBuffer);
 		g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x4E20;
@@ -764,7 +761,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 	GUI_DrawFilledRectangle(g_curWidgetXBase << 3, g_curWidgetYBase, (g_curWidgetXBase + g_curWidgetWidth) << 3, g_curWidgetYBase + g_curWidgetHeight, 12);
 
 	if (!loc02) {
-		Voice_LoadVoices(5);
+		Audio_LoadSampleSet(HOUSE_MERCENARY);
 
 		GUI_SetPaletteAnimated(g_palette2, 15);
 
@@ -804,7 +801,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 	}
 #else
 	{
-		Music_Play(0);
+		Audio_PlayMusic(MUSIC_STOP);
 
 		free(g_readBuffer);
 		g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x6D60;
@@ -943,7 +940,7 @@ void GameLoop_Main(bool new_game)
 	Sprites_LoadTiles();
 
 	GUI_Palette_CreateRemap(g_playerHouseID);
-	Voice_LoadVoices(g_playerHouseID);
+	Audio_LoadSampleSet(g_playerHouseID);
 
 	if (new_game)
 		Game_LoadScenario(g_playerHouseID, g_scenarioID);
@@ -952,7 +949,7 @@ void GameLoop_Main(bool new_game)
 
 	Timer_SetTimer(TIMER_GAME, true);
 
-	Music_Play(Tools_RandomRange(0, 5) + 8);
+	Audio_PlayMusic(MUSIC_IDLE1 + Tools_RandomRange(0, 5));
 
 	g_gameMode = GM_NORMAL;
 	g_gameOverlay = GAMEOVERLAY_NONE;
@@ -1007,13 +1004,14 @@ void GameLoop_Main(bool new_game)
 			l_selectionState = g_selectionState;
 		}
 
-		if (!Driver_Voice_IsPlaying() && !Sound_StartSpeech()) {
+		const bool narrator_speaking = Audio_Poll();
+		if (!narrator_speaking) {
 			if (g_gameConfig.music == 0) {
-				Music_Play(2);
+				Audio_PlayMusic(2); /* XXX: what? */
 
 				g_musicInBattle = 0;
 			} else if (g_musicInBattle > 0) {
-				Music_Play(Tools_RandomRange(0, 5) + 17);
+				Audio_PlayMusic(MUSIC_ATTACK1 + Tools_RandomRange(0, 5));
 				l_timerNext = Timer_GetTicks() + 300;
 				g_musicInBattle = -1;
 			} else {
@@ -1021,7 +1019,7 @@ void GameLoop_Main(bool new_game)
 
 				if (g_enableSoundMusic != 0 && Timer_GetTicks() > l_timerNext) {
 					if (!Audio_MusicIsPlaying()) {
-						Music_Play(Tools_RandomRange(0, 8) + 8);
+						Audio_PlayMusic(MUSIC_IDLE1 + Tools_RandomRange(0, 8));
 						l_timerNext = Timer_GetTicks() + 300;
 					}
 				}
@@ -1178,8 +1176,6 @@ int main(int argc, char **argv)
 
 	Input_Init();
 
-	Drivers_All_Init();
-
 	if (!Unknown_25C4_000E()) exit(1);
 
 	/* g_var_7097 = 0; */
@@ -1189,7 +1185,7 @@ int main(int argc, char **argv)
 	Sprites_LoadTiles();
 	VideoA5_InitSprites();
 	GameLoop_TweakWidgetDimensions();
-	Sound_Output_Feedback(0xFFFE);
+	Audio_PlayVoice(VOICE_STOP);
 	GameLoop_GameIntroAnimationMenu();
 
 	printf("%s\n", String_Get_ByIndex(STR_THANK_YOU_FOR_PLAYING_DUNE_II));
@@ -1309,7 +1305,7 @@ void Game_Prepare(void)
 		if (s != NULL) Map_SetSelectionSize(g_table_structureInfo[s->o.type].layout);
 	}
 
-	Voice_LoadVoices(g_playerHouseID);
+	Audio_LoadSampleSet(g_playerHouseID);
 
 	g_tickHousePowerMaintenance = max(g_timerGame + 70, g_tickHousePowerMaintenance);
 	g_viewport_forceRedraw = true;
@@ -1343,7 +1339,7 @@ void Game_Init(void)
 	memset(g_mapSpriteID, 0, 64 * 64 * sizeof(uint16));
 	memset(g_starportAvailable, 0, sizeof(g_starportAvailable));
 
-	Sound_Output_Feedback(0xFFFE);
+	Audio_PlayVoice(VOICE_STOP);
 
 	g_playerCreditsNoSilo     = 0;
 	g_houseMissileCountdown   = 0;
@@ -1367,7 +1363,7 @@ void Game_Init(void)
  */
 void Game_LoadScenario(uint8 houseID, uint16 scenarioID)
 {
-	Sound_Output_Feedback(0xFFFE);
+	Audio_PlayVoice(VOICE_STOP);
 
 	Game_Init();
 
@@ -1401,9 +1397,6 @@ void PrepareEnd(void)
 	String_Uninit();
 	Sprites_Uninit();
 	Font_Uninit();
-	Voice_UnloadVoices();
-
-	Drivers_All_Uninit();
 
 #if 0
 	if (g_mouseFileID != 0xFF) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, NULL);

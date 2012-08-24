@@ -10,7 +10,7 @@
 
 #include "load.h"
 
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "file.h"
 #include "gui/gui.h"
 #include "gui/widget.h"
@@ -133,7 +133,7 @@ bool LoadFile(char *filename)
 	char filenameComplete[1024];
 	bool res;
 
-	Sound_Output_Feedback(0xFFFE);
+	Audio_PlayVoice(VOICE_STOP);
 
 	Game_Init();
 

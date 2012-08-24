@@ -9,8 +9,7 @@
 
 #include "house.h"
 
-#include "audio/driver.h"
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "enhancement.h"
 #include "gfx.h"
 #include "gui/gui.h"
@@ -95,7 +94,8 @@ void GameLoop_House(void)
 
 	if (tickMissileCountdown && g_houseMissileCountdown != 0) {
 		g_houseMissileCountdown--;
-		Sound_Output_Feedback(g_houseMissileCountdown + 41);
+		/* XXX: What? Sound_Output_Feedback(g_houseMissileCountdown + 41); */
+		Audio_PlayVoice(VOICE_ONE + g_houseMissileCountdown - 2);
 
 		if (g_houseMissileCountdown == 0) Unit_LaunchHouseMissile(Map_FindLocationTile(4, g_playerHouseID));
 	}
@@ -235,7 +235,7 @@ void GameLoop_House(void)
 						h->starportLinkedID = UNIT_INDEX_INVALID;
 						u->o.flags.s.inTransport = true;
 
-						Sound_Output_Feedback(38);
+						Audio_PlayVoice(VOICE_FRIGATE_HAS_ARRIVED);
 					}
 				} else {
 					PoolFindStruct find2;
@@ -256,7 +256,7 @@ void GameLoop_House(void)
 							h->starportLinkedID = 0xFFFF;
 							u->o.flags.s.inTransport = true;
 
-							Sound_Output_Feedback(38);
+							Audio_PlayVoice(VOICE_FRIGATE_HAS_ARRIVED);
 						}
 					}
 				}
@@ -410,9 +410,8 @@ bool House_UpdateRadarState(House *h)
 	while (Driver_Voice_IsPlaying()) sleepIdle();
 #endif
 
-	Voice_Play(62);
-
-	Sound_Output_Feedback(activate ? 28 : 29);
+	Audio_PlaySound(SOUND_RADAR_STATIC);
+	Audio_PlayVoice(activate ? VOICE_RADAR_ACTIVATED : VOICE_RADAR_DEACTIVATED);
 
 #if 0
 	frameCount = WSA_GetFrameCount(wsa);

@@ -13,8 +13,7 @@
 
 #include "gui.h"
 #include "widget.h"
-#include "../audio/driver.h"
-#include "../audio/sound.h"
+#include "../audio/audio.h"
 #include "../config.h"
 #include "../file.h"
 #include "../gfx.h"
@@ -277,7 +276,9 @@ static bool GUI_Widget_TextButton_Click_(Widget *w, Unit *u)
 
 	Unit_SetAction(u, action);
 
-	if (ui->movementType == MOVEMENT_FOOT) Sound_StartSound(ai->selectionType);
+	/* XXX: What? */
+	if (ui->movementType == MOVEMENT_FOOT)
+		Audio_PlaySample(ai->selectionType, 255, 0.0f);
 
 	if (unitAction == action) return true;
 

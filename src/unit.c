@@ -14,7 +14,7 @@
 #include "unit.h"
 
 #include "animation.h"
-#include "audio/sound.h"
+#include "audio/audio.h"
 #include "config.h"
 #include "enhancement.h"
 #include "gui/gui.h"
@@ -1608,10 +1608,10 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 		if (unit->o.type == UNIT_HARVESTER) Map_FillCircleWithSpice(Tile_PackTile(unit->o.position), unit->amount / 32);
 
 		if (unit->o.type == UNIT_SABOTEUR) {
-			Sound_Output_Feedback(20);
+			Audio_PlayVoice(VOICE_SABOTEUR_DESTROYED);
 		} else {
 			if (!ui->o.flags.noMessageOnDeath && alive) {
-				Sound_Output_Feedback((houseID == g_playerHouseID || g_campaignID > 3) ? houseID + 14 : 13);
+				Audio_PlayVoice((houseID == g_playerHouseID || g_campaignID > 3) ? VOICE_HARKONNEN_UNIT_DESTROYED + houseID : VOICE_ENEMY_UNIT_DESTROYED);
 			}
 		}
 
@@ -1785,7 +1785,7 @@ void Unit_Select(Unit *unit)
 		ui = &g_table_unitInfo[unit->o.type];
 
 		/* Plays the 'reporting' sound file. */
-		Sound_StartSound(ui->movementType == MOVEMENT_FOOT ? 18 : 19);
+		Audio_PlaySample(ui->movementType == MOVEMENT_FOOT ? SAMPLE_YES_SIR : SAMPLE_REPORTING, 255, 0.0);
 
 		GUI_DisplayHint(ui->o.hintStringID, ui->o.spriteID);
 	}
@@ -2029,7 +2029,7 @@ Unit *Unit_CreateBullet(tile32 position, UnitType type, uint8 houseID, uint16 da
 			bullet = Unit_Create(UNIT_INDEX_INVALID, type, houseID, position, orientation);
 			if (bullet == NULL) return NULL;
 
-			Voice_PlayAtTile(ui->bulletSound, position);
+			Audio_PlaySoundAtTile(ui->bulletSound, position);
 
 			bullet->targetAttack = target;
 			bullet->o.hitpoints = damage;
@@ -2657,11 +2657,12 @@ void Unit_LaunchHouseMissile(uint16 packed)
 
 	Unit_Free(g_unitHouseMissile);
 
-	Sound_Output_Feedback(0xFFFE);
+	Audio_PlayVoice(VOICE_STOP);
 
 	Unit_CreateBullet(h->palacePosition, g_unitHouseMissile->o.type, g_unitHouseMissile->o.houseID, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
 
-	if (!isAI) Sound_Output_Feedback(39);
+	if (!isAI)
+		Audio_PlayVoice(VOICE_WARNING_MISSILE_APPROACHING);
 
 	g_houseMissileCountdown = 0;
 	g_unitHouseMissile = NULL;
@@ -2759,7 +2760,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 			if (hp->timerSandwormAttack == 0) {
 				if (g_musicInBattle == 0) g_musicInBattle = 1;
 
-				Sound_Output_Feedback(37);
+				Audio_PlayVoice(VOICE_WARNING_WORM_SIGN);
 
 				if (g_config.language == LANGUAGE_ENGLISH) {
 					GUI_DisplayHint(STR_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND, 105);
@@ -2774,12 +2775,12 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 				if (g_musicInBattle == 0) g_musicInBattle = 1;
 
 				if (unit->o.type == UNIT_SABOTEUR) {
-					Sound_Output_Feedback(12);
+					Audio_PlayVoice(VOICE_WARNING_SABOTEUR_APPROACHING);
 				} else {
 					if (g_scenarioID < 3) {
 						PoolFindStruct find;
 						Structure *s;
-						uint16 feedbackID;
+						enum VoiceID feedbackID;
 
 						find.houseID = g_playerHouseID;
 						find.index   = 0xFFFF;
@@ -2797,12 +2798,12 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 								feedbackID = ((Orientation_Orientation256ToOrientation16(Tile_GetDirection(s->o.position, unit->o.position)) + 1) & 7) / 2 + 1;
 							}
 						} else {
-							feedbackID = 1;
+							feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING;
 						}
 
-						Sound_Output_Feedback(feedbackID);
+						Audio_PlayVoice(feedbackID);
 					} else {
-						Sound_Output_Feedback(unit->o.houseID + 6);
+						Audio_PlayVoice(VOICE_WARNING_HARKONNEN_UNIT_APPROACHING + unit->o.houseID);
 					}
 				}
 

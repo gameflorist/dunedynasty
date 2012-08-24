@@ -6,10 +6,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/adl/sound_adlib.cpp
 	src/audio/audio.c
 	src/audio/audio_a5.cpp
-	src/audio/driver.c
-	src/audio/midi_alsa.c
-	src/audio/mt32mpu.c
-	src/audio/sound.c
 	src/buildqueue.c
 	src/codec/format40.c
 	src/codec/format80.c
@@ -98,12 +94,16 @@ set(DUNEDYNASTY_SRC_FILES
 	)
 
 set(OPENDUNE_UNUSED_SRC_FILES
+	src/audio/driver.c
 	src/audio/dsp_alsa.c
 	src/audio/dsp_none.c
 	src/audio/dsp_sdl.c
 	src/audio/dsp_win32.c
+	src/audio/midi_alsa.c
 	src/audio/midi_none.c
 	src/audio/midi_win32.c
+	src/audio/mt32mpu.c
+	src/audio/sound.c
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
 	src/gui/menu_opendune.c
