@@ -1,5 +1,9 @@
 set(DUNEDYNASTY_SRC_FILES
 	src/animation.c
+	src/audio/adl/fmopl.cpp
+	src/audio/adl/opl_dosbox.cpp
+	src/audio/adl/opl_mame.cpp
+	src/audio/adl/sound_adlib.cpp
 	src/audio/audio.c
 	src/audio/audio_a5.cpp
 	src/audio/driver.c

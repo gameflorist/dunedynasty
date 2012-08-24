@@ -6,7 +6,6 @@
 
 #include "audio.h"
 
-#include "audio_a5.h"
 #include "../config.h"
 #include "../file.h"
 #include "../gui/gui.h"
@@ -15,6 +14,7 @@
 #include "../table/widgetinfo.h"
 #include "../tile.h"
 
+float music_volume = 0.85f;
 float sound_volume = 0.65f;
 float voice_volume = 1.0f;
 
@@ -23,6 +23,26 @@ static enum HouseType s_curr_sample_set = HOUSE_INVALID;
 static enum SampleID s_voice_queue[256];
 static int s_voice_head = 0;
 static int s_voice_tail = 0;
+
+void
+Audio_PlayMusic(enum MusicID musicID)
+{
+	char filename[16];
+
+	if (musicID == MUSIC_INVALID)
+		return;
+
+	if (musicID == MUSIC_STOP) {
+		AudioA5_StopMusic();
+		return;
+	}
+
+	const SoundData *m = &g_table_musics[musicID];
+
+	snprintf(filename, sizeof(filename), "%s.ADL", m->string);
+
+	AudioA5_InitMusic(filename, m->variable_04);
+}
 
 static char
 Audio_GetSamplePrefix(enum HouseType houseID)

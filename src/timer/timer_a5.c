@@ -5,6 +5,7 @@
 
 #include "timer_a5.h"
 
+#include "../audio/audio.h"
 #include "../common_a5.h"
 
 static ALLEGRO_TIMER *s_timer[2];
@@ -59,6 +60,7 @@ TimerA5_Sleep(int tics)
 	for (int i = 0; i < tics; i++) {
 		al_wait_for_event(s_timer_queue, NULL);
 		al_drop_next_event(s_timer_queue);
+		Audio_PollMusic();
 	}
 
 	al_unregister_event_source(s_timer_queue, source);

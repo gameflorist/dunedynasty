@@ -91,6 +91,7 @@ static void Driver_Music_LoadFile(const char *musicName)
  */
 void Music_Play(uint16 musicID)
 {
+#if 0
 	if (musicID == 0xFFFF || musicID >= 38) return;
 
 	if (g_table_musics[musicID].string != s_currentMusic) {
@@ -105,6 +106,9 @@ void Music_Play(uint16 musicID)
 	}
 
 	Driver_Music_Play(g_table_musics[musicID].variable_04, 0xFF);
+#else
+	Audio_PlayMusic(musicID);
+#endif
 }
 
 /**

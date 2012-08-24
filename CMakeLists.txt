@@ -6,6 +6,7 @@ include(FindPkgConfig)
 pkg_check_modules(ALLEGRO5 REQUIRED allegro-5.0)
 pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-5.0)
 pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-5.0)
+pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-5.0)
 pkg_check_modules(ALLEGRO5_PRIMITIVES REQUIRED allegro_primitives-5.0)
 include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
 
@@ -23,6 +24,7 @@ set(CMAKE_CXX_FLAGS "-W -Wall -Wno-unused-parameter")
 target_link_libraries(bin/dunedynasty
 	${ALLEGRO5_AUDIO_LDFLAGS}
 	${ALLEGRO5_IMAGE_LDFLAGS}
+	${ALLEGRO5_MEMFILE_LDFLAGS}
 	${ALLEGRO5_PRIMITIVES_LDFLAGS}
 	${ALLEGRO5_LDFLAGS}
 	-lasound

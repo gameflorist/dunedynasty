@@ -2,9 +2,11 @@
 
 #include <assert.h>
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_audio.h>
 
 #include "input_a5.h"
 
+#include "../audio/audio.h"
 #include "../common_a5.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
@@ -122,6 +124,10 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 
 				Input_EventHandler(sc);
 			}
+			break;
+
+		case ALLEGRO_EVENT_AUDIO_STREAM_FRAGMENT:
+			AudioA5_PollMusic();
 			break;
 	}
 }

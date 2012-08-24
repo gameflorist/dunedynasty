@@ -157,8 +157,8 @@ void Drivers_All_Init(void)
 {
 	Drivers_Reset();
 
-	g_enableSoundMusic = Drivers_SoundMusic_Init(g_enableSoundMusic);
-	g_enableVoices = Drivers_Voice_Init(g_enableVoices);
+	/* g_enableSoundMusic = Drivers_SoundMusic_Init(g_enableSoundMusic); */
+	/* g_enableVoices = Drivers_Voice_Init(g_enableVoices); */
 }
 
 bool Driver_Music_IsPlaying(void)

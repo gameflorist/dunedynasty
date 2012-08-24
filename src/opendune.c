@@ -25,6 +25,7 @@
 #include "opendune.h"
 
 #include "animation.h"
+#include "audio/audio.h"
 #include "audio/driver.h"
 #include "audio/sound.h"
 #include "common_a5.h"
@@ -1017,8 +1018,9 @@ void GameLoop_Main(bool new_game)
 				g_musicInBattle = -1;
 			} else {
 				g_musicInBattle = 0;
+
 				if (g_enableSoundMusic != 0 && Timer_GetTicks() > l_timerNext) {
-					if (!Driver_Music_IsPlaying()) {
+					if (!Audio_MusicIsPlaying()) {
 						Music_Play(Tools_RandomRange(0, 8) + 8);
 						l_timerNext = Timer_GetTicks() + 300;
 					}

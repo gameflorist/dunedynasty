@@ -10,6 +10,12 @@ extern "C" {
 
 extern void AudioA5_Init(void);
 extern void AudioA5_Uninit(void);
+
+extern void AudioA5_InitMusic(const char *filename, int track);
+extern void AudioA5_StopMusic(void);
+extern void AudioA5_PollMusic(void);
+extern bool AudioA5_MusicIsPlaying(void);
+
 extern void AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size);
 extern bool AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan);
 extern bool AudioA5_PollNarrator(void);
