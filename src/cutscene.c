@@ -14,6 +14,7 @@
 
 #include "audio/audio.h"
 #include "config.h"
+#include "enhancement.h"
 #include "file.h"
 #include "gfx.h"
 #include "gui/font.h"
@@ -502,7 +503,13 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 	if (g_enableVoices != 0 && s_var_8062 != 0xFFFF && s_houseAnimation_currentSubtitle != 0 && g_config.language == LANGUAGE_ENGLISH) {
 		uint16 loc06 = s_var_8062 + s_houseAnimation_currentSubtitle;
 
-		Audio_PlayVoice(loc06);
+		if ((!enhancement_play_additional_voices) &&
+		    (loc06 == VOICE_INTRO_DUNE || loc06 == VOICE_INTRO_THE_BUILDING_OF_A_DYNASTY)) {
+			/* Newer versions lost these sounds. */
+		}
+		else {
+			Audio_PlayVoice(loc06);
+		}
 
 		if (g_feedback[loc06].messageId != 0) {
 			GameLoop_DrawText(String_Get_ByIndex(subtitle->stringID), subtitle->top);
@@ -1359,7 +1366,7 @@ void GameLoop_GameIntroAnimation(void)
 
 		Audio_PlayMusic(MUSIC_INTRO);
 
-		GameLoop_PrepareAnimation(animation, subtitle, 0x4A, soundEffect);
+		GameLoop_PrepareAnimation(animation, subtitle, VOICE_INTRO_PRESENT, soundEffect);
 
 		GameLoop_PlayAnimation();
 

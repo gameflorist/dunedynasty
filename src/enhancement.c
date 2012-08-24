@@ -66,7 +66,8 @@ bool enhancement_new_selection_cursor = true;
 bool enhancement_nonblocking_radar_animation = true;
 
 /**
- * Enable some extra sounds and voices.
+ * Enable some extra sounds and voices.  This restores the original
+ * "The Building of a Dynasty" voice!
  */
 bool enhancement_play_additional_voices = true;
 
