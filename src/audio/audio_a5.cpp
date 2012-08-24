@@ -1,4 +1,4 @@
-/* audio_a5.c */
+/* audio_a5.cpp */
 
 #include <assert.h>
 #include <allegro5/allegro.h>
@@ -7,9 +7,11 @@
 
 #include "audio_a5.h"
 
+extern "C" {
 #include "audio.h"
 #include "../file.h"
 #include "../house.h"
+}
 
 /* Sample instance 0 for narrator voices.
  * Sample instance 1 for acknowledgements.
@@ -43,7 +45,7 @@ AudioA5_Init(void)
 void
 AudioA5_Uninit(void)
 {
-	for (enum SampleID sampleID = 0; sampleID < SAMPLEID_MAX; sampleID++) {
+	for (int sampleID = 0; sampleID < SAMPLEID_MAX; sampleID++) {
 		al_destroy_sample(s_sample[sampleID]);
 		s_sample[sampleID] = NULL;
 	}
@@ -63,10 +65,10 @@ AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size)
 {
 	char header[0x1A];
 	char ignore1;
-	unsigned int size;
+	unsigned int size = 0;
 	unsigned char rate;
 	char ignore2;
-	uint8 *data = al_malloc(file_size - 32);
+	uint8 *data = (uint8 *)al_malloc(file_size - 32);
 
 	File_Read(file_index, header, 0x1A); /* "Creative Voice File..." */
 	File_Read(file_index, &ignore1, 1); /* block type */
