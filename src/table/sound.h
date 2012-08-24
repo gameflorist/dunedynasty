@@ -9,6 +9,57 @@
 /** Maximal number of spoken audio fragments in one message. */
 #define NUM_SPEECH_PARTS 5
 
+enum MusicID {
+	MUSIC_STOP = 0,
+	MUSIC_1 = 1,
+
+	MUSIC_LOSE_ORDOS = 2,
+	MUSIC_LOSE_HARKONNEN = 3,
+	MUSIC_LOSE_ATREIDES = 4,
+
+	MUSIC_WIN_ORDOS = 5,
+	MUSIC_WIN_HARKONNEN = 6,
+	MUSIC_WIN_ATREIDES = 7,
+
+	MUSIC_IDLE1 = 8,
+	MUSIC_IDLE2 = 9,
+	MUSIC_IDLE3 = 10,
+	MUSIC_IDLE4 = 11,
+	MUSIC_IDLE5 = 12,
+	MUSIC_IDLE6 = 13,
+	MUSIC_IDLE7 = 14,
+	MUSIC_IDLE8 = 15,
+	MUSIC_IDLE9 = 16,
+
+	MUSIC_ATTACK1 = 17,
+	MUSIC_ATTACK2 = 18,
+	MUSIC_ATTACK3 = 19,
+	MUSIC_ATTACK4 = 20,
+	MUSIC_ATTACK5 = 21,
+	MUSIC_ATTACK6 = 22,
+
+	MUSIC_23 = 23,
+
+	MUSIC_BRIEFING_HARKONNEN = 24,
+	MUSIC_BRIEFING_ATREIDES = 25,
+	MUSIC_BRIEFING_ORDOS = 26,
+
+	MUSIC_INTRO = 27,
+	MUSIC_MAIN_MENU = 28,
+	MUSIC_STRATEGIC_MAP = 29,
+	MUSIC_END_GAME_HARKONNEN = 30,
+	MUSIC_END_GAME_ATREIDES = 31,
+	MUSIC_END_GAME_ORDOS = 32,
+	MUSIC_CREDITS = 33,
+	MUSIC_CUTSCENE = 34,
+	MUSIC_35 = 35,
+	MUSIC_LOGOS = 36,
+	MUSIC_37 = 37,
+
+	MUSICID_MAX = 38,
+	MUSIC_INVALID = 0xFFFF
+};
+
 enum SampleID {
 	SAMPLE_SCREAM1 = 0,
 	SAMPLE_EXPLODE_SAND = 1,
@@ -318,7 +369,7 @@ typedef struct Feedback {
 } Feedback;
 
 extern const SoundData g_table_voices[SAMPLEID_MAX];
-extern const SoundData g_table_musics[];
+extern const SoundData g_table_musics[MUSICID_MAX];
 extern const enum SampleID g_table_voiceMapping[SOUNDID_MAX];
 extern const Feedback g_feedback[VOICEID_MAX];
 extern const enum SampleID g_translatedVoice[VOICEID_MAX][NUM_SPEECH_PARTS];

@@ -167,7 +167,7 @@ static const char _music_dune20[] = "dune20";
  * Available music.
  * @note The code compares pointers rather than the text itself, thus strings must be unique.
  */
-const SoundData g_table_musics[] = {
+const SoundData g_table_musics[MUSICID_MAX] = {
 	{NULL,          0}, /*  0 */
 	{_music_dune01, 2}, /*  1 */
 	{_music_dune01, 3}, /*  2 */
