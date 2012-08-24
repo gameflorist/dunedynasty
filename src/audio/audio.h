@@ -20,5 +20,6 @@ extern bool Audio_Poll(void);
 
 #define Audio_PollMusic         AudioA5_PollMusic
 #define Audio_MusicIsPlaying    AudioA5_MusicIsPlaying
+#define Audio_PlayEffect        AudioA5_PlayEffect
 
 #endif

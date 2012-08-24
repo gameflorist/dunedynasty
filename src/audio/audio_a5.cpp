@@ -145,6 +145,13 @@ AudioA5_MusicIsPlaying(void)
 }
 
 void
+Audio_PlayEffect(enum SoundID effectID)
+{
+	if (s_adlib != NULL)
+		s_adlib->playSoundEffect(effectID);
+}
+
+void
 AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size)
 {
 	char header[0x1A];
