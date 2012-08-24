@@ -66,6 +66,11 @@ bool enhancement_new_selection_cursor = true;
 bool enhancement_nonblocking_radar_animation = true;
 
 /**
+ * Enable some extra sounds and voices.
+ */
+bool enhancement_play_additional_voices = true;
+
+/**
  * The original game ignores all structures' health fields specified
  * in the scenario, giving them all full health instead.
  */

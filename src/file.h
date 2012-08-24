@@ -6,7 +6,7 @@
 #define FILE_H
 
 enum {
-	FILEINFO_MAX     = 676,
+	FILEINFO_MAX     = 682,
 	FILEINFO_INVALID = 0xFFFF,
 
 	FILE_MAX = 20,

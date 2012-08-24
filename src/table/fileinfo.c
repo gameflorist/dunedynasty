@@ -7,7 +7,7 @@
 
 #include "../file.h"
 
-FileInfo g_table_fileInfo[] = {
+FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 0 */
 		/* filename             */ "DUNE.PAK",
 		/* fileSize             */ 439833,
@@ -8789,6 +8789,86 @@ FileInfo g_table_fileInfo[] = {
 		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	/* --- */
+
+	{ /* 676 */
+		/* filename             */ "HNEXT.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 9,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 677 */
+		/* filename             */ "HNEXT2.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 9,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 678 */
+		/* filename             */ "ANEXT.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 10,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 679 */
+		/* filename             */ "ANEXT2.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 10,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 680 */
+		/* filename             */ "ONEXT.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 11,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 681 */
+		/* filename             */ "ONEXT2.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
 		/* inMemory             */ false,

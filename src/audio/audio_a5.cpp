@@ -185,7 +185,7 @@ AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan)
 	if (s_sample[sampleID] == NULL)
 		return true;
 
-	if ((SAMPLE_VOICE_FRAGMENT_ENEMY <= sampleID && sampleID <= SAMPLE_VOICE_FRAGMENT_CAPTURED) ||
+	if ((SAMPLE_VOICE_FRAGMENT_ENEMY <= sampleID && sampleID <= SAMPLE_VOICE_FRAGMENT_YOUR_NEXT_CONQUEST) ||
 	    (SAMPLE_INTRO_THREE_HOUSES_FIGHT <= sampleID && sampleID <= SAMPLE_INTRO_YOUR) ||
 	    (sampleID == SAMPLE_RADAR_STATIC)) {
 		idx_start = 0;

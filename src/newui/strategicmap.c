@@ -10,6 +10,7 @@
 
 #include "../audio/audio.h"
 #include "../config.h"
+#include "../enhancement.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
 #include "../ini.h"
@@ -459,6 +460,9 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 					map->region_aux = NULL;
 					map->arrow_frame = 0;
 					map->arrow_timer = curr_ticks;
+
+					if (enhancement_play_additional_voices)
+						Audio_PlayVoice(VOICE_SELECT_YOUR_NEXT_CONQUEST);
 				}
 
 				StrategicMap_AdvanceText(map, false);
@@ -466,6 +470,7 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 			break;
 
 		case STRATEGIC_MAP_SELECT_REGION:
+			Audio_Poll();
 			if (curr_ticks - map->text_timer >= 3 * 12)
 				redraw = false;
 			break;
