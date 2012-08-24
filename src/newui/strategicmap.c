@@ -8,6 +8,7 @@
 
 #include "strategicmap.h"
 
+#include "../audio/audio.h"
 #include "../config.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
@@ -16,6 +17,7 @@
 #include "../opendune.h"
 #include "../sprites.h"
 #include "../string.h"
+#include "../table/sound.h"
 #include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
@@ -360,6 +362,8 @@ StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData
 	map->text1 = NULL;
 	map->text2 = NULL;
 	StrategicMap_AdvanceText(map, true);
+
+	Audio_PlayMusic(MUSIC_STOP);
 }
 
 void
@@ -401,6 +405,8 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 {
 	const int64_t curr_ticks = Timer_GetTicks();
 	bool redraw = true;
+
+	Audio_PlayMusicIfSilent(MUSIC_STRATEGIC_MAP);
 
 	switch (map->state) {
 		case STRATEGIC_MAP_SHOW_PLANET:

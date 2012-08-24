@@ -243,6 +243,8 @@ MainMenu_Loop(void)
 	const int widgetID = GUI_Widget_HandleEvents(main_menu_widgets);
 	bool redraw = false;
 
+	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
+
 	switch (widgetID) {
 		case 0x8000 | STR_PLAY_A_GAME:
 			g_playerHouseID = HOUSE_MERCENARY;
@@ -399,6 +401,8 @@ Briefing_Initialise(enum MenuAction menu, MentatState *mentat)
 
 		MentatBriefing_InitText(g_playerHouseID, g_campaignID, entry, mentat);
 		MentatBriefing_InitWSA(g_playerHouseID, g_scenarioID, entry, mentat);
+
+		Audio_PlayMusic(MUSIC_STOP);
 	}
 
 	mentat->state = MENTAT_SHOW_TEXT;
@@ -435,7 +439,7 @@ Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 }
 
 static enum MenuAction
-Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
+Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *mentat)
 {
 	const int64_t curr_ticks = Timer_GetTicks();
 
@@ -454,6 +458,22 @@ Briefing_Loop(enum MenuAction curr_menu, MentatState *mentat)
 	}
 
 	GUI_Mentat_Animation(mentat->speaking_mode);
+
+	if (!Audio_MusicIsPlaying()) {
+		switch (curr_menu) {
+			case MENU_BRIEFING_WIN:
+				Audio_PlayMusic(g_table_houseInfo[houseID].musicWin);
+				break;
+
+			case MENU_BRIEFING_LOSE:
+				Audio_PlayMusic(g_table_houseInfo[houseID].musicLose);
+				break;
+
+			default:
+				Audio_PlayMusic(g_table_houseInfo[houseID].musicBriefing);
+				break;
+		}
+	}
 
 	if (mentat->state == MENTAT_IDLE) {
 		if (curr_menu == MENU_CONFIRM_HOUSE) {
@@ -529,6 +549,7 @@ StartGame_Loop(bool new_game)
 {
 	A5_UseIdentityTransform();
 	GameLoop_Main(new_game);
+	Audio_PlayMusic(MUSIC_STOP);
 	A5_UseMenuTransform();
 
 	switch (g_gameMode) {
@@ -908,8 +929,12 @@ Menu_Run(void)
 				res = PickHouse_Loop();
 				break;
 
+			case MENU_CONFIRM_HOUSE:
+				res = Briefing_Loop(curr_menu, HOUSE_MERCENARY, &g_mentat_state);
+				break;
+
 			case MENU_SECURITY:
-				res = Briefing_Loop(curr_menu, &g_mentat_state);
+				res = Briefing_Loop(curr_menu, g_playerHouseID, &g_mentat_state);
 				break;
 
 			case MENU_SECURITY | MENU_BLINK_CONFIRM | MENU_FADE_OUT:
@@ -917,11 +942,10 @@ Menu_Run(void)
 					res = MENU_NO_TRANSITION | MENU_BRIEFING;
 				break;
 
-			case MENU_CONFIRM_HOUSE:
 			case MENU_BRIEFING:
 			case MENU_BRIEFING_WIN:
 			case MENU_BRIEFING_LOSE:
-				res = Briefing_Loop(curr_menu, &g_mentat_state);
+				res = Briefing_Loop(curr_menu, g_playerHouseID, &g_mentat_state);
 				break;
 
 			case MENU_PLAY_A_GAME:

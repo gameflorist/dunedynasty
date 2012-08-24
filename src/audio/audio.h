@@ -9,6 +9,7 @@ extern float sound_volume;
 extern float voice_volume;
 
 extern void Audio_PlayMusic(enum MusicID musicID);
+extern void Audio_PlayMusicIfSilent(enum MusicID musicID);
 extern void Audio_LoadSampleSet(enum HouseType houseID);
 extern void Audio_PlaySample(enum SampleID sampleID, int volume, float pan);
 extern void Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position);

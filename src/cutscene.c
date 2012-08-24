@@ -1347,6 +1347,7 @@ void GameLoop_GameIntroAnimation(void)
 {
 	GUI_ChangeSelectionType(SELECTIONTYPE_INTRO);
 
+	Audio_PlayMusic(MUSIC_STOP);
 	Gameloop_Logos();
 
 	Audio_LoadSampleSet(HOUSE_MERCENARY);

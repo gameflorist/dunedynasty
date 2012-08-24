@@ -44,6 +44,13 @@ Audio_PlayMusic(enum MusicID musicID)
 	AudioA5_InitMusic(filename, m->variable_04);
 }
 
+void
+Audio_PlayMusicIfSilent(enum MusicID musicID)
+{
+	if (!Audio_MusicIsPlaying())
+		Audio_PlayMusic(musicID);
+}
+
 static char
 Audio_GetSamplePrefix(enum HouseType houseID)
 {
