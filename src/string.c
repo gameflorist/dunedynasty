@@ -15,7 +15,9 @@
 #include "string.h"
 
 #include "config.h"
+#include "enhancement.h"
 #include "file.h"
+#include "opendune.h"
 #include "table/strings.h"
 
 static char **s_strings = NULL;
@@ -152,6 +154,18 @@ void String_Init(void)
 	String_Load("TEXTA", true);
 	String_Load("TEXTO",true);
 	String_Load("PROTECT", true);
+
+	/* Restore the "The Building of a Dynasty" subtitle to match the narrator. */
+	if (enhancement_play_additional_voices && (g_config.language == LANGUAGE_ENGLISH)) {
+		const char *subtitle1 = "The Building of a Dynasty";
+		const char *subtitle2 = "Dune II: The Building of a Dynasty";
+
+		free(s_strings[STR_THE_BATTLE_FOR_ARRAKIS]);
+		s_strings[STR_THE_BATTLE_FOR_ARRAKIS] = strdup(subtitle1);
+
+		free(s_strings[STR_DUNE_II_THE_BATTLE_FOR_ARRAKIS]);
+		s_strings[STR_DUNE_II_THE_BATTLE_FOR_ARRAKIS] = strdup(subtitle2);
+	}
 }
 
 /**

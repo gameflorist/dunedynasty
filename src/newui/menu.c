@@ -211,6 +211,29 @@ MainMenu_Draw(void)
 {
 	Video_DrawCPS(String_GenerateFilename("TITLE"));
 
+	/* Restore the "The Building of a Dynasty" subtitle to match the narrator. */
+	if (enhancement_play_additional_voices) {
+		const char *subtitle = String_Get_ByIndex(STR_THE_BATTLE_FOR_ARRAKIS);
+
+		Font_Select(g_fontIntro);
+		g_fontCharOffset = 0;
+
+		unsigned char colours[16];
+
+		for (int i = 0; i < 16; i++)
+			colours[i] = 0;
+
+		for (int i = 0; i < 6; i++)
+			colours[i + 1] = 215 + i;
+
+		const int x = (SCREEN_WIDTH - Font_GetStringWidth(subtitle)) / 2;
+		const int y = 104;
+
+		GUI_InitColors(colours, 0, 15);
+		GUI_DrawFilledRectangle(0, y, SCREEN_WIDTH, y + g_fontIntro->height, 0);
+		GUI_DrawText(subtitle, x, y, 144, 0);
+	}
+
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
 	GUI_Widget_DrawAll(main_menu_widgets);
