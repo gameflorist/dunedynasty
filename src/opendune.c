@@ -804,7 +804,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 		Audio_PlayMusic(MUSIC_STOP);
 
 		free(g_readBuffer);
-		g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x6D60;
+		g_readBufferSize = 0x6D60;
 		g_readBuffer = calloc(1, g_readBufferSize);
 
 		Menu_Run();
@@ -1006,9 +1006,7 @@ void GameLoop_Main(bool new_game)
 
 		const bool narrator_speaking = Audio_Poll();
 		if (!narrator_speaking) {
-			if (g_gameConfig.music == 0) {
-				Audio_PlayMusic(2); /* XXX: what? */
-
+			if (!g_enable_audio) {
 				g_musicInBattle = 0;
 			} else if (g_musicInBattle > 0) {
 				Audio_PlayMusic(MUSIC_ATTACK1 + Tools_RandomRange(0, 5));
@@ -1017,7 +1015,7 @@ void GameLoop_Main(bool new_game)
 			} else {
 				g_musicInBattle = 0;
 
-				if (g_enableSoundMusic != 0 && Timer_GetTicks() > l_timerNext) {
+				if (g_enable_music && (Timer_GetTicks() > l_timerNext)) {
 					if (!Audio_MusicIsPlaying()) {
 						Audio_PlayMusic(MUSIC_IDLE1 + Tools_RandomRange(0, 8));
 						l_timerNext = Timer_GetTicks() + 300;

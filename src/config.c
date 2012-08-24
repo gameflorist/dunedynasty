@@ -14,8 +14,6 @@
 
 GameCfg g_gameConfig = { 1, 1, 2, 1, 1 };
 DuneCfg g_config;
-bool g_enableSoundMusic = true;
-bool g_enableVoices = true;
 int g_autoScrollDelay = 5; /* Default was 10. */
 
 /**
@@ -86,7 +84,4 @@ void GameOptions_Save(void)
 	File_Write(index, &g_gameConfig, sizeof(g_gameConfig));
 
 	File_Close(index);
-
-	if (g_gameConfig.music == 0)
-		Audio_PlayMusic(MUSIC_STOP);
 }

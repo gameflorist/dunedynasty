@@ -248,7 +248,7 @@ Viewport_Target(Unit *u, enum ActionType action, uint16 packed)
 			target->blinkCounter = 8;
 	}
 
-	if (g_enableVoices == 0) {
+	if (!g_enable_sounds) {
 		Audio_PlayEffect(EFFECT_SET_TARGET);
 	}
 	else if (g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT) {

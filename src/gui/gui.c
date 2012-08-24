@@ -2033,11 +2033,11 @@ char *GUI_String_Get_ByIndex(int16 stringID)
 		}
 
 		case -10:
-			stringID = (g_gameConfig.music != 0) ? STR_ON : STR_OFF;
+			stringID = (g_enable_music ? STR_ON : STR_OFF);
 			break;
 
 		case -11:
-			stringID = (g_gameConfig.sounds != 0) ? STR_ON : STR_OFF;
+			stringID = (g_enable_sounds ? STR_ON : STR_OFF);
 			break;
 
 		case -12: {

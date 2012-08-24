@@ -500,7 +500,7 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 		memset(screen + SCREEN_WIDTH * top, 0, SCREEN_WIDTH * (SCREEN_HEIGHT - top));
 	}
 
-	if (g_enableVoices != 0 && s_var_8062 != 0xFFFF && s_houseAnimation_currentSubtitle != 0 && g_config.language == LANGUAGE_ENGLISH) {
+	if (s_var_8062 != 0xFFFF && s_houseAnimation_currentSubtitle != 0 && g_config.language == LANGUAGE_ENGLISH) {
 		uint16 loc06 = s_var_8062 + s_houseAnimation_currentSubtitle;
 
 		if ((!enhancement_play_additional_voices) &&

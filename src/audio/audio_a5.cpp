@@ -42,7 +42,11 @@ AudioA5_Init(void)
 {
 	if (!al_install_audio()) {
 		fprintf(stderr, "al_install_audio() failed.\n");
+		g_enable_audio = false;
 		return;
+	}
+	else {
+		g_enable_audio = true;
 	}
 
 	al_voice = al_create_voice(SRATE, ALLEGRO_AUDIO_DEPTH_FLOAT32, ALLEGRO_CHANNEL_CONF_2);
@@ -145,7 +149,7 @@ AudioA5_MusicIsPlaying(void)
 }
 
 void
-Audio_PlayEffect(enum SoundID effectID)
+AudioA5_PlaySoundEffect(enum SoundID effectID)
 {
 	if (s_adlib != NULL)
 		s_adlib->playSoundEffect(effectID);

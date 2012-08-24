@@ -372,13 +372,15 @@ MenuBar_TickGameControls(void)
 	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_MUSIC_IS */
-			g_gameConfig.music ^= 0x1;
-			/* if (g_gameConfig.music == 0) Driver_Music_Stop(); */
+			g_enable_music = !g_enable_music;
+			g_enable_effects = g_enable_music;
+			if (!g_enable_music)
+				Audio_PlayMusic(MUSIC_STOP);
 			break;
 
 		case 0x8000 | 31: /* STR_SOUNDS_ARE */
-			g_gameConfig.sounds ^= 0x1;
-			/* if (g_gameConfig.sounds == 0) Driver_Sound_Stop(); */
+			g_enable_sounds = !g_enable_sounds;
+			g_enable_voices = !g_enable_voices;
 			break;
 
 		case 0x8000 | 32: /* STR_GAME_SPEED */

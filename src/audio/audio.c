@@ -14,6 +14,13 @@
 #include "../table/widgetinfo.h"
 #include "../tile.h"
 
+bool g_enable_audio;
+
+bool g_enable_music = true;
+bool g_enable_effects = true;
+bool g_enable_sounds = true;
+bool g_enable_voices = true;
+
 float music_volume = 0.85f;
 float sound_volume = 0.65f;
 float voice_volume = 1.0f;
@@ -27,18 +34,17 @@ static int s_voice_tail = 0;
 void
 Audio_PlayMusic(enum MusicID musicID)
 {
-	char filename[16];
-
-	if (musicID == MUSIC_INVALID)
-		return;
-
 	if (musicID == MUSIC_STOP) {
 		AudioA5_StopMusic();
 		return;
 	}
 
+	if ((!g_enable_audio) || (!g_enable_music) || (musicID == MUSIC_INVALID))
+		return;
+
 	const SoundData *m = &g_table_musics[musicID];
 
+	char filename[16];
 	snprintf(filename, sizeof(filename), "%s.ADL", m->string);
 
 	AudioA5_InitMusic(filename, m->variable_04);
@@ -49,6 +55,15 @@ Audio_PlayMusicIfSilent(enum MusicID musicID)
 {
 	if (!Audio_MusicIsPlaying())
 		Audio_PlayMusic(musicID);
+}
+
+void
+Audio_PlayEffect(enum SoundID effectID)
+{
+	if ((!g_enable_audio) || (!g_enable_effects))
+		return;
+
+	AudioA5_PlaySoundEffect(effectID);
 }
 
 static char
@@ -146,6 +161,9 @@ Audio_LoadSampleForHouse(enum HouseType houseID, enum SampleID sampleID)
 void
 Audio_LoadSampleSet(enum HouseType houseID)
 {
+	if (!g_enable_audio)
+		return;
+
 	if (s_curr_sample_set == houseID)
 		return;
 
@@ -159,7 +177,7 @@ Audio_LoadSampleSet(enum HouseType houseID)
 void
 Audio_PlaySample(enum SampleID sampleID, int volume, float pan)
 {
-	if (sampleID == SAMPLE_INVALID)
+	if ((!g_enable_audio) || (!g_enable_sounds) || (sampleID == SAMPLE_INVALID))
 		return;
 
 	AudioA5_PlaySample(sampleID, (float)volume / 255.0f, pan);
@@ -173,30 +191,32 @@ Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position)
 
 	assert(soundID < SOUNDID_MAX);
 
-	int volume = 255;
-	float pan = 0.0f;
-	if (position.tile != 0) {
-		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-		const int cx = Tile_GetPackedX(g_viewportPosition) + wi->width / (2 * TILE_SIZE);
-		const int cy = Tile_GetPackedY(g_viewportPosition) + wi->height / (2 * TILE_SIZE);
-		const uint16 packed = Tile_PackXY(cx, cy);
-
-		const int ux = Tile_GetPosX(position);
-
-		volume = Tile_GetDistancePacked(packed, Tile_PackTile(position));
-		if (volume > 64)
-			volume = 64;
-
-		volume = 255 - (volume * 255 / 80);
-		pan = clamp(-0.5f, 0.05f * (ux - cx), 0.5f);
-	}
-
 	const enum SampleID sampleID = g_table_voiceMapping[soundID];
 
-	if (sampleID == SAMPLE_INVALID) {
+	if (!g_enable_sounds || (sampleID == SAMPLE_INVALID)) {
 		Audio_PlayEffect(soundID);
 	}
-	else {
+
+	if (g_enable_sounds && (sampleID != SAMPLE_INVALID)) {
+		int volume = 255;
+		float pan = 0.0f;
+
+		if (position.tile != 0) {
+			const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+			const int cx = Tile_GetPackedX(g_viewportPosition) + wi->width / (2 * TILE_SIZE);
+			const int cy = Tile_GetPackedY(g_viewportPosition) + wi->height / (2 * TILE_SIZE);
+			const uint16 packed = Tile_PackXY(cx, cy);
+
+			const int ux = Tile_GetPosX(position);
+
+			volume = Tile_GetDistancePacked(packed, Tile_PackTile(position));
+			if (volume > 64)
+				volume = 64;
+
+			volume = 255 - (volume * 255 / 80);
+			pan = clamp(-0.5f, 0.05f * (ux - cx), 0.5f);
+		}
+
 		Audio_PlaySample(sampleID, volume, pan);
 	}
 }
@@ -237,27 +257,31 @@ Audio_PlayVoice(enum VoiceID voiceID)
 	assert(voiceID < VOICEID_MAX);
 	const Feedback *s = &g_feedback[voiceID];
 
-	if (s->soundId != 0xFFFF)
+	if (s->soundId != SOUND_INVALID)
 		Audio_PlayEffect(s->soundId);
 
-	for (int i = 0; i < NUM_SPEECH_PARTS; i++) {
-		const enum SampleID sampleID = s->voiceId[i];
+	if (g_enable_voices) {
+		for (int i = 0; i < NUM_SPEECH_PARTS; i++) {
+			const enum SampleID sampleID = s->voiceId[i];
 
-		if (sampleID == SAMPLE_INVALID)
-			break;
+			if (sampleID == SAMPLE_INVALID)
+				break;
 
-		if (!Audio_QueueVoice(sampleID))
-			break;
+			if (!Audio_QueueVoice(sampleID))
+				break;
+		}
+
+		Audio_Poll();
 	}
-
-	Audio_Poll();
 }
 
 bool
 Audio_Poll(void)
 {
-	bool playing = AudioA5_PollNarrator();
+	if ((!g_enable_audio) || (!g_enable_voices))
+		return false;
 
+	bool playing = AudioA5_PollNarrator();
 	if (playing)
 		return true;
 
