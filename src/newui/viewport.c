@@ -173,11 +173,12 @@ Viewport_SelectRegion(void)
 		/* Try to find own units. */
 		Unit *u = Unit_Find(&find);
 		while (u != NULL) {
+			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
 			uint16 ux, uy;
 
 			Map_IsPositionInViewport(u->o.position, &ux, &uy);
 
-			if ((x1 <= ux && ux <= x2) && (y1 <= uy && uy <= y2)) {
+			if ((oi->flags.tabSelectable) && (x1 <= ux && ux <= x2) && (y1 <= uy && uy <= y2)) {
 				if (!Unit_IsSelected(u))
 					Unit_Select(u);
 			}
