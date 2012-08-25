@@ -19,6 +19,7 @@
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "house.h"
+#include "newui/actionpanel.h"
 #include "opendune.h"
 #include "pool/pool.h"
 #include "pool/unit.h"
@@ -167,6 +168,8 @@ void Map_SetSelection(uint16 packed)
 			Map_SetSelectionSize(si->layout);
 
 			Structure_UpdateMap(s);
+
+			g_factoryWindowTotal = -1;
 		} else {
 			Map_SetSelectionSize(STRUCTURE_LAYOUT_1x1);
 		}

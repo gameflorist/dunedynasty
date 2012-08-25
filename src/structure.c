@@ -140,6 +140,7 @@ void GameLoop_Structure(void)
 						if (s->o.houseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 2) s->upgradeLevel = 3;
 
 						s->upgradeTimeLeft = Structure_IsUpgradable(s) ? 100 : 0;
+						g_factoryWindowTotal = -1;
 					}
 				} else {
 					s->o.flags.s.upgrading = false;

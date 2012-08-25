@@ -249,7 +249,10 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if (!(x1 <= g_mouseX && g_mouseX <= x2))
 		return false;
 
-	Structure_InitFactoryItems(s);
+	if (g_factoryWindowTotal < 0) {
+		factoryOffsetY = 0;
+		Structure_InitFactoryItems(s);
+	}
 
 	if (g_mouseDZ != 0) {
 		ActionPanel_ScrollFactory(widget, g_factoryWindowTotal, false);
@@ -432,7 +435,10 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	if (!(x1 <= g_mouseX && g_mouseX <= x2))
 		return false;
 
-	Structure_InitFactoryItems(s);
+	if (g_factoryWindowTotal < 0) {
+		factoryOffsetY = 0;
+		Structure_InitFactoryItems(s);
+	}
 
 	if (g_mouseDZ != 0) {
 		ActionPanel_ScrollFactory(widget, g_factoryWindowTotal, true);
@@ -504,7 +510,11 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		return;
 	}
 
-	Structure_InitFactoryItems(s);
+	if (g_factoryWindowTotal < 0) {
+		factoryOffsetY = 0;
+		Structure_InitFactoryItems(s);
+	}
+
 	Video_SetClippingArea(widget->offsetX - 1, widget->offsetY - 1, widget->width + 2, widget->height + 2);
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
