@@ -11,6 +11,7 @@
 #include "../gui/gui.h"
 #include "../opendune.h"
 #include "../sprites.h"
+#include "../string.h"
 #include "../table/widgetinfo.h"
 #include "../tile.h"
 
@@ -20,6 +21,7 @@ bool g_enable_music = true;
 bool g_enable_effects = true;
 bool g_enable_sounds = true;
 bool g_enable_voices = true;
+bool g_enable_subtitles = false;
 
 float music_volume = 0.85f;
 float sound_volume = 0.65f;
@@ -272,6 +274,11 @@ Audio_PlayVoice(enum VoiceID voiceID)
 		}
 
 		Audio_Poll();
+	}
+
+	if (g_enable_subtitles) {
+		g_viewportMessageText = String_Get_ByIndex(s->messageId);
+		g_viewportMessageCounter = 4;
 	}
 }
 

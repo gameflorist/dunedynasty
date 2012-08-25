@@ -9,6 +9,7 @@ extern bool g_enable_music;
 extern bool g_enable_effects;
 extern bool g_enable_sounds;
 extern bool g_enable_voices;
+extern bool g_enable_subtitles;
 
 extern float music_volume;
 extern float sound_volume;

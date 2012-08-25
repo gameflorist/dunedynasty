@@ -43,6 +43,7 @@ AudioA5_Init(void)
 	if (!al_install_audio()) {
 		fprintf(stderr, "al_install_audio() failed.\n");
 		g_enable_audio = false;
+		g_enable_subtitles = true;
 		return;
 	}
 	else {
