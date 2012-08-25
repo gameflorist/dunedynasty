@@ -488,6 +488,7 @@ Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, in
 	Unit_SetOrientation(u, orientation, true, 1);
 
 	Unit_SetSpeed(u, 0);
+	u->speedRemainder = 0;
 
 	u->o.position.tile  = position.tile;
 	u->o.hitpoints      = ui->o.hitpoints;
@@ -1965,8 +1966,10 @@ void Unit_SetSpeed(Unit *unit, uint16 speed)
 	speedPerTick = 0;
 
 	unit->speed          = 0;
-	unit->speedRemainder = 0;
 	unit->speedPerTick   = 0;
+
+	if (!enhancement_smooth_bullet_movement)
+		unit->speedRemainder = 0;
 
 	if (unit->o.type == UNIT_HARVESTER) {
 		speed = ((255 - unit->amount) * speed) / 256;

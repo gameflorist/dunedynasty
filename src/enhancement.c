@@ -91,7 +91,7 @@ enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ACCE
 
 /**
  * Render bullets as if they move every frame, rather than every third
- * frame, for smoother bullet movement.
+ * frame, for smoother bullet movement.  Also works on flying units.
  */
 bool enhancement_smooth_bullet_movement = true;
 
