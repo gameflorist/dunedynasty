@@ -976,6 +976,7 @@ void Map_SetViewportPosition(uint16 packed)
 	if (y < 0) y = 0;
 
 	g_viewportPosition = Tile_PackXY(x, y);
+	g_minimapPosition = g_viewportPosition;
 }
 
 /**
