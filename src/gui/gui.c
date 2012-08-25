@@ -76,17 +76,7 @@ static uint8 g_colours[16];
 uint8 g_palette_998A[3 * 256];
 uint8 g_remap[256];
 FactoryWindowItem g_factoryWindowItems[25];
-uint16 g_factoryWindowOrdered = 0;
-uint16 g_factoryWindowBase = 0;
 uint16 g_factoryWindowTotal = 0;
-uint16 g_factoryWindowSelected = 0;
-uint16 g_factoryWindowUpgradeCost = 0;
-bool g_factoryWindowConstructionYard = false;
-FactoryResult g_factoryWindowResult = FACTORY_RESUME;
-bool g_factoryWindowStarport = false;
-static uint8 s_factoryWindowGraymapTbl[256];
-static Widget s_factoryWindowWidgets[13];
-static uint8 s_factoryWindowWsaBuffer[64000];
 static uint16 s_temporaryColourBorderSchema[5][4];          /*!< Temporary storage for the #s_colourBorderSchema. */
 uint16 g_productionStringID;                                /*!< Descriptive text of activity of the active structure. */
 bool g_textDisplayNeedsUpdate;                              /*!< If set, text display needs to be updated. */
@@ -1752,69 +1742,11 @@ void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width
 	GFX_Screen_Copy(xSrc * 8, ySrc, xDst * 8, yDst, width * 8, height, screenSrc, screenDst);
 }
 
-static uint32 GUI_FactoryWindow_CreateWidgets(void)
-{
-	uint16 i;
-	uint16 count = 0;
-	WidgetInfo *wi = g_table_factoryWidgetInfo;
-	Widget *w = s_factoryWindowWidgets;
-
-	memset(w, 0, 13 * sizeof(Widget));
-
-	for (i = 0; i < 13; i++, wi++) {
-		if ((i == 8 || i == 9 || i == 10 || i == 12) && !g_factoryWindowStarport) continue;
-		if (i == 11 && g_factoryWindowStarport) continue;
-		if (i == 7 && g_factoryWindowUpgradeCost == 0) continue;
-
-		count++;
-
-		w->index     = i + 46;
-		w->state.all = 0x0;
-		w->offsetX   = wi->offsetX;
-		w->offsetY   = wi->offsetY;
-		w->flags.all = wi->flags;
-		w->shortcut  = (wi->shortcut < 0) ? abs(wi->shortcut) : GUI_Widget_GetShortcut(*String_Get_ByIndex(wi->shortcut));
-		w->clickProc = wi->clickProc;
-		w->width     = wi->width;
-		w->height    = wi->height;
-
-		if (wi->spriteID < 0) {
-			w->drawModeNormal   = DRAW_MODE_NONE;
-			w->drawModeSelected = DRAW_MODE_NONE;
-			w->drawModeDown     = DRAW_MODE_NONE;
-		} else {
-			w->drawModeNormal   = DRAW_MODE_SPRITE;
-			w->drawModeSelected = DRAW_MODE_SPRITE;
-			w->drawModeDown     = DRAW_MODE_SPRITE;
-			w->drawParameterNormal.sprite   = g_sprites[wi->spriteID];
-			w->drawParameterSelected.sprite = g_sprites[wi->spriteID + 1];
-			w->drawParameterDown.sprite     = g_sprites[wi->spriteID + 1];
-		}
-
-		if (i != 0) {
-			g_widgetInvoiceTail = GUI_Widget_Link(g_widgetInvoiceTail, w);
-		} else {
-			g_widgetInvoiceTail = w;
-		}
-
-		w++;
-	}
-
-	GUI_Widget_DrawAll(g_widgetInvoiceTail);
-
-	return count * sizeof(Widget);
-}
-
-static uint32 GUI_FactoryWindow_LoadGraymapTbl(void)
-{
-	uint8 fileID;
-
-	fileID = File_Open("GRAYRMAP.TBL", 1);
-	File_Read(fileID, s_factoryWindowGraymapTbl, 256);
-	File_Close(fileID);
-
-	return 256;
-}
+#if 0
+/* Moved to gui/menu_opendune.c. */
+static uint32 GUI_FactoryWindow_CreateWidgets(void);
+static uint32 GUI_FactoryWindow_LoadGraymapTbl(void);
+#endif
 
 static uint16 GUI_FactoryWindow_CalculateStarportPrice(uint16 credits)
 {
@@ -1834,8 +1766,6 @@ static int GUI_FactoryWindow_Sorter(const void *a, const void *b)
 void GUI_FactoryWindow_InitItems(enum StructureType s)
 {
 	g_factoryWindowTotal = 0;
-	g_factoryWindowSelected = 0;
-	g_factoryWindowBase = 0;
 
 	memset(g_factoryWindowItems, 0, 25 * sizeof(FactoryWindowItem));
 
@@ -1900,125 +1830,11 @@ void GUI_FactoryWindow_InitItems(enum StructureType s)
 	qsort(g_factoryWindowItems, g_factoryWindowTotal, sizeof(FactoryWindowItem), GUI_FactoryWindow_Sorter);
 }
 
-static void GUI_FactoryWindow_Init(Structure *s)
-{
-	static uint8 xSrc[HOUSE_MAX] = { 0, 0, 16, 0, 0, 0 };
-	static uint8 ySrc[HOUSE_MAX] = { 8, 152, 48, 0, 0, 0 };
-	uint16 oldScreenID;
-	void *wsa;
-	int16 i;
-	ObjectInfo *oi;
-
-	oldScreenID = GFX_Screen_SetActive(2);
-
-	Sprites_LoadImage("CHOAM.CPS", 3, NULL);
-	GUI_DrawSprite(2, g_sprites[11], 192, 0, 0, 0); /* "Credits" */
-
-	GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 2, g_remap);
-
-	GUI_Screen_Copy(xSrc[g_playerHouseID], ySrc[g_playerHouseID], 0, 8, 7, 40, 2, 2);
-	GUI_Screen_Copy(xSrc[g_playerHouseID], ySrc[g_playerHouseID], 0, 152, 7, 40, 2, 2);
-
-	GUI_FactoryWindow_CreateWidgets();
-	GUI_FactoryWindow_LoadGraymapTbl();
-	GUI_FactoryWindow_InitItems(s->o.type);
-
-	for (i = g_factoryWindowTotal; i < 4; i++) GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(g_widgetInvoiceTail, i + 46));
-
-	for (i = 0; i < 4; i++) {
-		FactoryWindowItem *item = GUI_FactoryWindow_GetItem(i);
-
-		if (item == NULL) continue;
-
-		oi = item->objectInfo;
-		if (oi->available == -1) {
-			GUI_DrawSprite(2, g_sprites[oi->spriteID], 72, 24 + i * 32, 0, 0x100, s_factoryWindowGraymapTbl, 1);
-		} else {
-			GUI_DrawSprite(2, g_sprites[oi->spriteID], 72, 24 + i * 32, 0, 0);
-		}
-	}
-
-	g_factoryWindowBase = 0;
-	g_factoryWindowSelected = 0;
-
-	oi = g_factoryWindowItems[0].objectInfo;
-
-	wsa = WSA_LoadFile(oi->wsa, s_factoryWindowWsaBuffer, sizeof(s_factoryWindowWsaBuffer), false);
-	WSA_DisplayFrame(wsa, 0, 128, 48, 2);
-	WSA_Unload(wsa);
-
-	GUI_Mouse_Hide_Safe();
-	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
-	GUI_Mouse_Show_Safe();
-
-	GUI_DrawFilledRectangle(64, 0, 112, SCREEN_HEIGHT - 1, GFX_GetPixel(72, 23));
-
-	GUI_FactoryWindow_PrepareScrollList();
-
-	GFX_Screen_SetActive(0);
-
-	GUI_FactoryWindow_DrawDetails();
-
-	GUI_DrawCredits(g_playerHouseID, 1);
-
-	GFX_Screen_SetActive(oldScreenID);
-}
-
-/**
- * Display the window where you can order/build stuff for a structure.
- * @param var06 Unknown.
- * @param isStarPort True if this is for a starport.
- * @param var0A Unknown.
- * @return Unknown value.
- */
-FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost)
-{
-	uint16 oldScreenID = GFX_Screen_SetActive(0);
-	uint8 backup[3];
-
-	memcpy(backup, g_palette1 + 255 * 3, 3);
-
-	g_factoryWindowConstructionYard = (s->o.type == STRUCTURE_CONSTRUCTION_YARD);
-	g_factoryWindowStarport = (s->o.type == STRUCTURE_STARPORT);
-	g_factoryWindowUpgradeCost = upgradeCost;
-	g_factoryWindowOrdered = 0;
-
-	GUI_FactoryWindow_Init(s);
-
-	GUI_FactoryWindow_UpdateSelection(true);
-
-	g_factoryWindowResult = FACTORY_CONTINUE;
-	while (g_factoryWindowResult == FACTORY_CONTINUE) {
-		uint16 event;
-
-		GUI_DrawCredits(g_playerHouseID, 0);
-
-		GUI_FactoryWindow_UpdateSelection(false);
-
-		event = GUI_Widget_HandleEvents(g_widgetInvoiceTail);
-
-		if (event == 0x6E) GUI_Production_ResumeGame_Click(NULL);
-
-		GUI_PaletteAnimate();
-		Video_Tick();
-		sleepIdle();
-	}
-
-	GUI_DrawCredits(g_playerHouseID, 1);
-
-	GFX_Screen_SetActive(oldScreenID);
-
-	GUI_FactoryWindow_B495_0F30();
-
-	memcpy(g_palette1 + 255 * 3, backup, 3);
-
-	GFX_SetPalette(g_palette1);
-
-	/* Visible credits have to be reset, as it might not be the real value */
-	g_playerCredits = 0xFFFF;
-
-	return g_factoryWindowResult;
-}
+#if 0
+/* Moved to gui/menu_opendune.c. */
+static void GUI_FactoryWindow_Init(Structure *s);
+extern FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost);
+#endif
 
 char *GUI_String_Get_ByIndex(int16 stringID)
 {
@@ -2116,201 +1932,15 @@ void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 f
 	}
 }
 
-void GUI_FactoryWindow_B495_0F30(void)
-{
-	GUI_Mouse_Hide_Safe();
-	GFX_Screen_Copy2(69, ((g_factoryWindowSelected + 1) * 32) + 5, 69, (g_factoryWindowSelected * 32) + 21, 38, 30, 2, 0, false);
-	GUI_Mouse_Show_Safe();
-}
-
-FactoryWindowItem *GUI_FactoryWindow_GetItem(int16 offset)
-{
-	offset += g_factoryWindowBase;
-
-	if (offset < 0 || offset >= g_factoryWindowTotal) return NULL;
-
-	return &g_factoryWindowItems[offset];
-}
-
-void GUI_FactoryWindow_DrawDetails(void)
-{
-	uint16 oldScreenID;
-	FactoryWindowItem *item = GUI_FactoryWindow_GetItem(g_factoryWindowSelected);
-	ObjectInfo *oi = item->objectInfo;
-	void *wsa;
-
-	oldScreenID = GFX_Screen_SetActive(2);
-
-	wsa = WSA_LoadFile(oi->wsa, s_factoryWindowWsaBuffer, sizeof(s_factoryWindowWsaBuffer), false);
-	WSA_DisplayFrame(wsa, 0, 128, 48, 2);
-	WSA_Unload(wsa);
-
-	if (g_factoryWindowConstructionYard) {
-		const StructureInfo *si;
-		int16 x = 288;
-		int16 y = 136;
-		uint8 *sprite;
-		uint16 width;
-		uint16 i;
-		uint16 j;
-
-		GUI_DrawSprite(g_screenActiveID, g_sprites[64], x, y, 0, 0);
-		x++;
-		y++;
-
-		sprite = g_sprites[24];
-		width = Sprite_GetWidth(sprite) + 1;
-		si = &g_table_structureInfo[item->objectType];
-
-		for (j = 0; j < g_table_structure_layoutSize[si->layout].height; j++) {
-			for (i = 0; i < g_table_structure_layoutSize[si->layout].width; i++) {
-				GUI_DrawSprite(g_screenActiveID, sprite, x + i * width, y + j * width, 0, 0);
-			}
-		}
-	}
-
-	if (oi->available == -1) {
-		GUI_Palette_RemapScreen(128, 48, 184, 112, 2, s_factoryWindowGraymapTbl);
-
-		if (g_factoryWindowStarport) {
-			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_OUT_OF_STOCK), 220, 99, 6, 0, 0x132);
-		} else {
-			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_NEED_STRUCTURE_UPGRADE), 220, 94, 6, 0, 0x132);
-
-			if (g_factoryWindowUpgradeCost != 0) {
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_UPGRADE_COST_D), 220, 104, 6, 0, 0x132, g_factoryWindowUpgradeCost);
-			} else {
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_REPAIR_STRUCTURE_FIRST), 220, 104, 6, 0, 0x132);
-			}
-		}
-	} else {
-		if (g_factoryWindowStarport) {
-			GUI_Screen_Copy(16, 99, 16, 160, 23, 9, 2, 2);
-			GUI_Screen_Copy(16, 99, 16, 169, 23, 9, 2, 2);
-			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_OUT_OF_STOCK), 220, 169, 6, 0, 0x132);
-
-			GUI_FactoryWindow_UpdateDetails();
-		}
-	}
-
-	GUI_Mouse_Hide_Safe();
-	GUI_Screen_Copy(16, 48, 16, 48, 23, 112, 2, oldScreenID);
-	GUI_Mouse_Show_Safe();
-
-	GFX_Screen_SetActive(oldScreenID);
-
-	GUI_FactoryWindow_DrawCaption(NULL);
-}
-
-void GUI_FactoryWindow_DrawCaption(const char *caption)
-{
-	uint16 oldScreenID;
-
-	oldScreenID = GFX_Screen_SetActive(2);
-
-	GUI_DrawFilledRectangle(128, 21, 310, 35, 116);
-
-	if (caption != NULL && *caption != '\0') {
-		GUI_DrawText_Wrapper(caption, 128, 23, 12, 0, 0x12);
-	} else {
-		FactoryWindowItem *item = GUI_FactoryWindow_GetItem(g_factoryWindowSelected);
-		ObjectInfo *oi = item->objectInfo;
-		uint16 width;
-
-		GUI_DrawText_Wrapper(String_Get_ByIndex(oi->stringID_full), 128, 23, 12, 0, 0x12);
-
-		width = Font_GetStringWidth(String_Get_ByIndex(STR_COST_999));
-		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_COST_3D), 310 - width, 23, 12, 0, 0x12, item->credits);
-
-		if (g_factoryWindowStarport) {
-			width += Font_GetStringWidth(String_Get_ByIndex(STR_QTY_99)) + 2;
-			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_QTY_2D), 310 - width, 23, 12, 0, 0x12, item->amount);
-		}
-	}
-
-	GUI_Mouse_Hide_Safe();
-	if (oldScreenID == 0) GFX_Screen_Copy2(128, 21, 128, 21, 182, 14, 3, oldScreenID, false);
-	GUI_Mouse_Show_Safe();
-
-	GFX_Screen_SetActive(oldScreenID);
-}
-
-void GUI_FactoryWindow_UpdateDetails(void)
-{
-	FactoryWindowItem *item = GUI_FactoryWindow_GetItem(g_factoryWindowSelected);
-	ObjectInfo *oi = item->objectInfo;
-
-	if (oi->available == -1) return;
-
-	GUI_Mouse_Hide_Safe();
-	GUI_Screen_Copy(16, (oi->available == item->amount) ? 169 : 160, 16, 99, 23, 9, 2, g_screenActiveID);
-	GUI_Mouse_Show_Safe();
-}
-
-/**
- * Update the selection in the factory window.
- * If \a selectionChanged, it draws the rectangle around the new entry.
- * In addition, the palette colour of the rectangle is slowly changed back and
- * forth between white and the house colour by palette changes, thus giving it
- * the appearance of glowing.
- * @param selectionChanged User has selected a new thing to build.
- */
-void GUI_FactoryWindow_UpdateSelection(bool selectionChanged)
-{
-	static int64_t paletteChangeTimer;
-	static int8 paletteColour;
-	static int8 paletteChange;
-
-	if (selectionChanged) {
-		uint16 y;
-
-		memset(g_palette1 + 255 * 3, 0x3F, 3);
-
-		GFX_SetPalette(g_palette1);
-
-		paletteChangeTimer = 0;
-		paletteColour = 0;
-		paletteChange = 8;
-
-		y = g_factoryWindowSelected * 32 + 24;
-
-		GUI_Mouse_Hide_Safe();
-		GUI_DrawWiredRectangle(71, y - 1, 104, y + 24, 255);
-		GUI_DrawWiredRectangle(72, y, 103, y + 23, 255);
-		GUI_Mouse_Show_Safe();
-	} else {
-		if (paletteChangeTimer > Timer_GetTicks()) return;
-	}
-
-	paletteChangeTimer = Timer_GetTicks() + 3;
-	paletteColour += paletteChange;
-
-	if (paletteColour < 0 || paletteColour > 63) {
-		paletteChange = -paletteChange;
-		paletteColour += paletteChange;
-	}
-
-	switch (g_playerHouseID) {
-		case HOUSE_HARKONNEN:
-			*(g_palette1 + 255 * 3 + 1) = paletteColour;
-			*(g_palette1 + 255 * 3 + 2) = paletteColour;
-			break;
-
-		case HOUSE_ATREIDES:
-			*(g_palette1 + 255 * 3 + 0) = paletteColour;
-			*(g_palette1 + 255 * 3 + 1) = paletteColour;
-			break;
-
-		case HOUSE_ORDOS:
-			*(g_palette1 + 255 * 3 + 0) = paletteColour;
-			*(g_palette1 + 255 * 3 + 2) = paletteColour;
-			break;
-
-		default: break;
-	}
-
-	GFX_SetPalette(g_palette1);
-}
+#if 0
+/* Moved to gui/menu_opendune.c. */
+extern void GUI_FactoryWindow_B495_0F30(void);
+extern FactoryWindowItem *GUI_FactoryWindow_GetItem(int16 offset);
+extern void GUI_FactoryWindow_DrawDetails(void);
+extern void GUI_FactoryWindow_DrawCaption(const char *caption);
+extern void GUI_FactoryWindow_UpdateDetails(void);
+extern void GUI_FactoryWindow_UpdateSelection(bool selectionChanged);
+#endif
 
 /**
  * Fade in parts of the screen from one screenbuffer to the other screenbuffer.
@@ -2386,42 +2016,10 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 	}
 }
 
-void GUI_FactoryWindow_PrepareScrollList(void)
-{
-	FactoryWindowItem *item;
-
-	GUI_Mouse_Hide_Safe();
-	GUI_Screen_Copy(9, 24, 9, 40, 4, 128, 0, 2);
-	GUI_Mouse_Show_Safe();
-
-	item = GUI_FactoryWindow_GetItem(-1);
-
-	if (item != NULL) {
-		ObjectInfo *oi = item->objectInfo;
-
-		if (oi->available == -1) {
-			GUI_DrawSprite(2, g_sprites[oi->spriteID], 72, 8, 0, 0x100, s_factoryWindowGraymapTbl, 1);
-		} else {
-			GUI_DrawSprite(2, g_sprites[oi->spriteID], 72, 8, 0, 0);
-		}
-	} else {
-		GUI_Screen_Copy(9, 32, 9, 24, 4, 8, 2, 2);
-	}
-
-	item = GUI_FactoryWindow_GetItem(4);
-
-	if (item != NULL) {
-		ObjectInfo *oi = item->objectInfo;
-
-		if (oi->available == -1) {
-			GUI_DrawSprite(2, g_sprites[oi->spriteID], 72, 168, 0, 0x100, s_factoryWindowGraymapTbl, 1);
-		} else {
-			GUI_DrawSprite(2, g_sprites[oi->spriteID], 72, 168, 0, 0);
-		}
-	} else {
-		GUI_Screen_Copy(9, 0, 9, 168, 4, 8, 2, 2);
-	}
-}
+#if 0
+/* Moved to gui/menu_opendune.c. */
+extern void GUI_FactoryWindow_PrepareScrollList(void);
+#endif
 
 /**
  * Fade in parts of the screen from one screenbuffer to the other screenbuffer.

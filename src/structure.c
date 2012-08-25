@@ -1472,6 +1472,7 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 	char *str;
 	Object *o;
 	ObjectInfo *oi;
+	assert(objectType != 0xFFFF); /* Factory window. */
 
 	if (s == NULL) return false;
 
@@ -1501,6 +1502,7 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 		if (!Structure_PopulateBuildable(s, objectType))
 			return false;
 
+#if 0
 		if (objectType == 0xFFFF) {
 			FactoryResult res;
 
@@ -1586,6 +1588,8 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 		} else {
 			s->objectType = objectType;
 		}
+#endif
+		s->objectType = objectType;
 	}
 
 	if (s->o.type == STRUCTURE_STARPORT) return true;
@@ -1904,8 +1908,6 @@ bool Structure_PopulateBuildable(Structure *s, uint16 objectType)
 	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 		uint8 i;
 
-		g_factoryWindowConstructionYard = true;
-
 		for (i = 0; i < STRUCTURE_MAX; i++) {
 			if ((buildable & (1 << i)) == 0) continue;
 			g_table_structureInfo[i].o.available = 1;
@@ -1914,8 +1916,6 @@ bool Structure_PopulateBuildable(Structure *s, uint16 objectType)
 			return false;
 		}
 	} else {
-		g_factoryWindowConstructionYard = false;
-
 		if (s->o.type == STRUCTURE_STARPORT) {
 			uint8 linkedID = 0xFF;
 			int16 loc60[UNIT_MAX];

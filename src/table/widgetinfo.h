@@ -28,10 +28,6 @@ enum GameWidgetType {
 	GAME_WIDGET_INVALID             = 0xFFFF
 };
 
-enum FactoryWidgetType {
-	FACTORY_WIDGET_MAX  = 13
-};
-
 typedef struct WidgetInfo {
 	int16 index;            /*!< ?? */
 	ClickProc *clickProc;   /*!< Function to execute when widget is pressed. */
@@ -46,6 +42,5 @@ typedef struct WidgetInfo {
 } WidgetInfo;
 
 extern WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1];
-extern WidgetInfo g_table_factoryWidgetInfo[FACTORY_WIDGET_MAX];
 
 #endif

@@ -244,6 +244,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	}
 };
 
+#if 0
 WidgetInfo g_table_factoryWidgetInfo[FACTORY_WIDGET_MAX] = {
 	{ /* 0 */
 		/* index       */ -1,
@@ -402,3 +403,4 @@ WidgetInfo g_table_factoryWidgetInfo[FACTORY_WIDGET_MAX] = {
 		/* stringID    */ STR_NULL,
 	}
 };
+#endif

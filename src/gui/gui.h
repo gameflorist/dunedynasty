@@ -9,16 +9,6 @@
 #include "../structure.h"
 
 /**
- * Factory results.
- */
-typedef enum FactoryResult {
-	FACTORY_RESUME       = 0,
-	FACTORY_BUY          = 1,
-	FACTORY_UPGRADE      = 2,
-	FACTORY_CONTINUE     = 0xFFFF
-} FactoryResult;
-
-/**
  * The possible selection types.
  */
 typedef enum SelectionType {
@@ -71,14 +61,7 @@ extern const SelectionTypeStruct g_table_selectionType[];
 extern uint8 g_palette_998A[3 * 256];
 extern uint8 g_remap[256];
 extern FactoryWindowItem g_factoryWindowItems[];
-extern uint16 g_factoryWindowOrdered;
-extern uint16 g_factoryWindowBase;
 extern uint16 g_factoryWindowTotal;
-extern uint16 g_factoryWindowSelected;
-extern uint16 g_factoryWindowUpgradeCost;
-extern bool g_factoryWindowConstructionYard;
-extern FactoryResult g_factoryWindowResult;
-extern bool g_factoryWindowStarport;
 extern uint16 g_productionStringID;
 extern bool g_textDisplayNeedsUpdate;
 
@@ -119,19 +102,11 @@ extern void GUI_ChangeSelectionType(uint16 selectionType);
 extern void GUI_InitColors(const uint8 *colors, uint8 first, uint8 last);
 extern void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, int16 memBlockSrc, int16 memBlockDst);
 extern void GUI_FactoryWindow_InitItems(enum StructureType s);
-extern FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost);
 extern char *GUI_String_Get_ByIndex(int16 stringID);
 extern void GUI_ClearScreen(uint16 arg06);
 extern uint16 GUI_Get_Scrollbar_Position(struct Widget *w);
 extern void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth);
-extern void GUI_FactoryWindow_B495_0F30(void);
-extern struct FactoryWindowItem *GUI_FactoryWindow_GetItem(int16 offset);
-extern void GUI_FactoryWindow_DrawDetails(void);
-extern void GUI_FactoryWindow_DrawCaption(const char *caption);
-extern void GUI_FactoryWindow_UpdateDetails(void);
-extern void GUI_FactoryWindow_UpdateSelection(bool selectionChanged);
 extern void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint16 width, uint16 height, uint16 memBlockSrc, uint16 memBlockDst);
-extern void GUI_FactoryWindow_PrepareScrollList(void);
 extern void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, uint16 arg12, bool arg14);
 extern void GUI_DrawBlockedRectangle(int16 left, int16 top, int16 width, int16 height, uint8 colour);
 extern void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 height, uint16 screenID, uint8 *remap);
