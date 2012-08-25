@@ -53,8 +53,10 @@ extern int Shape_Width(enum ShapeID shapeID);
 extern int Shape_Height(enum ShapeID shapeID);
 
 extern void Shape_Draw(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int flags);
+extern void Shape_DrawScale(enum ShapeID shapeID, int x, int y, int w, int h, enum WindowID windowID, int flags);
 extern void Shape_DrawRemap(enum ShapeID shapeID, enum HouseType houseID, int x, int y, enum WindowID windowID, int flags);
 extern void Shape_DrawGrey(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int flags);
+extern void Shape_DrawGreyScale(enum ShapeID shapeID, int x, int y, int w, int h, enum WindowID windowID, int flags);
 extern void Shape_DrawTint(enum ShapeID shapeID, int x, int y, unsigned char c, enum WindowID windowID, int flags);
 
 #endif

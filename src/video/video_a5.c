@@ -1120,12 +1120,36 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 }
 
 void
+VideoA5_DrawShapeScale(enum ShapeID shapeID, int x, int y, int w, int h, int flags)
+{
+	assert(shapeID < SHAPEID_MAX);
+
+	ALLEGRO_BITMAP *bmp = s_shape[shapeID][HOUSE_HARKONNEN];
+	assert(bmp != NULL);
+
+	al_draw_scaled_bitmap(bmp, 0, 0, al_get_bitmap_width(bmp), al_get_bitmap_height(bmp), x, y, w, h, flags);
+}
+
+void
 VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags)
 {
 	const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
 	assert(SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_FREMEN);
+	assert(s_shape[greyID][HOUSE_HARKONNEN] != NULL);
 
-	VideoA5_DrawShape(greyID, HOUSE_HARKONNEN, x, y, flags);
+	al_draw_bitmap(s_shape[greyID][HOUSE_HARKONNEN], x, y, flags);
+}
+
+void
+VideoA5_DrawShapeGreyScale(enum ShapeID shapeID, int x, int y, int w, int h, int flags)
+{
+	const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
+	assert(SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_FREMEN);
+
+	ALLEGRO_BITMAP *bmp = s_shape[greyID][HOUSE_HARKONNEN];
+	assert(bmp != NULL);
+
+	al_draw_scaled_bitmap(bmp, 0, 0, al_get_bitmap_width(bmp), al_get_bitmap_height(bmp), x, y, w, h, flags);
 }
 
 void
@@ -1134,12 +1158,7 @@ VideoA5_DrawShapeTint(enum ShapeID shapeID, int x, int y, unsigned char c, int f
 	assert(shapeID < SHAPEID_MAX);
 	assert(s_shape[shapeID][HOUSE_HARKONNEN] != NULL);
 
-	int al_flags = 0;
-
-	if (flags & 0x01) al_flags |= ALLEGRO_FLIP_HORIZONTAL;
-	if (flags & 0x02) al_flags |= ALLEGRO_FLIP_VERTICAL;
-
-	al_draw_tinted_bitmap(s_shape[shapeID][HOUSE_HARKONNEN], paltoRGB[c], x, y, al_flags);
+	al_draw_tinted_bitmap(s_shape[shapeID][HOUSE_HARKONNEN], paltoRGB[c], x, y, flags);
 }
 
 FadeInAux *

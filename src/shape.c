@@ -50,6 +50,15 @@ Shape_Draw(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int flags
 }
 
 void
+Shape_DrawScale(enum ShapeID shapeID, int x, int y, int w, int h, enum WindowID windowID, int flags)
+{
+	assert(!(flags & 0x8000));
+
+	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
+	Video_DrawShapeScale(shapeID, x, y, w, h, flags & 0x3);
+}
+
+void
 Shape_DrawRemap(enum ShapeID shapeID, enum HouseType houseID, int x, int y, enum WindowID windowID, int flags)
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
@@ -61,6 +70,15 @@ Shape_DrawGrey(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int f
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
 	Video_DrawShapeGrey(shapeID, x, y, flags & 0x3);
+}
+
+void
+Shape_DrawGreyScale(enum ShapeID shapeID, int x, int y, int w, int h, enum WindowID windowID, int flags)
+{
+	assert(!(flags & 0x8000));
+
+	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
+	Video_DrawShapeGreyScale(shapeID, x, y, w, h, flags & 0x3);
 }
 
 void
