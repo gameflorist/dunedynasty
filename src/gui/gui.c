@@ -75,8 +75,6 @@ static const RankScore _rankScores[] = {
 static uint8 g_colours[16];
 uint8 g_palette_998A[3 * 256];
 uint8 g_remap[256];
-FactoryWindowItem g_factoryWindowItems[25];
-uint16 g_factoryWindowTotal = 0;
 static uint16 s_temporaryColourBorderSchema[5][4];          /*!< Temporary storage for the #s_colourBorderSchema. */
 uint16 g_productionStringID;                                /*!< Descriptive text of activity of the active structure. */
 bool g_textDisplayNeedsUpdate;                              /*!< If set, text display needs to be updated. */
@@ -1746,91 +1744,12 @@ void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width
 /* Moved to gui/menu_opendune.c. */
 static uint32 GUI_FactoryWindow_CreateWidgets(void);
 static uint32 GUI_FactoryWindow_LoadGraymapTbl(void);
-#endif
 
-static uint16 GUI_FactoryWindow_CalculateStarportPrice(uint16 credits)
-{
-	credits = (credits / 10) * 4 + (credits / 10) * (Tools_RandomRange(0, 6) + Tools_RandomRange(0, 6));
+/* Moved to structure.c. */
+static uint16 GUI_FactoryWindow_CalculateStarportPrice(uint16 credits);
+static int GUI_FactoryWindow_Sorter(const void *a, const void *b);
+extern void GUI_FactoryWindow_InitItems(enum StructureType s);
 
-	return min(credits, 999);
-}
-
-static int GUI_FactoryWindow_Sorter(const void *a, const void *b)
-{
-	const FactoryWindowItem *pa = a;
-	const FactoryWindowItem *pb = b;
-
-	return pb->sortPriority - pa->sortPriority;
-}
-
-void GUI_FactoryWindow_InitItems(enum StructureType s)
-{
-	g_factoryWindowTotal = 0;
-
-	memset(g_factoryWindowItems, 0, 25 * sizeof(FactoryWindowItem));
-
-	if (s == STRUCTURE_STARPORT) {
-		uint16 seconds = (g_timerGame - g_tickScenarioStart) / 60;
-		uint16 seed = (seconds / 60) + g_scenarioID + g_playerHouseID;
-		seed *= seed;
-
-		srand(seed);
-	}
-
-	if (s != STRUCTURE_CONSTRUCTION_YARD) {
-		uint16 i;
-
-		for (i = 0; i < UNIT_MAX; i++) {
-			ObjectInfo *oi = &g_table_unitInfo[i].o;
-
-			if (oi->available == 0) continue;
-
-			g_factoryWindowItems[g_factoryWindowTotal].objectInfo = oi;
-			g_factoryWindowItems[g_factoryWindowTotal].objectType = i;
-
-			if (s == STRUCTURE_STARPORT) {
-				g_factoryWindowItems[g_factoryWindowTotal].credits = GUI_FactoryWindow_CalculateStarportPrice(oi->buildCredits);
-			} else {
-				g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
-			}
-
-			g_factoryWindowItems[g_factoryWindowTotal].sortPriority = oi->sortPriority;
-
-			g_factoryWindowTotal++;
-		}
-	} else {
-		uint16 i;
-
-		for (i = 0; i < STRUCTURE_MAX; i++) {
-			ObjectInfo *oi = &g_table_structureInfo[i].o;
-
-			if (oi->available == 0) continue;
-
-			g_factoryWindowItems[g_factoryWindowTotal].objectInfo    = oi;
-			g_factoryWindowItems[g_factoryWindowTotal].objectType    = i;
-			g_factoryWindowItems[g_factoryWindowTotal].credits       = oi->buildCredits;
-			g_factoryWindowItems[g_factoryWindowTotal].sortPriority  = oi->sortPriority;
-
-			if (i == 0 || i == 1) g_factoryWindowItems[g_factoryWindowTotal].sortPriority = 0x64;
-
-			g_factoryWindowTotal++;
-		}
-	}
-
-	if (g_factoryWindowTotal == 0) {
-#if 0
-		GUI_DisplayModalMessage("ERROR: No items in construction list!", 0xFFFF);
-		PrepareEnd();
-		exit(0);
-#else
-		return;
-#endif
-	}
-
-	qsort(g_factoryWindowItems, g_factoryWindowTotal, sizeof(FactoryWindowItem), GUI_FactoryWindow_Sorter);
-}
-
-#if 0
 /* Moved to gui/menu_opendune.c. */
 static void GUI_FactoryWindow_Init(Structure *s);
 extern FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost);

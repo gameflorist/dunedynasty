@@ -20,6 +20,9 @@
 #include "../unit.h"
 #include "../video/video.h"
 
+FactoryWindowItem g_factoryWindowItems[MAX_FACTORY_WINDOW_ITEMS];
+int g_factoryWindowTotal;
+
 static int factoryOffsetY;
 
 void
@@ -246,8 +249,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if (!(x1 <= g_mouseX && g_mouseX <= x2))
 		return false;
 
-	Structure_PopulateBuildable(s, 0);
-	GUI_FactoryWindow_InitItems(s->o.type);
+	Structure_InitFactoryItems(s);
 
 	if (g_mouseDZ != 0) {
 		ActionPanel_ScrollFactory(widget, g_factoryWindowTotal, false);
@@ -258,7 +260,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if ((g_mouseY < y1) || !(0 <= item && item < g_factoryWindowTotal))
 		return false;
 
-	if (g_factoryWindowItems[item].objectInfo->available <= 0)
+	if (g_factoryWindowItems[item].available <= 0)
 		return false;
 
 	const bool lmb = (widget->state.s.buttonState & 0x04);
@@ -430,8 +432,7 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	if (!(x1 <= g_mouseX && g_mouseX <= x2))
 		return false;
 
-	Structure_PopulateBuildable(s, 0);
-	GUI_FactoryWindow_InitItems(STRUCTURE_STARPORT);
+	Structure_InitFactoryItems(s);
 
 	if (g_mouseDZ != 0) {
 		ActionPanel_ScrollFactory(widget, g_factoryWindowTotal, true);
@@ -503,15 +504,14 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		return;
 	}
 
-	Structure_PopulateBuildable(s, 0);
-	GUI_FactoryWindow_InitItems(s->o.type);
+	Structure_InitFactoryItems(s);
 	Video_SetClippingArea(widget->offsetX - 1, widget->offsetY - 1, widget->width + 2, widget->height + 2);
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
-		const ObjectInfo *oi = g_factoryWindowItems[item].objectInfo;
+		const enum ShapeID shapeID = g_factoryWindowItems[item].shapeID;
 		const uint16 object_type = g_factoryWindowItems[item].objectType;
-		const int icon_w = Shape_Width(oi->spriteID);
-		const int icon_h = Shape_Height(oi->spriteID);
+		const int icon_w = Shape_Width(shapeID);
+		const int icon_h = Shape_Height(shapeID);
 
 		int x1, y1, x2, y2, w, h;
 		bool buttonDown = false;
@@ -528,16 +528,16 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		GUI_DrawBorder(x1, y1, w, h, buttonDown ? 0 : 1, true);
 
 		if ((s->o.type == STRUCTURE_STARPORT) && (g_starportAvailable[object_type] < 0)) {
-			Shape_DrawGrey(oi->spriteID, x1 + 2, y1 + 2, 0, 0);
+			Shape_DrawGrey(shapeID, x1 + 2, y1 + 2, 0, 0);
 
 			GUI_DrawText_Wrapper("OUT OF", x1 + w/2, y1 + 4, 6, 0, 0x132);
 			GUI_DrawText_Wrapper("STOCK", x1 + w/2, y1 + 15, 6, 0, 0x132);
 		}
-		else if (oi->available < 0) {
-			Shape_DrawGrey(oi->spriteID, x1 + 2, y1 + 2, 0, 0);
+		else if (g_factoryWindowItems[item].available < 0) {
+			Shape_DrawGrey(shapeID, x1 + 2, y1 + 2, 0, 0);
 		}
 		else {
-			Shape_Draw(oi->spriteID, x1 + 2, y1 + 2, 0, 0);
+			Shape_Draw(shapeID, x1 + 2, y1 + 2, 0, 0);
 		}
 
 		/* Draw layout. */

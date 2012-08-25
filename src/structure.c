@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 #include "types.h"
 #include "os/math.h"
 #include "os/strings.h"
@@ -18,6 +19,7 @@
 #include "gui/widget.h"
 #include "house.h"
 #include "map.h"
+#include "newui/actionpanel.h"
 #include "opendune.h"
 #include "pool/pool.h"
 #include "pool/house.h"
@@ -1798,6 +1800,87 @@ void Structure_UpdateMap(Structure *s)
 	}
 }
 
+/* Structure_GetAvailable:
+ *
+ * If s is construction yard, i is a StructureType.
+ * If s is starport, i is a UnitType.
+ * Otherwise, i is the factory item number.
+ */
+static int
+Structure_GetAvailable(const Structure *s, int i)
+{
+	if (s->o.type == STRUCTURE_STARPORT) {
+		assert(UNIT_CARRYALL <= i && i <= UNIT_MCV);
+		return g_starportAvailable[i];
+	}
+
+	const uint32 structuresBuilt = House_Get_ByIndex(s->o.houseID)->structuresBuilt;
+
+	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		assert(STRUCTURE_SLAB_1x1 <= i && i < STRUCTURE_MAX);
+
+		const StructureInfo *si = &g_table_structureInfo[i];
+		uint16 availableCampaign = si->o.availableCampaign;
+		uint32 structuresRequired = si->o.structuresRequired;
+
+		if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {
+			structuresRequired &= ~(1 << STRUCTURE_BARRACKS);
+			availableCampaign = 2;
+		}
+
+		if (((structuresBuilt & structuresRequired) == structuresRequired) || (s->o.houseID != g_playerHouseID)) {
+			if ((s->o.houseID != HOUSE_HARKONNEN) && (i == STRUCTURE_LIGHT_VEHICLE)) {
+				availableCampaign = 2;
+			}
+
+			if ((g_campaignID >= availableCampaign - 1) && (si->o.availableHouse & (1 << s->o.houseID))) {
+				if ((s->upgradeLevel >= si->o.upgradeLevelRequired) || (s->o.houseID != g_playerHouseID)) {
+					return 1;
+				}
+				else if ((s->upgradeTimeLeft != 0) && (s->upgradeLevel + 1 >= si->o.upgradeLevelRequired)) {
+					return -1;
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	else {
+		assert(0 <= i && i < 8);
+
+		const StructureInfo *si = &g_table_structureInfo[s->o.type];
+		uint16 unitType = si->buildableUnits[i];
+
+		if (unitType > UNIT_MCV)
+			return 0;
+
+		if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS)
+			unitType = UNIT_RAIDER_TRIKE;
+
+		const UnitInfo *ui = &g_table_unitInfo[unitType];
+		uint16 upgradeLevelRequired = ui->o.upgradeLevelRequired;
+
+		if (unitType == UNIT_SIEGE_TANK && s->creatorHouseID == HOUSE_ORDOS)
+			upgradeLevelRequired--;
+
+		if ((structuresBuilt & ui->o.structuresRequired) != ui->o.structuresRequired)
+			return 0;
+
+		if ((ui->o.availableHouse & (1 << s->creatorHouseID)) == 0)
+			return 0;
+
+		if (s->upgradeLevel >= upgradeLevelRequired) {
+			return 1;
+		}
+		else if (s->upgradeTimeLeft != 0 && s->upgradeLevel + 1 >= upgradeLevelRequired) {
+			return -1;
+		}
+
+		return 0;
+	}
+}
+
 uint32 Structure_GetBuildable(Structure *s)
 {
 	const StructureInfo *si;
@@ -2026,6 +2109,94 @@ void Structure_HouseUnderAttack(uint8 houseID)
 		/* XXX -- Dune2 does something odd here. What was their intention? */
 		if ((u->actionID == ACTION_GUARD && u->actionID == ACTION_AMBUSH) || u->actionID == ACTION_AREA_GUARD) Unit_SetAction(u, ACTION_HUNT);
 	}
+}
+
+static uint16 GUI_FactoryWindow_CalculateStarportPrice(uint16 credits)
+{
+	credits = (credits / 10) * 4 + (credits / 10) * (Tools_RandomRange(0, 6) + Tools_RandomRange(0, 6));
+
+	return min(credits, 999);
+}
+
+static int GUI_FactoryWindow_Sorter(const void *a, const void *b)
+{
+	const FactoryWindowItem *pa = a;
+	const FactoryWindowItem *pb = b;
+
+	return pb->sortPriority - pa->sortPriority;
+}
+
+void Structure_InitFactoryItems(const Structure *s)
+{
+	g_factoryWindowTotal = 0;
+
+	memset(g_factoryWindowItems, 0, MAX_FACTORY_WINDOW_ITEMS * sizeof(FactoryWindowItem));
+
+	if (s->o.type == STRUCTURE_STARPORT) {
+		uint16 seconds = (g_timerGame - g_tickScenarioStart) / 60;
+		uint16 seed = (seconds / 60) + g_scenarioID + g_playerHouseID;
+		seed *= seed;
+
+		srand(seed);
+	}
+
+	if (s->o.type != STRUCTURE_CONSTRUCTION_YARD) {
+		const StructureInfo *si = &g_table_structureInfo[s->o.type];
+		const int end = (s->o.type == STRUCTURE_STARPORT) ? UNIT_MCV + 1 : 8;
+
+		for (int i = 0; i < end; i++) {
+			const uint16 unitType = (s->o.type == STRUCTURE_STARPORT) ? i : si->buildableUnits[i];
+
+			if (unitType > UNIT_MCV)
+				continue;
+
+			const ObjectInfo *oi = &g_table_unitInfo[unitType].o;
+			const int available = Structure_GetAvailable(s, i);
+
+			if (available == 0)
+				continue;
+
+			g_factoryWindowItems[g_factoryWindowTotal].objectType = unitType;
+			g_factoryWindowItems[g_factoryWindowTotal].available = available;
+			g_factoryWindowItems[g_factoryWindowTotal].sortPriority = oi->sortPriority;
+			g_factoryWindowItems[g_factoryWindowTotal].shapeID = oi->spriteID;
+
+			if (s->o.type == STRUCTURE_STARPORT) {
+				g_factoryWindowItems[g_factoryWindowTotal].credits = GUI_FactoryWindow_CalculateStarportPrice(oi->buildCredits);
+			}
+			else {
+				g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
+			}
+
+			g_factoryWindowTotal++;
+		}
+	}
+	else {
+		for (enum StructureType i = 0; i < STRUCTURE_MAX; i++) {
+			const ObjectInfo *oi = &g_table_structureInfo[i].o;
+			const int available = Structure_GetAvailable(s, i);
+
+			if (available == 0)
+				continue;
+
+			g_factoryWindowItems[g_factoryWindowTotal].objectType = i;
+			g_factoryWindowItems[g_factoryWindowTotal].available = available;
+			g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
+			g_factoryWindowItems[g_factoryWindowTotal].shapeID = oi->spriteID;
+
+			if (i == STRUCTURE_SLAB_1x1 || i == STRUCTURE_SLAB_2x2) {
+				g_factoryWindowItems[g_factoryWindowTotal].sortPriority = 0x64;
+			}
+			else {
+				g_factoryWindowItems[g_factoryWindowTotal].sortPriority = oi->sortPriority;
+			}
+
+			g_factoryWindowTotal++;
+		}
+	}
+
+	if (g_factoryWindowTotal > 0)
+		qsort(g_factoryWindowItems, g_factoryWindowTotal, sizeof(FactoryWindowItem), GUI_FactoryWindow_Sorter);
 }
 
 /**

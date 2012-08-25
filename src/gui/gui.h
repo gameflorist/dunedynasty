@@ -34,17 +34,6 @@ typedef struct HallOfFameStruct {
 } HallOfFameStruct;
 
 /**
- * Factory Window Item struct.
- */
-typedef struct FactoryWindowItem {
-	uint16 objectType;                                      /*!< Which object is this item. */
-	int8   amount;                                          /*!< How many are available. */
-	uint16 credits;                                         /*!< What is the current price. */
-	uint16 sortPriority;                                    /*!< The sorting priority. */
-	struct ObjectInfo *objectInfo;                          /*!< The ObjectInfo of the item. */
-} FactoryWindowItem;
-
-/**
  * Information for the selection type.
  */
 typedef struct SelectionTypeStruct {
@@ -60,8 +49,6 @@ extern const SelectionTypeStruct g_table_selectionType[];
 
 extern uint8 g_palette_998A[3 * 256];
 extern uint8 g_remap[256];
-extern FactoryWindowItem g_factoryWindowItems[];
-extern uint16 g_factoryWindowTotal;
 extern uint16 g_productionStringID;
 extern bool g_textDisplayNeedsUpdate;
 
@@ -101,7 +88,6 @@ extern void GUI_DrawCredits(uint8 houseID, uint16 mode);
 extern void GUI_ChangeSelectionType(uint16 selectionType);
 extern void GUI_InitColors(const uint8 *colors, uint8 first, uint8 last);
 extern void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, int16 memBlockSrc, int16 memBlockDst);
-extern void GUI_FactoryWindow_InitItems(enum StructureType s);
 extern char *GUI_String_Get_ByIndex(int16 stringID);
 extern void GUI_ClearScreen(uint16 arg06);
 extern uint16 GUI_Get_Scrollbar_Position(struct Widget *w);
