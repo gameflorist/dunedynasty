@@ -107,8 +107,7 @@ bool GUI_Widget_SpriteTextButton_Click(Widget *w)
 		case STR_LAUNCH:
 		case STR_FREMEN:
 		case STR_SABOTEUR:
-			Structure_ActivateSpecial(s);
-			break;
+			return ActionPanel_ClickPalace(w, s);
 	}
 	return false;
 }

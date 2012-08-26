@@ -515,6 +515,24 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	return false;
 }
 
+bool
+ActionPanel_ClickPalace(const Widget *widget, Structure *s)
+{
+	const bool lmb = (widget->state.s.buttonState & 0x04);
+	int x1, y1, x2, y2;
+
+	g_factoryWindowTotal = 0;
+	factoryOffsetY = 0;
+
+	ActionPanel_ProductionButtonDimensions(widget, false, 0, &x1, &y1, &x2, &y2, NULL, NULL);
+	if (lmb && Mouse_InRegion(x1, y1, x2, y2)) {
+		Structure_ActivateSpecial(s);
+		return true;
+	}
+
+	return false;
+}
+
 static void
 ActionPanel_DrawStructureLayout(enum StructureType s, int x1, int y1)
 {
@@ -699,37 +717,43 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 }
 
 void
-ActionPanel_DrawPalace(const Widget *w, Structure *s)
+ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 {
-	const bool buttonDown = w->state.s.hover2;
-	const int positionX = w->offsetX;
-	const int positionY = w->offsetY;
-	const int width = w->width;
-	const int height = w->height;
-
 	enum ShapeID shapeID;
+	const char *name;
+	const char *deploy;
+	int x, y, w, h;
 	VARIABLE_NOT_USED(s);
 
 	switch (g_productionStringID) {
 		case STR_LAUNCH:
-			shapeID = 0x1E;
+			shapeID = SHAPE_DEATH_HAND;
+			name = g_table_unitInfo[UNIT_MISSILE_HOUSE].o.name;
+			deploy = String_Get_ByIndex(STR_LAUNCH);
 			break;
 
 		case STR_FREMEN:
-			shapeID = 0x5E;
+			shapeID = SHAPE_FREMEN_SQUAD;
+			name = String_Get_ByIndex(g_productionStringID);
+			deploy = String_Get_ByIndex(STR_DEPLOY);
 			break;
 
 		case STR_SABOTEUR:
-			shapeID = 0x60;
+			shapeID = SHAPE_SABOTEUR;
+			name = String_Get_ByIndex(g_productionStringID);
+			deploy = String_Get_ByIndex(STR_DEPLOY);
 			break;
 
 		default:
 			return;
 	}
 
-	GUI_DrawWiredRectangle(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
-	GUI_DrawBorder(positionX, positionY, width, height, buttonDown ? 0 : 1, true);
+	g_factoryWindowTotal = 0;
+	factoryOffsetY = 0;
 
-	Shape_Draw(shapeID, positionX + 2, positionY + 2, 0, 0);
-	GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), positionX + width / 2, positionY + height - 9, (buttonDown ? 0xE : 0xF), 0, 0x121);
+	ActionPanel_ProductionButtonDimensions(widget, false, 0, &x, &y, NULL, NULL, &w, &h);
+	GUI_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, widget->height - 3, 0, true);
+	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);
+	GUI_DrawText_Wrapper(name, x + w / 2, y - 9, 5, 0, 0x121);
+	GUI_DrawText_Wrapper(deploy, x + w / 2, y + h + 1, 0xF, 0, 0x121);
 }
