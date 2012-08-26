@@ -42,6 +42,12 @@ bool enhancement_fix_ix_colour_remapping = true;
 bool enhancement_fix_selection_after_entering_structure = true;
 
 /**
+ * In the original game, sandworms disappear after eating a set number
+ * of units.
+ */
+bool enhancement_insatiable_sandworms = true;
+
+/**
  * The original game ignores all structures' health fields specified
  * in the scenario, giving them all full health instead.
  */

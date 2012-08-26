@@ -14,6 +14,7 @@
 #include "../animation.h"
 #include "../audio/sound.h"
 #include "../config.h"
+#include "../enhancement.h"
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
@@ -648,7 +649,8 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 			Unit_UpdateMap(1, u);
 
-			u->amount--;
+			if (!enhancement_insatiable_sandworms)
+				u->amount--;
 
 			script->delay = 12;
 
