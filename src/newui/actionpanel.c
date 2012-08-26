@@ -298,6 +298,21 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if (s->o.flags.s.upgrading)
 		return false;
 
+	if (widget->state.s.keySelected) {
+		if (g_productionStringID == STR_PLACE_IT) {
+			Structure *ns = Structure_Get_ByIndex(s->o.linkedID);
+
+			g_structureActive = ns;
+			g_structureActiveType = s->objectType;
+			g_selectionState = Structure_IsValidBuildLocation(g_selectionRectanglePosition, g_structureActiveType);
+			g_structureActivePosition = g_selectionPosition;
+			s->o.linkedID = STRUCTURE_INVALID;
+
+			GUI_ChangeSelectionType(SELECTIONTYPE_PLACE);
+		}
+		return true;
+	}
+
 	if (g_factoryWindowTotal < 0) {
 		factoryOffsetY = 0;
 		Structure_InitFactoryItems(s);

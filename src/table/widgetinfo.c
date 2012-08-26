@@ -77,7 +77,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	{ /* 5 */
 		/* index       */ 5,
 		/* clickProc   */ &GUI_Widget_SpriteTextButton_Click,
-		/* shortcut    */ 0,
+		/* shortcut    */ SCANCODE_P,
 		/* flags       */ 17605,
 		/* spriteID    */ -3,
 		/* offsetX     */ 258,
