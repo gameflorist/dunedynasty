@@ -24,6 +24,12 @@ bool enhancement_fix_everlasting_unit_wobble = true;
 bool enhancement_fix_ix_colour_remapping = true;
 
 /**
+ * The original game ignores all structures' health fields specified
+ * in the scenario, giving them all full health instead.
+ */
+bool enhancement_read_scenario_structure_health = false;
+
+/**
  * A mistake in reading the scenario script causes reinforcements to
  * only be sent once.
  */
