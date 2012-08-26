@@ -134,6 +134,9 @@ Viewport_SelectRegion(void)
 
 		const uint16 packed = Tile_PackXY(tilex, tiley);
 
+		if (g_map[packed].overlaySpriteID == g_veiledSpriteID)
+			return;
+
 		if (mode == SELECTION_MODE_NONE) {
 			Map_SetSelection(packed);
 		}
