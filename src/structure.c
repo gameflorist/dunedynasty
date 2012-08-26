@@ -136,6 +136,9 @@ void GameLoop_Structure(void)
 						s->upgradeLevel++;
 						s->o.flags.s.upgrading = false;
 
+						/* ENHANCEMENT -- Resume production once upgrades are finished. */
+						if (g_dune2_enhanced) s->o.flags.s.onHold = false;
+
 						/* Ordos Heavy Vehicle gets the last upgrade for free */
 						if (s->o.houseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 2) s->upgradeLevel = 3;
 
