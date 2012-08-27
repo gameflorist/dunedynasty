@@ -57,6 +57,7 @@ enum MenuAction {
 	MENU_PLAY_A_GAME,
 	MENU_LOAD_GAME,
 	MENU_BATTLE_SUMMARY,
+	MENU_HALL_OF_FAME,
 	MENU_CUTSCENE,
 	MENU_STRATEGIC_MAP,
 	MENU_EXIT_GAME,
@@ -285,9 +286,8 @@ MainMenu_Loop(void)
 
 		case 0x8000 | STR_HALL_OF_FAME:
 			g_playerHouseID = HOUSE_MERCENARY;
-			GUI_HallOfFame_Show(0xFFFF);
 			MainMenu_SetupBlink(widgetID);
-			return MENU_REDRAW | MENU_MAIN_MENU;
+			return MENU_BLINK_CONFIRM | MENU_HALL_OF_FAME;
 
 		case 0x8000 | STR_EXIT_GAME:
 			MainMenu_SetupBlink(widgetID);
@@ -986,6 +986,11 @@ Menu_Run(void)
 				else {
 					res = BattleSummary_InputLoop(&g_hall_of_fame_state);
 				}
+				break;
+
+			case MENU_HALL_OF_FAME:
+				GUI_HallOfFame_Show(0xFFFF);
+				res = MENU_MAIN_MENU;
 				break;
 
 			case MENU_CUTSCENE:
