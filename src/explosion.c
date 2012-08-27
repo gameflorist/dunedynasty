@@ -166,9 +166,14 @@ static void Explosion_Func_SetAnimation(Explosion *e, uint16 animationMapID)
  */
 static void Explosion_Func_SetRow(Explosion *e, uint16 row)
 {
+#if 0
 	if ((row & 0x800) != 0) row |= 0xF000;
 	e->position.s.x = 0;
 	e->position.s.y = row;
+#else
+	VARIABLE_NOT_USED(e);
+	VARIABLE_NOT_USED(row);
+#endif
 }
 
 /**
