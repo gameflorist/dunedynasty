@@ -2810,8 +2810,13 @@ void GUI_HallOfFame_Show(uint16 score)
 	bool confirm_clear = false;
 	while (true) {
 		HallOfFame_DrawBackground(g_playerHouseID, true);
-		HallOfFame_DrawScoreTime(fame->score, fame->time);
-		HallOfFame_DrawRank(fame);
+		if (score == 0xFFFF) {
+			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_HALL_OF_FAME2), SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
+		}
+		else {
+			HallOfFame_DrawScoreTime(fame->score, fame->time);
+			HallOfFame_DrawRank(fame);
+		}
 		GUI_HallOfFame_DrawData(data, true);
 
 		Input_Tick(true);
