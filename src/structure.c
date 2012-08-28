@@ -1626,6 +1626,9 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 			o = &st->o;
 			oi = &g_table_structureInfo[objectType].o;
 			str = String_Get_ByIndex(g_table_structureInfo[objectType].o.stringID_full);
+
+			if (!Structure_CheckAvailableConcrete(objectType, s->o.houseID))
+				GUI_DisplayHint(STR_THERE_ISNT_ENOUGH_OPEN_CONCRETE_TO_PLACE_THIS_STRUCTURE_YOU_MAY_PROCEED_BUT_WITHOUT_ENOUGH_CONCRETE_THE_BUILDING_WILL_NEED_REPAIRS, g_table_structureInfo[objectType].o.spriteID);
 		}
 		else {
 			o = NULL;
