@@ -449,7 +449,7 @@ Viewport_Click(Widget *w)
 				 * ordered back to rock, e.g. to evade a worm attack.
 				 */
 				else if ((oi->actionsPlayer[i] == ACTION_HARVEST) && (g_table_landscapeInfo[lst].isSand)) {
-					action = ACTION_HARVEST;
+					action = (u->amount < 100) ? ACTION_HARVEST : ACTION_MOVE;
 				}
 			}
 
