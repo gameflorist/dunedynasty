@@ -7,6 +7,7 @@
 
 #include "../house.h"
 #include "../structure.h"
+#include "../table/sound.h"
 #include "../unit.h"
 #include "strings.h"
 
@@ -83,7 +84,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 0,
 		/* explosionType        */ -1,
 		/* bulletType           */ -1,
-		/* bulletSound          */ 42
+		/* bulletSound          */ SOUND_ROCKET
 	},
 
 	{ /* 1 */
@@ -156,7 +157,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 50,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_MISSILE_TROOPER,
-		/* bulletSound          */ 42
+		/* bulletSound          */ SOUND_ROCKET
 	},
 
 	{ /* 2 */
@@ -229,7 +230,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 3,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 58
+		/* bulletSound          */ SOUND_GUN
 	},
 
 	{ /* 3 */
@@ -302,7 +303,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 5,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 59
+		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
 
 	{ /* 4 */
@@ -375,7 +376,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 3,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 58
+		/* bulletSound          */ SOUND_GUN
 	},
 
 	{ /* 5 */
@@ -448,7 +449,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 5,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 59
+		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
 
 	{ /* 6 */
@@ -521,7 +522,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 2,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 58
+		/* bulletSound          */ SOUND_GUN
 	},
 
 	{ /* 7 */
@@ -740,7 +741,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 25,
 		/* explosionType        */ 1,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 57
+		/* bulletSound          */ SOUND_TANK
 	},
 
 	{ /* 10 */
@@ -813,7 +814,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 30,
 		/* explosionType        */ 1,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 57
+		/* bulletSound          */ SOUND_TANK
 	},
 
 	{ /* 11 */
@@ -886,7 +887,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 40,
 		/* explosionType        */ 1,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 57
+		/* bulletSound          */ SOUND_TANK
 	},
 
 	{ /* 12 */
@@ -959,7 +960,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 60,
 		/* explosionType        */ -1,
 		/* bulletType           */ UNIT_SONIC_BLAST,
-		/* bulletSound          */ 43
+		/* bulletSound          */ EFFECT_SONIC_BLAST
 	},
 
 	{ /* 13 */
@@ -1032,7 +1033,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 5,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 59
+		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
 
 	{ /* 14 */
@@ -1105,7 +1106,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 5,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 59
+		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
 
 	{ /* 15 */
@@ -1178,7 +1179,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 7,
 		/* explosionType        */ 0,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ 59
+		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
 
 	{ /* 16 */
@@ -1397,7 +1398,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 100,
 		/* explosionType        */ 11,
 		/* bulletType           */ -1,
-		/* bulletSound          */ 42
+		/* bulletSound          */ SOUND_ROCKET
 	},
 
 	{ /* 19 */
@@ -1470,7 +1471,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 75,
 		/* explosionType        */ 3,
 		/* bulletType           */ -1,
-		/* bulletSound          */ 42
+		/* bulletSound          */ SOUND_ROCKET
 	},
 
 	{ /* 20 */
@@ -1543,7 +1544,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 75,
 		/* explosionType        */ 3,
 		/* bulletType           */ -1,
-		/* bulletSound          */ 42
+		/* bulletSound          */ SOUND_ROCKET
 	},
 
 	{ /* 21 */
@@ -1616,7 +1617,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 75,
 		/* explosionType        */ 7,
 		/* bulletType           */ -1,
-		/* bulletSound          */ 42
+		/* bulletSound          */ SOUND_ROCKET
 	},
 
 	{ /* 22 */
@@ -1908,7 +1909,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 300,
 		/* explosionType        */ 13,
 		/* bulletType           */ UNIT_SANDWORM,
-		/* bulletSound          */ 63
+		/* bulletSound          */ SOUND_SANDWORM
 	},
 
 	{ /* 26 */
