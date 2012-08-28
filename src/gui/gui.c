@@ -90,7 +90,6 @@ static uint8 s_factoryWindowWsaBuffer[64000];
 static uint16 s_temporaryColourBorderSchema[5][4];          /*!< Temporary storage for the #s_colourBorderSchema. */
 uint16 g_productionStringID;                                /*!< Descriptive text of activity of the active structure. */
 bool g_textDisplayNeedsUpdate;                              /*!< If set, text display needs to be updated. */
-uint32 g_strategicRegionBits;                               /*!< Region bits at the map. */
 static uint32 s_ticksPlayed;
 
 uint16 g_cursorSpriteID;

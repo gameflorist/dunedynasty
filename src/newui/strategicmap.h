@@ -56,6 +56,7 @@ typedef struct StrategicMapData {
 } StrategicMapData;
 
 extern StrategicMapData g_strategic_map_state;
+extern uint32 g_strategicRegionBits;
 
 extern void StrategicMap_Init(void);
 extern void StrategicMap_AdvanceText(StrategicMapData *map, bool force);

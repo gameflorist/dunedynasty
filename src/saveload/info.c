@@ -8,6 +8,7 @@
 #include "saveload.h"
 #include "../house.h"
 #include "../map.h"
+#include "../newui/strategicmap.h"
 #include "../opendune.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"

@@ -28,6 +28,19 @@ static struct {
 } region_data[1 + STRATEGIC_MAP_MAX_REGIONS];
 
 StrategicMapData g_strategic_map_state;
+uint32 g_strategicRegionBits;   /* bits designating regions attempted. */
+
+static void
+StrategicMap_SetRegionAttempted(int region)
+{
+	g_strategicRegionBits |= (1 << region);
+}
+
+static bool
+StrategicMap_IsRegionAttempted(int region)
+{
+	return (g_strategicRegionBits & (1 << region));
+}
 
 void
 StrategicMap_Init(void)
@@ -163,8 +176,8 @@ static void
 StrategicMap_DrawArrows(enum HouseType houseID, int blink_scenario, const StrategicMapData *map)
 {
 	for (int i = 0; i < STRATEGIC_MAP_MAX_ARROWS; i++) {
-		if (map->arrow[i].index < 0)
-			break;
+		if (map->arrow[i].index <= 0)
+			continue;
 
 		/* Draw only arrows pointing to the selected region. */
 		if ((blink_scenario >= 0) && (map->arrow[i].index != map->arrow[blink_scenario].index))
@@ -260,6 +273,7 @@ StrategicMap_ReadArrows(int campaignID, StrategicMapData *map)
 {
 	char category[16];
 	int count = 0;
+	bool any_unattempted_regions = false;
 
 	snprintf(category, sizeof(category), "GROUP%d", campaignID);
 
@@ -278,11 +292,24 @@ StrategicMap_ReadArrows(int campaignID, StrategicMapData *map)
 
 		assert(count < STRATEGIC_MAP_MAX_ARROWS);
 
+		if ((index != 0) && !StrategicMap_IsRegionAttempted(index))
+			any_unattempted_regions = true;
+
 		map->arrow[count].index = index;
 		map->arrow[count].shapeID = SHAPE_ARROW + shapeID;
 		map->arrow[count].x = x;
 		map->arrow[count].y = y;
 		count++;
+	}
+
+	if (any_unattempted_regions) {
+		for (int i = 0; i < count; i++) {
+			if (StrategicMap_IsRegionAttempted(map->arrow[i].index))
+				map->arrow[i].index = -1;
+		}
+	}
+	else {
+		g_strategicRegionBits = 0;
 	}
 
 	for (; count < STRATEGIC_MAP_MAX_ARROWS; count++) {
@@ -502,8 +529,10 @@ StrategicMap_SelectRegion(const StrategicMapData *map, int x, int y)
 	const int region = g_fileRgnclkCPS[304*y + x];
 
 	for (int i = 0; i < STRATEGIC_MAP_MAX_ARROWS; i++) {
-		if (map->arrow[i].index == region)
+		if (map->arrow[i].index == region) {
+			StrategicMap_SetRegionAttempted(region);
 			return i;
+		}
 	}
 
 	return -1;
