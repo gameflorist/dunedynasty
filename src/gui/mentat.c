@@ -138,7 +138,7 @@ void GUI_Mentat_LoadHelpSubjects(bool init)
 	uint16 i;
 
 	if (init) {
-		helpDataList = GFX_Screen_Get_ByIndex(3);
+		helpDataList = GFX_Screen_Get_ByIndex(5);
 
 		s_topHelpList = 0;
 		s_selectedHelpSubject = 0;
@@ -148,7 +148,7 @@ void GUI_Mentat_LoadHelpSubjects(bool init)
 	}
 
 	fileID = ChunkFile_Open(s_mentatFilename);
-	length = ChunkFile_Read(fileID, HTOBE32('NAME'), helpDataList, GFX_Screen_GetSize_ByIndex(3));
+	length = ChunkFile_Read(fileID, HTOBE32('NAME'), helpDataList, GFX_Screen_GetSize_ByIndex(5));
 	ChunkFile_Close(fileID);
 
 	s_numberHelpSubjects = 0;
