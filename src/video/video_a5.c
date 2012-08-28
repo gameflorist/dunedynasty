@@ -297,6 +297,14 @@ VideoA5_Uninit(void)
 	screen = NULL;
 }
 
+void
+VideoA5_ToggleFullscreen(void)
+{
+	const bool fs = (al_get_display_flags(display) & ALLEGRO_FULLSCREEN_WINDOW);
+
+	al_set_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, !fs);
+}
+
 static void
 VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCopyMode mode)
 {

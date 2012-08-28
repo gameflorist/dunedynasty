@@ -11,6 +11,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
+#include "../video/video_a5.h"
 #include "scancode.h"
 
 bool
@@ -109,6 +110,13 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			/* Fall through. */
 		case ALLEGRO_EVENT_MOUSE_AXES:
 			Mouse_EventHandler(apply_mouse_transform, event->mouse.x, event->mouse.y, event->mouse.dz, mouse_event);
+			break;
+
+		case ALLEGRO_EVENT_KEY_CHAR:
+			if ((event->keyboard.keycode == ALLEGRO_KEY_F11) ||
+			    (event->keyboard.keycode == ALLEGRO_KEY_ENTER && (event->keyboard.modifiers & ALLEGRO_KEYMOD_ALT))) {
+				VideoA5_ToggleFullscreen();
+			}
 			break;
 
 		case ALLEGRO_EVENT_KEY_DOWN:
