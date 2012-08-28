@@ -16,10 +16,11 @@ ALLEGRO_EVENT_QUEUE *g_a5_input_queue;
 
 static ALLEGRO_TRANSFORM identity_transform;
 static ALLEGRO_TRANSFORM menu_transform;
+static bool apply_transform;
 
 /*--------------------------------------------------------------*/
 
-static void
+void
 A5_InitTransform(void)
 {
 	const double preferred_aspect = (double)SCREEN_WIDTH / SCREEN_HEIGHT;
@@ -48,6 +49,9 @@ A5_InitTransform(void)
 
 	al_identity_transform(&identity_transform);
 	al_build_transform(&menu_transform, offx, offy, scale, scale, 0.0f);
+
+	if (apply_transform == 1)
+		A5_UseMenuTransform();
 }
 
 bool
@@ -91,10 +95,12 @@ void
 A5_UseIdentityTransform(void)
 {
 	al_use_transform(&identity_transform);
+	apply_transform = false;
 }
 
 void
 A5_UseMenuTransform(void)
 {
 	al_use_transform(&menu_transform);
+	apply_transform = true;
 }

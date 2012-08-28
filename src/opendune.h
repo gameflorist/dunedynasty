@@ -78,6 +78,7 @@ extern uint32 g_readBufferSize;
 
 extern void Main(void);
 extern void GameLoop_Uninit(void);
+extern void GameLoop_TweakWidgetDimensions(int old_width);
 extern void GameLoop_Main(bool new_game);
 extern void Game_Prepare(void);
 extern void Game_Init(void);

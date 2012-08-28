@@ -373,6 +373,16 @@ static void Window_WidgetClick_Create(void)
 {
 	WidgetInfo *wi;
 
+	while (g_widgetLinkedListHead != NULL) {
+		Widget *w = g_widgetLinkedListHead;
+		g_widgetLinkedListHead = w->next;
+
+		free(w);
+	}
+
+	g_widgetLinkedListHead = NULL;
+	g_widgetLinkedListTail = NULL;
+
 	for (wi = g_table_gameWidgetInfo; wi->index >= 0; wi++) {
 		Widget *w;
 
@@ -881,11 +891,11 @@ static void InGame_Numpad_Move(uint16 key)
 	}
 }
 
-static void
-GameLoop_TweakWidgetDimensions(void)
+void
+GameLoop_TweakWidgetDimensions(int old_width)
 {
 	for (int i = 2; i <= 10; i++)
-		g_table_gameWidgetInfo[i].offsetX += TRUE_DISPLAY_WIDTH - SCREEN_WIDTH;
+		g_table_gameWidgetInfo[i].offsetX += TRUE_DISPLAY_WIDTH - old_width;
 
 	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - 14 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
 
@@ -923,6 +933,8 @@ GameLoop_TweakWidgetDimensions(void)
 	g_widgetProperties[WINDOWID_MINIMAP].yBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
 	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].xBase = TRUE_DISPLAY_WIDTH/8 - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].width;
 	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].height = TRUE_DISPLAY_HEIGHT - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].yBase - 12 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
+
+	Window_WidgetClick_Create();
 }
 
 /**
@@ -1183,7 +1195,7 @@ int main(int argc, char **argv)
 	Sprites_Init();
 	Sprites_LoadTiles();
 	VideoA5_InitSprites();
-	GameLoop_TweakWidgetDimensions();
+	GameLoop_TweakWidgetDimensions(SCREEN_WIDTH);
 	Audio_PlayVoice(VOICE_STOP);
 	GameLoop_GameIntroAnimationMenu();
 

@@ -26,6 +26,7 @@
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
 #include "../newui/viewport.h"
+#include "../opendune.h"
 #include "../sprites.h"
 #include "../tools.h"
 #include "../wsa.h"
@@ -301,8 +302,14 @@ void
 VideoA5_ToggleFullscreen(void)
 {
 	const bool fs = (al_get_display_flags(display) & ALLEGRO_FULLSCREEN_WINDOW);
+	const int old_width = TRUE_DISPLAY_WIDTH;
 
 	al_set_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, !fs);
+	TRUE_DISPLAY_WIDTH = al_get_display_width(display);
+	TRUE_DISPLAY_HEIGHT = al_get_display_height(display);
+
+	A5_InitTransform();
+	GameLoop_TweakWidgetDimensions(old_width);
 }
 
 static void
