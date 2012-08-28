@@ -378,11 +378,19 @@ StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData
 {
 	g_playerHouseID = houseID;
 	Sprites_CPS_LoadRegionClick();
-	StrategicMap_ReadOwnership(campaignID, map);
-	StrategicMap_ReadProgression(houseID, campaignID, map);
-	StrategicMap_ReadArrows(campaignID, map);
 
-	map->state = (campaignID == 1) ? STRATEGIC_MAP_SHOW_PLANET : STRATEGIC_MAP_SHOW_TEXT;
+	if (g_gameMode == GM_LOSE) {
+		StrategicMap_ReadOwnership(campaignID + 1, map);
+		StrategicMap_ReadArrows(campaignID, map);
+		map->state = STRATEGIC_MAP_SELECT_REGION;
+	}
+	else {
+		StrategicMap_ReadOwnership(campaignID, map);
+		StrategicMap_ReadProgression(houseID, campaignID, map);
+		StrategicMap_ReadArrows(campaignID, map);
+		map->state = (campaignID == 1) ? STRATEGIC_MAP_SHOW_PLANET : STRATEGIC_MAP_SHOW_TEXT;
+	}
+
 	map->fast_forward = false;
 	map->curr_progression = 0;
 	map->region_aux = NULL;
