@@ -209,6 +209,18 @@ AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan)
 		gain = sound_volume * volume;
 	}
 
+	return AudioA5_PlaySampleRaw(sampleID, gain, pan, idx_start, idx_end);
+}
+
+bool
+AudioA5_PlaySampleRaw(enum SampleID sampleID, float volume, float pan, int idx_start, int idx_end)
+{
+	if (s_sample[sampleID] == NULL)
+		return true;
+
+	if (pan < -100.0f)
+		pan = ALLEGRO_AUDIO_PAN_NONE;
+
 	for (int i = idx_start; i <= idx_end; i++) {
 		ALLEGRO_SAMPLE_INSTANCE *si = s_instance[i];
 
@@ -218,7 +230,7 @@ AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan)
 		if (!al_set_sample(si, s_sample[sampleID]))
 			continue;
 
-		al_set_sample_instance_gain(si, gain);
+		al_set_sample_instance_gain(si, volume);
 		al_set_sample_instance_pan(si, pan);
 		al_play_sample_instance(si);
 		return true;

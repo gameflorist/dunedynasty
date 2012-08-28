@@ -232,6 +232,17 @@ Audio_PlaySound(enum SoundID soundID)
 	Audio_PlaySoundAtTile(soundID, tile);
 }
 
+void
+Audio_PlaySoundCutscene(enum SoundID soundID)
+{
+	if ((!g_enable_sounds) || (soundID == SOUND_INVALID))
+		return;
+
+	const enum SampleID sampleID = g_table_voiceMapping[soundID];
+	if (sampleID != SAMPLE_INVALID)
+		AudioA5_PlaySampleRaw(sampleID, voice_volume, -1000.0f, 1, 11);
+}
+
 static bool
 Audio_QueueVoice(enum SampleID sampleID)
 {

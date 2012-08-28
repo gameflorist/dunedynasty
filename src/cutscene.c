@@ -410,7 +410,7 @@ static void GameLoop_PlaySoundEffect(uint8 animation)
 
 	if (soundEffect->animationID > animation || soundEffect->wait > s_var_8068) return;
 
-	Audio_PlaySound(soundEffect->voiceID);
+	Audio_PlaySoundCutscene(soundEffect->voiceID);
 
 	s_houseAnimation_currentSoundEffect++;
 }

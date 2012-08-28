@@ -19,6 +19,7 @@ extern void AudioA5_PlaySoundEffect(enum SoundID effectID);
 
 extern void AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size);
 extern bool AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan);
+extern bool AudioA5_PlaySampleRaw(enum SampleID sampleID, float volume, float pan, int idx_start, int idx_end);
 extern bool AudioA5_PollNarrator(void);
 
 #if __cplusplus
