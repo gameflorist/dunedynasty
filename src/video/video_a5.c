@@ -205,6 +205,7 @@ VideoA5_Init(void)
 
 	al_set_new_display_flags(ALLEGRO_GENERATE_EXPOSE_EVENTS);
 	display = al_create_display(TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+	al_set_window_title(display, "Dune Dynasty");
 	/* display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT); */
 	if (display == NULL)
 		return false;
