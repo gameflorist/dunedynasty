@@ -208,8 +208,8 @@ const SoundData g_table_musics[MUSICID_MAX] = {
 	{_music_dune00, 5}, /* 37 */
 };
 
-/**
- * Mapping soundID -> voice.
+/* Map soundID -> sampleID.
+ * Sounds mapped to SAMPLE_INVALID are effects.
  */
 const enum SampleID g_table_voiceMapping[SOUNDID_MAX] = {
 	0xFFFF, /*   0 */
@@ -232,56 +232,56 @@ const enum SampleID g_table_voiceMapping[SOUNDID_MAX] = {
 	0xFFFF, /*  17 */
 	0xFFFF, /*  18 */
 	0xFFFF, /*  19 */
-	13,     /*  20 */
+	SAMPLE_PLACEMENT,   /*  20 */
 	0xFFFF, /*  21 */
 	0xFFFF, /*  22 */
 	0xFFFF, /*  23 */
-	121,    /*  24 */
+	SAMPLE_DROP_LOAD,   /*  24 */
 	0xFFFF, /*  25 */
 	0xFFFF, /*  26 */
 	0xFFFF, /*  27 */
 	0xFFFF, /*  28 */
 	0xFFFF, /*  29 */
-	0,      /*  30 */
-	4,      /*  31 */
-	14,     /*  32 */
-	15,     /*  33 */
-	16,     /*  34 */
-	28,     /*  35 */
+	SAMPLE_SCREAM1, /*  30 */
+	SAMPLE_SCREAM5, /*  31 */
+	SAMPLE_SCREAM2, /*  32 */
+	SAMPLE_SCREAM3, /*  33 */
+	SAMPLE_SCREAM4, /*  34 */
+	SAMPLE_SQUISH,  /*  35 */
 	0xFFFF, /*  36 */
 	0xFFFF, /*  37 */
-	3,      /*  38 */
-	12,     /*  39 */
-	1,      /*  40 */
-	7,      /*  41 */
-	2,      /*  42 */
-	0xFFFF, /*  43 */
-	5,      /*  44 */
+	SAMPLE_BUTTON,          /*  38 */
+	SAMPLE_EXPLODE_GAS,     /*  39: s_explosion07 */
+	SAMPLE_EXPLODE_SAND,    /*  40: s_explosion08, s_explosion19 */
+	SAMPLE_EXPLODE_MEDIUM,  /*  41: s_explosion05, s_explosion09 */
+	SAMPLE_ROCKET,          /*  42: Death Hand, Launcher, Rocket Turret, Deviator */
+	0xFFFF, /*  43: Sonic Tank */
+	SAMPLE_STRUCTURE_DESTROYED, /*  44 */
 	0xFFFF, /*  45 */
 	0xFFFF, /*  46 */
 	0xFFFF, /*  47 */
 	0xFFFF, /*  48 */
-	7,      /*  49 */
-	6,      /*  50 */
-	8,      /*  51 */
+	SAMPLE_EXPLODE_MEDIUM,  /*  49: s_explosion03, s_explosion10, s_explosion15, s_explosion16, s_explosion17 */
+	SAMPLE_EXPLODE_SMALL,   /*  50: s_explosion02 */
+	SAMPLE_EXPLODE_LARGE,   /*  51: s_explosion04, s_explosion06, s_explosion11, s_explosion14 */
 	0xFFFF, /*  52 */
 	0xFFFF, /*  53 */
-	122,    /*  54 */
+	SAMPLE_EXPLODE_TINY,    /*  54: s_explosion18 */
 	0xFFFF, /*  55 */
-	9,      /*  56 */
-	9,      /*  57 */
-	11,     /*  58 */
-	10,     /*  59 */
-	43,     /*  60 */
+	SAMPLE_EXPLODE_CANNON,  /*  56 */
+	SAMPLE_EXPLODE_CANNON,  /*  57: Tank, Siege Tank, Devastator Tank */
+	SAMPLE_GUN,             /*  58: Soldier, Soldiers, Saboteur */
+	SAMPLE_MACHINE_GUN,     /*  59: Trike, Raider Trike, Quad, Trooper(s) at close range */
+	SAMPLE_VOICE_FRAGMENT_CONSTRUCTION_COMPLETE,    /*  60 */
 	0xFFFF, /*  61 */
-	25,     /*  62 */
-	26,     /*  63 */
-	27,     /*  64 */
-	72,     /*  65 */
-	73,     /*  66 */
-	74,     /*  67 */
-	75,     /*  68 */
-	76,     /*  69 */
+	SAMPLE_RADAR_STATIC,    /*  62 */
+	SAMPLE_SANDWORM,        /*  63 */
+	SAMPLE_MINI_ROCKET,     /*  64: Ornithopter, Trooper(s) at long range */
+	SAMPLE_BLASTER,         /*  65: Harkonnen end game */
+	SAMPLE_GLASS,           /*  66: Harkonnen end game */
+	SAMPLE_LIZARD,          /*  67: Ordos end game */
+	SAMPLE_FLESH,           /*  68: Harkonnen end game */
+	SAMPLE_CLICK,           /*  69: Harkonnen end game */
 	0xFFFF, /*  70 */
 	0xFFFF, /*  71 */
 	0xFFFF, /*  72 */
@@ -320,18 +320,18 @@ const enum SampleID g_table_voiceMapping[SOUNDID_MAX] = {
 	0xFFFF, /* 105 */
 	0xFFFF, /* 106 */
 	0xFFFF, /* 107 */
-	123,    /* 108 */
+	SAMPLE_INTRO_WIND,  /* 108 */
 	0xFFFF, /* 109 */
-	124,    /* 110 */
+	SAMPLE_INTRO_HARVESTER, /* 110 */
 	0xFFFF, /* 111 */
-	125,    /* 112 */
-	126,    /* 113 */
-	127,    /* 114 */
+	SAMPLE_INTRO_FIRE_ORNITHOPTER_TROOPER,  /* 112 */
+	SAMPLE_INTRO_BREAK_GLASS,   /* 113 */
+	SAMPLE_INTRO_FIRE_LAUNCHER, /* 114 */
 	0xFFFF, /* 115 */
 	0xFFFF, /* 116 */
-	128,    /* 117 */
-	129,    /* 118 */
-	130     /* 119 */
+	SAMPLE_INTRO_CARRYALL_FRIGATE,  /* 117 */
+	SAMPLE_INTRO_TROOPER_EXPLODE1,  /* 118 */
+	SAMPLE_INTRO_TROOPER_EXPLODE2   /* 119 */
 };
 
 /**
