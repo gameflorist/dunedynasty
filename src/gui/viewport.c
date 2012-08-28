@@ -54,6 +54,11 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 	uint16 packed;
 	bool click, drag;
 
+	if ((w->state.s.buttonState & 0x44) != 0) {
+		g_var_37B8 = true;
+		return false;
+	}
+
 	enum ShapeID spriteID = g_cursorSpriteID;
 	switch (w->index) {
 		default: break;
