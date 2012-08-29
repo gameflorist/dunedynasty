@@ -182,6 +182,22 @@ Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *ke
 	al_set_config_value(config, section, key, str[value]);
 }
 
+static void
+Config_GetMusicVolume(ALLEGRO_CONFIG *config, ExtMusicInfo *ext)
+{
+	if (!ext->enable)
+		return;
+
+	const char *str = al_get_config_value(config, "music", ext->filename);
+	if (str == NULL)
+		return;
+
+	Config_GetFloat(str, 0.0f, 2.0f, &ext->volume);
+
+	if (ext->volume <= 0.0f)
+		ext->enable = false;
+}
+
 /*--------------------------------------------------------------*/
 
 void
@@ -227,6 +243,23 @@ GameOptions_Load(void)
 				Config_GetWindowMode(str, opt->d._window);
 				break;
 		}
+	}
+
+	/* Music configuration. */
+	for (enum MusicID musicID = MUSIC_LOSE_ORDOS; musicID < MUSICID_MAX; musicID++) {
+		MusicInfo *m = &g_table_music[musicID];
+		char buf[1024];
+		const char *str;
+
+		snprintf(buf, sizeof(buf), "%s_%d", m->dune2_adlib.filename, m->dune2_adlib.track);
+		str = al_get_config_value(s_configFile, "music", buf);
+		if (str != NULL)
+			Config_GetBool(str, &m->dune2_adlib.enable);
+
+		Config_GetMusicVolume(s_configFile, &m->fed2k_mt32);
+		Config_GetMusicVolume(s_configFile, &m->d2tm_adlib);
+		Config_GetMusicVolume(s_configFile, &m->d2tm_mt32);
+		Config_GetMusicVolume(s_configFile, &m->d2tm_sc55);
 	}
 }
 
