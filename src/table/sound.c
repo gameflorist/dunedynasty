@@ -7,6 +7,7 @@
 #include "sound.h"
 
 #define D2TM_ADLIB_PREFIX   "d2tm_adlib"
+#define D2TM_MT32_PREFIX    "d2tm_mt32"
 #define FED2K_MT32_PREFIX   "fed2k_mt32"
 
 #define MIDI_FILE_NOT_AVAILABLE     { false, NULL, 0 }
@@ -16,6 +17,7 @@ const char *g_music_set_prefix[NUM_MUSIC_SETS] = {
 	"dune2_adlib",
 	FED2K_MT32_PREFIX,
 	D2TM_ADLIB_PREFIX,
+	D2TM_MT32_PREFIX,
 };
 
 MusicInfo g_table_music[MUSICID_MAX] = {
@@ -23,228 +25,266 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* dune2_adlib   */ MIDI_FILE_NOT_AVAILABLE,
 		/* fed2k_mt32    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_1: bonus track */
 		/* dune2_adlib   */ { true, "dune1.ADL", 2 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_01_3" },
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_LOSE_ORDOS */
 		/* dune2_adlib   */ { true, "dune1.ADL", 3 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_01_6" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/lose3" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/lose3" },
 	},
 
 	{	/* MUSIC_LOSE_HARKONNEN */
 		/* dune2_adlib   */ { true, "dune1.ADL", 4 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_01_4" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/lose2" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/lose1" },
 	},
 
 	{	/* MUSIC_LOSE_ATREIDES */
 		/* dune2_adlib   */ { true, "dune1.ADL", 5 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_01_5" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/lose1" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/lose2" },
 	},
 
 	{	/* MUSIC_WIN_ORDOS */
 		/* dune2_adlib   */ { true, "dune17.ADL", 4 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_17_21" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/win2" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/win3" },
 	},
 
 	{	/* MUSIC_WIN_HARKONNEN */
 		/* dune2_adlib   */ { true, "dune8.ADL", 3 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_08_11" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/win3" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/win2" },
 	},
 
 	{	/* MUSIC_WIN_ATREIDES */
 		/* dune2_adlib   */ { true, "dune8.ADL", 2 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_08_10" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/win1" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/win1" },
 	},
 
 	{	/* MUSIC_IDLE1 */
 		/* dune2_adlib   */ { true, "dune1.ADL", 6 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_01_7" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace2" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace1" },
 	},
 
 	{	/* MUSIC_IDLE2 */
 		/* dune2_adlib   */ { true, "dune2.ADL", 6 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_02_8" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace5" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace2" },
 	},
 
 	{	/* MUSIC_IDLE3 */
 		/* dune2_adlib   */ { true, "dune3.ADL", 6 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_03_9" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace4" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace3" },
 	},
 
 	{	/* MUSIC_IDLE4 */
 		/* dune2_adlib   */ { true, "dune4.ADL", 6 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_04_10" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace1" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace4" },
 	},
 
 	{	/* MUSIC_IDLE5 */
 		/* dune2_adlib   */ { true, "dune5.ADL", 6 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_05_11" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace9" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace5" },
 	},
 
 	{	/* MUSIC_IDLE6 */
 		/* dune2_adlib   */ { true, "dune6.ADL", 6 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_06_12" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace8" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace6" },
 	},
 
 	{	/* MUSIC_IDLE7 */
 		/* dune2_adlib   */ { true, "dune9.ADL", 4 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_09_13" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace7" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace7" },
 	},
 
 	{	/* MUSIC_IDLE8 */
 		/* dune2_adlib   */ { true, "dune9.ADL", 5 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_09_14" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace6" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace8" },
 	},
 
 	{	/* MUSIC_IDLE9 */
 		/* dune2_adlib   */ { true, "dune18.ADL", 6 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_18_24" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace3" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace9" },
 	},
 
 	{	/* MUSIC_ATTACK1 */
 		/* dune2_adlib   */ { true, "dune10.ADL", 7 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_10_17" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack5" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack1" },
 	},
 
 	{	/* MUSIC_ATTACK2 */
 		/* dune2_adlib   */ { true, "dune11.ADL", 7 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_11_18" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack3" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack2" },
 	},
 
 	{	/* MUSIC_ATTACK3 */
 		/* dune2_adlib   */ { true, "dune12.ADL", 7 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_12_19" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack6" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack3" },
 	},
 
 	{	/* MUSIC_ATTACK4 */
 		/* dune2_adlib   */ { true, "dune13.ADL", 7 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_13_20" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack2" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack4" },
 	},
 
 	{	/* MUSIC_ATTACK5 */
 		/* dune2_adlib   */ { true, "dune14.ADL", 7 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_14_21" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack4" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack5" },
 	},
 
 	{	/* MUSIC_ATTACK6 */
 		/* dune2_adlib   */ { true, "dune15.ADL", 7 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_15_22" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack1" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack6" },
 	},
 
 	{	/* MUSIC_23 */
 		/* dune2_adlib   */ { true, "dune1.ADL", 8 },
 		/* fed2k_mt32    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_BRIEFING_HARKONNEN */
 		/* dune2_adlib   */ { true, "dune7.ADL", 2 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_07_09" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/mentath" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/mentath" },
 	},
 
 	{	/* MUSIC_BRIEFING_ATREIDES */
 		/* dune2_adlib   */ { true, "dune7.ADL", 3 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_07_10" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/mentata" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/mentata" },
 	},
 
 	{	/* MUSIC_BRIEFING_ORDOS */
 		/* dune2_adlib   */ { true, "dune7.ADL", 4 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_07_11" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/mentato" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/mentato" },
 	},
 
 	{	/* MUSIC_INTRO */
 		/* dune2_adlib   */ { true, "dune0.ADL", 2 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_00_2" },
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/intro" },
 	},
 
 	{	/* MUSIC_MAIN_MENU */
 		/* dune2_adlib   */ { true, "dune7.ADL", 6 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_07_13" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/menu" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/menu" },
 	},
 
 	{	/* MUSIC_STRATEGIC_MAP */
 		/* dune2_adlib   */ { true, "dune16.ADL", 7 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_16_23" },
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/nextconq" },
+		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/nextconq" },
 	},
 
 	{	/* MUSIC_END_GAME_HARKONNEN */
 		/* dune2_adlib   */ { true, "dune19.ADL", 4 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_19_23" },
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_END_GAME_ATREIDES */
 		/* dune2_adlib   */ { true, "dune19.ADL", 2 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_19_21" },
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_END_GAME_ORDOS */
 		/* dune2_adlib   */ { true, "dune19.ADL", 3 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_19_22" },
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_CREDITS */
 		/* dune2_adlib   */ { true, "dune20.ADL", 2 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_20_22" },
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_CUTSCENE */
 		/* dune2_adlib   */ { true, "dune16.ADL", 8 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_16_24" },
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_35 */
 		/* dune2_adlib   */ { true, "dune0.ADL", 3 },
 		/* fed2k_mt32    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_LOGOS */
 		/* dune2_adlib   */ { true, "dune0.ADL", 4 },
 		/* fed2k_mt32    */ { true, 1.0f, FED2K_MT32_PREFIX "/dune2_mt32_00_4" },
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_37 */
 		/* dune2_adlib   */ { true, "dune0.ADL", 5 },
 		/* fed2k_mt32    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
+		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 };
 

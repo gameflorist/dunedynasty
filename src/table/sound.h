@@ -13,6 +13,7 @@ enum MusicSet {
 	MUSICSET_DUNE2_ADLIB,
 	MUSICSET_FED2K_MT32,
 	MUSICSET_D2TM_ADLIB,
+	MUSICSET_D2TM_MT32,
 
 	NUM_MUSIC_SETS
 };
@@ -379,6 +380,7 @@ typedef struct MusicInfo {
 	MidiFileInfo dune2_adlib;
 	ExtMusicInfo fed2k_mt32;
 	ExtMusicInfo d2tm_adlib;
+	ExtMusicInfo d2tm_mt32;
 } MusicInfo;
 
 /** Information about sound files. */
