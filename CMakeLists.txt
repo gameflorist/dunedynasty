@@ -4,6 +4,7 @@ project(dunedynasty)
 include(FindPkgConfig)
 
 pkg_check_modules(ALLEGRO5 REQUIRED allegro-5.0)
+pkg_check_modules(ALLEGRO5_ACODEC REQUIRED allegro_acodec-5.0)
 pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-5.0)
 pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-5.0)
 pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-5.0)
@@ -22,6 +23,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-
 set(CMAKE_CXX_FLAGS "-W -Wall -Wno-unused-parameter")
 
 target_link_libraries(bin/dunedynasty
+	${ALLEGRO5_ACODEC_LDFLAGS}
 	${ALLEGRO5_AUDIO_LDFLAGS}
 	${ALLEGRO5_IMAGE_LDFLAGS}
 	${ALLEGRO5_MEMFILE_LDFLAGS}
