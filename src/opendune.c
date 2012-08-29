@@ -592,7 +592,6 @@ static void GameLoop_GameIntroAnimationMenu(void)
 #endif
 
 	Window_WidgetClick_Create();
-	GameOptions_Load();
 	Unit_Init();
 	Team_Init();
 	House_Init();
@@ -1174,16 +1173,13 @@ int main(int argc, char **argv)
 
 	Mouse_Init();
 
-	if (A5_Init() == false)
-		exit(1);
-
 	VARIABLE_NOT_USED(argc);
 	VARIABLE_NOT_USED(argv);
 
-	if (!Config_Read("dune.cfg", &g_config)) {
-		Error("Missing dune.cfg file.\n");
+	GameOptions_Load();
+
+	if (A5_Init() == false)
 		exit(1);
-	}
 
 	Input_Init();
 

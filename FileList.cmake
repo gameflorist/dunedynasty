@@ -10,7 +10,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/codec/format40.c
 	src/codec/format80.c
 	src/common_a5.c
-	src/config.c
+	src/config_a5.c
 	src/crashlog/crashlog_none.c
 	src/cutscene.c
 	src/enhancement.c
@@ -104,6 +104,7 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/audio/midi_win32.c
 	src/audio/mt32mpu.c
 	src/audio/sound.c
+	src/config.c
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
 	src/gui/menu_opendune.c
