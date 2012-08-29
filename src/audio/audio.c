@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include "../os/math.h"
 
 #include "audio.h"
@@ -33,6 +34,51 @@ static enum HouseType s_curr_sample_set = HOUSE_INVALID;
 static enum SampleID s_voice_queue[256];
 static int s_voice_head = 0;
 static int s_voice_tail = 0;
+
+void
+Audio_ScanMusic(void)
+{
+	bool verbose = false;
+	struct stat st;
+	char buf[1024];
+
+	for (enum MusicID musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
+		MusicInfo *m = &g_table_music[musicID];
+
+		ExtMusicInfo *ext[] = {
+			&m->fed2k_mt32,
+			&m->d2tm_adlib,
+			&m->d2tm_mt32,
+			&m->d2tm_sc55,
+			NULL
+		};
+
+		for (int i = 0; ext[i]; i++) {
+			if (ext[i]->filename == NULL)
+				continue;
+
+			if (!ext[i]->enable) {
+				if (verbose) fprintf(stdout, "[disable] %s\n", ext[i]->filename);
+				continue;
+			}
+
+			snprintf(buf, sizeof(buf), "%s.flac", ext[i]->filename);
+			if (stat(buf, &st) == 0) {
+				if (verbose) fprintf(stdout, "[enable]  %s.flac\n", ext[i]->filename);
+				continue;
+			}
+
+			snprintf(buf, sizeof(buf), "%s.ogg", ext[i]->filename);
+			if (stat(buf, &st) == 0) {
+				if (verbose) fprintf(stdout, "[enable]  %s.ogg\n", ext[i]->filename);
+				continue;
+			}
+
+			ext[i]->enable = false;
+			if (verbose) fprintf(stdout, "[missing] %s\n", ext[i]->filename);
+		}
+	}
+}
 
 void
 Audio_PlayMusic(enum MusicID musicID)

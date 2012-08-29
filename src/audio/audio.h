@@ -15,6 +15,7 @@ extern float music_volume;
 extern float sound_volume;
 extern float voice_volume;
 
+extern void Audio_ScanMusic(void);
 extern void Audio_PlayMusic(enum MusicID musicID);
 extern void Audio_PlayMusicIfSilent(enum MusicID musicID);
 extern void Audio_PlayEffect(enum SoundID effectID);

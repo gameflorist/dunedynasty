@@ -1187,6 +1187,7 @@ int main(int argc, char **argv)
 
 	/* g_var_7097 = 0; */
 
+	Audio_ScanMusic();
 	String_Init();
 	Sprites_Init();
 	Sprites_LoadTiles();
