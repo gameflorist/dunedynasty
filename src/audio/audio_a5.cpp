@@ -88,8 +88,11 @@ AudioA5_Uninit(void)
 }
 
 void
-AudioA5_InitMusic(const char *filename, int track)
+AudioA5_InitMusic(const MidiFileInfo *mid)
 {
+	const char *filename = mid->filename;
+	const int track = mid->track;
+
 	if (s_music_stream == NULL)
 		return;
 
@@ -115,6 +118,11 @@ AudioA5_InitMusic(const char *filename, int track)
 
 	s_adlib->playTrack(track);
 	al_set_audio_stream_gain(s_music_stream, music_volume);
+}
+
+void
+AudioA5_InitExternalMusic(const ExtMusicInfo *ext)
+{
 }
 
 void

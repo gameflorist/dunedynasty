@@ -14,6 +14,7 @@
 #include "../string.h"
 #include "../table/widgetinfo.h"
 #include "../tile.h"
+#include "../tools.h"
 
 bool g_enable_audio;
 
@@ -36,17 +37,40 @@ static int s_voice_tail = 0;
 void
 Audio_PlayMusic(enum MusicID musicID)
 {
-	if (musicID == MUSIC_STOP) {
-		AudioA5_StopMusic();
+	AudioA5_StopMusic();
+
+	if (musicID == MUSIC_STOP)
 		return;
-	}
 
 	if ((!g_enable_audio) || (!g_enable_music) || (musicID == MUSIC_INVALID))
 		return;
 
 	const MusicInfo *m = &g_table_music[musicID];
 
-	AudioA5_InitMusic(m->dune2_adlib.filename, m->dune2_adlib.track);
+	union {
+		const MidiFileInfo *mid;
+		const ExtMusicInfo *ext;
+	} data[NUM_MUSIC_SETS];
+
+	int num_types = 0;
+
+	if (m->dune2_adlib.enable)  data[num_types++].mid = &m->dune2_adlib;
+	if (m->fed2k_mt32.enable)   data[num_types++].ext = &m->fed2k_mt32;
+	if (m->d2tm_adlib.enable)   data[num_types++].ext = &m->d2tm_adlib;
+	if (m->d2tm_mt32.enable)    data[num_types++].ext = &m->d2tm_mt32;
+	if (m->d2tm_sc55.enable)    data[num_types++].ext = &m->d2tm_sc55;
+
+	if (num_types <= 0)
+		return;
+
+	const int i = Tools_RandomRange(0, num_types - 1);
+
+	if (data[i].mid == &m->dune2_adlib) {
+		AudioA5_InitMusic(data[i].mid);
+	}
+	else {
+		AudioA5_InitExternalMusic(data[i].ext);
+	}
 }
 
 void

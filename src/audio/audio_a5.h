@@ -11,7 +11,8 @@ extern "C" {
 extern void AudioA5_Init(void);
 extern void AudioA5_Uninit(void);
 
-extern void AudioA5_InitMusic(const char *filename, int track);
+extern void AudioA5_InitMusic(const MidiFileInfo *mid);
+extern void AudioA5_InitExternalMusic(const ExtMusicInfo *ext);
 extern void AudioA5_StopMusic(void);
 extern void AudioA5_PollMusic(void);
 extern bool AudioA5_MusicIsPlaying(void);
