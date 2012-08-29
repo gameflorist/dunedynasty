@@ -4,6 +4,7 @@
 
 #include "types.h"
 
+#include "sound.h"
 #include "../house.h"
 
 const HouseInfo g_table_houseInfo[] = {
@@ -17,9 +18,9 @@ const HouseInfo g_table_houseInfo[] = {
 		/* starportDeliveryTime */ 10,
 		/* prefixChar           */ 'H',
 		/* specialWeapon        */ 1,
-		/* musicWin             */ 6,
-		/* musicLose            */ 3,
-		/* musicBriefing        */ 24,
+		/* musicWin             */ MUSIC_WIN_HARKONNEN,
+		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
+		/* musicBriefing        */ MUSIC_BRIEFING_HARKONNEN,
 		/* voiceFilename        */ "nhark.voc"
 	},
 
@@ -33,9 +34,9 @@ const HouseInfo g_table_houseInfo[] = {
 		/* starportDeliveryTime */ 10,
 		/* prefixChar           */ 'A',
 		/* specialWeapon        */ 2,
-		/* musicWin             */ 7,
-		/* musicLose            */ 4,
-		/* musicBriefing        */ 25,
+		/* musicWin             */ MUSIC_WIN_ATREIDES,
+		/* musicLose            */ MUSIC_LOSE_ATREIDES,
+		/* musicBriefing        */ MUSIC_BRIEFING_ATREIDES,
 		/* voiceFilename        */ "nattr.voc"
 	},
 
@@ -49,9 +50,9 @@ const HouseInfo g_table_houseInfo[] = {
 		/* starportDeliveryTime */ 10,
 		/* prefixChar           */ 'O',
 		/* specialWeapon        */ 3,
-		/* musicWin             */ 5,
-		/* musicLose            */ 2,
-		/* musicBriefing        */ 26,
+		/* musicWin             */ MUSIC_WIN_ORDOS,
+		/* musicLose            */ MUSIC_LOSE_ORDOS,
+		/* musicBriefing        */ MUSIC_BRIEFING_ORDOS,
 		/* voiceFilename        */ "nordo.voc"
 	},
 
@@ -65,9 +66,9 @@ const HouseInfo g_table_houseInfo[] = {
 		/* starportDeliveryTime */ 0,
 		/* prefixChar           */ 'O',
 		/* specialWeapon        */ 2,
-		/* musicWin             */ 5,
-		/* musicLose            */ 2,
-		/* musicBriefing        */ 65535,
+		/* musicWin             */ MUSIC_WIN_ORDOS,
+		/* musicLose            */ MUSIC_LOSE_ORDOS,
+		/* musicBriefing        */ MUSIC_INVALID,
 		/* voiceFilename        */ "afremen.voc"
 	},
 
@@ -81,9 +82,9 @@ const HouseInfo g_table_houseInfo[] = {
 		/* starportDeliveryTime */ 0,
 		/* prefixChar           */ 'H',
 		/* specialWeapon        */ 1,
-		/* musicWin             */ 6,
-		/* musicLose            */ 3,
-		/* musicBriefing        */ 65535,
+		/* musicWin             */ MUSIC_WIN_HARKONNEN,
+		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
+		/* musicBriefing        */ MUSIC_INVALID,
 		/* voiceFilename        */ "asard.voc"
 	},
 
@@ -97,9 +98,9 @@ const HouseInfo g_table_houseInfo[] = {
 		/* starportDeliveryTime */ 0,
 		/* prefixChar           */ 'M',
 		/* specialWeapon        */ 3,
-		/* musicWin             */ 7,
-		/* musicLose            */ 4,
-		/* musicBriefing        */ 65535,
+		/* musicWin             */ MUSIC_WIN_ATREIDES,
+		/* musicLose            */ MUSIC_LOSE_ATREIDES,
+		/* musicBriefing        */ MUSIC_INVALID,
 		/* voiceFilename        */ "amerc.voc"
 	}
 };
