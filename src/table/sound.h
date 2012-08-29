@@ -9,6 +9,12 @@
 /** Maximal number of spoken audio fragments in one message. */
 #define NUM_SPEECH_PARTS 5
 
+enum MusicSet {
+	MUSICSET_DUNE2_ADLIB,
+
+	NUM_MUSIC_SETS
+};
+
 enum MusicID {
 	MUSIC_STOP = 0,
 	MUSIC_1 = 1,
@@ -355,6 +361,16 @@ enum VoiceID {
 	VOICE_INVALID = 0xFFFF
 };
 
+typedef struct MidiFileInfo {
+	bool enable;
+	const char *filename;
+	int track;
+} MidiFileInfo;
+
+typedef struct MusicInfo {
+	MidiFileInfo dune2_adlib;
+} MusicInfo;
+
 /** Information about sound files. */
 typedef struct SoundData {
 	const char *string; /*!< Pointer to a string. */
@@ -368,8 +384,9 @@ typedef struct Feedback {
 	enum SoundID soundId;
 } Feedback;
 
+extern const char *g_music_set_prefix[NUM_MUSIC_SETS];
+extern MusicInfo g_table_music[MUSICID_MAX];
 extern const SoundData g_table_voices[SAMPLEID_MAX];
-extern const SoundData g_table_musics[MUSICID_MAX];
 extern const enum SampleID g_table_voiceMapping[SOUNDID_MAX];
 extern const Feedback g_feedback[VOICEID_MAX];
 extern const enum SampleID g_translatedVoice[VOICEID_MAX][NUM_SPEECH_PARTS];

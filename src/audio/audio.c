@@ -44,12 +44,9 @@ Audio_PlayMusic(enum MusicID musicID)
 	if ((!g_enable_audio) || (!g_enable_music) || (musicID == MUSIC_INVALID))
 		return;
 
-	const SoundData *m = &g_table_musics[musicID];
+	const MusicInfo *m = &g_table_music[musicID];
 
-	char filename[16];
-	snprintf(filename, sizeof(filename), "%s.ADL", m->string);
-
-	AudioA5_InitMusic(filename, m->variable_04);
+	AudioA5_InitMusic(m->dune2_adlib.filename, m->dune2_adlib.track);
 }
 
 void

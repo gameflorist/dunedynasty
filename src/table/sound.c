@@ -6,6 +6,166 @@
 
 #include "sound.h"
 
+#define MIDI_FILE_NOT_AVAILABLE     { false, NULL, 0 }
+
+const char *g_music_set_prefix[NUM_MUSIC_SETS] = {
+	"dune2_adlib",
+};
+
+MusicInfo g_table_music[MUSICID_MAX] = {
+	{	/* MUSIC_STOP */
+		/* dune2_adlib   */ MIDI_FILE_NOT_AVAILABLE,
+	},
+
+	{	/* MUSIC_1 */
+		/* dune2_adlib   */ { true, "dune1.ADL", 2 },
+	},
+
+	{	/* MUSIC_LOSE_ORDOS */
+		/* dune2_adlib   */ { true, "dune1.ADL", 3 },
+	},
+
+	{	/* MUSIC_LOSE_HARKONNEN */
+		/* dune2_adlib   */ { true, "dune1.ADL", 4 },
+	},
+
+	{	/* MUSIC_LOSE_ATREIDES */
+		/* dune2_adlib   */ { true, "dune1.ADL", 5 },
+	},
+
+	{	/* MUSIC_WIN_ORDOS */
+		/* dune2_adlib   */ { true, "dune17.ADL", 4 },
+	},
+
+	{	/* MUSIC_WIN_HARKONNEN */
+		/* dune2_adlib   */ { true, "dune8.ADL", 3 },
+	},
+
+	{	/* MUSIC_WIN_ATREIDES */
+		/* dune2_adlib   */ { true, "dune8.ADL", 2 },
+	},
+
+	{	/* MUSIC_IDLE1 */
+		/* dune2_adlib   */ { true, "dune1.ADL", 6 },
+	},
+
+	{	/* MUSIC_IDLE2 */
+		/* dune2_adlib   */ { true, "dune2.ADL", 6 },
+	},
+
+	{	/* MUSIC_IDLE3 */
+		/* dune2_adlib   */ { true, "dune3.ADL", 6 },
+	},
+
+	{	/* MUSIC_IDLE4 */
+		/* dune2_adlib   */ { true, "dune4.ADL", 6 },
+	},
+
+	{	/* MUSIC_IDLE5 */
+		/* dune2_adlib   */ { true, "dune5.ADL", 6 },
+	},
+
+	{	/* MUSIC_IDLE6 */
+		/* dune2_adlib   */ { true, "dune6.ADL", 6 },
+	},
+
+	{	/* MUSIC_IDLE7 */
+		/* dune2_adlib   */ { true, "dune9.ADL", 4 },
+	},
+
+	{	/* MUSIC_IDLE8 */
+		/* dune2_adlib   */ { true, "dune9.ADL", 5 },
+	},
+
+	{	/* MUSIC_IDLE9 */
+		/* dune2_adlib   */ { true, "dune18.ADL", 6 },
+	},
+
+	{	/* MUSIC_ATTACK1 */
+		/* dune2_adlib   */ { true, "dune10.ADL", 7 },
+	},
+
+	{	/* MUSIC_ATTACK2 */
+		/* dune2_adlib   */ { true, "dune11.ADL", 7 },
+	},
+
+	{	/* MUSIC_ATTACK3 */
+		/* dune2_adlib   */ { true, "dune12.ADL", 7 },
+	},
+
+	{	/* MUSIC_ATTACK4 */
+		/* dune2_adlib   */ { true, "dune13.ADL", 7 },
+	},
+
+	{	/* MUSIC_ATTACK5 */
+		/* dune2_adlib   */ { true, "dune14.ADL", 7 },
+	},
+
+	{	/* MUSIC_ATTACK6 */
+		/* dune2_adlib   */ { true, "dune15.ADL", 7 },
+	},
+
+	{	/* MUSIC_23 */
+		/* dune2_adlib   */ { true, "dune1.ADL", 8 },
+	},
+
+	{	/* MUSIC_BRIEFING_HARKONNEN */
+		/* dune2_adlib   */ { true, "dune7.ADL", 2 },
+	},
+
+	{	/* MUSIC_BRIEFING_ATREIDES */
+		/* dune2_adlib   */ { true, "dune7.ADL", 3 },
+	},
+
+	{	/* MUSIC_BRIEFING_ORDOS */
+		/* dune2_adlib   */ { true, "dune7.ADL", 4 },
+	},
+
+	{	/* MUSIC_INTRO */
+		/* dune2_adlib   */ { true, "dune0.ADL", 2 },
+	},
+
+	{	/* MUSIC_MAIN_MENU */
+		/* dune2_adlib   */ { true, "dune7.ADL", 6 },
+	},
+
+	{	/* MUSIC_STRATEGIC_MAP */
+		/* dune2_adlib   */ { true, "dune16.ADL", 7 },
+	},
+
+	{	/* MUSIC_END_GAME_HARKONNEN */
+		/* dune2_adlib   */ { true, "dune19.ADL", 4 },
+	},
+
+	{	/* MUSIC_END_GAME_ATREIDES */
+		/* dune2_adlib   */ { true, "dune19.ADL", 2 },
+	},
+
+	{	/* MUSIC_END_GAME_ORDOS */
+		/* dune2_adlib   */ { true, "dune19.ADL", 3 },
+	},
+
+	{	/* MUSIC_CREDITS */
+		/* dune2_adlib   */ { true, "dune20.ADL", 2 },
+	},
+
+	{	/* MUSIC_CUTSCENE */
+		/* dune2_adlib   */ { true, "dune16.ADL", 8 },
+	},
+
+	{	/* MUSIC_35 */
+		/* dune2_adlib   */ { true, "dune0.ADL", 3 },
+	},
+
+	{	/* MUSIC_LOGOS */
+		/* dune2_adlib   */ { true, "dune0.ADL", 4 },
+	},
+
+	{	/* MUSIC_37 */
+		/* dune2_adlib   */ { true, "dune0.ADL", 5 },
+	},
+};
+
 /** Available voices. */
 const SoundData g_table_voices[SAMPLEID_MAX] = {
 	{"+VSCREAM1.VOC",  11}, /*   0 */
@@ -139,73 +299,6 @@ const SoundData g_table_voices[SAMPLEID_MAX] = {
 	{"-CLANK.VOC",     10}, /* 128 */
 	{"-BLOWUP1.VOC",   10}, /* 129 */
 	{"-BLOWUP2.VOC",   11}  /* 130 */
-};
-
-static const char _music_dune00[] = "dune0";
-static const char _music_dune01[] = "dune1";
-static const char _music_dune02[] = "dune2";
-static const char _music_dune03[] = "dune3";
-static const char _music_dune04[] = "dune4";
-static const char _music_dune05[] = "dune5";
-static const char _music_dune06[] = "dune6";
-static const char _music_dune07[] = "dune7";
-static const char _music_dune08[] = "dune8";
-static const char _music_dune09[] = "dune9";
-static const char _music_dune10[] = "dune10";
-static const char _music_dune11[] = "dune11";
-static const char _music_dune12[] = "dune12";
-static const char _music_dune13[] = "dune13";
-static const char _music_dune14[] = "dune14";
-static const char _music_dune15[] = "dune15";
-static const char _music_dune16[] = "dune16";
-static const char _music_dune17[] = "dune17";
-static const char _music_dune18[] = "dune18";
-static const char _music_dune19[] = "dune19";
-static const char _music_dune20[] = "dune20";
-
-/**
- * Available music.
- * @note The code compares pointers rather than the text itself, thus strings must be unique.
- */
-const SoundData g_table_musics[MUSICID_MAX] = {
-	{NULL,          0}, /*  0 */
-	{_music_dune01, 2}, /*  1 */
-	{_music_dune01, 3}, /*  2 */
-	{_music_dune01, 4}, /*  3 */
-	{_music_dune01, 5}, /*  4 */
-	{_music_dune17, 4}, /*  5 */
-	{_music_dune08, 3}, /*  6 */
-	{_music_dune08, 2}, /*  7 */
-	{_music_dune01, 6}, /*  8 */
-	{_music_dune02, 6}, /*  9 */
-	{_music_dune03, 6}, /* 10 */
-	{_music_dune04, 6}, /* 11 */
-	{_music_dune05, 6}, /* 12 */
-	{_music_dune06, 6}, /* 13 */
-	{_music_dune09, 4}, /* 14 */
-	{_music_dune09, 5}, /* 15 */
-	{_music_dune18, 6}, /* 16 */
-	{_music_dune10, 7}, /* 17 */
-	{_music_dune11, 7}, /* 18 */
-	{_music_dune12, 7}, /* 19 */
-	{_music_dune13, 7}, /* 20 */
-	{_music_dune14, 7}, /* 21 */
-	{_music_dune15, 7}, /* 22 */
-	{_music_dune01, 8}, /* 23 */
-	{_music_dune07, 2}, /* 24 */
-	{_music_dune07, 3}, /* 25 */
-	{_music_dune07, 4}, /* 26 */
-	{_music_dune00, 2}, /* 27 */
-	{_music_dune07, 6}, /* 28 */
-	{_music_dune16, 7}, /* 29 */
-	{_music_dune19, 4}, /* 30 */
-	{_music_dune19, 2}, /* 31 */
-	{_music_dune19, 3}, /* 32 */
-	{_music_dune20, 2}, /* 33 */
-	{_music_dune16, 8}, /* 34 */
-	{_music_dune00, 3}, /* 35 */
-	{_music_dune00, 4}, /* 36 */
-	{_music_dune00, 5}, /* 37 */
 };
 
 /* Map soundID -> sampleID.
