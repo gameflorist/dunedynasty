@@ -66,9 +66,9 @@ char *String_GenerateFilename(char *name)
 {
 	static char filename[14];
 
-	assert(g_config.language < lengthof(g_languageSuffixes));
+	assert(g_gameConfig.language < lengthof(g_languageSuffixes));
 
-	snprintf(filename, sizeof(filename), "%s.%s", name, g_languageSuffixes[g_config.language]);
+	snprintf(filename, sizeof(filename), "%s.%s", name, g_languageSuffixes[g_gameConfig.language]);
 	return filename;
 }
 
@@ -156,7 +156,7 @@ void String_Init(void)
 	String_Load("PROTECT", true);
 
 	/* Restore the "The Building of a Dynasty" subtitle to match the narrator. */
-	if (enhancement_play_additional_voices && (g_config.language == LANGUAGE_ENGLISH)) {
+	if (enhancement_play_additional_voices && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 		const char *subtitle1 = "The Building of a Dynasty";
 		const char *subtitle2 = "Dune II: The Building of a Dynasty";
 

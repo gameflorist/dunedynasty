@@ -71,7 +71,7 @@ Audio_PlayEffect(enum SoundID effectID)
 static char
 Audio_GetSamplePrefix(enum HouseType houseID)
 {
-	switch (g_config.language) {
+	switch (g_gameConfig.language) {
 		case LANGUAGE_FRENCH:
 			return 'F';
 

@@ -96,8 +96,8 @@ static void
 StrategicMap_DrawBackground(enum HouseType houseID)
 {
 	const enum CPSID conquest =
-		(g_config.language == LANGUAGE_FRENCH) ? CPS_CONQUEST_FR :
-		(g_config.language == LANGUAGE_GERMAN) ? CPS_CONQUEST_DE :
+		(g_gameConfig.language == LANGUAGE_FRENCH) ? CPS_CONQUEST_FR :
+		(g_gameConfig.language == LANGUAGE_GERMAN) ? CPS_CONQUEST_DE :
 		CPS_CONQUEST_EN;
 
 	Video_DrawCPS("MAPMACH.CPS");
@@ -247,7 +247,7 @@ StrategicMap_ReadProgression(enum HouseType houseID, int campaignID, StrategicMa
 			const int region = atoi(s);
 
 			if (region != 0) {
-				snprintf(key, sizeof(key), "%sTXT%d", g_languageSuffixes[g_config.language], region);
+				snprintf(key, sizeof(key), "%sTXT%d", g_languageSuffixes[g_gameConfig.language], region);
 				Ini_GetString(category, key, NULL, map->progression[count].text, sizeof(map->progression[count].text), g_fileRegionINI);
 			}
 

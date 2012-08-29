@@ -500,7 +500,7 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 		memset(screen + SCREEN_WIDTH * top, 0, SCREEN_WIDTH * (SCREEN_HEIGHT - top));
 	}
 
-	if (s_var_8062 != 0xFFFF && s_houseAnimation_currentSubtitle != 0 && g_config.language == LANGUAGE_ENGLISH) {
+	if (s_var_8062 != 0xFFFF && s_houseAnimation_currentSubtitle != 0 && g_gameConfig.language == LANGUAGE_ENGLISH) {
 		uint16 loc06 = s_var_8062 + s_houseAnimation_currentSubtitle;
 
 		if ((!enhancement_play_additional_voices) &&
@@ -1155,7 +1155,7 @@ static void GameLoop_GameCredits(void)
 	while (true) {
 		File_ReadBlockFile(String_GenerateFilename("CREDITS"), s_buffer_1832, GFX_Screen_GetSize_ByIndex(6));
 
-		if (enhancement_play_additional_voices && (g_config.language == LANGUAGE_ENGLISH)) {
+		if (enhancement_play_additional_voices && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 			const char *find_str = "The Battle for Arrakis";
 			const char *replace_str = "The Building of a Dynasty";
 			const int find_len = strlen(find_str);

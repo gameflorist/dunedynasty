@@ -2412,7 +2412,7 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 
 		if (data[i].score == 0) break;
 
-		if (g_config.language == LANGUAGE_FRENCH) {
+		if (g_gameConfig.language == LANGUAGE_FRENCH) {
 			p1 = String_Get_ByIndex(_rankScores[data[i].rank].rankString);
 			p2 = g_table_houseInfo[data[i].houseID].name;
 		} else {

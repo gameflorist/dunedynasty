@@ -2155,7 +2155,7 @@ void Unit_DisplayStatusText(const Unit *unit)
 		snprintf(buffer, sizeof(buffer), "%s", String_Get_ByIndex(ui->o.stringID_abbrev));
 	} else {
 		const char *houseName = g_table_houseInfo[Unit_GetHouseID(unit)].name;
-		if (g_config.language == LANGUAGE_FRENCH) {
+		if (g_gameConfig.language == LANGUAGE_FRENCH) {
 			snprintf(buffer, sizeof(buffer), "%s %s", String_Get_ByIndex(ui->o.stringID_abbrev), houseName);
 		} else {
 			snprintf(buffer, sizeof(buffer), "%s %s", houseName, String_Get_ByIndex(ui->o.stringID_abbrev));
@@ -2809,7 +2809,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 
 				Audio_PlayVoice(VOICE_WARNING_WORM_SIGN);
 
-				if (g_config.language == LANGUAGE_ENGLISH) {
+				if (g_gameConfig.language == LANGUAGE_ENGLISH) {
 					GUI_DisplayHint(STR_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND, 105);
 				}
 

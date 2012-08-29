@@ -9,6 +9,8 @@
 
 #include "audio/audio.h"
 #include "gfx.h"
+#include "opendune.h"
+#include "string.h"
 
 #define CONFIG_FILENAME "dunedynasty.cfg"
 
@@ -22,10 +24,12 @@ typedef struct GameOption {
 		CONFIG_INT,
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_10,
+		CONFIG_LANGUAGE,
 	} type;
 
 	union {
 		bool *_bool;
+		unsigned int *_language;
 		int *_int;
 		float *_float;
 	} d;
@@ -33,9 +37,8 @@ typedef struct GameOption {
 
 static ALLEGRO_CONFIG *s_configFile;
 
-DuneCfg g_config;
-
 GameCfg g_gameConfig = {
+	LANGUAGE_ENGLISH,
 	2,      /* gameSpeed */
 	true,   /* hints */
 	true,   /* autoScroll */
@@ -47,6 +50,7 @@ GameCfg g_gameConfig = {
 static const GameOption s_game_option[] = {
 	{ "game",   "screen_width",     CONFIG_INT,     .d._int = &TRUE_DISPLAY_WIDTH },
 	{ "game",   "screen_height",    CONFIG_INT,     .d._int = &TRUE_DISPLAY_HEIGHT },
+	{ "game",   "language",         CONFIG_LANGUAGE,.d._language = &g_gameConfig.language },
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
 	{ "game",   "auto_scroll",      CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
@@ -115,6 +119,29 @@ Config_SetInt(ALLEGRO_CONFIG *config, const char *section, const char *key, int 
 	al_set_config_value(config, section, key, str);
 }
 
+static void
+Config_GetLanguage(const char *str, unsigned int *value)
+{
+	for (unsigned int lang = LANGUAGE_ENGLISH; lang < LANGUAGE_MAX; lang++) {
+		const char c_upper = g_languageSuffixes[lang][0];
+		const char c_lower = c_upper - 'A' + 'a';
+
+		if (str[0] == c_upper || str[0] == c_lower) {
+			*value = lang;
+			return;
+		}
+	}
+}
+
+static void
+Config_SetLanguage(ALLEGRO_CONFIG *config, const char *section, const char *key, unsigned int value)
+{
+	if (value >= LANGUAGE_MAX)
+		value = LANGUAGE_ENGLISH;
+
+	al_set_config_value(config, section, key, g_languageSuffixes[value]);
+}
+
 /*--------------------------------------------------------------*/
 
 void
@@ -151,6 +178,10 @@ GameOptions_Load(void)
 			case CONFIG_INT_1_10:
 				Config_GetInt(str, 1, 10, opt->d._int);
 				break;
+
+			case CONFIG_LANGUAGE:
+				Config_GetLanguage(str, opt->d._language);
+				break;
 		}
 	}
 }
@@ -182,6 +213,10 @@ GameOptions_Save(void)
 			case CONFIG_INT_0_4:
 			case CONFIG_INT_1_10:
 				Config_SetInt(s_configFile, opt->section, opt->key, *(opt->d._int));
+				break;
+
+			case CONFIG_LANGUAGE:
+				Config_SetLanguage(s_configFile, opt->section, opt->key, *(opt->d._language));
 				break;
 		}
 	}
