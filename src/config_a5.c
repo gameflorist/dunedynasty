@@ -39,9 +39,8 @@ GameCfg g_gameConfig = {
 	2,      /* gameSpeed */
 	true,   /* hints */
 	true,   /* autoScroll */
+	5,      /* autoScrollDelay */
 };
-
-int g_autoScrollDelay = 5; /* Default was 10. */
 
 /*--------------------------------------------------------------*/
 
@@ -51,7 +50,7 @@ static const GameOption s_game_option[] = {
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
 	{ "game",   "auto_scroll",      CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
-	{ "game",   "auto_scroll_delay",CONFIG_INT_1_10,.d._int = &g_autoScrollDelay },
+	{ "game",   "auto_scroll_delay",CONFIG_INT_1_10,.d._int = &g_gameConfig.autoScrollDelay },
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
 	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },

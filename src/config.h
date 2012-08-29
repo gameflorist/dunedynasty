@@ -30,12 +30,11 @@ typedef struct GameCfg {
 	int gameSpeed;
 	bool hints;
 	bool autoScroll;
+	int autoScrollDelay;
 } GameCfg;
 
 extern GameCfg g_gameConfig;
 extern DuneCfg g_config;
-
-extern int g_autoScrollDelay;
 
 extern void GameOptions_Load(void);
 extern void GameOptions_Save(void);
