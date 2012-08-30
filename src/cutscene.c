@@ -1374,6 +1374,7 @@ void GameLoop_GameIntroAnimation(void)
 	Audio_PlayMusic(MUSIC_STOP);
 	Gameloop_Logos();
 
+	g_playerHouseID = HOUSE_INVALID;
 	Audio_LoadSampleSet(HOUSE_MERCENARY);
 
 	if (!Cutscene_InputSkipScene()) {
