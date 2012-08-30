@@ -726,9 +726,11 @@ BattleSummary_TimerLoop(int scenarioID, HallOfFameData *fame)
 					fame->state = HALLOFFAME_PAUSE_METER;
 					fame->pause_timer = curr_ticks + 60 + 12;
 				}
+				Audio_PlayEffect(EFFECT_HALL_OF_FAME_END_METER);
 			}
 			else {
 				fame->meter[fame->curr_meter_idx].width++;
+				Audio_PlaySound(EFFECT_CREDITS_INCREASE);
 			}
 			break;
 
