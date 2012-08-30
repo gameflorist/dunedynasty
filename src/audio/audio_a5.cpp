@@ -30,8 +30,9 @@ static const int NUMFRAGS = 4;
 static const int FRAGLEN = 2048;
 static bool mame = true;
 
-static bool s_music_stream_requires_poll;
+static bool s_music_stream_is_effect_stream;
 static ALLEGRO_AUDIO_STREAM *s_music_stream;
+static ALLEGRO_AUDIO_STREAM *s_effect_stream;
 static SoundAdlibPC *s_adlib;
 
 static ALLEGRO_SAMPLE *s_sample[SAMPLEID_MAX];
@@ -77,37 +78,41 @@ AudioA5_Uninit(void)
 		s_instance[i] = NULL;
 	}
 
+	if (s_music_stream_is_effect_stream)
+		s_music_stream = NULL;
+
 	delete s_adlib;
 	al_destroy_audio_stream(s_music_stream);
+	al_destroy_audio_stream(s_effect_stream);
 	al_destroy_mixer(al_mixer);
 	al_destroy_voice(al_voice);
 	al_uninstall_audio();
 }
 
-void
-AudioA5_InitMusic(const MidiFileInfo *mid)
+/* Note: We can only have one instance of s_adlib. */
+static ALLEGRO_AUDIO_STREAM *
+AudioA5_InitAdlib(const MidiFileInfo *mid)
 {
+	ALLEGRO_AUDIO_STREAM *stream;
+
+	stream = al_create_audio_stream(NUMFRAGS, FRAGLEN, SRATE, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_1);
+	if (stream == NULL)
+		return NULL;
+
 	const char *filename = mid->filename;
-	const int track = mid->track;
-
-	if (s_music_stream != NULL)
-		al_destroy_audio_stream(s_music_stream);
-
-	s_music_stream = al_create_audio_stream(NUMFRAGS, FRAGLEN, SRATE, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_1);
-
-	if (s_music_stream == NULL)
-		return;
-
 	uint16 file_index = File_Open(filename, 1);
-	if (file_index == FILE_INVALID)
-		return;
+	if (file_index == FILE_INVALID) {
+		al_destroy_audio_stream(stream);
+		return NULL;
+	}
 
 	uint32 length = File_GetSize(file_index);
 
 	void *buf = malloc(length);
 	if (buf == NULL) {
 		File_Close(file_index);
-		return;
+		al_destroy_audio_stream(stream);
+		return NULL;
 	}
 
 	File_Read(file_index, buf, length);
@@ -118,47 +123,80 @@ AudioA5_InitMusic(const MidiFileInfo *mid)
 	s_adlib = new SoundAdlibPC(f, SRATE, mame);
 	al_fclose(f);
 
-	printf("playing %s, track %d\n", filename, track);
+	al_set_audio_stream_gain(stream, music_volume);
+	al_attach_audio_stream_to_mixer(stream, al_mixer);
+	al_register_event_source(g_a5_input_queue, al_get_audio_stream_event_source(stream));
+	return stream;
+}
+
+void
+AudioA5_InitMusic(const MidiFileInfo *mid)
+{
+	const int track = mid->track;
+	ALLEGRO_AUDIO_STREAM *stream;
+
+	stream = AudioA5_InitAdlib(mid);
+	if (stream == NULL)
+		return;
+
+	if (!s_music_stream_is_effect_stream) {
+		if (s_effect_stream != NULL)
+			al_destroy_audio_stream(s_effect_stream);
+	}
+
+	if (s_music_stream != NULL)
+		al_destroy_audio_stream(s_music_stream);
+
 	s_adlib->playTrack(track);
-	al_set_audio_stream_gain(s_music_stream, music_volume);
-	al_attach_audio_stream_to_mixer(s_music_stream, al_mixer);
-	al_register_event_source(g_a5_input_queue, al_get_audio_stream_event_source(s_music_stream));
-	s_music_stream_requires_poll = true;
+	s_music_stream = stream;
+	s_effect_stream = stream;
+	s_music_stream_is_effect_stream = true;
 }
 
 void
 AudioA5_InitExternalMusic(const ExtMusicInfo *ext)
 {
 	char filename[1024];
-
-	if (s_music_stream != NULL)
-		al_destroy_audio_stream(s_music_stream);
+	ALLEGRO_AUDIO_STREAM *stream;
 
 	/* Try flac. */
 	{
 		snprintf(filename, sizeof(filename), "%s.flac", ext->filename);
-		s_music_stream = al_load_audio_stream(filename, NUMFRAGS, FRAGLEN);
+		stream = al_load_audio_stream(filename, NUMFRAGS, FRAGLEN);
 	}
 
 	/* Try ogg. */
-	if (s_music_stream == NULL) {
+	if (stream == NULL) {
 		snprintf(filename, sizeof(filename), "%s.ogg", ext->filename);
-		s_music_stream = al_load_audio_stream(filename, NUMFRAGS, FRAGLEN);
+		stream = al_load_audio_stream(filename, NUMFRAGS, FRAGLEN);
 	}
 
-	if (s_music_stream == NULL)
+	if (stream == NULL)
 		return;
 
-	printf("playing %s\n", filename);
+	if (s_music_stream_is_effect_stream) {
+		/* Reinitialise effect stream in case previous Adlib stream
+		 * was for a file without the game sound effects.
+		 */
+		if (s_music_stream != NULL)
+			al_destroy_audio_stream(s_music_stream);
+
+		s_effect_stream = NULL;
+	}
+
+	if (s_effect_stream == NULL)
+		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_1].dune2_adlib);
+
+	s_music_stream = stream;
 	al_set_audio_stream_gain(s_music_stream, music_volume * ext->volume);
 	al_attach_audio_stream_to_mixer(s_music_stream, al_mixer);
-	s_music_stream_requires_poll = false;
+	s_music_stream_is_effect_stream = false;
 }
 
 void
 AudioA5_StopMusic(void)
 {
-	if (s_music_stream_requires_poll && s_adlib != NULL) {
+	if (s_music_stream_is_effect_stream && s_adlib != NULL) {
 		s_adlib->haltTrack();
 	}
 	else if (s_music_stream != NULL) {
@@ -169,20 +207,19 @@ AudioA5_StopMusic(void)
 void
 AudioA5_PollMusic(void)
 {
-	if (s_music_stream == NULL || !s_music_stream_requires_poll)
+	ALLEGRO_AUDIO_STREAM *stream = s_effect_stream;
+
+	if (s_adlib == NULL || stream == NULL)
 		return;
 
-	if (s_adlib == NULL)
-		return;
-
-	void *frag = al_get_audio_stream_fragment(s_music_stream);
+	void *frag = al_get_audio_stream_fragment(stream);
 	if (frag == NULL)
 		return;
 
 	s_adlib->callback(s_adlib, (SoundAdlibPC::Uint8 *)frag,
 			FRAGLEN * al_get_audio_depth_size(ALLEGRO_AUDIO_DEPTH_INT16));
 
-	al_set_audio_stream_fragment(s_music_stream, frag);
+	al_set_audio_stream_fragment(stream, frag);
 }
 
 bool
@@ -191,7 +228,7 @@ AudioA5_MusicIsPlaying(void)
 	if (s_music_stream == NULL)
 		return false;
 
-	if (s_music_stream_requires_poll && s_adlib != NULL) {
+	if (s_music_stream_is_effect_stream && s_adlib != NULL) {
 		return s_adlib->isPlaying();
 	}
 	else {
