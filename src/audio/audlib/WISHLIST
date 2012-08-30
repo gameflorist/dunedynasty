@@ -1,0 +1,39 @@
+My WISHLIST.  i.e. exercises left for the reader. :)
+
+--
+
+Some thing I described in email:
+
+
+    AUD_STREAM *song1 = load_aud_stream("normal.aud");
+    AUD_STREAM *song2 = load_aud_stream("action.aud");
+
+    play_aud_stream(song1);
+
+    while (!game_over) {
+
+	poll_aud();
+
+	if (moodswitch == fast)
+	    switch_aud_stream(song2);
+	else if (moodswitch == slow)
+	    switch_aud_stream(song1);
+    }
+
+
+Conclusion: CBF.
+
+--
+
+Something else I described in email:
+
+    queue_aud_stream("file1.aud");
+    queue_aud_stream("file2.aud");
+
+These would play in sequence.  This would be hard to mix with the 
+switch_aud_stream idea, so this basically will be scrapped for the
+previous idea.
+
+--
+
+Maybe more, I forget.

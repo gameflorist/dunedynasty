@@ -1,0 +1,103 @@
+unspecified = Peter Wang
+jpm = Joseph Morris
+
+
+October 1998
+-------------
+
+5   Started work on AUDlib.  Very fuzzy!
+6   Implemented more efficient method: a chunk at a time.
+8   Got the right sound today, no fuzz.
+9   Fixed restart_aud().
+10  Cleaned up; more library like.
+    Wrote doc.
+11  Added set_aud_volume().
+    Made get_next_chunk() and get_next_code() inline.
+    Version 0.5 [BETA] released.
+
+
+November 1998
+--------------
+
+xx  unload_aud() is automatically called after aud has finished playing and 
+    aud_loaded is set to FALSE.
+29  Prevented AUDlib from constantly calling malloc/realloc.
+    Tried to do a Windows port with RSXNTDJ, very choppy.
+
+
+December 1998
+--------------
+
+19  Removed RSXNTDJ stuff.
+
+
+January 1999
+-------------
+
+9   Reverted to 0.5 release code.
+    Upgraded to faster code.
+    Added stereo support.
+    Put in old bug fixes from November 1998.
+    Default volume changed from 128 to 255.
+
+14  Added extern "C" { for C++ programs.
+    Uploaded 0.6a.
+
+
+February 1999
+--------------
+
+24  Changed [un]load_aud to [un]load_aud_stream.
+
+28  Fixed up most "clicks".
+    Put in an ugly hack (thank Grzegorz for the name :) to avoid clipping 
+    end of streams.
+    Added pause_aud() and resume_aud(). 
+    Uploaded 0.6b.
+
+
+March 2000
+-----------
+
+19  Minor changes for Allegro 4.0 and Unix.
+    K&R'd source code.
+    Uploaded 0.7.
+
+
+April 2000
+-----------
+
+20  (jpm) :-
+    Added check to make sure fp is not null in get_next_chunk
+    Wrote load_aud_stream_offset, made load_aud_stream into a wrapper
+    Added load_aud_stream_offset to audlib.h
+    
+30  (jpm) :-
+    Doubled default buffer size
+    Modified load_aud_stream_offset to store offset in new global ofs
+    Rewrote restart_aud() to be slightly more intelligent
+
+
+May 2000
+---------
+
+8   (jpm) Now uses new globals datapos and dataend to look for end-of-stream
+    instead of pack_feof()
+   
+10  Merged in JPM's changes, with a few variable name changes.
+    Uploaded 0.8.
+    
+
+November 2000
+--------------
+
+15  Changed function and variable names (e.g. `restart_aud' to
+    `restart_aud_stream') to reduce confusion between AUDlib and loadaud.
+    Got rid of some useless things (e.g. aud_desc).
+    Uploaded 0.9.
+
+
+January 2002
+-------------
+
+03  Changed licence to zlib.

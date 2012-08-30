@@ -1,0 +1,192 @@
+
+			A   U   D   l   i   b
+
+			     version 0.9
+			     January 2002
+
+                   Copyleft 1998 - 2002 Peter Wang
+    		      	 (and contributors)
+
+
+#include <std_disclaimer.h>
+
+   "I do not accept responsibility for any effects, adverse or otherwise, 
+    that this code may have on you, your computer, your sanity, your dog, 
+    and anything else that you can think of. Use it at your own risk."
+
+
+What's new 
+----------
+
+version 0.9: (second upload)
+    - zlib licence
+
+version 0.9:
+    - API changes (e.g. `restart_aud' to `restart_aud_stream') to reduce
+      confusion between loadaud and AUDlib APIs.  If upgrading is too
+      painful you can always use the preprocessor...
+
+version 0.8:
+    Thanks to Joseph Morris:
+    - new function load_aud_stream_offset() 
+      i.e. load an AUD embedded inside larger file
+    - doubled default buffer size 
+
+version 0.7:
+    - changes for Allegro 4.0 and Unix
+    - same version number as loadaud :-)
+
+version 0.6b:
+    - changed [un]load_aud to [un]load_aud_stream to prevent namespace 
+    conflicts with loadaud (the other aud lib).  restart_aud, etc. have been 
+    left for backwards compatibility (even though this is ambiguous)
+
+    - "clicking" problems reduced
+    - added pause_aud and resume_aud
+
+version 0.6a:
+    - slight changed in audlib.h to support C++ programs
+
+version 0.6:
+    - faster code
+    - stereo aud support
+
+
+Introduction
+------------
+
+    aud is the sound format used in many Westwood Studios games.  It comes 
+    in two flavours: 8 bit and 16 bit.  All normal frequencies and mono / 
+    stereo channels are supported.
+
+    AUDlib supports 16 bit auds only.  These use the IMA ADPCM compression 
+    algorithm and provide 4:1 compression ratio (16bit -> 4bit) with low 
+    loss of quality.
+
+    8 bit auds use a proprietary algorithm and therefore are unsupported.
+
+    The point of writing a library like this is so that you can use .aud 
+    music files in your own games, so you can distribute it over the net, 
+    or perhaps if you had a lot of music, you could use auds instead CDA.
+
+
+Coding
+------
+    Type `make' to make the library and the example.  Type `make install' 
+    to copy `libaud.a' and `audlib.h' into the `lib' and `include' 
+    directories of your djgpp installation.
+
+    To use the library, #include <audlib.h> in your code, and link -laud.
+
+    Function and variable descriptions:
+
+    int load_aud_stream(char *filename, int loop);
+	Ready an AUD file to be played.  If you want the file to be looped 
+	give TRUE for loop.  Returns TRUE if load was succesful.
+
+    int load_aud_stream_offset(char *filename, int loop, int foffset);
+	Does the same as load_aud_stream(), only the AUD begins at
+	position FOFFSET inside the file.
+
+    void unload_aud_stream(void);
+	Free the AUD from memory.
+
+    int poll_aud_stream(void);
+	Decodes and buffers a few AUD chunks (enough to fill the size 
+	defined in BUFFER_SIZE).  It needs to be called as often as 
+	possible, otherwise you will have skips in your sound. Returns -1 if 
+	there's nothing to play (e.g. music has stopped), 0 if the playback 
+	buffer is full (meaning it has enough audio data for the moment), 
+	and 1 if data was successfully decoded and buffered.
+
+    void pause_aud_stream(void);
+	Pause playback.  Note: you should keep calling poll_aud afterwards.
+
+    void resume_aud_stream(void);
+	Take a wild guess.
+
+    void restart_aud_stream(void);
+	Does exactly that.
+
+    void set_aud_stream_volume(int vol);
+	Set the audio stream volume (0-255, default: 128) 
+	Note that set_aud_volume(0) will pause playback.
+
+    int aud_stream_loaded;
+	TRUE if an AUD file is currently loaded and ready to play.
+
+    int aud_stream_paused;
+	TRUE if paused.  FALSE if not.
+
+    int aud_stream_freq;
+	Frequency of the current file.
+
+    int aud_stream_stereo;
+	TRUE if it is a stereo AUD file.
+
+    char *aud_stream_error;
+	If load_aud() fails, check this for a human readable error string.
+
+    You may also like to edit the #define BUFFER_SIZE in audlib.c
+
+
+Example
+-------
+    Look at example.c.  If you don't have any AUD files, there is a *very* 
+    exciting one included (welcome.aud).
+
+
+To do and bugs
+--------------
+    Seeking functions.  Maybe.
+
+    The first time an aud is loaded it seems to need to "warm up" (on my 
+	laptop with a Yamaha OPL3SAx anyway).
+
+    Looping doesn't work correctly on some auds (e.g. welcome.aud) [FIXED]
+
+    Tiny click at the end of files.
+
+
+Special thanks
+--------------
+    - The code came from loadaud, which in turn came from a package which 
+    I found at ftp://ftp.cwi.nl/pub/audio/adpcm.zip by Jack Jansen 
+    (jack@cwi.nl).
+
+    - The older code and the aud file format description came from 
+    aud3.txt by Vladan Bato (bat22@geocities.com). 
+
+    His site is at: http://www.geocities.com/SiliconValley/8682/
+    There you can find AUD2WAV and WAV2AUD conversion utilities.  Note 
+    that these will not convert stereo wavs, for that you will need to get 
+    loadaud (also by me =).  See web address below.
+
+    - As you can probably see, I modelled my API after LibAmp by Ove Kaaven 
+    (ovek@arcticnet.no), and grafted some of his docs into mine.  Thanks Ove!
+
+    - Grzegorz Hankiewicz (gah@jet.es) for a LOT of suggestions, and for 
+    using the library in Wotan.  Woohoo!
+
+    - Joseph Morris (jpm@it-he.org) for `load_aud_stream_offset' and
+    related changes.
+
+
+Copyright
+---------
+    (note licence has changed)
+
+    AUDlib is released under the zlib licence, which lets you do
+    pretty much anything with it.  See LICENCE.txt for the full text.
+
+
+Contact
+-------
+
+    Email: tjaden@users.sf.net
+
+    WWW: http://www.alphalink.com.au/~tjaden/
+
+
+P.S. Don't forget to check out loadaud (web site above) so you can use 
+auds as SAMPLEs in your games and save us all download time.
