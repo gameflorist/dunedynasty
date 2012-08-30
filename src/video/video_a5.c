@@ -415,6 +415,18 @@ VideoA5_SetCursor(int spriteID)
 	al_set_mouse_cursor(display, s_cursor[spriteID]);
 }
 
+void
+VideoA5_ShowCursor(void)
+{
+	al_show_mouse_cursor(display);
+}
+
+void
+VideoA5_HideCursor(void)
+{
+	al_hide_mouse_cursor(display);
+}
+
 /*--------------------------------------------------------------*/
 
 void

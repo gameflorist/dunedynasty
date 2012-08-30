@@ -10,6 +10,8 @@ extern void VideoA5_Tick(void);
 extern void VideoA5_SetPalette(const uint8 *palette, int from, int length);
 extern void VideoA5_SetClippingArea(int x, int y, int w, int h);
 extern void VideoA5_SetCursor(int cursor);
+extern void VideoA5_ShowCursor(void);
+extern void VideoA5_HideCursor(void);
 
 extern void VideoA5_PutPixel(int x, int y, uint8 c);
 extern void VideoA5_DrawLine(int x1, int y1, int x2, int y2, uint8 c);

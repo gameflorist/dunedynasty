@@ -845,10 +845,12 @@ void GameLoop_LevelEndAnimation(void)
 
 	GameLoop_PrepareAnimation(animation, subtitle, 0xFFFF, soundEffect);
 
+	Video_HideCursor();
 	Audio_PlayMusic(MUSIC_CUTSCENE);
 
 	GameLoop_PlayAnimation();
 
+	Video_ShowCursor();
 	Audio_PlayEffect(EFFECT_FADE_OUT);
 
 	GameLoop_FinishAnimation();
@@ -1195,6 +1197,7 @@ void GameLoop_GameEndAnimation(void)
 	const HouseAnimation_SoundEffect *soundEffect;
 	enum MusicID musicID;
 
+	Video_HideCursor();
 	Audio_LoadSampleSet(HOUSE_MERCENARY);
 
 	switch (g_playerHouseID) {
@@ -1232,6 +1235,8 @@ void GameLoop_GameEndAnimation(void)
 	GameLoop_FinishAnimation();
 
 	GameLoop_GameCredits();
+
+	Video_ShowCursor();
 }
 
 /**
@@ -1370,6 +1375,7 @@ static void Gameloop_Logos(void)
 void GameLoop_GameIntroAnimation(void)
 {
 	GUI_ChangeSelectionType(SELECTIONTYPE_INTRO);
+	Video_HideCursor();
 
 	Audio_PlayMusic(MUSIC_STOP);
 	Gameloop_Logos();
@@ -1394,4 +1400,5 @@ void GameLoop_GameIntroAnimation(void)
 	}
 
 	GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
+	Video_ShowCursor();
 }

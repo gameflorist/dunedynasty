@@ -28,6 +28,8 @@ struct FadeInAux;
 #define Video_SetPalette        VideoA5_SetPalette
 #define Video_SetClippingArea   VideoA5_SetClippingArea
 #define Video_SetCursor         VideoA5_SetCursor
+#define Video_ShowCursor        VideoA5_ShowCursor
+#define Video_HideCursor        VideoA5_HideCursor
 
 #define Video_DrawCPS           VideoA5_DrawCPS
 #define Video_DrawCPSRegion     VideoA5_DrawCPSRegion
