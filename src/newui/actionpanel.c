@@ -192,33 +192,44 @@ ActionPanel_DrawMissileCountdown(uint8 fg, int count)
 }
 
 static int
-ActionPanel_ProductionButtonStride(const Widget *widget, bool is_starport)
+ActionPanel_ProductionButtonStride(const Widget *widget, bool is_starport, int *ret_items_per_screen)
 {
 	const int h = widget->height
 		- 3  /* top margin */
-		- 20 /* arrows */
+		- (widget->height >= 52 ? 20 : 0) /* arrows */
 		- 2  /* bottom margin */
 		- (is_starport ? 12 : 0);
 
 	const int items_per_screen = h / 58;
 
 	/* Try to squeeze in 1 more item. */
-	const int reth = h / (items_per_screen + 1);
-	if (reth >= 52)
-		return reth;
+	int reth = h / (items_per_screen + 1);
+	if (reth < 52)
+		reth = 58;
 
-	return 58;
+	if (ret_items_per_screen != NULL)
+		*ret_items_per_screen = h / reth;
+
+	return reth;
 }
 
 static void
 ActionPanel_ProductionButtonDimensions(const Widget *widget, bool is_starport,
 		int item, int *x1, int *y1, int *x2, int *y2, int *w, int *h)
 {
-	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport);
-	const int x = widget->offsetX + 4;
-	const int y = widget->offsetY + 16 + stride * item + factoryOffsetY;
+	int items_per_screen;
+	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
 	const int width = 52;
 	const int height = 39;
+	const int x = widget->offsetX + 4;
+	int y = widget->offsetY + 16 + stride * item + factoryOffsetY;
+
+	if (items_per_screen <= 1) {
+		y = widget->offsetY + widget->height - height
+			- (widget->height >= 52 ? 20 : 0)
+			- (is_starport ? 12 : 0)
+			+ stride * item + factoryOffsetY;
+	}
 
 	if (x1 != NULL) *x1 = x;
 	if (y1 != NULL) *y1 = y;
@@ -232,8 +243,16 @@ static void
 ActionPanel_ScrollButtonDimensions(const Widget *widget, int height, bool up,
 		int *x1, int *y1, int *x2, int *y2)
 {
-	const int x = widget->offsetX + (up ? 5 : 31);
-	const int y = widget->offsetY + height - 19;
+	int x, y;
+
+	if (widget->height < 52) {
+		x = widget->offsetX + widget->width - 24 - 1;
+		y = widget->offsetY + height / 2 + 1 - (up ? 15 : 0);
+	}
+	else {
+		x = widget->offsetX + (up ? 5 : 31);
+		y = widget->offsetY + height - 18;
+	}
 
 	if (x1 != NULL) *x1 = x;
 	if (y1 != NULL) *y1 = y;
@@ -256,10 +275,9 @@ ActionPanel_SendOrderButtonDimensions(const Widget *widget,
 static bool
 ActionPanel_ScrollFactory(const Widget *widget, bool is_starport)
 {
+	int items_per_screen;
 	const int height = (is_starport ? widget->height - 12 : widget->height);
-	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport);
-	const int items_per_screen = height / stride;
-	const int first_item = g_factoryWindowTotal - items_per_screen;
+	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
 
 	int delta = g_mouseDZ;
 	int x1, y1, x2, y2;
@@ -274,6 +292,8 @@ ActionPanel_ScrollFactory(const Widget *widget, bool is_starport)
 
 	if (delta == 0)
 		return false;
+
+	const int first_item = g_factoryWindowTotal - (items_per_screen <= 1 ? 1 : items_per_screen);
 
 	factoryOffsetY += delta * stride;
 	ActionPanel_ProductionButtonDimensions(widget, is_starport, first_item, NULL, &y1, NULL, NULL, NULL, NULL);
@@ -321,7 +341,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if (ActionPanel_ScrollFactory(widget, false))
 		return true;
 
-	if (g_mouseY >= widget->offsetY + height - 19)
+	if (g_mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
 		return false;
 
 	const bool lmb = (widget->state.s.buttonState & 0x04);
@@ -508,7 +528,7 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	if (ActionPanel_ScrollFactory(widget, true))
 		return true;
 
-	if (g_mouseY >= widget->offsetY + height - 19)
+	if (g_mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
 		return false;
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
@@ -574,9 +594,9 @@ static void
 ActionPanel_DrawScrollButtons(const Widget *widget, bool is_starport)
 {
 	const int height = (is_starport ? widget->height - 12 : widget->height);
-	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport);
-	const int items_per_screen = height / stride;
+	int items_per_screen;
 
+	ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
 	if (g_factoryWindowTotal <= items_per_screen)
 		return;
 
@@ -587,7 +607,7 @@ ActionPanel_DrawScrollButtons(const Widget *widget, bool is_starport)
 	if (pressed && Mouse_InRegion(x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP_PRESSED, x1, y1, 0, 0);
 	}
-	else {
+	else if (widget->height >= 52 || Mouse_InRegion(x1, y1, x2, y2 + 15)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP, x1, y1, 0, 0);
 	}
 
@@ -595,7 +615,7 @@ ActionPanel_DrawScrollButtons(const Widget *widget, bool is_starport)
 	if (pressed && Mouse_InRegion(x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN_PRESSED, x1, y1, 0, 0);
 	}
-	else {
+	else if (widget->height >= 52 || Mouse_InRegion(x1, y1 - 15, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN, x1, y1, 0, 0);
 	}
 }
@@ -655,7 +675,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		int fg = 0xF;
 
 		ActionPanel_ProductionButtonDimensions(widget, (s->o.type == STRUCTURE_STARPORT), item, &x1, &y1, NULL, &y2, &w, &h);
-		if (y2 >= widget->offsetY + height - 19)
+		if (y2 >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
 			break;
 
 		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
@@ -770,7 +790,9 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 
 	ActionPanel_ProductionButtonDimensions(widget, false, 0, &x, &y, NULL, NULL, &w, &h);
 	GUI_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, widget->height - 3, 0, true);
+	Video_SetClippingArea(widget->offsetX + 1, widget->offsetY + 3, widget->width - 2, widget->height - 5);
 	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);
 	GUI_DrawText_Wrapper(name, x + w / 2, y - 9, 5, 0, 0x121);
 	GUI_DrawText_Wrapper(deploy, x + w / 2, y + h + 1, 0xF, 0, 0x121);
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
