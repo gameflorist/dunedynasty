@@ -157,11 +157,15 @@ StrategicMap_DrawArrow(enum HouseType houseID, int scenario, const StrategicMapD
 }
 
 static void
-StrategicMap_DrawArrows(enum HouseType houseID, const StrategicMapData *map)
+StrategicMap_DrawArrows(enum HouseType houseID, int blink_scenario, const StrategicMapData *map)
 {
 	for (int i = 0; i < STRATEGIC_MAP_MAX_ARROWS; i++) {
 		if (map->arrow[i].index < 0)
 			break;
+
+		/* Draw only arrows pointing to the selected region. */
+		if ((blink_scenario >= 0) && (map->arrow[i].index != map->arrow[blink_scenario].index))
+			continue;
 
 		StrategicMap_DrawArrow(houseID, i, map);
 	}
@@ -377,7 +381,7 @@ StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map, int64_t fade_st
 		StrategicMap_DrawRegionFadeIn(map);
 	}
 	else if (map->state == STRATEGIC_MAP_SELECT_REGION) {
-		StrategicMap_DrawArrows(houseID, map);
+		StrategicMap_DrawArrows(houseID, -1, map);
 	}
 	else if (map->state == STRATEGIC_MAP_BLINK_REGION) {
 		const int64_t curr_ticks = Timer_GetTicks();
@@ -385,10 +389,10 @@ StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map, int64_t fade_st
 		if ((((curr_ticks - fade_start) / 20) & 0x1) == 0)
 			StrategicMap_DrawRegion(houseID, map->arrow[map->blink_scenario].index);
 
-		StrategicMap_DrawArrow(houseID, map->blink_scenario, map);
+		StrategicMap_DrawArrows(houseID, map->blink_scenario, map);
 	}
 	else if (map->state == STRATEGIC_MAP_BLINK_END) {
-		StrategicMap_DrawArrow(houseID, map->blink_scenario, map);
+		StrategicMap_DrawArrows(houseID, map->blink_scenario, map);
 	}
 }
 
