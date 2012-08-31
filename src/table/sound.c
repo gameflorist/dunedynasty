@@ -9,6 +9,7 @@
 #define D2TM_ADLIB_PREFIX   "d2tm_adlib"
 #define D2TM_MT32_PREFIX    "d2tm_mt32"
 #define D2TM_SC55_PREFIX    "d2tm_sc55"
+#define DUNE2000_PREFIX     "dune2000"
 #define FED2K_MT32_PREFIX   "fed2k_mt32"
 
 #define MIDI_FILE_NOT_AVAILABLE     { false, NULL, 0 }
@@ -20,6 +21,7 @@ const char *g_music_set_prefix[NUM_MUSIC_SETS] = {
 	D2TM_ADLIB_PREFIX,
 	D2TM_MT32_PREFIX,
 	D2TM_SC55_PREFIX,
+	DUNE2000_PREFIX,
 };
 
 MusicInfo g_table_music[MUSICID_MAX] = {
@@ -29,6 +31,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_1: bonus track */
@@ -37,6 +40,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_LOSE_ORDOS */
@@ -45,6 +49,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/lose3" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/lose3" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/lose3" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_LOSE_HARKONNEN */
@@ -53,6 +58,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/lose2" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/lose1" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/lose1" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_LOSE_ATREIDES */
@@ -61,6 +67,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/lose1" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/lose2" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/lose2" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_WIN_ORDOS */
@@ -69,6 +76,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/win2" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/win3" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/win3" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_WIN_HARKONNEN */
@@ -77,6 +85,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/win3" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/win2" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/win2" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_WIN_ATREIDES */
@@ -85,6 +94,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/win1" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/win1" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/win1" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_IDLE1 */
@@ -93,6 +103,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace2" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace1" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace2" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/AMBUSH" },
 	},
 
 	{	/* MUSIC_IDLE2 */
@@ -101,6 +112,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace5" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace2" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace5" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/SPICESCT" },
 	},
 
 	{	/* MUSIC_IDLE3 */
@@ -109,6 +121,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace4" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace3" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace4" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/RISEHARK" },
 	},
 
 	{	/* MUSIC_IDLE4 */
@@ -117,6 +130,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace1" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace4" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace1" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/ENTORDOS" },
 	},
 
 	{	/* MUSIC_IDLE5 */
@@ -125,6 +139,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace9" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace5" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace9" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/UNDERCON" },
 	},
 
 	{	/* MUSIC_IDLE6 */
@@ -133,6 +148,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace8" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace6" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace8" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/ATREGAIN" },
 	},
 
 	{	/* MUSIC_IDLE7 */
@@ -141,6 +157,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace7" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace7" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace7" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/FREMEN" },
 	},
 
 	{	/* MUSIC_IDLE8 */
@@ -149,6 +166,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace6" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace8" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace6" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/LANDSAND" },
 	},
 
 	{	/* MUSIC_IDLE9 */
@@ -157,6 +175,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/peace3" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/peace9" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/peace3" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/WAITGAME" },
 	},
 
 	{	/* MUSIC_ATTACK1 */
@@ -165,6 +184,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack5" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack1" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/attack4" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/ARAKATAK" },
 	},
 
 	{	/* MUSIC_ATTACK2 */
@@ -173,6 +193,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack3" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack2" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/attack5" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_ATTACK3 */
@@ -181,6 +202,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack6" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack3" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/attack2" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/HARK_BAT" },
 	},
 
 	{	/* MUSIC_ATTACK4 */
@@ -189,6 +211,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack2" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack4" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/attack3" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_ATTACK5 */
@@ -197,6 +220,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack4" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack5" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/attack1" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/FIGHTPWR" },
 	},
 
 	{	/* MUSIC_ATTACK6 */
@@ -205,6 +229,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/attack1" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/attack6" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/attack6" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_23 */
@@ -213,6 +238,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_BRIEFING_HARKONNEN */
@@ -221,6 +247,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/mentath" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/mentath" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/mentath" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_BRIEFING_ATREIDES */
@@ -229,6 +256,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/mentata" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/mentata" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/mentata" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_BRIEFING_ORDOS */
@@ -237,6 +265,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/mentato" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/mentato" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/mentato" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_INTRO */
@@ -245,6 +274,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/intro" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/intro" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_MAIN_MENU */
@@ -253,6 +283,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/menu" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/menu" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/menu" },
+		/* dune2000      */ { true, 1.0f, DUNE2000_PREFIX "/OPTIONS" },
 	},
 
 	{	/* MUSIC_STRATEGIC_MAP */
@@ -261,6 +292,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ { true, 1.0f, D2TM_ADLIB_PREFIX "/nextconq" },
 		/* d2tm_mt32     */ { true, 1.0f, D2TM_MT32_PREFIX "/nextconq" },
 		/* d2tm_sc55     */ { true, 1.0f, D2TM_SC55_PREFIX "/nextconq" },
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_END_GAME_HARKONNEN */
@@ -269,6 +301,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_END_GAME_ATREIDES */
@@ -277,6 +310,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_END_GAME_ORDOS */
@@ -285,6 +319,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_CREDITS */
@@ -293,6 +328,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_CUTSCENE */
@@ -301,6 +337,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_35 */
@@ -309,6 +346,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_LOGOS */
@@ -317,6 +355,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 
 	{	/* MUSIC_37 */
@@ -325,6 +364,7 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 		/* d2tm_adlib    */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_mt32     */ MUSIC_FILE_NOT_AVAILABLE,
 		/* d2tm_sc55     */ MUSIC_FILE_NOT_AVAILABLE,
+		/* dune2000      */ MUSIC_FILE_NOT_AVAILABLE,
 	},
 };
 
