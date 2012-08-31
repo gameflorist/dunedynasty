@@ -50,6 +50,7 @@ Audio_ScanMusic(void)
 			&m->d2tm_adlib,
 			&m->d2tm_mt32,
 			&m->d2tm_sc55,
+			&m->dune2000,
 			NULL
 		};
 
@@ -71,6 +72,12 @@ Audio_ScanMusic(void)
 			snprintf(buf, sizeof(buf), "%s.ogg", ext[i]->filename);
 			if (stat(buf, &st) == 0) {
 				if (verbose) fprintf(stdout, "[enable]  %s.ogg\n", ext[i]->filename);
+				continue;
+			}
+
+			snprintf(buf, sizeof(buf), "%s.AUD", ext[i]->filename);
+			if (stat(buf, &st) == 0) {
+				if (verbose) fprintf(stdout, "[enable]  %s.AUD\n", ext[i]->filename);
 				continue;
 			}
 
@@ -105,6 +112,7 @@ Audio_PlayMusic(enum MusicID musicID)
 	if (m->d2tm_adlib.enable)   data[num_types++].ext = &m->d2tm_adlib;
 	if (m->d2tm_mt32.enable)    data[num_types++].ext = &m->d2tm_mt32;
 	if (m->d2tm_sc55.enable)    data[num_types++].ext = &m->d2tm_sc55;
+	if (m->dune2000.enable)     data[num_types++].ext = &m->dune2000;
 
 	if (num_types <= 0)
 		return;

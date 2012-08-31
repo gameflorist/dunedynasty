@@ -6,6 +6,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/adl/sound_adlib.cpp
 	src/audio/audio.c
 	src/audio/audio_a5.cpp
+	src/audio/audlib/audlib_a5.c
 	src/buildqueue.c
 	src/codec/format40.c
 	src/codec/format80.c

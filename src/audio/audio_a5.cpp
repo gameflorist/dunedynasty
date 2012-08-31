@@ -10,6 +10,7 @@
 #include "audio_a5.h"
 
 #include "adl/sound_adlib.h"
+#include "audlib/audlib_a5.h"
 
 extern "C" {
 #include "audio.h"
@@ -24,21 +25,34 @@ extern "C" {
  */
 #define MAX_SAMPLE_INSTANCES 12
 
+enum MusicStreamType {
+	MUSICSTREAM_NONE,
+	MUSICSTREAM_ADLIB,
+	MUSICSTREAM_FLAC,
+	MUSICSTREAM_OGG,
+	MUSICSTREAM_AUD,
+};
+
 /* Music configuration. */
 static const int SRATE = 48000;
 static const int NUMFRAGS = 4;
 static const int FRAGLEN = 2048;
 static bool mame = true;
 
-static bool s_music_stream_is_effect_stream;
+static enum MusicStreamType curr_music_stream_type;
 static ALLEGRO_AUDIO_STREAM *s_music_stream;
 static ALLEGRO_AUDIO_STREAM *s_effect_stream;
 static SoundAdlibPC *s_adlib;
+static AUDSTREAM *s_aud;
 
 static ALLEGRO_SAMPLE *s_sample[SAMPLEID_MAX];
 static ALLEGRO_SAMPLE_INSTANCE *s_instance[MAX_SAMPLE_INSTANCES];
 static ALLEGRO_VOICE *al_voice;
 static ALLEGRO_MIXER *al_mixer;
+
+static void AudioA5_FreeMusicStream(void);
+
+/*--------------------------------------------------------------*/
 
 void
 AudioA5_Init(void)
@@ -78,16 +92,22 @@ AudioA5_Uninit(void)
 		s_instance[i] = NULL;
 	}
 
-	if (s_music_stream_is_effect_stream)
-		s_music_stream = NULL;
+	AudioA5_FreeMusicStream();
 
-	delete s_adlib;
-	al_destroy_audio_stream(s_music_stream);
-	al_destroy_audio_stream(s_effect_stream);
+	if (s_effect_stream != NULL) {
+		al_destroy_audio_stream(s_effect_stream);
+		s_effect_stream = NULL;
+
+		delete s_adlib;
+		s_adlib = NULL;
+	}
+
 	al_destroy_mixer(al_mixer);
 	al_destroy_voice(al_voice);
 	al_uninstall_audio();
 }
+
+/*--------------------------------------------------------------*/
 
 /* Note: We can only have one instance of s_adlib. */
 static ALLEGRO_AUDIO_STREAM *
@@ -129,78 +149,159 @@ AudioA5_InitAdlib(const MidiFileInfo *mid)
 	return stream;
 }
 
+static ALLEGRO_AUDIO_STREAM *
+AudioA5_InitFlac(const char *filename)
+{
+	char fn[1024];
+
+	snprintf(fn, sizeof(fn), "%s.flac", filename);
+	return al_load_audio_stream(fn, NUMFRAGS, FRAGLEN);
+}
+
+static ALLEGRO_AUDIO_STREAM *
+AudioA5_InitOgg(const char *filename)
+{
+	char fn[1024];
+
+	snprintf(fn, sizeof(fn), "%s.ogg", filename);
+	return al_load_audio_stream(fn, NUMFRAGS, FRAGLEN);
+}
+
+static AUDSTREAM *
+AudioA5_InitAud(const char *filename)
+{
+	char fn[1024];
+
+	snprintf(fn, sizeof(fn), "%s.AUD", filename);
+
+	ALLEGRO_FILE *f = al_fopen(fn, "r");
+	if (f == NULL)
+		return NULL;
+
+	return load_aud_stream(f);
+}
+
+static void
+AudioA5_FreeMusicStream(void)
+{
+	switch (curr_music_stream_type) {
+		case MUSICSTREAM_NONE:
+			return;
+
+		case MUSICSTREAM_ADLIB:
+			if (s_adlib != NULL) {
+				delete s_adlib;
+				s_adlib = NULL;
+
+				if (s_music_stream == s_effect_stream)
+					s_effect_stream = NULL;
+			}
+			break;
+
+		case MUSICSTREAM_FLAC:
+		case MUSICSTREAM_OGG:
+			break;
+
+		case MUSICSTREAM_AUD:
+			if (s_aud != NULL) {
+				unload_aud_stream(s_aud);
+				s_aud = NULL;
+				s_music_stream = NULL;
+			}
+			break;
+	}
+
+	if (s_music_stream != NULL) {
+		al_destroy_audio_stream(s_music_stream);
+		s_music_stream = NULL;
+	}
+}
+
 void
 AudioA5_InitMusic(const MidiFileInfo *mid)
 {
 	const int track = mid->track;
 	ALLEGRO_AUDIO_STREAM *stream;
 
-	stream = AudioA5_InitAdlib(mid);
-	if (stream == NULL)
-		return;
+	AudioA5_FreeMusicStream();
 
-	if (!s_music_stream_is_effect_stream) {
-		if (s_effect_stream != NULL)
-			al_destroy_audio_stream(s_effect_stream);
+	stream = AudioA5_InitAdlib(mid);
+	if (stream == NULL) {
+		curr_music_stream_type = MUSICSTREAM_NONE;
+		return;
 	}
 
-	if (s_music_stream != NULL)
-		al_destroy_audio_stream(s_music_stream);
+	if (s_effect_stream != NULL)
+		al_destroy_audio_stream(s_effect_stream);
 
 	s_adlib->playTrack(track);
 	s_music_stream = stream;
 	s_effect_stream = stream;
-	s_music_stream_is_effect_stream = true;
+	curr_music_stream_type = MUSICSTREAM_ADLIB;
 }
 
 void
 AudioA5_InitExternalMusic(const ExtMusicInfo *ext)
 {
-	char filename[1024];
-	ALLEGRO_AUDIO_STREAM *stream;
+	enum MusicStreamType next_music_stream_type = MUSICSTREAM_NONE;
+	ALLEGRO_AUDIO_STREAM *stream = NULL;
+	AUDSTREAM *next_aud = NULL;
 
-	/* Try flac. */
 	{
-		snprintf(filename, sizeof(filename), "%s.flac", ext->filename);
-		stream = al_load_audio_stream(filename, NUMFRAGS, FRAGLEN);
+		stream = AudioA5_InitFlac(ext->filename);
+		next_music_stream_type = MUSICSTREAM_FLAC;
 	}
 
-	/* Try ogg. */
 	if (stream == NULL) {
-		snprintf(filename, sizeof(filename), "%s.ogg", ext->filename);
-		stream = al_load_audio_stream(filename, NUMFRAGS, FRAGLEN);
+		stream = AudioA5_InitOgg(ext->filename);
+		next_music_stream_type = MUSICSTREAM_OGG;
 	}
 
-	if (stream == NULL)
+	if (stream == NULL) {
+		next_aud = AudioA5_InitAud(ext->filename);
+		if (next_aud != NULL) {
+			stream = get_aud_stream(next_aud);
+			next_music_stream_type = MUSICSTREAM_AUD;
+		}
+	}
+
+	if (stream == NULL) {
+		curr_music_stream_type = MUSICSTREAM_NONE;
 		return;
-
-	if (s_music_stream_is_effect_stream) {
-		/* Reinitialise effect stream in case previous Adlib stream
-		 * was for a file without the game sound effects.
-		 */
-		if (s_music_stream != NULL)
-			al_destroy_audio_stream(s_music_stream);
-
-		s_effect_stream = NULL;
 	}
+
+	/* If current stream is Adlib, reinitialise effect stream in case
+	 * it opened a file without the game sound effects.
+	 */
+	AudioA5_FreeMusicStream();
 
 	if (s_effect_stream == NULL)
 		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_1].dune2_adlib);
 
 	s_music_stream = stream;
+	s_aud = next_aud;
 	al_set_audio_stream_gain(s_music_stream, music_volume * ext->volume);
 	al_attach_audio_stream_to_mixer(s_music_stream, al_mixer);
-	s_music_stream_is_effect_stream = false;
+	curr_music_stream_type = next_music_stream_type;
 }
 
 void
 AudioA5_StopMusic(void)
 {
-	if (s_music_stream_is_effect_stream && s_adlib != NULL) {
-		s_adlib->haltTrack();
-	}
-	else if (s_music_stream != NULL) {
-		al_set_audio_stream_playing(s_music_stream, false);
+	switch (curr_music_stream_type) {
+		case MUSICSTREAM_NONE:
+			return;
+
+		case MUSICSTREAM_ADLIB:
+			if (s_adlib != NULL)
+				s_adlib->haltTrack();
+			break;
+
+		case MUSICSTREAM_FLAC:
+		case MUSICSTREAM_OGG:
+		case MUSICSTREAM_AUD:
+			al_set_audio_stream_playing(s_music_stream, false);
+			break;
 	}
 }
 
@@ -208,6 +309,16 @@ void
 AudioA5_PollMusic(void)
 {
 	ALLEGRO_AUDIO_STREAM *stream = s_effect_stream;
+
+	if (curr_music_stream_type == MUSICSTREAM_AUD && s_aud != NULL) {
+		const int ret = poll_aud_stream(s_aud);
+
+		/* Finished. */
+		if (ret == 2) {
+			AudioA5_FreeMusicStream();
+			curr_music_stream_type = MUSICSTREAM_NONE;
+		}
+	}
 
 	if (s_adlib == NULL || stream == NULL)
 		return;
@@ -228,11 +339,18 @@ AudioA5_MusicIsPlaying(void)
 	if (s_music_stream == NULL)
 		return false;
 
-	if (s_music_stream_is_effect_stream && s_adlib != NULL) {
-		return s_adlib->isPlaying();
-	}
-	else {
-		return al_get_audio_stream_playing(s_music_stream);
+	switch (curr_music_stream_type) {
+		default:
+		case MUSICSTREAM_NONE:
+			return false;
+
+		case MUSICSTREAM_ADLIB:
+			return s_adlib->isPlaying();
+
+		case MUSICSTREAM_FLAC:
+		case MUSICSTREAM_OGG:
+		case MUSICSTREAM_AUD:
+			return al_get_audio_stream_playing(s_music_stream);
 	}
 }
 

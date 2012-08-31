@@ -260,6 +260,7 @@ GameOptions_Load(void)
 		Config_GetMusicVolume(s_configFile, &m->d2tm_adlib);
 		Config_GetMusicVolume(s_configFile, &m->d2tm_mt32);
 		Config_GetMusicVolume(s_configFile, &m->d2tm_sc55);
+		Config_GetMusicVolume(s_configFile, &m->dune2000);
 	}
 }
 
