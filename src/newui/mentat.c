@@ -332,13 +332,19 @@ bool
 MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start)
 {
 	const int64_t curr_ticks = Timer_GetTicks();
+	bool end = (curr_ticks - blink_start >= 120);
 
 	if (curr_ticks >= mentat->speaking_timer)
 		mentat->speaking_mode = 0;
 
 	GUI_Mentat_Animation(mentat->speaking_mode);
 
-	if (curr_ticks - blink_start >= 120) {
+	if (Input_IsInputAvailable()) {
+		if (!(Input_GetNextKey() & SCANCODE_RELEASE))
+			end = true;
+	}
+
+	if (end) {
 		g_disableOtherMovement = false;
 		g_interrogation = false;
 		return true;
