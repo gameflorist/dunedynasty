@@ -727,7 +727,7 @@ StrategicMap_InputLoop(int campaignID, StrategicMapData *map)
 			map->state = STRATEGIC_MAP_BLINK_REGION;
 			StrategicMap_AdvanceText(map, true);
 
-			if ((enhancement_security_question != SECURITY_QUESTION_SKIP) && (campaignID == 1 || campaignID == 7)) {
+			if ((enhancement_security_question != SECURITY_QUESTION_SKIP) && (g_gameMode == GM_WIN) && (campaignID == 1 || campaignID == 7)) {
 				return MENU_BLINK_CONFIRM | MENU_SECURITY;
 			}
 			else {
