@@ -225,7 +225,7 @@ bool GUI_Widget_Scrollbar_Click(Widget *w)
  * @param w The widget.
  * @return True, always.
  */
-static bool GUI_Widget_TextButton_Click_(Widget *w, Unit *u)
+static bool GUI_Widget_TextButton_Click_(Widget *w, ActionType ref, Unit *u)
 {
 	const UnitInfo *ui;
 	const ActionInfo *ai;
@@ -242,6 +242,13 @@ static bool GUI_Widget_TextButton_Click_(Widget *w, Unit *u)
 	}
 
 	action = actions[w->index - 8];
+	if ((action == ref) ||
+	    (action == ACTION_RETREAT && ref == ACTION_RETURN) ||
+	    (action == ACTION_RETURN && ref == ACTION_RETREAT)) {
+	}
+	else {
+		return true;
+	}
 
 	unitAction = u->nextActionID;
 	if (unitAction == ACTION_INVALID) {
@@ -291,8 +298,16 @@ static bool GUI_Widget_TextButton_Click_(Widget *w, Unit *u)
 
 bool GUI_Widget_TextButton_Click(Widget *w)
 {
+	Unit *ref = Unit_GetForActionPanel();
+
+	if (ref == NULL)
+		return true;
+
+	UnitInfo *ui = &g_table_unitInfo[ref->o.type];
+	ActionType action = ui->o.actionsPlayer[w->index - 8];
+
 	for (Unit *u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
-		GUI_Widget_TextButton_Click_(w, u);
+		GUI_Widget_TextButton_Click_(w, action, u);
 	}
 
 	return true;
