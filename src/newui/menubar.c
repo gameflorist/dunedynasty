@@ -525,15 +525,20 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 
 	Input_History_Clear();
 	while (true) {
+		const bool narrator_speaking = Audio_Poll();
+
+		Input_Tick(true);
+		sleepIdle();
+
 		if (Input_IsInputAvailable()) {
 			const int key = Input_GetNextKey();
+
+			if (narrator_speaking)
+				continue;
 
 			if ((key == MOUSE_LMB) || (key == MOUSE_RMB) || (key == SCANCODE_ESCAPE) || (key == SCANCODE_SPACE))
 				break;
 		}
-
-		Input_Tick(true);
-		sleepIdle();
 	}
 
 	A5_UseIdentityTransform();
