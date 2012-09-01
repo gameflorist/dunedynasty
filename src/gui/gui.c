@@ -30,6 +30,7 @@
 #include "../input/mouse.h"
 #include "../load.h"
 #include "../map.h"
+#include "../newui/actionpanel.h"
 #include "../newui/halloffame.h"
 #include "../newui/menu.h"
 #include "../newui/menubar.h"
@@ -1655,6 +1656,7 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 				break;
 
 			case SELECTIONTYPE_STRUCTURE:
+				g_factoryWindowTotal = -1;
 				GUI_Widget_ActionPanel_Draw(true);
 
 				Timer_SetTimer(TIMER_GAME, true);
