@@ -183,18 +183,21 @@ Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *ke
 }
 
 static void
-Config_GetMusicVolume(ALLEGRO_CONFIG *config, ExtMusicInfo *ext)
+Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *key, bool enable, ExtMusicInfo *ext)
 {
 	if (!ext->enable)
 		return;
 
-	const char *str = al_get_config_value(config, "music", ext->filename);
+	const char *str = al_get_config_value(config, category, key);
 	if (str == NULL)
 		return;
 
 	Config_GetFloat(str, 0.0f, 2.0f, &ext->volume);
 
 	if (ext->volume <= 0.0f)
+		ext->enable = false;
+
+	if (!enable)
 		ext->enable = false;
 }
 
@@ -246,21 +249,44 @@ GameOptions_Load(void)
 	}
 
 	/* Music configuration. */
-	for (enum MusicID musicID = MUSIC_LOSE_ORDOS; musicID < MUSICID_MAX; musicID++) {
-		MusicInfo *m = &g_table_music[musicID];
-		char buf[1024];
-		const char *str;
+	for (enum MusicSet music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
+		char category[1024];
+		bool enable_set = true;
 
-		snprintf(buf, sizeof(buf), "%s_%d", m->dune2_adlib.filename, m->dune2_adlib.track);
-		str = al_get_config_value(s_configFile, "music", buf);
+		const char *str = al_get_config_value(s_configFile, "music", g_music_set_prefix[music_set]);
 		if (str != NULL)
-			Config_GetBool(str, &m->dune2_adlib.enable);
+			Config_GetBool(str, &enable_set);
 
-		Config_GetMusicVolume(s_configFile, &m->fed2k_mt32);
-		Config_GetMusicVolume(s_configFile, &m->d2tm_adlib);
-		Config_GetMusicVolume(s_configFile, &m->d2tm_mt32);
-		Config_GetMusicVolume(s_configFile, &m->d2tm_sc55);
-		Config_GetMusicVolume(s_configFile, &m->dune2000);
+		snprintf(category, sizeof(category), "music/%s", g_music_set_prefix[music_set]);
+
+		for (enum MusicID musicID = MUSIC_LOSE_ORDOS; musicID < MUSICID_MAX; musicID++) {
+			MusicInfoGlob glob[NUM_MUSIC_SETS];
+			MusicInfo *m = &g_table_music[musicID];
+
+			Audio_GlobMusicInfo(m, glob);
+
+			if (music_set == MUSICSET_DUNE2_ADLIB) {
+				MidiFileInfo *mid = glob[music_set].mid;
+
+				if (!enable_set) {
+					mid->enable = false;
+				}
+				else {
+					char key[1024];
+
+					snprintf(key, sizeof(key), "%s_%d", mid->filename, mid->track);
+					str = al_get_config_value(s_configFile, category, key);
+					if (str != NULL)
+						Config_GetBool(str, &mid->enable);
+				}
+			}
+			else {
+				ExtMusicInfo *ext = glob[music_set].ext;
+				const char *key = ext->filename + strlen(g_music_set_prefix[music_set]) + 1;
+
+				Config_GetMusicVolume(s_configFile, category, key, enable_set, ext);
+			}
+		}
 	}
 }
 

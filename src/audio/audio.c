@@ -36,53 +36,60 @@ static int s_voice_head = 0;
 static int s_voice_tail = 0;
 
 void
+Audio_GlobMusicInfo(MusicInfo *m, MusicInfoGlob glob[NUM_MUSIC_SETS])
+{
+	glob[MUSICSET_DUNE2_ADLIB].mid = &m->dune2_adlib;
+	glob[MUSICSET_FED2K_MT32].ext = &m->fed2k_mt32;
+	glob[MUSICSET_D2TM_ADLIB].ext = &m->d2tm_adlib;
+	glob[MUSICSET_D2TM_MT32].ext = &m->d2tm_mt32;
+	glob[MUSICSET_D2TM_SC55].ext = &m->d2tm_sc55;
+	glob[MUSICSET_DUNE2000].ext = &m->dune2000;
+}
+
+void
 Audio_ScanMusic(void)
 {
 	bool verbose = false;
 	struct stat st;
 	char buf[1024];
+	MusicInfoGlob glob[NUM_MUSIC_SETS];
 
 	for (enum MusicID musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
 		MusicInfo *m = &g_table_music[musicID];
 
-		ExtMusicInfo *ext[] = {
-			&m->fed2k_mt32,
-			&m->d2tm_adlib,
-			&m->d2tm_mt32,
-			&m->d2tm_sc55,
-			&m->dune2000,
-			NULL
-		};
+		Audio_GlobMusicInfo(m, glob);
 
-		for (int i = 0; ext[i]; i++) {
-			if (ext[i]->filename == NULL)
+		for (int i = MUSICSET_FED2K_MT32; i < NUM_MUSIC_SETS; i++) {
+			ExtMusicInfo *ext = glob[i].ext;
+
+			if (ext->filename == NULL)
 				continue;
 
-			if (!ext[i]->enable) {
-				if (verbose) fprintf(stdout, "[disable] %s\n", ext[i]->filename);
+			if (!ext->enable) {
+				if (verbose) fprintf(stdout, "[disable] %s\n", ext->filename);
 				continue;
 			}
 
-			snprintf(buf, sizeof(buf), "%s.flac", ext[i]->filename);
+			snprintf(buf, sizeof(buf), "%s.flac", ext->filename);
 			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s.flac\n", ext[i]->filename);
+				if (verbose) fprintf(stdout, "[enable]  %s.flac\n", ext->filename);
 				continue;
 			}
 
-			snprintf(buf, sizeof(buf), "%s.ogg", ext[i]->filename);
+			snprintf(buf, sizeof(buf), "%s.ogg", ext->filename);
 			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s.ogg\n", ext[i]->filename);
+				if (verbose) fprintf(stdout, "[enable]  %s.ogg\n", ext->filename);
 				continue;
 			}
 
-			snprintf(buf, sizeof(buf), "%s.AUD", ext[i]->filename);
+			snprintf(buf, sizeof(buf), "%s.AUD", ext->filename);
 			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s.AUD\n", ext[i]->filename);
+				if (verbose) fprintf(stdout, "[enable]  %s.AUD\n", ext->filename);
 				continue;
 			}
 
-			ext[i]->enable = false;
-			if (verbose) fprintf(stdout, "[missing] %s\n", ext[i]->filename);
+			ext->enable = false;
+			if (verbose) fprintf(stdout, "[missing] %s\n", ext->filename);
 		}
 	}
 }
@@ -98,32 +105,36 @@ Audio_PlayMusic(enum MusicID musicID)
 	if ((!g_enable_audio) || (!g_enable_music) || (musicID == MUSIC_INVALID))
 		return;
 
-	const MusicInfo *m = &g_table_music[musicID];
+	MusicInfo *m = &g_table_music[musicID];
+	MusicInfoGlob glob[NUM_MUSIC_SETS];
+	enum MusicSet music_set;
+	int num_sets = 0;
 
-	union {
-		const MidiFileInfo *mid;
-		const ExtMusicInfo *ext;
-	} data[NUM_MUSIC_SETS];
+	Audio_GlobMusicInfo(m, glob);
 
-	int num_types = 0;
+	for (music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
+		if (*(glob[music_set].enable)) {
+			num_sets++;
+		}
+	}
 
-	if (m->dune2_adlib.enable)  data[num_types++].mid = &m->dune2_adlib;
-	if (m->fed2k_mt32.enable)   data[num_types++].ext = &m->fed2k_mt32;
-	if (m->d2tm_adlib.enable)   data[num_types++].ext = &m->d2tm_adlib;
-	if (m->d2tm_mt32.enable)    data[num_types++].ext = &m->d2tm_mt32;
-	if (m->d2tm_sc55.enable)    data[num_types++].ext = &m->d2tm_sc55;
-	if (m->dune2000.enable)     data[num_types++].ext = &m->dune2000;
-
-	if (num_types <= 0)
+	if (num_sets <= 0)
 		return;
 
-	const int i = Tools_RandomRange(0, num_types - 1);
+	int i = Tools_RandomRange(0, num_sets - 1);
+	for (music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
+		if (*(glob[music_set].enable)) {
+			if (i == 0)
+				break;
+			i--;
+		}
+	}
 
-	if (data[i].mid == &m->dune2_adlib) {
-		AudioA5_InitMusic(data[i].mid);
+	if (music_set == MUSICSET_DUNE2_ADLIB) {
+		AudioA5_InitMusic(glob[music_set].mid);
 	}
 	else {
-		AudioA5_InitExternalMusic(data[i].ext);
+		AudioA5_InitExternalMusic(glob[music_set].ext);
 	}
 }
 

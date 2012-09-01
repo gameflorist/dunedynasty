@@ -378,6 +378,12 @@ typedef struct ExtMusicInfo {
 	const char *filename;
 } ExtMusicInfo;
 
+typedef union MusicInfoGlob {
+	bool *enable;
+	MidiFileInfo *mid;
+	ExtMusicInfo *ext;
+} MusicInfoGlob;
+
 typedef struct MusicInfo {
 	MidiFileInfo dune2_adlib;
 	ExtMusicInfo fed2k_mt32;
