@@ -7,7 +7,14 @@
 
 #include "types.h"
 
+enum WindowMode {
+	WM_WINDOWED,
+	WM_FULLSCREEN,
+	WM_FULLSCREEN_WINDOW
+};
+
 typedef struct GameCfg {
+	enum WindowMode windowMode;
 	unsigned int language;
 	int gameSpeed;
 	bool hints;

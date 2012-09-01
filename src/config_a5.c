@@ -25,6 +25,7 @@ typedef struct GameOption {
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_10,
 		CONFIG_LANGUAGE,
+		CONFIG_WINDOW
 	} type;
 
 	union {
@@ -32,12 +33,14 @@ typedef struct GameOption {
 		unsigned int *_language;
 		int *_int;
 		float *_float;
+		enum WindowMode *_window;
 	} d;
 } GameOption;
 
 static ALLEGRO_CONFIG *s_configFile;
 
 GameCfg g_gameConfig = {
+	WM_WINDOWED,
 	LANGUAGE_ENGLISH,
 	2,      /* gameSpeed */
 	true,   /* hints */
@@ -50,6 +53,7 @@ GameCfg g_gameConfig = {
 static const GameOption s_game_option[] = {
 	{ "game",   "screen_width",     CONFIG_INT,     .d._int = &TRUE_DISPLAY_WIDTH },
 	{ "game",   "screen_height",    CONFIG_INT,     .d._int = &TRUE_DISPLAY_HEIGHT },
+	{ "game",   "window_mode",      CONFIG_WINDOW,  .d._window = &g_gameConfig.windowMode },
 	{ "game",   "language",         CONFIG_LANGUAGE,.d._language = &g_gameConfig.language },
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
@@ -142,6 +146,42 @@ Config_SetLanguage(ALLEGRO_CONFIG *config, const char *section, const char *key,
 	al_set_config_value(config, section, key, g_languageSuffixes[value]);
 }
 
+static void
+Config_GetWindowMode(const char *str, enum WindowMode *value)
+{
+	/* Anything that's not 'fullscreen': win, window, windowed, etc. */
+	if (str[0] != 'f' && str[0] != 'F') {
+		*value = WM_WINDOWED;
+		return;
+	}
+
+	*value = WM_FULLSCREEN;
+
+	/* Anything with 'w': fsw, fullscreen_window, etc. */
+	while (*str != '\0') {
+		if (*str == 'w' || *str == 'W') {
+			*value = WM_FULLSCREEN_WINDOW;
+			return;
+		}
+
+		if (*str == '#' || *str == ';')
+			break;
+
+		str++;
+	}
+}
+
+static void
+Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *key, enum WindowMode value)
+{
+	const char *str[] = { "windowed", "fullscreen", "fullscreenwindow" };
+
+	if (value > WM_FULLSCREEN_WINDOW)
+		value = WM_WINDOWED;
+
+	al_set_config_value(config, section, key, str[value]);
+}
+
 /*--------------------------------------------------------------*/
 
 void
@@ -182,6 +222,10 @@ GameOptions_Load(void)
 			case CONFIG_LANGUAGE:
 				Config_GetLanguage(str, opt->d._language);
 				break;
+
+			case CONFIG_WINDOW:
+				Config_GetWindowMode(str, opt->d._window);
+				break;
 		}
 	}
 }
@@ -217,6 +261,10 @@ GameOptions_Save(void)
 
 			case CONFIG_LANGUAGE:
 				Config_SetLanguage(s_configFile, opt->section, opt->key, *(opt->d._language));
+				break;
+
+			case CONFIG_WINDOW:
+				Config_SetWindowMode(s_configFile, opt->section, opt->key, *(opt->d._window));
 				break;
 		}
 	}

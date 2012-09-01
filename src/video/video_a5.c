@@ -19,6 +19,7 @@
 #include "video_a5.h"
 
 #include "../common_a5.h"
+#include "../config.h"
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/font.h"
@@ -202,13 +203,24 @@ VideoA5_Init(void)
 {
 	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
 	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	int display_flags = ALLEGRO_GENERATE_EXPOSE_EVENTS;
 
-	al_set_new_display_flags(ALLEGRO_GENERATE_EXPOSE_EVENTS);
+	if (g_gameConfig.windowMode == WM_FULLSCREEN) {
+		display_flags |= ALLEGRO_FULLSCREEN;
+	}
+	else if (g_gameConfig.windowMode == WM_FULLSCREEN_WINDOW) {
+		display_flags |= ALLEGRO_FULLSCREEN_WINDOW;
+	}
+
+	al_set_new_display_flags(display_flags);
 	display = al_create_display(TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 	al_set_window_title(display, "Dune Dynasty");
 	/* display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT); */
 	if (display == NULL)
 		return false;
+
+	TRUE_DISPLAY_WIDTH = al_get_display_width(display);
+	TRUE_DISPLAY_HEIGHT = al_get_display_height(display);
 
 	VideoA5_InitDisplayIcon(dune2_16x16_xpm, 16, 16, 32);
 	/* VideoA5_InitDisplayIcon(dune2_32x32_xpm, 32, 32, 23); */
