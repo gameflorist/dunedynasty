@@ -4,9 +4,11 @@
 
 #include "xmi/xmidi.h"
 
+#define FRAG_COUNT      (4)
+#define FRAG_SAMPLES    (2048)
+
 static fluid_settings_t *settings;
 static fluid_synth_t *synth;
-static fluid_audio_driver_t *adriver;
 
 static bool
 create_synth(void)
@@ -21,20 +23,12 @@ create_synth(void)
     if (!synth) {
         return false;
     }
-    adriver = new_fluid_audio_driver(settings, synth);
-    if (!adriver) {
-        return false;
-    }
     return true;
 }
 
 static void
 delete_synth(void)
 {
-    if (adriver) {
-        delete_fluid_audio_driver(adriver);
-        adriver = NULL;
-    }
     if (synth) {
         delete_fluid_synth(synth);
         synth = NULL;
@@ -155,11 +149,25 @@ int main(int argc, const char **argv)
     al_install_keyboard();
     al_create_display(320, 200);
 
+    if (!al_install_audio()) {
+        return 1;
+    }
+    al_reserve_samples(0);
+
+    /* Fluidsynth and Allegro both use floating point internally. */
+    ALLEGRO_MIXER *mixer;
+    ALLEGRO_AUDIO_STREAM *stream;
+    mixer = al_get_default_mixer();
+    stream = al_create_audio_stream(FRAG_COUNT, FRAG_SAMPLES, 44100,
+        ALLEGRO_AUDIO_DEPTH_FLOAT32, ALLEGRO_CHANNEL_CONF_2);
+    al_attach_audio_stream_to_mixer(stream, mixer);
+
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     ALLEGRO_TIMER *timer = al_create_timer(ALLEGRO_BPM_TO_SECS(120.0 * ppqn));
 
     al_register_event_source(queue, al_get_timer_event_source(timer));
     al_register_event_source(queue, al_get_keyboard_event_source());
+    al_register_event_source(queue, al_get_audio_stream_event_source(stream));
 
     al_start_timer(timer);
 
@@ -176,6 +184,14 @@ int main(int argc, const char **argv)
                 }
                 midi_events = midi_events->next;
             }
+        }
+        if (ev.type == ALLEGRO_EVENT_AUDIO_STREAM_FRAGMENT) {
+            void *buf = al_get_audio_stream_fragment(stream);
+            fluid_synth_write_float(synth, FRAG_SAMPLES,
+                buf, 0, 2,  /* left channel */
+                buf, 1, 2   /* right channel */
+            );
+            al_set_audio_stream_fragment(stream, buf);
         }
         if (ev.type == ALLEGRO_EVENT_KEY_CHAR && ev.keyboard.unichar == 27) {
             break;
