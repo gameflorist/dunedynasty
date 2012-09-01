@@ -15,6 +15,7 @@ extern float music_volume;
 extern float sound_volume;
 extern float voice_volume;
 
+extern void Audio_DisplayMusicName(void);
 extern void Audio_GlobMusicInfo(MusicInfo *m, MusicInfoGlob glob[NUM_MUSIC_SETS]);
 extern void Audio_ScanMusic(void);
 extern void Audio_PlayMusic(enum MusicID musicID);

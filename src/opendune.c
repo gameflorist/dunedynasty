@@ -886,6 +886,10 @@ static void InGame_Numpad_Move(uint16 key)
 			Viewport_Homekey();
 			break;
 
+		case SCANCODE_F5:
+			Audio_DisplayMusicName();
+			break;
+
 		default: return;
 	}
 }

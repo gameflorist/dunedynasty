@@ -29,11 +29,19 @@ float music_volume = 0.85f;
 float sound_volume = 0.65f;
 float voice_volume = 1.0f;
 
+static char music_message[128];
+
 static enum HouseType s_curr_sample_set = HOUSE_INVALID;
 
 static enum SampleID s_voice_queue[256];
 static int s_voice_head = 0;
 static int s_voice_tail = 0;
+
+void
+Audio_DisplayMusicName(void)
+{
+	GUI_DisplayText(music_message, 5);
+}
 
 void
 Audio_GlobMusicInfo(MusicInfo *m, MusicInfoGlob glob[NUM_MUSIC_SETS])
@@ -131,10 +139,18 @@ Audio_PlayMusic(enum MusicID musicID)
 	}
 
 	if (music_set == MUSICSET_DUNE2_ADLIB) {
-		AudioA5_InitMusic(glob[music_set].mid);
+		MidiFileInfo *mid = glob[music_set].mid;
+
+		AudioA5_InitMusic(mid);
+		snprintf(music_message, sizeof(music_message), "Playing %s, track %d",
+				mid->filename, mid->track);
 	}
 	else {
-		AudioA5_InitExternalMusic(glob[music_set].ext);
+		ExtMusicInfo *ext = glob[music_set].ext;
+
+		AudioA5_InitExternalMusic(ext);
+		snprintf(music_message, sizeof(music_message), "Playing %s, volume %.2fx",
+				ext->filename, music_volume * ext->volume);
 	}
 }
 
