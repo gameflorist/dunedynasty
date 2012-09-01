@@ -29,6 +29,8 @@ float music_volume = 0.85f;
 float sound_volume = 0.65f;
 float voice_volume = 1.0f;
 
+static MusicInfoGlob curr_music;
+static enum MusicSet curr_music_set;
 static char music_message[128];
 
 static enum HouseType s_curr_sample_set = HOUSE_INVALID;
@@ -142,16 +144,17 @@ Audio_PlayMusic(enum MusicID musicID)
 		MidiFileInfo *mid = glob[music_set].mid;
 
 		AudioA5_InitMusic(mid);
-		snprintf(music_message, sizeof(music_message), "Playing %s, track %d",
-				mid->filename, mid->track);
+		snprintf(music_message, sizeof(music_message), "Playing %s, track %d", mid->filename, mid->track);
 	}
 	else {
 		ExtMusicInfo *ext = glob[music_set].ext;
 
 		AudioA5_InitExternalMusic(ext);
-		snprintf(music_message, sizeof(music_message), "Playing %s, volume %.2fx",
-				ext->filename, music_volume * ext->volume);
+		snprintf(music_message, sizeof(music_message), "Playing %s", ext->filename);
 	}
+
+	curr_music = glob[music_set];
+	curr_music_set = music_set;
 }
 
 void
@@ -159,6 +162,45 @@ Audio_PlayMusicIfSilent(enum MusicID musicID)
 {
 	if (!Audio_MusicIsPlaying())
 		Audio_PlayMusic(musicID);
+}
+
+void
+Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only)
+{
+	float volume;
+
+	/* Adjust single track. */
+	if (adjust_current_track_only && (curr_music_set != MUSICSET_DUNE2_ADLIB)) {
+		ExtMusicInfo *ext = curr_music.ext;
+
+		ext->volume += increase ? 0.05f : -0.05f;
+		ext->volume = clamp(0.0f, ext->volume, 2.0f);
+
+		volume = music_volume * curr_music.ext->volume;
+		snprintf(music_message, sizeof(music_message), "Playing %s, volume %.2f x %.2f",
+				ext->filename, music_volume, ext->volume);
+	}
+	else {
+		music_volume += increase ? 0.05f : -0.05f;
+		music_volume = clamp(0.0f, music_volume, 1.0f);
+
+		if (curr_music_set == MUSICSET_DUNE2_ADLIB) {
+			MidiFileInfo *mid = curr_music.mid;
+
+			volume = music_volume;
+			snprintf(music_message, sizeof(music_message), "Playing %s, track %d, volume %.2f",
+					mid->filename, mid->track, volume);
+		}
+		else {
+			ExtMusicInfo *ext = curr_music.ext;
+
+			volume = music_volume * ext->volume;
+			snprintf(music_message, sizeof(music_message), "Playing %s, volume %.2f x %.2f",
+					ext->filename, music_volume, ext->volume);
+		}
+	}
+
+	AudioA5_SetMusicVolume(volume);
 }
 
 void

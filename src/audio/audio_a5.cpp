@@ -286,6 +286,13 @@ AudioA5_InitExternalMusic(const ExtMusicInfo *ext)
 }
 
 void
+AudioA5_SetMusicVolume(float volume)
+{
+	if (s_music_stream != NULL)
+		al_set_audio_stream_gain(s_music_stream, volume);
+}
+
+void
 AudioA5_StopMusic(void)
 {
 	switch (curr_music_stream_type) {

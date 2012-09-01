@@ -20,6 +20,7 @@ extern void Audio_GlobMusicInfo(MusicInfo *m, MusicInfoGlob glob[NUM_MUSIC_SETS]
 extern void Audio_ScanMusic(void);
 extern void Audio_PlayMusic(enum MusicID musicID);
 extern void Audio_PlayMusicIfSilent(enum MusicID musicID);
+extern void Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only);
 extern void Audio_PlayEffect(enum SoundID effectID);
 extern void Audio_LoadSampleSet(enum HouseType houseID);
 extern void Audio_PlaySample(enum SampleID sampleID, int volume, float pan);

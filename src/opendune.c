@@ -890,6 +890,17 @@ static void InGame_Numpad_Move(uint16 key)
 			Audio_DisplayMusicName();
 			break;
 
+		case SCANCODE_F6:
+		case SCANCODE_F7:
+			{
+				const bool increase = (key == SCANCODE_F7);
+				const bool adjust_current_track_only = (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT));
+
+				Audio_AdjustMusicVolume(increase, adjust_current_track_only);
+				Audio_DisplayMusicName();
+			}
+			break;
+
 		default: return;
 	}
 }
