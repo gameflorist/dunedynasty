@@ -477,7 +477,7 @@ static uint16 GUI_Widget_ActionPanel_GetActionType(bool forceDraw)
 
 			if (actionType == displayedActionType && !forceDraw) actionType = 0;
 		} else {
-			u = Unit_FirstSelected();
+			u = Unit_GetForActionPanel();
 
 			if (forceDraw
 				|| u->o.index     != displayedIndex
@@ -596,7 +596,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 
 	switch (actionType) {
 		case 2: { /* Unit */
-			u  = Unit_FirstSelected();
+			u  = Unit_GetForActionPanel();
 			ui = &g_table_unitInfo[u->o.type];
 
 			o  = &u->o;

@@ -148,6 +148,51 @@ Unit_UnselectAll(void)
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 }
 
+Unit *
+Unit_GetForActionPanel(void)
+{
+	/* Select a representative unit for the action panel. */
+	const int priority_table[] = {
+		-9, /* UNIT_CARRYALL */
+		-9, /* UNIT_ORNITHOPTER */
+		15, /* UNIT_INFANTRY */
+		20, /* UNIT_TROOPERS */
+		 5, /* UNIT_SOLDIER */
+		10, /* UNIT_TROOPER */
+		-1, /* UNIT_SABOTEUR: sabotage instead of attack */
+		60, /* UNIT_LAUNCHER */
+		65, /* UNIT_DEVIATOR */
+		50, /* UNIT_TANK */
+		70, /* UNIT_SIEGE_TANK */
+		90, /* UNIT_DEVASTATOR: will destruct! */
+		80, /* UNIT_SONIC_TANK */
+		30, /* UNIT_TRIKE */
+		35, /* UNIT_RAIDER_TRIKE */
+		40, /* UNIT_QUAD */
+		-2, /* UNIT_HARVESTER: harvest instead of attack */
+		-3, /* UNIT_MCV: deploy instead of attack */
+	};
+
+	Unit *u;
+	Unit *best_unit = NULL;
+	int best_priority = -1000;
+
+	for (u = Unit_FirstSelected(); u != NULL; u = Unit_NextSelected(u)) {
+		int priority = -9;
+
+		if (u->o.type <= UNIT_MCV) {
+			priority = priority_table[u->o.type];
+		}
+
+		if (best_priority < priority) {
+			best_priority = priority;
+			best_unit = u;
+		}
+	}
+
+	return best_unit;
+}
+
 /**
  * Rotate a unit (or his top).
  *
