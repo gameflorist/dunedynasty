@@ -1574,7 +1574,8 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 
 			case SELECTIONTYPE_UNIT:
 				if (Unit_AnySelected() && selectionType != SELECTIONTYPE_TARGET && selectionType != SELECTIONTYPE_UNIT) {
-					for (Unit *u = Unit_FirstSelected(); u != NULL; u = Unit_NextSelected(u)) {
+					int iter;
+					for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 						Unit_UpdateMap(2, u);
 					}
 

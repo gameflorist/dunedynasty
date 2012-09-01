@@ -65,7 +65,8 @@ static uint32 SaveLoad_UnitSelected(void *object, uint32 value, bool loading)
 	}
 
 	if (Unit_AnySelected()) {
-		return Unit_FirstSelected()->o.index;
+		const Unit *u = Unit_FirstSelected(NULL);
+		return u->o.index;
 	} else {
 		return 0xFFFF;
 	}

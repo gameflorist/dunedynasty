@@ -1043,7 +1043,8 @@ void GameLoop_Main(bool new_game)
 				}
 
 				if (g_selectionType != SELECTIONTYPE_TARGET) {
-					g_selectionPosition = Tile_PackTile(Tile_Center(Unit_FirstSelected()->o.position));
+					const Unit *u = Unit_FirstSelected(NULL);
+					g_selectionPosition = Tile_PackTile(Tile_Center(u->o.position));
 				}
 			}
 

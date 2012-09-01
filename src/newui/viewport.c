@@ -95,7 +95,9 @@ static enum SelectionMode
 Viewport_GetSelectionMode(void)
 {
 	if (Unit_AnySelected()) {
-		if (Unit_GetHouseID(Unit_FirstSelected()) == g_playerHouseID) {
+		const Unit *u = Unit_FirstSelected(NULL);
+
+		if (Unit_GetHouseID(u) == g_playerHouseID) {
 			return SELECTION_MODE_CONTROLLABLE_UNIT;
 		}
 		else {
@@ -382,7 +384,8 @@ Viewport_Click(Widget *w)
 				return true;
 			}
 
-			for (Unit *u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
+			int iter;
+			for (Unit *u = Unit_FirstSelected(&iter); u; u = Unit_NextSelected(&iter)) {
 				Viewport_Target(u, g_activeAction, packed);
 			}
 
@@ -435,7 +438,8 @@ Viewport_Click(Widget *w)
 				attack = true;
 		}
 
-		for (Unit *u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
+		int iter;
+		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
 			enum ActionType action = ACTION_INVALID;
 

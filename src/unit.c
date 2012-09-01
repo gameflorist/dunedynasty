@@ -60,33 +60,34 @@ uint16 g_var_39E8 = 0;
 int16 g_starportAvailable[UNIT_MAX];
 
 Unit *
-Unit_FirstSelected(void)
+Unit_FirstSelected(int *iter)
 {
 	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
-		if (g_unitSelected[i])
+		if (g_unitSelected[i]) {
+			if (iter != NULL)
+				*iter = i;
+
 			return g_unitSelected[i];
+		}
 	}
+
+	if (iter != NULL)
+		*iter = 0;
 
 	return NULL;
 }
 
 Unit *
-Unit_NextSelected(Unit *unit)
+Unit_NextSelected(int *iter)
 {
-	int i;
-
-	for (i = 0; i < MAX_SELECTABLE_UNITS; i++) {
-		if (g_unitSelected[i] == unit) {
-			i++;
-			break;
+	for (int i = *iter + 1; i < MAX_SELECTABLE_UNITS; i++) {
+		if (g_unitSelected[i]) {
+			*iter = i;
+			return g_unitSelected[i];
 		}
 	}
 
-	for (; i < MAX_SELECTABLE_UNITS; i++) {
-		if (g_unitSelected[i])
-			return g_unitSelected[i];
-	}
-
+	*iter = 0;
 	return NULL;
 }
 
@@ -176,8 +177,9 @@ Unit_GetForActionPanel(void)
 	Unit *u;
 	Unit *best_unit = NULL;
 	int best_priority = -1000;
+	int iter;
 
-	for (u = Unit_FirstSelected(); u != NULL; u = Unit_NextSelected(u)) {
+	for (u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 		int priority = -9;
 
 		if (u->o.type <= UNIT_MCV) {
@@ -1802,6 +1804,7 @@ void Unit_SetOrientation(Unit *unit, int8 orientation, bool rotateInstantly, uin
  */
 void Unit_Select(Unit *unit)
 {
+	int iter;
 	assert(unit != NULL);
 
 	if (Unit_IsSelected(unit))
@@ -1816,7 +1819,7 @@ void Unit_Select(Unit *unit)
 	}
 
 	if (Unit_AnySelected()) {
-		for (Unit *u = Unit_FirstSelected(); u != NULL; u = Unit_NextSelected(u)) {
+		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 			Unit_UpdateMap(2, u);
 		}
 	}
@@ -1847,7 +1850,7 @@ void Unit_Select(Unit *unit)
 		}
 	}
 
-	for (Unit *u = Unit_FirstSelected(); u != NULL; u = Unit_NextSelected(u)) {
+	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 		Unit_UpdateMap(2, u);
 	}
 
@@ -2202,9 +2205,9 @@ void Unit_DisplayGroupStatusText(void)
 
 	int highest_priority = -1;
 	Unit *best_candidate = NULL;
+	int iter;
 	
-	Unit *u = Unit_FirstSelected();
-	while (u != NULL) {
+	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 		int priority = ui->o.priorityTarget;
 
@@ -2216,8 +2219,6 @@ void Unit_DisplayGroupStatusText(void)
 			highest_priority = priority;
 			best_candidate = u;
 		}
-
-		u = Unit_NextSelected(u);
 	}
 
 	if (best_candidate != NULL)

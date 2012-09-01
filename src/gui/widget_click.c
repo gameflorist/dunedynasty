@@ -306,7 +306,8 @@ bool GUI_Widget_TextButton_Click(Widget *w)
 	UnitInfo *ui = &g_table_unitInfo[ref->o.type];
 	ActionType action = ui->o.actionsPlayer[w->index - 8];
 
-	for (Unit *u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
+	int iter;
+	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 		GUI_Widget_TextButton_Click_(w, action, u);
 	}
 

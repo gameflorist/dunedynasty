@@ -90,9 +90,8 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 
 	spriteID = 0;
 	if (Unit_AnySelected()) {
-		const UnitInfo *ui;
-
-		ui = &g_table_unitInfo[Unit_FirstSelected()->o.type];
+		const Unit *u = Unit_FirstSelected(NULL);
+		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 
 		spriteID = ui->o.spriteID;
 	} else {

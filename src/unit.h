@@ -200,8 +200,8 @@ extern int16 g_starportAvailable[UNIT_MAX];
 extern uint16 g_var_39E6;
 extern uint16 g_var_39E8;
 
-extern Unit *Unit_FirstSelected(void);
-extern Unit *Unit_NextSelected(Unit *unit);
+extern Unit *Unit_FirstSelected(int *iter);
+extern Unit *Unit_NextSelected(int *iter);
 extern bool Unit_IsSelected(const Unit *unit);
 extern bool Unit_AnySelected(void);
 extern void Unit_AddSelected(Unit *unit);

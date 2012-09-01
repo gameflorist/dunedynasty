@@ -149,7 +149,8 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 			return true;
 		}
 
-		for (Unit *u = Unit_FirstSelected(); u; u = Unit_NextSelected(u)) {
+		int iter;
+		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 			Viewport_Target(u, g_activeAction, packed);
 		}
 
