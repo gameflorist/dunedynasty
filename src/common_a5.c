@@ -104,3 +104,16 @@ A5_UseMenuTransform(void)
 	al_use_transform(&menu_transform);
 	apply_transform = true;
 }
+
+bool
+A5_SaveTransform(void)
+{
+	return apply_transform;
+}
+
+void
+A5_RestoreTransform(bool prev_transform)
+{
+	if (prev_transform)
+		A5_UseMenuTransform();
+}

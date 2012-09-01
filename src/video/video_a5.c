@@ -500,9 +500,14 @@ VideoA5_DrawFilledRectRGBA(int x1, int y1, int x2, int y2, unsigned char r, unsi
 void
 VideoA5_ShadeScreen(int alpha)
 {
+	const bool prev_transform = A5_SaveTransform();
+
 	alpha = clamp(0x00, alpha, 0xFF);
 
+	A5_UseIdentityTransform();
 	al_draw_filled_rectangle(0.0f, 0.0f, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT, al_map_rgba(0, 0, 0, alpha));
+
+	A5_RestoreTransform(prev_transform);
 }
 
 /*--------------------------------------------------------------*/

@@ -10,5 +10,7 @@ extern bool A5_Init(void);
 extern void A5_Uninit(void);
 extern void A5_UseIdentityTransform(void);
 extern void A5_UseMenuTransform(void);
+extern bool A5_SaveTransform(void);
+extern void A5_RestoreTransform(bool prev_transform);
 
 #endif
