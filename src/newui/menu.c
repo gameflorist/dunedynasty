@@ -592,7 +592,7 @@ StartGame_Loop(bool new_game)
 			return MENU_NO_TRANSITION | MENU_BRIEFING_LOSE;
 
 		case GM_QUITGAME:
-			return MENU_EXIT_GAME;
+			return MENU_MAIN_MENU;
 	}
 
 	return MENU_MAIN_MENU;
