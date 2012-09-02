@@ -2155,7 +2155,10 @@ void Structure_InitFactoryItems(const Structure *s)
 		const int end = (s->o.type == STRUCTURE_STARPORT) ? UNIT_MCV + 1 : 8;
 
 		for (int i = 0; i < end; i++) {
-			const uint16 unitType = (s->o.type == STRUCTURE_STARPORT) ? i : si->buildableUnits[i];
+			uint16 unitType = (s->o.type == STRUCTURE_STARPORT) ? i : si->buildableUnits[i];
+
+			if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS && s->o.type != STRUCTURE_STARPORT)
+				unitType = UNIT_RAIDER_TRIKE;
 
 			if (unitType > UNIT_MCV)
 				continue;
