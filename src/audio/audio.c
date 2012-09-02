@@ -347,9 +347,7 @@ Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position)
 
 	const enum SampleID sampleID = g_table_voiceMapping[soundID];
 
-	if (!g_enable_sounds || (sampleID == SAMPLE_INVALID)) {
-		Audio_PlayEffect(soundID);
-	}
+	Audio_PlayEffect(soundID);
 
 	if (g_enable_sounds && (sampleID != SAMPLE_INVALID)) {
 		int volume = 255;
