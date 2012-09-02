@@ -586,6 +586,7 @@ StartGame_Loop(bool new_game)
 			return MENU_PICK_HOUSE;
 
 		case GM_WIN:
+			g_strategicRegionBits = 0;
 			return MENU_NO_TRANSITION | MENU_BRIEFING_WIN;
 
 		case GM_LOSE:
