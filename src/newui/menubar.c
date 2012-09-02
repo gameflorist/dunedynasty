@@ -78,7 +78,7 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 }
 
 void
-MenuBar_DrawStatusBar(const char *line1, const char *line2, uint8 fg1, uint8 fg2, int offset)
+MenuBar_DrawStatusBar(const char *line1, const char *line2, uint8 fg1, uint8 fg2, bool scrollInProgress, int offset)
 {
 	const int x = g_widgetProperties[WINDOWID_STATUSBAR].xBase*8;
 	const int y = g_widgetProperties[WINDOWID_STATUSBAR].yBase;
@@ -87,12 +87,12 @@ MenuBar_DrawStatusBar(const char *line1, const char *line2, uint8 fg1, uint8 fg2
 
 	Video_SetClippingArea(x, y, w, h);
 
-	if (offset == 0) {
-		GUI_DrawText_Wrapper(line1, x, y - offset + 2, fg1, 0, 0x012);
-	}
-	else {
+	if (scrollInProgress) {
 		GUI_DrawText_Wrapper(line2, x, y - offset + 2, fg2, 0, 0x012);
 		GUI_DrawText_Wrapper(line1, x, y - offset + 13, fg1, 0, 0x012);
+	}
+	else {
+		GUI_DrawText_Wrapper(line1, x, y - offset + 2, fg1, 0, 0x012);
 	}
 
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);

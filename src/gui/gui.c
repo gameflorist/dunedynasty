@@ -182,7 +182,8 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		displayLine3[0] = '\0';
 	}
 
-	MenuBar_DrawStatusBar(displayLine1, displayLine2, fgColour1, fgColour2, textOffset);
+	if (str == NULL)
+		MenuBar_DrawStatusBar(displayLine1, displayLine2, fgColour1, fgColour2, scrollInProgress, textOffset);
 
 	if (scrollInProgress) {
 		if (buffer[0] != '\0') {
