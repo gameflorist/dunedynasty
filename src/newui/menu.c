@@ -611,6 +611,7 @@ static enum MenuAction
 LoadGame_Loop(void)
 {
 	const int ret = GUI_Widget_SaveLoad_Click(false);
+	bool redraw = false;
 
 	if (ret == -1) {
 		return MENU_MAIN_MENU;
@@ -619,7 +620,18 @@ LoadGame_Loop(void)
 		return StartGame_Loop(false);
 	}
 
-	return MENU_REDRAW | MENU_LOAD_GAME;
+	Widget *w = g_widgetLinkedListTail;
+	while (w != NULL) {
+		if ((w->state.s.selected != w->state.s.selectedLast) ||
+			(w->state.s.hover1 != w->state.s.hover1Last)) {
+			redraw = true;
+			break;
+		}
+
+		w = GUI_Widget_GetNext(w);
+	}
+
+	return (redraw ? MENU_REDRAW : 0) | MENU_LOAD_GAME;
 }
 
 /*--------------------------------------------------------------*/
