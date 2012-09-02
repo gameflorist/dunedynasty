@@ -544,6 +544,11 @@ uint16 Script_Structure_Fire(ScriptEngine *script)
 		type      = UNIT_BULLET;
 		damage    = 20;
 		fireDelay = Tools_AdjustToGameSpeed(g_table_unitInfo[UNIT_TANK].fireDelay, 1, 255, true);
+
+		/* Cannon turrets and rocket turrets at close range were silent. */
+		if (enhancement_play_additional_voices) {
+			Audio_PlaySoundAtTile(SOUND_TANK, s->o.position);
+		}
 	}
 
 	position.tile = s->o.position.tile;
