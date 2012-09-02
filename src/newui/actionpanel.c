@@ -6,6 +6,7 @@
 
 #include "actionpanel.h"
 
+#include "../audio/audio.h"
 #include "../gfx.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
@@ -480,6 +481,9 @@ ActionPanel_ClickStarportPlus(Structure *s, int entry)
 		}
 
 		h->credits -= item->credits;
+	}
+	else {
+		Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 	}
 }
 
