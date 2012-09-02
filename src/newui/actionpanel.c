@@ -354,8 +354,12 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			break;
 	}
 
-	if (g_factoryWindowItems[item].available <= 0)
+	if (g_factoryWindowItems[item].available <= 0) {
+		if (item < g_factoryWindowTotal)
+			Audio_PlaySound(EFFECT_ERROR_OCCURRED);
+
 		return false;
+	}
 
 	const uint16 clicked_type = g_factoryWindowItems[item].objectType;
 
@@ -396,7 +400,9 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			case STR_BUILD_IT:
 				if (lmb) {
 					s->objectType = g_factoryWindowItems[item].objectType;
-					Structure_BuildObject(s, s->objectType);
+					if (!Structure_BuildObject(s, s->objectType)) {
+						Audio_PlaySound(EFFECT_ERROR_OCCURRED);
+					}
 				}
 				break;
 
