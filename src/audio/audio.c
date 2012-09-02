@@ -15,6 +15,7 @@
 #include "../string.h"
 #include "../table/widgetinfo.h"
 #include "../tile.h"
+#include "../timer/timer.h"
 #include "../tools.h"
 
 bool g_enable_audio;
@@ -35,6 +36,7 @@ static char music_message[128];
 
 static enum HouseType s_curr_sample_set = HOUSE_INVALID;
 
+static int64_t s_sample_last_played[SAMPLEID_MAX];
 static enum SampleID s_voice_queue[256];
 static int s_voice_head = 0;
 static int s_voice_tail = 0;
@@ -326,7 +328,13 @@ Audio_PlaySample(enum SampleID sampleID, int volume, float pan)
 	if ((!g_enable_audio) || (!g_enable_sounds) || (sampleID == SAMPLE_INVALID))
 		return;
 
-	AudioA5_PlaySample(sampleID, (float)volume / 255.0f, pan);
+	const int64_t curr_ticks = Timer_GetTicks();
+	assert(sampleID < SAMPLEID_MAX);
+
+	if (curr_ticks - s_sample_last_played[sampleID] > 6) {
+		s_sample_last_played[sampleID] = curr_ticks;
+		AudioA5_PlaySample(sampleID, (float)volume / 255.0f, pan);
+	}
 }
 
 void
