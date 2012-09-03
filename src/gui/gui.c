@@ -145,9 +145,6 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 	static int16 line1Importance;    /* Importance of the displayed line of text. */
 	static int16 line2Importance;    /* Importance of the next line of text. */
 	static int16 line3Importance;    /* Importance of the next message. */
-	static uint8 fgColour1;          /* Foreground colour current line. */
-	static uint8 fgColour2;          /* Foreground colour next line. */
-	static uint8 fgColour3;          /* Foreground colour next message. */
 
 	buffer[0] = '\0';
 
@@ -183,7 +180,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 	}
 
 	if (str == NULL)
-		MenuBar_DrawStatusBar(displayLine1, displayLine2, fgColour1, fgColour2, scrollInProgress, textOffset);
+		MenuBar_DrawStatusBar(displayLine1, displayLine2, scrollInProgress, textOffset);
 
 	if (scrollInProgress) {
 		if (buffer[0] != '\0') {
@@ -235,13 +232,11 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 
 		/* Finished scrolling, move line 2 to line 1. */
 		strcpy(displayLine1, displayLine2);
-		fgColour1 = fgColour2;
 		line1Importance = (line2Importance != 0) ? line2Importance - 1 : 0;
 
 		/* And move line 3 to line 2. */
 		strcpy(displayLine2, displayLine3);
 		line2Importance = line3Importance;
-		fgColour2 = fgColour3;
 		displayLine3[0] = '\0';
 
 		line3Importance = -1;
@@ -259,18 +254,15 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 			if (importance >= line2Importance) {
 				/* Move line 2 to line 2 to make room for the new line. */
 				strcpy(displayLine3, displayLine2);
-				fgColour3 = fgColour2;
 				line3Importance = line2Importance;
 				/* Copy new line to line 2. */
 				strcpy(displayLine2, buffer);
-				fgColour2 = 12;
 				line2Importance = importance;
 
 			} else if (importance >= line3Importance) {
 				/* Copy new line to line 3. */
 				strcpy(displayLine3, buffer);
 				line3Importance = importance;
-				fgColour3 = 12;
 			}
 		}
 	} else {
