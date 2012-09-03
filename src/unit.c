@@ -1804,6 +1804,9 @@ uint16 Unit_FindTargetAround(uint16 packed)
 
 	uint8 i;
 
+	if (enhancement_i_mean_where_i_clicked)
+		return packed;
+
 	if (g_selectionType == SELECTIONTYPE_PLACE) return packed;
 
 	if (Structure_Get_ByPackedTile(packed) != NULL) return packed;

@@ -42,6 +42,12 @@ bool enhancement_fix_ix_colour_remapping = true;
 bool enhancement_fix_selection_after_entering_structure = true;
 
 /**
+ * Dune 2 likes to search the tiles surrounding the one you clicked
+ * for an appropriate target, which can be annoying.
+ */
+bool enhancement_i_mean_where_i_clicked = true;
+
+/**
  * In the original game, sandworms disappear after eating a set number
  * of units.
  */
