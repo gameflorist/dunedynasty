@@ -16,7 +16,7 @@
 #include "../structure.h"
 
 static struct Structure g_structureArray[STRUCTURE_INDEX_MAX_HARD];
-static struct Structure *g_structureFindArray[STRUCTURE_INDEX_MAX_HARD];
+static struct Structure *g_structureFindArray[STRUCTURE_INDEX_MAX_SOFT];
 static uint16 g_structureFindCount;
 
 /**
@@ -68,6 +68,10 @@ void Structure_Init(void)
 	memset(g_structureArray, 0, sizeof(g_structureArray));
 	memset(g_structureFindArray, 0, sizeof(g_structureFindArray));
 	g_structureFindCount = 0;
+
+	Structure_Allocate(0, STRUCTURE_SLAB_1x1);
+	Structure_Allocate(0, STRUCTURE_SLAB_2x2);
+	Structure_Allocate(0, STRUCTURE_WALL);
 }
 
 /**
@@ -87,7 +91,7 @@ void Structure_Recount(void)
 
 	g_structureFindCount = 0;
 
-	for (index = 0; index < STRUCTURE_INDEX_MAX_HARD; index++) {
+	for (index = 0; index < STRUCTURE_INDEX_MAX_SOFT; index++) {
 		Structure *s = Structure_Get_ByIndex(index);
 		if (!s->o.flags.s.used) continue;
 
@@ -134,6 +138,8 @@ Structure *Structure_Allocate(uint16 index, uint8 type)
 				s = Structure_Get_ByIndex(index);
 				if (s->o.flags.s.used) return NULL;
 			}
+
+			g_structureFindArray[g_structureFindCount++] = s;
 			break;
 	}
 	assert(s != NULL);
@@ -146,8 +152,6 @@ Structure *Structure_Allocate(uint16 index, uint8 type)
 	s->o.flags.s.used      = true;
 	s->o.flags.s.allocated = true;
 	s->o.script.delay = 0;
-
-	g_structureFindArray[g_structureFindCount++] = s;
 
 	return s;
 }
@@ -167,7 +171,11 @@ void Structure_Free(Structure *s)
 
 	Script_Reset(&s->o.script, g_scriptStructure);
 
+	if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
+		return;
+
 	/* Walk the array to find the Structure we are removing */
+	assert(g_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
 	for (i = 0; i < g_structureFindCount; i++) {
 		if (g_structureFindArray[i] != s) continue;
 		break;
