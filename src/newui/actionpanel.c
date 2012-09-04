@@ -707,7 +707,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			if (s->objectType == object_type)
 				count++;
 
-			GUI_DrawText_Wrapper("%d", x1 + w - 1, y1 + h - 8, 14, 0, 0x231, count);
+			GUI_DrawText_Wrapper("x%d", x1 + w - 1, y1 + h - 10, 15, 0, 0x232, count);
 		}
 	}
 
