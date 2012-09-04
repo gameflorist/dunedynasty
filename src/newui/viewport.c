@@ -222,6 +222,9 @@ Viewport_Target(Unit *u, enum ActionType action, uint16 packed)
 {
 	uint16 encoded;
 
+	if (Unit_GetHouseID(u) != g_playerHouseID)
+		return;
+
 	Object_Script_Variable4_Clear(&u->o);
 	u->targetAttack = 0;
 	u->targetMove = 0;
