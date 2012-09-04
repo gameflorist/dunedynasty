@@ -680,7 +680,12 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 		default: break;
 	}
 
-	u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 255, true) & 0xFF;
+	if (enhancement_fix_firing_rates_and_ranges) {
+		u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 65535, true);
+	}
+	else {
+		u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 255, true) & 0xFF;
+	}
 
 	if (fireTwice) {
 		u->o.flags.s.fireTwiceFlip = !u->o.flags.s.fireTwiceFlip;

@@ -24,6 +24,12 @@ bool enhancement_fix_enemy_approach_direction_warning = true;
 bool enhancement_fix_everlasting_unit_wobble = true;
 
 /**
+ * In the original game, sonic blasts' travel distance and units'
+ * relative firing rates vary with the game speed.
+ */
+bool enhancement_fix_firing_rates_and_ranges = true;
+
+/**
  * Too many tile colours are remapped with house colours, causing
  * graphical issues with the IX building.
  */
