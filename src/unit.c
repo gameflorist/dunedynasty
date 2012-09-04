@@ -182,6 +182,9 @@ Unit_GetForActionPanel(void)
 
 		if (u->o.type <= UNIT_MCV) {
 			priority = priority_table[u->o.type];
+
+			if (Unit_GetHouseID(u) == g_playerHouseID)
+				priority += 100;
 		}
 
 		if (best_priority < priority) {
