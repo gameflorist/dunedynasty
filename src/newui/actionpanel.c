@@ -596,7 +596,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 	GUI_DrawWiredRectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 12);
 
 	if (BuildQueue_IsEmpty(&s->queue)) {
-		Video_DrawFilledRectRGB(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8);
+		GUI_DrawFilledRectRGBA(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8, 0XFF);
 		GUI_DrawBorder(x1, y1, w, h, 1, false);
 		fg = 0xE;
 	}
@@ -689,9 +689,11 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 				const int timeLeft = buildTime - (s->countDown + 255) / 256;
 				const int percentDone = 100 * timeLeft / buildTime;
 
+				GUI_DrawFilledRectRGBA(x1 + 2, y1 + 12, x1 + w - 3, y1 + 12 + g_fontCurrent->height + 3, 0x00, 0x00, 0x00, 0x80);
 				GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 14, fg, 0, 0x121, percentDone);
 			}
 			else if (g_productionStringID != STR_BUILD_IT) {
+				GUI_DrawFilledRectRGBA(x1 + 2, y1 + 12, x1 + w - 3, y1 + 12 + g_fontCurrent->height + 3, 0x00, 0x00, 0x00, 0x80);
 				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), x1 + w / 2, y1 + 14, fg, 0, 0x121);
 			}
 		}
