@@ -50,9 +50,6 @@ Unit *g_unitActive = NULL;
 Unit *g_unitHouseMissile = NULL;
 static Unit *g_unitSelected[MAX_SELECTABLE_UNITS];
 
-uint16 g_var_39E6 = 0;
-uint16 g_var_39E8 = 0;
-
 /**
  * Number of units of each type available at the starport.
  * \c 0 means not available, \c -1 means \c 0 units, \c >0 means that number of units available.
@@ -2589,7 +2586,6 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 	if (ui->movementType == MOVEMENT_WINGER) {
 		if (type != 0) {
 			unit->o.flags.s.isDirty = true;
-			g_var_39E8++;
 		}
 
 		Map_UpdateAround(g_table_unitInfo[unit->o.type].dimension, unit->o.position, unit, g_functions[0][type]);
@@ -2619,7 +2615,6 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 
 	if (type != 0) {
 		unit->o.flags.s.isDirty = true;
-		g_var_39E6++;
 	}
 
 	radius = ui->dimension + 3;

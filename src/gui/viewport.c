@@ -376,7 +376,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		}
 	}
 
-	if (g_var_39E6 != 0 || forceRedraw || updateDisplay) {
+	if (true || forceRedraw || updateDisplay) {
 		find.type    = 0xFFFF;
 		find.index   = 0xFFFF;
 		find.houseID = HOUSE_INVALID;
@@ -528,8 +528,6 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 			Viewport_DrawSelectedUnit(x, y);
 		}
-
-		g_var_39E6 = 0;
 	}
 
 	Viewport_DrawRallyPoint();
@@ -557,7 +555,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 #endif
 	}
 
-	if (g_var_39E8 != 0 || forceRedraw || updateDisplay) {
+	if (true || forceRedraw || updateDisplay) {
 		find.type    = 0xFFFF;
 		find.index   = 0xFFFF;
 		find.houseID = HOUSE_INVALID;
@@ -659,8 +657,6 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 			Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, 2, s_spriteFlags | 0x2000);
 #endif
 		}
-
-		g_var_39E8 = 0;
 	}
 
 	if (updateDisplay) {

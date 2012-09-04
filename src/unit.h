@@ -197,9 +197,6 @@ extern Unit *g_unitActive;
 extern Unit *g_unitHouseMissile;
 extern int16 g_starportAvailable[UNIT_MAX];
 
-extern uint16 g_var_39E6;
-extern uint16 g_var_39E8;
-
 extern Unit *Unit_FirstSelected(int *iter);
 extern Unit *Unit_NextSelected(int *iter);
 extern bool Unit_IsSelected(const Unit *unit);
