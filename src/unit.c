@@ -915,6 +915,23 @@ uint16 Unit_GetTargetUnitPriority(Unit *unit, Unit *target)
 	priority = targetInfo->o.priorityTarget + targetInfo->o.priorityBuild;
 	if (distance != 0) priority = (priority / distance) + 1;
 
+	if (AI_IsBrutalAI(Unit_GetHouseID(unit))) {
+		/* Make brutal AI prefer to attack its own deviated vehicles with light guns. */
+		bool was_ally = House_AreAllied(Unit_GetHouseID(unit), target->o.houseID);
+
+		if (was_ally) {
+			if (g_table_unitInfo[unit->o.type].damage >= target->o.hitpoints) {
+				return 0;
+			}
+			else if (g_table_unitInfo[unit->o.type].damage <= 10) {
+				priority += 100;
+			}
+			else {
+				priority = 1;
+			}
+		}
+	}
+
 	if (priority > 0x7D00) return 0x7D00;
 	return priority;
 }
@@ -1400,6 +1417,11 @@ bool Unit_Deviate(Unit *unit, uint16 probability)
 	Unit_UpdateMap(2, unit);
 
 	if (g_playerHouseID == HOUSE_ORDOS) {
+		/* Make brutal AI know about its own deviated units. */
+		if (AI_IsBrutalAI(unit->o.houseID)) {
+			unit->o.seenByHouses = 0xFF;
+		}
+
 		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
 		if (AI_IsBrutalAI(HOUSE_ORDOS)) {
