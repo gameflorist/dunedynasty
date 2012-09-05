@@ -50,6 +50,8 @@ static int64_t s_tickStructurePalace    = 0; /*!< Indicates next time Palace fun
 
 uint16 g_structureIndex;
 
+static int16 Structure_IsValidBuildLandscape(uint16 position, StructureType type);
+
 /**
  * Loop over all structures, preforming various of tasks.
  */
@@ -570,7 +572,16 @@ bool Structure_Place(Structure *s, uint16 position)
 		} return true;
 	}
 
-	loc0A = Structure_IsValidBuildLocation(position, s->o.type);
+	if (AI_IsBrutalAI(s->o.houseID)) {
+		/* Make brutal AI actually place the structure.  It doesn't
+		 * need to obey the connectivity rules, but we'll penalise it
+		 * for rebuilding structures without concrete.
+		 */
+		loc0A = Structure_IsValidBuildLandscape(position, s->o.type);
+	}
+	else {
+		loc0A = Structure_IsValidBuildLocation(position, s->o.type);
+	}
 
 	if (loc0A == 0) {
 		if ((s->o.houseID != g_playerHouseID || !g_debugScenario) && g_var_38BC == 0) {
@@ -792,7 +803,8 @@ uint32 Structure_GetStructuresBuilt(House *h)
  * @param type The structure type to check the position for.
  * @return 0 if the position is not valid, 1 if the position is valid and have enough slabs, <0 if the position is valid but miss some slabs.
  */
-int16 Structure_IsValidBuildLocation(uint16 position, StructureType type)
+static int16
+Structure_IsValidBuildLandscape(uint16 position, StructureType type)
 {
 	const StructureInfo *si;
 	const uint16 *layoutTile;
@@ -844,6 +856,23 @@ int16 Structure_IsValidBuildLocation(uint16 position, StructureType type)
 		}
 	}
 
+	if (!isValid) return 0;
+	if (neededSlabs == 0) return 1;
+	return -neededSlabs;
+}
+
+int16 Structure_IsValidBuildLocation(uint16 position, StructureType type)
+{
+	const StructureInfo *si;
+	uint8 i;
+	int16 retSlabs;
+	bool isValid;
+	uint16 curPos;
+
+	si = &g_table_structureInfo[type];
+	retSlabs = Structure_IsValidBuildLandscape(position, type);
+	isValid = (retSlabs != 0);
+
 	if (g_var_38BC == 0 && isValid && type != STRUCTURE_CONSTRUCTION_YARD && !g_debugScenario) {
 		isValid = false;
 		for (i = 0; i < 16; i++) {
@@ -871,8 +900,7 @@ int16 Structure_IsValidBuildLocation(uint16 position, StructureType type)
 	}
 
 	if (!isValid) return 0;
-	if (neededSlabs == 0) return 1;
-	return -neededSlabs;
+	return retSlabs;
 }
 
 /**
