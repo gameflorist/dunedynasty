@@ -11,6 +11,7 @@
 
 #include "script.h"
 
+#include "../ai.h"
 #include "../animation.h"
 #include "../audio/audio.h"
 #include "../config.h"
@@ -1655,6 +1656,14 @@ uint16 Script_Unit_Harvest(ScriptEngine *script)
 	VARIABLE_NOT_USED(script);
 
 	u = g_scriptCurrentUnit;
+
+	if (AI_IsBrutalAI(Unit_GetHouseID(u))) {
+		/* In brutal AI, call for a carryall if a worm attack is imminent. */
+		if (UnitAI_CallCarryallToEvadeSandworm(u)) {
+			u->actionID = ACTION_STOP;
+			return 0;
+		}
+	}
 
 	if (u->o.type != UNIT_HARVESTER) return 0;
 	if (u->amount >= 100) return 0;
