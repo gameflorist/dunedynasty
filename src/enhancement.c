@@ -12,6 +12,12 @@
 bool g_dune2_enhanced = true;
 
 /**
+ * Various AI changes to make the game tougher.  Includes double
+ * production rate, half cost, rebuild base, etc.
+ */
+bool enhancement_brutal_ai = false;
+
+/**
  * Fix the often incorrect warning message regarding the direction of
  * incoming enemies in the early missions.
  */

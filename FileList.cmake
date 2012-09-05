@@ -1,4 +1,5 @@
 set(DUNEDYNASTY_SRC_FILES
+	src/ai.c
 	src/animation.c
 	src/audio/adl/fmopl.cpp
 	src/audio/adl/opl_dosbox.cpp

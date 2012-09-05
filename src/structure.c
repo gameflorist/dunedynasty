@@ -11,6 +11,7 @@
 
 #include "structure.h"
 
+#include "ai.h"
 #include "animation.h"
 #include "audio/audio.h"
 #include "enhancement.h"
@@ -195,9 +196,15 @@ void GameLoop_Structure(void)
 						buildSpeed = s->o.hitpoints * 256 / si->o.hitpoints;
 					}
 
-					/* For AIs, we slow down building speed in all but the last campaign */
 					if (g_playerHouseID != s->o.houseID) {
-						if (buildSpeed > g_campaignID * 20 + 95) buildSpeed = g_campaignID * 20 + 95;
+						if (AI_IsBrutalAI(s->o.houseID)) {
+							/* For brutal AI, double production speed. */
+							buildSpeed *= 2;
+						}
+						else if (buildSpeed > g_campaignID * 20 + 95) {
+							/* For AIs, we slow down building speed in all but the last campaign */
+							buildSpeed = g_campaignID * 20 + 95;
+						}
 					}
 
 					buildCost = oi->buildCredits * 256 / oi->buildTime;
@@ -211,6 +218,11 @@ void GameLoop_Structure(void)
 					}
 
 					buildCost += s->buildCostRemainder;
+
+					/* For brutal AI, half production cost. */
+					if (AI_IsBrutalAI(s->o.houseID)) {
+						buildCost /= 2;
+					}
 
 					if (buildCost / 256 <= h->credits) {
 						s->buildCostRemainder = buildCost & 0xFF;
