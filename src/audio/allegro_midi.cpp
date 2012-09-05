@@ -13,11 +13,8 @@ struct MIDI_PLAYER
 {
     fluid_settings_t *settings;
     fluid_synth_t *synth;
+    fluid_player_t *player;
     ALLEGRO_AUDIO_STREAM *stream;
-    ALLEGRO_TIMER *timer;
-    midi_event *midi_events;
-    midi_event *midi_events_pos;
-    int ppqn;
 };
 
 static bool
@@ -39,14 +36,15 @@ init_midi_player(MIDI_PLAYER *pl, const char *sfpath)
     if (fluid_synth_sfload(pl->synth, sfpath, 1) == -1)
         return false;
 
+    pl->player = new_fluid_player(pl->synth);
+    if (!pl->player)
+        return false;
+
     /* Fluidsynth and Allegro both use floating point internally. */
     pl->stream = al_create_audio_stream(FRAG_COUNT, FRAG_SAMPLES, SRATE,
         ALLEGRO_AUDIO_DEPTH_FLOAT32, ALLEGRO_CHANNEL_CONF_2);
     if (!pl->stream)
         return false;
-
-    /* Create a timer at some arbitrary rate but don't start it yet. */
-    pl->timer = al_create_timer(1000.0);
 
     return true;
 }
@@ -69,14 +67,12 @@ destroy_midi_player(MIDI_PLAYER *pl)
         return;
     if (pl->stream)
         al_destroy_audio_stream(pl->stream);
-    if (pl->timer)
-        al_destroy_timer(pl->timer);
+    if (pl->player)
+        delete_fluid_player(pl->player);
     if (pl->synth)
         delete_fluid_synth(pl->synth);
     if (pl->settings)
         delete_fluid_settings(pl->settings);
-    if (pl->midi_events)
-        XMIDI::DeleteEventList(pl->midi_events);
     free(pl);
 }
 
@@ -86,119 +82,55 @@ get_midi_player_audio_stream(MIDI_PLAYER *pl)
     return pl->stream;
 }
 
-ALLEGRO_TIMER *
-get_midi_player_timer(MIDI_PLAYER *pl)
-{
-    return pl->timer;
-}
-
 bool
 play_xmidi(MIDI_PLAYER *pl, const char *filename, int track)
 {
     FILE *fp;
+    bool ok;
 
     stop_midi_player(pl);
 
     fp = fopen(filename, "rb");
-    if (fp) {
-        FileDataSource inp(fp);
-        XMIDI xmidi(&inp, XMIDI_CONVERT_NOCONVERSION);
-        xmidi.retrieve(track, &pl->midi_events, pl->ppqn);
-        fclose(fp);
+    if (!fp) {
+        return false;
     }
 
-    if (!pl->midi_events)
-        return false;
+    ok = true;
 
-    pl->midi_events_pos = pl->midi_events;
+    {
+        FileDataSource inp(fp);
+        XMIDI xmidi(&inp, XMIDI_CONVERT_NOCONVERSION);
 
-    /* MIDI defaults to 120 BPM. */
-    al_set_timer_speed(pl->timer, ALLEGRO_BPM_TO_SECS(120.0 * pl->ppqn));
-    al_start_timer(pl->timer);
+        int len = xmidi.retrieve(track, NULL);
+        char buf[len];
+        BufferDataSource out(buf, len);
+        xmidi.retrieve(track, &out);
+        if (fluid_player_add_mem(pl->player, buf, len) != FLUID_OK) {
+            ok = false;
+        }
+    }
 
-    return true;
+    fclose(fp);
+
+    if (ok && fluid_player_play(pl->player) != FLUID_OK) {
+        ok = false;
+    }
+
+    return ok;
 }
 
 void
 stop_midi_player(MIDI_PLAYER *pl)
 {
-    if (pl->timer) {
-        al_stop_timer(pl->timer);
+    if (pl->player) {
+        fluid_player_stop(pl->player);
     }
-    if (pl->midi_events) {
-        XMIDI::DeleteEventList(pl->midi_events);
-        pl->midi_events = NULL;
-        pl->midi_events_pos = NULL;
-    }
-}
-
-static bool
-process_midi_event(MIDI_PLAYER *pl, const midi_event *ev)
-{
-    uint8_t cmd  = ev->status & 0xf0;
-    uint8_t chan = ev->status & 0x0f;
-    uint8_t param1 = ev->data[0];
-    uint8_t param2 = ev->data[1];
-
-    switch (cmd) {
-        case 0x80:  /* Note off */
-            fluid_synth_noteoff(pl->synth, chan, param1);
-            break;
-        case 0x90:  /* Note on */
-            fluid_synth_noteon(pl->synth, chan, param1, param2);
-            break;
-        case 0xA0:  /* Aftertouch */
-            break;
-        case 0xB0:  /* Control change */
-            fluid_synth_cc(pl->synth, chan, param1, param2);
-            break;
-        case 0xC0:  /* Program change */
-            fluid_synth_program_change(pl->synth, chan, param1);
-            break;
-        case 0xD0:  /* Channel pressure */
-            break;
-        case 0xE0:  /* Pitch bench */
-            fluid_synth_pitch_bend(pl->synth, chan, (param2 << 7) | param1);
-            break;
-        case 0xF0:  /* SysEx */
-            if (param1 == 0x51 && ev->len == 3) {
-                /* Set tempo */
-                const uint8_t b0 = ev->buffer[0];
-                const uint8_t b1 = ev->buffer[1];
-                const uint8_t b2 = ev->buffer[2];
-                const int usec_per_qn = (b0 << 16) | (b1 << 8) | b2;
-                const double usec_per_min = 60e6;
-                const double bpm = usec_per_min / usec_per_qn;
-                al_set_timer_speed(pl->timer, ALLEGRO_BPM_TO_SECS(bpm * pl->ppqn));
-            }
-            else if (chan == 0x0f && param1 == 0x2f && param2 == 0x00) {
-                /* End of track */
-                return false;
-            }
-            break;
-        default:
-            fprintf(stderr, "unhandled command: 0x%02X\n", cmd);
-            break;
-    }
-
-    return true;
 }
 
 bool
-poll_midi_player_timer(MIDI_PLAYER *pl)
+get_midi_playing(MIDI_PLAYER *pl)
 {
-    for (;;) {
-        midi_event *ev = pl->midi_events_pos;
-        if (!ev)
-            return false;
-        if (ev->time > al_get_timer_count(pl->timer))
-            return true;
-        if (!process_midi_event(pl, ev)) {
-            pl->midi_events_pos = NULL; /* end */
-            return false;
-        }
-        pl->midi_events_pos = pl->midi_events_pos->next;
-    }
+    return fluid_player_get_status(pl->player) == FLUID_PLAYER_PLAYING;
 }
 
 void
@@ -245,7 +177,6 @@ int main(int argc, const char **argv)
 
     queue = al_create_event_queue();
     al_register_event_source(queue, al_get_audio_stream_event_source(pl->stream));
-    al_register_event_source(queue, al_get_timer_event_source(get_midi_player_timer(pl)));
     al_register_event_source(queue, al_get_keyboard_event_source());
 
     if (!play_xmidi(pl, midpath, track)) {
@@ -256,10 +187,6 @@ int main(int argc, const char **argv)
         ALLEGRO_EVENT ev;
         al_wait_for_event(queue, &ev);
 
-        if (ev.type == ALLEGRO_EVENT_TIMER) {
-            if (!poll_midi_player_timer(pl))
-                break;
-        }
         if (ev.type == ALLEGRO_EVENT_AUDIO_STREAM_FRAGMENT) {
             poll_midi_player_fragment(pl);
         }

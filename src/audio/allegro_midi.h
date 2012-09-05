@@ -15,9 +15,6 @@ destroy_midi_player(MIDI_PLAYER *pl);
 extern ALLEGRO_AUDIO_STREAM *
 get_midi_player_audio_stream(MIDI_PLAYER *pl);
 
-extern ALLEGRO_TIMER *
-get_midi_player_timer(MIDI_PLAYER *pl);
-
 extern bool
 play_xmidi(MIDI_PLAYER *pl, const char *filename, int track);
 
@@ -25,7 +22,7 @@ extern void
 stop_midi_player(MIDI_PLAYER *pl);
 
 extern bool
-poll_midi_player_timer(MIDI_PLAYER *pl);
+get_midi_playing(MIDI_PLAYER *pl);
 
 extern void
 poll_midi_player_fragment(MIDI_PLAYER *pl);
