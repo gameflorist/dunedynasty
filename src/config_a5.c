@@ -8,6 +8,7 @@
 #include "config.h"
 
 #include "audio/audio.h"
+#include "enhancement.h"
 #include "gfx.h"
 #include "opendune.h"
 #include "string.h"
@@ -71,6 +72,11 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "sound_volume",     CONFIG_FLOAT,   .d._float = &sound_volume },
 	{ "audio",  "voice_volume",     CONFIG_FLOAT,   .d._float = &voice_volume },
 	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
+
+	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
+	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
+	{ "enhancement",    "raise_scenario_unit_cap",  CONFIG_BOOL,.d._bool = &enhancement_raise_scenario_unit_cap },
+	{ "enhancement",    "repeat_reinforcements",    CONFIG_BOOL,.d._bool = &enhancement_repeat_reinforcements },
 
 	{ NULL, NULL, CONFIG_BOOL, .d._bool = NULL }
 };
