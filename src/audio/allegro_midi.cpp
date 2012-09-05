@@ -24,8 +24,8 @@ init_midi_player(MIDI_PLAYER *pl, const char *sfpath)
     if (!pl->settings)
         return false;
 
-    // fluid_settings_setstr(pl->settings, "synth.reverb.active", "yes");
-    // fluid_settings_setstr(pl->settings, "synth.chorus.active", "no");
+    fluid_settings_setstr(pl->settings, "synth.reverb.active", "yes");
+    fluid_settings_setstr(pl->settings, "synth.chorus.active", "no");
 
     pl->synth = new_fluid_synth(pl->settings);
     if (!pl->synth)
