@@ -11,5 +11,6 @@ extern uint32 StructureAI_FilterBuildOptions(enum StructureType s, enum HouseTyp
 extern uint32 StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType houseID, uint32 buildable);
 
 extern bool UnitAI_CallCarryallToEvadeSandworm(const Unit *harvester);
+extern bool UnitAI_ShouldDestructDevastator(const Unit *devastator);
 
 #endif

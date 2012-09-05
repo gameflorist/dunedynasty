@@ -13,6 +13,7 @@
 
 #include "unit.h"
 
+#include "ai.h"
 #include "animation.h"
 #include "audio/audio.h"
 #include "config.h"
@@ -1401,7 +1402,18 @@ bool Unit_Deviate(Unit *unit, uint16 probability)
 	if (g_playerHouseID == HOUSE_ORDOS) {
 		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
-		Unit_SetAction(unit, ui->actionAI);
+		if (AI_IsBrutalAI(HOUSE_ORDOS)) {
+			/* Make brutal AI destruct devastators if outcome is desirable. */
+			if (UnitAI_ShouldDestructDevastator(unit)) {
+				Unit_SetAction(unit, ACTION_DESTRUCT);
+			}
+			else {
+				Unit_SetAction(unit, ui->actionAI);
+			}
+		}
+		else {
+			Unit_SetAction(unit, ui->actionAI);
+		}
 	}
 
 	Unit_UntargetMe(unit);

@@ -8,6 +8,7 @@
 #include "ai.h"
 
 #include "enhancement.h"
+#include "map.h"
 #include "pool/house.h"
 #include "pool/pool.h"
 #include "pool/structure.h"
@@ -189,4 +190,39 @@ UnitAI_CountUnits(enum HouseType houseID, enum UnitType unit_type)
 	}
 
 	return unit_count;
+}
+
+bool
+UnitAI_ShouldDestructDevastator(const Unit *devastator)
+{
+	if (devastator->o.type != UNIT_DEVASTATOR)
+		return false;
+
+	int x = Tile_GetPosX(devastator->o.position);
+	int y = Tile_GetPosY(devastator->o.position);
+	int net_damage = 0;
+
+	for (int dy = -1; dy <= 1; dy++) {
+		for (int dx = -1; dx <= 1; dx++) {
+			if (!((0 <= x + dx && x + dx < MAP_SIZE_MAX) && (0 <= y + dy && y + dy < MAP_SIZE_MAX)))
+				continue;
+
+			uint16 packed = Tile_PackXY(x + dx, y + dy);
+			Unit *u = Unit_Get_ByPackedTile(packed);
+
+			if (u == NULL)
+				continue;
+
+			int cost = g_table_unitInfo[u->o.type].o.buildCredits;
+
+			if (House_AreAllied(devastator->o.houseID, u->o.houseID)) {
+				net_damage += cost;
+			}
+			else {
+				net_damage -= cost;
+			}
+		}
+	}
+
+	return (net_damage > 0);
 }
