@@ -11,6 +11,7 @@
 
 enum MusicSet {
 	MUSICSET_DUNE2_ADLIB,
+	MUSICSET_DUNE2_C55,
 	MUSICSET_FED2K_MT32,
 	MUSICSET_D2TM_ADLIB,
 	MUSICSET_D2TM_MT32,
@@ -386,6 +387,7 @@ typedef union MusicInfoGlob {
 
 typedef struct MusicInfo {
 	MidiFileInfo dune2_adlib;
+	MidiFileInfo dune2_c55;
 	ExtMusicInfo fed2k_mt32;
 	ExtMusicInfo d2tm_adlib;
 	ExtMusicInfo d2tm_mt32;
