@@ -2270,7 +2270,7 @@ void Structure_InitFactoryItems(const Structure *s)
 uint16 Structure_AI_PickNextToBuild(Structure *s)
 {
 	PoolFindStruct find;
-	uint16 buildable;
+	uint32 buildable;
 	uint16 type;
 	House *h;
 	int i;
@@ -2308,9 +2308,11 @@ uint16 Structure_AI_PickNextToBuild(Structure *s)
 		}
 	}
 
-	if (s->o.type == STRUCTURE_HEAVY_VEHICLE) {
-		buildable &= ~(1 << UNIT_HARVESTER);
-		buildable &= ~(1 << UNIT_MCV);
+	if (AI_IsBrutalAI(s->o.houseID)) {
+		buildable = StructureAI_FilterBuildOptions(s->o.type, s->o.houseID, buildable);
+	}
+	else {
+		buildable = StructureAI_FilterBuildOptions_Original(s->o.type, s->o.houseID, buildable);
 	}
 
 	type = 0xFFFF;
