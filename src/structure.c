@@ -706,6 +706,9 @@ void Structure_SetState(Structure *s, int16 state)
 
 void Structure_SetRallyPoint(Structure *s, uint16 packed)
 {
+	if (s->o.houseID != g_playerHouseID)
+		return;
+
 	const StructureInfo *si = &g_table_structureInfo[s->o.type];
 	const uint8 tx = Tile_GetPackedX(packed);
 	const uint8 ty = Tile_GetPackedY(packed);
