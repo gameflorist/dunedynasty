@@ -30,6 +30,8 @@ float music_volume = 0.85f;
 float sound_volume = 0.65f;
 float voice_volume = 1.0f;
 
+char sound_font_path[1024];
+
 static MusicInfoGlob curr_music;
 static enum MusicSet curr_music_set;
 static char music_message[128];
@@ -51,6 +53,7 @@ void
 Audio_GlobMusicInfo(MusicInfo *m, MusicInfoGlob glob[NUM_MUSIC_SETS])
 {
 	glob[MUSICSET_DUNE2_ADLIB].mid = &m->dune2_adlib;
+	glob[MUSICSET_DUNE2_C55].mid = &m->dune2_c55;
 	glob[MUSICSET_FED2K_MT32].ext = &m->fed2k_mt32;
 	glob[MUSICSET_D2TM_ADLIB].ext = &m->d2tm_adlib;
 	glob[MUSICSET_D2TM_MT32].ext = &m->d2tm_mt32;
@@ -65,6 +68,17 @@ Audio_ScanMusic(void)
 	struct stat st;
 	char buf[1024];
 	MusicInfoGlob glob[NUM_MUSIC_SETS];
+
+	if (stat(sound_font_path, &st) == 0) {
+		if (verbose) fprintf(stdout, "[enable]  MIDI sound font: %s\n", sound_font_path);
+	}
+	else {
+		if (verbose) fprintf(stdout, "[missing] sound font not found: %s\n", sound_font_path);
+
+		for (enum MusicID musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
+			g_table_music[musicID].dune2_c55.enable = false;
+		}
+	}
 
 	for (enum MusicID musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
 		MusicInfo *m = &g_table_music[musicID];
@@ -142,10 +156,16 @@ Audio_PlayMusic(enum MusicID musicID)
 		}
 	}
 
-	if (music_set == MUSICSET_DUNE2_ADLIB) {
+	if (music_set <= MUSICSET_DUNE2_C55) {
 		MidiFileInfo *mid = glob[music_set].mid;
 
-		AudioA5_InitMusic(mid);
+		if (music_set == MUSICSET_DUNE2_ADLIB) {
+			AudioA5_InitMusic(mid);
+		}
+		else {
+			AudioA5_InitMidiMusic(mid);
+		}
+
 		snprintf(music_message, sizeof(music_message), "Playing %s, track %d", mid->filename, mid->track);
 	}
 	else {
@@ -172,7 +192,7 @@ Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only)
 	float volume;
 
 	/* Adjust single track. */
-	if (adjust_current_track_only && (curr_music_set != MUSICSET_DUNE2_ADLIB)) {
+	if (adjust_current_track_only && (curr_music_set > MUSICSET_DUNE2_C55)) {
 		ExtMusicInfo *ext = curr_music.ext;
 
 		ext->volume += increase ? 0.05f : -0.05f;
@@ -186,7 +206,7 @@ Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only)
 		music_volume += increase ? 0.05f : -0.05f;
 		music_volume = clamp(0.0f, music_volume, 1.0f);
 
-		if (curr_music_set == MUSICSET_DUNE2_ADLIB) {
+		if (curr_music_set <= MUSICSET_DUNE2_C55) {
 			MidiFileInfo *mid = curr_music.mid;
 
 			volume = music_volume;

@@ -4,9 +4,11 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/adl/opl_dosbox.cpp
 	src/audio/adl/opl_mame.cpp
 	src/audio/adl/sound_adlib.cpp
+	src/audio/allegro_midi.cpp
 	src/audio/audio.c
 	src/audio/audio_a5.cpp
 	src/audio/audlib/audlib_a5.c
+	src/audio/xmi/xmidi.cpp
 	src/buildqueue.c
 	src/codec/format40.c
 	src/codec/format80.c

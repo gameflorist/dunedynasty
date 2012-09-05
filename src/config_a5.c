@@ -25,6 +25,7 @@ typedef struct GameOption {
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_10,
 		CONFIG_LANGUAGE,
+		CONFIG_STRING,
 		CONFIG_WINDOW
 	} type;
 
@@ -33,6 +34,7 @@ typedef struct GameOption {
 		unsigned int *_language;
 		int *_int;
 		float *_float;
+		char *_string;
 		enum WindowMode *_window;
 	} d;
 } GameOption;
@@ -68,6 +70,7 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "music_volume",     CONFIG_FLOAT,   .d._float = &music_volume },
 	{ "audio",  "sound_volume",     CONFIG_FLOAT,   .d._float = &sound_volume },
 	{ "audio",  "voice_volume",     CONFIG_FLOAT,   .d._float = &voice_volume },
+	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
 
 	{ NULL, NULL, CONFIG_BOOL, .d._bool = NULL }
 };
@@ -242,6 +245,10 @@ GameOptions_Load(void)
 				Config_GetLanguage(str, opt->d._language);
 				break;
 
+			case CONFIG_STRING:
+				strncpy(opt->d._string, str, 1024);
+				break;
+
 			case CONFIG_WINDOW:
 				Config_GetWindowMode(str, opt->d._window);
 				break;
@@ -265,7 +272,7 @@ GameOptions_Load(void)
 
 			Audio_GlobMusicInfo(m, glob);
 
-			if (music_set == MUSICSET_DUNE2_ADLIB) {
+			if (music_set <= MUSICSET_DUNE2_C55) {
 				MidiFileInfo *mid = glob[music_set].mid;
 
 				if (!enable_set) {
@@ -321,6 +328,10 @@ GameOptions_Save(void)
 
 			case CONFIG_LANGUAGE:
 				Config_SetLanguage(s_configFile, opt->section, opt->key, *(opt->d._language));
+				break;
+
+			case CONFIG_STRING:
+				al_set_config_value(s_configFile, opt->section, opt->key, opt->d._string);
 				break;
 
 			case CONFIG_WINDOW:

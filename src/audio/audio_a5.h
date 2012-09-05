@@ -12,6 +12,7 @@ extern void AudioA5_Init(void);
 extern void AudioA5_Uninit(void);
 
 extern void AudioA5_InitMusic(const MidiFileInfo *mid);
+extern void AudioA5_InitMidiMusic(const MidiFileInfo *mid);
 extern void AudioA5_InitExternalMusic(const ExtMusicInfo *ext);
 extern void AudioA5_SetMusicVolume(float volume);
 extern void AudioA5_StopMusic(void);
