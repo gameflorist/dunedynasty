@@ -25,6 +25,17 @@
 # define M_PI (3.14159265358979323846)
 #endif
 
+enum AISquadPlanID {
+	AISQUAD_FLANK_A,    /* 45, 90 */
+	AISQUAD_FLANK_B,
+	AISQUAD_135_A,      /* 45, 90, 135 */
+	AISQUAD_135_B,
+	AISQUAD_BACKSTAB_A, /* 60, 120, 180 */
+	AISQUAD_BACKSTAB_B,
+
+	NUM_AISQUAD_ATTACK_PLANS
+};
+
 enum AISquadState {
 	AISQUAD_RECRUITING,
 	AISQUAD_ASSEMBLE_SQUAD,
@@ -42,6 +53,21 @@ typedef struct AISquad {
 	int max_members;
 	uint16 waypoint[5];
 } AISquad;
+
+typedef struct AISquadPlan {
+	float distance1, angle1;
+	float distance2, angle2;
+	float distance3, angle3;
+} AISquadPlan;
+
+static const AISquadPlan aisquad_attack_plan[NUM_AISQUAD_ATTACK_PLANS] = {
+	{ 25.0f,  45.0f, 25.0f,   90.0f, 15.0f,   90.0f },
+	{ 25.0f, -45.0f, 25.0f,  -90.0f, 15.0f,  -90.0f },
+	{ 25.0f,  45.0f, 25.0f,   90.0f, 15.0f,  135.0f },
+	{ 25.0f, -45.0f, 25.0f,  -90.0f, 15.0f, -135.0f },
+	{ 32.0f,  60.0f, 24.0f,  120.0f, 12.0f,  180.0f },
+	{ 32.0f, -60.0f, 24.0f, -120.0f, 12.0f, -180.0f }
+};
 
 static AISquad s_aisquad[SQUADID_MAX + 1];
 
@@ -289,12 +315,15 @@ UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit, uint16 target_encoded)
 	float dy = targety - originy;
 	float theta = atan2f(dy, dx);
 
-	int detourx1 = targetx + 48.0f * cos(theta + M_PI * 60.0f/180.0f);
-	int detoury1 = targety - 48.0f * sin(theta + M_PI * 60.0f/180.0f);
-	int detourx2 = targetx + 32.0f * cos(theta + M_PI * 120.0f/180.0f);
-	int detoury2 = targety - 32.0f * sin(theta + M_PI * 120.0f/180.0f);
-	int detourx3 = targetx + 16.0f * cos(theta + M_PI * 180.0f/180.0f);
-	int detoury3 = targety - 16.0f * sin(theta + M_PI * 180.0f/180.0f);
+	const int planID = Tools_RandomRange(0, NUM_AISQUAD_ATTACK_PLANS - 1);
+	const AISquadPlan *plan = &aisquad_attack_plan[planID];
+
+	int detourx1 = targetx + plan->distance1 * cos(theta + plan->angle1 * M_PI / 180.0f);
+	int detoury1 = targety - plan->distance1 * sin(theta + plan->angle1 * M_PI / 180.0f);
+	int detourx2 = targetx + plan->distance2 * cos(theta + plan->angle2 * M_PI / 180.0f);
+	int detoury2 = targety - plan->distance2 * sin(theta + plan->angle2 * M_PI / 180.0f);
+	int detourx3 = targetx + plan->distance3 * cos(theta + plan->angle3 * M_PI / 180.0f);
+	int detoury3 = targety - plan->distance3 * sin(theta + plan->angle3 * M_PI / 180.0f);
 
 	UnitAI_ClampWaypoint(&detourx1, &detoury1);
 	UnitAI_ClampWaypoint(&detourx2, &detoury2);
