@@ -83,22 +83,16 @@ get_midi_player_audio_stream(MIDI_PLAYER *pl)
 }
 
 bool
-play_xmidi(MIDI_PLAYER *pl, const char *filename, int track)
+play_xmidi(MIDI_PLAYER *pl, char *data, unsigned int length, int track)
 {
-    FILE *fp;
     bool ok;
 
     stop_midi_player(pl);
 
-    fp = fopen(filename, "rb");
-    if (!fp) {
-        return false;
-    }
-
     ok = true;
 
     {
-        FileDataSource inp(fp);
+        BufferDataSource inp(data, length);
         XMIDI xmidi(&inp, XMIDI_CONVERT_NOCONVERSION);
 
         int len = xmidi.retrieve(track, NULL);
@@ -109,8 +103,6 @@ play_xmidi(MIDI_PLAYER *pl, const char *filename, int track)
             ok = false;
         }
     }
-
-    fclose(fp);
 
     if (ok && fluid_player_play(pl->player) != FLUID_OK) {
         ok = false;
@@ -147,6 +139,7 @@ poll_midi_player_fragment(MIDI_PLAYER *pl)
     }
 }
 
+#if 0
 int main(int argc, const char **argv)
 {
     MIDI_PLAYER *pl;
@@ -200,5 +193,6 @@ int main(int argc, const char **argv)
 
     return 0;
 }
+#endif
 
 /* vim: set sts=4 sw=4 et: */

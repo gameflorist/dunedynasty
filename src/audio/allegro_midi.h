@@ -16,7 +16,7 @@ extern ALLEGRO_AUDIO_STREAM *
 get_midi_player_audio_stream(MIDI_PLAYER *pl);
 
 extern bool
-play_xmidi(MIDI_PLAYER *pl, const char *filename, int track);
+play_xmidi(MIDI_PLAYER *pl, char *data, unsigned int length, int track);
 
 extern void
 stop_midi_player(MIDI_PLAYER *pl);
