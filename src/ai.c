@@ -328,12 +328,21 @@ UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit, uint16 target_encoded)
 	int detourx3 = targetx + plan->distance3 * cos(theta + plan->angle3 * M_PI / 180.0f);
 	int detoury3 = targety - plan->distance3 * sin(theta + plan->angle3 * M_PI / 180.0f);
 
+	/* Try to disperse to not clog up the factory. */
+	originx += Tools_RandomRange(0, 9) - 5;
+	originy += Tools_RandomRange(0, 9) - 5;
+
+	UnitAI_ClampWaypoint(&originx, &originy);
 	UnitAI_ClampWaypoint(&detourx1, &detoury1);
 	UnitAI_ClampWaypoint(&detourx2, &detoury2);
 	UnitAI_ClampWaypoint(&detourx3, &detoury3);
 
 	/* Assemble here before the operation. */
-	squad->waypoint[0] = Tile_PackTile(unit->o.position);
+	squad->waypoint[0] = Tile_PackXY(originx, originy);
+
+	if (g_map[squad->waypoint[0]].hasStructure)
+		squad->waypoint[0] = Tile_PackTile(unit->o.position);
+
 	squad->waypoint[1] = squad->waypoint[0];
 
 	/* Detours. */
