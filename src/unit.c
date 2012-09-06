@@ -663,11 +663,6 @@ void Unit_SetAction(Unit *u, ActionType action)
 			Script_Reset(&u->o.script, g_scriptUnit);
 			u->o.script.variables[0] = action;
 			Script_Load(&u->o.script, u->o.type);
-
-			/* For brutal AI, think about teams attacks. */
-			if (AI_IsBrutalAI(u->o.houseID)) {
-				UnitAI_AssignSquad(u);
-			}
 			return;
 
 		case 2:
@@ -849,6 +844,9 @@ void Unit_SetDestination(Unit *u, uint16 destination)
 	if (u == NULL) return;
 
 	if (AI_IsBrutalAI(u->o.houseID)) {
+		/* For brutal AI, consider joining (or forming) a squad and
+		 * using the squad's destination instead.
+		 */
 		destination = UnitAI_GetSquadDestination(u, destination);
 	}
 

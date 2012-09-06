@@ -275,10 +275,9 @@ UnitAI_ClampWaypoint(int *x, int *y)
 }
 
 static void
-UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit)
+UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit, uint16 target_encoded)
 {
 	uint16 origin = Tile_PackTile(unit->o.position);
-	uint16 target_encoded = Unit_FindBestTargetEncoded(unit, 4);
 	uint16 target = Tools_Index_GetPackedTile(target_encoded);
 
 	int originx = Tile_GetPackedX(origin);
@@ -326,8 +325,8 @@ UnitAI_SquadFind(const AISquad *squad, PoolFindStruct *find)
 	return NULL;
 }
 
-void
-UnitAI_AssignSquad(Unit *unit)
+static void
+UnitAI_AssignSquad(Unit *unit, uint16 destination)
 {
 	enum SquadID emptySquadID = SQUADID_INVALID;
 	int distance;
@@ -341,6 +340,11 @@ UnitAI_AssignSquad(Unit *unit)
 
 	/* Don't trust deviated units! */
 	if (Unit_GetHouseID(unit) != unit->o.houseID)
+		return;
+
+	/* If the destination is close, just go. */
+	distance = Tile_GetDistanceRoundedUp(unit->o.position, Tools_Index_GetTile(destination));
+	if (distance < 32)
 		return;
 
 	/* Consider joining a squad. */
@@ -389,7 +393,7 @@ UnitAI_AssignSquad(Unit *unit)
 		squad->num_members = 1;
 		squad->max_members = 3;
 
-		UnitAI_SquadPlotWaypoints(squad, unit);
+		UnitAI_SquadPlotWaypoints(squad, unit, destination);
 	}
 }
 
@@ -422,8 +426,11 @@ UnitAI_DisbandSquad(AISquad *squad)
 }
 
 uint16
-UnitAI_GetSquadDestination(const Unit *unit, uint16 destination)
+UnitAI_GetSquadDestination(Unit *unit, uint16 destination)
 {
+	/* Consider joining a squad on long journeys. */
+	UnitAI_AssignSquad(unit, destination);
+
 	if (unit->aiSquad == SQUADID_INVALID)
 		return destination;
 

@@ -14,9 +14,8 @@ extern bool UnitAI_CallCarryallToEvadeSandworm(const Unit *harvester);
 extern bool UnitAI_ShouldDestructDevastator(const Unit *devastator);
 
 extern void UnitAI_ClearSquads(void);
-extern void UnitAI_AssignSquad(Unit *unit);
 extern void UnitAI_DetachFromSquad(Unit *unit);
-extern uint16 UnitAI_GetSquadDestination(const Unit *unit, uint16 destination);
+extern uint16 UnitAI_GetSquadDestination(Unit *unit, uint16 destination);
 extern void UnitAI_SquadLoop(void);
 
 #endif
