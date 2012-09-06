@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(dunedynasty)
 
+option(WITH_FLUIDSYNTH "FluidSynth" ON)
+
 include(FindPkgConfig)
 
 pkg_check_modules(ALLEGRO5 REQUIRED allegro-5.0)
@@ -11,8 +13,19 @@ pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-5.0)
 pkg_check_modules(ALLEGRO5_PRIMITIVES REQUIRED allegro_primitives-5.0)
 include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
 
-pkg_check_modules(FLUIDSYNTH fluidsynth)
-include_directories(SYSTEM ${FLUIDSYNTH_INCLUDE_DIRS})
+if(WITH_FLUIDSYNTH)
+    pkg_check_modules(FLUIDSYNTH fluidsynth)
+    if(FLUIDSYNTH_FOUND)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWITH_FLUIDSYNTH=1")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DWITH_FLUIDSYNTH=1")
+	include_directories(SYSTEM ${FLUIDSYNTH_INCLUDE_DIRS})
+    else(FLUIDSYNTH_FOUND)
+	message("FluidSynth not found")
+	set(WITH_FLUIDSYNTH OFF)
+    endif(FLUIDSYNTH_FOUND)
+endif(WITH_FLUIDSYNTH)
+
+# ----------------------------------------------------------------
 
 include(FileList.cmake)
 include_directories("include")
@@ -23,7 +36,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -fomit-frame-pointer")
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g3")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition -Wno-multichar -pedantic")
-set(CMAKE_CXX_FLAGS "-W -Wall -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wno-unused-parameter")
 
 target_link_libraries(bin/dunedynasty
 	${ALLEGRO5_ACODEC_LDFLAGS}
@@ -32,8 +45,13 @@ target_link_libraries(bin/dunedynasty
 	${ALLEGRO5_MEMFILE_LDFLAGS}
 	${ALLEGRO5_PRIMITIVES_LDFLAGS}
 	${ALLEGRO5_LDFLAGS}
+	)
+
+if(WITH_FLUIDSYNTH)
+    target_link_libraries(bin/dunedynasty
 	${FLUIDSYNTH_LDFLAGS}
 	)
+endif(WITH_FLUIDSYNTH)
 
 
 #add_executable(bin/allegro_adl

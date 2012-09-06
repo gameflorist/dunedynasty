@@ -68,13 +68,25 @@ Audio_ScanMusic(void)
 	struct stat st;
 	char buf[1024];
 	MusicInfoGlob glob[NUM_MUSIC_SETS];
+	bool enable_dune2_c55;
 
+#if WITH_FLUIDSYNTH
 	if (stat(sound_font_path, &st) == 0) {
 		if (verbose) fprintf(stdout, "[enable]  MIDI sound font: %s\n", sound_font_path);
+		enable_dune2_c55 = true;
 	}
 	else {
 		if (verbose) fprintf(stdout, "[missing] sound font not found: %s\n", sound_font_path);
+		enable_dune2_c55 = false;
+	}
+#else
+	{
+		if (verbose) fprintf(stdout, "[disable] MIDI support\n");
+		enable_dune2_c55 = false;
+	}
+#endif /* WITH_FLUIDSYNTH */
 
+	if (!enable_dune2_c55) {
 		for (enum MusicID musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
 			g_table_music[musicID].dune2_c55.enable = false;
 		}

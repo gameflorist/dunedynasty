@@ -10,8 +10,13 @@
 #include "audio_a5.h"
 
 #include "adl/sound_adlib.h"
-#include "allegro_midi.h"
 #include "audlib/audlib_a5.h"
+
+#if WITH_FLUIDSYNTH
+# include "allegro_midi.h"
+#else
+# include "disable_midi.h"
+#endif /* WITH_FLUIDSYNTH */
 
 extern "C" {
 #include "audio.h"
