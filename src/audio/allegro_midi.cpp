@@ -123,7 +123,8 @@ void
 stop_midi_player(MIDI_PLAYER *pl)
 {
     if (pl->player) {
-        fluid_player_stop(pl->player);
+        delete_fluid_player(pl->player);
+        pl->player = new_fluid_player(pl->synth);
     }
 }
 
