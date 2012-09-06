@@ -24,6 +24,7 @@
 
 #include "opendune.h"
 
+#include "ai.h"
 #include "animation.h"
 #include "audio/audio.h"
 #include "common_a5.h"
@@ -593,6 +594,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 	Window_WidgetClick_Create();
 	Unit_Init();
+	UnitAI_ClearSquads();
 	Team_Init();
 	House_Init();
 	Structure_Init();
@@ -1093,6 +1095,7 @@ void GameLoop_Main(bool new_game)
 
 			g_timerGame = Timer_GameTicks();
 
+			UnitAI_SquadLoop();
 			GameLoop_Team();
 			GameLoop_Unit();
 			GameLoop_Structure();
@@ -1357,6 +1360,7 @@ void Game_Init(void)
 {
 	Unit_Init();
 	Structure_Init();
+	UnitAI_ClearSquads();
 	Team_Init();
 	House_Init();
 

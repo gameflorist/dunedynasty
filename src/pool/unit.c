@@ -148,6 +148,7 @@ Unit *Unit_Allocate(uint16 index, uint8 type, uint8 houseID)
 	u->o.script.delay      = 0;
 	u->route[0]            = 0xFF;
 	u->squadID = SQUADID_INVALID;
+	u->aiSquad = SQUADID_INVALID;
 	if (type == UNIT_SANDWORM) u->amount = 3;
 
 	g_unitFindArray[g_unitFindCount++] = u;

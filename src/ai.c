@@ -4,6 +4,8 @@
  */
 
 #include <assert.h>
+#include <math.h>
+#include "os/math.h"
 
 #include "ai.h"
 
@@ -13,9 +15,35 @@
 #include "pool/pool.h"
 #include "pool/structure.h"
 #include "pool/unit.h"
+#include "scenario.h"
 #include "structure.h"
+#include "team.h"
 #include "tile.h"
 #include "tools.h"
+
+#ifndef M_PI
+# define M_PI (3.14159265358979323846)
+#endif
+
+enum AISquadState {
+	AISQUAD_RECRUITING,
+	AISQUAD_ASSEMBLE_SQUAD,
+	AISQUAD_DETOUR1,
+	AISQUAD_DETOUR2,
+	AISQUAD_DETOUR3,
+	AISQUAD_DISBAND
+};
+
+typedef struct AISquad {
+	enum SquadID aiSquad;
+	enum AISquadState state;
+	enum HouseType houseID;
+	int num_members;
+	int max_members;
+	uint16 waypoint[5];
+} AISquad;
+
+static AISquad s_aisquad[SQUADID_MAX + 1];
 
 static int UnitAI_CountUnits(enum HouseType houseID, enum UnitType unit_type);
 
@@ -225,4 +253,219 @@ UnitAI_ShouldDestructDevastator(const Unit *devastator)
 	}
 
 	return (net_damage > 0);
+}
+
+/*--------------------------------------------------------------*/
+
+void
+UnitAI_ClearSquads(void)
+{
+	for (enum SquadID aiSquad = SQUADID_1; aiSquad <= SQUADID_MAX; aiSquad++) {
+		s_aisquad[aiSquad].num_members = 0;
+	}
+}
+
+static void
+UnitAI_ClampWaypoint(int *x, int *y)
+{
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+
+	*x = clamp(mapInfo->minX, *x, mapInfo->minX + mapInfo->sizeX - 1);
+	*y = clamp(mapInfo->minY, *y, mapInfo->minY + mapInfo->sizeY - 1);
+}
+
+static void
+UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit)
+{
+	uint16 origin = Tile_PackTile(unit->o.position);
+	uint16 target_encoded = Unit_FindBestTargetEncoded(unit, 4);
+	uint16 target = Tools_Index_GetPackedTile(target_encoded);
+
+	int originx = Tile_GetPackedX(origin);
+	int originy = Tile_GetPackedY(origin);
+	int targetx = Tile_GetPackedX(target);
+	int targety = Tile_GetPackedY(target);
+
+	float dx = originx - targetx;
+	float dy = targety - originy;
+	float theta = atan2f(dy, dx);
+
+	int detourx1 = targetx + 48.0f * cos(theta + M_PI * 60.0f/180.0f);
+	int detoury1 = targety - 48.0f * sin(theta + M_PI * 60.0f/180.0f);
+	int detourx2 = targetx + 32.0f * cos(theta + M_PI * 120.0f/180.0f);
+	int detoury2 = targety - 32.0f * sin(theta + M_PI * 120.0f/180.0f);
+	int detourx3 = targetx + 16.0f * cos(theta + M_PI * 180.0f/180.0f);
+	int detoury3 = targety - 16.0f * sin(theta + M_PI * 180.0f/180.0f);
+
+	UnitAI_ClampWaypoint(&detourx1, &detoury1);
+	UnitAI_ClampWaypoint(&detourx2, &detoury2);
+	UnitAI_ClampWaypoint(&detourx3, &detoury3);
+
+	/* Assemble here before the operation. */
+	squad->waypoint[0] = Tile_PackTile(unit->o.position);
+	squad->waypoint[1] = squad->waypoint[0];
+
+	/* Detours. */
+	squad->waypoint[2] = Tile_PackXY(detourx1, detoury1);
+	squad->waypoint[3] = Tile_PackXY(detourx2, detoury2);
+	squad->waypoint[4] = Tile_PackXY(detourx3, detoury3);
+}
+
+static Unit *
+UnitAI_SquadFind(const AISquad *squad, PoolFindStruct *find)
+{
+	Unit *u = Unit_Find(find);
+
+	while (u != NULL) {
+		if (u->aiSquad == squad->aiSquad)
+			return u;
+
+		u = Unit_Find(find);
+	}
+
+	return NULL;
+}
+
+void
+UnitAI_AssignSquad(Unit *unit)
+{
+	enum SquadID emptySquadID = SQUADID_INVALID;
+
+	if (unit->aiSquad != SQUADID_INVALID)
+		return;
+
+	if (unit->o.type != UNIT_QUAD)
+		return;
+
+	/* Consider joining a squad. */
+	do {
+		enum SquadID aiSquad = SQUADID_1;
+		AISquad *squad = &s_aisquad[aiSquad];
+
+		/* Consider creating a new squad later. */
+		if (squad->num_members == 0) {
+			if (emptySquadID == SQUADID_INVALID)
+				emptySquadID = aiSquad;
+
+			break;
+		}
+
+		/* Squad not accepting any more units. */
+		if (squad->state != AISQUAD_RECRUITING)
+			return;
+
+		unit->aiSquad = aiSquad;
+		squad->num_members++;
+
+		if (squad->num_members >= squad->max_members)
+			squad->state++;
+
+		return;
+	} while (false);
+
+	/* Create new squad and attack plan. */
+	if (emptySquadID != SQUADID_INVALID) {
+		AISquad *squad = &s_aisquad[emptySquadID];
+
+		unit->aiSquad = emptySquadID;
+
+		squad->aiSquad = emptySquadID;
+		squad->state = AISQUAD_RECRUITING;
+		squad->houseID = unit->o.houseID;
+		squad->num_members = 1;
+		squad->max_members = 3;
+
+		UnitAI_SquadPlotWaypoints(squad, unit);
+	}
+}
+
+void
+UnitAI_DetachFromSquad(Unit *unit)
+{
+	if (unit->aiSquad == SQUADID_INVALID)
+		return;
+
+	unit->aiSquad = SQUADID_INVALID;
+	s_aisquad[unit->aiSquad].num_members--;
+}
+
+static void
+UnitAI_DisbandSquad(AISquad *squad)
+{
+	PoolFindStruct find;
+
+	find.houseID = squad->houseID;
+	find.type = 0xFFFF;
+	find.index = 0xFFFF;
+
+	Unit *u = UnitAI_SquadFind(squad, &find);
+	while (u != NULL) {
+		u->aiSquad = SQUADID_INVALID;
+		u = UnitAI_SquadFind(squad, &find);
+	}
+
+	squad->num_members = 0;
+}
+
+uint16
+UnitAI_GetSquadDestination(const Unit *unit, uint16 destination)
+{
+	if (unit->aiSquad == SQUADID_INVALID)
+		return destination;
+
+	AISquad *squad = &s_aisquad[unit->aiSquad];
+
+	if (squad->state <= AISQUAD_DETOUR3) {
+		return Tools_Index_Encode(squad->waypoint[squad->state], IT_TILE);
+	}
+	else {
+		return destination;
+	}
+}
+
+static bool
+UnitAI_SquadIsGathered(const AISquad *squad)
+{
+	PoolFindStruct find;
+	tile32 destination;
+
+	if (squad->state > AISQUAD_DETOUR3)
+		return true;
+
+	find.houseID = squad->houseID;
+	find.type = 0xFFFF;
+	find.index = 0xFFFF;
+	destination = Tile_UnpackTile(squad->waypoint[squad->state]);
+
+	Unit *u = UnitAI_SquadFind(squad, &find);
+	while (u != NULL) {
+		int dist = Tile_GetDistanceRoundedUp(u->o.position, destination);
+		if (dist >= 8)
+			return false;
+
+		u = UnitAI_SquadFind(squad, &find);
+	}
+
+	return true;
+}
+
+void
+UnitAI_SquadLoop(void)
+{
+	for (enum SquadID aiSquad = SQUADID_1; aiSquad <= SQUADID_MAX; aiSquad++) {
+		AISquad *squad = &s_aisquad[aiSquad];
+
+		if (squad->num_members == 0)
+			continue;
+
+		if (squad->state == AISQUAD_RECRUITING)
+			continue;
+
+		if (UnitAI_SquadIsGathered(squad)) {
+			squad->state++;
+		}
+
+		if (squad->state == AISQUAD_DISBAND)
+			UnitAI_DisbandSquad(squad);
+	}
 }

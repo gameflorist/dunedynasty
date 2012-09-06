@@ -663,6 +663,11 @@ void Unit_SetAction(Unit *u, ActionType action)
 			Script_Reset(&u->o.script, g_scriptUnit);
 			u->o.script.variables[0] = action;
 			Script_Load(&u->o.script, u->o.type);
+
+			/* For brutal AI, think about teams attacks. */
+			if (AI_IsBrutalAI(u->o.houseID)) {
+				UnitAI_AssignSquad(u);
+			}
 			return;
 
 		case 2:
@@ -842,6 +847,11 @@ void Unit_SetDestination(Unit *u, uint16 destination)
 	Structure *s;
 
 	if (u == NULL) return;
+
+	if (AI_IsBrutalAI(u->o.houseID)) {
+		destination = UnitAI_GetSquadDestination(u, destination);
+	}
+
 	if (!Tools_Index_IsValid(destination)) return;
 	if (u->targetMove == destination) return;
 
@@ -1683,6 +1693,7 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 
 	if (unit == NULL || !unit->o.flags.s.allocated) return false;
 
+	UnitAI_DetachFromSquad(unit);
 	ui = &g_table_unitInfo[unit->o.type];
 
 	if (!ui->flags.isNormalUnit && unit->o.type != UNIT_SANDWORM) return false;
@@ -1792,6 +1803,7 @@ void Unit_UntargetMe(Unit *unit)
 		if (s->o.script.variables[2] == encoded) s->o.script.variables[2] = 0;
 	}
 
+	UnitAI_DetachFromSquad(unit);
 	Unit_RemoveFromTeam(unit);
 
 	find.houseID = HOUSE_INVALID;
@@ -2599,6 +2611,7 @@ void Unit_RemovePlayer(Unit *unit)
 	if (!unit->o.flags.s.allocated) return;
 
 	unit->o.flags.s.allocated = false;
+	UnitAI_DetachFromSquad(unit);
 	Unit_RemoveFromTeam(unit);
 
 	if (!Unit_IsSelected(unit))

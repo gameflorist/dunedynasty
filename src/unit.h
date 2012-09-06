@@ -129,6 +129,7 @@ typedef struct Unit {
 	uint8  route[14];                                       /*!< The current route the Unit is following. */
 
 	enum SquadID squadID;
+	enum SquadID aiSquad;
 } Unit;
 
 /**

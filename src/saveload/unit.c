@@ -85,6 +85,7 @@ bool Unit_Load(FILE *fp, uint32 length)
 
 		/* Extra data. */
 		u->squadID = SQUADID_INVALID;
+		u->aiSquad = SQUADID_INVALID;
 	}
 	if (length != 0) return false;
 
