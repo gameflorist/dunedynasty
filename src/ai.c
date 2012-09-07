@@ -330,6 +330,7 @@ void
 UnitAI_AssignSquad(Unit *unit)
 {
 	enum SquadID emptySquadID = SQUADID_INVALID;
+	int distance;
 
 	if (unit->aiSquad != SQUADID_INVALID)
 		return;
@@ -351,6 +352,11 @@ UnitAI_AssignSquad(Unit *unit)
 
 		/* Squad not accepting any more units. */
 		if (squad->state != AISQUAD_RECRUITING)
+			continue;
+
+		/* Squad is too far away. */
+		distance = Tile_GetDistanceRoundedUp(unit->o.position, Tile_UnpackTile(squad->waypoint[0]));
+		if (distance > 16)
 			continue;
 
 		unit->aiSquad = aiSquad;
