@@ -335,7 +335,8 @@ UnitAI_AssignSquad(Unit *unit)
 	if (unit->aiSquad != SQUADID_INVALID)
 		return;
 
-	if (unit->o.type != UNIT_QUAD)
+	/* Only attempt flank attacks with regular tanks. */
+	if (!(UNIT_LAUNCHER <= unit->o.type && unit->o.type <= UNIT_QUAD))
 		return;
 
 	/* Don't trust deviated units! */
