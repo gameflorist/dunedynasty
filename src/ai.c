@@ -374,11 +374,6 @@ UnitAI_AssignSquad(Unit *unit, uint16 destination)
 	if (Unit_GetHouseID(unit) != unit->o.houseID)
 		return;
 
-	/* If the destination is close, just go. */
-	distance = Tile_GetDistanceRoundedUp(unit->o.position, Tools_Index_GetTile(destination));
-	if (distance < 32)
-		return;
-
 	/* Consider joining a squad. */
 	for (enum SquadID aiSquad = SQUADID_1; aiSquad <= SQUADID_MAX; aiSquad++) {
 		AISquad *squad = &s_aisquad[aiSquad];
@@ -412,6 +407,15 @@ UnitAI_AssignSquad(Unit *unit, uint16 destination)
 
 		return;
 	}
+
+	if (emptySquadID == SQUADID_INVALID)
+		return;
+
+	/* Consider creating a team.  Greater chance if distance is large. */
+	distance = Tile_GetDistanceRoundedUp(unit->o.position, Tools_Index_GetTile(destination));
+	int r = Tools_Random_256();
+	if (min(6 * (distance - 16), 128) < r)
+		return;
 
 	/* Create new squad and attack plan. */
 	if (emptySquadID != SQUADID_INVALID) {
