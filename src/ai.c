@@ -338,8 +338,7 @@ UnitAI_AssignSquad(Unit *unit)
 		return;
 
 	/* Consider joining a squad. */
-	do {
-		enum SquadID aiSquad = SQUADID_1;
+	for (enum SquadID aiSquad = SQUADID_1; aiSquad <= SQUADID_MAX; aiSquad++) {
 		AISquad *squad = &s_aisquad[aiSquad];
 
 		/* Consider creating a new squad later. */
@@ -347,12 +346,12 @@ UnitAI_AssignSquad(Unit *unit)
 			if (emptySquadID == SQUADID_INVALID)
 				emptySquadID = aiSquad;
 
-			break;
+			continue;
 		}
 
 		/* Squad not accepting any more units. */
 		if (squad->state != AISQUAD_RECRUITING)
-			return;
+			continue;
 
 		unit->aiSquad = aiSquad;
 		squad->num_members++;
@@ -361,7 +360,7 @@ UnitAI_AssignSquad(Unit *unit)
 			squad->state++;
 
 		return;
-	} while (false);
+	}
 
 	/* Create new squad and attack plan. */
 	if (emptySquadID != SQUADID_INVALID) {
