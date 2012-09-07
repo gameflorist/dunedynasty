@@ -19,6 +19,7 @@
 #include "structure.h"
 #include "team.h"
 #include "tile.h"
+#include "timer/timer.h"
 #include "tools.h"
 
 #ifndef M_PI
@@ -52,6 +53,8 @@ typedef struct AISquad {
 	int num_members;
 	int max_members;
 	uint16 waypoint[5];
+
+	int64_t recruitment_timeout;
 } AISquad;
 
 typedef struct AISquadPlan {
@@ -422,6 +425,8 @@ UnitAI_AssignSquad(Unit *unit, uint16 destination)
 		squad->num_members = 1;
 		squad->max_members = 3;
 
+		/* 60 ticks per second, distance is roughly 30. */
+		squad->recruitment_timeout = g_timerGame + Tools_AdjustToGameSpeed(120 * (distance - 12), 1, 0xFFFF, true);
 		UnitAI_SquadPlotWaypoints(squad, unit, destination);
 	}
 }
@@ -508,8 +513,12 @@ UnitAI_SquadLoop(void)
 		if (squad->num_members == 0)
 			continue;
 
-		if (squad->state == AISQUAD_RECRUITING)
+		if (squad->state == AISQUAD_RECRUITING) {
+			if (g_timerGame > squad->recruitment_timeout)
+				squad->state++;
+
 			continue;
+		}
 
 		if (UnitAI_SquadIsGathered(squad)) {
 			squad->state++;
