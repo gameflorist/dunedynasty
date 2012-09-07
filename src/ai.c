@@ -53,6 +53,7 @@ typedef struct AISquad {
 	int num_members;
 	int max_members;
 	uint16 waypoint[5];
+	uint16 target;
 
 	int64_t recruitment_timeout;
 } AISquad;
@@ -179,6 +180,52 @@ StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType hou
 }
 
 /*--------------------------------------------------------------*/
+
+uint16
+UnitAI_GetAnyEnemyInRange(const Unit *unit)
+{
+	UnitInfo *ui = &g_table_unitInfo[unit->o.type];
+	enum HouseType houseID = Unit_GetHouseID(unit);
+	int dist = max(4, ui->fireDistance);
+
+	PoolFindStruct find;
+
+	find.houseID = HOUSE_INVALID;
+	find.index = 0xFFFF;
+	find.type = 0xFFFF;
+
+	Unit *u = Unit_Find(&find);
+	while (u != NULL) {
+		if (u->o.type == UNIT_SANDWORM) {
+		}
+		else if (House_AreAllied(houseID, Unit_GetHouseID(u))) {
+		}
+		else if (!g_table_unitInfo[u->o.type].flags.isGroundUnit) {
+		}
+		else if (Tile_GetDistanceRoundedUp(unit->o.position, u->o.position) <= dist) {
+			return Tools_Index_Encode(u->o.index, IT_UNIT);
+		}
+
+		u = Unit_Find(&find);
+	}
+
+	find.houseID = HOUSE_INVALID;
+	find.index = 0xFFFF;
+	find.type = 0xFFFF;
+
+	Structure *s = Structure_Find(&find);
+	while (s != NULL) {
+		if (House_AreAllied(houseID, s->o.houseID)) {
+		}
+		else if (Tile_GetDistanceRoundedUp(unit->o.position, s->o.position) <= dist) {
+			return Tools_Index_Encode(s->o.index, IT_STRUCTURE);
+		}
+
+		s = Structure_Find(&find);
+	}
+
+	return 0;
+}
 
 bool
 UnitAI_CallCarryallToEvadeSandworm(const Unit *harvester)
@@ -349,6 +396,8 @@ UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit, uint16 target_encoded)
 	squad->waypoint[2] = Tile_PackXY(detourx1, detoury1);
 	squad->waypoint[3] = Tile_PackXY(detourx2, detoury2);
 	squad->waypoint[4] = Tile_PackXY(detourx3, detoury3);
+
+	squad->target = target_encoded;
 }
 
 static Unit *
@@ -372,7 +421,9 @@ UnitAI_AssignSquad(Unit *unit, uint16 destination)
 	enum SquadID emptySquadID = SQUADID_INVALID;
 	int distance;
 
-	if ((unit->actionID != ACTION_HUNT) || (unit->aiSquad != SQUADID_INVALID))
+	if ((unit->actionID != ACTION_HUNT) ||
+		(unit->aiSquad != SQUADID_INVALID) ||
+		Tools_Index_GetType(destination) == IT_UNIT)
 		return;
 
 	/* Only attempt flank attacks with regular tanks. */
@@ -423,7 +474,7 @@ UnitAI_AssignSquad(Unit *unit, uint16 destination)
 	/* Consider creating a team.  Greater chance if distance is large. */
 	distance = Tile_GetDistanceRoundedUp(unit->o.position, Tools_Index_GetTile(destination));
 	int r = Tools_Random_256();
-	if (min(6 * (distance - 16), 128) < r)
+	if (min(8 * (distance - 16), 128) < r)
 		return;
 
 	/* Create new squad and attack plan. */
@@ -466,10 +517,27 @@ UnitAI_DisbandSquad(AISquad *squad)
 	Unit *u = UnitAI_SquadFind(squad, &find);
 	while (u != NULL) {
 		u->aiSquad = SQUADID_INVALID;
+		Unit_SetTarget(u, squad->target);
+
 		u = UnitAI_SquadFind(squad, &find);
 	}
 
 	squad->num_members = 0;
+}
+
+void
+UnitAI_AbortMission(Unit *unit, uint16 enemy)
+{
+	if (unit->aiSquad == SQUADID_INVALID)
+		return;
+
+	AISquad *squad = &s_aisquad[unit->aiSquad];
+
+	if (enemy != 0) {
+		squad->target = enemy;
+	}
+
+	UnitAI_DisbandSquad(squad);
 }
 
 uint16
@@ -487,7 +555,7 @@ UnitAI_GetSquadDestination(Unit *unit, uint16 destination)
 		return Tools_Index_Encode(squad->waypoint[squad->state], IT_TILE);
 	}
 	else {
-		return destination;
+		return squad->target;
 	}
 }
 

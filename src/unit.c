@@ -1660,6 +1660,14 @@ bool Unit_Move(Unit *unit, uint16 distance)
 						isSpecialBloom = true;
 					}
 				}
+
+				/* For brutal AI following a plan, check if our ambush has been detected. */
+				if (unit->aiSquad != SQUADID_INVALID) {
+					uint16 enemy = UnitAI_GetAnyEnemyInRange(unit);
+
+					if (enemy != 0)
+						UnitAI_AbortMission(unit, enemy);
+				}
 			}
 		}
 	}
@@ -1691,7 +1699,6 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 
 	if (unit == NULL || !unit->o.flags.s.allocated) return false;
 
-	UnitAI_DetachFromSquad(unit);
 	ui = &g_table_unitInfo[unit->o.type];
 
 	if (!ui->flags.isNormalUnit && unit->o.type != UNIT_SANDWORM) return false;
@@ -1732,6 +1739,9 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 	if (houseID != g_playerHouseID && unit->actionID == ACTION_AMBUSH && unit->o.type != UNIT_HARVESTER) {
 		Unit_SetAction(unit, ACTION_ATTACK);
 	}
+
+	/* For brutal AI, give up sneak attack if we are attacked. */
+	UnitAI_AbortMission(unit, 0);
 
 	if (unit->o.hitpoints >= ui->o.hitpoints / 2) return false;
 
