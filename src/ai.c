@@ -27,6 +27,13 @@
 #endif
 
 enum AISquadPlanID {
+	AISQUAD_DIRECT_A,
+	AISQUAD_DIRECT_B,
+	AISQUAD_DIRECT_C,
+	AISQUAD_DIRECT_D,
+	AISQUAD_ENCIRCLE_A, /* 45 */
+	AISQUAD_ENCIRCLE_B,
+
 	AISQUAD_FLANK_A,    /* 45, 90 */
 	AISQUAD_FLANK_B,
 	AISQUAD_135_A,      /* 45, 90, 135 */
@@ -65,6 +72,14 @@ typedef struct AISquadPlan {
 } AISquadPlan;
 
 static const AISquadPlan aisquad_attack_plan[NUM_AISQUAD_ATTACK_PLANS] = {
+	/* Camp outside of turret range, and assault together. */
+	{ 12.0f,   0.0f, 12.0f,    0.0f, 12.0f,    0.0f },
+	{ 12.0f,   0.0f, 12.0f,    0.0f, 12.0f,    0.0f },
+	{ 15.0f,   0.0f, 15.0f,    0.0f, 15.0f,    0.0f },
+	{ 15.0f,   0.0f, 15.0f,    0.0f, 15.0f,    0.0f },
+	{ 15.0f,  45.0f, 15.0f,   45.0f, 15.0f,   45.0f },
+	{ 15.0f, -45.0f, 15.0f,  -45.0f, 15.0f,  -45.0f },
+
 	{ 25.0f,  45.0f, 25.0f,   90.0f, 15.0f,   90.0f },
 	{ 25.0f, -45.0f, 25.0f,  -90.0f, 15.0f,  -90.0f },
 	{ 25.0f,  45.0f, 25.0f,   90.0f, 15.0f,  135.0f },
