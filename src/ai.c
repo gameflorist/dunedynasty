@@ -338,6 +338,10 @@ UnitAI_AssignSquad(Unit *unit)
 	if (unit->o.type != UNIT_QUAD)
 		return;
 
+	/* Don't trust deviated units! */
+	if (Unit_GetHouseID(unit) != unit->o.houseID)
+		return;
+
 	/* Consider joining a squad. */
 	for (enum SquadID aiSquad = SQUADID_1; aiSquad <= SQUADID_MAX; aiSquad++) {
 		AISquad *squad = &s_aisquad[aiSquad];
@@ -349,6 +353,10 @@ UnitAI_AssignSquad(Unit *unit)
 
 			continue;
 		}
+
+		/* Only accept units in the same house. */
+		if (squad->houseID != unit->o.houseID)
+			continue;
 
 		/* Squad not accepting any more units. */
 		if (squad->state != AISQUAD_RECRUITING)
