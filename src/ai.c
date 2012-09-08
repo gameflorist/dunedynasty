@@ -331,7 +331,7 @@ UnitAI_AssignSquad(Unit *unit, uint16 destination)
 	enum SquadID emptySquadID = SQUADID_INVALID;
 	int distance;
 
-	if (unit->aiSquad != SQUADID_INVALID)
+	if ((unit->actionID != ACTION_HUNT) || (unit->aiSquad != SQUADID_INVALID))
 		return;
 
 	/* Only attempt flank attacks with regular tanks. */
