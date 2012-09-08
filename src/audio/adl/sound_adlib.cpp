@@ -207,7 +207,7 @@ private:
 		uint8 *dataptr;
 		uint8 duration;
 		uint8 repeatCounter;
-		int8 baseOctave;
+		uint8 baseOctave;
 		uint8 priority;
 		uint8 dataptrStackPos;
 		uint8 *dataptrStack[4];
@@ -1017,14 +1017,36 @@ void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
 void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 	debugC(9, "setupNote(%d, %lu)", rawNote, (long)(&channel - _channels));
 
+#if 0
 	channel.rawNote = rawNote;
 
 	int8 note = (rawNote & 0x0F) + channel.baseNote;
 	int8 octave = ((rawNote + channel.baseOctave) >> 4) & 0x0F;
+#else
+	/* Revert scumm c571026a20b70b09d706dbefda22ce575c74c7e8. */
+	/* unk1         => note (rawNote)
+	 * unk2         => octave
+	 * value        => freq
+	 * state.unk10  => channel.baseOctave
+	 * state.unk13  => channel.rawNote
+	 * state.unk14  => channel.baseNote
+	 * state.unk15  => channel.baseFreq
+	 * state.unk17  => channel.regAx
+	 * state.unkOutputValue1    => channel.regBx
+	 */
+
+	channel.rawNote = rawNote;
+	uint8 octave = rawNote & 0xF0;
+	octave += channel.baseOctave;
+	uint8 note = rawNote;
+	note &= 0x0F;
+	note += channel.baseNote;
+#endif
 
 	// There are only twelve notes. If we go outside that, we have to
 	// adjust the note and octave.
 
+#if 0
 	if (note >= 12) {
 		note -= 12;
 		octave++;
@@ -1032,6 +1054,15 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 		note += 12;
 		octave--;
 	}
+#else
+	if ((int8)note >= 0x0C) {
+		note -= 0x0C;
+		octave += 0x10;
+	} else if ((int8)note < 0) {
+		note += 0x0C;
+		octave -= 0x10;
+	}
+#endif
 
 	// The calculation of frequency looks quite different from the original
 	// disassembly at a first glance, but when you consider that the
@@ -1045,9 +1076,17 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 
 	uint16 freq = _unkTable[note] + channel.baseFreq;
 
+#if 1
+	octave >>= 2;
+	octave &= 0x1C;
+	octave |= (freq & 0xFF00) >> 8;
+	freq = (freq & 0xFF) | (octave << 8);
+#endif
+
 	// When called from callback 41, the behaviour is slightly different:
 	// We adjust the frequency, even when channel.unk16 is 0.
 
+#if 0
 	if (channel.unk16 || flag) {
 		const uint8 *table;
 
@@ -1059,9 +1098,25 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 			freq -= table[-channel.unk16];
 		}
 	}
+#else
+	if (channel.unk16 || flag) {
+		if (channel.unk16 >= 0) {
+			const uint8 *table = _unkTables[(channel.rawNote & 0x0F) + 2];
+			freq += table[channel.unk16];
+		} else {
+			const uint8 *table = _unkTables[channel.rawNote & 0x0F];
+			freq -= table[(channel.unk16 ^ 0xFF) + 1];
+		}
+	}
+#endif
 
+#if 0
 	channel.regAx = freq & 0xFF;
 	channel.regBx = (channel.regBx & 0x20) | (octave << 2) | ((freq >> 8) & 0x03);
+#else
+	channel.regBx = (channel.regBx & 0x20) | ((freq & 0xFF00) >> 8);
+	channel.regAx = freq & 0xFF;
+#endif
 
 	// Keep the note on or off
 	writeOPL(0xA0 + _curChannel, channel.regAx);
