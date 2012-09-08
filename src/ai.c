@@ -50,6 +50,7 @@ enum AISquadState {
 	AISQUAD_DETOUR1,
 	AISQUAD_DETOUR2,
 	AISQUAD_DETOUR3,
+	AISQUAD_CHARGE,
 	AISQUAD_DISBAND
 };
 
@@ -509,6 +510,22 @@ UnitAI_AssignSquad(Unit *unit, uint16 destination)
 	}
 }
 
+static void
+UnitAI_SquadCharge(AISquad *squad)
+{
+	PoolFindStruct find;
+
+	find.houseID = squad->houseID;
+	find.type = 0xFFFF;
+	find.index = 0xFFFF;
+
+	Unit *u = UnitAI_SquadFind(squad, &find);
+	while (u != NULL) {
+		u->targetAttack = squad->target;
+		u = UnitAI_SquadFind(squad, &find);
+	}
+}
+
 void
 UnitAI_DetachFromSquad(Unit *unit)
 {
@@ -549,9 +566,10 @@ UnitAI_AbortMission(Unit *unit, uint16 enemy)
 
 	if (enemy != 0) {
 		squad->target = enemy;
+		squad->state = AISQUAD_CHARGE;
 	}
 
-	UnitAI_DisbandSquad(squad);
+	UnitAI_SquadCharge(squad);
 }
 
 uint16
@@ -579,13 +597,23 @@ UnitAI_SquadIsGathered(const AISquad *squad)
 	PoolFindStruct find;
 	tile32 destination;
 
-	if (squad->state > AISQUAD_DETOUR3)
+	if (squad->state >= AISQUAD_DISBAND)
 		return true;
+
+	if (squad->state <= AISQUAD_DETOUR3) {
+		destination = Tile_UnpackTile(squad->waypoint[squad->state]);
+	}
+	else {
+		uint16 packed = Tools_Index_GetPackedTile(squad->target);
+		if (packed == 0)
+			return true;
+
+		destination = Tile_UnpackTile(packed);
+	}
 
 	find.houseID = squad->houseID;
 	find.type = 0xFFFF;
 	find.index = 0xFFFF;
-	destination = Tile_UnpackTile(squad->waypoint[squad->state]);
 
 	Unit *u = UnitAI_SquadFind(squad, &find);
 	while (u != NULL) {
@@ -623,6 +651,10 @@ UnitAI_SquadLoop(void)
 
 		if (UnitAI_SquadIsGathered(squad)) {
 			squad->state++;
+
+			if (squad->state == AISQUAD_CHARGE) {
+				UnitAI_SquadCharge(squad);
+			}
 		}
 
 		if (squad->state == AISQUAD_DISBAND)
