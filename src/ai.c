@@ -50,12 +50,14 @@ enum AISquadState {
 	AISQUAD_DETOUR1,
 	AISQUAD_DETOUR2,
 	AISQUAD_DETOUR3,
+	AISQUAD_BATTLE_FORMATION,
 	AISQUAD_CHARGE,
 	AISQUAD_DISBAND
 };
 
 typedef struct AISquad {
 	enum SquadID aiSquad;
+	enum AISquadPlanID plan;
 	enum AISquadState state;
 	enum HouseType houseID;
 	int num_members;
@@ -400,6 +402,8 @@ UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit, uint16 target_encoded)
 	UnitAI_ClampWaypoint(&detourx2, &detoury2);
 	UnitAI_ClampWaypoint(&detourx3, &detoury3);
 
+	squad->plan = planID;
+
 	/* Assemble here before the operation. */
 	squad->waypoint[0] = Tile_PackXY(originx, originy);
 
@@ -521,7 +525,9 @@ UnitAI_SquadCharge(AISquad *squad)
 
 	Unit *u = UnitAI_SquadFind(squad, &find);
 	while (u != NULL) {
+		Unit_SetAction(u, ACTION_HUNT);
 		u->targetAttack = squad->target;
+
 		u = UnitAI_SquadFind(squad, &find);
 	}
 }
@@ -531,6 +537,9 @@ UnitAI_DetachFromSquad(Unit *unit)
 {
 	if (unit->aiSquad == SQUADID_INVALID)
 		return;
+
+	if (unit->actionID != ACTION_HUNT)
+		Unit_SetAction(unit, ACTION_HUNT);
 
 	unit->aiSquad = SQUADID_INVALID;
 	s_aisquad[unit->aiSquad].num_members--;
@@ -586,9 +595,32 @@ UnitAI_GetSquadDestination(Unit *unit, uint16 destination)
 	if (squad->state <= AISQUAD_DETOUR3) {
 		return Tools_Index_Encode(squad->waypoint[squad->state], IT_TILE);
 	}
+	else if (squad->state == AISQUAD_BATTLE_FORMATION) {
+		return unit->targetMove;
+	}
 	else {
 		return squad->target;
 	}
+}
+
+static bool
+UnitAI_SquadIsInFormation(const AISquad *squad)
+{
+	PoolFindStruct find;
+
+	find.houseID = squad->houseID;
+	find.type = 0xFFFF;
+	find.index = 0xFFFF;
+
+	Unit *u = UnitAI_SquadFind(squad, &find);
+	while (u != NULL) {
+		if (u->targetMove != 0)
+			return false;
+
+		u = UnitAI_SquadFind(squad, &find);
+	}
+
+	return true;
 }
 
 static bool
@@ -602,6 +634,9 @@ UnitAI_SquadIsGathered(const AISquad *squad)
 
 	if (squad->state <= AISQUAD_DETOUR3) {
 		destination = Tile_UnpackTile(squad->waypoint[squad->state]);
+	}
+	else if (squad->state == AISQUAD_BATTLE_FORMATION) {
+		return UnitAI_SquadIsInFormation(squad);
 	}
 	else {
 		uint16 packed = Tools_Index_GetPackedTile(squad->target);
@@ -633,6 +668,59 @@ UnitAI_SquadIsGathered(const AISquad *squad)
 	return true;
 }
 
+static void
+UnitAI_ArrangeBattleFormation(AISquad *squad)
+{
+	const int dx[8] = {  0,  1,  1,  1,  0, -1, -1, -1 };
+	const int dy[8] = { -1, -1,  0,  1,  1,  1,  0, -1 };
+
+	uint16 curr_packed = squad->waypoint[AISQUAD_DETOUR3];
+	int currx = Tile_GetPackedX(curr_packed);
+	int curry = Tile_GetPackedY(curr_packed);
+
+	uint16 target_packed = Tools_Index_GetPackedTile(squad->target);
+	int targetx = Tile_GetPackedX(target_packed);
+	int targety = Tile_GetPackedY(target_packed);
+
+	float theta = atan2f(currx - targetx, targety - curry);
+	uint8 orient256 = (int8)(theta * 128.0f / M_PI);
+	uint8 orient8 = Orientation_Orientation256ToOrientation8(orient256);
+	uint8 tangent8 = (orient8 + 2) & 0x7;
+	int distance = aisquad_attack_plan[squad->plan].distance3;
+	int rank = 1;
+	int sign = 1;
+
+	/* Charge diagonally.  distance = |deltax| * 3 / 2, where |deltax| = |deltay|. */
+	if (orient8 & 0x1)
+		distance = distance * 2 / 3;
+
+	/* Ideally, unit is positioned here. */
+	int ux = targetx + distance * dx[orient8];
+	int uy = targety + distance * dy[orient8];
+
+	PoolFindStruct find;
+
+	find.houseID = squad->houseID;
+	find.type = 0xFFFF;
+	find.index = 0xFFFF;
+
+	Unit *u = UnitAI_SquadFind(squad, &find);
+	while (u != NULL) {
+		u->targetMove = Tools_Index_Encode(Tile_PackXY(ux, uy), IT_TILE);
+
+		/* We need the destination to be precise! */
+		Unit_SetAction(u, ACTION_MOVE);
+
+		ux += sign * rank * dx[tangent8];
+		uy += sign * rank * dy[tangent8];
+		UnitAI_ClampWaypoint(&ux, &uy);
+
+		rank++;
+		sign = -sign;
+		u = UnitAI_SquadFind(squad, &find);
+	}
+}
+
 void
 UnitAI_SquadLoop(void)
 {
@@ -651,6 +739,15 @@ UnitAI_SquadLoop(void)
 
 		if (UnitAI_SquadIsGathered(squad)) {
 			squad->state++;
+
+			if (squad->state == AISQUAD_BATTLE_FORMATION) {
+				if (squad->num_members == 1) {
+					squad->state++;
+				}
+				else {
+					UnitAI_ArrangeBattleFormation(squad);
+				}
+			}
 
 			if (squad->state == AISQUAD_CHARGE) {
 				UnitAI_SquadCharge(squad);
