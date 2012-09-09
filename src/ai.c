@@ -471,14 +471,13 @@ UnitAI_AssignSquad(Unit *unit, uint16 destination)
 	if (emptySquadID == SQUADID_INVALID)
 		return;
 
-	/* Consider creating a team.  Greater chance if distance is large. */
+	/* Consider creating a team if the journey is far. */
 	distance = Tile_GetDistanceRoundedUp(unit->o.position, Tools_Index_GetTile(destination));
-	int r = Tools_Random_256();
-	if (min(8 * (distance - 16), 128) < r)
+	if (distance <= 12)
 		return;
 
 	/* Create new squad and attack plan. */
-	if (emptySquadID != SQUADID_INVALID) {
+	if (Tools_Random_256() & 0x1) {
 		AISquad *squad = &s_aisquad[emptySquadID];
 
 		unit->aiSquad = emptySquadID;
