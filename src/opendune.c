@@ -901,6 +901,17 @@ static void InGame_Numpad_Move(uint16 key)
 			}
 			break;
 
+#if 0
+		/* Debugging. */
+		case SCANCODE_F9:
+			Tile_RemoveFogInRadius(Tile_UnpackTile(Tile_PackXY(32,32)), 64);
+			break;
+
+		case SCANCODE_F10:
+			s_debugForceWin = true;
+			break;
+#endif
+
 		default: return;
 	}
 }
