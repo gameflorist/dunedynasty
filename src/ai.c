@@ -148,6 +148,17 @@ StructureAI_ShouldBuildHarvesters(enum HouseType houseID)
 	return (optimal_harvester_count > harvester_count);
 }
 
+static bool
+StructureAI_ShouldBuildInfantry(enum HouseType houseID)
+{
+	House *h = House_Get_ByIndex(houseID);
+
+	if (h->structuresBuilt & (FLAG_STRUCTURE_HEAVY_VEHICLE | FLAG_STRUCTURE_WOR_TROOPER))
+		return false;
+
+	return true;
+}
+
 uint32
 StructureAI_FilterBuildOptions(enum StructureType s, enum HouseType houseID, uint32 buildable)
 {
@@ -162,6 +173,11 @@ StructureAI_FilterBuildOptions(enum StructureType s, enum HouseType houseID, uin
 		case STRUCTURE_HIGH_TECH:
 			if (!StructureAI_ShouldBuildCarryalls(houseID))
 				buildable &= ~(1 << UNIT_CARRYALL);
+			break;
+
+		case STRUCTURE_BARRACKS:
+			if (!StructureAI_ShouldBuildInfantry(houseID))
+				buildable &= ~((1 << UNIT_INFANTRY) | (1 << UNIT_SOLDIER));
 			break;
 
 		default:
