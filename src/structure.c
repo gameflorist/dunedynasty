@@ -2270,7 +2270,6 @@ void Structure_InitFactoryItems(const Structure *s)
 uint16 Structure_AI_PickNextToBuild(Structure *s)
 {
 	uint32 buildable;
-	uint16 type;
 	House *h;
 	int i;
 
@@ -2299,17 +2298,33 @@ uint16 Structure_AI_PickNextToBuild(Structure *s)
 		buildable = StructureAI_FilterBuildOptions_Original(s->o.type, s->o.houseID, buildable);
 	}
 
-	type = 0xFFFF;
-	for (i = 0; i < UNIT_MAX; i++) {
+	uint16 type = 0xFFFF;
+	uint16 priority_type = 0;
+	for (int j = 0; j < UNIT_MAX; j++) {
+		uint16 priority_i;
+
+		/* Adjustments to build order for brutal AI. */
+		if (AI_IsBrutalAI(s->o.houseID)) {
+			i = StructureAI_RemapBuildItem(j, &priority_i);
+		}
+		else {
+			i = j;
+			priority_i = g_table_unitInfo[i].o.priorityBuild;
+		}
+
 		if ((buildable & (1 << i)) == 0) continue;
 
-		if ((Tools_Random_256() % 4) == 0) type = i;
+		if ((Tools_Random_256() % 4) == 0) {
+			type = i;
+			priority_type = priority_i;
+		}
 
 		if (type != 0xFFFF) {
-			if (g_table_unitInfo[i].o.priorityBuild <= g_table_unitInfo[type].o.priorityBuild) continue;
+			if (priority_i <= priority_type) continue;
 		}
 
 		type = i;
+		priority_type = priority_i;
 	}
 
 	return type;

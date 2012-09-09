@@ -214,6 +214,99 @@ StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType hou
 	return buildable;
 }
 
+int
+StructureAI_RemapBuildItem(int index, uint16 *priority)
+{
+	/* AI builds items like this:
+	 * - iterate through possible build units in order.
+	 * - the unit has a 25% chance of becoming the thing to build.
+	 * - otherwise, build it if it has higher priority.
+	 *
+	 * Here we change the order of iteration and priorities.
+	 */
+
+	const struct {
+		uint16 priority;
+		enum UnitType unit_type;
+	} remap[] = {
+		/* Hi-Tech:
+		 * Chance of creating carryall even if ornithopter is
+		 * available, if required.
+		 */
+		{  75, UNIT_ORNITHOPTER },
+		{  20, UNIT_CARRYALL },     /* at most 1. */
+
+		/* Barracks, WOR:
+		 * Always upgrade lone soldiers and troopers to squads, which
+		 * are more supply and cost efficient.
+		 */
+		{  10, UNIT_SOLDIER },
+		{  20, UNIT_TROOPER },
+		{  20, UNIT_INFANTRY },
+		{  50, UNIT_TROOPERS },
+
+		{   0, UNIT_SABOTEUR },     /* never built. */
+
+		/* Heavy factory build ratios:
+		 *                  | siege- | IX-tech
+		 * 130 siege tank   | 56, 75 | 42, 42, 56
+		 *  80 tank         | 19, 25 |  0, 14, 19
+		 *  50 deviator     |        |  -,  -, 25
+		 * 100 devastator   |        | 33,  -,  -
+		 *  60 launcher     | 25,  - | 25,  -,  -
+		 *  70 sonic tank   |        |  -, 44,  -
+		 *
+		 * Also works well for partially upgraded factories.
+		 */
+
+		/* General behaviours:
+		 *
+		 * Before IX-tech, build 75% combat tanks and 25% launchers
+		 * when only those two units are available.  Continue to build
+		 * launchers after siege tanks are available.
+		 *
+		 * Harkonnen will phase out combat tanks once devastators are
+		 * available.  The backbone will still be siege tanks since
+		 * devastators are slow and will destruct.  Continue to use
+		 * launchers as they have good firepower.
+		 *
+		 * Atreides will phase out launchers once sonic tanks are
+		 * available, since they fill that role quite well (and the AI
+		 * isn't good with launchers).  Continue to build combat tanks
+		 * to use as meat, as a 62% sonic tank army is too fragile.
+		 *
+		 * Ordos will complement their deviators with combat tanks,
+		 * which have better speeds than siege tanks.  Not as reliant
+		 * on their IX-tech tanks as Harkonnen and Atreides since they
+		 * won't win the war.
+		 */
+
+		{ 130, UNIT_SIEGE_TANK },
+		{  80, UNIT_TANK },
+		{  50, UNIT_DEVIATOR },
+		{ 100, UNIT_DEVASTATOR },   /* was 175, keep it lower then siege tank. */
+		{  60, UNIT_LAUNCHER },     /* was  60, keep it lower than combat tank. */
+		{  70, UNIT_SONIC_TANK },   /* was  80, keep it lower than combat tank. */
+
+		{  50, UNIT_TRIKE },
+		{  55, UNIT_RAIDER_TRIKE },
+		{  60, UNIT_QUAD },
+
+		/* Chance of creating harvester if required. */
+		{  10, UNIT_HARVESTER },    /* at most 2 or 3. */
+
+		{  10, UNIT_MCV }           /* never built. */
+	};
+
+	if (index > UNIT_MCV) {
+		*priority = g_table_unitInfo[index].o.priorityBuild;
+		return index;
+	}
+
+	*priority = remap[index].priority;
+	return remap[index].unit_type;
+}
+
 /*--------------------------------------------------------------*/
 
 uint16
