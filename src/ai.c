@@ -66,6 +66,7 @@ typedef struct AISquad {
 	uint16 target;
 
 	int64_t recruitment_timeout;
+	int64_t formation_timeout;
 } AISquad;
 
 typedef struct AISquadPlan {
@@ -608,6 +609,9 @@ UnitAI_SquadIsInFormation(const AISquad *squad)
 {
 	PoolFindStruct find;
 
+	if (g_timerGame > squad->formation_timeout)
+		return true;
+
 	find.houseID = squad->houseID;
 	find.type = 0xFFFF;
 	find.index = 0xFFFF;
@@ -719,6 +723,9 @@ UnitAI_ArrangeBattleFormation(AISquad *squad)
 		sign = -sign;
 		u = UnitAI_SquadFind(squad, &find);
 	}
+
+	/* Time to build formation, 60 ticks per second. */
+	squad->formation_timeout = g_timerGame + Tools_AdjustToGameSpeed(60 * 15, 1, 0xFFFF, true);
 }
 
 void
