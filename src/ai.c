@@ -508,8 +508,14 @@ UnitAI_SquadIsGathered(const AISquad *squad)
 	Unit *u = UnitAI_SquadFind(squad, &find);
 	while (u != NULL) {
 		int dist = Tile_GetDistanceRoundedUp(u->o.position, destination);
-		if (dist >= 8)
+		int proximity = max(8, g_table_unitInfo[u->o.type].fireDistance + 2);
+
+		/* AI units on ACTION_HUNT don't usually get closer than their
+		 * fire distance.
+		 */
+		if (dist >= proximity) {
 			return false;
+		}
 
 		u = UnitAI_SquadFind(squad, &find);
 	}
