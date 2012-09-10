@@ -10,7 +10,7 @@
 #include "object.h"
 
 enum {
-	MAX_SELECTABLE_UNITS  = 16
+	MAX_SELECTABLE_UNITS  = 32
 };
 
 /**
