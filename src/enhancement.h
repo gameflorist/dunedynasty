@@ -17,6 +17,7 @@ extern bool enhancement_fix_everlasting_unit_wobble;
 extern bool enhancement_fix_firing_rates_and_ranges;
 extern bool enhancement_fix_ix_colour_remapping;
 extern bool enhancement_fix_ordos_siege_tank_tech;
+extern bool enhancement_fix_scenario_typos;
 extern bool enhancement_fix_selection_after_entering_structure;
 extern bool enhancement_fix_typos;
 extern bool enhancement_i_mean_where_i_clicked;

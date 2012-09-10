@@ -42,6 +42,12 @@ bool enhancement_fix_ix_colour_remapping = true;
 bool enhancement_fix_ordos_siege_tank_tech = true;
 
 /**
+ * Fix typos in the scenarios, including AI unit caps, AI teams,
+ * reinforcements, and Atreides WOR facilities.
+ */
+bool enhancement_fix_scenario_typos = true;
+
+/**
  * When a unit enters a structure, the last tile the unit was on
  * becomes selected rather than the entire structure.
  */

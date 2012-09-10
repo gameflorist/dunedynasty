@@ -71,6 +71,12 @@ static void Scenario_Load_House(uint8 houseID)
 	h->creditsQuota = Ini_GetInteger(houseName, "Quota",    0, s_scenarioBuffer);
 	h->unitCountMax = Ini_GetInteger(houseName, "MaxUnit", 39, s_scenarioBuffer);
 
+	/* ENHANCEMENT -- "MaxUnits" instead of MaxUnit. */
+	if (enhancement_fix_scenario_typos) {
+		if (h->unitCountMax == 0)
+			h->unitCountMax = Ini_GetInteger(houseName, "MaxUnits", 39, s_scenarioBuffer);
+	}
+
 	/* For 'Brain = Human' we have to set a few additional things */
 	if (*houseType != 'H') return;
 
