@@ -50,6 +50,7 @@ static ALLEGRO_SAMPLE_INSTANCE *s_instance[MAX_SAMPLE_INSTANCES];
 static ALLEGRO_VOICE *al_voice;
 static ALLEGRO_MIXER *al_mixer;
 
+static ALLEGRO_AUDIO_STREAM *AudioA5_InitAdlib(const MidiFileInfo *mid);
 static void AudioA5_FreeMusicStream(void);
 
 /*--------------------------------------------------------------*/
@@ -77,6 +78,8 @@ AudioA5_Init(void)
 	}
 
 	al_init_acodec_addon();
+
+	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_1].dune2_adlib);
 }
 
 void
