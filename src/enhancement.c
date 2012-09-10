@@ -90,6 +90,12 @@ bool enhancement_nonblocking_radar_animation = true;
 bool enhancement_play_additional_voices = true;
 
 /**
+ * Dune 2 usually limits the player to 25 units, and the CPU to 20
+ * units per house.  Allow larger armies if possible.
+ */
+bool enhancement_raise_scenario_unit_cap = false;
+
+/**
  * The original game ignores all structures' health fields specified
  * in the scenario, giving them all full health instead.
  */

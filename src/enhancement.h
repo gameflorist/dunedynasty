@@ -25,6 +25,7 @@ extern bool enhancement_insatiable_sandworms;
 extern bool enhancement_new_selection_cursor;
 extern bool enhancement_nonblocking_radar_animation;
 extern bool enhancement_play_additional_voices;
+extern bool enhancement_raise_scenario_unit_cap;
 extern bool enhancement_read_scenario_structure_health;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
