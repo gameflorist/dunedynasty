@@ -94,7 +94,7 @@ extern const tile32 g_table_tilediff[][8];
 
 extern uint16 g_dirtyViewportCount;
 
-extern LandscapeInfo g_table_landscapeInfo[LST_MAX];
+extern const LandscapeInfo g_table_landscapeInfo[LST_MAX];
 
 extern uint16 Map_MoveDirection(uint16 direction);
 extern void Map_SetSelection(uint16 packed);

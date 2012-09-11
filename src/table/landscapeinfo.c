@@ -7,7 +7,7 @@
 
 #include "../map.h"
 
-LandscapeInfo g_table_landscapeInfo[LST_MAX] = {
+const LandscapeInfo g_table_landscapeInfo[LST_MAX] = {
 	{ /* 0 / LST_NORMAL_SAND */
 		/* movementSpeed        */ { 112, 112, 112, 160, 255, 192 },
 		/* letUnitWobble        */ false,
@@ -112,8 +112,8 @@ LandscapeInfo g_table_landscapeInfo[LST_MAX] = {
 		/* isValidForStructure2 */ false,
 		/* canBecomeSpice       */ true,
 		/* variable_10          */ 1,
-		/* radarColour          */ 88,
-		/* spriteID             */ 37,
+		/* radarColour          */ 215, /* was 88, but is set by GameLoop_GameIntroAnimationMenu. */
+		/* spriteID             */ 53,  /* was 37, but is set by GameLoop_GameIntroAnimationMenu. */
 	},
 
 	{ /* 9 / LST_THICK_SPICE */
@@ -124,8 +124,8 @@ LandscapeInfo g_table_landscapeInfo[LST_MAX] = {
 		/* isValidForStructure2 */ false,
 		/* canBecomeSpice       */ true,
 		/* variable_10          */ 1,
-		/* radarColour          */ 88,
-		/* spriteID             */ 37,
+		/* radarColour          */ 215, /* was 88, but is set by GameLoop_GameIntroAnimationMenu. */
+		/* spriteID             */ 53,  /* was 37, but is set by GameLoop_GameIntroAnimationMenu. */
 	},
 
 	{ /* 10 / LST_CONCRETE_SLAB */
