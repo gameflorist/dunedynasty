@@ -170,8 +170,18 @@ void String_Init(void)
 	if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 		char *str;
 
+		str = s_strings[STR_OLD_SAVE_GAME_FILE_IS_INCOMPATIBLE_WITH_LATEST_VERSION];
+		str = strstr(str, "incompatable");
+		if (str != NULL)
+			str[8] = 'i';
+
 		str = s_strings[STR_ORNITHOPTER];
 		str[6] = 'o';
+
+		str = s_strings[STR_WARNING_ORIGINAL_SAVED_GAMES_ARE_INCOMPATIBLE_WITH_THE_NEW_VERSION_THE_BATTLE_WILL_BE_RESTARTED];
+		str = strstr(str, "incompatable");
+		if (str != NULL)
+			str[8] = 'i';
 
 		str = s_strings[STR_STARPORT_THE_STARPORT_IS_USED_TO_ORDER_AND_RECEIVE_SHIPMENTS_FROM_CHOAM];
 		if (strncmp(str, "Startport", 9) == 0)
