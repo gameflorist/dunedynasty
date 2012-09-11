@@ -5,12 +5,6 @@
 #ifndef EXPLOSION_H
 #define EXPLOSION_H
 
-#include <inttypes.h>
-
-enum {
-    EXPLOSION_MAX = 32                                      /*!< The maximum amount of active explosions we can have. */
-};
-
 /**
  * The valid types for command in Explosion.
  */
@@ -35,23 +29,9 @@ typedef struct ExplosionCommandStruct {
 	uint16 parameter;                                       /*!< The parameter of the Explosion. */
 } ExplosionCommandStruct;
 
-/**
- * The layout of a Explosion.
- */
-typedef struct Explosion {
-	int64_t timeOut;                                        /*!< Time out for the next command. */
-	uint8  houseID;                                         /*!< A houseID. */
-	bool   isDirty;                                         /*!< Does the Explosion require a redraw next round. */
-	uint8  current;                                         /*!< Index in #commands pointing to the next command. */
-	uint16 spriteID;                                        /*!< SpriteID. */
-	const ExplosionCommandStruct *commands;                 /*!< Commands being executed. */
-	tile32 position;                                        /*!< Position where this explosion acts. */
-} Explosion;
-
-extern Explosion g_explosions[];
-extern const ExplosionCommandStruct *g_table_explosion[];
-
+extern void Explosion_Init(void);
 extern void Explosion_Start(uint16 explosionType, tile32 position);
 extern void Explosion_Tick(void);
+extern void Explosion_Draw(void);
 
 #endif /* EXPLOSION_H */

@@ -13,16 +13,31 @@
 #include "audio/audio.h"
 #include "house.h"
 #include "map.h"
+#include "shape.h"
 #include "sprites.h"
 #include "structure.h"
 #include "tile.h"
 #include "timer/timer.h"
 #include "tools.h"
 
+enum {
+	EXPLOSION_MAX = 32                      /*!< The maximum amount of active explosions we can have. */
+};
 
-Explosion g_explosions[EXPLOSION_MAX];                      /*!< Explosions. */
+typedef struct Explosion {
+	int64_t timeOut;                        /*!< Time out for the next command. */
+	enum HouseType houseID;                 /*!< A houseID. */
+	bool isDirty;                           /*!< Does the Explosion require a redraw next round. */
+	uint8 current;                          /*!< Index in #commands pointing to the next command. */
+	enum ShapeID spriteID;                  /*!< SpriteID. */
+	const ExplosionCommandStruct *commands; /*!< Commands being executed. */
+	tile32 position;                        /*!< Position where this explosion acts. */
+} Explosion;
+
+static Explosion g_explosions[EXPLOSION_MAX];               /*!< Explosions. */
 static int64_t s_explosionTimer = 0;                        /*!< Timeout value for next explosion activity. */
 
+extern const ExplosionCommandStruct *g_table_explosion[];
 
 /**
  * Update the tile a Explosion is on.
@@ -248,6 +263,12 @@ static void Explosion_StopAtPosition(uint16 packed)
 	}
 }
 
+void
+Explosion_Init(void)
+{
+	memset(g_explosions, 0, EXPLOSION_MAX * sizeof(Explosion));
+}
+
 /**
  * Start a Explosion on a tile.
  * @param explosionType Type of Explosion.
@@ -328,5 +349,30 @@ void Explosion_Tick(void)
 		if (e->commands == NULL || e->timeOut > s_explosionTimer) continue;
 
 		s_explosionTimer = e->timeOut;
+	}
+}
+
+void
+Explosion_Draw(void)
+{
+	for (int i = 0; i < EXPLOSION_MAX; i++) {
+		Explosion *e = &g_explosions[i];
+
+		if (e->commands == NULL) continue;
+		if (e->spriteID == 0) continue;
+
+		const uint16 curPos = Tile_PackTile(e->position);
+		if (!g_map[curPos].isUnveiled)
+			continue;
+
+		uint16 x, y;
+		if (!Map_IsPositionInViewport(e->position, &x, &y))
+			continue;
+
+#if 0
+		GUI_DrawSprite(g_screenActiveID, GUI_Widget_Viewport_Draw_GetSprite(e->spriteID, e->houseID), x, y, 2, s_spriteFlags, s_paletteHouse);
+#else
+		Shape_Draw(e->spriteID, x, y, 2, 0xC000);
+#endif
 	}
 }

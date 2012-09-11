@@ -532,28 +532,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 	Viewport_DrawRallyPoint();
 	Viewport_DrawSelectionBox();
-
-	for (i = 0; i < 32; i++) {
-		Explosion *e;
-
-		e = &g_explosions[i];
-
-		curPos = Tile_PackTile(e->position);
-
-		if (e->commands == NULL) continue;
-		if (e->spriteID == 0) continue;
-
-		if (!g_map[curPos].isUnveiled && !g_debugScenario) continue;
-		if (!Map_IsPositionInViewport(e->position, &x, &y)) continue;
-
-		s_spriteFlags = 0xC000;
-
-#if 0
-		GUI_DrawSprite(g_screenActiveID, GUI_Widget_Viewport_Draw_GetSprite(e->spriteID, e->houseID), x, y, 2, s_spriteFlags, s_paletteHouse);
-#else
-		Shape_Draw(e->spriteID, x, y, 2, s_spriteFlags);
-#endif
-	}
+	Explosion_Draw();
 
 	if (true || forceRedraw || updateDisplay) {
 		find.type    = 0xFFFF;
