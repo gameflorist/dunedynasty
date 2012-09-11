@@ -25,7 +25,6 @@ typedef struct Explosion {
 	/* Heap key. */
 	int64_t timeOut;                        /*!< Time out for the next command. */
 
-	enum HouseType houseID;                 /*!< A houseID. */
 	bool isDirty;                           /*!< Does the Explosion require a redraw next round. */
 	uint8 current;                          /*!< Index in #commands pointing to the next command. */
 	enum ShapeID spriteID;                  /*!< SpriteID. */
@@ -60,18 +59,15 @@ static void Explosion_Update(uint16 type, Explosion *e)
  */
 static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
 {
-	static const int16 bloomLocations[] = { -1, 2, 1 };
+	const int16 bloomLocations[] = { -1, 2, 1 };
 
-	uint16 packed;
+	uint16 packed = Tile_PackTile(e->position);
 	uint16 type;
 	Tile *t;
 	int16 iconMapIndex;
 	uint16 overlaySpriteID;
 	uint16 *iconMap;
-
 	VARIABLE_NOT_USED(parameter);
-
-	packed = Tile_PackTile(e->position);
 
 	if (!Map_IsPositionUnveiled(packed)) return;
 
@@ -141,11 +137,8 @@ static void Explosion_Func_NoOperation(Explosion *e, uint16 parameter)
  */
 static void Explosion_Func_BloomExplosion(Explosion *e, uint16 parameter)
 {
-	uint16 packed;
-
+	uint16 packed = Tile_PackTile(e->position);
 	VARIABLE_NOT_USED(parameter);
-
-	packed = Tile_PackTile(e->position);
 
 	if (g_map[packed].groundSpriteID != g_bloomSpriteID) return;
 
@@ -159,9 +152,7 @@ static void Explosion_Func_BloomExplosion(Explosion *e, uint16 parameter)
  */
 static void Explosion_Func_SetAnimation(Explosion *e, uint16 animationMapID)
 {
-	uint16 packed;
-
-	packed = Tile_PackTile(e->position);
+	uint16 packed = Tile_PackTile(e->position);
 
 	if (Structure_Get_ByPackedTile(packed) != NULL) return;
 
@@ -169,7 +160,7 @@ static void Explosion_Func_SetAnimation(Explosion *e, uint16 animationMapID)
 	animationMapID += g_table_landscapeInfo[Map_GetLandscapeType(packed)].isSand ? 0 : 2;
 
 	assert(animationMapID < 16);
-	Animation_Start(g_table_animation_map[animationMapID], e->position, 0, e->houseID, 3);
+	Animation_Start(g_table_animation_map[animationMapID], e->position, 0, HOUSE_HARKONNEN, 3);
 }
 
 /**
@@ -196,9 +187,10 @@ static void Explosion_Func_SetRow(Explosion *e, uint16 row)
  */
 static void Explosion_Func_Stop(Explosion *e, uint16 parameter)
 {
+	uint16 packed = Tile_PackTile(e->position);
 	VARIABLE_NOT_USED(parameter);
 
-	g_map[Tile_PackTile(e->position)].hasExplosion = false;
+	g_map[packed].hasExplosion = false;
 
 	Explosion_Update(0, e);
 
@@ -243,18 +235,16 @@ static void Explosion_Func_SetSpriteID(Explosion *e, uint16 spriteID)
  */
 static void Explosion_StopAtPosition(uint16 packed)
 {
-	Tile *t;
-
-	t = &g_map[packed];
-
-	if (!t->hasExplosion) return;
+	if (!g_map[packed].hasExplosion) return;
 
 	for (int i = 1; i < s_explosions.num_elem; i++) {
 		Explosion *e = (Explosion *)BinHeap_GetElem(&s_explosions, i);
 
-		if (e->commands == NULL || Tile_PackTile(e->position) != packed) continue;
+		if (e->commands == NULL) continue;
+		if (Tile_PackTile(e->position) != packed) continue;
 
 		Explosion_Func_Stop(e, 0);
+		break;
 	}
 }
 
@@ -277,23 +267,19 @@ Explosion_Uninit(void)
  */
 void Explosion_Start(uint16 explosionType, tile32 position)
 {
-	const ExplosionCommandStruct *commands;
-	uint16 packed;
-
 	if (explosionType > 19) return;
-	commands = g_table_explosion[explosionType];
 
-	packed = Tile_PackTile(position);
-
+	uint16 packed = Tile_PackTile(position);
 	Explosion_StopAtPosition(packed);
 
 	Explosion *e = BinHeap_Push(&s_explosions, Timer_GetTicks());
 	if (e != NULL) {
-		e->commands = commands;
+		e->commands = g_table_explosion[explosionType];
 		e->current  = 0;
 		e->spriteID = 0;
 		e->position = position;
 		e->isDirty  = false;
+
 		g_map[packed].hasExplosion = true;
 	}
 }
@@ -353,8 +339,8 @@ Explosion_Draw(void)
 		if (e->commands == NULL) continue;
 		if (e->spriteID == 0) continue;
 
-		const uint16 curPos = Tile_PackTile(e->position);
-		if (!g_map[curPos].isUnveiled)
+		const uint16 packed = Tile_PackTile(e->position);
+		if (!g_map[packed].isUnveiled)
 			continue;
 
 		uint16 x, y;
