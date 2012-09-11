@@ -16,6 +16,7 @@ extern bool enhancement_fix_enemy_approach_direction_warning;
 extern bool enhancement_fix_everlasting_unit_wobble;
 extern bool enhancement_fix_firing_rates_and_ranges;
 extern bool enhancement_fix_ix_colour_remapping;
+extern bool enhancement_fix_ordos_siege_tank_tech;
 extern bool enhancement_fix_selection_after_entering_structure;
 extern bool enhancement_i_mean_where_i_clicked;
 extern bool enhancement_insatiable_sandworms;

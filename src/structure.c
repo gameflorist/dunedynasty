@@ -1133,7 +1133,16 @@ bool Structure_IsUpgradable(Structure *s)
 	si = &g_table_structureInfo[s->o.type];
 
 	if (s->o.houseID == HOUSE_HARKONNEN && s->o.type == STRUCTURE_HIGH_TECH) return false;
-	if (s->o.houseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 1 && si->upgradeCampaign[2] > g_campaignID) return false;
+
+	if (s->o.houseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 1) {
+		int ref = g_campaignID;
+
+		/* ENHANCEMENT -- Siege tanks should be available when g_campaignID = 5, (si->upgradeCampaign[2] = 6). */
+		if (enhancement_fix_ordos_siege_tank_tech)
+			ref = g_campaignID + 1;
+
+		if (si->upgradeCampaign[2] > ref) return false;
+	}
 
 	if (si->upgradeCampaign[s->upgradeLevel] != 0 && si->upgradeCampaign[s->upgradeLevel] <= g_campaignID + 1) {
 		House *h;

@@ -36,6 +36,12 @@ bool enhancement_fix_firing_rates_and_ranges = true;
 bool enhancement_fix_ix_colour_remapping = true;
 
 /**
+ * In the original game, Ordos get siege tanks one level too late
+ * (affects both players and AI).
+ */
+bool enhancement_fix_ordos_siege_tank_tech = true;
+
+/**
  * When a unit enters a structure, the last tile the unit was on
  * becomes selected rather than the entire structure.
  */
