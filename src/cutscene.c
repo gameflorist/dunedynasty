@@ -1153,6 +1153,23 @@ static void GameLoop_GameCredits(void)
 	while (true) {
 		File_ReadBlockFile(String_GenerateFilename("CREDITS"), s_buffer_1832, GFX_Screen_GetSize_ByIndex(6));
 
+		if (enhancement_play_additional_voices && (g_config.language == LANGUAGE_ENGLISH)) {
+			const char *find_str = "The Battle for Arrakis";
+			const char *replace_str = "The Building of a Dynasty";
+			const int find_len = strlen(find_str);
+			const int replace_len = strlen(replace_str);
+
+			char *str = s_buffer_1832;
+
+			str = strstr(str, find_str);
+			while (str != NULL) {
+				memmove(str + replace_len, str + find_len, strlen(str) + 1);
+				memcpy(str, replace_str, replace_len);
+
+				str = strstr(str + replace_len, find_str);
+			}
+		}
+
 		GameCredits_Play(s_buffer_1832, 20, 2, 4, 6);
 
 		if (Cutscene_InputSkipScene()) break;
