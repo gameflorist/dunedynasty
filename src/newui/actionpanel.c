@@ -7,6 +7,8 @@
 #include "actionpanel.h"
 
 #include "../audio/audio.h"
+#include "../config.h"
+#include "../enhancement.h"
 #include "../gfx.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
@@ -132,11 +134,21 @@ ActionPanel_DrawStructureDescription(Structure *s)
 			{
 				uint16 powerOutput = o->hitpoints * -si->powerUsage / oi->hitpoints;
 				uint16 powerAverage = (h->windtrapCount == 0) ? 0 : h->powerUsage / h->windtrapCount;
+				uint8 fg = (powerOutput >= powerAverage) ? 29 : 6;
 
 				GUI_DrawLine(x0 + 261, y0 + 95, x0 + 312, y0 + 95, 16);
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), x0 + 258, y0 + 88, 29, 0, 0x11);
-				GUI_DrawText_Wrapper("%d", x0 + 302, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11, powerAverage);
-				GUI_DrawText_Wrapper("%d", x0 + 302, y0 + g_fontCurrent->height * 3 + 80, (powerOutput >= powerAverage) ? 29 : 6, 0, 0x11, powerOutput);
+				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
+					GUI_DrawText_Wrapper("Power Info", x0 + 286, y0 + 88, 29, 0, 0x111);
+					GUI_DrawText_Wrapper("Needed:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Output:", x0 + 262, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x211, powerAverage);
+					GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 3 + 80, fg, 0, 0x211, powerOutput);
+				}
+				else {
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), x0 + 258, y0 + 88, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", x0 + 302, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11, powerAverage);
+					GUI_DrawText_Wrapper("%d", x0 + 302, y0 + g_fontCurrent->height * 3 + 80, fg, 0, 0x11, powerOutput);
+				}
 			}
 			break;
 
@@ -158,13 +170,31 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
 
 				GUI_DrawLine(x0 + 261, y0 + 95, x0 + 312, y0 + 95, 16);
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), x0 + 258, y0 + 88, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
+				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
+					GUI_DrawText_Wrapper("Spice", x0 + 286, y0 + 88, 29, 0, 0x111);
+					GUI_DrawText_Wrapper("Holds:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Max:", x0 + 262, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x211, creditsStored);
+					GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x211, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
+				}
+				else {
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), x0 + 258, y0 + 88, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
+				}
 			}
 			break;
 
 		case STRUCTURE_OUTPOST:
 			GUI_DrawLine(x0 + 261, y0 + 95, x0 + 312, y0 + 95, 16);
-			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), x0 + 258, y0 + 88, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
+			if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
+				GUI_DrawText_Wrapper("Radar Scan", x0 + 286, y0 + 88, 29, 0, 0x111);
+				GUI_DrawText_Wrapper("Friend:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);
+				GUI_DrawText_Wrapper("Enemy:", x0 + 262, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x11);
+				GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x211, h->unitCountAllied);
+				GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x211, h->unitCountEnemy);
+			}
+			else {
+				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), x0 + 258, y0 + 88, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
+			}
 			break;
 	}
 }
