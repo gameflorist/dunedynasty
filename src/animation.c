@@ -10,6 +10,7 @@
 #include "animation.h"
 
 #include "audio/audio.h"
+#include "binheap.h"
 #include "map.h"
 #include "tile.h"
 #include "timer/timer.h"
@@ -17,12 +18,10 @@
 #include "sprites.h"
 #include "structure.h"
 
-enum {
-    ANIMATION_MAX = 112
-};
-
 typedef struct Animation {
+	/* Heap key. */
 	int64_t tickNext;                       /*!< Which tick this Animation should be called again. */
+
 	enum StructureLayout tileLayout;        /*!< Tile layout of the Animation. */
 	enum HouseType houseID;                 /*!< House of the item being animated. */
 	uint8 current;                          /*!< At which command we currently are in the Animation. */
@@ -31,8 +30,7 @@ typedef struct Animation {
 	tile32 tile;                            /*!< Top-left tile of Animation. */
 } Animation;
 
-static Animation g_animations[ANIMATION_MAX];
-static int64_t s_animationTimer; /*!< Timer for animations. */
+static BinHeap s_animations;
 
 /**
  * Stop with this Animation.
@@ -212,7 +210,13 @@ static void Animation_Func_PlayVoice(Animation *animation, int16 parameter)
 void
 Animation_Init(void)
 {
-	memset(g_animations, 0, ANIMATION_MAX * sizeof(Animation));
+	BinHeap_Init(&s_animations, sizeof(Animation));
+}
+
+void
+Animation_Uninit(void)
+{
+	BinHeap_Free(&s_animations);
 }
 
 /**
@@ -225,18 +229,14 @@ Animation_Init(void)
  */
 void Animation_Start(void *commands, tile32 tile, uint16 tileLayout, uint8 houseID, uint8 iconGroup)
 {
-	Animation *animation = g_animations;
 	uint16 packed = Tile_PackTile(tile);
 	Tile *t;
-	int i;
 
 	t = &g_map[packed];
 	Animation_Stop_ByTile(packed);
 
-	for (i = 0; i < ANIMATION_MAX; i++, animation++) {
-		if (animation->commands != NULL) continue;
-
-		animation->tickNext   = Timer_GetTicks();
+	Animation *animation = BinHeap_Push(&s_animations, Timer_GetTicks());
+	if (animation != NULL) {
 		animation->tileLayout = tileLayout;
 		animation->houseID    = houseID;
 		animation->current    = 0;
@@ -244,11 +244,8 @@ void Animation_Start(void *commands, tile32 tile, uint16 tileLayout, uint8 house
 		animation->commands   = commands;
 		animation->tile       = tile;
 
-		s_animationTimer = 0;
-
 		t->houseID = houseID;
 		t->hasAnimation = true;
-		return;
 	}
 }
 
@@ -258,13 +255,13 @@ void Animation_Start(void *commands, tile32 tile, uint16 tileLayout, uint8 house
  */
 void Animation_Stop_ByTile(uint16 packed)
 {
-	Animation *animation = g_animations;
 	Tile *t = &g_map[packed];
-	int i;
 
 	if (!t->hasAnimation) return;
 
-	for (i = 0; i < ANIMATION_MAX; i++, animation++) {
+	for (int i = 1; i < s_animations.num_elem; i++) {
+		Animation *animation = (Animation *)BinHeap_GetElem(&s_animations, i);
+
 		if (animation->commands == NULL) continue;
 		if (Tile_PackTile(animation->tile) != packed) continue;
 
@@ -278,16 +275,11 @@ void Animation_Stop_ByTile(uint16 packed)
  */
 void Animation_Tick(void)
 {
-	Animation *animation = g_animations;
-	int i;
+	const int64_t curr_ticks = Timer_GetTicks();
 
-	if (s_animationTimer > Timer_GetTicks()) return;
-	s_animationTimer += 10000;
-
-	for (i = 0; i < ANIMATION_MAX; i++, animation++) {
-		if (animation->commands == NULL) continue;
-
-		if (animation->tickNext <= Timer_GetTicks()) {
+	Animation *animation = BinHeap_GetMin(&s_animations);
+	while ((animation != NULL) && (animation->tickNext <= curr_ticks)) {
+		while (animation->commands != NULL) {
 			AnimationCommandStruct *commands = animation->commands;
 			int16 parameter;
 
@@ -310,9 +302,17 @@ void Animation_Tick(void)
 				case ANIMATION_SET_ICONGROUP:      Animation_Func_SetIconGroup(animation, parameter); break;
 			}
 
-			if (animation->commands == NULL) continue;
+			if (animation->tickNext > curr_ticks)
+				break;
 		}
 
-		if (animation->tickNext < s_animationTimer) s_animationTimer = animation->tickNext;
+		if (animation->commands == NULL) {
+			BinHeap_Pop(&s_animations);
+		}
+		else {
+			BinHeap_UpdateMin(&s_animations);
+		}
+
+		animation = BinHeap_GetMin(&s_animations);
 	}
 }
