@@ -12,11 +12,11 @@
 #include "audio/audio.h"
 #include "binheap.h"
 #include "map.h"
+#include "sprites.h"
+#include "structure.h"
 #include "tile.h"
 #include "timer/timer.h"
 #include "tools.h"
-#include "sprites.h"
-#include "structure.h"
 
 typedef struct Animation {
 	/* Heap key. */
@@ -40,24 +40,23 @@ static BinHeap s_animations;
 static void Animation_Func_Stop(Animation *animation, int16 parameter)
 {
 	const uint16 *layout = g_table_structure_layoutTiles[animation->tileLayout];
+	uint16 layoutTileCount = g_table_structure_layoutTileCount[animation->tileLayout];
 	uint16 packed = Tile_PackTile(animation->tile);
-	Tile *t = &g_map[packed];
-	int i;
-
 	VARIABLE_NOT_USED(parameter);
 
-	t->hasAnimation = false;
+	g_map[packed].hasAnimation = false;
 	animation->commands = NULL;
 
-	for (i = 0; i < g_table_structure_layoutTileCount[animation->tileLayout]; i++) {
+	for (int i = 0; i < layoutTileCount; i++) {
 		uint16 position = packed + (*layout++);
+		Tile *t = &g_map[position];
 
 		if (animation->tileLayout != 0) {
-			g_map[position].groundSpriteID = g_mapSpriteID[position];
+			t->groundSpriteID = g_mapSpriteID[position];
 		}
 
 		if (Map_IsPositionUnveiled(position)) {
-			g_map[position].overlaySpriteID = 0;
+			t->overlaySpriteID = 0;
 		}
 
 		Map_Update(position, 0, false);
@@ -73,11 +72,9 @@ static void Animation_Func_Stop(Animation *animation, int16 parameter)
 static void Animation_Func_Abort(Animation *animation, int16 parameter)
 {
 	uint16 packed = Tile_PackTile(animation->tile);
-	Tile *t = &g_map[packed];
-
 	VARIABLE_NOT_USED(parameter);
 
-	t->hasAnimation = false;
+	g_map[packed].hasAnimation = false;
 	animation->commands = NULL;
 
 	Map_Update(packed, 0, false);
@@ -104,12 +101,11 @@ static void Animation_Func_Pause(Animation *animation, int16 parameter)
 static void Animation_Func_SetOverlaySprite(Animation *animation, int16 parameter)
 {
 	uint16 packed = Tile_PackTile(animation->tile);
-	Tile *t = &g_map[packed];
-
 	assert(parameter >= 0);
 
 	if (!Map_IsPositionUnveiled(packed)) return;
 
+	Tile *t = &g_map[packed];
 	t->overlaySpriteID = g_iconMap[g_iconMap[animation->iconGroup] + parameter];
 	t->houseID = animation->houseID;
 
@@ -135,27 +131,28 @@ static void Animation_Func_Rewind(Animation *animation, int16 parameter)
  */
 static void Animation_Func_SetGroundSprite(Animation *animation, int16 parameter)
 {
+	const uint16 *layout = g_table_structure_layoutTiles[animation->tileLayout];
+	uint16 layoutTileCount = g_table_structure_layoutTileCount[animation->tileLayout];
+	uint16 packed = Tile_PackTile(animation->tile);
+
 	uint16 specialMap[1];
 	uint16 *iconMap;
-	const uint16 *layout = g_table_structure_layoutTiles[animation->tileLayout];
-	uint16 packed = Tile_PackTile(animation->tile);
-	uint16 layoutTileCount;
-	int i;
 
-	layoutTileCount = g_table_structure_layoutTileCount[animation->tileLayout];
 	iconMap = &g_iconMap[g_iconMap[animation->iconGroup] + layoutTileCount * parameter];
 
 	/* Some special case for turrets */
-	if (parameter > 1 && (animation->iconGroup == 23 || animation->iconGroup == 24)) {
+	if ((parameter > 1) &&
+		(animation->iconGroup == ICM_ICONGROUP_BASE_DEFENSE_TURRET ||
+		 animation->iconGroup == ICM_ICONGROUP_BASE_ROCKET_TURRET)) {
 		Structure *s = Structure_Get_ByPackedTile(packed);
 		assert(s != NULL);
 		assert(layoutTileCount == 1);
 
 		specialMap[0] = s->rotationSpriteDiff + g_iconMap[g_iconMap[animation->iconGroup]] + 2;
-		iconMap = &specialMap[0];
+		iconMap = specialMap;
 	}
 
-	for (i = 0; i < layoutTileCount; i++) {
+	for (int i = 0; i < layoutTileCount; i++) {
 		uint16 position = packed + (*layout++);
 		uint16 spriteID = *iconMap++;
 		Tile *t = &g_map[position];
@@ -230,9 +227,6 @@ Animation_Uninit(void)
 void Animation_Start(void *commands, tile32 tile, uint16 tileLayout, uint8 houseID, uint8 iconGroup)
 {
 	uint16 packed = Tile_PackTile(tile);
-	Tile *t;
-
-	t = &g_map[packed];
 	Animation_Stop_ByTile(packed);
 
 	Animation *animation = BinHeap_Push(&s_animations, Timer_GetTicks());
@@ -244,8 +238,8 @@ void Animation_Start(void *commands, tile32 tile, uint16 tileLayout, uint8 house
 		animation->commands   = commands;
 		animation->tile       = tile;
 
-		t->houseID = houseID;
-		t->hasAnimation = true;
+		g_map[packed].houseID = houseID;
+		g_map[packed].hasAnimation = true;
 	}
 }
 
@@ -255,9 +249,7 @@ void Animation_Start(void *commands, tile32 tile, uint16 tileLayout, uint8 house
  */
 void Animation_Stop_ByTile(uint16 packed)
 {
-	Tile *t = &g_map[packed];
-
-	if (!t->hasAnimation) return;
+	if (!g_map[packed].hasAnimation) return;
 
 	for (int i = 1; i < s_animations.num_elem; i++) {
 		Animation *animation = (Animation *)BinHeap_GetElem(&s_animations, i);
@@ -266,7 +258,7 @@ void Animation_Stop_ByTile(uint16 packed)
 		if (Tile_PackTile(animation->tile) != packed) continue;
 
 		Animation_Func_Stop(animation, 0);
-		return;
+		break;
 	}
 }
 
@@ -280,13 +272,11 @@ void Animation_Tick(void)
 	Animation *animation = BinHeap_GetMin(&s_animations);
 	while ((animation != NULL) && (animation->tickNext <= curr_ticks)) {
 		while (animation->commands != NULL) {
-			AnimationCommandStruct *commands = animation->commands;
-			int16 parameter;
-
-			commands += animation->current++;
-
-			parameter = commands->parameter;
+			AnimationCommandStruct *commands = animation->commands + animation->current;
+			int16 parameter = commands->parameter;
 			assert((parameter & 0x0800) == 0 || (parameter & 0xF000) != 0); /* Validate if the compiler sign-extends correctly */
+
+			animation->current++;
 
 			switch (commands->command) {
 				case ANIMATION_STOP:
