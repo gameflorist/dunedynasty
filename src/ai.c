@@ -16,7 +16,7 @@
 #include "tile.h"
 #include "tools.h"
 
-static int UnitAI_CountHarvesters(enum HouseType houseID);
+static int UnitAI_CountUnits(enum HouseType houseID, enum UnitType unit_type);
 
 /*--------------------------------------------------------------*/
 
@@ -27,6 +27,18 @@ AI_IsBrutalAI(enum HouseType houseID)
 }
 
 /*--------------------------------------------------------------*/
+
+static bool
+StructureAI_ShouldBuildCarryalls(enum HouseType houseID)
+{
+	const int carryall_count = UnitAI_CountUnits(houseID, UNIT_CARRYALL);
+	const int optimal_carryall_count = 2;
+
+	/* Build a second carryall since we have more harvesters, but it
+	 * will also help out with repair duty, and serves as a backup.
+	 */
+	return (optimal_carryall_count > carryall_count);
+}
 
 static bool
 StructureAI_ShouldBuildHarvesters(enum HouseType houseID)
@@ -45,7 +57,7 @@ StructureAI_ShouldBuildHarvesters(enum HouseType houseID)
 		s = Structure_Find(&find);
 	}
 
-	const int harvester_count = UnitAI_CountHarvesters(houseID);
+	const int harvester_count = UnitAI_CountUnits(houseID, UNIT_HARVESTER);
 
 	/* If no harvesters, wait for the gifted harvester. */
 	if (harvester_count == 0)
@@ -69,6 +81,11 @@ StructureAI_FilterBuildOptions(enum StructureType s, enum HouseType houseID, uin
 			buildable &= ~(1 << UNIT_MCV);
 			break;
 
+		case STRUCTURE_HIGH_TECH:
+			if (!StructureAI_ShouldBuildCarryalls(houseID))
+				buildable &= ~(1 << UNIT_CARRYALL);
+			break;
+
 		default:
 			break;
 	}
@@ -79,12 +96,21 @@ StructureAI_FilterBuildOptions(enum StructureType s, enum HouseType houseID, uin
 uint32
 StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType houseID, uint32 buildable)
 {
-	VARIABLE_NOT_USED(houseID);
+	PoolFindStruct find;
 
 	switch (s) {
 		case STRUCTURE_HEAVY_VEHICLE:
 			buildable &= ~(1 << UNIT_HARVESTER);
 			buildable &= ~(1 << UNIT_MCV);
+			break;
+
+		case STRUCTURE_HIGH_TECH:
+			find.houseID = houseID;
+			find.index   = 0xFFFF;
+			find.type    = UNIT_CARRYALL;
+
+			if (Unit_Find(&find))
+				buildable &= ~(1 << UNIT_CARRYALL);
 			break;
 
 		default:
@@ -143,21 +169,24 @@ UnitAI_CallCarryallToEvadeSandworm(const Unit *harvester)
 }
 
 static int
-UnitAI_CountHarvesters(enum HouseType houseID)
+UnitAI_CountUnits(enum HouseType houseID, enum UnitType unit_type)
 {
 	const House *h = House_Get_ByIndex(houseID);
-	int harvester_count = h->harvestersIncoming;
+	int unit_count = 0;
 
-	/* Count harvesters, including those in production and deviated. */
+	if (unit_type == UNIT_HARVESTER)
+		unit_count = h->harvestersIncoming;
+
+	/* Count units, including units in production and units deviated. */
 	for (int i = 0; i < g_unitFindCount; i++) {
 		Unit *u = g_unitFindArray[i];
 
 		if (u == NULL)
 			continue;
 
-		if ((u->o.houseID == houseID) && (u->o.type == UNIT_HARVESTER))
-			harvester_count++;
+		if ((u->o.houseID == houseID) && (u->o.type == unit_type))
+			unit_count++;
 	}
 
-	return harvester_count;
+	return unit_count;
 }

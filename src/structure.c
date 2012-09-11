@@ -2269,7 +2269,6 @@ void Structure_InitFactoryItems(const Structure *s)
  */
 uint16 Structure_AI_PickNextToBuild(Structure *s)
 {
-	PoolFindStruct find;
 	uint32 buildable;
 	uint16 type;
 	House *h;
@@ -2291,21 +2290,6 @@ uint16 Structure_AI_PickNextToBuild(Structure *s)
 		}
 
 		return 0xFFFF;
-	}
-
-	if (s->o.type == STRUCTURE_HIGH_TECH) {
-		find.houseID = s->o.houseID;
-		find.index   = 0xFFFF;
-		find.type    = UNIT_CARRYALL;
-
-		while (true) {
-			Unit *u;
-
-			u = Unit_Find(&find);
-			if (u == NULL) break;
-
-			buildable &= ~(1 << UNIT_CARRYALL);
-		}
 	}
 
 	if (AI_IsBrutalAI(s->o.houseID)) {
