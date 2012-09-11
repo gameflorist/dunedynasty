@@ -48,6 +48,12 @@ bool enhancement_fix_ordos_siege_tank_tech = true;
 bool enhancement_fix_selection_after_entering_structure = true;
 
 /**
+ * Fix some of the typos and formatting issues from the original game,
+ * including the silo, windtrap, and outpost text.
+ */
+bool enhancement_fix_typos = true;
+
+/**
  * Dune 2 likes to search the tiles surrounding the one you clicked
  * for an appropriate target, which can be annoying.
  */

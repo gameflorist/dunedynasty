@@ -166,6 +166,14 @@ void String_Init(void)
 		free(s_strings[STR_DUNE_II_THE_BATTLE_FOR_ARRAKIS]);
 		s_strings[STR_DUNE_II_THE_BATTLE_FOR_ARRAKIS] = strdup(subtitle2);
 	}
+
+	if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
+		char *str;
+
+		str = s_strings[STR_STARPORT_THE_STARPORT_IS_USED_TO_ORDER_AND_RECEIVE_SHIPMENTS_FROM_CHOAM];
+		if (strncmp(str, "Startport", 9) == 0)
+			memmove(str + 4, str + 5, strlen(str + 5) + 1);
+	}
 }
 
 /**

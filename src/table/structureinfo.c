@@ -760,7 +760,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_ATTACK, ACTION_ATTACK, ACTION_ATTACK },
 		/* available            */ 0,
-		/* hintStringID         */ STR_STARTPORT_THE_STARPORT_IS_USED_TO_ORDER_AND_RECEIVE_SHIPMENTS_FROM_CHOAM,
+		/* hintStringID         */ STR_STARPORT_THE_STARPORT_IS_USED_TO_ORDER_AND_RECEIVE_SHIPMENTS_FROM_CHOAM,
 		/* priorityBuild        */ 0,
 		/* priorityTarget       */ 250,
 		/* availableHouse       */ FLAG_HOUSE_MERCENARY | FLAG_HOUSE_SARDAUKAR | FLAG_HOUSE_FREMEN | FLAG_HOUSE_ORDOS | FLAG_HOUSE_ATREIDES | FLAG_HOUSE_HARKONNEN,
