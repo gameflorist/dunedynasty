@@ -26,7 +26,7 @@ typedef struct Animation {
 	enum HouseType houseID;                 /*!< House of the item being animated. */
 	uint8 current;                          /*!< At which command we currently are in the Animation. */
 	uint8 iconGroup;                        /*!< Which iconGroup the sprites of the Animation belongs. */
-	AnimationCommandStruct *commands;       /*!< List of commands for this Animation. */
+	const AnimationCommandStruct *commands; /*!< List of commands for this Animation. */
 	tile32 tile;                            /*!< Top-left tile of Animation. */
 } Animation;
 
@@ -224,7 +224,7 @@ Animation_Uninit(void)
  * @param houseID The house of the item being Animation.
  * @param iconGroup In which IconGroup the sprites of the Animation belongs.
  */
-void Animation_Start(void *commands, tile32 tile, uint16 tileLayout, uint8 houseID, uint8 iconGroup)
+void Animation_Start(const AnimationCommandStruct *commands, tile32 tile, uint16 tileLayout, uint8 houseID, uint8 iconGroup)
 {
 	uint16 packed = Tile_PackTile(tile);
 	Animation_Stop_ByTile(packed);
@@ -272,7 +272,7 @@ void Animation_Tick(void)
 	Animation *animation = BinHeap_GetMin(&s_animations);
 	while ((animation != NULL) && (animation->tickNext <= curr_ticks)) {
 		while (animation->commands != NULL) {
-			AnimationCommandStruct *commands = animation->commands + animation->current;
+			const AnimationCommandStruct *commands = animation->commands + animation->current;
 			int16 parameter = commands->parameter;
 			assert((parameter & 0x0800) == 0 || (parameter & 0xF000) != 0); /* Validate if the compiler sign-extends correctly */
 
