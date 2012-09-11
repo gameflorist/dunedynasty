@@ -30,6 +30,7 @@ typedef struct ExplosionCommandStruct {
 } ExplosionCommandStruct;
 
 extern void Explosion_Init(void);
+extern void Explosion_Uninit(void);
 extern void Explosion_Start(uint16 explosionType, tile32 position);
 extern void Explosion_Tick(void);
 extern void Explosion_Draw(void);

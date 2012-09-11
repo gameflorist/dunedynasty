@@ -11,6 +11,7 @@
 
 #include "animation.h"
 #include "audio/audio.h"
+#include "binheap.h"
 #include "house.h"
 #include "map.h"
 #include "shape.h"
@@ -20,12 +21,10 @@
 #include "timer/timer.h"
 #include "tools.h"
 
-enum {
-	EXPLOSION_MAX = 32                      /*!< The maximum amount of active explosions we can have. */
-};
-
 typedef struct Explosion {
+	/* Heap key. */
 	int64_t timeOut;                        /*!< Time out for the next command. */
+
 	enum HouseType houseID;                 /*!< A houseID. */
 	bool isDirty;                           /*!< Does the Explosion require a redraw next round. */
 	uint8 current;                          /*!< Index in #commands pointing to the next command. */
@@ -34,8 +33,7 @@ typedef struct Explosion {
 	tile32 position;                        /*!< Position where this explosion acts. */
 } Explosion;
 
-static Explosion g_explosions[EXPLOSION_MAX];               /*!< Explosions. */
-static int64_t s_explosionTimer = 0;                        /*!< Timeout value for next explosion activity. */
+static BinHeap s_explosions;
 
 extern const ExplosionCommandStruct *g_table_explosion[];
 
@@ -246,16 +244,13 @@ static void Explosion_Func_SetSpriteID(Explosion *e, uint16 spriteID)
 static void Explosion_StopAtPosition(uint16 packed)
 {
 	Tile *t;
-	uint8 i;
 
 	t = &g_map[packed];
 
 	if (!t->hasExplosion) return;
 
-	for (i = 0; i < EXPLOSION_MAX; i++) {
-		Explosion *e;
-
-		e = &g_explosions[i];
+	for (int i = 1; i < s_explosions.num_elem; i++) {
+		Explosion *e = (Explosion *)BinHeap_GetElem(&s_explosions, i);
 
 		if (e->commands == NULL || Tile_PackTile(e->position) != packed) continue;
 
@@ -266,7 +261,13 @@ static void Explosion_StopAtPosition(uint16 packed)
 void
 Explosion_Init(void)
 {
-	memset(g_explosions, 0, EXPLOSION_MAX * sizeof(Explosion));
+	BinHeap_Init(&s_explosions, sizeof(Explosion));
+}
+
+void
+Explosion_Uninit(void)
+{
+	BinHeap_Free(&s_explosions);
 }
 
 /**
@@ -278,7 +279,6 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 {
 	const ExplosionCommandStruct *commands;
 	uint16 packed;
-	uint8 i;
 
 	if (explosionType > 19) return;
 	commands = g_table_explosion[explosionType];
@@ -287,23 +287,14 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 
 	Explosion_StopAtPosition(packed);
 
-	for (i = 0; i < EXPLOSION_MAX; i++) {
-		Explosion *e;
-
-		e = &g_explosions[i];
-
-		if (e->commands != NULL) continue;
-
+	Explosion *e = BinHeap_Push(&s_explosions, Timer_GetTicks());
+	if (e != NULL) {
 		e->commands = commands;
 		e->current  = 0;
 		e->spriteID = 0;
 		e->position = position;
 		e->isDirty  = false;
-		e->timeOut  = Timer_GetTicks();
-		s_explosionTimer = 0;
 		g_map[packed].hasExplosion = true;
-
-		break;
 	}
 }
 
@@ -312,19 +303,11 @@ void Explosion_Start(uint16 explosionType, tile32 position)
  */
 void Explosion_Tick(void)
 {
-	uint8 i;
+	const int64_t curr_ticks = Timer_GetTicks();
 
-	if (s_explosionTimer > Timer_GetTicks()) return;
-	s_explosionTimer += 10000;
-
-	for (i = 0; i < EXPLOSION_MAX; i++) {
-		Explosion *e;
-
-		e = &g_explosions[i];
-
-		if (e->commands == NULL) continue;
-
-		if (e->timeOut <= Timer_GetTicks()) {
+	Explosion *e = BinHeap_GetMin(&s_explosions);
+	while ((e != NULL) && (e->timeOut <= curr_ticks)) {
+		while (e->commands != NULL) {
 			uint16 parameter = e->commands[e->current].parameter;
 			uint16 command   = e->commands[e->current].command;
 
@@ -344,19 +327,28 @@ void Explosion_Tick(void)
 				case EXPLOSION_SET_ANIMATION:      Explosion_Func_SetAnimation(e, parameter); break;
 				case EXPLOSION_BLOOM_EXPLOSION:    Explosion_Func_BloomExplosion(e, parameter); break;
 			}
+
+			if (e->timeOut > curr_ticks)
+				break;
 		}
 
-		if (e->commands == NULL || e->timeOut > s_explosionTimer) continue;
+		/* Push explosion with updated time before pop. */
+		if (e->commands == NULL) {
+			BinHeap_Pop(&s_explosions);
+		}
+		else {
+			BinHeap_UpdateMin(&s_explosions);
+		}
 
-		s_explosionTimer = e->timeOut;
+		e = BinHeap_GetMin(&s_explosions);
 	}
 }
 
 void
 Explosion_Draw(void)
 {
-	for (int i = 0; i < EXPLOSION_MAX; i++) {
-		Explosion *e = &g_explosions[i];
+	for (int i = 1; i < s_explosions.num_elem; i++) {
+		Explosion *e = (Explosion *)BinHeap_GetElem(&s_explosions, i);
 
 		if (e->commands == NULL) continue;
 		if (e->spriteID == 0) continue;

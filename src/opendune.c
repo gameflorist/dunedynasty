@@ -1427,6 +1427,7 @@ void Game_LoadScenario(uint8 houseID, uint16 scenarioID)
 void PrepareEnd(void)
 {
 	Animation_Uninit();
+	Explosion_Uninit();
 
 	GameLoop_Uninit();
 
