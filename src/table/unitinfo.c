@@ -91,7 +91,7 @@ UnitInfo g_table_unitInfo[] = {
 		{ /* objectInfo */
 		/* stringID_abbrev      */ STR_THOPTER,
 		/* name                 */ "'Thopter",
-		/* stringID_full        */ STR_ORNITHIPTER,
+		/* stringID_full        */ STR_ORNITHOPTER,
 		/* wsa                  */ "orni.wsa",
 		{ /* flags */
 		/* hasShadow            */ true,

@@ -170,6 +170,9 @@ void String_Init(void)
 	if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 		char *str;
 
+		str = s_strings[STR_ORNITHOPTER];
+		str[6] = 'o';
+
 		str = s_strings[STR_STARPORT_THE_STARPORT_IS_USED_TO_ORDER_AND_RECEIVE_SHIPMENTS_FROM_CHOAM];
 		if (strncmp(str, "Startport", 9) == 0)
 			memmove(str + 4, str + 5, strlen(str + 5) + 1);
