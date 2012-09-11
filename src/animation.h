@@ -25,7 +25,7 @@ typedef enum AnimationCommand {
  */
 typedef struct AnimationCommandStruct {
 	uint8 command;                                          /*!< The command of this command (see AnimationCommand). */
-	uint16 parameter;                                       /*!< The parameter for this command. */
+	int16 parameter;                                        /*!< The parameter for this command. */
 } AnimationCommandStruct;
 
 extern AnimationCommandStruct g_table_animation_unitMove[8][8];
