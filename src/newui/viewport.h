@@ -11,6 +11,7 @@ extern void Viewport_Homekey(void);
 extern void Viewport_DrawTiles(void);
 extern void Viewport_DrawTileFog(void);
 extern void Viewport_DrawSelectedUnit(int x, int y);
+extern void Viewport_DrawUnit(const Unit *u);
 extern void Viewport_DrawRallyPoint(void);
 extern void Viewport_DrawSelectionBox(void);
 extern void Viewport_RenderBrush(int x, int y);

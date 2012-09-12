@@ -244,11 +244,6 @@ static uint8 *GUI_Widget_Viewport_Draw_GetSprite(uint16 spriteID, uint8 houseID)
  */
 void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScreen)
 {
-	static const uint16 values_32A4[8][2] = {
-		{0, 0}, {1, 0}, {2, 0}, {3, 0},
-		{4, 0}, {3, 1}, {2, 1}, {1, 1}
-	};
-
 	uint16 x;
 	uint16 y;
 	uint16 i;
@@ -381,152 +376,12 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		find.index   = 0xFFFF;
 		find.houseID = HOUSE_INVALID;
 
-		while (true) {
-			Unit *u;
-			UnitInfo *ui;
-			uint16 packed;
-			uint8 orientation;
-			uint16 index;
+		Unit *u = Unit_Find(&find);
+		while (u != NULL) {
+			if (20 <= u->o.index && u->o.index <= 101)
+				Viewport_DrawUnit(u);
 
 			u = Unit_Find(&find);
-
-			if (u == NULL) break;
-
-			if (u->o.index < 20 || u->o.index > 101) continue;
-
-			packed = Tile_PackTile(u->o.position);
-
-			if ((!u->o.flags.s.isDirty || u->o.flags.s.isNotOnMap) && !forceRedraw && !BitArray_Test(g_dirtyViewport, packed)) continue;
-			u->o.flags.s.isDirty = false;
-
-			if (!g_map[packed].isUnveiled && !g_debugScenario) continue;
-
-			ui = &g_table_unitInfo[u->o.type];
-
-			if (!Map_IsPositionInViewport(u->o.position, &x, &y)) continue;
-
-			x += g_table_tilediff[0][u->wobbleIndex].s.x;
-			y += g_table_tilediff[0][u->wobbleIndex].s.y;
-
-			orientation = Orientation_Orientation256ToOrientation8(u->orientation[0].current);
-
-			if (u->spriteOffset >= 0 || ui->destroyedSpriteID == 0) {
-				static const uint16 values_32C4[8][2] = {
-					{0, 0}, {1, 0}, {1, 0}, {1, 0},
-					{2, 0}, {1, 1}, {1, 1}, {1, 1}
-				};
-
-				index = ui->groundSpriteID;
-
-				switch (ui->displayMode) {
-					case 1:
-					case 2:
-						if (ui->movementType == MOVEMENT_SLITHER) break;
-						index += values_32A4[orientation][0];
-						s_spriteFlags = values_32A4[orientation][1];
-						break;
-
-					case 3: {
-						static const uint16 values_334A[4] = {0, 1, 0, 2};
-
-						index += values_32C4[orientation][0] * 3;
-						index += values_334A[u->spriteOffset & 3];
-						s_spriteFlags = values_32C4[orientation][1];
-					} break;
-
-					case 4:
-						index += values_32C4[orientation][0] * 4;
-						index += u->spriteOffset & 3;
-						s_spriteFlags = values_32C4[orientation][1];
-						break;
-
-					default:
-						s_spriteFlags = 0;
-						break;
-				}
-			} else {
-				index = ui->destroyedSpriteID - u->spriteOffset - 1;
-				s_spriteFlags = 0;
-			}
-
-			if (u->o.type != UNIT_SANDWORM && u->o.flags.s.isHighlighted) s_spriteFlags |= 0x100;
-			if (ui->o.flags.blurTile) s_spriteFlags |= 0x200;
-
-#if 0
-			GUI_DrawSprite(g_screenActiveID, GUI_Widget_Viewport_Draw_GetSprite(index, (u->deviated != 0) ? HOUSE_ORDOS : Unit_GetHouseID(u)), x, y, 2, s_spriteFlags | 0xE000, s_paletteHouse, g_paletteMapping2, 1);
-#else
-			Shape_DrawRemap(index, (u->deviated != 0) ? HOUSE_ORDOS : Unit_GetHouseID(u), x, y, 2, s_spriteFlags | 0xE000);
-#endif
-
-			if (u->o.type == UNIT_HARVESTER && u->actionID == ACTION_HARVEST && u->spriteOffset >= 0 && (u->actionID == ACTION_HARVEST || u->actionID == ACTION_MOVE)) {
-				uint16 type = Map_GetLandscapeType(packed);
-				if (type == LST_SPICE || type == LST_THICK_SPICE) {
-					static const int16 values_334E[8][2] = {
-						{0, 7},  {-7,  6}, {-14, 1}, {-9, -6},
-						{0, -9}, { 9, -6}, { 14, 1}, { 7,  6}
-					};
-
-					GUI_DrawSprite(g_screenActiveID, GUI_Widget_Viewport_Draw_GetSprite((u->spriteOffset % 3) + 0xDF + (values_32A4[orientation][0] * 3), Unit_GetHouseID(u)), x + values_334E[orientation][0], y + values_334E[orientation][1], 2, values_32A4[orientation][1] | 0xC000);
-				}
-			}
-
-			if (u->spriteOffset >= 0 && ui->turretSpriteID != 0xFFFF) {
-				int16 offsetX = 0;
-				int16 offsetY = 0;
-				uint16 index = ui->turretSpriteID;
-
-				orientation = Orientation_Orientation256ToOrientation8(u->orientation[ui->o.flags.hasTurret ? 1 : 0].current);
-
-				switch (ui->turretSpriteID) {
-					case 0x8D: /* sonic tank */
-						offsetY = -2;
-						break;
-
-					case 0x92: /* rocket launcher */
-						offsetY = -3;
-						break;
-
-					case 0x7E: { /* siege tank */
-						static const int16 values_336E[8][2] = {
-							{ 0, -5}, { 0, -5}, { 2, -3}, { 2, -1},
-							{-1, -3}, {-2, -1}, {-2, -3}, {-1, -5}
-						};
-
-						offsetX = values_336E[orientation][0];
-						offsetY = values_336E[orientation][1];
-					} break;
-
-					case 0x88: { /* devastator */
-						static const int16 values_338E[8][2] = {
-							{ 0, -4}, {-1, -3}, { 2, -4}, {0, -3},
-							{-1, -3}, { 0, -3}, {-2, -4}, {1, -3}
-						};
-
-						offsetX = values_338E[orientation][0];
-						offsetY = values_338E[orientation][1];
-					} break;
-
-					default:
-						break;
-				}
-
-				s_spriteFlags = values_32A4[orientation][1];
-				index += values_32A4[orientation][0];
-
-				GUI_DrawSprite(g_screenActiveID, GUI_Widget_Viewport_Draw_GetSprite(index, Unit_GetHouseID(u)), x + offsetX, y + offsetY, 2, s_spriteFlags | 0xE000, s_paletteHouse);
-			}
-
-			if (u->o.flags.s.isSmoking) {
-				uint16 spriteID = 180 + (u->spriteOffset & 3);
-				if (spriteID == 183) spriteID = 181;
-
-				GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], x, y - 14, 2, 0xC000);
-			}
-
-			if (!Unit_IsSelected(u))
-				continue;
-
-			Viewport_DrawSelectedUnit(x, y);
 		}
 	}
 

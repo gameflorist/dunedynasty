@@ -39,6 +39,12 @@ enum SelectionMode {
 	SELECTION_MODE_STRUCTURE
 };
 
+/* Sprite index offset and flag pairs for the 8 orientations. */
+static const uint16 values_32A4[8][2] = {
+	{0, 0}, {1, 0}, {2, 0}, {3, 0},
+	{4, 0}, {3, 1}, {2, 1}, {1, 1}
+};
+
 /* Selection box is in screen coordinates. */
 static bool selection_box_active = false;
 static int selection_box_x1;
@@ -796,6 +802,153 @@ Viewport_DrawSelectedUnit(int x, int y)
 	else {
 		Shape_DrawTint(SHAPE_SELECTED_UNIT, x, y, 0xFF, WINDOWID_VIEWPORT, 0xC000);
 	}
+}
+
+static void
+Viewport_DrawUnitHarvesting(const Unit *u, uint8 orientation, int x, int y)
+{
+	const int16 values_334E[8][2] = {
+		{0, 7},  {-7,  6}, {-14, 1}, {-9, -6},
+		{0, -9}, { 9, -6}, { 14, 1}, { 7,  6}
+	};
+
+	enum ShapeID shapeID = (u->spriteOffset % 3) + 0xDF + (values_32A4[orientation][0] * 3);
+	uint16 spriteFlags = values_32A4[orientation][1];
+
+	x += values_334E[orientation][0];
+	y += values_334E[orientation][1];
+
+	Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, spriteFlags | 0xC000);
+}
+
+static void
+Viewport_DrawUnitTurret(const Unit *u, const UnitInfo *ui, int x, int y)
+{
+	const int16 values_336E[8][2] = { /* siege tank */
+		{ 0, -5}, { 0, -5}, { 2, -3}, { 2, -1},
+		{-1, -3}, {-2, -1}, {-2, -3}, {-1, -5}
+	};
+
+	const int16 values_338E[8][2] = { /* devastator */
+		{ 0, -4}, {-1, -3}, { 2, -4}, {0, -3},
+		{-1, -3}, { 0, -3}, {-2, -4}, {1, -3}
+	};
+
+	uint8 orientation = Orientation_Orientation256ToOrientation8(u->orientation[ui->o.flags.hasTurret ? 1 : 0].current);
+	enum ShapeID shapeID = ui->turretSpriteID + values_32A4[orientation][0];
+	uint16 spriteFlags = values_32A4[orientation][1];
+
+	switch (ui->turretSpriteID) {
+		case 0x8D: /* sonic tank */
+			y += -2;
+			break;
+
+		case 0x92: /* rocket launcher */
+			y += -3;
+			break;
+
+		case 0x7E: /* siege tank */
+			x += values_336E[orientation][0];
+			y += values_336E[orientation][1];
+			break;
+
+		case 0x88: /* devastator */
+			x += values_338E[orientation][0];
+			y += values_338E[orientation][1];
+			break;
+
+		default:
+			break;
+	}
+
+	Shape_DrawRemap(shapeID, Unit_GetHouseID(u), x, y, WINDOWID_VIEWPORT, spriteFlags | 0xE000);
+}
+
+void
+Viewport_DrawUnit(const Unit *u)
+{
+	const uint16 values_32C4[8][2] = {
+		{0, 0}, {1, 0}, {1, 0}, {1, 0},
+		{2, 0}, {1, 1}, {1, 1}, {1, 1}
+	};
+
+	const uint16 values_334A[4] = {0, 1, 0, 2};
+
+	uint16 packed = Tile_PackTile(u->o.position);
+	if (!g_map[packed].isUnveiled && !g_debugScenario)
+		return;
+
+	uint16 x, y;
+	if (!Map_IsPositionInViewport(u->o.position, &x, &y))
+		return;
+
+	x += g_table_tilediff[0][u->wobbleIndex].s.x;
+	y += g_table_tilediff[0][u->wobbleIndex].s.y;
+
+	uint16 s_spriteFlags = 0;
+	uint16 index;
+
+	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+	uint8 orientation = Orientation_Orientation256ToOrientation8(u->orientation[0].current);
+
+	if (u->spriteOffset >= 0 || ui->destroyedSpriteID == 0) {
+		index = ui->groundSpriteID;
+
+		switch (ui->displayMode) {
+			case 1:
+			case 2:
+				if (ui->movementType == MOVEMENT_SLITHER) break;
+				index += values_32A4[orientation][0];
+				s_spriteFlags = values_32A4[orientation][1];
+				break;
+
+			case 3:
+				index += values_32C4[orientation][0] * 3;
+				index += values_334A[u->spriteOffset & 3];
+				s_spriteFlags = values_32C4[orientation][1];
+				break;
+
+			case 4:
+				index += values_32C4[orientation][0] * 4;
+				index += u->spriteOffset & 3;
+				s_spriteFlags = values_32C4[orientation][1];
+				break;
+
+			default:
+				s_spriteFlags = 0;
+				break;
+		}
+	} else {
+		index = ui->destroyedSpriteID - u->spriteOffset - 1;
+		s_spriteFlags = 0;
+	}
+
+	if (u->o.type != UNIT_SANDWORM && u->o.flags.s.isHighlighted) s_spriteFlags |= 0x100;
+	if (ui->o.flags.blurTile) s_spriteFlags |= 0x200;
+
+	Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, WINDOWID_VIEWPORT, s_spriteFlags | 0xE000);
+
+	/* XXX: Is it just ACTION_HARVEST, or ACTION_MOVE too? */
+	if (u->o.type == UNIT_HARVESTER && u->actionID == ACTION_HARVEST && u->spriteOffset >= 0 && (u->actionID == ACTION_HARVEST || u->actionID == ACTION_MOVE)) {
+		uint16 type = Map_GetLandscapeType(packed);
+
+		if (type == LST_SPICE || type == LST_THICK_SPICE)
+			Viewport_DrawUnitHarvesting(u, orientation, x, y);
+	}
+
+	if (u->spriteOffset >= 0 && ui->turretSpriteID != 0xFFFF) {
+		Viewport_DrawUnitTurret(u, ui, x, y);
+	}
+
+	if (u->o.flags.s.isSmoking) {
+		enum ShapeID shapeID = 180 + (u->spriteOffset & 3);
+		if (shapeID == 183) shapeID = 181;
+
+		Shape_Draw(shapeID, x, y - 14, WINDOWID_VIEWPORT, 0xC000);
+	}
+
+	if (Unit_IsSelected(u))
+		Viewport_DrawSelectedUnit(x, y);
 }
 
 void
