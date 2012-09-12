@@ -38,13 +38,13 @@
 #include "tools.h"
 
 
-static uint32 s_tickUnitUnknown1  = 0; /*!< Indicates next time the Unknown1 function is executed. */
-static uint32 s_tickUnitUnknown2  = 0; /*!< Indicates next time the Unknown2 function is executed. */
-static uint32 s_tickUnitBlinking  = 0; /*!< Indicates next time the Blinking function is executed. */
-static uint32 s_tickUnitUnknown4  = 0; /*!< Indicates next time the Unknown4 function is executed. */
-static uint32 s_tickUnitScript    = 0; /*!< Indicates next time the Script function is executed. */
-static uint32 s_tickUnitUnknown5  = 0; /*!< Indicates next time the Unknown5 function is executed. */
-static uint32 s_tickUnitDeviation = 0; /*!< Indicates next time the Deviation function is executed. */
+static int64_t s_tickUnitUnknown1  = 0; /*!< Indicates next time the Unknown1 function is executed. */
+static int64_t s_tickUnitUnknown2  = 0; /*!< Indicates next time the Unknown2 function is executed. */
+static int64_t s_tickUnitBlinking  = 0; /*!< Indicates next time the Blinking function is executed. */
+static int64_t s_tickUnitUnknown4  = 0; /*!< Indicates next time the Unknown4 function is executed. */
+static int64_t s_tickUnitScript    = 0; /*!< Indicates next time the Script function is executed. */
+static int64_t s_tickUnitUnknown5  = 0; /*!< Indicates next time the Unknown5 function is executed. */
+static int64_t s_tickUnitDeviation = 0; /*!< Indicates next time the Deviation function is executed. */
 
 Unit *g_unitActive = NULL;
 Unit *g_unitHouseMissile = NULL;
