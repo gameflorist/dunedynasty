@@ -21,7 +21,7 @@
 
 
 Explosion g_explosions[EXPLOSION_MAX];                      /*!< Explosions. */
-static uint32 s_explosionTimer = 0;                         /*!< Timeout value for next explosion activity. */
+static int64_t s_explosionTimer = 0;                        /*!< Timeout value for next explosion activity. */
 
 
 /**

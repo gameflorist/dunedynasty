@@ -5,6 +5,8 @@
 #ifndef EXPLOSION_H
 #define EXPLOSION_H
 
+#include <inttypes.h>
+
 enum {
     EXPLOSION_MAX = 32                                      /*!< The maximum amount of active explosions we can have. */
 };
@@ -37,7 +39,7 @@ typedef struct ExplosionCommandStruct {
  * The layout of a Explosion.
  */
 typedef struct Explosion {
-	uint32 timeOut;                                         /*!< Time out for the next command. */
+	int64_t timeOut;                                        /*!< Time out for the next command. */
 	uint8  houseID;                                         /*!< A houseID. */
 	bool   isDirty;                                         /*!< Does the Explosion require a redraw next round. */
 	uint8  current;                                         /*!< Index in #commands pointing to the next command. */
