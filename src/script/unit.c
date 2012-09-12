@@ -1860,6 +1860,10 @@ uint16 Script_Unit_MCVDeploy(ScriptEngine *script)
 			Unit_Remove(u);
 			return 1;
 		}
+
+		/* ENHANCEMENT -- Deploy in top-left corner or don't deploy at all. */
+		if (enhancement_i_mean_where_i_clicked)
+			break;
 	}
 
 	if (Unit_GetHouseID(u) == g_playerHouseID) {
