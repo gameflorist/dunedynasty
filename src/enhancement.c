@@ -66,6 +66,12 @@ bool enhancement_fix_selection_after_entering_structure = true;
 bool enhancement_fix_typos = true;
 
 /**
+ * In the original game, fog is drawn underneath units, at the same
+ * time as other overlays, making units suddenly appear and disappear.
+ */
+bool enhancement_fog_covers_units = true;
+
+/**
  * Dune 2 likes to search the tiles surrounding the one you clicked
  * for an appropriate target, which can be annoying.
  */

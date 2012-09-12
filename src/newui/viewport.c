@@ -664,17 +664,11 @@ Viewport_Homekey(void)
 	}
 }
 
-void
-Viewport_DrawTiles(void)
+static void
+Viewport_DrawTilesInRange(int x0, int y0,
+		int viewportX1, int viewportY1, int viewportX2, int viewportY2,
+		bool draw_tile, bool draw_fog)
 {
-	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-	const int viewportX1 = wi->offsetX;
-	const int viewportY1 = wi->offsetY;
-	const int viewportX2 = wi->offsetX + wi->width - 1;
-	const int viewportY2 = wi->offsetY + wi->height - 1;
-	const int x0 = Tile_GetPackedX(g_viewportPosition);
-	const int y0 = Tile_GetPackedY(g_viewportPosition);
-
 	int top = viewportY1;
 	for (int y = y0; (y < MAP_SIZE_MAX) && (top <= viewportY2); y++, top += TILE_SIZE) {
 		int left = viewportX1;
@@ -682,16 +676,23 @@ Viewport_DrawTiles(void)
 		for (int x = x0; (x < MAP_SIZE_MAX) && (left <= viewportX2); x++, left += TILE_SIZE) {
 			const int curPos = Tile_PackXY(x, y);
 			const Tile *t = &g_map[curPos];
+			const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
 
-			if ((t->overlaySpriteID == g_veiledSpriteID) && !g_debugScenario)
-				continue;
+			if (draw_tile && (t->overlaySpriteID != g_veiledSpriteID)) {
+				Video_DrawIcon(t->groundSpriteID, t->houseID, left, top);
 
-			Video_DrawIcon(t->groundSpriteID, t->houseID, left, top);
+				if ((t->overlaySpriteID != 0) && !overlay_is_fog)
+					Video_DrawIcon(t->overlaySpriteID, t->houseID, left, top);
+			}
 
-			if ((t->overlaySpriteID == 0) || g_debugScenario)
-				continue;
+			if (draw_fog && overlay_is_fog) {
+				uint16 iconID = t->overlaySpriteID;
 
-			Video_DrawIcon(t->overlaySpriteID, t->houseID, left, top);
+				if (t->overlaySpriteID == g_veiledSpriteID)
+					iconID = g_veiledSpriteID - 1;
+
+				Video_DrawIcon(iconID, t->houseID, left, top);
+			}
 		}
 	}
 
@@ -703,6 +704,40 @@ Viewport_DrawTiles(void)
 	for (int y = y0, top = viewportY1; (y < MAP_SIZE_MAX) && (top <= viewportY2); y++, top += TILE_SIZE)
 		GUI_DrawText_Wrapper("%d", viewportX1, top, 6, 0, 0x21, y);
 #endif
+}
+
+void
+Viewport_DrawTiles(void)
+{
+	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+	const int viewportX1 = wi->offsetX;
+	const int viewportY1 = wi->offsetY;
+	const int viewportX2 = wi->offsetX + wi->width - 1;
+	const int viewportY2 = wi->offsetY + wi->height - 1;
+	const int x0 = Tile_GetPackedX(g_viewportPosition);
+	const int y0 = Tile_GetPackedY(g_viewportPosition);
+
+	/* ENHANCEMENT -- Draw fog over the top of units. */
+	const bool draw_fog = enhancement_fog_covers_units ? false : true;
+
+	Viewport_DrawTilesInRange(x0, y0, viewportX1, viewportY1, viewportX2, viewportY2, true, draw_fog);
+}
+
+void
+Viewport_DrawTileFog(void)
+{
+	if (!enhancement_fog_covers_units)
+		return;
+
+	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+	const int viewportX1 = wi->offsetX;
+	const int viewportY1 = wi->offsetY;
+	const int viewportX2 = wi->offsetX + wi->width - 1;
+	const int viewportY2 = wi->offsetY + wi->height - 1;
+	const int x0 = Tile_GetPackedX(g_viewportPosition);
+	const int y0 = Tile_GetPackedY(g_viewportPosition);
+
+	Viewport_DrawTilesInRange(x0, y0, viewportX1, viewportY1, viewportX2, viewportY2, false, true);
 }
 
 void

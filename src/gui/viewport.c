@@ -530,6 +530,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		}
 	}
 
+	Viewport_DrawTileFog();
 	Viewport_DrawRallyPoint();
 	Viewport_DrawSelectionBox();
 	Explosion_Draw();

@@ -9,6 +9,7 @@ extern void Viewport_Place(void);
 extern void Viewport_Hotkey(enum SquadID squad);
 extern void Viewport_Homekey(void);
 extern void Viewport_DrawTiles(void);
+extern void Viewport_DrawTileFog(void);
 extern void Viewport_DrawSelectedUnit(int x, int y);
 extern void Viewport_DrawRallyPoint(void);
 extern void Viewport_DrawSelectionBox(void);
