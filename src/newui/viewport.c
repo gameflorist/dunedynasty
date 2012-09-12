@@ -975,6 +975,24 @@ Viewport_DrawSelectionBox(void)
 	GUI_DrawWiredRectangle(selection_box_x1, selection_box_y1, x2, y2, 0xFF);
 }
 
+static void
+Viewport_DrawInterface(enum HouseType houseID, int blurx, int blury)
+{
+	const int x = (TRUE_DISPLAY_WIDTH - 80) - blurx;
+
+	if (x >= 3 * TILE_SIZE)
+		return;
+
+	blury += g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].offsetY;
+	for (int y = TRUE_DISPLAY_HEIGHT - 83 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
+		if ((y - blury < 3 * TILE_SIZE) && (y - blury + 52 >= 0))
+			Video_DrawCPSSpecial(CPS_SIDEBAR_MIDDLE, houseID, x, y - blury);
+	}
+
+	Video_DrawCPSSpecial(CPS_SIDEBAR_TOP, houseID, x, 40 - blury);
+	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, x, TRUE_DISPLAY_HEIGHT - 83 - blury);
+}
+
 /* Viewport_RenderBrush:
  *
  * A mini rendering routine used for the sandworm and sonic wave
@@ -1046,6 +1064,7 @@ Viewport_RenderBrush(int x, int y)
 			viewportX1, viewportY1, viewportX2, viewportY2, false, true);
 
 	/* Render interface. */
+	Viewport_DrawInterface(g_playerHouseID, x, y);
 }
 
 void
