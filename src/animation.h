@@ -5,6 +5,8 @@
 #ifndef ANIMATE_H
 #define ANIMATE_H
 
+#include <inttypes.h>
+
 enum {
     ANIMATION_MAX = 112                                     /*!< The maximum amount of active animations we can have. */
 };
@@ -36,7 +38,7 @@ typedef struct AnimationCommandStruct {
  * Information about an active animation.
  */
 typedef struct Animation {
-	uint32  tickNext;                                       /*!< Which tick this Animation should be called again. */
+	int64_t tickNext;                                       /*!< Which tick this Animation should be called again. */
 	uint16  tileLayout;                                     /*!< Tile layout of the Animation. */
 	uint8   houseID;                                        /*!< House of the item being animated. */
 	uint8   current;                                        /*!< At which command we currently are in the Animation. */

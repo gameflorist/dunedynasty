@@ -17,7 +17,7 @@
 #include "structure.h"
 
 Animation g_animations[ANIMATION_MAX];
-static uint32 s_animationTimer; /*!< Timer for animations. */
+static int64_t s_animationTimer; /*!< Timer for animations. */
 
 /**
  * Stop with this Animation.
