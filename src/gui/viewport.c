@@ -244,6 +244,8 @@ static uint8 *GUI_Widget_Viewport_Draw_GetSprite(uint16 spriteID, uint8 houseID)
  */
 void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScreen)
 {
+	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+
 	uint16 x;
 	uint16 y;
 	uint16 i;
@@ -353,11 +355,10 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 		if (!Map_IsPositionInViewport(u->o.position, &x, &y)) continue;
 
-		Viewport_DrawSelectedUnit(x, y);
+		Viewport_DrawSelectedUnit(x + wi->offsetX, y + wi->offsetY);
 	}
 
 	if (!Unit_AnySelected() && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
-		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 		const int x1 = wi->offsetX + TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - Tile_GetPackedX(g_minimapPosition));
 		const int y1 = wi->offsetY + TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - Tile_GetPackedY(g_minimapPosition));
 		const int x2 = x1 + (TILE_SIZE * g_selectionWidth) - 1;
@@ -379,7 +380,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		Unit *u = Unit_Find(&find);
 		while (u != NULL) {
 			if (20 <= u->o.index && u->o.index <= 101)
-				Viewport_DrawUnit(u);
+				Viewport_DrawUnit(u, wi->offsetX, wi->offsetY, false);
 
 			u = Unit_Find(&find);
 		}
@@ -545,7 +546,6 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	}
 
 	if ((g_viewportMessageCounter & 1) != 0 && g_viewportMessageText != NULL && (minX[6] <= 14 || maxX[6] >= 0 || arg08 || forceRedraw)) {
-		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 		const int x = wi->offsetX + wi->width / 2;
 		const int y = wi->offsetY + wi->height - 61;
 

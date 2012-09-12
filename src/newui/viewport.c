@@ -780,8 +780,8 @@ void
 Viewport_DrawSelectedUnit(int x, int y)
 {
 	if (enhancement_new_selection_cursor) {
-		const int x1 = x - TILE_SIZE/2 + 1 + g_widgetProperties[WINDOWID_VIEWPORT].xBase*8;
-		const int y1 = y - TILE_SIZE/2 + 1 + g_widgetProperties[WINDOWID_VIEWPORT].yBase;
+		const int x1 = x - TILE_SIZE/2 + 1;
+		const int y1 = y - TILE_SIZE/2 + 1;
 		const int x2 = x1 + TILE_SIZE - 3;
 		const int y2 = y1 + TILE_SIZE - 3;
 
@@ -800,7 +800,7 @@ Viewport_DrawSelectedUnit(int x, int y)
 #endif
 	}
 	else {
-		Shape_DrawTint(SHAPE_SELECTED_UNIT, x, y, 0xFF, WINDOWID_VIEWPORT, 0xC000);
+		Shape_DrawTint(SHAPE_SELECTED_UNIT, x, y, 0xFF, 0, 0x8000);
 	}
 }
 
@@ -818,7 +818,7 @@ Viewport_DrawUnitHarvesting(const Unit *u, uint8 orientation, int x, int y)
 	x += values_334E[orientation][0];
 	y += values_334E[orientation][1];
 
-	Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, spriteFlags | 0xC000);
+	Shape_Draw(shapeID, x, y, 0, spriteFlags | 0x8000);
 }
 
 static void
@@ -861,11 +861,11 @@ Viewport_DrawUnitTurret(const Unit *u, const UnitInfo *ui, int x, int y)
 			break;
 	}
 
-	Shape_DrawRemap(shapeID, Unit_GetHouseID(u), x, y, WINDOWID_VIEWPORT, spriteFlags | 0xE000);
+	Shape_DrawRemap(shapeID, Unit_GetHouseID(u), x, y, 0, spriteFlags | 0xA000);
 }
 
 void
-Viewport_DrawUnit(const Unit *u)
+Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_effect)
 {
 	const uint16 values_32C4[8][2] = {
 		{0, 0}, {1, 0}, {1, 0}, {1, 0},
@@ -879,8 +879,20 @@ Viewport_DrawUnit(const Unit *u)
 		return;
 
 	uint16 x, y;
-	if (!Map_IsPositionInViewport(u->o.position, &x, &y))
-		return;
+
+	if (render_for_blur_effect) {
+		Map_IsPositionInViewport(u->o.position, &x, &y);
+
+		x -= windowX;
+		y -= windowY;
+	}
+	else {
+		if (!Map_IsPositionInViewport(u->o.position, &x, &y))
+			return;
+
+		x += windowX;
+		y += windowY;
+	}
 
 	x += g_table_tilediff[0][u->wobbleIndex].s.x;
 	y += g_table_tilediff[0][u->wobbleIndex].s.y;
@@ -926,7 +938,7 @@ Viewport_DrawUnit(const Unit *u)
 	if (u->o.type != UNIT_SANDWORM && u->o.flags.s.isHighlighted) s_spriteFlags |= 0x100;
 	if (ui->o.flags.blurTile) s_spriteFlags |= 0x200;
 
-	Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, WINDOWID_VIEWPORT, s_spriteFlags | 0xE000);
+	Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, 0, s_spriteFlags | 0xA000);
 
 	/* XXX: Is it just ACTION_HARVEST, or ACTION_MOVE too? */
 	if (u->o.type == UNIT_HARVESTER && u->actionID == ACTION_HARVEST && u->spriteOffset >= 0 && (u->actionID == ACTION_HARVEST || u->actionID == ACTION_MOVE)) {
@@ -944,7 +956,7 @@ Viewport_DrawUnit(const Unit *u)
 		enum ShapeID shapeID = 180 + (u->spriteOffset & 3);
 		if (shapeID == 183) shapeID = 181;
 
-		Shape_Draw(shapeID, x, y - 14, WINDOWID_VIEWPORT, 0xC000);
+		Shape_Draw(shapeID, x, y - 14, 0, 0x8000);
 	}
 
 	if (Unit_IsSelected(u))
@@ -1000,7 +1012,34 @@ Viewport_RenderBrush(int x, int y)
 	Viewport_DrawTilesInRange(tile_left + tile_dx, tile_top + tile_dy,
 			viewportX1, viewportY1, viewportX2, viewportY2, true, false);
 
-	/* Draw units. */
+	/* Draw ground units (not sandworms, projectiles, etc.). */
+	for (int dy = 0; dy < 3; dy++) {
+		for (int dx = 0; dx < 3; dx++) {
+			const int tilex = tile_left + tile_dx + dx;
+			const int tiley = tile_top + tile_dy + dy;
+
+			if (!(Map_InRange(tilex) && Map_InRange(tiley)))
+				continue;
+
+			const uint16 packed = Tile_PackXY(tilex, tiley);
+			const Tile *t = &g_map[packed];
+
+			if (!t->hasUnit || (t->index == 0))
+				continue;
+
+			const int index = t->index - 1;
+			if (!(20 <= index && index <= 101))
+				continue;
+
+			const Unit *u = Unit_Get_ByIndex(index);
+			const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+
+			if (ui->o.flags.blurTile)
+				continue;
+
+			Viewport_DrawUnit(u, x, y, true);
+		}
+	}
 
 	/* Draw fog. */
 	Viewport_DrawTilesInRange(tile_left + tile_dx, tile_top + tile_dy,
