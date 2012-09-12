@@ -41,10 +41,10 @@ uint16 g_structureActivePosition = 0;
 uint16 g_structureActiveType = 0;
 
 static bool s_debugInstantBuild = false; /*!< When non-zero, constructions are almost instant. */
-static uint32 s_tickStructureDegrade   = 0; /*!< Indicates next time Degrade function is executed. */
-static uint32 s_tickStructureStructure = 0; /*!< Indicates next time Structures function is executed. */
-static uint32 s_tickStructureScript    = 0; /*!< Indicates next time Script function is executed. */
-static uint32 s_tickStructurePalace    = 0; /*!< Indicates next time Palace function is executed. */
+static int64_t s_tickStructureDegrade   = 0; /*!< Indicates next time Degrade function is executed. */
+static int64_t s_tickStructureStructure = 0; /*!< Indicates next time Structures function is executed. */
+static int64_t s_tickStructureScript    = 0; /*!< Indicates next time Script function is executed. */
+static int64_t s_tickStructurePalace    = 0; /*!< Indicates next time Palace function is executed. */
 
 uint16 g_structureIndex;
 
