@@ -117,3 +117,40 @@ BinHeap_GetMin(BinHeap *heap)
 
 	return BinHeap_GetElem(heap, 1);
 }
+
+void
+BinHeap_UpdateMin(BinHeap *heap)
+{
+	int idx = 1;
+	BinHeapElem *tmp = BinHeap_GetElem(heap, 0);
+	BinHeapElem *e = BinHeap_GetElem(heap, 1);
+
+	/* Use heap->elem[0] as temporary storage. */
+	memcpy(tmp, e, heap->elem_size);
+
+	while (2 * idx < heap->num_elem) {
+		int child = 2 * idx;
+		int right = 2 * idx + 1;
+		BinHeapElem *c = BinHeap_GetElem(heap, child);
+
+		if (right < heap->num_elem) {
+			BinHeapElem *r = BinHeap_GetElem(heap, right);
+
+			if (r->key < c->key) {
+				child = right;
+				c = r;
+			}
+		}
+
+		if (tmp->key <= c->key) {
+			break;
+		}
+		else {
+			memcpy(e, c, heap->elem_size);
+			idx = child;
+			e = c;
+		}
+	}
+
+	memcpy(e, tmp, heap->elem_size);
+}

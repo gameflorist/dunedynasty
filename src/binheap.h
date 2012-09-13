@@ -22,5 +22,6 @@ extern BinHeapElem *BinHeap_GetElem(BinHeap *heap, int i);
 extern void *BinHeap_Push(BinHeap *heap, int64_t key);
 extern void BinHeap_Pop(BinHeap *heap);
 extern void *BinHeap_GetMin(BinHeap *heap);
+extern void BinHeap_UpdateMin(BinHeap *heap);
 
 #endif
