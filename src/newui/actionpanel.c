@@ -393,7 +393,8 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			break;
 	}
 
-	if (g_factoryWindowItems[item].available <= 0) {
+	/* Upgrade required. */
+	if (g_factoryWindowItems[item].available == -1) {
 		if (item < g_factoryWindowTotal)
 			Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 
@@ -401,6 +402,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	}
 
 	const uint16 clicked_type = g_factoryWindowItems[item].objectType;
+	bool action_successful = true;
 
 	if ((s->objectType == clicked_type) || (g_productionStringID == STR_BUILD_IT)) {
 		switch (g_productionStringID) {
@@ -439,8 +441,12 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			case STR_BUILD_IT:
 				if (lmb) {
 					s->objectType = g_factoryWindowItems[item].objectType;
-					if (!Structure_BuildObject(s, s->objectType)) {
-						Audio_PlaySound(EFFECT_ERROR_OCCURRED);
+
+					if (g_factoryWindowItems[item].available > 0) {
+						action_successful = Structure_BuildObject(s, s->objectType);
+					}
+					else {
+						action_successful = false;
 					}
 				}
 				break;
@@ -448,7 +454,12 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			case STR_COMPLETED:
 			case STR_D_DONE:
 				if (lmb) {
-					BuildQueue_Add(&s->queue, clicked_type, 0);
+					if (g_factoryWindowItems[item].available > 0) {
+						BuildQueue_Add(&s->queue, clicked_type, 0);
+					}
+					else {
+						action_successful = false;
+					}
 				}
 				else if (rmb && (g_productionStringID == STR_D_DONE)) {
 					s->o.flags.s.onHold = true;
@@ -461,11 +472,20 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	}
 	else {
 		if (lmb) {
-			BuildQueue_Add(&s->queue, clicked_type, 0);
+			if (g_factoryWindowItems[item].available > 0) {
+				BuildQueue_Add(&s->queue, clicked_type, 0);
+			}
+			else {
+				action_successful = false;
+			}
 		}
 		else if (rmb) {
 			BuildQueue_RemoveTail(&s->queue, clicked_type, NULL);
 		}
+	}
+
+	if (!action_successful) {
+		Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 	}
 
 	return false;

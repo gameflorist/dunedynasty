@@ -51,6 +51,7 @@ static int64_t s_tickStructurePalace    = 0; /*!< Indicates next time Palace fun
 uint16 g_structureIndex;
 
 static int16 Structure_IsValidBuildLandscape(uint16 position, StructureType type);
+static int Structure_GetAvailable(const Structure *s, int i);
 
 /**
  * Loop over all structures, preforming various of tasks.
@@ -305,10 +306,17 @@ void GameLoop_Structure(void)
 					}
 
 					if (start_next) {
-						uint16 object_type = BuildQueue_RemoveHead(&s->queue);
+						uint16 object_type;
 
-						if (object_type != 0xFFFF)
-							Structure_BuildObject(s, object_type);
+						object_type = BuildQueue_RemoveHead(&s->queue);
+						while (object_type != 0xFFFF) {
+							if (Structure_GetAvailable(s, object_type)) {
+								if (Structure_BuildObject(s, object_type))
+									break;
+							}
+
+							object_type = BuildQueue_RemoveHead(&s->queue);
+						}
 					}
 				}
 
@@ -1861,12 +1869,6 @@ void Structure_UpdateMap(Structure *s)
 	}
 }
 
-/* Structure_GetAvailable:
- *
- * If s is construction yard, i is a StructureType.
- * If s is starport, i is a UnitType.
- * Otherwise, i is the factory item number.
- */
 static int
 Structure_GetAvailable(const Structure *s, int i)
 {
@@ -1904,14 +1906,17 @@ Structure_GetAvailable(const Structure *s, int i)
 			}
 		}
 
+		/* If the prerequisites were destroyed, allow the current
+		 * building to complete but do not allow new ones.
+		 */
+		if (i == s->objectType && s->o.linkedID != 0xFF)
+			return -2;
+
 		return 0;
 	}
 
 	else {
-		assert(0 <= i && i < 8);
-
-		const StructureInfo *si = &g_table_structureInfo[s->o.type];
-		uint16 unitType = si->buildableUnits[i];
+		uint16 unitType = i;
 
 		if (unitType > UNIT_MCV)
 			return 0;
@@ -1925,8 +1930,15 @@ Structure_GetAvailable(const Structure *s, int i)
 		if (unitType == UNIT_SIEGE_TANK && s->creatorHouseID == HOUSE_ORDOS)
 			upgradeLevelRequired--;
 
-		if ((structuresBuilt & ui->o.structuresRequired) != ui->o.structuresRequired)
+		if ((structuresBuilt & ui->o.structuresRequired) != ui->o.structuresRequired) {
+			/* If the prerequisites were destroyed, allow the current
+			 * building to complete but do not allow new ones.
+			 */
+			if (unitType == s->objectType && s->o.linkedID != 0xFF)
+				return -2;
+
 			return 0;
+		}
 
 		if ((ui->o.availableHouse & (1 << s->creatorHouseID)) == 0)
 			return 0;
@@ -2215,7 +2227,14 @@ void Structure_InitFactoryItems(const Structure *s)
 				continue;
 
 			const ObjectInfo *oi = &g_table_unitInfo[unitType].o;
-			const int available = Structure_GetAvailable(s, i);
+			int available;
+
+			if (s->o.type == STRUCTURE_STARPORT) {
+				available = Structure_GetAvailable(s, i);
+			}
+			else {
+				available = Structure_GetAvailable(s, si->buildableUnits[i]);
+			}
 
 			if (available == 0)
 				continue;

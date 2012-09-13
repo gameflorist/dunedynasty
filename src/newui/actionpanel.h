@@ -12,7 +12,14 @@ enum {
 
 typedef struct FactoryWindowItem {
 	int objectType;
-	int available;      /* 0 = not available, -1 upgrade required, 1+ available, or starport amount. */
+
+	/* -2 = prerequisites lost.
+	 * -1 = upgrade required.
+	 *  0 = not available.
+	 * 1+ = available.
+	 */
+	int available;
+
 	int credits;
 	int sortPriority;
 	enum ShapeID shapeID;
