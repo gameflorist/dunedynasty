@@ -39,13 +39,13 @@ HouseType g_playerHouseID = HOUSE_INVALID;
 uint16 g_houseMissileCountdown = 0;
 uint16 g_playerCreditsNoSilo = 0;
 uint16 g_playerCredits = 0; /*!< Credits shown to player as 'current'. */
-uint32 g_tickHousePowerMaintenance = 0;
+int64_t g_tickHousePowerMaintenance = 0;
 
-static uint32 s_tickHouseHouse = 0;
-static uint32 s_tickHouseStarport = 0;
-static uint32 s_tickHouseReinforcement = 0;
-static uint32 s_tickHouseMissileCountdown = 0;
-static uint32 s_tickHouseStarportAvailability = 0;
+static int64_t s_tickHouseHouse = 0;
+static int64_t s_tickHouseStarport = 0;
+static int64_t s_tickHouseReinforcement = 0;
+static int64_t s_tickHouseMissileCountdown = 0;
+static int64_t s_tickHouseStarportAvailability = 0;
 
 /**
  * Loop over all houses, preforming various of tasks.

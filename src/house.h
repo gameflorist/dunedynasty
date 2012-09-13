@@ -5,6 +5,8 @@
 #ifndef HOUSE_H
 #define HOUSE_H
 
+#include <inttypes.h>
+
 /**
  * Types of %Houses available in the game.
  */
@@ -152,7 +154,7 @@ extern HouseType g_playerHouseID;
 extern uint16 g_houseMissileCountdown;
 extern uint16 g_playerCreditsNoSilo;
 extern uint16 g_playerCredits;
-extern uint32 g_tickHousePowerMaintenance;
+extern int64_t g_tickHousePowerMaintenance;
 
 extern void GameLoop_House(void);
 extern uint8 House_StringToType(const char *name);
