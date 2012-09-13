@@ -22,6 +22,7 @@
 #include "gui/widget.h"
 #include "house.h"
 #include "map.h"
+#include "newui/actionpanel.h"
 #include "opendune.h"
 #include "pool/pool.h"
 #include "pool/house.h"
@@ -2429,6 +2430,7 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 
 		h = House_Get_ByIndex(unit->o.houseID);
 		h->structuresBuilt = Structure_GetStructuresBuilt(h);
+		g_factoryWindowTotal = -1;
 
 		if (s->o.linkedID != 0xFF) {
 			Unit *u = Unit_Get_ByIndex(s->o.linkedID);

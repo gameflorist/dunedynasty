@@ -1440,6 +1440,7 @@ void Structure_Remove(Structure *s)
 	Structure_UntargetMe(s);
 
 	h->structuresBuilt = Structure_GetStructuresBuilt(h);
+	g_factoryWindowTotal = -1;
 
 	House_UpdateCreditsStorage(s->o.houseID);
 
