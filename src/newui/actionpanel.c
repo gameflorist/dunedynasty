@@ -27,8 +27,6 @@
 FactoryWindowItem g_factoryWindowItems[MAX_FACTORY_WINDOW_ITEMS];
 int g_factoryWindowTotal;
 
-static int factoryOffsetY;
-
 void
 ActionPanel_DrawPortrait(uint16 action_type, enum ShapeID shapeID)
 {
@@ -245,21 +243,22 @@ ActionPanel_ProductionButtonStride(const Widget *widget, bool is_starport, int *
 }
 
 static void
-ActionPanel_ProductionButtonDimensions(const Widget *widget, bool is_starport,
+ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 		int item, int *x1, int *y1, int *x2, int *y2, int *w, int *h)
 {
 	int items_per_screen;
+	const bool is_starport = (s->o.type == STRUCTURE_STARPORT);
 	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
 	const int width = 52;
 	const int height = 39;
 	const int x = widget->offsetX + 4;
-	int y = widget->offsetY + 16 + stride * item + factoryOffsetY;
+	int y = widget->offsetY + 16 + stride * item + s->factoryOffsetY;
 
 	if (items_per_screen <= 1) {
 		y = widget->offsetY + widget->height - height
 			- (widget->height >= 52 ? 20 : 0)
 			- (is_starport ? 12 : 0)
-			+ stride * item + factoryOffsetY;
+			+ stride * item + s->factoryOffsetY;
 	}
 
 	if (x1 != NULL) *x1 = x;
@@ -303,12 +302,30 @@ ActionPanel_SendOrderButtonDimensions(const Widget *widget,
 	if (h != NULL) *h = 10;
 }
 
-static bool
-ActionPanel_ScrollFactory(const Widget *widget, bool is_starport)
+static void
+ActionPanel_ClampFactoryScrollOffset(const Widget *widget, Structure *s)
 {
 	int items_per_screen;
-	const int height = (is_starport ? widget->height - 12 : widget->height);
+	const bool is_starport = (s->o.type == STRUCTURE_STARPORT);
 	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
+	const int first_item = g_factoryWindowTotal - (items_per_screen <= 1 ? 1 : items_per_screen);
+	int y1;
+
+	ActionPanel_ProductionButtonDimensions(widget, s, first_item, NULL, &y1, NULL, NULL, NULL, NULL);
+
+	if (y1 < widget->offsetY + 16)
+		s->factoryOffsetY = -stride * first_item;
+
+	if (s->factoryOffsetY > 0)
+		s->factoryOffsetY = 0;
+}
+
+static bool
+ActionPanel_ScrollFactory(const Widget *widget, Structure *s)
+{
+	const bool is_starport = (s->o.type == STRUCTURE_STARPORT);
+	const int height = (is_starport ? widget->height - 12 : widget->height);
+	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, NULL);
 
 	int delta = g_mouseDZ;
 	int x1, y1, x2, y2;
@@ -324,16 +341,8 @@ ActionPanel_ScrollFactory(const Widget *widget, bool is_starport)
 	if (delta == 0)
 		return false;
 
-	const int first_item = g_factoryWindowTotal - (items_per_screen <= 1 ? 1 : items_per_screen);
-
-	factoryOffsetY += delta * stride;
-	ActionPanel_ProductionButtonDimensions(widget, is_starport, first_item, NULL, &y1, NULL, NULL, NULL, NULL);
-
-	if (y1 < widget->offsetY + 16)
-		factoryOffsetY = -stride * first_item;
-
-	if (factoryOffsetY > 0)
-		factoryOffsetY = 0;
+	s->factoryOffsetY += delta * stride;
+	ActionPanel_ClampFactoryScrollOffset(widget, s);
 
 	return true;
 }
@@ -365,11 +374,11 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	}
 
 	if (g_factoryWindowTotal < 0) {
-		factoryOffsetY = 0;
 		Structure_InitFactoryItems(s);
+		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
-	if (ActionPanel_ScrollFactory(widget, false))
+	if (ActionPanel_ScrollFactory(widget, s))
 		return true;
 
 	if (g_mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
@@ -379,7 +388,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	const bool rmb = (widget->state.s.buttonState & 0x40);
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
-		ActionPanel_ProductionButtonDimensions(widget, false, item, &x1, &y1, &x2, &y2, NULL, NULL);
+		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
 		if (Mouse_InRegion(x1, y1, x2, y2))
 			break;
 	}
@@ -555,8 +564,8 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	int item;
 
 	if (g_factoryWindowTotal < 0) {
-		factoryOffsetY = 0;
 		Structure_InitFactoryItems(s);
+		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
 	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
@@ -565,14 +574,14 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 		return true;
 	}
 
-	if (ActionPanel_ScrollFactory(widget, true))
+	if (ActionPanel_ScrollFactory(widget, s))
 		return true;
 
 	if (g_mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
 		return false;
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
-		ActionPanel_ProductionButtonDimensions(widget, true, item, &x1, &y1, &x2, &y2, NULL, NULL);
+		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
 		if (Mouse_InRegion(x1, y1, x2, y2))
 			break;
 	}
@@ -597,9 +606,8 @@ ActionPanel_ClickPalace(const Widget *widget, Structure *s)
 	int x1, y1, x2, y2;
 
 	g_factoryWindowTotal = 0;
-	factoryOffsetY = 0;
 
-	ActionPanel_ProductionButtonDimensions(widget, false, 0, &x1, &y1, &x2, &y2, NULL, NULL);
+	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x1, &y1, &x2, &y2, NULL, NULL);
 	if (lmb && Mouse_InRegion(x1, y1, x2, y2)) {
 		Structure_ActivateSpecial(s);
 		return true;
@@ -699,8 +707,8 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 	}
 
 	if (g_factoryWindowTotal < 0) {
-		factoryOffsetY = 0;
 		Structure_InitFactoryItems(s);
+		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
 	GUI_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, height - 3, 0, true);
@@ -714,7 +722,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		int x1, y1, y2, w, h;
 		int fg = 0xF;
 
-		ActionPanel_ProductionButtonDimensions(widget, (s->o.type == STRUCTURE_STARPORT), item, &x1, &y1, NULL, &y2, &w, &h);
+		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, NULL, &y2, &w, &h);
 		if (y2 >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
 			break;
 
@@ -826,9 +834,8 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 	}
 
 	g_factoryWindowTotal = 0;
-	factoryOffsetY = 0;
 
-	ActionPanel_ProductionButtonDimensions(widget, false, 0, &x, &y, NULL, NULL, &w, &h);
+	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x, &y, NULL, NULL, &w, &h);
 	GUI_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, widget->height - 3, 0, true);
 	Video_SetClippingArea(widget->offsetX + 1, widget->offsetY + 3, widget->width - 2, widget->height - 5);
 	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);

@@ -58,6 +58,7 @@ bool Structure_Load(FILE *fp, uint32 length)
 		s->squadID = SQUADID_INVALID;
 		BuildQueue_Init(&s->queue);
 		s->rallyPoint = 0xFFFF;
+		s->factoryOffsetY = 0;
 	}
 	if (length != 0) return false;
 

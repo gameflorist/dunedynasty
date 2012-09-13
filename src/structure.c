@@ -434,6 +434,7 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 	s->squadID = SQUADID_INVALID;
 	BuildQueue_Init(&s->queue);
 	s->rallyPoint = 0xFFFF;
+	s->factoryOffsetY = 0;
 
 	if (typeID == STRUCTURE_TURRET) {
 		s->rotationSpriteDiff = g_iconMap[g_iconMap[ICM_ICONGROUP_BASE_DEFENSE_TURRET] + 1];

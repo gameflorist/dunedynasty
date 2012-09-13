@@ -97,6 +97,7 @@ typedef struct Structure {
 	enum SquadID squadID;
 	BuildQueue queue;
 	uint16 rallyPoint;
+	int factoryOffsetY;
 } Structure;
 
 /**
