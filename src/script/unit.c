@@ -1857,7 +1857,15 @@ uint16 Script_Unit_MCVDeploy(ScriptEngine *script)
 		s = Structure_Create(0xFFFF, STRUCTURE_CONSTRUCTION_YARD, Unit_GetHouseID(u), Tile_PackTile(u->o.position) + offsets[i]);
 
 		if (s != NULL) {
+			const bool unit_was_selected = Unit_IsSelected(u);
+
 			Unit_Remove(u);
+
+			if (enhancement_fix_selection_after_entering_structure) {
+				if (unit_was_selected && !Unit_AnySelected())
+					Map_SetSelection(Tile_PackTile(s->o.position));
+			}
+
 			return 1;
 		}
 
