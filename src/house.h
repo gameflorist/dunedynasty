@@ -42,19 +42,6 @@ enum HouseWeapon {
 	HOUSE_WEAPON_INVALID = 0xFF
 };
 
-typedef enum HouseAnimationType {
-	HOUSEANIMATION_INTRO            = 0,
-	HOUSEANIMATION_LEVEL4_HARKONNEN = 1,
-	HOUSEANIMATION_LEVEL4_ARTREIDES = 2,
-	HOUSEANIMATION_LEVEL4_ORDOS     = 3,
-	HOUSEANIMATION_LEVEL8_HARKONNEN = 4,
-	HOUSEANIMATION_LEVEL8_ARTREIDES = 5,
-	HOUSEANIMATION_LEVEL8_ORDOS     = 6,
-	HOUSEANIMATION_LEVEL9_HARKONNEN = 7,
-	HOUSEANIMATION_LEVEL9_ARTREIDES = 8,
-	HOUSEANIMATION_LEVEL9_ORDOS     = 9
-} HouseAnimationType;
-
 /**
  * A %House as stored in the memory.
  */
@@ -108,46 +95,7 @@ typedef struct HouseInfo {
 	const char *voiceFilename;                              /*!< Pointer to filename with the voices of the house. */
 } HouseInfo;
 
-/**
- * The information for a single animation frame in House Animation. It is part
- *  of an array that stops when duration is 0.
- */
-typedef struct HouseAnimation_Animation {
-	const char *string;                                     /*!< Name of the WSA for this animation. */
-	uint8  duration;                                        /*!< Duration of this animation. */
-	uint8  frameCount;                                      /*!< Amount of frames in this animation. */
-	uint16 flags;                                           /*!< Flags of the animation. */
-} HouseAnimation_Animation;
-
-/**
- * Subtitle information part of House Information. It is part of an array that
- *  stops when stringID is 0xFFFF.
- */
-typedef struct HouseAnimation_Subtitle {
-	uint16 stringID;                                        /*!< StringID for the subtitle. */
-	uint16 colour;                                          /*!< Colour of the subtitle. */
-	uint8  animationID;                                     /*!< To which AnimationID this Subtitle belongs. */
-	uint8  top;                                             /*!< The top of the subtitle, in pixels. */
-	uint8  waitFadein;                                      /*!< How long to wait before we fadein this Subtitle. */
-	uint8  paletteFadein;                                   /*!< How many ticks the palette update should take when appearing. */
-	uint8  waitFadeout;                                     /*!< How long to wait before we fadeout this Subtitle. */
-	uint8  paletteFadeout;                                  /*!< How many ticks the palette update should take when disappearing. */
-} HouseAnimation_Subtitle;
-
-/**
- * Voice information part of House Information. It is part of an array that
- *  stops when voiceID is 0xFF.
- */
-typedef struct HouseAnimation_SoundEffect {
-	uint8  animationID;                                     /*!< The which AnimationID this SoundEffect belongs. */
-	uint8  voiceID;                                         /*!< The SoundEffect to play. */
-	uint8  wait;                                            /*!< How long to wait before we play this SoundEffect. */
-} HouseAnimation_SoundEffect;
-
 extern const HouseInfo g_table_houseInfo[];
-extern const HouseAnimation_Animation g_table_houseAnimation_animation[][32];
-extern const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[][32];
-extern const HouseAnimation_SoundEffect g_table_houseAnimation_soundEffect[][90];
 
 extern House *g_playerHouse;
 extern HouseType g_playerHouseID;
