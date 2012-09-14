@@ -5,6 +5,6 @@
 #ifndef LOAD_H
 #define LOAD_H
 
-extern bool LoadFile(char *filename);
+extern bool LoadFile(const char *filename);
 
 #endif /* LOAD_H */

@@ -125,7 +125,8 @@ static bool Load_Main(FILE *fp)
 	return true;
 }
 
-bool LoadFile(char *filename)
+bool
+LoadFile(const char *filename)
 {
 	FILE *fp;
 	char filenameComplete[1024];

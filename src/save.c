@@ -32,7 +32,8 @@
  * @param saveProc The proc to call to generate the content of the chunk.
  * @return True if and only if all bytes were written successful.
  */
-static bool Save_Chunk(FILE *fp, char *header, bool (*saveProc)(FILE *fp))
+static bool
+Save_Chunk(FILE *fp, const char *header, bool (*saveProc)(FILE *fp))
 {
 	uint32 position;
 	uint32 length;
@@ -72,7 +73,8 @@ static bool Save_Chunk(FILE *fp, char *header, bool (*saveProc)(FILE *fp))
  * @param description The description of the savegame.
  * @return True if and only if all bytes were written successful.
  */
-static bool Save_Main(FILE *fp, char *description)
+static bool
+Save_Main(FILE *fp, const char *description)
 {
 	uint32 length;
 	uint32 lengthSwapped;
@@ -122,7 +124,8 @@ static bool Save_Main(FILE *fp, char *description)
  * @param description The description of the savegame.
  * @return True if and only if all bytes were written successful.
  */
-bool SaveFile(char *filename, char *description)
+bool
+SaveFile(const char *filename, const char *description)
 {
 	FILE *fp;
 	char filenameComplete[1024];
