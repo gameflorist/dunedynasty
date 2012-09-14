@@ -13,7 +13,7 @@
 
 #include "file.h"
 
-
+#define DUNE2_DATA_PREFIX   "data"
 
 /**
  * Static information about opened files.
@@ -28,6 +28,8 @@ typedef struct File {
 static File s_file[FILE_MAX];
 
 uint16 g_fileOperation = 0; /*!< If non-zero, input (keyboard + mouse), video is not updated, .. Basically, any operation that might trigger a free() in the signal handler, which can collide with malloc() of file operations. */
+
+char g_dune_data_dir[1024];
 
 /**
  * Find the FileInfo index for the given filename.
@@ -61,7 +63,7 @@ static uint8 _File_Open(const char *filename, uint8 mode)
 	uint8 fileIndex;
 	uint16 fileInfoIndex;
 
-	snprintf(filenameComplete, sizeof(filenameComplete), "data/%s", filename);
+	snprintf(filenameComplete, sizeof(filenameComplete), "%s/%s/%s", g_dune_data_dir, DUNE2_DATA_PREFIX, filename);
 	/* XXX -- This should be removed when all references are changed to lowercase */
 	{
 		char *f;
@@ -107,7 +109,7 @@ static uint8 _File_Open(const char *filename, uint8 mode)
 	if (!g_table_fileInfo[fileInfoIndex].flags.inPAKFile) return FILE_INVALID;
 
 	pakName = g_table_fileInfo[g_table_fileInfo[fileInfoIndex].parentIndex].filename;
-	snprintf(pakNameComplete, sizeof(pakNameComplete), "data/%s", pakName);
+	snprintf(pakNameComplete, sizeof(pakNameComplete), "%s/%s/%s", g_dune_data_dir, DUNE2_DATA_PREFIX, pakName);
 	/* XXX -- This should be removed when all references are changed to lowercase */
 	{
 		char *f;

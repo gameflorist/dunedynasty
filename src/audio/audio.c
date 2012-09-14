@@ -108,21 +108,21 @@ Audio_ScanMusic(void)
 				continue;
 			}
 
-			snprintf(buf, sizeof(buf), "%s.flac", ext->filename);
+			snprintf(buf, sizeof(buf), "%s/%s.flac", g_dune_data_dir, ext->filename);
 			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s.flac\n", ext->filename);
+				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
 				continue;
 			}
 
-			snprintf(buf, sizeof(buf), "%s.ogg", ext->filename);
+			snprintf(buf, sizeof(buf), "%s/%s.ogg", g_dune_data_dir, ext->filename);
 			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s.ogg\n", ext->filename);
+				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
 				continue;
 			}
 
-			snprintf(buf, sizeof(buf), "%s.AUD", ext->filename);
+			snprintf(buf, sizeof(buf), "%s/%s.AUD", g_dune_data_dir, ext->filename);
 			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s.AUD\n", ext->filename);
+				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
 				continue;
 			}
 

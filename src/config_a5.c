@@ -9,6 +9,7 @@
 
 #include "audio/audio.h"
 #include "enhancement.h"
+#include "file.h"
 #include "gfx.h"
 #include "opendune.h"
 #include "string.h"
@@ -215,6 +216,8 @@ Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *
 void
 GameOptions_Load(void)
 {
+	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
+
 	s_configFile = al_load_config_file(CONFIG_FILENAME);
 	if (s_configFile == NULL)
 		return;

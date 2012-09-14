@@ -192,7 +192,7 @@ AudioA5_InitFlac(const char *filename)
 {
 	char fn[1024];
 
-	snprintf(fn, sizeof(fn), "%s.flac", filename);
+	snprintf(fn, sizeof(fn), "%s/%s.flac", g_dune_data_dir, filename);
 	return al_load_audio_stream(fn, NUMFRAGS, FRAGLEN);
 }
 
@@ -201,7 +201,7 @@ AudioA5_InitOgg(const char *filename)
 {
 	char fn[1024];
 
-	snprintf(fn, sizeof(fn), "%s.ogg", filename);
+	snprintf(fn, sizeof(fn), "%s/%s.ogg", g_dune_data_dir, filename);
 	return al_load_audio_stream(fn, NUMFRAGS, FRAGLEN);
 }
 
@@ -210,7 +210,7 @@ AudioA5_InitAud(const char *filename)
 {
 	char fn[1024];
 
-	snprintf(fn, sizeof(fn), "%s.AUD", filename);
+	snprintf(fn, sizeof(fn), "%s/%s.AUD", g_dune_data_dir, filename);
 
 	ALLEGRO_FILE *f = al_fopen(fn, "r");
 	if (f == NULL)

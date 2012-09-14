@@ -31,6 +31,7 @@ typedef struct FileInfo {
 
 extern FileInfo g_table_fileInfo[];
 extern uint16 g_fileOperation;
+extern char g_dune_data_dir[1024];
 
 extern bool File_Exists(const char *filename);
 extern uint8 File_Open(const char *filename, uint8 mode);

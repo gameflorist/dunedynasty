@@ -1151,8 +1151,10 @@ static bool Unknown_25C4_000E(void)
 			"--------------------------\n"
 			"ERROR LOADING DATA FILE\n"
 			"\n"
-			"Did you copy the Dune2 1.07eu data files into the data directory ?\n"
-			"\n"
+			"Did you copy the Dune2 1.07eu data files into the data directory\n"
+			"%s/data ?\n"
+			"\n",
+			g_dune_data_dir
 		);
 
 		return false;
@@ -1203,12 +1205,12 @@ int main(int argc, char **argv)
 
 	GameOptions_Load();
 
+	if (!Unknown_25C4_000E()) exit(1);
+
 	if (A5_Init() == false)
 		exit(1);
 
 	Input_Init();
-
-	if (!Unknown_25C4_000E()) exit(1);
 
 	/* g_var_7097 = 0; */
 
