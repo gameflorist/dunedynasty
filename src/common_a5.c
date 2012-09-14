@@ -6,6 +6,7 @@
 #include "common_a5.h"
 
 #include "audio/audio_a5.h"
+#include "config.h"
 #include "gfx.h"
 #include "input/input_a5.h"
 #include "input/mouse.h"
@@ -55,11 +56,19 @@ A5_InitTransform(void)
 }
 
 bool
-A5_Init(void)
+A5_InitOptions(void)
 {
 	if (al_init() != true)
 		return false;
 
+	GameOptions_Load();
+
+	return true;
+}
+
+bool
+A5_Init(void)
+{
 	g_a5_input_queue = al_create_event_queue();
 	if (g_a5_input_queue == NULL)
 		return false;

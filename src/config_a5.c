@@ -213,13 +213,40 @@ Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *
 
 /*--------------------------------------------------------------*/
 
+static void
+ConfigA5_InitDataDirectories(void)
+{
+	ALLEGRO_PATH *dune_data_path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+	ALLEGRO_PATH *user_data_path = al_get_standard_path(ALLEGRO_USER_DATA_PATH);
+	const char *data_path_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
+	const char *user_path_cstr = al_path_cstr(user_data_path, ALLEGRO_NATIVE_PATH_SEP);
+	char filename[1024];
+
+	/* Find global data directory. */
+	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), data_path_cstr);
+	File_MakeCompleteFilename(filename, sizeof(filename), "dune.pak", true);
+	if (!al_filename_exists(filename)) {
+		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
+	}
+
+	/* Find personal directory, and create subdirectories. */
+	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), user_path_cstr);
+
+	al_destroy_path(dune_data_path);
+	al_destroy_path(user_data_path);
+	fprintf(stdout, "Dune data directory: %s\n", g_dune_data_dir);
+	fprintf(stdout, "Personal data directory: %s\n", g_personal_data_dir);
+}
+
 void
 GameOptions_Load(void)
 {
-	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
-	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), ".");
+	char filename[1024];
 
-	s_configFile = al_load_config_file(CONFIG_FILENAME);
+	ConfigA5_InitDataDirectories();
+
+	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
+	s_configFile = al_load_config_file(filename);
 	if (s_configFile == NULL)
 		return;
 
@@ -310,6 +337,8 @@ GameOptions_Load(void)
 void
 GameOptions_Save(void)
 {
+	char filename[1024];
+
 	if (s_configFile == NULL) {
 		s_configFile = al_create_config();
 		if (s_configFile == NULL)
@@ -350,5 +379,6 @@ GameOptions_Save(void)
 		}
 	}
 
-	al_save_config_file(CONFIG_FILENAME, s_configFile);
+	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
+	al_save_config_file(filename, s_configFile);
 }

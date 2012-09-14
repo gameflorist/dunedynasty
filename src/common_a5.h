@@ -6,6 +6,7 @@
 extern struct ALLEGRO_EVENT_QUEUE *g_a5_input_queue;
 
 extern void A5_InitTransform(void);
+extern bool A5_InitOptions(void);
 extern bool A5_Init(void);
 extern void A5_Uninit(void);
 extern void A5_UseIdentityTransform(void);

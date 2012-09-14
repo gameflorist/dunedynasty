@@ -1203,7 +1203,8 @@ int main(int argc, char **argv)
 	VARIABLE_NOT_USED(argc);
 	VARIABLE_NOT_USED(argv);
 
-	GameOptions_Load();
+	if (A5_InitOptions() == false)
+		exit(1);
 
 	if (!Unknown_25C4_000E()) exit(1);
 
