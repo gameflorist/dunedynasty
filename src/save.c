@@ -8,6 +8,7 @@
 
 #include "save.h"
 
+#include "file.h"
 #include "house.h"
 #include "map.h"
 #include "opendune.h"
@@ -170,7 +171,7 @@ bool SaveFile(char *filename, char *description)
 		}
 	}
 
-	snprintf(filenameComplete, sizeof(filenameComplete), "data/%s", filename);
+	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), filename, false);
 	fp = fopen(filenameComplete, "wb");
 	if (fp == NULL) {
 		Error("Failed to open file '%s' for writing.\n", filenameComplete);

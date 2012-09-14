@@ -217,6 +217,7 @@ void
 GameOptions_Load(void)
 {
 	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
+	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), ".");
 
 	s_configFile = al_load_config_file(CONFIG_FILENAME);
 	if (s_configFile == NULL)

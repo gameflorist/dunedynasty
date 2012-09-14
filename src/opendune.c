@@ -606,8 +606,8 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 		loc10 = true;
 
-		hasSave = File_Exists("_save000.dat");
-		hasFame = File_Exists("SAVEFAME.DAT");
+		hasSave = File_Exists_Personal("_save000.dat");
+		hasFame = File_Exists_Personal("SAVEFAME.DAT");
 
 		stringID = STR_REPLAY_INTRODUCTION;
 
@@ -656,7 +656,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 					GFX_SetPalette(g_palette2);
 
-					hasFame = File_Exists("SAVEFAME.DAT");
+					hasFame = File_Exists_Personal("SAVEFAME.DAT");
 					loc06 = true;
 					break;
 

@@ -2214,7 +2214,7 @@ void GUI_HallOfFame_Show(uint16 score)
 	HallOfFameStruct *data;
 
 	if (score == 0xFFFF) {
-		if (!File_Exists("SAVEFAME.DAT")) {
+		if (!File_Exists_Personal("SAVEFAME.DAT")) {
 			return;
 		}
 		s_ticksPlayed = 0;
@@ -2222,21 +2222,21 @@ void GUI_HallOfFame_Show(uint16 score)
 
 	data = (HallOfFameStruct *)GFX_Screen_Get_ByIndex(5);
 
-	if (!File_Exists("SAVEFAME.DAT")) {
+	if (!File_Exists_Personal("SAVEFAME.DAT")) {
 		uint16 written;
 
 		memset(data, 0, 128);
 
 		GUI_HallOfFame_Encode(data);
 
-		fileID = File_Open("SAVEFAME.DAT", 2);
+		fileID = File_Open_Personal("SAVEFAME.DAT", 2);
 		written = File_Write(fileID, data, 128);
 		File_Close(fileID);
 
 		if (written != 128) return;
 	}
 
-	File_ReadBlockFile("SAVEFAME.DAT", data, 128);
+	File_ReadBlockFile_Personal("SAVEFAME.DAT", data, 128);
 
 	GUI_HallOfFame_Decode(data);
 
@@ -2303,7 +2303,7 @@ void GUI_HallOfFame_Show(uint16 score)
 		memcpy(&g_widgetProperties[19], &backupProperties, sizeof(WidgetProperties));
 
 		GUI_HallOfFame_Encode(data);
-		fileID = File_Open("SAVEFAME.DAT", 2);
+		fileID = File_Open_Personal("SAVEFAME.DAT", 2);
 		File_Write(fileID, data, 128);
 		File_Close(fileID);
 		GUI_HallOfFame_Decode(data);

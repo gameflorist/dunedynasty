@@ -14,6 +14,7 @@
 #include "file.h"
 
 #define DUNE2_DATA_PREFIX   "data"
+#define DUNE2_SAVE_PREFIX   "save"
 
 /**
  * Static information about opened files.
@@ -30,6 +31,18 @@ static File s_file[FILE_MAX];
 uint16 g_fileOperation = 0; /*!< If non-zero, input (keyboard + mouse), video is not updated, .. Basically, any operation that might trigger a free() in the signal handler, which can collide with malloc() of file operations. */
 
 char g_dune_data_dir[1024];
+char g_personal_data_dir[1024];
+
+void
+File_MakeCompleteFilename(char *buf, size_t len, const char *filename, bool is_global_data)
+{
+	if (is_global_data) {
+		snprintf(buf, len, "%s/%s/%s", g_dune_data_dir, DUNE2_DATA_PREFIX, filename);
+	}
+	else {
+		snprintf(buf, len, "%s/%s/%s", g_personal_data_dir, DUNE2_SAVE_PREFIX, filename);
+	}
+}
 
 /**
  * Find the FileInfo index for the given filename.
@@ -55,7 +68,7 @@ static uint16 FileInfo_FindIndex_ByName(const char *filename)
  * @param mode The mode to open the file in. Bit 1 means reading, bit 2 means writing.
  * @return An index value refering to the opened file, or FILE_INVALID.
  */
-static uint8 _File_Open(const char *filename, uint8 mode)
+static uint8 _File_Open(const char *filename, bool is_global_data, uint8 mode)
 {
 	const char *pakName;
 	char filenameComplete[1024];
@@ -63,7 +76,7 @@ static uint8 _File_Open(const char *filename, uint8 mode)
 	uint8 fileIndex;
 	uint16 fileInfoIndex;
 
-	snprintf(filenameComplete, sizeof(filenameComplete), "%s/%s/%s", g_dune_data_dir, DUNE2_DATA_PREFIX, filename);
+	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), filename, is_global_data);
 	/* XXX -- This should be removed when all references are changed to lowercase */
 	{
 		char *f;
@@ -109,7 +122,7 @@ static uint8 _File_Open(const char *filename, uint8 mode)
 	if (!g_table_fileInfo[fileInfoIndex].flags.inPAKFile) return FILE_INVALID;
 
 	pakName = g_table_fileInfo[g_table_fileInfo[fileInfoIndex].parentIndex].filename;
-	snprintf(pakNameComplete, sizeof(pakNameComplete), "%s/%s/%s", g_dune_data_dir, DUNE2_DATA_PREFIX, pakName);
+	File_MakeCompleteFilename(pakNameComplete, sizeof(pakNameComplete), pakName, is_global_data);
 	/* XXX -- This should be removed when all references are changed to lowercase */
 	{
 		char *f;
@@ -201,13 +214,14 @@ static uint8 _File_Open(const char *filename, uint8 mode)
  * @param filename The filename to check for.
  * @return True if and only if the file can be found.
  */
-bool File_Exists(const char *filename)
+bool
+File_Exists_Ex(const char *filename, bool is_global_data)
 {
 	uint8 index;
 
 	g_fileOperation++;
 
-	index = _File_Open(filename, 1);
+	index = _File_Open(filename, is_global_data, 1);
 	if (index == FILE_INVALID) {
 		g_fileOperation--;
 		return false;
@@ -226,12 +240,13 @@ bool File_Exists(const char *filename)
  * @param mode The mode to open the file in. Bit 1 means reading, bit 2 means writing.
  * @return An index value refering to the opened file, or FILE_INVALID.
  */
-uint8 File_Open(const char *filename, uint8 mode)
+uint8
+File_Open_Ex(const char *filename, bool is_global_data, uint8 mode)
 {
 	uint8 res;
 
 	g_fileOperation++;
-	res = _File_Open(filename, mode);
+	res = _File_Open(filename, is_global_data, mode);
 	g_fileOperation--;
 
 	if (res == FILE_INVALID) {
@@ -370,11 +385,12 @@ uint32 File_GetSize(uint8 index)
  *
  * @param filename The filename to remove.
  */
-void File_Delete(const char *filename)
+void
+File_Delete_Personal(const char *filename)
 {
 	char filenameComplete[1024];
 
-	snprintf(filenameComplete, sizeof(filenameComplete), "data/%s", filename);
+	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), filename, false);
 	/* XXX -- This should be removed when all references are changed to lowercase */
 	{
 		char *f;
@@ -394,13 +410,14 @@ void File_Delete(const char *filename)
  *
  * @param filename The filename to create.
  */
-void File_Create(const char *filename)
+void
+File_Create_Personal(const char *filename)
 {
 	uint8 index;
 
 	g_fileOperation++;
 
-	index = _File_Open(filename, 2);
+	index = _File_Open(filename, false, 2);
 	if (index == FILE_INVALID) {
 		g_fileOperation--;
 		return;
@@ -418,11 +435,12 @@ void File_Create(const char *filename)
  * @param length The amount of bytes to read.
  * @return The amount of bytes truly read, or 0 if there was a failure.
  */
-uint32 File_ReadBlockFile(const char *filename, void *buffer, uint32 length)
+uint32
+File_ReadBlockFile_Ex(const char *filename, bool is_global_data, void *buffer, uint32 length)
 {
 	uint8 index;
 
-	index = File_Open(filename, 1);
+	index = File_Open_Ex(filename, is_global_data, 1);
 	length = File_Read(index, buffer, length);
 	File_Close(index);
 	return length;
@@ -482,15 +500,16 @@ uint32 File_ReadFile(const char *filename, void *buf)
  * @param filename The name of the file to open.
  * @return An index value refering to the opened file, or FILE_INVALID.
  */
-uint8 ChunkFile_Open(const char *filename)
+uint8
+ChunkFile_Open_Ex(const char *filename, bool is_global_data)
 {
 	uint8 index;
 	uint32 header;
 
-	index = File_Open(filename, 1);
+	index = File_Open_Ex(filename, is_global_data, 1);
 	File_Close(index);
 
-	index = File_Open(filename, 1);
+	index = File_Open_Ex(filename, is_global_data, 1);
 
 	File_Read(index, &header, 4);
 

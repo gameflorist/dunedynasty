@@ -137,7 +137,7 @@ bool LoadFile(char *filename)
 
 	Game_Init();
 
-	snprintf(filenameComplete, sizeof(filenameComplete), "data/%s", filename);
+	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), filename, false);
 	fp = fopen(filenameComplete, "rb");
 	if (fp == NULL) {
 		Error("Failed to open file '%s' for reading.\n", filenameComplete);
