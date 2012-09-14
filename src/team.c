@@ -17,7 +17,7 @@
 #include "timer/timer.h"
 #include "tools.h"
 
-static uint32 s_tickTeamGameLoop = 0; /*!< Indicates next time the GameLoop function is executed. */
+static int64_t s_tickTeamGameLoop = 0; /*!< Indicates next time the GameLoop function is executed. */
 
 /**
  * Loop over all teams, performing various of tasks.
