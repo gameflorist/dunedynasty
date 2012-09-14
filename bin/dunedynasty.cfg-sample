@@ -1,0 +1,278 @@
+# Dune Dynasty sample config file.
+#
+# Copy this file to your personal data directory:
+# ${HOME}/.local/share/dunedynasty/dunedynasty.cfg.
+#
+# window_mode is one of:
+#  (win) windowed
+#  (fs)  fullscreen
+#  (fsw) fullscreenwindow
+
+[game]
+window_mode=windowed
+; window_mode=fullscreen
+; window_mode=fullscreenwindow
+screen_width=640
+screen_height=480
+language=ENG
+game_speed=2
+hints=1
+auto_scroll=1
+auto_scroll_delay=5
+
+[audio]
+enable_music=1
+enable_effects=1
+enable_sound=1
+enable_voice=1
+enable_subtitles=0
+music_volume=0.900000
+sound_volume=0.750000
+voice_volume=1.000000
+sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
+
+[enhancement]
+brutal_ai=0
+insatiable_sandworms=1
+raise_scenario_unit_cap=0
+repeat_reinforcements=1
+
+# MUSIC CONFIGURATION
+# Uncomment to disable entire music sets.
+[music]
+; dune2_adlib=0
+; dune2_c55=0
+; fed2k_mt32=0
+; d2tm_adlib=0
+; d2tm_mt32=0 # Subset of fed2k_mt32.
+; d2tm_sc55=0
+; dune2000=0
+
+# Dune 2 Adlib
+# Uncomment to disable individual tracks.
+[music/dune2_adlib]
+; dune1.ADL_6	= f # Idle 1
+; dune2.ADL_6	= f # Idle 2
+; dune3.ADL_6	= f # Idle 3
+; dune4.ADL_6	= f # Idle 4
+; dune5.ADL_6	= f # Idle 5
+; dune6.ADL_6	= f # Idle 6
+; dune9.ADL_4	= f # Idle 7
+; dune9.ADL_5	= f # Idle 8
+; dune18.ADL_6	= f # Idle 9
+; dune10.ADL_7	= f # Attack 1
+; dune11.ADL_7	= f # Attack 2
+; dune12.ADL_7	= f # Attack 3
+; dune13.ADL_7	= f # Attack 4
+; dune14.ADL_7	= f # Attack 5
+; dune15.ADL_7	= f # Attack 6
+; dune7.ADL_2	= f # Briefing Harkonnen
+; dune7.ADL_3	= f # Briefing Atreides
+; dune7.ADL_4	= f # Briefing Ordos
+; dune8.ADL_3	= f # Win Harkonnen
+; dune8.ADL_2	= f # Win Atreides
+; dune17.ADL_4	= f # Win Ordos
+; dune1.ADL_4	= f # Lose Harkonnen
+; dune1.ADL_5	= f # Lose Atreides
+; dune1.ADL_3	= f # Lose Ordos
+; dune7.ADL_6	= f # Menu
+; dune16.ADL_7	= f # Strategic Map
+; dune0.ADL_2	= f # Intro               -- Missing in: d2tm_adlib.
+; dune19.ADL_4	= f # End Game Harkonnen  -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
+; dune19.ADL_2	= f # End Game Atreides   -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
+; dune19.ADL_3	= f # End Game Ordos      -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
+; dune0.ADL_4	= f # Logos               -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
+; dune16.ADL_8	= f # Cutscene            -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
+; dune20.ADL_2	= f # Credits             -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
+
+# Dune 2 C55
+# Remember to set a sound font above!
+[music/dune2_c55]
+; dune1.C55_6	= f # Idle 1
+; dune2.C55_6	= f # Idle 2
+; dune3.C55_6	= f # Idle 3
+; dune4.C55_6	= f # Idle 4
+; dune5.C55_6	= f # Idle 5
+; dune6.C55_6	= f # Idle 6
+; dune9.C55_4	= f # Idle 7
+; dune9.C55_5	= f # Idle 8
+; dune18.C55_6	= f # Idle 9
+; dune10.C55_7	= f # Attack 1
+; dune11.C55_7	= f # Attack 2
+; dune12.C55_7	= f # Attack 3
+; dune13.C55_7	= f # Attack 4
+; dune14.C55_7	= f # Attack 5
+; dune15.C55_7	= f # Attack 6
+; dune7.C55_2	= f # Briefing Harkonnen
+; dune7.C55_3	= f # Briefing Atreides
+; dune7.C55_4	= f # Briefing Ordos
+; dune8.C55_3	= f # Win Harkonnen
+; dune8.C55_2	= f # Win Atreides
+; dune17.C55_4	= f # Win Ordos
+; dune1.C55_4	= f # Lose Harkonnen
+; dune1.C55_5	= f # Lose Atreides
+; dune1.C55_3	= f # Lose Ordos
+; dune7.C55_6	= f # Menu
+; dune16.C55_7	= f # Strategic Map
+; dune0.C55_2	= f # Intro
+; dune19.C55_4	= f # End Game Harkonnen
+; dune19.C55_2	= f # End Game Atreides
+; dune19.C55_3	= f # End Game Ordos
+; dune0.C55_4	= f # Logos
+; dune16.C55_8	= f # Cutscene
+; dune20.C55_2	= f # Credits
+
+# EXTERNAL MUSIC SETS
+# Set the volume of individual songs, or <= 0.0 to disable.
+
+# FED2k MT-32 addon
+# Complete.
+[music/fed2k_mt32]
+dune2_mt32_01_7 	= 0.65  # Idle 1
+dune2_mt32_02_8 	= 0.65  # Idle 2
+dune2_mt32_03_9 	= 0.65  # Idle 3
+dune2_mt32_04_10	= 0.65  # Idle 4
+dune2_mt32_05_11	= 0.65  # Idle 5
+dune2_mt32_06_12	= 0.65  # Idle 6
+dune2_mt32_09_13	= 0.65  # Idle 7
+dune2_mt32_09_14	= 0.65  # Idle 8
+dune2_mt32_18_24	= 0.65  # Idle 9
+dune2_mt32_10_17	= 0.65  # Attack 1
+dune2_mt32_11_18	= 0.65  # Attack 2
+dune2_mt32_12_19	= 0.65  # Attack 3
+dune2_mt32_13_20	= 0.65  # Attack 4
+dune2_mt32_14_21	= 0.65  # Attack 5
+dune2_mt32_15_22	= 0.65  # Attack 6
+dune2_mt32_07_09	= 0.65  # Briefing Harkonnen
+dune2_mt32_07_10	= 0.65  # Briefing Atreides
+dune2_mt32_07_11	= 0.65  # Briefing Ordos
+dune2_mt32_08_11	= 0.65  # Win Harkonnen
+dune2_mt32_08_10	= 0.65  # Win Atreides
+dune2_mt32_17_21	= 0.65  # Win Ordos
+dune2_mt32_01_4 	= 0.65  # Lose Harkonnen
+dune2_mt32_01_5 	= 0.65  # Lose Atreides
+dune2_mt32_01_6 	= 0.65  # Lose Ordos
+dune2_mt32_19_23	= 0.65  # End Game Harkonnen
+dune2_mt32_19_21	= 0.65  # End Game Atreides
+dune2_mt32_19_22	= 0.65  # End Game Ordos
+dune2_mt32_00_4 	= 0.65  # Logos
+dune2_mt32_00_2 	= 0.65  # Intro
+dune2_mt32_07_13	= 0.65  # Menu
+dune2_mt32_16_24	= 0.65  # Cutscene
+dune2_mt32_16_23	= 0.65  # Strategic Map
+dune2_mt32_20_22	= 0.65  # Credits
+dune2_mt32_01_3 	= 0.65  # Bonus
+
+# Dune 2 The Maker Adlib addon
+# Missing: End Game, Logos, Intro, Cutscene, Credits.
+[music/d2tm_adlib]
+peace1  	= 1.00  # Idle 4
+peace2  	= 0.75  # Idle 1
+peace3  	= 0.75  # Idle 9
+peace4  	= 0.75  # Idle 3
+peace5  	= 1.00  # Idle 2
+peace6  	= 1.00  # Idle 8
+peace7  	= 0.75  # Idle 7
+peace8  	= 0.75  # Idle 6
+peace9  	= 0.75  # Idle 5
+attack1 	= 0.65  # Attack 6
+attack2 	= 0.65  # Attack 4
+attack3 	= 0.65  # Attack 2
+attack4 	= 0.65  # Attack 5
+attack5 	= 0.65  # Attack 1
+attack6 	= 0.65  # Attack 3
+mentath 	= 0.79  # Briefing Harkonnen
+mentata 	= 0.79  # Briefing Atreides
+mentato 	= 0.79  # Briefing Ordos
+win3    	= 0.92  # Win Harkonnen
+win1    	= 0.92  # Win Atreides
+win2    	= 0.92  # Win Ordos
+lose2   	= 0.72  # Lose Harkonnen
+lose1   	= 0.72  # Lose Atreides
+lose3   	= 0.72  # Lose Ordos
+menu    	= 1.0   # Menu
+nextconq	= 0.87  # Strategic Map
+
+# Dune 2 The Maker MT-32 addon
+# Missing: End Game, Logos, Cutscene, Credits.
+[music/d2tm_mt32]
+peace1  	= 0.65  # Idle 1
+peace2  	= 0.65  # Idle 2
+peace3  	= 0.65  # Idle 3
+peace4  	= 0.65  # Idle 4
+peace5  	= 0.65  # Idle 5
+peace6  	= 0.65  # Idle 6
+peace7  	= 0.65  # Idle 7
+peace8  	= 0.65  # Idle 8
+peace9  	= 0.65  # Idle 9
+attack1 	= 0.65  # Attack 1
+attack2 	= 0.65  # Attack 2
+attack3 	= 0.65  # Attack 3
+attack4 	= 0.65  # Attack 4
+attack5 	= 0.65  # Attack 5
+attack6 	= 0.65  # Attack 6
+mentath 	= 0.65  # Briefing Harkonnen
+mentata 	= 0.65  # Briefing Atreides
+mentato 	= 0.65  # Briefing Ordos
+win2    	= 0.65  # Win Harkonnen
+win1    	= 0.65  # Win Atreides
+win3    	= 0.65  # Win Ordos
+lose1   	= 0.65  # Lose Harkonnen
+lose2   	= 0.65  # Lose Atreides
+lose3   	= 0.65  # Lose Ordos
+intro   	= 0.65  # Intro
+menu    	= 0.65  # Menu
+nextconq	= 0.65  # Strategic Map
+
+# Dune 2 The Maker SC-55 addon
+# Missing: End Game, Logos, Cutscene, Credits.
+[music/d2tm_sc55]
+peace1  	= 1.30  # Idle 4
+peace2  	= 1.30  # Idle 1
+peace3  	= 1.30  # Idle 9
+peace4  	= 1.30  # Idle 3
+peace5  	= 1.50  # Idle 2
+peace6  	= 1.50  # Idle 8
+peace7  	= 1.30  # Idle 7
+peace8  	= 1.30  # Idle 6
+peace9  	= 1.30  # Idle 5
+attack1 	= 1.30  # Attack 5
+attack2 	= 1.30  # Attack 3
+attack3 	= 1.30  # Attack 4
+attack4 	= 1.30  # Attack 1
+attack5 	= 1.30  # Attack 2
+attack6 	= 1.30  # Attack 6
+mentath 	= 0.69  # Briefing Harkonnen
+mentata 	= 0.69  # Briefing Atreides
+mentato 	= 0.69  # Briefing Ordos
+win2    	= 0.65  # Same as fed2k_mt32 - Win Harkonnen
+win1    	= 0.65  # Same as fed2k_mt32 - Win Atreides
+win3    	= 0.65  # Same as fed2k_mt32 - Win Ordos
+lose1   	= 0.65  # Same as fed2k_mt32 - Lose Harkonnen
+lose2   	= 0.65  # Same as fed2k_mt32 - Lose Atreides
+lose3   	= 0.65  # Same as fed2k_mt32 - Lose Ordos
+intro   	= 0.65  # Same as fed2k_mt32 - Intro
+menu    	= 0.65  # Same as fed2k_mt32 - Menu
+nextconq	= 0.65  # Same as fed2k_mt32 - Strategic Map
+
+# Dune 2000 music addon
+# Stars denote resemblence, or the difficulty I had mapping them.
+# "The Ambush" sounds like something, but I can't find it!
+[music/dune2000]
+SPICESCT	= 1.0 # [**   ] Idle 2 - "Spice Scouting"
+RISEHARK	= 1.0 # [***  ] Idle 3 - "Rise of Harkonnen"
+UNDERCON	= 1.0 # [*****] Idle 5 - "Under Construction"
+ATREGAIN	= 1.0 # [***  ] Idle 6 - "The Atreides Gain"
+ARAKATAK	= 1.0 # [**** ] Attack 1 - "Attack on Arrakis"
+HARK_BAT	= 1.0 # [*****] Attack 3 - "Harkonnen Battle"
+FIGHTPWR	= 1.0 # [**** ] Attack 5 - "Fight for Power"
+AMBUSH  	= 1.0 # [*    ] Idle 1 - "The Ambush"
+ENTORDOS	= 1.0 # [     ] Idle 4 - "Enter the Ordos"
+FREMEN  	= 1.0 # [     ] Idle 7 - "The Fremen"
+LANDSAND	= 1.0 # [     ] Idle 8 - "Land of Sand"
+WAITGAME	= 1.0 # [     ] Idle 9 - "The Waiting Game"
+OPTIONS 	= 1.0 # [     ] Menu
+PLOTTING	=-1.0 # [     ] Unused Idle - "Plotting"
+SOLDAPPR	=-1.0 # [     ] Unused Idle - "The Soldiers Approach"
+ROBOTIX 	=-1.0 # [     ] Unused Idle - "Robotix"
+SCORE   	=-1.0 # [     ] Unused
