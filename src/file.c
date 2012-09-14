@@ -28,10 +28,10 @@ typedef struct File {
 
 static File s_file[FILE_MAX];
 
-uint16 g_fileOperation = 0; /*!< If non-zero, input (keyboard + mouse), video is not updated, .. Basically, any operation that might trigger a free() in the signal handler, which can collide with malloc() of file operations. */
-
 char g_dune_data_dir[1024];
 char g_personal_data_dir[1024];
+
+extern FileInfo g_table_fileInfo[FILEINFO_MAX];
 
 void
 File_MakeCompleteFilename(char *buf, size_t len, const char *filename, bool is_global_data)
@@ -219,16 +219,11 @@ File_Exists_Ex(const char *filename, bool is_global_data)
 {
 	uint8 index;
 
-	g_fileOperation++;
-
 	index = _File_Open(filename, is_global_data, 1);
 	if (index == FILE_INVALID) {
-		g_fileOperation--;
 		return false;
 	}
 	File_Close(index);
-
-	g_fileOperation--;
 
 	return true;
 }
@@ -245,9 +240,7 @@ File_Open_Ex(const char *filename, bool is_global_data, uint8 mode)
 {
 	uint8 res;
 
-	g_fileOperation++;
 	res = _File_Open(filename, is_global_data, mode);
-	g_fileOperation--;
 
 	if (res == FILE_INVALID) {
 		Error("ERROR: unable to open file '%s'.\n", filename);
@@ -267,12 +260,8 @@ void File_Close(uint8 index)
 	if (index >= FILE_MAX) return;
 	if (s_file[index].fp == NULL) return;
 
-	g_fileOperation++;
-
 	fclose(s_file[index].fp);
 	s_file[index].fp = NULL;
-
-	g_fileOperation--;
 }
 
 /**
@@ -292,14 +281,12 @@ uint32 File_Read(uint8 index, void *buffer, uint32 length)
 
 	if (length > s_file[index].size - s_file[index].position) length = s_file[index].size - s_file[index].position;
 
-	g_fileOperation++;
 	if (fread(buffer, length, 1, s_file[index].fp) != 1) {
 		Error("ERROR: read error\n");
 		File_Close(index);
 
 		length = 0;
 	}
-	g_fileOperation--;
 
 	s_file[index].position += length;
 	return length;
@@ -318,14 +305,12 @@ uint32 File_Write(uint8 index, void *buffer, uint32 length)
 	if (index >= FILE_MAX) return 0;
 	if (s_file[index].fp == NULL) return 0;
 
-	g_fileOperation++;
 	if (fwrite(buffer, length, 1, s_file[index].fp) != 1) {
 		Error("ERROR: write error\n");
 		File_Close(index);
 
 		length = 0;
 	}
-	g_fileOperation--;
 
 	s_file[index].position += length;
 	if (s_file[index].position > s_file[index].size) s_file[index].size = s_file[index].position;
@@ -346,7 +331,6 @@ uint32 File_Seek(uint8 index, uint32 position, uint8 mode)
 	if (s_file[index].fp == NULL) return 0;
 	if (mode > 2) { File_Close(index); return 0; }
 
-	g_fileOperation++;
 	switch (mode) {
 		case 0:
 			fseek(s_file[index].fp, s_file[index].start + position, SEEK_SET);
@@ -361,7 +345,6 @@ uint32 File_Seek(uint8 index, uint32 position, uint8 mode)
 			s_file[index].position = s_file[index].size - position;
 			break;
 	}
-	g_fileOperation--;
 
 	return s_file[index].position;
 }
@@ -400,31 +383,7 @@ File_Delete_Personal(const char *filename)
 		}
 	}
 
-	g_fileOperation++;
 	unlink(filenameComplete);
-	g_fileOperation--;
-}
-
-/**
- * Create a file on the disk.
- *
- * @param filename The filename to create.
- */
-void
-File_Create_Personal(const char *filename)
-{
-	uint8 index;
-
-	g_fileOperation++;
-
-	index = _File_Open(filename, false, 2);
-	if (index == FILE_INVALID) {
-		g_fileOperation--;
-		return;
-	}
-	File_Close(index);
-
-	g_fileOperation--;
 }
 
 /**

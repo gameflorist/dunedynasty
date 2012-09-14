@@ -29,8 +29,6 @@ typedef struct FileInfo {
 	} flags;                                                /*!< General flags of the FileInfo. */
 } FileInfo;
 
-extern FileInfo g_table_fileInfo[];
-extern uint16 g_fileOperation;
 extern char g_dune_data_dir[1024];
 extern char g_personal_data_dir[1024];
 
@@ -41,7 +39,6 @@ extern uint32 File_Write(uint8 index, void *buffer, uint32 length);
 extern uint32 File_Seek(uint8 index, uint32 position, uint8 mode);
 extern uint32 File_GetSize(uint8 index);
 extern void File_Delete_Personal(const char *filename);
-extern void File_Create_Personal(const char *filename);
 extern void *File_ReadWholeFile(const char *filename);
 extern uint32 File_ReadFile(const char *filename, void *buf);
 extern void ChunkFile_Close(uint8 index);

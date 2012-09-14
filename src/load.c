@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "types.h"
 #include "os/endian.h"
+#include "os/error.h"
 #include "os/strings.h"
 
 #include "load.h"
@@ -13,11 +14,8 @@
 #include "audio/audio.h"
 #include "file.h"
 #include "gui/gui.h"
-#include "gui/widget.h"
-#include "house.h"
 #include "map.h"
 #include "opendune.h"
-#include "os/error.h"
 #include "saveload/saveload.h"
 #include "sprites.h"
 #include "string.h"
@@ -168,14 +166,4 @@ bool LoadFile(char *filename)
 	if (g_gameMode != GM_RESTART) Game_Prepare();
 
 	return true;
-}
-
-/**
- * In case the current house is Mercenary, another palette is loaded.
- */
-void Load_Palette_Mercenaries(void)
-{
-	if (g_playerHouseID == HOUSE_MERCENARY) {
-		File_ReadBlockFile("IBM.PAL", g_palette1, 256 * 3);
-	}
 }
