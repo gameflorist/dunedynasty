@@ -32,13 +32,13 @@ enum HouseFlag {
 /**
  * Types of special %House Weapons available in the game.
  */
-typedef enum HouseWeapon {
-	HOUSE_WEAPON_MISSLE   = 1,
+enum HouseWeapon {
+	HOUSE_WEAPON_MISSILE  = 1,
 	HOUSE_WEAPON_FREMEN   = 2,
 	HOUSE_WEAPON_SABOTEUR = 3,
 
 	HOUSE_WEAPON_INVALID = 0xFF
-} HouseWeapon;
+};
 
 typedef enum HouseAnimationType {
 	HOUSEANIMATION_INTRO            = 0,

@@ -2,8 +2,6 @@
 
 /** @file src/table/houseinfo.c HouseInfo file table. */
 
-#include "types.h"
-
 #include "sound.h"
 #include "../house.h"
 
@@ -17,7 +15,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* specialCountDown     */ 600,
 		/* starportDeliveryTime */ 10,
 		/* prefixChar           */ 'H',
-		/* specialWeapon        */ 1,
+		/* specialWeapon        */ HOUSE_WEAPON_MISSILE,
 		/* musicWin             */ MUSIC_WIN_HARKONNEN,
 		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
 		/* musicBriefing        */ MUSIC_BRIEFING_HARKONNEN,
@@ -33,7 +31,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* specialCountDown     */ 300,
 		/* starportDeliveryTime */ 10,
 		/* prefixChar           */ 'A',
-		/* specialWeapon        */ 2,
+		/* specialWeapon        */ HOUSE_WEAPON_FREMEN,
 		/* musicWin             */ MUSIC_WIN_ATREIDES,
 		/* musicLose            */ MUSIC_LOSE_ATREIDES,
 		/* musicBriefing        */ MUSIC_BRIEFING_ATREIDES,
@@ -49,7 +47,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* specialCountDown     */ 300,
 		/* starportDeliveryTime */ 10,
 		/* prefixChar           */ 'O',
-		/* specialWeapon        */ 3,
+		/* specialWeapon        */ HOUSE_WEAPON_SABOTEUR,
 		/* musicWin             */ MUSIC_WIN_ORDOS,
 		/* musicLose            */ MUSIC_LOSE_ORDOS,
 		/* musicBriefing        */ MUSIC_BRIEFING_ORDOS,
@@ -65,7 +63,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* specialCountDown     */ 300,
 		/* starportDeliveryTime */ 0,
 		/* prefixChar           */ 'O',
-		/* specialWeapon        */ 2,
+		/* specialWeapon        */ HOUSE_WEAPON_FREMEN,
 		/* musicWin             */ MUSIC_WIN_ORDOS,
 		/* musicLose            */ MUSIC_LOSE_ORDOS,
 		/* musicBriefing        */ MUSIC_INVALID,
@@ -81,7 +79,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* specialCountDown     */ 600,
 		/* starportDeliveryTime */ 0,
 		/* prefixChar           */ 'H',
-		/* specialWeapon        */ 1,
+		/* specialWeapon        */ HOUSE_WEAPON_MISSILE,
 		/* musicWin             */ MUSIC_WIN_HARKONNEN,
 		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
 		/* musicBriefing        */ MUSIC_INVALID,
@@ -97,7 +95,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* specialCountDown     */ 300,
 		/* starportDeliveryTime */ 0,
 		/* prefixChar           */ 'M',
-		/* specialWeapon        */ 3,
+		/* specialWeapon        */ HOUSE_WEAPON_SABOTEUR,
 		/* musicWin             */ MUSIC_WIN_ATREIDES,
 		/* musicLose            */ MUSIC_LOSE_ATREIDES,
 		/* musicBriefing        */ MUSIC_INVALID,
