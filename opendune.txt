@@ -94,4 +94,3 @@ Thanks To (in alphabetical order):
 
   Bug Reporters                        - Thank you all for all bug reports
   Westwood                             - For an amazing game
-
