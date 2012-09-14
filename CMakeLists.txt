@@ -1,7 +1,15 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(dunedynasty)
 
+set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
 option(WITH_FLUIDSYNTH "FluidSynth" ON)
+
+if(NOT DUNE_DATA_DIR)
+	set(DUNE_DATA_DIR ".")
+endif(NOT DUNE_DATA_DIR)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDUNE_DATA_DIR='\"${DUNE_DATA_DIR}\"'")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDUNE_DATA_DIR='\"${DUNE_DATA_DIR}\"'")
 
 include(FindPkgConfig)
 
