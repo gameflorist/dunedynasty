@@ -362,22 +362,9 @@ void GFX_SetPalette(uint8 *palette)
 	memcpy(g_paletteActive, palette, 256 * 3);
 }
 
-/**
- * Get a pixel on the screen.
- * @param x The X-coordinate on the screen.
- * @param y The Y-coordinate on the screen.
- * @return The colour of the pixel.
- */
-uint8 GFX_GetPixel(uint16 x, uint16 y)
-{
-	if (y >= SCREEN_HEIGHT) return 0;
-	if (x >= SCREEN_WIDTH) return 0;
-
-	return *((uint8 *)GFX_Screen_GetActive() + y * SCREEN_WIDTH + x);
-}
-
 #if 0
 /* Moved to video/video_opendune.c. */
+extern uint8 GFX_GetPixel(uint16 x, uint16 y);
 extern uint16 GFX_GetSize(int16 width, int16 height);
 #endif
 

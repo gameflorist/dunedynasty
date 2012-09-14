@@ -1934,94 +1934,9 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 #if 0
 /* Moved to gui/menu_opendune.c. */
 extern void GUI_FactoryWindow_PrepareScrollList(void);
-#endif
 
-/**
- * Fade in parts of the screen from one screenbuffer to the other screenbuffer.
- * @param x The X-position in the source and destination screenbuffers.
- * @param y The Y-position in the source and destination screenbuffers.
- * @param width The width of the screen to copy.
- * @param height The height of the screen to copy.
- * @param screenSrc The ID of the source screen.
- * @param screenDst The ID of the destination screen.
- * @param delay The delay.
- * @param skipNull Wether to copy pixels with colour 0.
- */
-void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, uint16 delay, bool skipNull)
-{
-	uint16 oldScreenID;
-	uint16 i;
-	uint16 j;
-
-	uint16 columns[SCREEN_WIDTH];
-	uint16 rows[SCREEN_HEIGHT];
-
-	assert(width <= SCREEN_WIDTH);
-	assert(height <= SCREEN_HEIGHT);
-
-	if (screenDst == 0) {
-		GUI_Mouse_Hide_InRegion(x, y, x + width, y + height);
-	}
-
-	for (i = 0; i < width; i++)  columns[i] = i;
-	for (i = 0; i < height; i++) rows[i] = i;
-
-	for (i = 0; i < width; i++) {
-		uint16 tmp;
-
-		j = Tools_RandomRange(0, width - 1);
-
-		tmp = columns[j];
-		columns[j] = columns[i];
-		columns[i] = tmp;
-	}
-
-	for (i = 0; i < height; i++) {
-		uint16 tmp;
-
-		j = Tools_RandomRange(0, height - 1);
-
-		tmp = rows[j];
-		rows[j] = rows[i];
-		rows[i] = tmp;
-	}
-
-	oldScreenID = GFX_Screen_SetActive(screenDst);
-
-	for (j = 0; j < height; j++) {
-		uint16 j2 = j;
-
-		for (i = 0; i < width; i++) {
-			uint8 colour;
-			uint16 curX = x + columns[i];
-			uint16 curY = y + rows[j2];
-
-			if (++j2 >= height) j2 = 0;
-
-			GFX_Screen_SetActive(screenSrc);
-
-			colour = GFX_GetPixel(curX, curY);
-
-			GFX_Screen_SetActive(screenDst);
-
-			if (skipNull && colour == 0) continue;
-
-			GFX_PutPixel(curX, curY, colour);
-		}
-
-		Video_Tick();
-		Timer_Sleep(delay);
-	}
-
-	if (screenDst == 0) {
-		GUI_Mouse_Show_InRegion();
-	}
-
-	GFX_Screen_SetActive(oldScreenID);
-}
-
-#if 0
 /* Moved to video/video_opendune.c. */
+extern void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, uint16 delay, bool skipNull);
 extern void GUI_Mouse_Show(void);
 extern void GUI_Mouse_Hide(void);
 extern void GUI_Mouse_Hide_Safe(void);
@@ -2030,65 +1945,7 @@ extern void GUI_Mouse_Show_InRegion(void);
 extern void GUI_Mouse_Hide_InRegion(uint16 left, uint16 top, uint16 right, uint16 bottom);
 extern void GUI_Mouse_Show_InWidget(void);
 extern void GUI_Mouse_Hide_InWidget(uint16 widgetIndex);
-#endif
-
-/**
- * Draws a chess-pattern filled rectangle.
- * @param left The X-position of the rectangle.
- * @param top The Y-position of the rectangle.
- * @param width The width of the rectangle.
- * @param height The height of the rectangle.
- * @param colour The colour of the rectangle.
- */
-void GUI_DrawBlockedRectangle(int16 left, int16 top, int16 width, int16 height, uint8 colour)
-{
-	uint8 *screen;
-
-	if (width <= 0) return;
-	if (height <= 0) return;
-	if (left >= SCREEN_WIDTH) return;
-	if (top >= SCREEN_HEIGHT) return;
-
-	if (left < 0) {
-		if (left + width <= 0) return;
-		width += left;
-		left = 0;
-	}
-	if (top < 0) {
-		if (top + height <= 0) return;
-		height += top;
-		top = 0;
-	}
-
-	if (left + width >= SCREEN_WIDTH) {
-		width = SCREEN_WIDTH - left;
-	}
-	if (top + height >= SCREEN_HEIGHT) {
-		height = SCREEN_HEIGHT - top;
-	}
-
-	screen = GFX_Screen_GetActive();
-	screen += top * SCREEN_WIDTH + left;
-
-	for (; height > 0; height--) {
-		int i = width;
-
-		if ((height & 1) != (width & 1)) {
-			screen++;
-			i--;
-		}
-
-		for (; i > 0; i -= 2) {
-			*screen = colour;
-			screen += 2;
-		}
-
-		screen += SCREEN_WIDTH - width - (height & 1);
-	}
-}
-
-#if 0
-/* Moved to video/video_opendune.c. */
+extern void GUI_DrawBlockedRectangle(int16 left, int16 top, int16 width, int16 height, uint8 colour);
 extern void GUI_Mouse_SetPosition(uint16 x, uint16 y);
 #endif
 

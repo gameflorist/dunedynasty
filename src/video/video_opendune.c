@@ -16,6 +16,20 @@ void GFX_PutPixel(uint16 x, uint16 y, uint8 colour)
 	*((uint8 *)GFX_Screen_GetActive() + y * SCREEN_WIDTH + x) = colour;
 }
 
+/**
+ * Get a pixel on the screen.
+ * @param x The X-coordinate on the screen.
+ * @param y The Y-coordinate on the screen.
+ * @return The colour of the pixel.
+ */
+uint8 GFX_GetPixel(uint16 x, uint16 y)
+{
+	if (y >= SCREEN_HEIGHT) return 0;
+	if (x >= SCREEN_WIDTH) return 0;
+
+	return *((uint8 *)GFX_Screen_GetActive() + y * SCREEN_WIDTH + x);
+}
+
 uint16 GFX_GetSize(int16 width, int16 height)
 {
 	if (width < 1) width = 1;
@@ -350,6 +364,90 @@ void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bottom)
 }
 
 /**
+ * Fade in parts of the screen from one screenbuffer to the other screenbuffer.
+ * @param x The X-position in the source and destination screenbuffers.
+ * @param y The Y-position in the source and destination screenbuffers.
+ * @param width The width of the screen to copy.
+ * @param height The height of the screen to copy.
+ * @param screenSrc The ID of the source screen.
+ * @param screenDst The ID of the destination screen.
+ * @param delay The delay.
+ * @param skipNull Wether to copy pixels with colour 0.
+ */
+void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, uint16 delay, bool skipNull)
+{
+	uint16 oldScreenID;
+	uint16 i;
+	uint16 j;
+
+	uint16 columns[SCREEN_WIDTH];
+	uint16 rows[SCREEN_HEIGHT];
+
+	assert(width <= SCREEN_WIDTH);
+	assert(height <= SCREEN_HEIGHT);
+
+	if (screenDst == 0) {
+		GUI_Mouse_Hide_InRegion(x, y, x + width, y + height);
+	}
+
+	for (i = 0; i < width; i++)  columns[i] = i;
+	for (i = 0; i < height; i++) rows[i] = i;
+
+	for (i = 0; i < width; i++) {
+		uint16 tmp;
+
+		j = Tools_RandomRange(0, width - 1);
+
+		tmp = columns[j];
+		columns[j] = columns[i];
+		columns[i] = tmp;
+	}
+
+	for (i = 0; i < height; i++) {
+		uint16 tmp;
+
+		j = Tools_RandomRange(0, height - 1);
+
+		tmp = rows[j];
+		rows[j] = rows[i];
+		rows[i] = tmp;
+	}
+
+	oldScreenID = GFX_Screen_SetActive(screenDst);
+
+	for (j = 0; j < height; j++) {
+		uint16 j2 = j;
+
+		for (i = 0; i < width; i++) {
+			uint8 colour;
+			uint16 curX = x + columns[i];
+			uint16 curY = y + rows[j2];
+
+			if (++j2 >= height) j2 = 0;
+
+			GFX_Screen_SetActive(screenSrc);
+
+			colour = GFX_GetPixel(curX, curY);
+
+			GFX_Screen_SetActive(screenDst);
+
+			if (skipNull && colour == 0) continue;
+
+			GFX_PutPixel(curX, curY, colour);
+		}
+
+		Video_Tick();
+		Timer_Sleep(delay);
+	}
+
+	if (screenDst == 0) {
+		GUI_Mouse_Show_InRegion();
+	}
+
+	GFX_Screen_SetActive(oldScreenID);
+}
+
+/**
  * Show the mouse on the screen. Copy the screen behind the mouse in a safe
  *  buffer.
  */
@@ -544,6 +642,61 @@ void GUI_Mouse_Hide_InWidget(uint16 widgetIndex)
 }
 
 /**
+ * Draws a chess-pattern filled rectangle.
+ * @param left The X-position of the rectangle.
+ * @param top The Y-position of the rectangle.
+ * @param width The width of the rectangle.
+ * @param height The height of the rectangle.
+ * @param colour The colour of the rectangle.
+ */
+void GUI_DrawBlockedRectangle(int16 left, int16 top, int16 width, int16 height, uint8 colour)
+{
+	uint8 *screen;
+
+	if (width <= 0) return;
+	if (height <= 0) return;
+	if (left >= SCREEN_WIDTH) return;
+	if (top >= SCREEN_HEIGHT) return;
+
+	if (left < 0) {
+		if (left + width <= 0) return;
+		width += left;
+		left = 0;
+	}
+	if (top < 0) {
+		if (top + height <= 0) return;
+		height += top;
+		top = 0;
+	}
+
+	if (left + width >= SCREEN_WIDTH) {
+		width = SCREEN_WIDTH - left;
+	}
+	if (top + height >= SCREEN_HEIGHT) {
+		height = SCREEN_HEIGHT - top;
+	}
+
+	screen = GFX_Screen_GetActive();
+	screen += top * SCREEN_WIDTH + left;
+
+	for (; height > 0; height--) {
+		int i = width;
+
+		if ((height & 1) != (width & 1)) {
+			screen++;
+			i--;
+		}
+
+		for (; i > 0; i -= 2) {
+			*screen = colour;
+			screen += 2;
+		}
+
+		screen += SCREEN_WIDTH - width - (height & 1);
+	}
+}
+
+/**
  * Set the mouse to the given position on the screen.
  *
  * @param x The new X-position of the mouse.
@@ -570,6 +723,29 @@ void GUI_Mouse_SetPosition(uint16 x, uint16 y)
 	}
 
 	g_mouseLock--;
+}
+
+/* gui/widget.c */
+
+/**
+ * Draw a chess-pattern filled rectangle over the widget.
+ *
+ * @param w The widget to draw.
+ * @param colour The colour of the chess pattern.
+ */
+static void GUI_Widget_DrawBlocked(Widget *w, uint8 colour)
+{
+	if (g_screenActiveID == 0) {
+		GUI_Mouse_Hide_InRegion(w->offsetX, w->offsetY, w->offsetX + w->width, w->offsetY + w->height);
+	}
+
+	GUI_DrawSprite(g_screenActiveID, w->drawParameterNormal.sprite, w->offsetX, w->offsetY, w->parentID, 0);
+
+	GUI_DrawBlockedRectangle(w->offsetX, w->offsetY, w->width, w->height, colour);
+
+	if (g_screenActiveID == 0) {
+		GUI_Mouse_Show_InRegion();
+	}
 }
 
 /* sprites.c */

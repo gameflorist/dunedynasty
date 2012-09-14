@@ -97,26 +97,10 @@ Widget *GUI_Widget_Get_ByIndex(Widget *w, uint16 index)
 	return NULL;
 }
 
-/**
- * Draw a chess-pattern filled rectangle over the widget.
- *
- * @param w The widget to draw.
- * @param colour The colour of the chess pattern.
- */
+#if 0
+/* Moved to video/video_opendune.c. */
 static void GUI_Widget_DrawBlocked(Widget *w, uint8 colour)
-{
-	if (g_screenActiveID == 0) {
-		GUI_Mouse_Hide_InRegion(w->offsetX, w->offsetY, w->offsetX + w->width, w->offsetY + w->height);
-	}
-
-	GUI_DrawSprite(g_screenActiveID, w->drawParameterNormal.sprite, w->offsetX, w->offsetY, w->parentID, 0);
-
-	GUI_DrawBlockedRectangle(w->offsetX, w->offsetY, w->width, w->height, colour);
-
-	if (g_screenActiveID == 0) {
-		GUI_Mouse_Show_InRegion();
-	}
-}
+#endif
 
 /**
  * Make the widget invisible.
@@ -157,7 +141,8 @@ void GUI_Widget_Draw(Widget *w)
 	if (w->flags.s.invisible) {
 		if (!w->flags.s.greyWhenInvisible) return;
 
-		GUI_Widget_DrawBlocked(w, 12);
+		/* XXX: Pretty sure the game never comes here. */
+		/* GUI_Widget_DrawBlocked(w, 12); */
 		return;
 	}
 
