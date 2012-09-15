@@ -182,3 +182,61 @@ Map
     of the house, and the house becomes the value of Trike (13). This also
     means that these vehicles read/write outside the house struct, which in
     terms results in random artifects.
+
+
+==================================================================
+==      Dune Dynasty Enhancements                               ==
+==================================================================
+
+Many of the fixes to the scenario files from the "v1.07 fix" patch
+have been incorporated.  (Bugs are fixed in the code.)
+
+References:
+http://forum.dune2k.com/topic/20168-dune-2-v107-fix/
+
+
+Gameplay fixes
+--------------
+- Fixed the internal syntax error which prevented the AI from
+    assembling attack teams of vehicles ("team bug").
+
+- Looped reinforcements are now enabled in certain missions.
+  *** This is enabled by OpenDUNE.
+
+
+Mission-specific fixes
+----------------------
+- Fixed invalid spice bloom placement in SCENA005.
+- Fixed the error that disabled Devastator reinforcements.
+
+- Fixed incorrect hit point values for pre-placed buildings in SCENH006.
+    *** Note that, by default, structure hit points are ignored.
+
+[n] Changed the player's starting credits from 1500 to 1000 in SCENO022.
+    *** Could be intentional, since Ordos is meant to be a wealthy house.
+
+[n] Changed Atreides Troopers to Atreides Infantry.
+    *** Doesn't really hurt, but maybe they should be Fremen?
+
+- Changed the Atreides WOR to Atreides Barracks, so that the Atreides
+    can produce infantry.
+- Fixed all missions where the MaxUnit value name was misspelled as
+    MaxUnits for an AI player.
+- Fixed the error which prevented the player from buying Ornithopters
+    at the Starport.
+
+
+Mentat information and spelling fixes
+-------------------------------------
+- Fixed incorrect power consumption values for the Barracks and the
+    Starport.
+
+- Removed two obsolete entries in German from the English Mentat database.
+    *** Restored the English text for the Sardaukar and Frigate entries.
+
+- Fixed the spelling of the word "Ornithopter".
+- Fixed the spelling of the word "incompatible".
+- Fixed the spelling of the word "Starport" in the building hints section.
+- Fixed Harkonnen mentat description for Devastator.
+- Fixed Harkonnen mentat description for Siege tank.
+- Fixed Ordos mentat description for Ornithopter.
