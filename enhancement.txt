@@ -1,5 +1,90 @@
-Enhancement over Dune2
-======================
+==================================================================
+==      Differences Between Dune 2 v1.0 and v1.07               ==
+==================================================================
+
+References:
+http://forum.dune2k.com/topic/20343-info-differences-between-dune-ii-v10-and-v107/
+http://forum.dune2k.com/topic/23786-different-versions-amipc1017useuhs/
+
+
+Bug/error fixes
+---------------
+- Fixed the "Frigate arrival in T-0" Starport bug.
+- The numbers of units in stock at the Starport that are defined in
+    each mission are now used correctly.
+- Fixed a bug that sometimes caused Carryalls that drop scripted
+    reinforcements to get stuck at the border of the map.
+- Fixed a small graphical glitch on the Atreides Mentat screen.
+- Fixed a broken frame in the Gun Turret animation.
+- The corners of the map are no longer revealed from shroud at the
+    beginning of the mission.
+- Fixed some minor errors in briefing texts.
+
+
+Gameplay changes
+----------------
+- The AI now rebuilds destroyed structures more actively and frequently.
+- Building repair cost has been reduced.
+
+- Palace repairs now cost nothing. This is actually a bug, read more here.
+    *** This seems to have been fixed by OpenDUNE.
+
+- The maximum overall number of buildings that can be present on the
+    map reduced from 81 to 80.
+- The player can now build concrete slabs and wall segments even if
+    the building-per-map limit is reached.
+- The saboteur is now visible to the player.
+- The maximum number of saboteurs that can be present on the map at
+    any given time reduced from 3 to 2.
+- Ornithopter hit points increased from 10 to 25.
+
+- Troopers and Launchers are now able to fire at air units.
+    *** Need to check if this is still the case.
+
+- The maximum number of Sandworms that can be present on the map at a
+    time reduced from 3 to 2.
+- The number of units a Sandworm will swallow before disappearing
+    reduced from 4 to 3.
+- Fremen units and Sandworms are no longer ignored by turrets.
+
+
+Interface changes
+-----------------
+- The "Repair" button on the sidebar now starts flashing red when a
+    building is below 50% its original HP.
+- Most unit orders can now be correctly issued from keyboard by
+    pressing the first letter of the corresponding order's name.
+
+- Pressing the "A" key no longer can be used to issue a "Harvest"
+    order to a Harvester.
+    *** Reverted since "H" is now a shortcut for construction yard.
+
+- Pressing the "G" key now orders a combat unit to guard.
+- Pressing the "H" key no longer orders a combat unit to retreat.
+- The wormsign is now announced for the Atreides player.
+
+
+Miscellaneous
+-------------
+- Added two more player ranks ("Chief Warlord" and "Emperor") to the
+    scoring system.
+- The Fremen colour scheme has been made a bit brighter.
+
+- Removed several animation frames of the Heavy Factory, Repair
+    Facility and High-Tech Factory.
+    *** Can I restore these somehow?
+
+- Removed two Mentat database entries: "Sardaukar" and "Frigate".
+    *** Restored the English text.
+
+- Certain characters from the 6p font (used on the game sidebar) have
+    been narrowed down by 1 pixel.  These include C, E, F and L.
+
+
+==================================================================
+==      OpenDUNE: Enhancement over Dune 2                       ==
+==================================================================
+
 When OpenDUNE is started in enhanced mode (default), a lot of bugs and
  problems which are in the original Dune2 version, are fixed.
 
@@ -97,4 +182,3 @@ Map
     of the house, and the house becomes the value of Trike (13). This also
     means that these vehicles read/write outside the house struct, which in
     terms results in random artifects.
-
