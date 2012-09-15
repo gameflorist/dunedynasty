@@ -472,6 +472,15 @@ uint8 Unit_StringToType(const char *name)
 		if (strcasecmp(g_table_unitInfo[type].o.name, name) == 0) return type;
 	}
 
+	/* ENHANCEMENT -- CHOAM and reinforcement typos: "Devistator", "Thopter" instead of Devastator, Ornithopter. */
+	if (enhancement_fix_scenario_typos) {
+		if (strcasecmp(name, "Thopter") == 0)
+			return UNIT_ORNITHOPTER;
+
+		if (strcasecmp(name, "Devistator") == 0)
+			return UNIT_DEVASTATOR;
+	}
+
 	return UNIT_INVALID;
 }
 
