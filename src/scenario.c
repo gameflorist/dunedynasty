@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
+#include "os/math.h"
 #include "os/strings.h"
 
 #include "scenario.h"
@@ -273,10 +274,18 @@ static void Scenario_Load_Structure(const char *key, char *settings)
 	*split = '\0';
 
 	/* Third value is the Hitpoints in percent (in base 256) */
-	hitpoints = atoi(settings);
 	/* ENHANCEMENT -- Dune2 ignores the % hitpoints read from the scenario */
-	if (!enhancement_read_scenario_structure_health)
+	if (enhancement_read_scenario_structure_health) {
+		if (enhancement_fix_scenario_typos) {
+			hitpoints = clamp(0, atoi(settings), 256);
+		}
+		else {
+			hitpoints = atoi(settings);
+		}
+	}
+	else {
 		hitpoints = 256;
+	}
 
 	/* Fourth value is the position of the structure */
 	settings = split + 1;
