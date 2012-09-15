@@ -501,7 +501,13 @@ uint8 Unit_MovementStringToType(const char *name)
 	if (name == NULL) return MOVEMENT_INVALID;
 
 	for (type = 0; type < MOVEMENT_MAX; type++) {
-		if (strcasecmp(g_table_movementTypeName[type], name) == 0) return type;
+		/* ENHANCEMENT -- AI team typos: "Track", "Wheel" instead of Tracked, Wheeled. */
+		if (enhancement_fix_scenario_typos) {
+			if (strncasecmp(g_table_movementTypeName[type], name, 5) == 0) return type;
+		}
+		else {
+			if (strcasecmp(g_table_movementTypeName[type], name) == 0) return type;
+		}
 	}
 
 	return MOVEMENT_INVALID;
