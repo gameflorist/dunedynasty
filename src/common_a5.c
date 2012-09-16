@@ -7,7 +7,6 @@
 
 #include "audio/audio_a5.h"
 #include "config.h"
-#include "gfx.h"
 #include "input/input_a5.h"
 #include "input/mouse.h"
 #include "timer/timer_a5.h"
@@ -15,9 +14,8 @@
 
 ALLEGRO_EVENT_QUEUE *g_a5_input_queue;
 
-static ALLEGRO_TRANSFORM identity_transform;
-static ALLEGRO_TRANSFORM menu_transform;
-static bool apply_transform;
+static ALLEGRO_TRANSFORM s_transform[SCREENDIV_MAX];
+static enum ScreenDivID curr_transform;
 
 /*--------------------------------------------------------------*/
 
@@ -48,11 +46,10 @@ A5_InitTransform(void)
 	g_mouse_transform_offx = offx;
 	g_mouse_transform_offy = offy;
 
-	al_identity_transform(&identity_transform);
-	al_build_transform(&menu_transform, offx, offy, scale, scale, 0.0f);
+	al_identity_transform(&s_transform[SCREENDIV_MAIN]);
+	al_build_transform(&s_transform[SCREENDIV_MENU], offx, offy, scale, scale, 0.0f);
 
-	if (apply_transform == 1)
-		A5_UseMenuTransform();
+	A5_UseTransform(curr_transform);
 }
 
 bool
@@ -101,28 +98,14 @@ A5_Uninit(void)
 }
 
 void
-A5_UseIdentityTransform(void)
+A5_UseTransform(enum ScreenDivID div)
 {
-	al_use_transform(&identity_transform);
-	apply_transform = false;
+	al_use_transform(&s_transform[div]);
+	curr_transform = div;
 }
 
-void
-A5_UseMenuTransform(void)
-{
-	al_use_transform(&menu_transform);
-	apply_transform = true;
-}
-
-bool
+enum ScreenDivID
 A5_SaveTransform(void)
 {
-	return apply_transform;
-}
-
-void
-A5_RestoreTransform(bool prev_transform)
-{
-	if (prev_transform)
-		A5_UseMenuTransform();
+	return curr_transform;
 }

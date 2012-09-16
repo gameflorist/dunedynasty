@@ -252,7 +252,7 @@ void
 MenuBar_TickMentatOverlay(void)
 {
 	Video_ShadeScreen(128);
-	A5_UseMenuTransform();
+	A5_UseTransform(SCREENDIV_MENU);
 
 	if (MentatHelp_Tick(g_playerHouseID, &g_mentat_state)) {
 		free(g_widgetMentatFirst);
@@ -278,7 +278,7 @@ MenuBar_TickMentatOverlay(void)
 		Sprites_LoadTiles();
 	}
 
-	A5_UseIdentityTransform();
+	A5_UseTransform(SCREENDIV_MAIN);
 }
 
 /*--------------------------------------------------------------*/
@@ -481,7 +481,7 @@ MenuBar_TickConfirmation(enum GameOverlay overlay)
 void
 MenuBar_TickOptionsOverlay(void)
 {
-	A5_UseMenuTransform();
+	A5_UseTransform(SCREENDIV_MENU);
 
 	switch (g_gameOverlay) {
 		case GAMEOVERLAY_OPTIONS:
@@ -508,7 +508,7 @@ MenuBar_TickOptionsOverlay(void)
 			break;
 	}
 
-	A5_UseIdentityTransform();
+	A5_UseTransform(SCREENDIV_MAIN);
 
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		Timer_SetTimer(TIMER_GAME, true);
@@ -539,7 +539,7 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 	GUI_DrawInterfaceAndRadar();
 	Video_ShadeScreen(128);
 
-	A5_UseMenuTransform();
+	A5_UseTransform(SCREENDIV_MENU);
 
 	/* Centre the dialog box to the viewport. */
 	const int old_x = w->xBase;
@@ -578,7 +578,7 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 		}
 	}
 
-	A5_UseIdentityTransform();
+	A5_UseTransform(SCREENDIV_MAIN);
 
 	/* Not sure. */
 	return 0;

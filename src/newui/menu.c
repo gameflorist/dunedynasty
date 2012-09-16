@@ -189,7 +189,7 @@ Menu_Init(void)
 	PickHouse_InitWidgets();
 	Briefing_InitWidgets();
 	StrategicMap_Init();
-	A5_UseMenuTransform();
+	A5_UseTransform(SCREENDIV_MENU);
 }
 
 /*--------------------------------------------------------------*/
@@ -570,10 +570,10 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 static enum MenuAction
 StartGame_Loop(bool new_game)
 {
-	A5_UseIdentityTransform();
+	A5_UseTransform(SCREENDIV_MAIN);
 	GameLoop_Main(new_game);
 	Audio_PlayMusic(MUSIC_STOP);
-	A5_UseMenuTransform();
+	A5_UseTransform(SCREENDIV_MENU);
 
 	switch (g_gameMode) {
 		case GM_NORMAL:

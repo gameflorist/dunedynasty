@@ -489,14 +489,14 @@ VideoA5_HideCursor(void)
 void
 VideoA5_ShadeScreen(int alpha)
 {
-	const bool prev_transform = A5_SaveTransform();
+	const enum ScreenDivID prev_transform = A5_SaveTransform();
 
 	alpha = clamp(0x00, alpha, 0xFF);
 
-	A5_UseIdentityTransform();
+	A5_UseTransform(SCREENDIV_MAIN);
 	al_draw_filled_rectangle(0.0f, 0.0f, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT, al_map_rgba(0, 0, 0, alpha));
 
-	A5_RestoreTransform(prev_transform);
+	A5_UseTransform(prev_transform);
 }
 
 /*--------------------------------------------------------------*/
