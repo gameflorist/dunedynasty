@@ -155,6 +155,16 @@ void String_Init(void)
 	String_Load("TEXTO",true);
 	String_Load("PROTECT", true);
 
+	/* US and HitSquad versions use "Load a game" instead of "Load Game." */
+	if (s_strings[STR_LOAD_GAME] != NULL) {
+		char *str = s_strings[STR_LOAD_GAME];
+		while (*str == ' ') str++;
+		if (*str == '\0') {
+			free(s_strings[STR_LOAD_GAME]);
+			s_strings[STR_LOAD_GAME] = strdup(s_strings[STR_LOAD_A_GAME]);
+		}
+	}
+
 	/* Restore the "The Building of a Dynasty" subtitle to match the narrator. */
 	if (enhancement_play_additional_voices && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 		const char *subtitle1 = "The Building of a Dynasty";
