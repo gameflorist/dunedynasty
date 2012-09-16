@@ -1,0 +1,19 @@
+Put the eu v1.07 data files here.
+
+md5sum -c FILELIST.TXT
+
+9f0fd308f64709b749fed88b1490b6a4  atre.pak
+c6243b437711111b1aff1082e6fb8ea6  dune.pak
+5cff0b41bc7e246da094641feeb79974  english.pak
+20f91f6b67c20305936b79528a7b4ca5  finale.pak
+8bbb75c37718b30cc3acf5671208e425  french.pak
+6425e69905d35e92b882f00778833b48  german.pak
+72268db03ec685241be7fdceb93fde39  hark.pak
+fcdfda49a0765cdf155112158847b296  intro.pak
+f7e2cd778899a542538ca0ba24c3fef8  introvoc.pak
+7213c73939a817e001bcd20d051ff006  mentat.pak
+bd06bcc712c09a88ce226d86bb91a8d9  merc.pak
+1e8551ee6d25ce6334db71d6d3716895  ordos.pak
+45fa0eaca986558c8fcade5551b07fd9  scenario.pak
+515e86d995222776d59d4634dafdb57a  sound.pak
+afe359874848e2cd65913b6d9765302b  voc.pak
