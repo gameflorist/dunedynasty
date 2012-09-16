@@ -231,6 +231,10 @@ ConfigA5_InitDataDirectories(void)
 
 	/* Find personal directory, and create subdirectories. */
 	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), user_path_cstr);
+	File_MakeCompleteFilename(filename, sizeof(filename), "", false);
+	if (!al_make_directory(filename)) {
+		fprintf(stderr, "Could not create %s!\n", filename);
+	}
 
 	al_destroy_path(dune_data_path);
 	al_destroy_path(user_data_path);
