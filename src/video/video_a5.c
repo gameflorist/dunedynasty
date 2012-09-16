@@ -113,6 +113,7 @@ static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
 static ALLEGRO_MOUSE_CURSOR *s_cursor[CURSOR_MAX];
 
+static bool take_screenshot = false;
 static FadeInAux s_fadeInAux;
 
 /* VideoA5_GetNextXY:
@@ -325,6 +326,12 @@ VideoA5_ToggleFullscreen(void)
 	GameLoop_TweakWidgetDimensions(old_width);
 }
 
+void
+VideoA5_CaptureScreenshot(void)
+{
+	take_screenshot = true;
+}
+
 static void
 VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCopyMode mode)
 {
@@ -406,6 +413,25 @@ VideoA5_Tick(void)
 
 	al_set_target_backbuffer(display);
 #endif
+
+	if (take_screenshot) {
+		struct tm *tm;
+		time_t timep;
+		char filename[1024];
+		char filepath[1024];
+
+		take_screenshot = false;
+
+		timep = time(NULL);
+		tm = localtime(&timep);
+
+		strftime(filename, sizeof(filename), "screenshot_%Y%m%d_%H%M%S.png", tm);
+		snprintf(filepath, sizeof(filepath), "%s/%s", g_personal_data_dir, filename);
+
+		al_save_bitmap(filepath, al_get_backbuffer(display));
+		fprintf(stdout, "screenshot: %s\n", filepath);
+	}
+
 	al_flip_display();
 	al_clear_to_color(paltoRGB[0]);
 }

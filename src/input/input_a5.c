@@ -117,6 +117,10 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			    (event->keyboard.keycode == ALLEGRO_KEY_ENTER && (event->keyboard.modifiers & ALLEGRO_KEYMOD_ALT))) {
 				VideoA5_ToggleFullscreen();
 			}
+			else if (event->keyboard.keycode == ALLEGRO_KEY_F12) {
+				VideoA5_CaptureScreenshot();
+			}
+
 			break;
 
 		case ALLEGRO_EVENT_KEY_DOWN:
