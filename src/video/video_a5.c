@@ -319,7 +319,6 @@ void
 VideoA5_ToggleFullscreen(void)
 {
 	const bool fs = (al_get_display_flags(display) & ALLEGRO_FULLSCREEN_WINDOW);
-	const int old_width = TRUE_DISPLAY_WIDTH;
 
 	al_set_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, !fs);
 	TRUE_DISPLAY_WIDTH = al_get_display_width(display);
@@ -327,7 +326,7 @@ VideoA5_ToggleFullscreen(void)
 
 	al_set_target_backbuffer(display);
 	A5_InitTransform(true);
-	GameLoop_TweakWidgetDimensions(old_width);
+	GameLoop_TweakWidgetDimensions();
 }
 
 void

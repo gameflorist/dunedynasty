@@ -170,14 +170,14 @@ void GUI_Widget_Draw(Widget *w)
 	if (w->offsetX < 0) {
 		offsetX = g_widgetProperties[w->parentID].width + w->offsetX;
 	}
-	positionLeft = g_widgetProperties[w->parentID].xBase + offsetX;
+	positionLeft = g_widgetProperties[w->parentID].xBase + g_screenDiv[w->div].x + offsetX;
 	positionRight = positionLeft + w->width - 1;
 
 	offsetY = w->offsetY;
 	if (w->offsetY < 0) {
 		offsetY = g_widgetProperties[w->parentID].height + w->offsetY;
 	}
-	positionTop = g_widgetProperties[w->parentID].yBase + offsetY;
+	positionTop = g_widgetProperties[w->parentID].yBase + g_screenDiv[w->div].y + offsetY;
 	positionBottom = positionTop + w->height - 1;
 
 	assert(drawMode < DRAW_MODE_MAX);
@@ -189,7 +189,7 @@ void GUI_Widget_Draw(Widget *w)
 		case DRAW_MODE_NONE: break;
 
 		case DRAW_MODE_SPRITE: {
-			GUI_DrawSprite(g_screenActiveID, drawParam.sprite, offsetX, offsetY, w->parentID, 0x4100, g_remap, 1);
+			GUI_DrawSprite(g_screenActiveID, drawParam.sprite, positionLeft, positionTop, 0, 0x100, g_remap, 1);
 		} break;
 
 		case DRAW_MODE_TEXT: {

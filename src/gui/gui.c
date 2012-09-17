@@ -20,6 +20,7 @@
 #include "../animation.h"
 #include "../audio/audio.h"
 #include "../codec/format80.h"
+#include "../common_a5.h"
 #include "../config.h"
 #include "../explosion.h"
 #include "../file.h"
@@ -1356,7 +1357,10 @@ void GUI_DrawInterfaceAndRadar(void)
 
 	GUI_DrawScreen(g_screenActiveID);
 
+	A5_UseTransform(SCREENDIV_SIDEBAR);
 	GUI_Widget_ActionPanel_Draw(true);
+
+	A5_UseTransform(SCREENDIV_MAIN);
 
 #if 0
 	find.houseID = HOUSE_INVALID;

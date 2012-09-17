@@ -331,11 +331,11 @@ ActionPanel_ScrollFactory(const Widget *widget, Structure *s)
 	int x1, y1, x2, y2;
 
 	ActionPanel_ScrollButtonDimensions(widget, height, true, &x1, &y1, &x2, &y2);
-	if ((widget->state.s.buttonState & 0x44) && Mouse_InRegion(x1, y1, x2, y2))
+	if ((widget->state.s.buttonState & 0x44) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 		delta = 1;
 
 	ActionPanel_ScrollButtonDimensions(widget, height, false, &x1, &y1, &x2, &y2);
-	if ((widget->state.s.buttonState & 0x44) && Mouse_InRegion(x1, y1, x2, y2))
+	if ((widget->state.s.buttonState & 0x44) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 		delta = -1;
 
 	if (delta == 0)
@@ -381,7 +381,10 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if (ActionPanel_ScrollFactory(widget, s))
 		return true;
 
-	if (g_mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
+	int mouseY;
+	Mouse_TransformToDiv(widget->div, NULL, &mouseY);
+
+	if (mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
 		return false;
 
 	const bool lmb = (widget->state.s.buttonState & 0x04);
@@ -389,7 +392,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
 		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
-		if (Mouse_InRegion(x1, y1, x2, y2))
+		if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 			break;
 	}
 
@@ -589,7 +592,7 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	}
 
 	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
-	if (lmb && Mouse_InRegion(x1, y1, x2, y2)) {
+	if (lmb && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		ActionPanel_ClickStarportOrder(s);
 		return true;
 	}
@@ -597,12 +600,15 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	if (ActionPanel_ScrollFactory(widget, s))
 		return true;
 
-	if (g_mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
+	int mouseY;
+	Mouse_TransformToDiv(widget->div, NULL, &mouseY);
+
+	if (mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
 		return false;
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
 		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
-		if (Mouse_InRegion(x1, y1, x2, y2))
+		if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 			break;
 	}
 
@@ -628,7 +634,7 @@ ActionPanel_ClickPalace(const Widget *widget, Structure *s)
 	g_factoryWindowTotal = 0;
 
 	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x1, &y1, &x2, &y2, NULL, NULL);
-	if (lmb && Mouse_InRegion(x1, y1, x2, y2)) {
+	if (lmb && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Structure_ActivateSpecial(s);
 		return true;
 	}
@@ -672,18 +678,18 @@ ActionPanel_DrawScrollButtons(const Widget *widget, bool is_starport)
 	int x1, y1, x2, y2;
 
 	ActionPanel_ScrollButtonDimensions(widget, height, true, &x1, &y1, &x2, &y2);
-	if (pressed && Mouse_InRegion(x1, y1, x2, y2)) {
+	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP_PRESSED, x1, y1, 0, 0);
 	}
-	else if (widget->height >= 52 || Mouse_InRegion(x1, y1, x2, y2 + 15)) {
+	else if (widget->height >= 52 || Mouse_InRegion_Div(widget->div, x1, y1, x2, y2 + 15)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP, x1, y1, 0, 0);
 	}
 
 	ActionPanel_ScrollButtonDimensions(widget, height, false, &x1, &y1, &x2, &y2);
-	if (pressed && Mouse_InRegion(x1, y1, x2, y2)) {
+	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN_PRESSED, x1, y1, 0, 0);
 	}
-	else if (widget->height >= 52 || Mouse_InRegion(x1, y1 - 15, x2, y2)) {
+	else if (widget->height >= 52 || Mouse_InRegion_Div(widget->div, x1, y1 - 15, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN, x1, y1, 0, 0);
 	}
 }
@@ -704,7 +710,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 		fg = 0xE;
 	}
 	else {
-		const bool buttonDown = (widget->state.s.hover1 && Mouse_InRegion(x1, y1, x2, y2));
+		const bool buttonDown = (widget->state.s.hover1 && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2));
 
 		GUI_DrawBorder(x1, y1, w, h, buttonDown ? 0 : 1, true);
 		fg = 0xF;
@@ -716,6 +722,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 void
 ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 {
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_SIDEBAR];
 	const int height = (s->o.type == STRUCTURE_STARPORT) ? widget->height - 12 : widget->height;
 
 	if (g_productionStringID == STR_UPGRADINGD_DONE) {
@@ -732,7 +739,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 	}
 
 	GUI_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, height - 3, 0, true);
-	Video_SetClippingArea(widget->offsetX + 1, widget->offsetY + 3, widget->width - 2, height - 5);
+	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * height);
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
 		const uint16 object_type = g_factoryWindowItems[item].objectType;
@@ -824,6 +831,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 void
 ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 {
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_SIDEBAR];
 	enum ShapeID shapeID;
 	const char *name;
 	const char *deploy;
@@ -857,9 +865,11 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 
 	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x, &y, NULL, NULL, &w, &h);
 	GUI_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, widget->height - 3, 0, true);
-	Video_SetClippingArea(widget->offsetX + 1, widget->offsetY + 3, widget->width - 2, widget->height - 5);
+	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * (widget->height - 5));
+
 	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);
 	GUI_DrawText_Wrapper(name, x + w / 2, y - 9, 5, 0, 0x121);
 	GUI_DrawText_Wrapper(deploy, x + w / 2, y + h + 1, 0xF, 0, 0x121);
+
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }

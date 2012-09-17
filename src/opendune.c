@@ -914,12 +914,12 @@ static void InGame_Numpad_Move(uint16 key)
 }
 
 void
-GameLoop_TweakWidgetDimensions(int old_width)
+GameLoop_TweakWidgetDimensions(void)
 {
-	for (int i = 2; i <= 10; i++)
-		g_table_gameWidgetInfo[i].offsetX += TRUE_DISPLAY_WIDTH - old_width;
+	const ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
+	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
 
-	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - 14 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
+	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - (14 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height);
 
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = 0;
@@ -941,20 +941,22 @@ GameLoop_TweakWidgetDimensions(int old_width)
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].width = TRUE_DISPLAY_WIDTH;
 	g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height = 5;
 
-	g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX = TRUE_DISPLAY_WIDTH - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].width;
-	g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
+	g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
 
-	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width = TRUE_DISPLAY_WIDTH - 16 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].width;
-	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].height = TRUE_DISPLAY_HEIGHT - 40;
+	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].offsetY = viewport->y;
+	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width = viewport->width;
+	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].height = viewport->height;
 
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT_FALLBACK].width = TRUE_DISPLAY_WIDTH;
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT_FALLBACK].height = TRUE_DISPLAY_HEIGHT;
 
 	/* gui/widget.c */
+	g_widgetProperties[WINDOWID_VIEWPORT].yBase = g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].offsetY;
 	g_widgetProperties[WINDOWID_MINIMAP].xBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX;
 	g_widgetProperties[WINDOWID_MINIMAP].yBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
-	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].xBase = TRUE_DISPLAY_WIDTH - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].width;
-	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].height = TRUE_DISPLAY_HEIGHT - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].yBase - 12 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
+	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].xBase = 16;
+	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].yBase = 2;
+	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].height = sidebar->height - (2 + 12 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height);
 
 	Window_WidgetClick_Create();
 }
@@ -1213,7 +1215,7 @@ int main(int argc, char **argv)
 	Sprites_Init();
 	Sprites_LoadTiles();
 	VideoA5_InitSprites();
-	GameLoop_TweakWidgetDimensions(SCREEN_WIDTH);
+	GameLoop_TweakWidgetDimensions();
 	Audio_PlayVoice(VOICE_STOP);
 	GameLoop_GameIntroAnimationMenu();
 

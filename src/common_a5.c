@@ -109,7 +109,7 @@ A5_InitTransform(bool screen_size_changed)
 			0.0f, 0.0f, TRUE_DISPLAY_WIDTH, menubar->scale * 40.0f);
 
 	ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
-	sidebar->scale = 1.0f;
+	sidebar->scale = 2.0f;
 	A5_InitScreenDiv(target, SCREENDIV_SIDEBAR,
 			TRUE_DISPLAY_WIDTH - sidebar->scale * 80.0f, menubar->scale * menubar->height,
 			TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
