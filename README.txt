@@ -1,54 +1,166 @@
-                Dune Dynasty
-                    v1.0
+Dune Dynasty
+============
+
+Classic Dune. Modern Controls.
+
+About
+-----
+
+Dune Dynasty is a continuation of the classic real-time strategy game
+Dune II by Westwood Studios.  It is not a remake.  It builds upon the
+original game engine as reverse-engineered by the [OpenDUNE] project.
+
+Dune Dynasty features these modern enhancements:
+
+  - Runs natively on Linux and Windows (OpenGL required)
+  - High-resolution graphics, including zooming
+  - Multiple unit selection with control groups
+  - New build queue interface
+  - Rally points
+  - Multiple sound channels
+
+Plus:
+
+  - Emulated Ad-Lib sound and music playback
+  - General MIDI playback using FluidSynth
+  - Bug fixes
+  - Smoother unit animation
+  - Brutal AI mode
 
 Dune Dynasty is licensed under the GNU General Public License version
-2.0.  For more information, see the COPYING file included with every
+2.0.  For more information, see the `COPYING` file included with every
 release and source download of the game.
 
+[![Screenshot]][Screenshot]
 
-Compiling
----------
 
-You will need cmake and Allegro 5.  FluidSynth is optional.
+Download
+--------
+
+[Download] the source code or Windows binaries from the [SourceForge]
+project page.
+
+
+Compiling from source
+---------------------
+(Skip this if you are using precompiled Windows binaries.)
+
+You will need [CMake] and [Allegro 5].  [FluidSynth] is an optional dependency.
 
     cmake .
     make
 
-The binary will be placed in the bin/ directory.
+Alternatively, you can use an out-of-source build:
+
+    mkdir Build
+    cd Build
+    cmake ..
+    make
+
+The binary will be placed in the dist/ directory.
 
 
-Starting Up
+Starting up
 -----------
 
-You will need to extract the eu v1.07 data files into bin/data/.  The
-files should have lower case filenames.
+You will need the *.PAK data files from the EU v1.07 release of Dune II.
+Place them into one of the following places:
 
-    cd bin/data
-    unzip dune2_eu_1.07.zip
-    md5sum -c FILELIST.TXT
+ 1. In a directory named `data` next to the dunedynasty executable.
+    This is the simplest option.
 
-Give dunedynasty a run to make sure it works.
+ 2. In your personal data directory.
+    The location depends on your operating system.
 
-    cd bin
-    ./dunedynasty
+    On Unix, this will be:
 
-The game will create and print out a personal data directory, which is
-where it will save your games.  You should also copy the sample config
-file into this directory.
+        ~/.local/share/dunedynasty/data
 
-    Personal data directory: ~/.local/share/dunedynasty/
-    cp bin/dunedynasty.cfg-sample ~/.local/share/dunedynasty/dunedynasty.cfg
+    On Windows, this will be something like:
 
-If you have FluidSynth installed, you will need to set the sound_font
-path in the config file to enable General MIDI.  e.g.
+        C:\users\nobody\Application Data\Dune Dynasty\data
+
+ 3. The system-wide directory as configured in the CMake variable
+    $DUNE_DATA_DIR/data.
+
+Once the data files are in place, you may start the game by running
+`dunedynasty.exe` or `dunedynasty`.
+
+
+Controls
+--------
+
+The controls should be similar to most real-time strategy games.
+You can finally select multiple units by dragging a rectangle,
+or shift clicking.  Right click issues commands on units, and sets
+the rally point on buildings.
+
+Keyboard shortcuts are mostly just the first letter of the action.
+
+    A           Attack or Harvest
+    M           Move
+    G, S        Guard (Stop)
+    H           Select construction yard
+    P           Place constructed structure
+
+    F1          Mentat
+    F2          Options
+    F5          Show current song
+    F6          Decrease music volume
+    F7          Increase music volume
+
+    `           Toggle health bars
+    -, +        Zoom in or out
+    [, ]        Toggle size of menu and side bars
+
+    Alt-Enter   Toggle windowed mode
+    F11         Toggle windowed mode
+    F12         Save screenshot into data directory
+
+    Ctrl-1      Assign control group 1
+    Ctrl-2      Assign control group 2, etc.
+    1-0         Jump to control group 1-0
+
+Double tap H or a control group number to centre on the
+construction yard or the control group.
+
+
+Configuration
+-------------
+
+On Unix the configuration file is located at:
+
+    ~/.config/dunedynasty/dunedynasty.cfg
+
+On Windows the configuration file will be located somewhere like:
+
+    C:\users\nobody\Application Data\Dune Dynasty\dunedynasty.cfg
+
+See the sample file `dunedynasty.cfg-sample` for a list of configuration
+options.  You can modify the existing `dunedynasty.cfg` file or
+replace it with `dunedynasty.cfg-sample`.
+
+
+General MIDI music
+------------------
+
+Dune Dynasty can play MIDI music if it was compiled with FluidSynth support.
+You will need to set the `sound_font` path in the configuration file to
+an appropriate sound font (.sf2) file, e.g.
 
     [audio]
     sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
 
-Dune Dynasty also recognises various external music sets, which it can
-play instead of the Adlib or General MIDI music.  Each of these have
-their own subdirectory in the bin/ directory.  Instructions are
-provided in the respective FILELIST.TXT files.
+
+External music packs
+--------------------
+
+Dune Dynasty can play various external music sets, e.g. music from Dune 2000.
+Each of these have their own subdirectory in the dist/ directory.
+Instructions are provided in the respective FILELIST.TXT files.
+
+Note that many of the external music sets are provided in .mp3 format.
+Currently you must convert them to Ogg Vorbis (.ogg) or FLAC formats.
 
 If you want to disable any music set, edit the [music] section of the
 config file.  e.g. to disable the Adlib music:
@@ -56,44 +168,55 @@ config file.  e.g. to disable the Adlib music:
     [music]
     dune2_adlib=0
 
-Once everything is set up to your liking, start dunedynasty again to
-play the game!
+
+Saved games
+-----------
+
+Saved games are located in a personal data directory.
+On Unix this will be:
+
+    ~/.config/dunedynasty/save
+
+On Windows this will be something like:
+
+    C:\users\nobody\Application Data\Dune Dynasty\save
+
+Saved games from Dune II should work if placed there.
 
 
-Controls
---------
+Acknowledgements
+----------------
 
-The controls should be similar to most real-time strategy games.
-Keyboard shortcuts are mostly just the first letter of the action.
-
-    A       Attack or Harvest
-    H       Select construction yard
-    P       Place constructed structure
-
-    F1      Mentat
-    F2      Options
-
-    F5      Show current song
-    F6      Decrease music volume
-    F7      Increase music volume
-
-    F12     Save screenshot (~/.local/share/dunedynasty/).
-
-
-Code and Thank Yous
--------------------
+Thank you to:
 
 The OpenDUNE team:
-  Albert Hofkamp (Alberth)
-  Loic Guilloux (glx)
-  Patric Stout (TrueBrain)
-  Steven Noorbergen (Xaroth)
 
-Allegro 5 team.
+  - Albert Hofkamp (Alberth)
+  - Loic Guilloux (glx)
+  - Patric Stout (TrueBrain)
+  - Steven Noorbergen (Xaroth)
 
-AdPlug, DOSBox, MAME, ScummVM, Dune Legacy, and everyone else who
-worked on the OPL code.
+The Allegro 5 developers.
+
+The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else
+who worked on the Adlib/OPL/MIDI player code.
 
 Peter, for help on various bits of the code, the music, and AUDlib.
 
 Westwood Studios, for an amazing game!
+
+
+Author
+------
+
+David Wang <dswang@users.sourceforge.net>
+
+
+
+[OpenDUNE]: http://www.opendune.org/
+[Allegro 5]: http://alleg.sourceforge.net/
+[CMake]: http://www.cmake.org/
+[FluidSynth]: http://sourceforge.net/apps/trac/fluidsynth/
+[Download]: http://sourceforge.net/projects/dunedynasty/files/
+[Screenshot]: http://sourceforge.net/projects/dunedynasty/screenshots/screenshot_hark.png "Screenshot"
+[SourceForge]: http://sourceforge.net/projects/dunedynasty/
