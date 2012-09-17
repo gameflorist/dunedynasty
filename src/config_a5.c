@@ -217,7 +217,7 @@ static void
 ConfigA5_InitDataDirectories(void)
 {
 	ALLEGRO_PATH *dune_data_path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-	ALLEGRO_PATH *user_data_path = al_get_standard_path(ALLEGRO_USER_DATA_PATH);
+	ALLEGRO_PATH *user_data_path = al_get_standard_path(ALLEGRO_USER_SETTINGS_PATH);
 	const char *data_path_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
 	const char *user_path_cstr = al_path_cstr(user_data_path, ALLEGRO_NATIVE_PATH_SEP);
 	char filename[1024];
