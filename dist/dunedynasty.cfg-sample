@@ -1,12 +1,12 @@
 # Dune Dynasty sample config file.
 #
 # Copy this file to your personal data directory:
-# ${HOME}/.local/share/dunedynasty/dunedynasty.cfg.
+# ${HOME}/.config/dunedynasty/dunedynasty.cfg.
 #
 # window_mode is one of:
-#  (win) windowed
-#  (fs)  fullscreen
-#  (fsw) fullscreenwindow
+#  windowed
+#  fullscreen
+#  fullscreenwindow
 
 [game]
 window_mode=windowed
@@ -14,11 +14,14 @@ window_mode=windowed
 ; window_mode=fullscreenwindow
 screen_width=640
 screen_height=480
+menubar_scale=1.000000
+sidebar_scale=1.000000
+viewport_scale=2.000000
 language=ENG
 game_speed=2
 hints=1
 auto_scroll=1
-auto_scroll_delay=5
+scroll_speed=4
 
 [audio]
 enable_music=1
@@ -38,15 +41,15 @@ raise_scenario_unit_cap=0
 repeat_reinforcements=1
 
 # MUSIC CONFIGURATION
-# Uncomment to disable entire music sets.
+# Enable or disable entire music sets.
 [music]
-; dune2_adlib=0
-; dune2_c55=0
-; fed2k_mt32=0
-; d2tm_adlib=0
-; d2tm_mt32=0 # Subset of fed2k_mt32.
-; d2tm_sc55=0
-; dune2000=0
+dune2_adlib=1
+dune2_c55=1
+fed2k_mt32=1
+d2tm_adlib=1
+d2tm_mt32=1 # Subset of fed2k_mt32.
+d2tm_sc55=1
+dune2000=1
 
 # Dune 2 Adlib
 # Uncomment to disable individual tracks.
