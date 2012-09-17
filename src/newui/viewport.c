@@ -1008,7 +1008,7 @@ Viewport_RenderBrush(int x, int y)
 	const int tile_top  = Tile_GetPackedY(g_viewportPosition);
 
 	/* Make brush coordinates relative to viewport. */
-	x -= g_widgetProperties[WINDOWID_VIEWPORT].xBase*8;
+	x -= g_widgetProperties[WINDOWID_VIEWPORT].xBase;
 	y -= g_widgetProperties[WINDOWID_VIEWPORT].yBase;
 
 	/* Tile containing top-left corner of brush. */

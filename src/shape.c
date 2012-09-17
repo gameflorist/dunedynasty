@@ -35,7 +35,7 @@ static void
 Shape_FixXY(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int flags, int *retx, int *rety)
 {
 	if (flags & 0x4000) {
-		x += g_widgetProperties[windowID].xBase*8;
+		x += g_widgetProperties[windowID].xBase;
 		y += g_widgetProperties[windowID].yBase;
 	}
 

@@ -103,7 +103,7 @@ MainMenu_InitWidgets(void)
 		w = GUI_Widget_Allocate(menuitem[i], 0, 0, 0, SHAPE_INVALID, STR_NULL);
 
 		w->parentID = WINDOWID_MAINMENU_FRAME;
-		w->offsetX = prop21->xBase*8;
+		w->offsetX = prop21->xBase;
 		w->offsetY = prop21->yBase + (g_fontCurrent->height * i);
 		w->height = g_fontCurrent->height - 1;
 
@@ -127,8 +127,8 @@ MainMenu_InitWidgets(void)
 		maxWidth = max(maxWidth, Font_GetStringWidth(w->drawParameterNormal.text) + 7);
 	}
 
-	prop13->width = maxWidth/8 + 2;
-	prop13->xBase = (SCREEN_WIDTH/8 - prop13->width)/2;
+	prop13->width = maxWidth + 2*8;
+	prop13->xBase = (SCREEN_WIDTH - prop13->width)/2;
 	prop13->yBase = 160 - prop13->height/2;
 
 	for (Widget *w = main_menu_widgets; w != NULL; w = GUI_Widget_GetNext(w)) {

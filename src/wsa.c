@@ -352,8 +352,8 @@ static void WSA_DrawFrame(int16 x, int16 y, int16 width, int16 height, uint16 wi
 
 	dst = GFX_Screen_GetActive();
 
-	left   = g_widgetProperties[windowID].xBase << 3;
-	right  = left + (g_widgetProperties[windowID].width << 3);
+	left   = g_widgetProperties[windowID].xBase;
+	right  = left + g_widgetProperties[windowID].width;
 	top    = g_widgetProperties[windowID].yBase;
 	bottom = top + g_widgetProperties[windowID].height;
 

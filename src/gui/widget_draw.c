@@ -43,14 +43,14 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 
 	oldScreenID = GFX_Screen_SetActive(2);
 
-	positionX = w->offsetX + (g_widgetProperties[w->parentID].xBase << 3);
-	positionY = w->offsetY +  g_widgetProperties[w->parentID].yBase;
+	positionX = w->offsetX + g_widgetProperties[w->parentID].xBase;
+	positionY = w->offsetY + g_widgetProperties[w->parentID].yBase;
 	width     = w->width;
 	height    = w->height;
 
-	g_widgetProperties[19].xBase  = positionX >> 3;
+	g_widgetProperties[19].xBase  = positionX;
 	g_widgetProperties[19].yBase  = positionY;
-	g_widgetProperties[19].width  = width >> 3;
+	g_widgetProperties[19].width  = width;
 	g_widgetProperties[19].height = height;
 
 	state  = (w->state.s.selected) ? 0 : 2;
@@ -398,8 +398,8 @@ void GUI_Widget_Scrollbar_Draw(Widget *w)
 	height = w->height;
 
 	positionX = w->offsetX;
-	if (w->offsetX < 0) positionX += g_widgetProperties[w->parentID].width << 3;
-	positionX += g_widgetProperties[w->parentID].xBase<< 3;
+	if (w->offsetX < 0) positionX += g_widgetProperties[w->parentID].width;
+	positionX += g_widgetProperties[w->parentID].xBase;
 
 	positionY = w->offsetY;
 	if (w->offsetY < 0) positionY += g_widgetProperties[w->parentID].height;
@@ -880,9 +880,9 @@ void GUI_Widget_DrawBorder(uint16 widgetIndex, uint16 borderType, bool pressed)
 		{0, 0}, {2, 4}, {1, 1}, {2, 1}
 	};
 
-	uint16 left   = g_widgetProperties[widgetIndex].xBase << 3;
+	uint16 left   = g_widgetProperties[widgetIndex].xBase;
 	uint16 top    = g_widgetProperties[widgetIndex].yBase;
-	uint16 width  = g_widgetProperties[widgetIndex].width << 3;
+	uint16 width  = g_widgetProperties[widgetIndex].width;
 	uint16 height = g_widgetProperties[widgetIndex].height;
 
 	uint16 colourSchemaIndex = (pressed) ? 2 : 0;
@@ -916,21 +916,21 @@ GUI_Widget_DrawWindow(const WindowDesc *desc)
 	GUI_Widget_DrawBorder(desc->index, 2, true);
 
 	if (title != NULL) {
-		GUI_DrawText_Wrapper(title, wi->xBase*8 + wi->width*8 / 2, wi->yBase + 6 + ((desc == &g_yesNoWindowDesc) ? 2 : 0), 238, 0, 0x122);
+		GUI_DrawText_Wrapper(title, wi->xBase + wi->width / 2, wi->yBase + 6 + ((desc == &g_yesNoWindowDesc) ? 2 : 0), 238, 0, 0x122);
 	}
 
 	if (GUI_String_Get_ByIndex(desc->widgets[0].stringID) == NULL) {
-		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_THERE_ARE_NO_SAVED_GAMES_TO_LOAD), (wi->xBase + 2) << 3, wi->yBase + 42, 232, 0, 0x22);
+		GUI_DrawText_Wrapper(String_Get_ByIndex(STR_THERE_ARE_NO_SAVED_GAMES_TO_LOAD), wi->xBase + 2*8, wi->yBase + 42, 232, 0, 0x22);
 	}
 
 	for (int i = 0; i < desc->widgetCount; i++) {
 		const Widget *w = &g_table_windowWidgets[i];
 
 		if (g_gameConfig.language == LANGUAGE_FRENCH) {
-			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), wi->xBase*8 + 40, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
+			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), wi->xBase + 40, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
 		}
 		else {
-			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), w->offsetX + wi->xBase*8 - 10, w->offsetY + wi->yBase + 3, 232, 0, 0x222);
+			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), w->offsetX + wi->xBase - 10, w->offsetY + wi->yBase + 3, 232, 0, 0x222);
 		}
 	}
 }

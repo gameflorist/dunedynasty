@@ -202,7 +202,7 @@ VideoA5_InitDisplayIcon(char **xpm, int w, int h, int colours)
 bool
 VideoA5_Init(void)
 {
-	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	int display_flags = ALLEGRO_OPENGL | ALLEGRO_GENERATE_EXPOSE_EVENTS;
 
@@ -834,7 +834,7 @@ static void
 VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 		int x, int y, int *retx, int *rety)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	const int num = VideoA5_NumIconsInGroup(group);
 
@@ -874,7 +874,7 @@ static void
 VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 		int x, int y, int *retx, int *rety)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	const int idx = ICONID_MAX - (iconID - 304) - 1;
 	assert(304 <= iconID && iconID <= 308);
@@ -978,7 +978,7 @@ static ALLEGRO_BITMAP *
 VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 		int *retx, int *rety, int *ret_row_h, unsigned char *remap)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	const int w = Shape_Width(shapeID);
 	const int h = Shape_Height(shapeID);
@@ -1034,7 +1034,7 @@ VideoA5_InitShapes(unsigned char *buf)
 		{  -1,   0, false }
 	};
 
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 
 	int x = 0, y = 0, row_h = 0;
@@ -1279,7 +1279,7 @@ VideoA5_FontIndex(const Font *font, const uint8 *pal)
 static void
 VideoA5_ExportFont(Font *font, const uint8 *pal, int y, int *rety)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	const int fnt = VideoA5_FontIndex(font, pal);
 
@@ -1342,7 +1342,7 @@ VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y)
 static void
 VideoA5_InitWSA(unsigned char *buf)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 
 	void *wsa = WSA_LoadFile("STATIC.WSA", GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), true);
@@ -1390,7 +1390,7 @@ VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int
 void
 VideoA5_DrawWSAStatic(int frame, int x, int y)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	const int tx = frame % (WINDOW_W / 65);
 	const int ty = frame / (WINDOW_H / 65);
@@ -1423,7 +1423,7 @@ VideoA5_InitCursor(void)
 void
 VideoA5_InitSprites(void)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	const uint16 old_screen = GFX_Screen_SetActive(0);
 	const enum WindowID old_widget = Widget_SetCurrentWidget(WINDOWID_RENDER_TEXTURE);

@@ -153,8 +153,8 @@ bool GUI_Widget_Scrollbar_Click(Widget *w)
 	scrollbar = w->data;
 
 	positionX = w->offsetX;
-	if (w->offsetX < 0) positionX += g_widgetProperties[w->parentID].width << 3;
-	positionX += g_widgetProperties[w->parentID].xBase << 3;
+	if (w->offsetX < 0) positionX += g_widgetProperties[w->parentID].width;
+	positionX += g_widgetProperties[w->parentID].xBase;
 
 	positionY = w->offsetY;
 	if (w->offsetY < 0) positionY += g_widgetProperties[w->parentID].height;

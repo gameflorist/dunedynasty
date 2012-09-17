@@ -88,11 +88,11 @@ int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16
 	uint16 returnValue = 0x0;
 	char *t;
 
-	positionX = g_curWidgetXBase << 3;
+	positionX = g_curWidgetXBase;
 
 	textWidth = 0;
 	textLength = 0;
-	maxWidth = (g_curWidgetWidth << 3) - Font_GetCharWidth('W') - 1;
+	maxWidth = g_curWidgetWidth - Font_GetCharWidth('W') - 1;
 	t = text;
 
 	/* Calculate the length and width of the current string */

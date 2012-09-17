@@ -146,9 +146,9 @@ typedef struct WindowDesc {
 
 /** Widget properties. */
 typedef struct WidgetProperties {
-	uint16 xBase;                                           /*!< Horizontal base coordinate divided by 8. */
+	uint16 xBase;                                           /*!< Horizontal base coordinate. */
 	uint16 yBase;                                           /*!< Vertical base coordinate. */
-	uint16 width;                                           /*!< Width of the widget divided by 8. */
+	uint16 width;                                           /*!< Width of the widget. */
 	uint16 height;                                          /*!< Height of the widget. */
 	uint8  fgColourBlink;                                   /*!< Foreground colour for 'blink'. */
 	uint8  fgColourNormal;                                  /*!< Foreground colour for 'normal'. */

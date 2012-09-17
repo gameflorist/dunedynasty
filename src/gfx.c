@@ -71,8 +71,8 @@ void GFX_Init(void)
 		totalSize += GFX_Screen_GetSize_ByIndex(i * 2);
 	}
 
-	if (totalSize < (uint32)g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8 * g_widgetProperties[WINDOWID_RENDER_TEXTURE].height)
-		totalSize = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8 * g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	if (totalSize < (uint32)g_widgetProperties[WINDOWID_RENDER_TEXTURE].width * g_widgetProperties[WINDOWID_RENDER_TEXTURE].height)
+		totalSize = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width * g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 
 	screenBuffers = calloc(1, totalSize);
 
@@ -151,8 +151,8 @@ void GFX_DrawSprite_(uint16 spriteID, uint16 x, uint16 y, uint8 houseID)
 	wptr = GFX_Screen_GetActive();
 
 	if (g_curWidgetIndex == WINDOWID_RENDER_TEXTURE) {
-		wptr += g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8 * y + x;
-		s_spriteSpacing = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8 - 2*s_spriteWidth;
+		wptr += g_widgetProperties[WINDOWID_RENDER_TEXTURE].width * y + x;
+		s_spriteSpacing = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width - 2*s_spriteWidth;
 	}
 	else {
 		wptr += SCREEN_WIDTH * y + x;

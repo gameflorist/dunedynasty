@@ -199,8 +199,8 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 
 			GUI_DrawFilledRectangle(0, 0, SCREEN_WIDTH - 1, 23, g_curWidgetFGColourNormal);
 
-			GUI_DrawText_Wrapper(displayLine2, g_curWidgetXBase << 3,  2, fgColour2, 0, 0x012);
-			GUI_DrawText_Wrapper(displayLine1, g_curWidgetXBase << 3, 13, fgColour1, 0, 0x012);
+			GUI_DrawText_Wrapper(displayLine2, g_curWidgetXBase, fgColour2, 0, 0x012);
+			GUI_DrawText_Wrapper(displayLine1, g_curWidgetXBase, 13, fgColour1, 0, 0x012);
 
 			GFX_Screen_SetActive(oldScreenID);
 		}
@@ -213,7 +213,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 			height = g_curWidgetHeight;
 		}
 
-		GUI_Screen_Copy(g_curWidgetXBase, textOffset, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, height, 2, 0);
+		GUI_Screen_Copy(g_curWidgetXBase/8, textOffset, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, height, 2, 0);
 		GUI_Mouse_Show_InWidget();
 
 		Widget_SetCurrentWidget(oldValue_07AE_0000);
@@ -281,7 +281,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
  */
 void GUI_DrawChar_(unsigned char c, int x, int y)
 {
-	const int width = (g_curWidgetIndex == WINDOWID_RENDER_TEXTURE) ? g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8 : SCREEN_WIDTH;
+	const int width = (g_curWidgetIndex == WINDOWID_RENDER_TEXTURE) ? g_widgetProperties[WINDOWID_RENDER_TEXTURE].width : SCREEN_WIDTH;
 	const int height = (g_curWidgetIndex == WINDOWID_RENDER_TEXTURE) ? g_widgetProperties[WINDOWID_RENDER_TEXTURE].height : SCREEN_WIDTH;
 
 	uint8 *screen = GFX_Screen_GetActive();
@@ -798,11 +798,11 @@ void GUI_DrawSprite_(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uin
 	loc34 = 0;
 
 	buf = GFX_Screen_Get_ByIndex(screenID);
-	buf += g_widgetProperties[windowID].xBase << 3;
+	buf += g_widgetProperties[windowID].xBase;
 
-	if ((flags & 0x4000) == 0) posX -= g_widgetProperties[windowID].xBase << 3;
+	if ((flags & 0x4000) == 0) posX -= g_widgetProperties[windowID].xBase;
 
-	width = g_widgetProperties[windowID].width << 3;
+	width = g_widgetProperties[windowID].width;
 	top = g_widgetProperties[windowID].yBase;
 
 	if ((flags & 0x4000) != 0) posY += g_widgetProperties[windowID].yBase;
@@ -1495,7 +1495,7 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 
 	if (oldScreenID != g_screenActiveID) {
 		GUI_Mouse_Hide_InWidget(5);
-		GUI_Screen_Copy(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase - 40, g_curWidgetWidth, g_curWidgetHeight, g_screenActiveID, oldScreenID);
+		GUI_Screen_Copy(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase - 40, g_curWidgetWidth/8, g_curWidgetHeight, g_screenActiveID, oldScreenID);
 		GUI_Mouse_Show_InWidget();
 	}
 
@@ -2071,9 +2071,9 @@ void GUI_HallOfFame_Show(uint16 score)
 
 		memcpy(&backupProperties, &g_widgetProperties[19], sizeof(WidgetProperties));
 
-		g_widgetProperties[19].xBase = 4;
+		g_widgetProperties[19].xBase = 4*8;
 		g_widgetProperties[19].yBase = (editLine - 1) * 11 + 90;
-		g_widgetProperties[19].width = width / 8;
+		g_widgetProperties[19].width = width;
 		g_widgetProperties[19].height = 11;
 		g_widgetProperties[19].fgColourBlink = 6;
 		g_widgetProperties[19].fgColourNormal = 116;

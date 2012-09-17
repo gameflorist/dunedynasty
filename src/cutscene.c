@@ -901,7 +901,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 
 	Widget_SetCurrentWidget(windowID);
 
-	spriteX = (g_curWidgetWidth << 3) - Sprite_GetWidth(g_sprites[spriteID]);
+	spriteX = g_curWidgetWidth - Sprite_GetWidth(g_sprites[spriteID]);
 	spriteY = g_curWidgetHeight - Sprite_GetHeight(g_sprites[spriteID]);
 
 	positions[0].x = spriteX;
@@ -1030,7 +1030,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 			default: break;
 		}
 
-		GUI_Screen_Copy(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, memory, screenID);
+		GUI_Screen_Copy(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, memory, screenID);
 
 		for (loc02 = 0; loc02 < stringCount; loc02++) {
 			if ((int16)strings[loc02].y < g_curWidgetHeight) {
@@ -1116,7 +1116,7 @@ static void GameLoop_GameCredits(void)
 
 	GUI_ClearScreen(0);
 
-	GUI_Screen_Copy(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, 0);
+	GUI_Screen_Copy(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, 2, 0);
 
 	Cutscene_SetPaletteAnimated(g_palette_998A, 60);
 
@@ -1140,9 +1140,9 @@ static void GameLoop_GameCredits(void)
 
 	Sprites_LoadImage("MAPPLAN.CPS", 3, g_palette_998A);
 
-	GUI_Palette_RemapScreen(g_curWidgetXBase << 3, g_curWidgetYBase, g_curWidgetWidth << 3, g_curWidgetHeight, 2, memory);
+	GUI_Palette_RemapScreen(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, memory);
 
-	Cutscene_Screen_FadeIn2(g_curWidgetXBase << 3, g_curWidgetYBase, g_curWidgetWidth << 3, g_curWidgetHeight, 2, 0, 1, false);
+	Cutscene_Screen_FadeIn2(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, 0, 1, false);
 
 	GameCredits_LoadPalette();
 

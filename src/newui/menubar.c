@@ -104,9 +104,9 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 void
 MenuBar_DrawStatusBar(const char *line1, const char *line2, bool scrollInProgress, int offset)
 {
-	const int x = g_widgetProperties[WINDOWID_STATUSBAR].xBase*8;
+	const int x = g_widgetProperties[WINDOWID_STATUSBAR].xBase;
 	const int y = g_widgetProperties[WINDOWID_STATUSBAR].yBase;
-	const int w = g_widgetProperties[WINDOWID_STATUSBAR].width*8;
+	const int w = g_widgetProperties[WINDOWID_STATUSBAR].width;
 	const int h = g_widgetProperties[WINDOWID_STATUSBAR].height;
 
 	Video_SetClippingArea(x, y, w, h);
@@ -135,7 +135,7 @@ MenuBar_DrawRadarAnimation(void)
 		return;
 	}
 
-	const int x = g_widgetProperties[WINDOWID_MINIMAP].xBase*8;
+	const int x = g_widgetProperties[WINDOWID_MINIMAP].xBase;
 	const int y = g_widgetProperties[WINDOWID_MINIMAP].yBase;
 
 	int frame = (curr_ticks - radar_animation_timer) / RADAR_ANIMATION_DELAY;
@@ -210,7 +210,7 @@ MenuBar_StartRadarAnimation(bool activate)
 		Timer_SetTimer(TIMER_GAME, false);
 
 		for (int frame = 0; frame < RADAR_ANIMATION_FRAME_COUNT; frame++) {
-			const int x = g_widgetProperties[WINDOWID_MINIMAP].xBase*8;
+			const int x = g_widgetProperties[WINDOWID_MINIMAP].xBase;
 			const int y = g_widgetProperties[WINDOWID_MINIMAP].yBase;
 
 			GUI_DrawInterfaceAndRadar(0);
@@ -533,7 +533,7 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 
-	const int lines = GUI_SplitText(textBuffer, (w->width - ((shapeID == SHAPE_INVALID) ? 2 : 7))*8 - 6, '\r');
+	const int lines = GUI_SplitText(textBuffer, (w->width - ((shapeID == SHAPE_INVALID) ? 2*8 : 7*8)) - 6, '\r');
 	w->height = g_fontCurrent->height * max(lines, 3) + 18;
 
 	GUI_DrawInterfaceAndRadar(0);
@@ -543,18 +543,17 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 
 	/* Centre the dialog box to the viewport. */
 	const int old_x = w->xBase;
-	const int x = (g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width / g_mouse_transform_scale - w->width*8)/2;
+	w->xBase = (g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width / g_mouse_transform_scale - w->width)/2;
 
-	w->xBase = x/8;
 	GUI_Widget_DrawBorder(WINDOWID_MODAL_MESSAGE, 1, 1);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 
 	if (shapeID != SHAPE_INVALID) {
 		Shape_Draw(shapeID, 7, 8, WINDOWID_MODAL_MESSAGE, 0x4000);
-		GUI_DrawText(textBuffer, (w->xBase + 5)*8, w->yBase + 8, w->fgColourBlink, 0);
+		GUI_DrawText(textBuffer, w->xBase + 5*8, w->yBase + 8, w->fgColourBlink, 0);
 	}
 	else {
-		GUI_DrawText(textBuffer, (w->xBase + 1)*8, w->yBase + 8, w->fgColourBlink, 0);
+		GUI_DrawText(textBuffer, w->xBase + 1*8, w->yBase + 8, w->fgColourBlink, 0);
 	}
 
 	w->xBase = old_x;

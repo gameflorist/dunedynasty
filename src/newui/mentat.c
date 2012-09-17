@@ -168,7 +168,7 @@ MentatBriefing_DrawDescription(const MentatState *mentat)
 	if (mentat->desc) {
 		const WidgetProperties *wi = &g_widgetProperties[WINDOWID_MENTAT_PICTURE];
 
-		GUI_DrawText_Wrapper(mentat->desc, wi->xBase*8 + 5, wi->yBase + 3, g_curWidgetFGColourBlink, 0, 0x31);
+		GUI_DrawText_Wrapper(mentat->desc, wi->xBase + 5, wi->yBase + 3, g_curWidgetFGColourBlink, 0, 0x31);
 	}
 }
 
@@ -321,8 +321,8 @@ MentatSecurity_Draw(MentatState *mentat)
 
 	MentatBriefing_DrawText(mentat);
 
-	GUI_DrawBorder(wi->xBase*8 - 6, wi->yBase - 6, wi->width*8 + 12, wi->height + 12, 1, true);
-	GUI_DrawBorder(wi->xBase*8 - 2, wi->yBase - 2, wi->width*8 + 4, wi->height + 4, 2, false);
+	GUI_DrawBorder(wi->xBase - 6, wi->yBase - 6, wi->width + 12, wi->height + 12, 1, true);
+	GUI_DrawBorder(wi->xBase - 2, wi->yBase - 2, wi->width + 4, wi->height + 4, 2, false);
 
 	GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, 9, NULL, NULL, 0);
 	Widget_SetCurrentWidget(old_widget);

@@ -197,7 +197,7 @@ void GUI_Mentat_Draw(bool force)
 
 	Widget_SetAndPaintCurrentWidget(8);
 
-	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECT_SUBJECT), (g_curWidgetXBase << 3) + 16, g_curWidgetYBase + 2, 12, 0, 0x12);
+	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECT_SUBJECT), g_curWidgetXBase + 16, g_curWidgetYBase + 2, 12, 0, 0x12);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x11);
 
 	line = GUI_Widget_Get_ByIndex(w, 3);

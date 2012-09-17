@@ -67,7 +67,7 @@ ActionPanel_DrawHealthBar(int curr, int max)
 	if (max < 1)
 		max = 1;
 
-	const int x = wi->xBase*8 + 37;
+	const int x = wi->xBase + 37;
 	const int y = wi->yBase + 10;
 	const int w = max(1, 24 * curr / max);
 	const int h = 7;
@@ -80,15 +80,15 @@ ActionPanel_DrawHealthBar(int curr, int max)
 	GUI_DrawFilledRectangle(x, y, x + w - 1, y + h - 1, colour);
 
 	Shape_Draw(SHAPE_HEALTH_INDICATOR, 36, 18, WINDOWID_ACTIONPANEL_FRAME, 0x4000);
-	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_DMG), wi->xBase*8 + 40, wi->yBase + 23, 29, 0, 0x11);
+	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_DMG), wi->xBase + 40, wi->yBase + 23, 29, 0, 0x11);
 }
 
 void
 ActionPanel_DrawStructureDescription(Structure *s)
 {
 	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
-	const int x0 = (wi->xBase - 32)*8;
-	const int y0 = (wi->yBase - 42);
+	const int x0 = wi->xBase - 32;
+	const int y0 = wi->yBase - 42;
 
 	const StructureInfo *si = &g_table_structureInfo[s->o.type];
 	const Object *o = &s->o;
@@ -201,8 +201,8 @@ void
 ActionPanel_DrawActionDescription(uint16 stringID, int x, int y, uint8 fg)
 {
 	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
-	const int x0 = (wi->xBase - 32)*8;
-	const int y0 = (wi->yBase - 42);
+	const int x0 = wi->xBase - 32;
+	const int y0 = wi->yBase - 42;
 
 	GUI_DrawText_Wrapper(String_Get_ByIndex(stringID), x0 + x, y0 + y, fg, 0, 0x11);
 }
@@ -211,8 +211,8 @@ void
 ActionPanel_DrawMissileCountdown(uint8 fg, int count)
 {
 	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
-	const int x0 = (wi->xBase - 32)*8;
-	const int y0 = (wi->yBase - 42);
+	const int x0 = wi->xBase - 32;
+	const int y0 = wi->yBase - 42;
 
 	if (count <= 0)
 		count = 0;

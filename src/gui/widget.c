@@ -36,30 +36,30 @@ Widget *g_widgetMentatScrollbar = NULL;
 
 /** Layout and other properties of the widgets. */
 WidgetProperties g_widgetProperties[WINDOWID_MAX] = {
-	/* x   y   w    h   p4  norm sel */
-	{ 0,   0, 40, 200,  15,  12,  0}, /*  0 */
-	{ 1,  75, 29,  70,  15,  15,  0}, /*  1: modal message */
-	{ 0,  40, 30, 160,  15,  20,  0}, /*  2: viewport */
-	{32, 136,  8,  64,  15,  12,  0}, /*  3: minimap */
-	{32,  44,  8,   9,  29, 116,  0}, /*  4: credits */
-	{32,   4,  8,   9,  29, 116,  0}, /*  5 */
-	{32,  42,  8,  82,  15,  20,  0}, /*  6: action panel */
-	{ 1,  21, 38,  14,  12, 116,  0}, /*  7: status bar */
-	{16,  48, 23, 112,  15, 233,  0}, /*  8: mentat picture */
-	{ 2, 176, 36,  11,  15,  20,  0}, /*  9: mentat security prompt */
-	{ 0,  40, 40, 160,  29,  20,  0}, /* 10 */
-	{16,  48, 23, 112,  29,  20,  0}, /* 11 */
-	{ 9,  80, 22, 112,  29, 116,  0}, /* 12 */
-	{12, 140, 16,  42, 236, 233,  0}, /* 13: main menu frame */
-	{ 2,  89, 36,  60,   0,   0,  0}, /* 14: save game frame */
-	{ 4, 110, 32,  12, 232, 235,  0}, /* 15: save game edit box */
-	{ 5,  48, 30, 134,   0,   0,  0}, /* 16: options menu */
-	{ 3,  36, 36, 148,   0,   0,  0}, /* 17: save/load game */
-	{ 1,  72, 38,  52,   0,   0,  0}, /* 18: yes/no dialog */
-	{ 0,   0,  0,   0,   0,   0,  0}, /* 19: hall of fame */
-	{ 2,  24, 36, 152,  12,  12,  0}, /* 20 */
-	{ 1,   6, 12,   3,   0,  15,  6}, /* 21: main menu item */
-	{ 0,0,1024/8,1024,   0,   0,  0}  /* 22: texture rendering pseudo-widget */
+	/*  x    y     w    h   p4  norm sel */
+	{ 0*8,   0, 40*8, 200,  15,  12,  0}, /*  0 */
+	{ 1*8,  75, 29*8,  70,  15,  15,  0}, /*  1: modal message */
+	{ 0*8,  40, 30*8, 160,  15,  20,  0}, /*  2: viewport */
+	{32*8, 136,  8*8,  64,  15,  12,  0}, /*  3: minimap */
+	{32*8,  44,  8*8,   9,  29, 116,  0}, /*  4: credits */
+	{32*8,   4,  8*8,   9,  29, 116,  0}, /*  5 */
+	{32*8,  42,  8*8,  82,  15,  20,  0}, /*  6: action panel */
+	{ 1*8,  21, 38*8,  14,  12, 116,  0}, /*  7: status bar */
+	{16*8,  48, 23*8, 112,  15, 233,  0}, /*  8: mentat picture */
+	{ 2*8, 176, 36*8,  11,  15,  20,  0}, /*  9: mentat security prompt */
+	{ 0*8,  40, 40*8, 160,  29,  20,  0}, /* 10 */
+	{16*8,  48, 23*8, 112,  29,  20,  0}, /* 11 */
+	{ 9*8,  80, 22*8, 112,  29, 116,  0}, /* 12 */
+	{12*8, 140, 16*8,  42, 236, 233,  0}, /* 13: main menu frame */
+	{ 2*8,  89, 36*8,  60,   0,   0,  0}, /* 14: save game frame */
+	{ 4*8, 110, 32*8,  12, 232, 235,  0}, /* 15: save game edit box */
+	{ 5*8,  48, 30*8, 134,   0,   0,  0}, /* 16: options menu */
+	{ 3*8,  36, 36*8, 148,   0,   0,  0}, /* 17: save/load game */
+	{ 1*8,  72, 38*8,  52,   0,   0,  0}, /* 18: yes/no dialog */
+	{ 0*8,   0,  0*8,   0,   0,   0,  0}, /* 19: hall of fame */
+	{ 2*8,  24, 36*8, 152,  12,  12,  0}, /* 20 */
+	{ 1*8,   6, 12*8,   3,   0,  15,  6}, /* 21: main menu item */
+	{ 0*8,   0, 1024,1024,   0,   0,  0}  /* 22: texture rendering pseudo-widget */
 };
 
 uint16 g_curWidgetIndex;          /*!< Index of the currently selected widget in #g_widgetProperties. */
@@ -168,9 +168,9 @@ void GUI_Widget_Draw(Widget *w)
 
 	offsetX = w->offsetX;
 	if (w->offsetX < 0) {
-		offsetX = (g_widgetProperties[w->parentID].width << 3) + w->offsetX;
+		offsetX = g_widgetProperties[w->parentID].width + w->offsetX;
 	}
-	positionLeft = (g_widgetProperties[w->parentID].xBase << 3) + offsetX;
+	positionLeft = g_widgetProperties[w->parentID].xBase + offsetX;
 	positionRight = positionLeft + w->width - 1;
 
 	offsetY = w->offsetY;
@@ -327,8 +327,8 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 		w->state.s.hover1Last = w->state.s.hover1;
 
 		positionX = w->offsetX;
-		if (w->offsetX < 0) positionX += g_widgetProperties[w->parentID].width << 3;
-		positionX += g_widgetProperties[w->parentID].xBase << 3;
+		if (w->offsetX < 0) positionX += g_widgetProperties[w->parentID].width;
+		positionX += g_widgetProperties[w->parentID].xBase;
 
 		positionY = w->offsetY;
 		if (w->offsetY < 0) positionY += g_widgetProperties[w->parentID].height;
@@ -1017,5 +1017,5 @@ uint16 Widget_SetAndPaintCurrentWidget(uint16 index)
  */
 void Widget_PaintCurrentWidget(void)
 {
-	GUI_DrawFilledRectangle(g_curWidgetXBase << 3, g_curWidgetYBase, ((g_curWidgetXBase + g_curWidgetWidth) << 3) - 1, g_curWidgetYBase + g_curWidgetHeight - 1, g_curWidgetFGColourNormal);
+	GUI_DrawFilledRectangle(g_curWidgetXBase, g_curWidgetYBase, (g_curWidgetXBase + g_curWidgetWidth) - 1, g_curWidgetYBase + g_curWidgetHeight - 1, g_curWidgetFGColourNormal);
 }

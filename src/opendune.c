@@ -709,9 +709,9 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 				maxWidth += 7;
 
-				g_widgetProperties[21].width  = maxWidth >> 3;
-				g_widgetProperties[13].width  = g_widgetProperties[21].width + 2;
-				g_widgetProperties[13].xBase  = 19 - (maxWidth >> 4);
+				g_widgetProperties[21].width  = maxWidth;
+				g_widgetProperties[13].width  = g_widgetProperties[21].width + 2*8;
+				g_widgetProperties[13].xBase  = 19*8 - maxWidth;
 				g_widgetProperties[13].yBase  = 160 - ((g_widgetProperties[21].height * g_fontCurrent->height) >> 1);
 				g_widgetProperties[13].height = (g_widgetProperties[21].height * g_fontCurrent->height) + 11;
 
@@ -763,7 +763,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 		g_readBuffer = calloc(1, g_readBufferSize);
 	}
 
-	GUI_DrawFilledRectangle(g_curWidgetXBase << 3, g_curWidgetYBase, (g_curWidgetXBase + g_curWidgetWidth) << 3, g_curWidgetYBase + g_curWidgetHeight, 12);
+	GUI_DrawFilledRectangle(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase + g_curWidgetWidth, g_curWidgetYBase + g_curWidgetHeight, 12);
 
 	if (!loc02) {
 		Audio_LoadSampleSet(HOUSE_MERCENARY);
@@ -950,9 +950,9 @@ GameLoop_TweakWidgetDimensions(int old_width)
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT_FALLBACK].height = TRUE_DISPLAY_HEIGHT;
 
 	/* gui/widget.c */
-	g_widgetProperties[WINDOWID_MINIMAP].xBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX/8;
+	g_widgetProperties[WINDOWID_MINIMAP].xBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX;
 	g_widgetProperties[WINDOWID_MINIMAP].yBase = g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
-	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].xBase = TRUE_DISPLAY_WIDTH/8 - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].width;
+	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].xBase = TRUE_DISPLAY_WIDTH - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].width;
 	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].height = TRUE_DISPLAY_HEIGHT - g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].yBase - 12 - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
 
 	Window_WidgetClick_Create();
@@ -1132,7 +1132,7 @@ void GameLoop_Main(bool new_game)
 
 	GFX_ClearScreen();
 
-	GUI_Screen_FadeIn(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, 0);
+	GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, 2, 0);
 }
 
 static bool Unknown_25C4_000E(void)
