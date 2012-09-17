@@ -268,9 +268,6 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 #endif
 	}
 
-	mouseX = g_mouseX;
-	mouseY = g_mouseY;
-
 	buttonState = 0;
 	/* if (g_var_7097 == 0) */
 	{
@@ -290,10 +287,12 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 			buttonStateChange <<= 2;
 		}
 
+#if 0
 		if (buttonStateChange != 0) {
 			mouseX = g_mouseClickX;
 			mouseY = g_mouseClickY;
 		}
+#endif
 
 		/* Disable when release, enable when click */
 		l_widget_button_state &= ~((buttonStateChange & 0x4400) >> 1);
@@ -321,6 +320,9 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 		bool widgetClick;
 
 		if (w->flags.s.invisible) continue;
+
+		mouseX = (g_mouseX - g_screenDiv[w->div].x) / g_screenDiv[w->div].scale;
+		mouseY = (g_mouseY - g_screenDiv[w->div].y) / g_screenDiv[w->div].scale;
 
 		/* Store the previous button state */
 		w->state.s.selectedLast = w->state.s.selected;
@@ -605,6 +607,7 @@ Widget *GUI_Widget_Allocate(uint16 index, uint16 shortcut, uint16 offsetX, uint1
 	w->state.all        = 0x0;
 	w->offsetX          = offsetX;
 	w->offsetY          = offsetY;
+	w->div              = SCREENDIV_MAIN;
 
 	w->flags.all = 0x0;
 	w->flags.s.requiresClick = true;

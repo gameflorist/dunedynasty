@@ -25,6 +25,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 78,
 		/* height      */ 16,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_MENUBAR,
 	},
 	{ /* 1 */
 		/* index       */ 2,
@@ -37,6 +38,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 78,
 		/* height      */ 16,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_MENUBAR,
 	},
 	{ /* 2 */
 		/* index       */ 3,
@@ -49,6 +51,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 64,
 		/* height      */ 6,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 3 */
 		/* index       */ 6,
@@ -61,6 +64,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 32,
 		/* height      */ 24,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 4 */
 		/* index       */ 4,
@@ -73,6 +77,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 60,
 		/* height      */ 10,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 5 */
 		/* index       */ 5,
@@ -85,6 +90,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 60,
 		/* height      */ 35,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 6 */
 		/* index       */ 7,
@@ -97,6 +103,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 58,
 		/* height      */ 11,
 		/* stringID    */ STR_CANCEL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 7 */
 		/* index       */ 8,
@@ -109,6 +116,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 60,
 		/* height      */ 10,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 8 */
 		/* index       */ 9,
@@ -121,6 +129,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 60,
 		/* height      */ 10,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 9 */
 		/* index       */ 10,
@@ -133,6 +142,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 60,
 		/* height      */ 10,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 10 */
 		/* index       */ 11,
@@ -145,6 +155,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 60,
 		/* height      */ 10,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 11 */
 		/* index       */ 39,
@@ -157,6 +168,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 240,
 		/* height      */ 16,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_MAIN,
 	},
 	{ /* 12 */
 		/* index       */ 40,
@@ -169,6 +181,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 10,
 		/* height      */ 160,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_MAIN,
 	},
 	{ /* 13 */
 		/* index       */ 41,
@@ -181,6 +194,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 2,
 		/* height      */ 160,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_MAIN,
 	},
 	{ /* 14 */
 		/* index       */ 42,
@@ -193,6 +207,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 240,
 		/* height      */ 2,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_MAIN,
 	},
 	{ /* 15 */
 		/* index       */ 43,
@@ -205,6 +220,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 240,
 		/* height      */ 160,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_VIEWPORT,
 	},
 	{ /* 16 */
 		/* index       */ 44,
@@ -217,6 +233,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 64,
 		/* height      */ 64,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_SIDEBAR,
 	},
 	{ /* 17 */
 		/* index       */ 45,
@@ -229,6 +246,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 320,
 		/* height      */ 200,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_MAIN,
 	},
 	{ /* 18 */
 		/* index       */ -1,
@@ -241,6 +259,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* width       */ 0,
 		/* height      */ 0,
 		/* stringID    */ STR_NULL,
+		/* div         */ SCREENDIV_MAIN,
 	}
 };
 

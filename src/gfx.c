@@ -29,6 +29,14 @@ static void *s_screenBuffer[5] = { NULL, NULL, NULL, NULL, NULL };
 
 uint16 g_screenActiveID = 0;
 
+ScreenDiv g_screenDiv[SCREENDIV_MAX] = {
+	{ 1.0f,   0,   0, 320, 200 }, /* SCREENDIV_MAIN */
+	{ 1.0f,   0,   0, 320, 200 }, /* SCREENDIV_MENU */
+	{ 1.0f,   0,   0, 320,  40 }, /* SCREENDIV_MENUBAR */
+	{ 1.0f,   0,   0,  80, 160 }, /* SCREENDIV_SIDEBAR */
+	{ 1.0f,   0,   0, 240, 160 }, /* SCREENDIV_VIEWPORT */
+};
+
 /**
  * Get the codesegment of the active screen buffer.
  * @return The codesegment of the screen buffer.

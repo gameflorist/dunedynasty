@@ -6,6 +6,7 @@
 #define GUI_WIDGET_H
 
 #include "types.h"
+#include "../gfx.h"
 
 /**
  * Types of DrawMode available in the game.
@@ -105,6 +106,8 @@ typedef struct Widget {
 	ClickProc *clickProc;                                   /*!< Function to execute when widget is pressed. */
 	void *data;                                             /*!< If non-NULL, it points to WidgetScrollbar or HallOfFameData belonging to this widget. */
 	uint16 stringID;                                        /*!< Strings to print on the widget. Index above 0xFFF2 are special. */
+
+	enum ScreenDivID div;
 } Widget;
 
 typedef void (ScrollbarDrawProc)(Widget *);

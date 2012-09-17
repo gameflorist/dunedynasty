@@ -12,10 +12,28 @@ enum {
 	SCREEN_HEIGHT = 200  /*!< Height of Dune 2 screen in pixels. */
 };
 
+enum ScreenDivID {
+	SCREENDIV_MAIN = 0,
+	SCREENDIV_MENU = 1,
+	SCREENDIV_MENUBAR = 2,
+	SCREENDIV_SIDEBAR = 3,
+	SCREENDIV_VIEWPORT = 4,
+
+	SCREENDIV_MAX
+};
+
+typedef struct ScreenDiv {
+	float scale;
+	int x, y;
+	int width, height;
+} ScreenDiv;
+
 extern int TRUE_DISPLAY_WIDTH;
 extern int TRUE_DISPLAY_HEIGHT;
 
 extern uint16 g_screenActiveID;
+
+extern ScreenDiv g_screenDiv[SCREENDIV_MAX];
 
 extern void GFX_Init(void);
 extern void GFX_Uninit(void);

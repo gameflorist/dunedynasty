@@ -386,6 +386,7 @@ static void Window_WidgetClick_Create(void)
 		Widget *w;
 
 		w = GUI_Widget_Allocate(wi->index, wi->shortcut, wi->offsetX, wi->offsetY, wi->spriteID, wi->stringID);
+		w->div = wi->div;
 
 		if (wi->spriteID < 0) {
 			w->width  = wi->width;

@@ -57,6 +57,7 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	},
 	{ /* 1 */
 		/* next                  */ NULL,
@@ -106,6 +107,7 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	},
 	{ /* 2 */
 		/* next                  */ NULL,
@@ -155,6 +157,7 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	},
 	{ /* 3 */
 		/* next                  */ NULL,
@@ -204,6 +207,7 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	},
 	{ /* 4 */
 		/* next                  */ NULL,
@@ -253,6 +257,7 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	},
 	{ /* 5 */
 		/* next                  */ NULL,
@@ -302,6 +307,7 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	},
 	{ /* 6 */
 		/* next                  */ NULL,
@@ -351,6 +357,7 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	},
 	{ /* 7 */
 		/* next                  */ NULL,
@@ -400,6 +407,7 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	},
 	{ /* 8 */
 		/* next                  */ NULL,
@@ -449,5 +457,6 @@ Widget g_table_windowWidgets[] = {
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
+		/* div                   */ SCREENDIV_MAIN,
 	}
 };

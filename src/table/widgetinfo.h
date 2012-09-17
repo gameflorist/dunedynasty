@@ -39,6 +39,8 @@ typedef struct WidgetInfo {
 	uint16 width;           /*!< ?? */
 	uint16 height;          /*!< ?? */
 	uint16 stringID;        /*!< ?? */
+
+	enum ScreenDivID div;
 } WidgetInfo;
 
 extern WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1];
