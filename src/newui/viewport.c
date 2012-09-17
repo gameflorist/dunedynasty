@@ -1118,13 +1118,13 @@ Viewport_DrawInterface(enum HouseType houseID, int blurx, int blury)
 		return;
 
 	blury += g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].offsetY;
-	for (int y = TRUE_DISPLAY_HEIGHT - 83 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
+	for (int y = TRUE_DISPLAY_HEIGHT - 85 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
 		if ((y - blury < 3 * TILE_SIZE) && (y - blury + 52 >= 0))
 			Video_DrawCPSSpecial(CPS_SIDEBAR_MIDDLE, houseID, x, y - blury);
 	}
 
 	Video_DrawCPSSpecial(CPS_SIDEBAR_TOP, houseID, x, 40 - blury);
-	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, x, TRUE_DISPLAY_HEIGHT - 83 - blury);
+	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, x, TRUE_DISPLAY_HEIGHT - 85 - blury);
 }
 
 /* Viewport_RenderBrush:

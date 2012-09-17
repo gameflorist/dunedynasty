@@ -152,7 +152,7 @@ MenuBar_Draw(enum HouseType houseID)
 {
 	Widget *w;
 
-	for (int y = TRUE_DISPLAY_HEIGHT - 83 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
+	for (int y = TRUE_DISPLAY_HEIGHT - 85 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
 		Video_DrawCPSSpecial(CPS_SIDEBAR_MIDDLE, houseID, TRUE_DISPLAY_WIDTH - 80, y);
 	}
 
@@ -169,7 +169,7 @@ MenuBar_Draw(enum HouseType houseID)
 	Video_DrawCPSSpecial(CPS_STATUSBAR_LEFT, houseID, 0, 17);
 	Video_DrawCPSSpecial(CPS_STATUSBAR_RIGHT, houseID, TRUE_DISPLAY_WIDTH - 8, 17);
 	Video_DrawCPSSpecial(CPS_SIDEBAR_TOP, houseID, TRUE_DISPLAY_WIDTH - 80, 40);
-	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, TRUE_DISPLAY_WIDTH - 80, TRUE_DISPLAY_HEIGHT - 83);
+	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, TRUE_DISPLAY_WIDTH - 80, TRUE_DISPLAY_HEIGHT - 85);
 	Prim_FillRect_i(TRUE_DISPLAY_WIDTH - 64, TRUE_DISPLAY_HEIGHT - 64, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT, 0);
 
 	/* Mentat. */
