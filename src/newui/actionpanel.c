@@ -86,10 +86,6 @@ ActionPanel_DrawHealthBar(int curr, int max)
 void
 ActionPanel_DrawStructureDescription(Structure *s)
 {
-	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
-	const int x0 = wi->xBase - 32;
-	const int y0 = wi->yBase - 42;
-
 	const StructureInfo *si = &g_table_structureInfo[s->o.type];
 	const Object *o = &s->o;
 	const ObjectInfo *oi = &si->o;
@@ -123,8 +119,8 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				steps = g_table_unitInfo[u->o.type].o.buildTime / 4;
 				percent = (steps - (s->countDown >> 8)) * 100 / steps;
 
-				Shape_Draw(g_table_unitInfo[u->o.type].o.spriteID, x0 + 260, y0 + 89, 0, 0);
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_D_DONE), x0 + 258, y0 + 116, 29, 0, 0x11, percent);
+				Shape_Draw(g_table_unitInfo[u->o.type].o.spriteID, 20, 49, 0, 0);
+				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_D_DONE), 18, 76, 29, 0, 0x11, percent);
 			}
 			break;
 
@@ -134,28 +130,28 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				uint16 powerAverage = (h->windtrapCount == 0) ? 0 : h->powerUsage / h->windtrapCount;
 				uint8 fg = (powerOutput >= powerAverage) ? 29 : 6;
 
-				Prim_Hline(x0 + 261, y0 + 95, x0 + 312, 16);
+				Prim_Hline(21, 55, 72, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
-					GUI_DrawText_Wrapper("Power Info", x0 + 286, y0 + 88, 29, 0, 0x111);
-					GUI_DrawText_Wrapper("Needed:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("Output:", x0 + 262, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x211, powerAverage);
-					GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 3 + 80, fg, 0, 0x211, powerOutput);
+					GUI_DrawText_Wrapper("Power Info", 46, 48, 29, 0, 0x111);
+					GUI_DrawText_Wrapper("Needed:", 22, g_fontCurrent->height * 2 + 40, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Output:", 22, g_fontCurrent->height * 3 + 40, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 2 + 40, 29, 0, 0x211, powerAverage);
+					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 3 + 40, fg, 0, 0x211, powerOutput);
 				}
 				else {
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), x0 + 258, y0 + 88, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", x0 + 302, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11, powerAverage);
-					GUI_DrawText_Wrapper("%d", x0 + 302, y0 + g_fontCurrent->height * 3 + 80, fg, 0, 0x11, powerOutput);
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), 18, 48, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 62, g_fontCurrent->height * 2 + 40, 29, 0, 0x11, powerAverage);
+					GUI_DrawText_Wrapper("%d", 62, g_fontCurrent->height * 3 + 40, fg, 0, 0x11, powerOutput);
 				}
 			}
 			break;
 
 		case STRUCTURE_STARPORT:
 			if (h->starportLinkedID != 0xFFFF) {
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATEARRIVAL_INTMINUS_D), x0 + 258, y0 + 88, 29, 0, 0x11, h->starportTimeLeft);
+				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATEARRIVAL_INTMINUS_D), 18, 48, 29, 0, 0x11, h->starportTimeLeft);
 			}
 			else {
-				/* GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATE_INORBIT_ANDAWAITINGORDER), x0 + 258, y0 + 88, 29, 0, 0x11); */
+				/* GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATE_INORBIT_ANDAWAITINGORDER), 18, 48, 29, 0, 0x11); */
 			}
 			break;
 
@@ -167,31 +163,31 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				creditsStored = h->credits * si->creditsStorage / h->creditsStorage;
 				if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
 
-				Prim_Hline(x0 + 261, y0 + 95, x0 + 312, 16);
+				Prim_Hline(21, 55, 72, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
-					GUI_DrawText_Wrapper("Spice", x0 + 286, y0 + 88, 29, 0, 0x111);
-					GUI_DrawText_Wrapper("Holds:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("Max:", x0 + 262, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x211, creditsStored);
-					GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x211, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
+					GUI_DrawText_Wrapper("Spice", 46, 48, 29, 0, 0x111);
+					GUI_DrawText_Wrapper("Holds:", 22, g_fontCurrent->height * 2 + 40, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Max:", 22, g_fontCurrent->height * 3 + 40, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 2 + 40, 29, 0, 0x211, creditsStored);
+					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 3 + 40, 29, 0, 0x211, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
 				}
 				else {
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), x0 + 258, y0 + 88, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), 18, 48, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
 				}
 			}
 			break;
 
 		case STRUCTURE_OUTPOST:
-			Prim_Hline(x0 + 261, y0 + 95, x0 + 312, 16);
+			Prim_Hline(21, 55, 72, 16);
 			if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
-				GUI_DrawText_Wrapper("Radar Scan", x0 + 286, y0 + 88, 29, 0, 0x111);
-				GUI_DrawText_Wrapper("Friend:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);
-				GUI_DrawText_Wrapper("Enemy:", x0 + 262, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x11);
-				GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x211, h->unitCountAllied);
-				GUI_DrawText_Wrapper("%d", x0 + 311, y0 + g_fontCurrent->height * 3 + 80, 29, 0, 0x211, h->unitCountEnemy);
+				GUI_DrawText_Wrapper("Radar Scan", 46, 48, 29, 0, 0x111);
+				GUI_DrawText_Wrapper("Friend:", 22, g_fontCurrent->height * 2 + 40, 29, 0, 0x11);
+				GUI_DrawText_Wrapper("Enemy:", 22, g_fontCurrent->height * 3 + 40, 29, 0, 0x11);
+				GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 2 + 40, 29, 0, 0x211, h->unitCountAllied);
+				GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 3 + 40, 29, 0, 0x211, h->unitCountEnemy);
 			}
 			else {
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), x0 + 258, y0 + 88, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
+				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), 18, 48, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
 			}
 			break;
 	}
@@ -200,24 +196,16 @@ ActionPanel_DrawStructureDescription(Structure *s)
 void
 ActionPanel_DrawActionDescription(uint16 stringID, int x, int y, uint8 fg)
 {
-	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
-	const int x0 = wi->xBase - 32;
-	const int y0 = wi->yBase - 42;
-
-	GUI_DrawText_Wrapper(String_Get_ByIndex(stringID), x0 + x, y0 + y, fg, 0, 0x11);
+	GUI_DrawText_Wrapper(String_Get_ByIndex(stringID), x, y, fg, 0, 0x11);
 }
 
 void
 ActionPanel_DrawMissileCountdown(uint8 fg, int count)
 {
-	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
-	const int x0 = wi->xBase - 32;
-	const int y0 = wi->yBase - 42;
-
 	if (count <= 0)
 		count = 0;
 
-	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_PICK_TARGETTMINUS_D), x0 + 259, y0 + 84, fg, 0, 0x11, count);
+	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_PICK_TARGETTMINUS_D), 19, 44, fg, 0, 0x11, count);
 }
 
 static int

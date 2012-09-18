@@ -739,22 +739,22 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 
 				case 4: /* Attack */
 					GUI_Widget_MakeVisible(widget30);
-					ActionPanel_DrawActionDescription(STR_SELECTTARGET, 259, 76, g_curWidgetFGColourBlink);
+					ActionPanel_DrawActionDescription(STR_SELECTTARGET, 19, 36, g_curWidgetFGColourBlink);
 					break;
 
 				case 5: /* Movement */
 					GUI_Widget_MakeVisible(widget30);
-					ActionPanel_DrawActionDescription(STR_SELECTDESTINATION, 259, 76, g_curWidgetFGColourBlink);
+					ActionPanel_DrawActionDescription(STR_SELECTDESTINATION, 19, 36, g_curWidgetFGColourBlink);
 					break;
 
 				case 6: /* Harvest */
 					GUI_Widget_MakeVisible(widget30);
-					ActionPanel_DrawActionDescription(STR_SELECTPLACE_TOHARVEST, 259, 76, g_curWidgetFGColourBlink);
+					ActionPanel_DrawActionDescription(STR_SELECTPLACE_TOHARVEST, 19, 36, g_curWidgetFGColourBlink);
 					break;
 
 				case 7: /* Placement */
 					GUI_Widget_MakeVisible(widget30);
-					ActionPanel_DrawActionDescription(STR_SELECTLOCATION_TOBUILD, 259, 84, g_curWidgetFGColourBlink);
+					ActionPanel_DrawActionDescription(STR_SELECTLOCATION_TOBUILD, 19, 44, g_curWidgetFGColourBlink);
 					break;
 
 				case 8: /* House Missile */
