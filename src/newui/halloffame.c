@@ -170,8 +170,8 @@ HallOfFame_DrawMeter(enum HouseType houseID, const HallOfFameData *fame, int met
 			Prim_FillRect_i(x, y, x + w - 1, y + h - 1, 209);
 		}
 
-		GUI_DrawLine(x + 1, y + h, x + w, y + h, 12);
-		GUI_DrawLine(x + w, y + 1, x + w, y + h, 12);
+		Prim_Hline(x + 1, y + h, x + w, 12);
+		Prim_Vline(x + w, y + 1, y + h, 12);
 	}
 
 	const bool done =

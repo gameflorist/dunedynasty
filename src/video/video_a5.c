@@ -486,20 +486,6 @@ VideoA5_HideCursor(void)
 /*--------------------------------------------------------------*/
 
 void
-VideoA5_DrawLine(int x1, int y1, int x2, int y2, uint8 c)
-{
-	if (y1 == y2) {
-		al_draw_line(x1, y1 + 0.5f, x2 + 0.99f, y2 + 0.5f, paltoRGB[c], 1.0f);
-	}
-	else if (x1 == x2) {
-		al_draw_line(x1 + 0.5f, y1, x2 + 0.5f, y2 + 0.99f, paltoRGB[c], 1.0f);
-	}
-	else {
-		al_draw_line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, paltoRGB[c], 1.0f);
-	}
-}
-
-void
 VideoA5_ShadeScreen(int alpha)
 {
 	const bool prev_transform = A5_SaveTransform();

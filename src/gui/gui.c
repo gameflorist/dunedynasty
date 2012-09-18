@@ -1289,10 +1289,10 @@ void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16
 
 	if (fill) Prim_FillRect_i(left, top, left + width, top + height, colourSchema[0]);
 
-	GUI_DrawLine(left, top + height, left + width, top + height, colourSchema[1]);
-	GUI_DrawLine(left + width, top, left + width, top + height, colourSchema[1]);
-	GUI_DrawLine(left, top, left + width, top, colourSchema[2]);
-	GUI_DrawLine(left, top, left, top + height, colourSchema[2]);
+	Prim_Hline(left, top + height, left + width, colourSchema[1]);
+	Prim_Vline(left + width, top, top + height, colourSchema[1]);
+	Prim_Hline(left, top, left + width, colourSchema[2]);
+	Prim_Vline(left, top, top + height, colourSchema[2]);
 
 	Prim_FillRect_i(left, top + height, left, top + height, colourSchema[3]);
 	Prim_FillRect_i(left + width, top, left + width, top, colourSchema[3]);

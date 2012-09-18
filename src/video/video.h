@@ -45,7 +45,6 @@ struct FadeInAux;
 #define Video_InitFadeInCPS     VideoA5_InitFadeInCPS
 #define Video_InitFadeInShape   VideoA5_InitFadeInShape
 
-#define GUI_DrawLine            VideoA5_DrawLine
 #define Video_ShadeScreen       VideoA5_ShadeScreen
 
 #define GUI_Mouse_Show()

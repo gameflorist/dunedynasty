@@ -371,8 +371,8 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		Prim_Rect_i(x1, y1, x2, y2, 0xFF);
 
 		if (g_selectionState == 0 && g_selectionType == SELECTIONTYPE_PLACE) {
-			GUI_DrawLine(x1, y1, x2, y2, 0xFF);
-			GUI_DrawLine(x2, y1, x1, y2, 0xFF);
+			Prim_Line(x1 + 0.33f, y1 + 0.33f, x2 + 0.66f, y2 + 0.66f, 0xFF, 0.75f);
+			Prim_Line(x2 + 0.66f, y1 + 0.33f, x1 + 0.33f, y2 + 0.66f, 0xFF, 0.75f);
 		}
 	}
 

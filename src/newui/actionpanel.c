@@ -134,7 +134,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				uint16 powerAverage = (h->windtrapCount == 0) ? 0 : h->powerUsage / h->windtrapCount;
 				uint8 fg = (powerOutput >= powerAverage) ? 29 : 6;
 
-				GUI_DrawLine(x0 + 261, y0 + 95, x0 + 312, y0 + 95, 16);
+				Prim_Hline(x0 + 261, y0 + 95, x0 + 312, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 					GUI_DrawText_Wrapper("Power Info", x0 + 286, y0 + 88, 29, 0, 0x111);
 					GUI_DrawText_Wrapper("Needed:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);
@@ -167,7 +167,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				creditsStored = h->credits * si->creditsStorage / h->creditsStorage;
 				if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
 
-				GUI_DrawLine(x0 + 261, y0 + 95, x0 + 312, y0 + 95, 16);
+				Prim_Hline(x0 + 261, y0 + 95, x0 + 312, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 					GUI_DrawText_Wrapper("Spice", x0 + 286, y0 + 88, 29, 0, 0x111);
 					GUI_DrawText_Wrapper("Holds:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);
@@ -182,7 +182,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 			break;
 
 		case STRUCTURE_OUTPOST:
-			GUI_DrawLine(x0 + 261, y0 + 95, x0 + 312, y0 + 95, 16);
+			Prim_Hline(x0 + 261, y0 + 95, x0 + 312, 16);
 			if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 				GUI_DrawText_Wrapper("Radar Scan", x0 + 286, y0 + 88, 29, 0, 0x111);
 				GUI_DrawText_Wrapper("Friend:", x0 + 262, y0 + g_fontCurrent->height * 2 + 80, 29, 0, 0x11);

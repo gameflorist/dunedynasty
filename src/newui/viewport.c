@@ -759,7 +759,7 @@ Viewport_DrawRallyPoint(void)
 		const int x2 = wi->offsetX + (TILE_SIZE * (Tile_GetPackedX(s->rallyPoint) - tx)) + TILE_SIZE/2;
 		const int y2 = wi->offsetY + (TILE_SIZE * (Tile_GetPackedY(s->rallyPoint) - ty)) + TILE_SIZE/2;
 
-		GUI_DrawLine(x1, y1, x2, y2, 14);
+		Prim_Line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, 14, 1.0f);
 		Shape_DrawTint(SHAPE_CURSOR_TARGET, x2, y2, 14, 0, 0x8000);
 	}
 }
@@ -781,10 +781,10 @@ Viewport_DrawSelectedUnit(int x, int y)
 		GUI_DrawLine(x1, y2 - 2, x1 + 2 + 1, y2 + 1, 0xFF);
 #else
 		/* 4 pixels long. */
-		GUI_DrawLine(x1, y1 + 3, x1 + 3 + 1, y1 - 1, 0xFF);
-		GUI_DrawLine(x2 - 3, y1, x2 + 1, y1 + 3 + 1, 0xFF);
-		GUI_DrawLine(x2 - 3, y2, x2 + 1, y2 - 3 - 1, 0xFF);
-		GUI_DrawLine(x1, y2 - 3, x1 + 3 + 1, y2 + 1, 0xFF);
+		Prim_Line(x1     + 0.5f, y1 + 3 + 0.5f, x1 + 3 + 1 + 0.5f, y1 - 1     + 0.5f, 0xFF, 1.0f);
+		Prim_Line(x2 - 3 + 0.5f, y1     + 0.5f, x2 + 1     + 0.5f, y1 + 3 + 1 + 0.5f, 0xFF, 1.0f);
+		Prim_Line(x2 - 3 + 0.5f, y2     + 0.5f, x2 + 1     + 0.5f, y2 - 3 - 1 + 0.5f, 0xFF, 1.0f);
+		Prim_Line(x1     + 0.5f, y2 - 3 + 0.5f, x1 + 3 + 1 + 0.5f, y2 + 1     + 0.5f, 0xFF, 1.0f);
 #endif
 	}
 	else {
