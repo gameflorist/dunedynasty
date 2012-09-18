@@ -47,7 +47,7 @@ static uint32 s_tickMapScroll;                              /*!< Stores last tim
 bool GUI_Widget_Viewport_Click(Widget *w)
 {
 	uint16 direction;
-	uint16 x, y;
+	int x, y;
 	uint16 packed;
 	bool click, drag;
 
@@ -112,11 +112,11 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 	}
 
 	if (click) {
-		x = g_mouseClickX;
-		y = g_mouseClickY;
+		x = ((float)g_mouseClickX - g_screenDiv[w->div].x) / g_screenDiv[w->div].scale;
+		y = ((float)g_mouseClickY - g_screenDiv[w->div].y) / g_screenDiv[w->div].scale;
 	} else {
-		x = g_mouseX;
-		y = g_mouseY;
+		x = ((float)g_mouseX - g_screenDiv[w->div].x) / g_screenDiv[w->div].scale;
+		y = ((float)g_mouseY - g_screenDiv[w->div].y) / g_screenDiv[w->div].scale;
 	}
 
 #if 0

@@ -123,17 +123,17 @@ MenuBar_DrawStatusBar(const char *line1, const char *line2, bool scrollInProgres
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
 
-void
+static bool
 MenuBar_DrawRadarAnimation(void)
 {
 	if (radar_animation_state == RADAR_ANIMATION_NONE)
-		return;
+		return false;
 
 	const int64_t curr_ticks = Timer_GetTicks();
 
 	if (curr_ticks - radar_animation_timer >= RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
 		radar_animation_state = RADAR_ANIMATION_NONE;
-		return;
+		return false;
 	}
 
 	const int x = g_widgetProperties[WINDOWID_MINIMAP].xBase;
@@ -146,6 +146,7 @@ MenuBar_DrawRadarAnimation(void)
 		frame = RADAR_ANIMATION_FRAME_COUNT - frame - 1;
 
 	Video_DrawWSAStatic(frame, x, y);
+	return true;
 }
 
 void
@@ -210,7 +211,9 @@ MenuBar_Draw(enum HouseType houseID)
 	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, 0, sidebar->height - 85);
 	Prim_FillRect_i(16, sidebar->height - 64, 80, sidebar->height, 0);
 
-	MenuBar_DrawRadarAnimation();
+	if (!MenuBar_DrawRadarAnimation()) {
+		GUI_Widget_Viewport_RedrawMap(0);
+	}
 
 	A5_UseTransform(prev_transform);
 }

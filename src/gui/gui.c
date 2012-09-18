@@ -1353,8 +1353,6 @@ void GUI_DrawInterfaceAndRadar(void)
 
 	MenuBar_Draw(g_playerHouseID);
 
-	GUI_Widget_Viewport_RedrawMap(g_screenActiveID);
-
 	GUI_DrawScreen(g_screenActiveID);
 
 	A5_UseTransform(SCREENDIV_SIDEBAR);
@@ -2396,7 +2394,6 @@ void GUI_DrawScreen(uint16 screenID)
 	GFX_Screen_SetActive(oldScreenID);
 
 	Map_SetSelectionObjectPosition(g_selectionRectanglePosition);
-	Map_UpdateMinimapPosition(g_viewportPosition, false);
 
 	GUI_Mouse_Show_InWidget();
 }
