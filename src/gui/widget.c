@@ -234,7 +234,6 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 	static Widget *l_widget_last         = NULL;
 	static uint16  l_widget_button_state = 0x0;
 
-	uint16 mouseX, mouseY;
 	uint16 buttonState;
 	uint16 returnValue;
 	enum Scancode key;
@@ -321,8 +320,8 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 
 		if (w->flags.s.invisible) continue;
 
-		mouseX = (g_mouseX - g_screenDiv[w->div].x) / g_screenDiv[w->div].scale;
-		mouseY = (g_mouseY - g_screenDiv[w->div].y) / g_screenDiv[w->div].scale;
+		int mouseX, mouseY;
+		Mouse_TransformToDiv(w->div, &mouseX, &mouseY);
 
 		/* Store the previous button state */
 		w->state.s.selectedLast = w->state.s.selected;

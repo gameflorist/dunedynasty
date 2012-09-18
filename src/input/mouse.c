@@ -1,6 +1,7 @@
 /* mouse.c */
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "mouse.h"
 
@@ -45,6 +46,16 @@ Mouse_EventHandler(bool apply_transform, int x, int y, int dz, enum Scancode sta
 	g_mouseClickY = y;
 
 	Input_EventHandler(state);
+}
+
+void
+Mouse_TransformToDiv(enum ScreenDivID div, int *mouseX, int *mouseY)
+{
+	if (mouseX != NULL)
+		*mouseX = (g_mouseX - g_screenDiv[div].x) / g_screenDiv[div].scale;
+
+	if (mouseY != NULL)
+		*mouseY = (g_mouseY - g_screenDiv[div].y) / g_screenDiv[div].scale;
 }
 
 bool
