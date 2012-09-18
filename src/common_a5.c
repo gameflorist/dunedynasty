@@ -14,14 +14,54 @@
 
 ALLEGRO_EVENT_QUEUE *g_a5_input_queue;
 
-static ALLEGRO_TRANSFORM s_transform[SCREENDIV_MAX];
+static ALLEGRO_BITMAP *s_transform[SCREENDIV_MAX];
 static enum ScreenDivID curr_transform;
 
 /*--------------------------------------------------------------*/
 
-void
-A5_InitTransform(void)
+static void
+A5_InitScreenDiv(ALLEGRO_BITMAP *parent, enum ScreenDivID divID,
+		float x1, float y1, float x2, float y2)
 {
+	const float w = x2 - x1;
+	const float h = y2 - y1;
+
+	ScreenDiv *div = &g_screenDiv[divID];
+	ALLEGRO_TRANSFORM trans;
+
+	div->x = x1;
+	div->y = y1;
+	div->width = w / div->scale;
+	div->height = h / div->scale;
+
+	al_destroy_bitmap(s_transform[divID]);
+	s_transform[divID] = al_create_sub_bitmap(parent, x1, y1, w, h);
+	al_set_target_bitmap(s_transform[divID]);
+
+	if (divID == SCREENDIV_MAIN) {
+		al_identity_transform(&trans);
+		al_use_transform(&trans);
+	}
+	else {
+		al_build_transform(&trans, 0, 0, div->scale, div->scale, 0.0f);
+		al_use_transform(&trans);
+	}
+}
+
+void
+A5_InitTransform(bool screen_size_changed)
+{
+	ALLEGRO_TRANSFORM trans;
+
+	/* Identity. */
+	if (screen_size_changed) {
+		s_transform[SCREENDIV_MAIN] = al_get_target_bitmap();
+		assert(!al_is_sub_bitmap(s_transform[SCREENDIV_MAIN]));
+
+		al_identity_transform(&trans);
+		al_use_transform(&trans);
+	}
+
 	const double preferred_aspect = (double)SCREEN_WIDTH / SCREEN_HEIGHT;
 	const double w = TRUE_DISPLAY_WIDTH;
 	const double h = TRUE_DISPLAY_HEIGHT;
@@ -46,8 +86,38 @@ A5_InitTransform(void)
 	g_mouse_transform_offx = offx;
 	g_mouse_transform_offy = offy;
 
-	al_identity_transform(&s_transform[SCREENDIV_MAIN]);
-	al_build_transform(&s_transform[SCREENDIV_MENU], offx, offy, scale, scale, 0.0f);
+	ALLEGRO_BITMAP *target = s_transform[SCREENDIV_MAIN];
+	assert(target != NULL);
+
+	/* Menu. */
+	{
+		ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+		div->scale = scale;
+
+		ALLEGRO_BITMAP *sub = al_create_sub_bitmap(target, 0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+		al_set_target_bitmap(sub);
+
+		al_destroy_bitmap(s_transform[SCREENDIV_MENU]);
+		s_transform[SCREENDIV_MENU] = sub;
+		al_build_transform(&trans, offx, offy, div->scale, div->scale, 0.0f);
+		al_use_transform(&trans);
+	}
+
+	ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
+	menubar->scale = 2.0f;
+	A5_InitScreenDiv(target, SCREENDIV_MENUBAR,
+			0.0f, 0.0f, TRUE_DISPLAY_WIDTH, menubar->scale * 40.0f);
+
+	ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
+	sidebar->scale = 1.0f;
+	A5_InitScreenDiv(target, SCREENDIV_SIDEBAR,
+			TRUE_DISPLAY_WIDTH - sidebar->scale * 80.0f, menubar->scale * menubar->height,
+			TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+
+	ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+	viewport->scale = 1.0f;
+	A5_InitScreenDiv(target, SCREENDIV_VIEWPORT,
+			0.0f, menubar->scale * menubar->height, sidebar->x, TRUE_DISPLAY_HEIGHT);
 
 	A5_UseTransform(curr_transform);
 }
@@ -80,7 +150,7 @@ A5_Init(void)
 		return false;
 
 	AudioA5_Init();
-	A5_InitTransform();
+	A5_InitTransform(true);
 
 	return true;
 }
@@ -88,6 +158,13 @@ A5_Init(void)
 void
 A5_Uninit(void)
 {
+	s_transform[SCREENDIV_MAIN] = NULL;
+
+	for (enum ScreenDivID div = SCREENDIV_MAIN + 1; div < SCREENDIV_MAX; div++) {
+		al_destroy_bitmap(s_transform[div]);
+		s_transform[div] = NULL;
+	}
+
 	AudioA5_Uninit();
 	TimerA5_Uninit();
 	VideoA5_Uninit();
@@ -100,7 +177,7 @@ A5_Uninit(void)
 void
 A5_UseTransform(enum ScreenDivID div)
 {
-	al_use_transform(&s_transform[div]);
+	al_set_target_bitmap(s_transform[div]);
 	curr_transform = div;
 }
 
