@@ -65,7 +65,7 @@ Prim_FillRect_i(int x1, int y1, int x2, int y2, uint8 c)
 }
 
 void
-Prim_FillRect_RGBA(int x1, int y1, int x2, int y2,
+Prim_FillRect_RGBA(float x1, float y1, float x2, float y2,
 		unsigned char r, unsigned char g, unsigned char b, unsigned char alpha)
 {
 	assert(x1 <= x2);
