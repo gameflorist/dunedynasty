@@ -35,11 +35,6 @@ struct FadeInAux;
 #define Video_DrawCPSRegion     VideoA5_DrawCPSRegion
 #define Video_DrawCPSSpecial    VideoA5_DrawCPSSpecial
 #define Video_DrawIcon          VideoA5_DrawIcon
-#define Video_DrawShape             VideoA5_DrawShape
-#define Video_DrawShapeScale        VideoA5_DrawShapeScale
-#define Video_DrawShapeGrey         VideoA5_DrawShapeGrey
-#define Video_DrawShapeGreyScale    VideoA5_DrawShapeGreyScale
-#define Video_DrawShapeTint         VideoA5_DrawShapeTint
 #define Video_DrawChar          VideoA5_DrawChar
 #define Video_DrawWSA           VideoA5_DrawWSA
 #define Video_DrawWSAStatic     VideoA5_DrawWSAStatic

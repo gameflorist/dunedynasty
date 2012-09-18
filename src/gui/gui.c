@@ -705,7 +705,7 @@ void GUI_DrawSprite(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint
 	}
 
 	/* XXX: Attempt to find house by remap colour. */
-	{
+	if (spriteID >= 0) {
 		va_list ap;
 
 		va_start(ap, flags);
@@ -727,20 +727,8 @@ void GUI_DrawSprite(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint
 		}
 
 		va_end(ap);
-	}
 
-	if (flags & 0x4000) {
-		x += g_widgetProperties[windowID].xBase*8;
-		y += g_widgetProperties[windowID].yBase;
-	}
-
-	if (flags & 0x8000) {
-		x -= Sprite_GetWidth(sprite) / 2;
-		y -= Sprite_GetHeight(sprite) / 2;
-	}
-
-	if (spriteID >= 0) {
-		Video_DrawShape(spriteID, houseID, x, y, flags & 0x03);
+		Shape_DrawRemap(spriteID, houseID, x, y, windowID, flags & 0xC003);
 	}
 }
 

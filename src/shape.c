@@ -7,6 +7,12 @@
 #include "sprites.h"
 #include "video/video.h"
 
+#define Video_DrawShape             VideoA5_DrawShape
+#define Video_DrawShapeScale        VideoA5_DrawShapeScale
+#define Video_DrawShapeGrey         VideoA5_DrawShapeGrey
+#define Video_DrawShapeGreyScale    VideoA5_DrawShapeGreyScale
+#define Video_DrawShapeTint         VideoA5_DrawShapeTint
+
 int
 Shape_Width(enum ShapeID shapeID)
 {
