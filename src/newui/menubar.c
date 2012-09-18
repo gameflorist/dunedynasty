@@ -70,6 +70,7 @@ MenuBar_ShowMentatAndOptions(void)
 void
 MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 {
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENUBAR];
 	const int digit_w = 10;
 
 	char char_old[7];
@@ -78,12 +79,12 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 	snprintf(char_old, sizeof(char_old), "%6d", credits_old);
 	snprintf(char_new, sizeof(char_new), "%6d", credits_new);
 
-	Video_SetClippingArea(TRUE_DISPLAY_WIDTH - digit_w * 6, 4, digit_w * 6, 9);
+	Video_SetClippingArea(0, div->scale * 4, TRUE_DISPLAY_WIDTH, div->scale * 9);
 
 	for (int i = 0; i < 6; i++) {
 		const enum ShapeID shape_old = SHAPE_CREDITS_NUMBER_0 + char_old[i] - '0';
 		const enum ShapeID shape_new = SHAPE_CREDITS_NUMBER_0 + char_new[i] - '0';
-		const int x = TRUE_DISPLAY_WIDTH - digit_w * (6 - i);
+		const int x = TRUE_DISPLAY_WIDTH / div->scale - digit_w * (6 - i);
 
 		if (char_old[i] != char_new[i]) {
 			if (char_old[i] != ' ')
@@ -104,12 +105,12 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 void
 MenuBar_DrawStatusBar(const char *line1, const char *line2, bool scrollInProgress, int offset)
 {
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENUBAR];
 	const int x = g_widgetProperties[WINDOWID_STATUSBAR].xBase;
 	const int y = g_widgetProperties[WINDOWID_STATUSBAR].yBase;
-	const int w = g_widgetProperties[WINDOWID_STATUSBAR].width;
 	const int h = g_widgetProperties[WINDOWID_STATUSBAR].height;
 
-	Video_SetClippingArea(x, y, w, h);
+	Video_SetClippingArea(0, div->scale * y, TRUE_DISPLAY_WIDTH, div->scale * h);
 
 	if (scrollInProgress) {
 		GUI_DrawText_Wrapper(line2, x, y - offset + 2, 12, 0, 0x012);
@@ -150,27 +151,28 @@ MenuBar_DrawRadarAnimation(void)
 void
 MenuBar_Draw(enum HouseType houseID)
 {
+	const ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
+	const ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
+	const enum ScreenDivID prev_transform = A5_SaveTransform();
+
 	Widget *w;
 
-	for (int y = TRUE_DISPLAY_HEIGHT - 85 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
-		Video_DrawCPSSpecial(CPS_SIDEBAR_MIDDLE, houseID, TRUE_DISPLAY_WIDTH - 80, y);
-	}
+	/* MenuBar. */
+	A5_UseTransform(SCREENDIV_MENUBAR);
 
-	for (int x = TRUE_DISPLAY_WIDTH - 136 - 320; x + 320 - 1 >= 184; x -= 320) {
+	for (int x = menubar->width - 136; x + 320 - 1 >= 184; x -= 320) {
 		Video_DrawCPSSpecial(CPS_MENUBAR_MIDDLE, houseID, x, 0);
 	}
 
-	for (int x = TRUE_DISPLAY_WIDTH - 8 - 425; x + 425 - 1 >= 8; x -= 425) {
+	for (int x = menubar->width - 8 - 425; x + 425 - 1 >= 8; x -= 425) {
 		Video_DrawCPSSpecial(CPS_STATUSBAR_MIDDLE, houseID, x, 17);
 	}
 
 	Video_DrawCPSSpecial(CPS_MENUBAR_LEFT, houseID, 0, 0);
-	Video_DrawCPSSpecial(CPS_MENUBAR_RIGHT, houseID, TRUE_DISPLAY_WIDTH - 136, 0);
+	Video_DrawCPSSpecial(CPS_MENUBAR_RIGHT, houseID, menubar->width - 136, 0);
 	Video_DrawCPSSpecial(CPS_STATUSBAR_LEFT, houseID, 0, 17);
-	Video_DrawCPSSpecial(CPS_STATUSBAR_RIGHT, houseID, TRUE_DISPLAY_WIDTH - 8, 17);
-	Video_DrawCPSSpecial(CPS_SIDEBAR_TOP, houseID, TRUE_DISPLAY_WIDTH - 80, 40);
-	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, TRUE_DISPLAY_WIDTH - 80, TRUE_DISPLAY_HEIGHT - 85);
-	Prim_FillRect_i(TRUE_DISPLAY_WIDTH - 64, TRUE_DISPLAY_HEIGHT - 64, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT, 0);
+	Video_DrawCPSSpecial(CPS_STATUSBAR_RIGHT, houseID, menubar->width - 8, 17);
+	Shape_DrawRemap(SHAPE_CREDITS_LABEL, houseID, menubar->width - 128, 0, 0, 0);
 
 	/* Mentat. */
 	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 1);
@@ -194,9 +196,23 @@ MenuBar_Draw(enum HouseType houseID)
 		GUI_Widget_Draw(w);
 	}
 
-	Shape_DrawRemap(SHAPE_CREDITS_LABEL, houseID, TRUE_DISPLAY_WIDTH - 128, 0, 0, 0);
+	GUI_DrawCredits(g_playerHouseID, (g_playerCredits == 0xFFFF) ? 2 : 1);
+	GUI_DisplayText(NULL, 0);
+
+	/* SideBar. */
+	A5_UseTransform(SCREENDIV_SIDEBAR);
+
+	for (int y = sidebar->height - 85 - 52; y + 52 - 1 >= 17; y -= 52) {
+		Video_DrawCPSSpecial(CPS_SIDEBAR_MIDDLE, houseID, 0, y);
+	}
+
+	Video_DrawCPSSpecial(CPS_SIDEBAR_TOP, houseID, 0, 0);
+	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, 0, sidebar->height - 85);
+	Prim_FillRect_i(16, sidebar->height - 64, 80, sidebar->height, 0);
 
 	MenuBar_DrawRadarAnimation();
+
+	A5_UseTransform(prev_transform);
 }
 
 void

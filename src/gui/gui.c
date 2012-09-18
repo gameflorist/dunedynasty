@@ -177,7 +177,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		displayLine3[0] = '\0';
 	}
 
-	if (str == NULL)
+	if (str == NULL && importance == 0)
 		MenuBar_DrawStatusBar(displayLine1, displayLine2, scrollInProgress, textOffset);
 
 	if (scrollInProgress) {
@@ -1385,12 +1385,6 @@ void GUI_DrawInterfaceAndRadar(void)
 
 		Unit_UpdateMap(1, u);
 	}
-
-	GUI_DrawCredits(g_playerHouseID, (g_playerCredits == 0xFFFF) ? 2 : 1);
-	/* XXX: what is this for? */
-	/* GUI_SetPaletteAnimated(g_palette1, 15); */
-
-	MenuBar_DrawRadarAnimation();
 
 	GFX_Screen_SetActive(oldScreenID);
 	Input_History_Clear();

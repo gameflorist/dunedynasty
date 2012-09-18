@@ -1084,8 +1084,6 @@ void GameLoop_Main(bool new_game)
 
 			InGame_Numpad_Move(key);
 
-			GUI_DrawCredits(g_playerHouseID, 0);
-
 			g_timerGame = Timer_GameTicks();
 
 			UnitAI_SquadLoop();
@@ -1096,8 +1094,6 @@ void GameLoop_Main(bool new_game)
 
 			GUI_DrawScreen(0);
 		}
-
-		GUI_DisplayText(NULL, 0);
 
 		if (g_var_38F8 && !g_debugScenario) {
 			GameLoop_LevelEnd();
