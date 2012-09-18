@@ -61,7 +61,6 @@ extern uint16 g_selectionPosition;
 extern uint16 g_selectionWidth;
 extern uint16 g_selectionHeight;
 extern int16  g_selectionState;
-extern bool g_var_81E6;
 
 extern uint16 g_cursorSpriteID;
 
