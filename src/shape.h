@@ -55,6 +55,17 @@ enum ShapeID {
 	SHAPE_INVALID = 0xFFFF
 };
 
+enum ShapeFlag {
+	SHAPE_HFLIP     = 0x0001,
+	SHAPE_VFLIP     = 0x0002,
+	SHAPE_REMAP     = 0x0100, /* Use Shape_DrawRemap instead. */
+	SHAPE_HIGHLIGHT = 0x0100,
+	SHAPE_BLUR      = 0x0200,
+	SHAPE_SHADOW    = 0x0300,
+	SHAPE_OFFSET    = 0x4000, /* Add window xBase, yBase. */
+	SHAPE_CENTRED   = 0x8000
+};
+
 extern int Shape_Width(enum ShapeID shapeID);
 extern int Shape_Height(enum ShapeID shapeID);
 

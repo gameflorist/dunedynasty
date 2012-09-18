@@ -252,7 +252,6 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	uint16 x;
 	uint16 y;
 	uint16 i;
-	uint16 curPos;
 	bool updateDisplay;
 	uint16 oldScreenID;
 	uint16 oldValue_07AE_0000;
@@ -400,102 +399,12 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		find.index   = 0xFFFF;
 		find.houseID = HOUSE_INVALID;
 
-		while (true) {
-			static const uint16 values_32E4[8][2] = {
-				{0, 0}, {1, 0}, {2, 0}, {1, 2},
-				{0, 2}, {1, 3}, {2, 1}, {1, 1}
-			};
-
-			Unit *u;
-			UnitInfo *ui;
-			uint8 orientation;
-			uint8 *sprite;
-			uint16 index;
+		Unit *u = Unit_Find(&find);
+		while (u != NULL) {
+			if (u->o.index <= 15)
+				Viewport_DrawAirUnit(u);
 
 			u = Unit_Find(&find);
-
-			if (u == NULL) break;
-
-			if (u->o.index > 15) continue;
-
-			curPos = Tile_PackTile(u->o.position);
-
-			/* if ((!u->o.flags.s.isDirty || u->o.flags.s.isNotOnMap) && !forceRedraw && !BitArray_Test(g_dirtyViewport, curPos)) continue; */
-			u->o.flags.s.isDirty = false;
-
-			if (!g_map[curPos].isUnveiled && !g_debugScenario) continue;
-
-			ui = &g_table_unitInfo[u->o.type];
-
-			if (!Map_IsPositionInViewport(u->o.position, &x, &y)) continue;
-
-			if (enhancement_smooth_unit_animation != SMOOTH_UNIT_ANIMATION_DISABLE)
-				Viewport_InterpolateMovement(u, &x, &y);
-
-			index = ui->groundSpriteID;
-			orientation = u->orientation[0].current;
-			s_spriteFlags = 0xC000;
-
-			switch (ui->displayMode) {
-				case 0:
-					if (u->o.flags.s.bulletIsBig) index++;
-					break;
-
-				case 1:
-					orientation = Orientation_Orientation256ToOrientation8(orientation);
-
-					index += values_32E4[orientation][0];
-					s_spriteFlags |= values_32E4[orientation][1];
-					break;
-
-				case 2: {
-					static const uint16 values_3304[16][2] = {
-						{0, 0}, {1, 0}, {2, 0}, {3, 0},
-						{4, 0}, {3, 2}, {2, 2}, {1, 2},
-						{0, 2}, {3, 3}, {2, 3}, {3, 3},
-						{4, 1}, {3, 1}, {2, 1}, {1, 1}
-					};
-
-					orientation = Orientation_Orientation256ToOrientation16(orientation);
-
-					index += values_3304[orientation][0];
-					s_spriteFlags |= values_3304[orientation][1];
-				} break;
-
-				case 5: {
-					static const uint16 values_33AE[4] = {2, 1, 0, 1};
-
-					orientation = Orientation_Orientation256ToOrientation8(orientation);
-
-					index += (values_32E4[orientation][0] * 3) + values_33AE[u->spriteOffset & 3];
-					s_spriteFlags |= values_32E4[orientation][1];
-				} break;
-
-				default:
-					s_spriteFlags = 0x0;
-					break;
-			}
-
-			if (ui->flags.hasAnimationSet && u->o.flags.s.animationFlip) index += 5;
-			if (u->o.type == UNIT_CARRYALL && u->o.flags.s.inTransport) index += 3;
-
-			sprite = GUI_Widget_Viewport_Draw_GetSprite(index, Unit_GetHouseID(u));
-
-			if (ui->o.flags.hasShadow) {
-#if 0
-				GUI_DrawSprite(g_screenActiveID, sprite, x + 1, y + 3, 2, (s_spriteFlags & 0xDFFF) | 0x300, g_paletteMapping1, 1);
-#else
-				Shape_Draw(index, x + 1, y + 3, 2, (s_spriteFlags & 0xDFFF) | 0x300);
-#endif
-			}
-
-			if (ui->o.flags.blurTile) s_spriteFlags |= 0x200;
-
-#if 0
-			GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0x2000, s_paletteHouse);
-#else
-			Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, 2, s_spriteFlags | 0x2000);
-#endif
 		}
 	}
 

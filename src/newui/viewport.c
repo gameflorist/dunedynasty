@@ -40,6 +40,7 @@ enum SelectionMode {
 };
 
 /* Sprite index offset and flag pairs for the 8 orientations. */
+/* For sprites drawn at {0, 45, 90, 135, 180} degrees (e.g. tanks). */
 static const uint16 values_32A4[8][2] = {
 	{0, 0}, {1, 0}, {2, 0}, {3, 0},
 	{4, 0}, {3, 1}, {2, 1}, {1, 1}
@@ -51,6 +52,10 @@ static int selection_box_x1;
 static int selection_box_x2;
 static int selection_box_y1;
 static int selection_box_y2;
+
+static void Viewport_InterpolateMovement(const Unit *u, uint16 *x, uint16 *y);
+
+/*--------------------------------------------------------------*/
 
 static bool
 Map_InRange(int xy)
@@ -952,6 +957,90 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 }
 
 void
+Viewport_DrawAirUnit(const Unit *u)
+{
+	/* For sprites drawn at {0, 45, 90} degrees (e.g. carryalls). */
+	const uint16 values_32E4[8][2] = {
+		{0, 0}, {1, 0}, {2, 0}, {1, 2},
+		{0, 2}, {1, 3}, {2, 1}, {1, 1}
+	};
+
+	/* For sprites drawn at {0, 30, 45, 60, 90} degrees. */
+	const uint16 values_3304[16][2] = {
+		{0, 0}, {1, 0}, {2, 0}, {3, 0},
+		{4, 0}, {3, 2}, {2, 2}, {1, 2},
+		{0, 2}, {3, 3}, {2, 3}, {3, 3},
+		{4, 1}, {3, 1}, {2, 1}, {1, 1}
+	};
+
+	const uint16 values_33AE[4] = {2, 1, 0, 1}; /* ornithopter */
+
+	uint16 curPos = Tile_PackTile(u->o.position);
+
+	if (!g_map[curPos].isUnveiled && !g_debugScenario)
+		return;
+
+	uint16 x, y;
+	if (!Map_IsPositionInViewport(u->o.position, &x, &y))
+		return;
+
+	if (enhancement_smooth_unit_animation != SMOOTH_UNIT_ANIMATION_DISABLE)
+		Viewport_InterpolateMovement(u, &x, &y);
+
+	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+
+	uint16 s_spriteFlags = 0xC000;
+	uint16 index = ui->groundSpriteID;
+	uint8 orientation = u->orientation[0].current;
+
+	switch (ui->displayMode) {
+		case 0:
+			if (u->o.flags.s.bulletIsBig) index++;
+			break;
+
+		case 1: /* carryall, frigate */
+			orientation = Orientation_Orientation256ToOrientation8(orientation);
+
+			index += values_32E4[orientation][0];
+			s_spriteFlags |= values_32E4[orientation][1];
+			break;
+
+		case 2: /* rockets */
+			orientation = Orientation_Orientation256ToOrientation16(orientation);
+
+			index += values_3304[orientation][0];
+			s_spriteFlags |= values_3304[orientation][1];
+			break;
+
+		case 5: /* ornithopter */
+			orientation = Orientation_Orientation256ToOrientation8(orientation);
+
+			index += (values_32E4[orientation][0] * 3) + values_33AE[u->spriteOffset & 3];
+			s_spriteFlags |= values_32E4[orientation][1];
+			break;
+
+		default:
+			s_spriteFlags = 0x0;
+			break;
+	}
+
+	if (ui->flags.hasAnimationSet && u->o.flags.s.animationFlip)
+		index += 5;
+
+	if (u->o.type == UNIT_CARRYALL && u->o.flags.s.inTransport)
+		index += 3;
+
+	if (ui->o.flags.hasShadow) {
+		Shape_Draw(index, x + 1, y + 3, WINDOWID_VIEWPORT, (s_spriteFlags & 0xDFFF) | 0x300);
+	}
+
+	if (ui->o.flags.blurTile)
+		s_spriteFlags |= 0x200;
+
+	Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, WINDOWID_VIEWPORT, s_spriteFlags | 0x2000);
+}
+
+void
 Viewport_DrawSelectionBox(void)
 {
 	if (!selection_box_active)
@@ -1068,7 +1157,7 @@ Viewport_RenderBrush(int x, int y)
 	Viewport_DrawInterface(g_playerHouseID, x, y);
 }
 
-void
+static void
 Viewport_InterpolateMovement(const Unit *u, uint16 *x, uint16 *y)
 {
 	const int frame = clamp(0, (3 + g_timerGame - g_tickUnitUnknown1), 2);
