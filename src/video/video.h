@@ -32,9 +32,10 @@ struct FadeInAux;
 #define Video_ShowCursor        VideoA5_ShowCursor
 #define Video_HideCursor        VideoA5_HideCursor
 
-#define Video_DrawCPS           VideoA5_DrawCPS
-#define Video_DrawCPSRegion     VideoA5_DrawCPSRegion
-#define Video_DrawCPSSpecial    VideoA5_DrawCPSSpecial
+#define Video_DrawCPS                VideoA5_DrawCPS
+#define Video_DrawCPSRegion          VideoA5_DrawCPSRegion
+#define Video_DrawCPSSpecial         VideoA5_DrawCPSSpecial
+#define Video_DrawCPSSpecialScale    VideoA5_DrawCPSSpecialScale
 #define Video_DrawIcon          VideoA5_DrawIcon
 #define Video_DrawChar          VideoA5_DrawChar
 #define Video_DrawWSA           VideoA5_DrawWSA

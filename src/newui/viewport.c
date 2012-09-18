@@ -1109,19 +1109,41 @@ Viewport_DrawSelectionBox(void)
 static void
 Viewport_DrawInterface(enum HouseType houseID, int blurx, int blury)
 {
-	const int x = (TRUE_DISPLAY_WIDTH - 80) - blurx;
+	const ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
+	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+
+	const int x = g_screenDiv[SCREENDIV_VIEWPORT].width - blurx;
 
 	if (x >= 3 * TILE_SIZE)
 		return;
 
-	blury += g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].offsetY;
-	for (int y = TRUE_DISPLAY_HEIGHT - 85 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
-		if ((y - blury < 3 * TILE_SIZE) && (y - blury + 52 >= 0))
-			Video_DrawCPSSpecial(CPS_SIDEBAR_MIDDLE, houseID, x, y - blury);
+	/* Scaling factor between sidebar -> viewport->scale. */
+	float scale = sidebar->scale / viewport->scale;
+	float screen_blury = viewport->y + viewport->scale * blury;
+
+	for (int y = sidebar->height - 85 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
+		/* Translate y in sidebar's coordinates -> screen -> viewport coordinates. */
+		float screen_y = sidebar->y + sidebar->scale * y;
+		float desty = (screen_y - screen_blury) / viewport->scale;
+
+		Video_DrawCPSSpecialScale(CPS_SIDEBAR_MIDDLE, houseID, x, desty, scale);
 	}
 
-	Video_DrawCPSSpecial(CPS_SIDEBAR_TOP, houseID, x, 40 - blury);
-	Video_DrawCPSSpecial(CPS_SIDEBAR_BOTTOM, houseID, x, TRUE_DISPLAY_HEIGHT - 85 - blury);
+	{
+		int y = 0;
+		float screen_y = sidebar->y + sidebar->scale * y;
+		float desty = (screen_y - screen_blury) / viewport->scale;
+
+		Video_DrawCPSSpecialScale(CPS_SIDEBAR_TOP, houseID, x, desty, scale);
+	}
+
+	{
+		int y = sidebar->height - 85;
+		float screen_y = sidebar->y + sidebar->scale * y;
+		float desty = (screen_y - screen_blury) / viewport->scale;
+
+		Video_DrawCPSSpecialScale(CPS_SIDEBAR_BOTTOM, houseID, x, desty, scale);
+	}
 }
 
 /* Viewport_RenderBrush:

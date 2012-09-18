@@ -815,6 +815,30 @@ VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y)
 	al_draw_bitmap_region(cps_special_texture, sx, sy, coord->w, coord->h, x, y, 0);
 }
 
+void
+VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int y, float scale)
+{
+	/* This is only used to draw interface when rendering the blur brush. */
+	assert(CPS_SIDEBAR_TOP <= cpsID && cpsID <= CPS_SIDEBAR_BOTTOM);
+	assert(houseID < HOUSE_MAX);
+
+	const struct CPSSpecialCoord *coord = &cps_special_coord[cpsID];
+	const ALLEGRO_COLOR tint = al_map_rgb(0xFF, 0xFF, 0xFF);
+	int sx = coord->tx + 17 * houseID;
+	int sy = coord->ty;
+
+	if (cpsID == CPS_SIDEBAR_BOTTOM) {
+		sy += 23 * houseID;
+	}
+	else {
+		sy += 4 * houseID;
+	}
+
+	al_draw_tinted_scaled_rotated_bitmap_region(cps_special_texture,
+			sx, sy, coord->w, coord->h, tint, 0.0f, 0.0f,
+			x, y, scale, scale, 0.0f, 0);
+}
+
 FadeInAux *
 VideoA5_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fade_in)
 {
