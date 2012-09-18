@@ -1066,7 +1066,7 @@ void GameLoop_Main(bool new_game)
 			key = 0;
 		}
 
-		GUI_DrawInterfaceAndRadar(0);
+		GUI_DrawInterfaceAndRadar();
 
 		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE) {
 			if (Unit_AnySelected()) {
@@ -1080,8 +1080,6 @@ void GameLoop_Main(bool new_game)
 					g_selectionPosition = Tile_PackTile(Tile_Center(u->o.position));
 				}
 			}
-
-			GUI_Widget_ActionPanel_Draw(false);
 
 			InGame_Numpad_Move(key);
 

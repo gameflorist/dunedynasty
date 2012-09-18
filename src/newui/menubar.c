@@ -213,7 +213,7 @@ MenuBar_StartRadarAnimation(bool activate)
 			const int x = g_widgetProperties[WINDOWID_MINIMAP].xBase;
 			const int y = g_widgetProperties[WINDOWID_MINIMAP].yBase;
 
-			GUI_DrawInterfaceAndRadar(0);
+			GUI_DrawInterfaceAndRadar();
 			Video_DrawWSAStatic(activate ? RADAR_ANIMATION_FRAME_COUNT - frame - 1 : frame, x, y);
 			Video_Tick();
 			Timer_Sleep(RADAR_ANIMATION_DELAY);
@@ -536,7 +536,7 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 	const int lines = GUI_SplitText(textBuffer, (w->width - ((shapeID == SHAPE_INVALID) ? 2*8 : 7*8)) - 6, '\r');
 	w->height = g_fontCurrent->height * max(lines, 3) + 18;
 
-	GUI_DrawInterfaceAndRadar(0);
+	GUI_DrawInterfaceAndRadar();
 	Video_ShadeScreen(128);
 
 	A5_UseMenuTransform();

@@ -111,10 +111,6 @@ void GameLoop_Structure(void)
 		if (tickPalace && s->o.type == STRUCTURE_PALACE) {
 			if (s->countDown != 0) {
 				s->countDown--;
-
-				if (s->o.houseID == g_playerHouseID) {
-					GUI_Widget_ActionPanel_Draw(true);
-				}
 			}
 
 			/* Check if we have to fire the weapon for the AI immediately */
@@ -1036,10 +1032,6 @@ void Structure_ActivateSpecial(Structure *s)
 		} break;
 
 		default: break;
-	}
-
-	if (s->o.houseID == g_playerHouseID) {
-		GUI_Widget_ActionPanel_Draw(true);
 	}
 }
 

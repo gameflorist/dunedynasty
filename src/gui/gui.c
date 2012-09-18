@@ -1340,10 +1340,11 @@ extern void GUI_DrawProgressbar(uint16 current, uint16 max);
 
 /**
  * Draw the interface (borders etc etc) and radar on the screen.
- * @param screenID The screen to draw the radar on.
+ * @param screenID The screen to draw the radar on.  Always 0.
  */
-void GUI_DrawInterfaceAndRadar(uint16 screenID)
+void GUI_DrawInterfaceAndRadar(void)
 {
+	const uint16 screenID = 0;
 	PoolFindStruct find;
 	uint16 oldScreenID;
 
@@ -1561,8 +1562,6 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 		if (g_table_selectionType[oldSelectionType].variable_04 && g_table_selectionType[selectionType].variable_06) {
 			g_viewport_forceRedraw = true;
 			g_var_3A14 = true;
-
-			GUI_DrawInterfaceAndRadar(0);
 		}
 
 		Widget_SetCurrentWidget(g_table_selectionType[selectionType].defaultWidget);
@@ -1605,13 +1604,11 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 
 			case SELECTIONTYPE_TARGET:
 				g_structureActivePosition = g_selectionPosition;
-				GUI_Widget_ActionPanel_Draw(true);
 				Timer_SetTimer(TIMER_GAME, true);
 				break;
 
 			case SELECTIONTYPE_PLACE:
 				Unit_UnselectAll();
-				GUI_Widget_ActionPanel_Draw(true);
 
 				Map_SetSelectionSize(g_table_structureInfo[g_structureActiveType].layout);
 
@@ -1619,15 +1616,11 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 				break;
 
 			case SELECTIONTYPE_UNIT:
-				GUI_Widget_ActionPanel_Draw(true);
-
 				Timer_SetTimer(TIMER_GAME, true);
 				break;
 
 			case SELECTIONTYPE_STRUCTURE:
 				g_factoryWindowTotal = -1;
-				GUI_Widget_ActionPanel_Draw(true);
-
 				Timer_SetTimer(TIMER_GAME, true);
 				break;
 

@@ -81,7 +81,7 @@ extern void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top);
 extern void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colors, uint8 reference, uint8 intensity);
 extern void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill);
 extern uint16 GUI_DisplayHint(uint16 stringID, uint16 spriteID);
-extern void GUI_DrawInterfaceAndRadar(uint16 unknown);
+extern void GUI_DrawInterfaceAndRadar(void);
 extern void GUI_DrawCredits(uint8 houseID, uint16 mode);
 extern void GUI_ChangeSelectionType(uint16 selectionType);
 extern void GUI_InitColors(const uint8 *colors, uint8 first, uint8 last);
