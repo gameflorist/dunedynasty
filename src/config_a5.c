@@ -24,6 +24,7 @@ typedef struct GameOption {
 	enum OptionType {
 		CONFIG_BOOL,
 		CONFIG_FLOAT,
+		CONFIG_FLOAT_1_3,
 		CONFIG_INT,
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_10,
@@ -59,6 +60,9 @@ static const GameOption s_game_option[] = {
 	{ "game",   "screen_width",     CONFIG_INT,     .d._int = &TRUE_DISPLAY_WIDTH },
 	{ "game",   "screen_height",    CONFIG_INT,     .d._int = &TRUE_DISPLAY_HEIGHT },
 	{ "game",   "window_mode",      CONFIG_WINDOW,  .d._window = &g_gameConfig.windowMode },
+	{ "game",   "menubar_scale",    CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scale },
+	{ "game",   "sidebar_scale",    CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scale },
+	{ "game",   "viewport_scale",   CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scale },
 	{ "game",   "language",         CONFIG_LANGUAGE,.d._language = &g_gameConfig.language },
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
@@ -271,6 +275,10 @@ GameOptions_Load(void)
 				Config_GetFloat(str, 0.0f, 1.0f, opt->d._float);
 				break;
 
+			case CONFIG_FLOAT_1_3:
+				Config_GetFloat(str, 1.0f, 3.0f, opt->d._float);
+				break;
+
 			case CONFIG_INT:
 				Config_GetInt(str, 0, INT_MAX, opt->d._int);
 				break;
@@ -361,6 +369,7 @@ GameOptions_Save(void)
 				break;
 
 			case CONFIG_FLOAT:
+			case CONFIG_FLOAT_1_3:
 				Config_SetFloat(s_configFile, opt->section, opt->key, *(opt->d._float));
 				break;
 

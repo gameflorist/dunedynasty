@@ -104,18 +104,14 @@ A5_InitTransform(bool screen_size_changed)
 	}
 
 	ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
-	menubar->scale = 2.0f;
 	A5_InitScreenDiv(target, SCREENDIV_MENUBAR,
 			0.0f, 0.0f, TRUE_DISPLAY_WIDTH, menubar->scale * 40.0f);
 
 	ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
-	sidebar->scale = 2.0f;
 	A5_InitScreenDiv(target, SCREENDIV_SIDEBAR,
 			TRUE_DISPLAY_WIDTH - sidebar->scale * 80.0f, menubar->scale * menubar->height,
 			TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
-	ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
-	viewport->scale = 2.0f;
 	A5_InitScreenDiv(target, SCREENDIV_VIEWPORT,
 			0.0f, menubar->scale * menubar->height, sidebar->x, TRUE_DISPLAY_HEIGHT);
 
@@ -127,6 +123,27 @@ A5_InitOptions(void)
 {
 	if (al_init() != true)
 		return false;
+
+	ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
+	ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
+	ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+
+	/* Default viewport scales. */
+	if (TRUE_DISPLAY_WIDTH <= 320) {
+		menubar->scale = 1.0f;
+		sidebar->scale = 1.0f;
+		viewport->scale = 1.0f;
+	}
+	else if (TRUE_DISPLAY_WIDTH <= 640) {
+		menubar->scale = 1.0f;
+		sidebar->scale = 1.0f;
+		viewport->scale = 2.0f;
+	}
+	else {
+		menubar->scale = 2.0f;
+		sidebar->scale = 2.0f;
+		viewport->scale = 2.0f;
+	}
 
 	GameOptions_Load();
 
