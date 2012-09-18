@@ -34,7 +34,7 @@ ScreenDiv g_screenDiv[SCREENDIV_MAX] = {
 	{ 1.0f,   0,   0, 320, 200 }, /* SCREENDIV_MENU */
 	{ 1.0f,   0,   0, 320,  40 }, /* SCREENDIV_MENUBAR */
 	{ 1.0f, 240,  40,  80, 160 }, /* SCREENDIV_SIDEBAR */
-	{ 1.0f,   0,   0, 240, 160 }, /* SCREENDIV_VIEWPORT */
+	{ 1.0f,   0,  40, 240, 160 }, /* SCREENDIV_VIEWPORT */
 };
 
 /**

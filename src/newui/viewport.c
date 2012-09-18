@@ -341,10 +341,13 @@ Viewport_Place(void)
 bool
 Viewport_Click(Widget *w)
 {
+	int mouseX, mouseY;
+	Mouse_TransformToDiv(SCREENDIV_VIEWPORT, &mouseX, &mouseY);
+
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
-	const int tilex = Map_Clamp(x0 + (g_mouseX - w->offsetX) / TILE_SIZE);
-	const int tiley = Map_Clamp(y0 + (g_mouseY - w->offsetY) / TILE_SIZE);
+	const int tilex = Map_Clamp(x0 + mouseX / TILE_SIZE);
+	const int tiley = Map_Clamp(y0 + mouseY / TILE_SIZE);
 	const uint16 packed = Tile_PackXY(tilex, tiley);
 
 	if ((w->state.s.buttonState & 0x04) != 0) {
@@ -352,8 +355,8 @@ Viewport_Click(Widget *w)
 			return true;
 
 		selection_box_active = false;
-		selection_box_x2 = Viewport_ClampSelectionBoxX(g_mouseX);
-		selection_box_y2 = Viewport_ClampSelectionBoxY(g_mouseY);
+		selection_box_x2 = Viewport_ClampSelectionBoxX(mouseX);
+		selection_box_y2 = Viewport_ClampSelectionBoxY(mouseY);
 
 		if (selection_box_x1 > selection_box_x2) {
 			const int swap = selection_box_x1;
@@ -402,8 +405,8 @@ Viewport_Click(Widget *w)
 		}
 		else {
 			selection_box_active = true;
-			selection_box_x1 = g_mouseX;
-			selection_box_y1 = g_mouseY;
+			selection_box_x1 = mouseX;
+			selection_box_y1 = mouseY;
 
 			if ((Input_Test(SCANCODE_LSHIFT) == false) && (Input_Test(SCANCODE_RSHIFT) == false)) {
 				Map_SetSelection(0xFFFF);
@@ -709,10 +712,10 @@ void
 Viewport_DrawTiles(void)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-	const int viewportX1 = wi->offsetX;
-	const int viewportY1 = wi->offsetY;
-	const int viewportX2 = wi->offsetX + wi->width - 1;
-	const int viewportY2 = wi->offsetY + wi->height - 1;
+	const int viewportX1 = 0;
+	const int viewportY1 = 0;
+	const int viewportX2 = wi->width - 1;
+	const int viewportY2 = wi->height - 1;
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
 
@@ -729,10 +732,10 @@ Viewport_DrawTileFog(void)
 		return;
 
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-	const int viewportX1 = wi->offsetX;
-	const int viewportY1 = wi->offsetY;
-	const int viewportX2 = wi->offsetX + wi->width - 1;
-	const int viewportY2 = wi->offsetY + wi->height - 1;
+	const int viewportX1 = 0;
+	const int viewportY1 = 0;
+	const int viewportX2 = wi->width - 1;
+	const int viewportY2 = wi->height - 1;
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
 
@@ -1090,10 +1093,13 @@ Viewport_DrawSelectionBox(void)
 	if (!selection_box_active)
 		return;
 
+	int mouseX, mouseY;
+	Mouse_TransformToDiv(SCREENDIV_VIEWPORT, &mouseX, &mouseY);
+
 	int x1 = selection_box_x1;
 	int y1 = selection_box_y1;
-	int x2 = Viewport_ClampSelectionBoxX(g_mouseX);
-	int y2 = Viewport_ClampSelectionBoxY(g_mouseY);
+	int x2 = Viewport_ClampSelectionBoxX(mouseX);
+	int y2 = Viewport_ClampSelectionBoxY(mouseY);
 
 	/* Make x1 <= x2, y1 <= y2 so that rectangles are not rounded off. */
 	if (selection_box_x1 > x2) {

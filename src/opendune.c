@@ -943,7 +943,7 @@ GameLoop_TweakWidgetDimensions(void)
 
 	g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
 
-	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].offsetY = viewport->y;
+	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].offsetY = 0;
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width = viewport->width;
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].height = viewport->height;
 
