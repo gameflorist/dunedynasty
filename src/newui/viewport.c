@@ -778,22 +778,13 @@ Viewport_DrawSelectedUnit(int x, int y)
 	if (enhancement_new_selection_cursor) {
 		const int x1 = x - TILE_SIZE/2 + 1;
 		const int y1 = y - TILE_SIZE/2 + 1;
-		const int x2 = x1 + TILE_SIZE - 3;
-		const int y2 = y1 + TILE_SIZE - 3;
+		const int x2 = x1 + TILE_SIZE - 2;
+		const int y2 = y1 + TILE_SIZE - 2;
 
-#if 0
-		/* 3 pixels long. */
-		GUI_DrawLine(x1, y1 + 2, x1 + 2 + 1, y1 - 1, 0xFF);
-		GUI_DrawLine(x2 - 2, y1, x2 + 1, y1 + 2 + 1, 0xFF);
-		GUI_DrawLine(x2 - 2, y2, x2 + 1, y2 - 2 - 1, 0xFF);
-		GUI_DrawLine(x1, y2 - 2, x1 + 2 + 1, y2 + 1, 0xFF);
-#else
-		/* 4 pixels long. */
-		Prim_Line(x1     + 0.5f, y1 + 3 + 0.5f, x1 + 3 + 1 + 0.5f, y1 - 1     + 0.5f, 0xFF, 1.0f);
-		Prim_Line(x2 - 3 + 0.5f, y1     + 0.5f, x2 + 1     + 0.5f, y1 + 3 + 1 + 0.5f, 0xFF, 1.0f);
-		Prim_Line(x2 - 3 + 0.5f, y2     + 0.5f, x2 + 1     + 0.5f, y2 - 3 - 1 + 0.5f, 0xFF, 1.0f);
-		Prim_Line(x1     + 0.5f, y2 - 3 + 0.5f, x1 + 3 + 1 + 0.5f, y2 + 1     + 0.5f, 0xFF, 1.0f);
-#endif
+		Prim_Line(x1 + 0.33f, y1 + 3.66f, x1 + 3.66f, y1 + 0.33f, 0xFF, 0.75f);
+		Prim_Line(x2 - 3.66f, y1 + 0.33f, x2 - 0.33f, y1 + 3.66f, 0xFF, 0.75f);
+		Prim_Line(x1 + 0.33f, y2 - 3.66f, x1 + 3.66f, y2 - 0.33f, 0xFF, 0.75f);
+		Prim_Line(x2 - 3.66f, y2 - 0.33f, x2 - 0.33f, y2 - 3.66f, 0xFF, 0.75f);
 	}
 	else {
 		Shape_DrawTint(SHAPE_SELECTED_UNIT, x, y, 0xFF, 0, 0x8000);
