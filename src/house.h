@@ -85,7 +85,7 @@ typedef struct HouseInfo {
 	uint16 toughness;                                       /*!< How though the House is. Gives probability of deviation and chance of retreating. */
 	uint16 degradingChance;                                 /*!< On Unit create, this is the chance a Unit will be set to 'degrading'. */
 	uint16 degradingAmount;                                 /*!< Amount of damage dealt to degrading Structures. */
-	uint16 minimapColor;                                    /*!< The color used on the minimap. */
+	uint8  minimapColor;                                    /*!< The color used on the minimap. */
 	uint16 specialCountDown;                                /*!< Time between activation of Special Weapon. */
 	uint16 starportDeliveryTime;                            /*!< Time it takes for a starport delivery. */
 	uint16 prefixChar;                                      /*!< Char used as prefix for some filenames. */

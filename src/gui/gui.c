@@ -76,7 +76,7 @@ static const RankScore _rankScores[] = {
 static uint8 g_colours[16];
 uint8 g_palette_998A[3 * 256];
 uint8 g_remap[256];
-static uint16 s_temporaryColourBorderSchema[5][4];          /*!< Temporary storage for the #s_colourBorderSchema. */
+static uint8 s_temporaryColourBorderSchema[5][4];           /*!< Temporary storage for the #s_colourBorderSchema. */
 uint16 g_productionStringID;                                /*!< Descriptive text of activity of the active structure. */
 static uint32 s_ticksPlayed;
 
@@ -97,7 +97,7 @@ int16  g_selectionState = 1;                                /*!< State of the se
 
 
 /*!< Colours used for the border of widgets. */
-static uint16 s_colourBorderSchema[5][4] = {
+static uint8 s_colourBorderSchema[5][4] = {
 	{ 26,  29,  29,  29},
 	{ 20,  26,  16,  20},
 	{ 20,  16,  26,  20},
@@ -106,7 +106,7 @@ static uint16 s_colourBorderSchema[5][4] = {
 };
 
 /** Colours used for the border of widgets in the hall of fame. */
-static const uint16 s_HOF_ColourBorderSchema[5][4] = {
+static const uint8 s_HOF_ColourBorderSchema[5][4] = {
 	{226, 228, 228, 228},
 	{116, 226, 105, 116},
 	{116, 105, 226, 116},
@@ -1281,19 +1281,17 @@ void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colours, uint8 reference, 
  */
 void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill)
 {
-	uint16 *colourSchema;
+	const uint8 *colourSchema = s_colourBorderSchema[colourSchemaIndex];
 
 	width  -= 1;
 	height -= 1;
 
-	colourSchema = s_colourBorderSchema[colourSchemaIndex];
+	if (fill) GUI_DrawFilledRectangle(left, top, left + width, top + height, colourSchema[0]);
 
-	if (fill) GUI_DrawFilledRectangle(left, top, left + width, top + height, colourSchema[0] & 0xFF);
-
-	GUI_DrawLine(left, top + height, left + width, top + height, colourSchema[1] & 0xFF);
-	GUI_DrawLine(left + width, top, left + width, top + height, colourSchema[1] & 0xFF);
-	GUI_DrawLine(left, top, left + width, top, colourSchema[2] & 0xFF);
-	GUI_DrawLine(left, top, left, top + height, colourSchema[2] & 0xFF);
+	GUI_DrawLine(left, top + height, left + width, top + height, colourSchema[1]);
+	GUI_DrawLine(left + width, top, left + width, top + height, colourSchema[1]);
+	GUI_DrawLine(left, top, left + width, top, colourSchema[2]);
+	GUI_DrawLine(left, top, left, top + height, colourSchema[2]);
 
 	GUI_DrawFilledRectangle(left, top + height, left, top + height, colourSchema[3]);
 	GUI_DrawFilledRectangle(left + width, top, left + width, top, colourSchema[3]);

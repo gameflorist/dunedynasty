@@ -618,7 +618,7 @@ void GUI_Widget_Viewport_DrawTile(uint16 packed)
 {
 	uint16 x;
 	uint16 y;
-	uint16 colour;
+	uint8 colour;
 	uint16 spriteID;
 	Tile *t;
 	uint16 mapScale;
