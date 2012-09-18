@@ -898,6 +898,50 @@ static void InGame_Numpad_Move(uint16 key)
 			}
 			break;
 
+		case SCANCODE_OPENBRACE:
+		case SCANCODE_CLOSEBRACE:
+			{
+				enum ScreenDivID divID = (key == SCANCODE_OPENBRACE) ? SCREENDIV_MENUBAR : SCREENDIV_SIDEBAR;
+				ScreenDiv *div = &g_screenDiv[divID];
+				div->scale = (div->scale >= 1.5f) ? 1.0f : 2.0f;
+
+				A5_InitTransform(false);
+				GameLoop_TweakWidgetDimensions();
+			}
+			break;
+
+		case SCANCODE_MINUS:
+		case SCANCODE_EQUALS:
+			{
+				const float scaling_factor[] = { 1.0f, 1.5f, 2.0f, 3.0f };
+				int curr;
+
+				ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+
+				for (curr = 0; curr < (int)lengthof(scaling_factor); curr++) {
+					if (viewport->scale <= scaling_factor[curr])
+						break;
+				}
+
+				int new_scale = curr + (key == SCANCODE_EQUALS ? 1 : -1);
+				new_scale = clamp(0, new_scale, (int)lengthof(scaling_factor) - 1);
+
+				if (new_scale != curr) {
+					const int viewport_cx = Tile_GetPackedX(g_viewportPosition) + viewport->width / (2 * TILE_SIZE);
+					const int viewport_cy = Tile_GetPackedY(g_viewportPosition) + viewport->height / (2 * TILE_SIZE);
+
+					viewport->scale = scaling_factor[new_scale];
+					A5_InitTransform(false);
+					GameLoop_TweakWidgetDimensions();
+
+					const int viewport_left = Map_Clamp(viewport_cx - viewport->width / (2 * TILE_SIZE));
+					const int viewport_top = Map_Clamp(viewport_cy - viewport->height / (2 * TILE_SIZE));
+
+					g_viewportPosition = Tile_PackXY(viewport_left, viewport_top);
+				}
+			}
+			break;
+
 #if 0
 		/* Debugging. */
 		case SCANCODE_F9:
