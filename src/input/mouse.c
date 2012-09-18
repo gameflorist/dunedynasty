@@ -64,3 +64,13 @@ Mouse_InRegion(int x1, int y1, int x2, int y2)
 	return (x1 <= g_mouseX && g_mouseX <= x2) &&
 	       (y1 <= g_mouseY && g_mouseY <= y2);
 }
+
+bool
+Mouse_InRegion_Div(enum ScreenDivID div, int x1, int y1, int x2, int y2)
+{
+	int mouseX, mouseY;
+	Mouse_TransformToDiv(div, &mouseX, &mouseY);
+
+	return (x1 <= mouseX && mouseX <= x2) &&
+	       (y1 <= mouseY && mouseY <= y2);
+}
