@@ -1296,8 +1296,8 @@ void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16
 	GUI_DrawLine(left, top, left + width, top, colourSchema[2] & 0xFF);
 	GUI_DrawLine(left, top, left, top + height, colourSchema[2] & 0xFF);
 
-	GFX_PutPixel(left, top + height, colourSchema[3] & 0xFF);
-	GFX_PutPixel(left + width, top, colourSchema[3] & 0xFF);
+	GUI_DrawFilledRectangle(left, top + height, left, top + height, colourSchema[3]);
+	GUI_DrawFilledRectangle(left + width, top, left + width, top, colourSchema[3]);
 }
 
 /**

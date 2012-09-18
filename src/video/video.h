@@ -44,7 +44,6 @@ struct FadeInAux;
 #define Video_InitFadeInCPS     VideoA5_InitFadeInCPS
 #define Video_InitFadeInShape   VideoA5_InitFadeInShape
 
-#define GFX_PutPixel            VideoA5_PutPixel
 #define GUI_DrawLine            VideoA5_DrawLine
 #define GUI_DrawWiredRectangle  VideoA5_DrawRectangle
 #define GUI_DrawFilledRectangle VideoA5_DrawFilledRectangle

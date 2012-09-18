@@ -703,7 +703,7 @@ void GUI_Widget_Viewport_DrawTile(uint16 packed)
 
 		x += wi->offsetX;
 		y += wi->offsetY;
-		GFX_PutPixel(x, y, colour & 0xFF);
+		GUI_DrawFilledRectangle(x, y, x, y, colour);
 	}
 }
 

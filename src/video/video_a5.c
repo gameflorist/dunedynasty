@@ -484,12 +484,6 @@ VideoA5_HideCursor(void)
 /*--------------------------------------------------------------*/
 
 void
-VideoA5_PutPixel(int x, int y, uint8 c)
-{
-	al_draw_pixel(x + 0.5f, y + 0.5f, paltoRGB[c]);
-}
-
-void
 VideoA5_DrawLine(int x1, int y1, int x2, int y2, uint8 c)
 {
 	if (y1 == y2) {
