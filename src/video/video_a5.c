@@ -961,7 +961,7 @@ VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 
 	*retx = x + w + 1;
 	*rety = y;
-	*ret_row_h = max(row_h, h);
+	*ret_row_h = (x == 0) ? h : max(row_h, h);
 	return bmp;
 }
 
@@ -983,7 +983,8 @@ VideoA5_InitShapes(unsigned char *buf)
 		{ 168, 237, false }, /* UNITS1.SHP */
 		{ 238, 257,  true }, /* UNITS.SHP: quad .. mcv */
 		{ 258, 282, false }, /* UNITS.SHP: rockets */
-		{ 283, 354,  true }, /* UNITS.SHP: carry-all .. landed ornithoper */
+		{ 283, 300,  true }, /* UNITS.SHP: carryall .. frigate */
+		{ 301, 354,  true }, /* UNITS.SHP: saboteur .. landed ornithoper */
 		{ 373, 386, false }, /* MENTAT */
 		{ 387, 401, false }, /* MENSHPH.SHP */
 		{ 402, 416, false }, /* MENSHPA.SHP */
