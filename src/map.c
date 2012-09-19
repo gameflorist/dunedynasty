@@ -39,7 +39,7 @@
 
 uint16 g_mapSpriteID[64 * 64];
 Tile g_map[64 * 64];                                        /*!< All map data. */
-uint8 g_functions[3][3] = {{0, 1, 0}, {2, 3, 0}, {0, 1, 0}};
+const uint8 g_functions[3][3] = {{0, 1, 0}, {2, 3, 0}, {0, 1, 0}};
 
 static bool s_debugNoExplosionDamage = false;               /*!< When non-zero, explosions do no damage to their surrounding. */
 

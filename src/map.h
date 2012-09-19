@@ -77,7 +77,7 @@ struct Unit;
 
 extern uint16 g_mapSpriteID[];
 extern Tile g_map[];
-extern uint8 g_functions[3][3];
+extern const uint8 g_functions[3][3];
 
 extern const MapInfo g_mapInfos[3];
 extern const tile32 g_table_tilediff[][8];
