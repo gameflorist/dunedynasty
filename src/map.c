@@ -784,10 +784,6 @@ void Map_FillCircleWithSpice(uint16 packed, uint16 radius)
 			if (Map_GetLandscapeType(curPacked) == LST_SPICE) continue;
 
 			Map_ChangeSpiceAmount(curPacked, 1);
-
-			if (g_debugScenario) {
-				Map_MarkTileDirty(curPacked);
-			}
 		}
 	}
 
@@ -1454,8 +1450,6 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	if (t->isUnveiled && Sprite_IsUnveiled(t->overlaySpriteID)) return false;
 	t->isUnveiled = true;
 
-	Map_MarkTileDirty(packed);
-
 	u = Unit_Get_ByPackedTile(packed);
 	if (u != NULL) Unit_HouseUnitCount_Add(u, houseID);
 
@@ -1767,14 +1761,4 @@ void Map_CreateLandscape(uint32 seed)
 	}
 
 	for (i = 0; i < 4096; i++) g_mapSpriteID[i] = g_map[i].groundSpriteID;
-}
-
-/**
- * Mark a specific tile as dirty, so it gets a redrawn next time.
- *
- * @param packed The tile to mark as dirty.
- */
-void Map_MarkTileDirty(uint16 packed)
-{
-	VARIABLE_NOT_USED(packed);
 }

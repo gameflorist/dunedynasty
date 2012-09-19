@@ -2717,15 +2717,12 @@ void Unit_RemoveFromTile(Unit *unit, uint16 packed)
 		t->hasUnit = false;
 	}
 
-	Map_MarkTileDirty(packed);
-
 	Map_Update(packed, 0, false);
 }
 
 void Unit_AddToTile(Unit *unit, uint16 packed)
 {
 	Map_UnveilTile(packed, Unit_GetHouseID(unit));
-	Map_MarkTileDirty(packed);
 	Map_Update(packed, 1, false);
 }
 

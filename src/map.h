@@ -108,6 +108,5 @@ extern void Map_UpdateAround(uint16 arg06, tile32 position, struct Unit *unit, u
 extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
 extern bool Map_UnveilTile(uint16 packed, uint8 houseID);
 extern void Map_CreateLandscape(uint32 seed);
-extern void Map_MarkTileDirty(uint16 packed);
 
 #endif /* MAP_H */

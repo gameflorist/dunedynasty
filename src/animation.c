@@ -166,8 +166,6 @@ static void Animation_Func_SetGroundSprite(Animation *animation, int16 parameter
 		}
 
 		Map_Update(position, 0, false);
-
-		Map_MarkTileDirty(position);
 	}
 }
 
