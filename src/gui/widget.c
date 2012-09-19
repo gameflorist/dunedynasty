@@ -196,9 +196,9 @@ void GUI_Widget_Draw(Widget *w)
 			GUI_DrawText(drawParam.text, positionLeft, positionTop, fgColour, bgColour);
 		} break;
 
-		case DRAW_MODE_UNKNOWN3: {
-			GFX_DrawSprite(drawParam.unknown, positionLeft, positionTop, HOUSE_HARKONNEN);
-		} break;
+		case DRAW_MODE_UNKNOWN3:
+			Video_DrawIcon(drawParam.unknown, HOUSE_HARKONNEN, positionLeft, positionTop);
+			break;
 
 		case DRAW_MODE_CUSTOM_PROC: {
 			if (drawParam.proc == NULL) return;
