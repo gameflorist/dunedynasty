@@ -59,18 +59,6 @@ Map_InRange(int xy)
 }
 
 static int
-Map_Clamp(int x)
-{
-	if (x <= 0)
-		return 0;
-
-	if (x >= MAP_SIZE_MAX - 1)
-		return MAP_SIZE_MAX - 1;
-
-	return x;
-}
-
-static int
 Viewport_ClampSelectionBoxX(int x)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];

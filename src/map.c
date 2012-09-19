@@ -78,6 +78,12 @@ Map_InRangePacked(uint16 packed)
 	return Map_InRangeX(x) && Map_InRangeY(y);
 }
 
+int
+Map_Clamp(int x)
+{
+	return clamp(0, x, MAP_SIZE_MAX - 1);
+}
+
 /**
  * Move the viewport position in the given direction.
  *
