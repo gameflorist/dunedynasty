@@ -746,6 +746,42 @@ void GUI_Mouse_SetPosition(uint16 x, uint16 y)
 	g_mouseLock--;
 }
 
+/* gui/viewport.c */
+
+/**
+ * Get a sprite for the viewport, recolouring it when needed.
+ *
+ * @param spriteID The sprite to get.
+ * @param houseID The House to recolour it with.
+ * @return The sprite if found, otherwise NULL.
+ */
+static uint8 *GUI_Widget_Viewport_Draw_GetSprite(uint16 spriteID, uint8 houseID)
+{
+	uint8 *sprite;
+	uint8 i;
+
+	if (spriteID > 355) return NULL;
+
+	sprite = g_sprites[spriteID];
+
+	if (sprite == NULL) return NULL;
+
+	if ((Sprites_GetType(sprite) & 0x1) == 0) return sprite;
+
+	for (i = 0; i < 16; i++) {
+		uint8 v = sprite[10 + i];
+
+		if (v >= 0x90 && v <= 0x98) {
+			if (v == 0xFF) break;
+			v += houseID * 16;
+		}
+
+		s_paletteHouse[i] = v;
+	}
+
+	return sprite;
+}
+
 /* gui/widget.c */
 
 /**

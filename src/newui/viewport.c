@@ -769,7 +769,7 @@ Viewport_DrawRallyPoint(void)
 	}
 }
 
-void
+static void
 Viewport_DrawSelectedUnit(int x, int y)
 {
 	if (enhancement_new_selection_cursor) {
@@ -794,6 +794,30 @@ Viewport_DrawSelectedUnit(int x, int y)
 	}
 	else {
 		Shape_DrawTint(SHAPE_SELECTED_UNIT, x, y, 0xFF, 0, 0x8000);
+	}
+}
+
+void
+Viewport_DrawSandworm(const Unit *u)
+{
+	if (!g_map[Tile_PackTile(u->o.position)].isUnveiled && !g_debugScenario)
+		return;
+
+	const enum ShapeID shapeID = g_table_unitInfo[UNIT_SANDWORM].groundSpriteID;
+	uint16 x, y;
+
+	if (Map_IsPositionInViewport(u->o.position, &x, &y))
+		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200);
+
+	if (Map_IsPositionInViewport(u->targetLast, &x, &y))
+		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200);
+
+	if (Map_IsPositionInViewport(u->targetPreLast, &x, &y))
+		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200);
+
+	if (Unit_IsSelected(u)) {
+		if (Map_IsPositionInViewport(u->o.position, &x, &y))
+			Viewport_DrawSelectedUnit(x, y);
 	}
 }
 

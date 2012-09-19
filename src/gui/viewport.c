@@ -39,9 +39,6 @@
 static uint32 s_tickCursor;                                 /*!< Stores last time Viewport changed the cursor spriteID. */
 static uint32 s_tickMapScroll;                              /*!< Stores last time Viewport ran MapScroll function. */
 
-static uint8 s_paletteHouse[16];                            /*!< Used for palette manipulation to get housed coloured units etc. */
-static uint16 s_spriteFlags;
-
 /**
  * Handles the Click events for the Viewport widget.
  *
@@ -204,39 +201,10 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 	return true;
 }
 
-/**
- * Get a sprite for the viewport, recolouring it when needed.
- *
- * @param spriteID The sprite to get.
- * @param houseID The House to recolour it with.
- * @return The sprite if found, otherwise NULL.
- */
-static uint8 *GUI_Widget_Viewport_Draw_GetSprite(uint16 spriteID, uint8 houseID)
-{
-	uint8 *sprite;
-	uint8 i;
-
-	if (spriteID > 355) return NULL;
-
-	sprite = g_sprites[spriteID];
-
-	if (sprite == NULL) return NULL;
-
-	if ((Sprites_GetType(sprite) & 0x1) == 0) return sprite;
-
-	for (i = 0; i < 16; i++) {
-		uint8 v = sprite[10 + i];
-
-		if (v >= 0x90 && v <= 0x98) {
-			if (v == 0xFF) break;
-			v += houseID * 16;
-		}
-
-		s_paletteHouse[i] = v;
-	}
-
-	return sprite;
-}
+#if 0
+/* Moved to video/video_opendune.c. */
+static uint8 *GUI_Widget_Viewport_Draw_GetSprite(uint16 spriteID, uint8 houseID);
+#endif
 
 /**
  * Redraw parts of the viewport that require redrawing.
@@ -316,48 +284,16 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	Viewport_DrawTiles();
 #endif
 
-	find.type    = UNIT_SANDWORM;
-	find.index   = 0xFFFF;
-	find.houseID = HOUSE_INVALID;
+	{
+		find.type    = UNIT_SANDWORM;
+		find.index   = 0xFFFF;
+		find.houseID = HOUSE_INVALID;
 
-	while (true) {
-		Unit *u;
-		uint8 *sprite;
-
-		u = Unit_Find(&find);
-
-		if (u == NULL) break;
-
-		if (!u->o.flags.s.isDirty && !forceRedraw) continue;
-		u->o.flags.s.isDirty = false;
-
-		if (!g_map[Tile_PackTile(u->o.position)].isUnveiled && !g_debugScenario) continue;
-
-		sprite = GUI_Widget_Viewport_Draw_GetSprite(g_table_unitInfo[u->o.type].groundSpriteID, Unit_GetHouseID(u));
-
-		s_spriteFlags = 0x200;
-
-#if 0
-		if (Map_IsPositionInViewport(u->o.position, &x, &y)) GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0xC000);
-		if (Map_IsPositionInViewport(u->targetLast, &x, &y)) GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0xC000);
-		if (Map_IsPositionInViewport(u->targetPreLast, &x, &y)) GUI_DrawSprite(g_screenActiveID, sprite, x, y, 2, s_spriteFlags | 0xC000);
-#else
-		if (Map_IsPositionInViewport(u->o.position, &x, &y))
-			Shape_Draw(g_table_unitInfo[u->o.type].groundSpriteID, x, y, 2, s_spriteFlags | 0xC000);
-
-		if (Map_IsPositionInViewport(u->targetLast, &x, &y))
-			Shape_Draw(g_table_unitInfo[u->o.type].groundSpriteID, x, y, 2, s_spriteFlags | 0xC000);
-
-		if (Map_IsPositionInViewport(u->targetPreLast, &x, &y))
-			Shape_Draw(g_table_unitInfo[u->o.type].groundSpriteID, x, y, 2, s_spriteFlags | 0xC000);
-#endif
-
-		if (!Unit_IsSelected(u))
-			continue;
-
-		if (!Map_IsPositionInViewport(u->o.position, &x, &y)) continue;
-
-		Viewport_DrawSelectedUnit(x + wi->offsetX, y + wi->offsetY);
+		Unit *u = Unit_Find(&find);
+		while (u != NULL) {
+			Viewport_DrawSandworm(u);
+			u = Unit_Find(&find);
+		}
 	}
 
 	if (!Unit_AnySelected() && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
