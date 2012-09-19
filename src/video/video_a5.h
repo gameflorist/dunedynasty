@@ -23,6 +23,7 @@ extern void VideoA5_DrawCPSRegion(const char *filename, int sx, int sy, int dx, 
 extern void VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags);
+extern void VideoA5_DrawShapeRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int orient256, int flags);
 extern void VideoA5_DrawShapeScale(enum ShapeID shapeID, int x, int y, int w, int h, int flags);
 extern void VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags);
 extern void VideoA5_DrawShapeGreyScale(enum ShapeID shapeID, int x, int y, int w, int h, int flags);

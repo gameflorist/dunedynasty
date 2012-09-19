@@ -8,6 +8,7 @@
 #include "video/video.h"
 
 #define Video_DrawShape             VideoA5_DrawShape
+#define Video_DrawShapeRotate       VideoA5_DrawShapeRotate
 #define Video_DrawShapeScale        VideoA5_DrawShapeScale
 #define Video_DrawShapeGrey         VideoA5_DrawShapeGrey
 #define Video_DrawShapeGreyScale    VideoA5_DrawShapeGreyScale
@@ -69,6 +70,13 @@ Shape_DrawRemap(enum ShapeID shapeID, enum HouseType houseID, int x, int y, enum
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
 	Video_DrawShape(shapeID, houseID, x, y, flags & 0x303);
+}
+
+void
+Shape_DrawRemapRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int orient256, enum WindowID windowID, int flags)
+{
+	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
+	Video_DrawShapeRotate(shapeID, houseID, x, y, orient256, flags & 0x300);
 }
 
 void

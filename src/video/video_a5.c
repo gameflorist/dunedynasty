@@ -1132,11 +1132,37 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 	}
 	else if ((flags & 0x300) == 0x300) {
 		/* Shadow. */
-		al_draw_tinted_bitmap(s_shape[shapeID][houseID], al_map_rgba(0, 0, 0, 0x40), x, y, al_flags);
+		ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, 0x40);
+		al_draw_tinted_bitmap(s_shape[shapeID][houseID], tint, x, y, al_flags);
 	}
 	else {
 		/* Normal. */
 		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
+	}
+}
+
+void
+VideoA5_DrawShapeRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int orient256, int flags)
+{
+	ALLEGRO_BITMAP *bmp = s_shape[shapeID][houseID];
+	assert(shapeID < SHAPEID_MAX);
+	assert(houseID < HOUSE_MAX);
+	assert(bmp != NULL);
+	assert((flags & 0x300) != 0x100);
+	assert((flags & 0x300) != 0x200);
+
+	const float cx = al_get_bitmap_width(bmp) / 2.0f;
+	const float cy = al_get_bitmap_height(bmp) / 2.0f;
+	const float angle = 2.0f * ALLEGRO_PI * orient256 / 256.0f;
+	const int al_flags = (flags & 0x3);
+
+	if ((flags & 0x300) == 0x300) {
+		ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, 0x40);
+
+		al_draw_tinted_rotated_bitmap(bmp, tint, cx, cy, x, y, angle, al_flags);
+	}
+	else {
+		al_draw_rotated_bitmap(bmp, cx, cy, x, y, angle, al_flags);
 	}
 }
 
