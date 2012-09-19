@@ -41,7 +41,7 @@
 
 
 int64_t g_tickUnitUnknown1  = 0;        /*!< Indicates next time the Unknown1 function is executed. */
-static int64_t s_tickUnitUnknown2  = 0; /*!< Indicates next time the Unknown2 function is executed. */
+int64_t g_tickUnitUnknown2  = 0;        /*!< Indicates next time the Unknown2 function is executed. */
 static int64_t s_tickUnitBlinking  = 0; /*!< Indicates next time the Blinking function is executed. */
 static int64_t s_tickUnitUnknown4  = 0; /*!< Indicates next time the Unknown4 function is executed. */
 static int64_t s_tickUnitScript    = 0; /*!< Indicates next time the Script function is executed. */
@@ -273,9 +273,9 @@ void GameLoop_Unit(void)
 		g_tickUnitUnknown1 = g_timerGame + 3;
 	}
 
-	if (s_tickUnitUnknown2 <= g_timerGame) {
+	if (g_tickUnitUnknown2 <= g_timerGame) {
 		tickRotation = true;
-		s_tickUnitUnknown2 = g_timerGame + Tools_AdjustToGameSpeed(4, 2, 8, true);
+		g_tickUnitUnknown2 = g_timerGame + Tools_AdjustToGameSpeed(4, 2, 8, true);
 	}
 
 	if (s_tickUnitBlinking <= g_timerGame) {
@@ -2086,7 +2086,7 @@ void Unit_SetSpeed(Unit *unit, uint16 speed)
 	unit->speed          = 0;
 	unit->speedPerTick   = 0;
 
-	if (!enhancement_smooth_bullet_movement)
+	if (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE)
 		unit->speedRemainder = 0;
 
 	if (unit->o.type == UNIT_HARVESTER) {

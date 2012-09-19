@@ -126,10 +126,10 @@ bool enhancement_repeat_reinforcements = true;
 enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ACCEPT_ALL;
 
 /**
- * Render bullets as if they move every frame, rather than every third
- * frame, for smoother bullet movement.  Also works on flying units.
+ * Render units (and bullets) as if they move every frame, and rotate
+ * top-down units to arbitrary angles.
  */
-bool enhancement_smooth_bullet_movement = true;
+enum SmoothUnitAnimationMode enhancement_smooth_unit_animation = SMOOTH_UNIT_ANIMATION_ENABLE;
 
 /**
  * Use the Fremen and Sardaukar portaits for troopers and trooper

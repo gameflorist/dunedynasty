@@ -11,6 +11,12 @@ enum SecurityQuestionMode {
 	SECURITY_QUESTION_SKIP
 };
 
+enum SmoothUnitAnimationMode {
+	SMOOTH_UNIT_ANIMATION_DISABLE,
+	SMOOTH_UNIT_ANIMATION_TRANSLATION_ONLY,
+	SMOOTH_UNIT_ANIMATION_ENABLE
+};
+
 extern bool g_dune2_enhanced;
 extern bool enhancement_brutal_ai;
 extern bool enhancement_fix_enemy_approach_direction_warning;
@@ -31,7 +37,7 @@ extern bool enhancement_raise_scenario_unit_cap;
 extern bool enhancement_read_scenario_structure_health;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
-extern bool enhancement_smooth_bullet_movement;
+extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;
 extern bool enhancement_special_trooper_portaits;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 

@@ -1,10 +1,16 @@
 /* shape.c */
 
 #include <assert.h>
+#include <stdlib.h>
+#include "os/math.h"
 
 #include "shape.h"
 
+#include "enhancement.h"
 #include "sprites.h"
+#include "tile.h"
+#include "timer/timer.h"
+#include "tools.h"
 #include "video/video.h"
 
 #define Video_DrawShape             VideoA5_DrawShape
@@ -73,9 +79,28 @@ Shape_DrawRemap(enum ShapeID shapeID, enum HouseType houseID, int x, int y, enum
 }
 
 void
-Shape_DrawRemapRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int orient256, enum WindowID windowID, int flags)
+Shape_DrawRemapRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y, const dir24 *orient, enum WindowID windowID, int flags)
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
+
+	const int duration = Tools_AdjustToGameSpeed(4, 2, 8, true);
+	const int frame = clamp(0, duration + g_timerGame - g_tickUnitUnknown2, duration - 1);
+	const int speed = orient->speed;
+
+	/* Based on Unit_Rotate. */
+	int diff = orient->target - orient->current;
+	int orient256;
+
+	if (diff > 128) diff -= 256;
+	if (diff < -128) diff += 256;
+
+	if (abs(speed) >= abs(diff)) {
+		orient256 = orient->current + diff * frame / duration;
+	}
+	else {
+		orient256 = orient->current + speed * frame / duration;
+	}
+
 	Video_DrawShapeRotate(shapeID, houseID, x, y, orient256, flags & 0x300);
 }
 

@@ -187,6 +187,7 @@ struct Team;
 struct Structure;
 
 extern int64_t g_tickUnitUnknown1;
+extern int64_t g_tickUnitUnknown2;
 
 extern const char *g_table_movementTypeName[];
 
