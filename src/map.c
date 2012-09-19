@@ -192,25 +192,18 @@ void Map_SetSelection(uint16 packed)
  * @return The previous layout.
  * @see StructureLayout
  */
-uint16 Map_SetSelectionSize(uint16 layout)
+void Map_SetSelectionSize(uint16 layout)
 {
-	static uint16 selectionLayout = 0;
-
-	uint16 oldLayout;
 	uint16 oldPosition;
 
-	oldLayout = selectionLayout;
-	if (layout & 0x80) return oldLayout;
+	if (layout & 0x80) return;
 
 	oldPosition = Map_SetSelectionObjectPosition(0xFFFF);
 
-	selectionLayout   = layout;
 	g_selectionWidth  = g_table_structure_layoutSize[layout].width;
 	g_selectionHeight = g_table_structure_layoutSize[layout].height;
 
 	Map_SetSelectionObjectPosition(oldPosition);
-
-	return oldLayout;
 }
 
 /**

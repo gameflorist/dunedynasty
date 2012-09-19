@@ -86,7 +86,7 @@ extern const LandscapeInfo g_table_landscapeInfo[LST_MAX];
 
 extern uint16 Map_MoveDirection(uint16 direction);
 extern void Map_SetSelection(uint16 packed);
-extern uint16 Map_SetSelectionSize(uint16 layout);
+extern void Map_SetSelectionSize(uint16 layout);
 extern uint16 Map_SetSelectionObjectPosition(uint16 packed);
 extern void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate);
 extern bool Map_IsValidPosition(uint16 position);
