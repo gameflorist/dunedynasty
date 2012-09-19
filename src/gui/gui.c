@@ -279,11 +279,6 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
  * @param x The most left position where to draw the string.
  * @param y The most top position where to draw the string.
  */
-static void GUI_DrawChar(unsigned char c, uint16 x, uint16 y)
-{
-	Video_DrawChar(c, g_colours, x, y);
-}
-
 void GUI_DrawChar_(unsigned char c, int x, int y)
 {
 	const int width = (g_curWidgetIndex == WINDOWID_RENDER_TEXTURE) ? g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8 : SCREEN_WIDTH;
@@ -386,7 +381,7 @@ void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uin
 		}
 		if (y > TRUE_DISPLAY_HEIGHT) break;
 
-		GUI_DrawChar(*s, x, y);
+		Video_DrawChar(*s, g_colours, x, y);
 
 		x += width;
 		s++;
