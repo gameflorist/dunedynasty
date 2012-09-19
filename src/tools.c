@@ -16,7 +16,7 @@
 #include "unit.h"
 
 
-uint8 s_randomSeed[4];
+static uint8 s_randomSeed[4];
 
 uint16 Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum, bool inverseSpeed)
 {
