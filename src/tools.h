@@ -34,8 +34,4 @@ extern uint8 Tools_Random_256(void);
 extern void Tools_Random_Seed(uint32 seed);
 extern uint16 Tools_RandomRange(uint16 min, uint16 max);
 
-extern bool BitArray_Test(uint8 *array, uint16 index);
-extern void BitArray_Set(uint8 *array, uint16 index);
-extern void BitArray_Clear(uint8 *array, uint16 index);
-
 #endif /* TOOLS_H */
