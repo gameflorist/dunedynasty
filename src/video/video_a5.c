@@ -129,7 +129,7 @@ VideoA5_GetNextXY(int texture_width, int texture_height,
 		int x, int y, int w, int h, int row_h, int *retx, int *rety)
 {
 	if (x + w - 1 >= texture_width) {
-		x = 0;
+		x = 1;
 		y += row_h + 1;
 	}
 
@@ -846,7 +846,7 @@ VideoA5_NumIconsInGroup(enum IconMapEntries group)
 }
 
 static void
-VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
+VideoA5_ExportIconGroup(unsigned char *buf, enum IconMapEntries group, int num_common,
 		int x, int y, int *retx, int *rety)
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
@@ -867,13 +867,24 @@ VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 				continue;
 
 			if ((idx >= num_common) || (houseID == HOUSE_HARKONNEN)) {
-				VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, TILE_SIZE, TILE_SIZE, TILE_SIZE, &x, &y);
+				VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, TILE_SIZE + 1, TILE_SIZE + 1, TILE_SIZE + 1, &x, &y);
+
+				GFX_DrawSprite_(iconID, x, y - 1, houseID);
+				GFX_DrawSprite_(iconID, x, y + 1, houseID);
+				GFX_DrawSprite_(iconID, x - 1, y, houseID);
+				GFX_DrawSprite_(iconID, x + 1, y, houseID);
+
+				/* Clear in case of transparent icons (e.g. fog sprite overlays). */
+				for (int i = 0; i < TILE_SIZE; i++) {
+					memset(buf + WINDOW_W * (y + i) + x, 0, TILE_SIZE);
+				}
+
 				GFX_DrawSprite_(iconID, x, y, houseID);
 
 				s_icon[iconID][houseID] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
 				assert(s_icon[iconID][houseID] != NULL);
 
-				x += TILE_SIZE + 1;
+				x += TILE_SIZE + 2;
 			}
 			else {
 				s_icon[iconID][houseID] = s_icon[iconID][HOUSE_HARKONNEN];
@@ -947,14 +958,14 @@ VideoA5_InitIcons(unsigned char *buf)
 		{  0, ICM_ICONGROUP_EOF }
 	};
 
-	int x = 0, y = 0;
-
 	al_set_target_bitmap(icon_texture);
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 
+	int x, y;
+
+	x = 1, y = 1;
 	for (int i = 0; icon_data[i].group < ICM_ICONGROUP_EOF; i++) {
-		VideoA5_ExportIconGroup(icon_data[i].group, icon_data[i].num_common,
-				x, y, &x, &y);
+		VideoA5_ExportIconGroup(buf, icon_data[i].group, icon_data[i].num_common, x, y, &x, &y);
 	}
 
 	VideoA5_CopyBitmap(buf, icon_texture, TRANSPARENT_COLOUR_0);
