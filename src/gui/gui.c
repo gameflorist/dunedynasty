@@ -1807,28 +1807,10 @@ void GUI_ClearScreen(uint16 screenID)
 	GFX_Screen_SetActive(oldScreenID);
 }
 
-/**
- * Draw a string to the screen using a fixed width for each char.
- *
- * @param string The string to draw.
- * @param left The most left position where to draw the string.
- * @param top The most top position where to draw the string.
- * @param fgColour The foreground colour of the text.
- * @param bgColour The background colour of the text.
- * @param charWidth The width of a char.
- */
-void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth)
-{
-	char s[2] = " ";
-
-	while (*string != '\0') {
-		*s = *string++;
-		GUI_DrawText(s, left, top, fgColour, bgColour);
-		left += charWidth;
-	}
-}
-
 #if 0
+/* Moved to video/video_opendune.c. */
+extern void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth);
+
 /* Moved to gui/menu_opendune.c. */
 extern void GUI_FactoryWindow_B495_0F30(void);
 extern FactoryWindowItem *GUI_FactoryWindow_GetItem(int16 offset);

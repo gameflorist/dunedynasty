@@ -89,7 +89,6 @@ extern void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int1
 extern char *GUI_String_Get_ByIndex(int16 stringID);
 extern void GUI_ClearScreen(uint16 arg06);
 extern uint16 GUI_Get_Scrollbar_Position(struct Widget *w);
-extern void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth);
 extern void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint16 width, uint16 height, uint16 memBlockSrc, uint16 memBlockDst);
 extern void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 height, uint16 screenID, uint8 *remap);
 extern void GUI_HallOfFame_Show(uint16 score);
