@@ -403,8 +403,6 @@ bool House_UpdateRadarState(House *h)
 	wsa = WSA_LoadFile("STATIC.WSA", GFX_Screen_Get_ByIndex(3), GFX_Screen_GetSize_ByIndex(3), true);
 	frameCount = WSA_GetFrameCount(wsa);
 
-	g_textDisplayNeedsUpdate = true;
-
 	GUI_Mouse_Hide_Safe();
 
 	while (Driver_Voice_IsPlaying()) sleepIdle();

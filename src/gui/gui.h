@@ -50,7 +50,6 @@ extern const SelectionTypeStruct g_table_selectionType[];
 extern uint8 g_palette_998A[3 * 256];
 extern uint8 g_remap[256];
 extern uint16 g_productionStringID;
-extern bool g_textDisplayNeedsUpdate;
 
 extern uint16 g_viewportMessageCounter;
 extern char *g_viewportMessageText;

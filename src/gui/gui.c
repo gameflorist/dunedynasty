@@ -78,7 +78,6 @@ uint8 g_palette_998A[3 * 256];
 uint8 g_remap[256];
 static uint16 s_temporaryColourBorderSchema[5][4];          /*!< Temporary storage for the #s_colourBorderSchema. */
 uint16 g_productionStringID;                                /*!< Descriptive text of activity of the active structure. */
-bool g_textDisplayNeedsUpdate;                              /*!< If set, text display needs to be updated. */
 static uint32 s_ticksPlayed;
 
 uint16 g_cursorSpriteID;
@@ -203,8 +202,6 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 			GUI_DrawText_Wrapper(displayLine2, g_curWidgetXBase << 3,  2, fgColour2, 0, 0x012);
 			GUI_DrawText_Wrapper(displayLine1, g_curWidgetXBase << 3, 13, fgColour1, 0, 0x012);
 
-			g_textDisplayNeedsUpdate = false;
-
 			GFX_Screen_SetActive(oldScreenID);
 		}
 
@@ -240,7 +237,6 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		displayLine3[0] = '\0';
 
 		line3Importance = -1;
-		g_textDisplayNeedsUpdate = true;
 		displayTimer = Timer_GetTicks() + (line2Importance <= line1Importance ? 900 : 1);
 		scrollInProgress = false;
 		return;
@@ -1362,8 +1358,6 @@ void GUI_DrawInterfaceAndRadar(uint16 screenID)
 
 	MenuBar_Draw(g_playerHouseID);
 
-	g_textDisplayNeedsUpdate = true;
-
 	GUI_Widget_Viewport_RedrawMap(g_screenActiveID);
 
 	GUI_DrawScreen(g_screenActiveID);
@@ -1603,7 +1597,6 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 			}
 
 			GUI_Widget_DrawAll(g_widgetLinkedListHead);
-			g_textDisplayNeedsUpdate = true;
 		}
 
 		switch (g_selectionType) {
