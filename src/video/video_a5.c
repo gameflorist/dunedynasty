@@ -846,6 +846,66 @@ VideoA5_NumIconsInGroup(enum IconMapEntries group)
 }
 
 static void
+VideoA5_ExportStructureIcons(enum StructureType s, enum StructureLayout l, int index,
+		bool is_common, int x0, int y0, int *retx, int *rety)
+{
+	const StructureInfo *si = &g_table_structureInfo[s];
+	const enum StructureLayout layout = si->layout;
+	const int w = g_table_structure_layoutSize[l].width;
+	const int h = g_table_structure_layoutSize[l].height;
+
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		int idx = index;
+
+		GUI_Palette_CreateRemap(houseID);
+
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				const uint16 iconID = g_iconMap[g_iconMap[si->iconGroup] + idx];
+				assert(iconID < ICONID_MAX);
+				assert(s_icon[iconID][houseID] == NULL);
+
+				if (is_common && (houseID != HOUSE_HARKONNEN)) {
+					s_icon[iconID][houseID] = s_icon[iconID][HOUSE_HARKONNEN];
+					idx++;
+					continue;
+				}
+
+				const int x = x0 + TILE_SIZE * j + (l == STRUCTURE_LAYOUT_3x3 ? 50 * houseID : 0);
+				const int y = y0 + TILE_SIZE * i + (l == STRUCTURE_LAYOUT_3x3 ? 0 : 34 * houseID);
+
+				if (i == 0)
+					GFX_DrawSprite_(iconID, x, y - 1, houseID);
+				if (i == h - 1)
+					GFX_DrawSprite_(iconID, x, y + 1, houseID);
+				if (j == 0)
+					GFX_DrawSprite_(iconID, x - 1, y, houseID);
+				if (j == w - 1)
+					GFX_DrawSprite_(iconID, x + 1, y, houseID);
+
+				GFX_DrawSprite_(iconID, x, y, houseID);
+
+				s_icon[iconID][houseID] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
+				assert(s_icon[iconID][houseID] != NULL);
+
+				idx++;
+			}
+
+			idx += g_table_structure_layoutSize[layout].width - g_table_structure_layoutSize[l].width;
+		}
+	}
+
+	if (l == STRUCTURE_LAYOUT_3x3) {
+		*retx = x0;
+		*rety = y0 + TILE_SIZE * h + 2;
+	}
+	else {
+		*retx = x0 + TILE_SIZE * w + 2;
+		*rety = y0;
+	}
+}
+
+static void
 VideoA5_ExportIconGroup(unsigned char *buf, enum IconMapEntries group, int num_common,
 		int x, int y, int *retx, int *rety)
 {
@@ -924,6 +984,38 @@ static void
 VideoA5_InitIcons(unsigned char *buf)
 {
 	const struct {
+		enum StructureLayout layout;
+		int index;
+		enum StructureType structure;
+	} structure_icon_set[] = {
+		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_LIGHT_VEHICLE },
+		{ STRUCTURE_LAYOUT_1x2, 17, STRUCTURE_LIGHT_VEHICLE },
+		{ STRUCTURE_LAYOUT_3x2, 12, STRUCTURE_HEAVY_VEHICLE },
+		{ STRUCTURE_LAYOUT_3x2, 12, STRUCTURE_HIGH_TECH },
+		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_HOUSE_OF_IX },
+		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_WOR_TROOPER },
+		{ STRUCTURE_LAYOUT_2x2,  8, STRUCTURE_CONSTRUCTION_YARD },
+		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_WINDTRAP },
+		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_BARRACKS },
+		{ STRUCTURE_LAYOUT_3x2, 12, STRUCTURE_REPAIR },
+		{ STRUCTURE_LAYOUT_2x2,  8, STRUCTURE_SILO },
+		{ STRUCTURE_LAYOUT_2x2,  8, STRUCTURE_OUTPOST },
+		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_REFINERY },
+		{ STRUCTURE_LAYOUT_1x2, 14, STRUCTURE_REFINERY },
+		{ STRUCTURE_LAYOUT_1x2, 26, STRUCTURE_REFINERY },
+		{ STRUCTURE_LAYOUT_1x2, 38, STRUCTURE_REFINERY },
+		{ STRUCTURE_LAYOUT_1x2, 50, STRUCTURE_REFINERY },
+		{ STRUCTURE_LAYOUT_2x2, 39, STRUCTURE_STARPORT },
+		{ STRUCTURE_LAYOUT_2x2, 57, STRUCTURE_STARPORT },
+		{ STRUCTURE_LAYOUT_2x2, 75, STRUCTURE_STARPORT },
+
+		{ STRUCTURE_LAYOUT_3x3, 18, STRUCTURE_PALACE },
+		{ STRUCTURE_LAYOUT_3x3, 18, STRUCTURE_STARPORT },
+
+		{ STRUCTURE_LAYOUT_1x1,  0, STRUCTURE_INVALID }
+	};
+
+	const struct {
 		int num_common;
 		enum IconMapEntries group;
 	} icon_data[] = {
@@ -964,6 +1056,19 @@ VideoA5_InitIcons(unsigned char *buf)
 	int x, y;
 
 	x = 1, y = 1;
+	for (int i = 0; structure_icon_set[i].structure < STRUCTURE_MAX; i++) {
+		VideoA5_ExportStructureIcons(structure_icon_set[i].structure, structure_icon_set[i].layout,
+				structure_icon_set[i].index, false, x, y, &x, &y);
+	}
+
+	/* Structure construction and debris. */
+	VideoA5_ExportStructureIcons(STRUCTURE_LIGHT_VEHICLE, STRUCTURE_LAYOUT_2x2, 0, true, x, y, &x, &y);
+	VideoA5_ExportStructureIcons(STRUCTURE_LIGHT_VEHICLE, STRUCTURE_LAYOUT_2x2, 4, true, x, y, &x, &y);
+	VideoA5_ExportStructureIcons(STRUCTURE_HEAVY_VEHICLE, STRUCTURE_LAYOUT_3x2, 0, true, x, y, &x, &y);
+	VideoA5_ExportStructureIcons(STRUCTURE_PALACE, STRUCTURE_LAYOUT_3x3, 0, true, x, y, &x, &y);
+	VideoA5_ExportStructureIcons(STRUCTURE_PALACE, STRUCTURE_LAYOUT_3x3, 9, true, x + TILE_SIZE * 3 + 2, y - TILE_SIZE * 3 - 2, &x, &y);
+
+	x = 1, y = 34 * HOUSE_MAX + 1;
 	for (int i = 0; icon_data[i].group < ICM_ICONGROUP_EOF; i++) {
 		VideoA5_ExportIconGroup(buf, icon_data[i].group, icon_data[i].num_common, x, y, &x, &y);
 	}
