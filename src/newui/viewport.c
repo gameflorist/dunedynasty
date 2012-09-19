@@ -988,6 +988,9 @@ Viewport_DrawAirUnit(const Unit *u)
 		Viewport_InterpolateMovement(u, &x, &y);
 
 	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+	const bool smooth_rotation =
+		(enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_ENABLE) &&
+		(u->o.type == UNIT_CARRYALL || u->o.type == UNIT_ORNITHOPTER || u->o.type == UNIT_FRIGATE);
 
 	uint16 s_spriteFlags = 0xC000;
 	uint16 index = ui->groundSpriteID;
@@ -999,10 +1002,12 @@ Viewport_DrawAirUnit(const Unit *u)
 			break;
 
 		case 1: /* carryall, frigate */
-			orientation = Orientation_Orientation256ToOrientation8(orientation);
+			if (!smooth_rotation) {
+				orientation = Orientation_Orientation256ToOrientation8(orientation);
 
-			index += values_32E4[orientation][0];
-			s_spriteFlags |= values_32E4[orientation][1];
+				index += values_32E4[orientation][0];
+				s_spriteFlags |= values_32E4[orientation][1];
+			}
 			break;
 
 		case 2: /* rockets */
@@ -1013,10 +1018,14 @@ Viewport_DrawAirUnit(const Unit *u)
 			break;
 
 		case 5: /* ornithopter */
-			orientation = Orientation_Orientation256ToOrientation8(orientation);
+			if (!smooth_rotation) {
+				orientation = Orientation_Orientation256ToOrientation8(orientation);
 
-			index += (values_32E4[orientation][0] * 3) + values_33AE[u->spriteOffset & 3];
-			s_spriteFlags |= values_32E4[orientation][1];
+				index += (values_32E4[orientation][0] * 3);
+				s_spriteFlags |= values_32E4[orientation][1];
+			}
+
+			index += values_33AE[u->spriteOffset & 3];
 			break;
 
 		default:
@@ -1031,13 +1040,24 @@ Viewport_DrawAirUnit(const Unit *u)
 		index += 3;
 
 	if (ui->o.flags.hasShadow) {
-		Shape_Draw(index, x + 1, y + 3, WINDOWID_VIEWPORT, (s_spriteFlags & 0xDFFF) | 0x300);
+		if (smooth_rotation) {
+			Shape_DrawRemapRotate(index, Unit_GetHouseID(u),
+					x + 1, y + 3, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x5FFF) | 0x300);
+		}
+		else {
+			Shape_Draw(index, x + 1, y + 3, WINDOWID_VIEWPORT, (s_spriteFlags & 0xDFFF) | 0x300);
+		}
 	}
 
 	if (ui->o.flags.blurTile)
 		s_spriteFlags |= 0x200;
 
-	Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, WINDOWID_VIEWPORT, s_spriteFlags | 0x2000);
+	if (smooth_rotation) {
+		Shape_DrawRemapRotate(index, Unit_GetHouseID(u), x, y, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x7FFF) | 0x2000);
+	}
+	else {
+		Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, WINDOWID_VIEWPORT, s_spriteFlags | 0x2000);
+	}
 }
 
 void
