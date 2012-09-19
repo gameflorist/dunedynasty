@@ -213,12 +213,6 @@ uint16 Map_SetSelectionSize(uint16 layout)
 	return oldLayout;
 }
 
-static void Map_InvalidateSelection(uint16 packed, bool enable)
-{
-	VARIABLE_NOT_USED(packed);
-	VARIABLE_NOT_USED(enable);
-}
-
 /**
  * Sets the selection object to the given position.
  *
@@ -229,15 +223,9 @@ uint16 Map_SetSelectionObjectPosition(uint16 packed)
 {
 	static uint16 selectionPosition = 0xFFFF;
 
-	uint16 oldPacked;
-
-	oldPacked = selectionPosition;
+	uint16 oldPacked = selectionPosition;
 
 	if (packed == oldPacked) return oldPacked;
-
-	Map_InvalidateSelection(oldPacked, false);
-
-	if (packed != 0xFFFF) Map_InvalidateSelection(packed, true);
 
 	selectionPosition = packed;
 
