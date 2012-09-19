@@ -2376,15 +2376,6 @@ void GUI_DrawScreen(uint16 screenID)
 
 	if (loc10) {
 		Map_SetSelectionObjectPosition(0xFFFF);
-
-		for (xpos = 0; xpos < 14; xpos++) {
-			uint16 v = g_minimapPosition + xpos + 6*64;
-
-			BitArray_Set(g_dirtyViewport, v);
-			BitArray_Set(g_dirtyMinimap, v);
-
-			g_dirtyViewportCount++;
-		}
 	}
 
 	g_minimapPosition = g_viewportPosition;

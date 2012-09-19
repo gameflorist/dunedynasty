@@ -41,18 +41,7 @@ uint16 g_mapSpriteID[64 * 64];
 Tile g_map[64 * 64];                                        /*!< All map data. */
 uint8 g_functions[3][3] = {{0, 1, 0}, {2, 3, 0}, {0, 1, 0}};
 
-uint8 g_dirtyMinimap[512];                                  /*!< Dirty tiles of the minimap (must be rendered again). */
-uint8 g_displayedMinimap[512];                              /*!< Displayed part of the minimap. */
-uint8 g_dirtyViewport[512];                                 /*!< Dirty tiles of the viewport (must be rendered again). */
-uint8 g_displayedViewport[512];                             /*!< Displayed part of the viewport. */
-
-uint16 g_changedTilesCount;                                 /*!< Number of changed tiles in #_changedTiles. */
-uint16 g_changedTiles[200];                                 /*!< Array of positions of changed tiles. */
-uint8 g_changedTilesMap[512];                               /*!< Bit array of changed tiles, in order not to loose changes. */
-
 static bool s_debugNoExplosionDamage = false;               /*!< When non-zero, explosions do no damage to their surrounding. */
-
-uint16 g_dirtyViewportCount = 0;
 
 /**
  * Map definitions.
@@ -226,25 +215,8 @@ uint16 Map_SetSelectionSize(uint16 layout)
 
 static void Map_InvalidateSelection(uint16 packed, bool enable)
 {
-	uint16 x, y;
-
-	if (packed == 0xFFFF) return;
-
-	for (y = 0; y < g_selectionHeight; y++) {
-		for (x = 0; x < g_selectionWidth; x++) {
-			uint16 curPacked;
-
-			curPacked = packed + Tile_PackXY(x, y);
-
-			Map_Update(curPacked, 0, false);
-
-			if (enable) {
-				BitArray_Set(g_displayedViewport, curPacked);
-			} else {
-				BitArray_Clear(g_displayedViewport, curPacked);
-			}
-		}
-	}
+	VARIABLE_NOT_USED(packed);
+	VARIABLE_NOT_USED(enable);
 }
 
 /**
@@ -700,6 +672,7 @@ uint16 Map_GetLandscapeType(uint16 packed)
 	return _landscapeSpriteMap[spriteOffset];
 }
 
+#if 0
 /**
  * Checks wether a packed tile is visible in the viewport.
  *
@@ -718,6 +691,7 @@ static bool Map_IsTileVisible(uint16 packed)
 
 	return x >= x2 && x < x2 + 15 && y >= y2 && y < y2 + 10;
 }
+#endif
 
 /**
  * Updates ??.
@@ -728,45 +702,9 @@ static bool Map_IsTileVisible(uint16 packed)
  */
 void Map_Update(uint16 packed, uint16 type, bool ignoreInvisible)
 {
-	static int16 offsets[9] = {
-		-64, /* up */
-		-63, /* up right */
-		1,   /* right */
-		65,  /* down rigth */
-		64,  /* down */
-		63,  /* down left */
-		-1,  /* left */
-		-65, /* up left */
-		0
-	};
-
-	if (!ignoreInvisible && !Map_IsTileVisible(packed)) return;
-
-	switch (type) {
-		default:
-		case 0: {
-			uint8 i;
-			uint16 curPacked;
-
-			if (BitArray_Test(g_dirtyMinimap, packed)) return;
-
-			g_dirtyViewportCount++;
-
-			for (i = 0; i < 9; i++) {
-				curPacked = (packed + offsets[i]) & 0xFFF;
-				BitArray_Set(g_dirtyViewport, curPacked);
-			}
-
-			BitArray_Set(g_dirtyMinimap, curPacked);
-			return;
-		}
-
-		case 1:
-		case 2:
-		case 3:
-			BitArray_Set(g_dirtyViewport, packed);
-			return;
-	}
+	VARIABLE_NOT_USED(packed);
+	VARIABLE_NOT_USED(type);
+	VARIABLE_NOT_USED(ignoreInvisible);
 }
 
 /**
@@ -1226,8 +1164,6 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 				if (x + i < 0 || x + i >= 64 || y + j < 0 || y + j >= 64) continue;
 
 				curPacked = Tile_PackXY(x + i, y + j);
-				BitArray_Set(g_dirtyViewport, curPacked);
-				g_dirtyViewportCount++;
 
 				switch (function) {
 					case 0: Map_Update(curPacked, 0, false); break;
@@ -1255,9 +1191,6 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 			uint16 curPacked = Tile_PackTile(curTile);
 
 			if (curPacked != lastPacked) {
-				BitArray_Set(g_dirtyViewport, curPacked);
-				g_dirtyViewportCount++;
-
 				switch (function) {
 					case 0: Map_Update(curPacked, 0, false); break;
 					case 1: Map_Update(curPacked, 3, false); break;
@@ -1843,8 +1776,5 @@ void Map_CreateLandscape(uint32 seed)
  */
 void Map_MarkTileDirty(uint16 packed)
 {
-	if (BitArray_Test(g_displayedMinimap, packed) && g_scenario.mapScale + 1 == 0) return;
-
-	BitArray_Set(g_changedTilesMap, packed);
-	if (g_changedTilesCount < lengthof(g_changedTiles)) g_changedTiles[g_changedTilesCount++] = packed;
+	VARIABLE_NOT_USED(packed);
 }

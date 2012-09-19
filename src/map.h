@@ -79,20 +79,8 @@ extern uint16 g_mapSpriteID[];
 extern Tile g_map[];
 extern uint8 g_functions[3][3];
 
-extern uint8 g_changedTilesMap[512];
-extern uint8 g_dirtyMinimap[512];
-extern uint8 g_displayedMinimap[512];
-extern uint8 g_dirtyViewport[512];
-extern uint8 g_displayedViewport[512];
-
-extern uint16 g_changedTilesCount;
-extern uint16 g_changedTiles[200];
-extern uint8 g_changedTilesMap[512];
-
 extern const MapInfo g_mapInfos[3];
 extern const tile32 g_table_tilediff[][8];
-
-extern uint16 g_dirtyViewportCount;
 
 extern const LandscapeInfo g_table_landscapeInfo[LST_MAX];
 

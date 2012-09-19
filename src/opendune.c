@@ -1363,12 +1363,6 @@ void Game_Init(void)
 	Explosion_Init();
 	memset(g_map, 0, 64 * 64 * sizeof(Tile));
 
-	memset(g_displayedViewport, 0, sizeof(g_displayedViewport));
-	memset(g_displayedMinimap,  0, sizeof(g_displayedMinimap));
-	memset(g_changedTilesMap,   0, sizeof(g_changedTilesMap));
-	memset(g_dirtyViewport,     0, sizeof(g_dirtyViewport));
-	memset(g_dirtyMinimap,      0, sizeof(g_dirtyMinimap));
-
 	memset(g_mapSpriteID, 0, 64 * 64 * sizeof(uint16));
 	memset(g_starportAvailable, 0, sizeof(g_starportAvailable));
 

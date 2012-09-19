@@ -416,7 +416,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 			curPos = Tile_PackTile(u->o.position);
 
-			if ((!u->o.flags.s.isDirty || u->o.flags.s.isNotOnMap) && !forceRedraw && !BitArray_Test(g_dirtyViewport, curPos)) continue;
+			/* if ((!u->o.flags.s.isDirty || u->o.flags.s.isNotOnMap) && !forceRedraw && !BitArray_Test(g_dirtyViewport, curPos)) continue; */
 			u->o.flags.s.isDirty = false;
 
 			if (!g_map[curPos].isUnveiled && !g_debugScenario) continue;
@@ -495,11 +495,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		}
 	}
 
-	if (updateDisplay) {
-		memset(g_dirtyMinimap,  0, sizeof(g_dirtyMinimap));
-		memset(g_dirtyViewport, 0, sizeof(g_dirtyViewport));
-	}
-
+#if 0
 	if (g_changedTilesCount != 0) {
 		bool init = false;
 		bool update = false;
@@ -544,6 +540,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 			g_changedTilesCount = 0;
 		}
 	}
+#endif
 
 	if ((g_viewportMessageCounter & 1) != 0 && g_viewportMessageText != NULL && (minX[6] <= 14 || maxX[6] >= 0 || arg08 || forceRedraw)) {
 		const int x = wi->offsetX + wi->width / 2;
@@ -632,7 +629,7 @@ void GUI_Widget_Viewport_DrawTile(uint16 packed)
 
 	mapScale = g_scenario.mapScale + 1;
 
-	if (mapScale == 0 || BitArray_Test(g_displayedMinimap, packed)) return;
+	if (mapScale == 0) return;
 
 	t = &g_map[packed];
 
