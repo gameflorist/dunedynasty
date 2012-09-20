@@ -869,44 +869,6 @@ void Map_ChangeSpiceAmount(uint16 packed, int16 dir)
 }
 
 /**
- * Sets the viewport position.
- *
- * @param packed The packed position.
-*/
-void Map_SetViewportPosition(uint16 packed)
-{
-	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
-	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-	const int w = ceilf((float)wi->width / TILE_SIZE);
-	const int h = ceilf((float)wi->height / TILE_SIZE);
-
-	int x = Tile_GetPackedX(packed) - w / 2;
-	int y = Tile_GetPackedY(packed) - h / 2;
-
-	x = max(x, mapInfo->minX);
-	y = max(y, mapInfo->minY);
-
-	if (x + w - 1 > mapInfo->minX + mapInfo->sizeX) {
-		x = mapInfo->minX + mapInfo->sizeX - w + 1;
-
-		if (x < mapInfo->minX)
-			x = (x + mapInfo->minX) / 2;
-	}
-
-	if (y + h - 1 > mapInfo->minY + mapInfo->sizeY) {
-		y = mapInfo->minY + mapInfo->sizeY - h + 1;
-
-		if (y < mapInfo->minY)
-			y = (y + mapInfo->minY) / 2;
-	}
-
-	if (x < 0) x = 0;
-	if (y < 0) y = 0;
-
-	g_viewportPosition = Tile_PackXY(x, y);
-}
-
-/**
  * A unit drove over a special bloom, which can either give credits, a friendly
  *  Trike, an enemy Trike, or an enemy Infantry.
  * @param packed The tile where the bloom is on.

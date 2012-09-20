@@ -582,10 +582,7 @@ static void Scenario_CentreViewport(uint8 houseID)
 
 	Structure *s = Structure_Find(&find);
 	if (s != NULL) {
-		const int cx = Tile_GetPosX(s->o.position);
-		const int cy = Tile_GetPosY(s->o.position);
-
-		Map_SetViewportPosition(Tile_PackXY(cx, cy));
+		Map_CentreViewport((s->o.position.s.x >> 4) + TILE_SIZE, (s->o.position.s.y >> 4) + TILE_SIZE);
 	}
 }
 

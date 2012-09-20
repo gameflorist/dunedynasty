@@ -104,7 +104,6 @@ extern void Map_DeviateArea(uint16 type, tile32 position, uint16 radius);
 extern void Map_Bloom_ExplodeSpice(uint16 packed, uint8 houseID);
 extern void Map_FillCircleWithSpice(uint16 packed, uint16 radius);
 extern void Map_ChangeSpiceAmount(uint16 packed, int16 dir);
-extern void Map_SetViewportPosition(uint16 packed);
 extern void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID);
 extern uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID);
 extern void Map_UpdateAround(uint16 arg06, tile32 position, struct Unit *unit, uint8 function);

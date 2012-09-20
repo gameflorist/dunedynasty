@@ -333,7 +333,7 @@ bool GUI_Widget_Name_Click(Widget *w)
 
 	packed = Tile_PackTile(o->position);
 
-	Map_SetViewportPosition(packed);
+	Map_CentreViewport(o->position.s.x >> 4, o->position.s.y >> 4);
 	Map_SetSelection(packed);
 
 	return false;

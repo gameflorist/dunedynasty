@@ -519,8 +519,8 @@ Viewport_Hotkey(enum SquadID squad)
 			if ((Unit_GetHouseID(u) == g_playerHouseID) && Unit_IsSelected(u)) {
 				u->squadID = squad;
 
-				cx += Tile_GetX(u->o.position);
-				cy += Tile_GetY(u->o.position);
+				cx += (u->o.position.s.x >> 4);
+				cy += (u->o.position.s.y >> 4);
 				count++;
 			}
 			else if (u->squadID == squad) {
@@ -577,8 +577,8 @@ Viewport_Hotkey(enum SquadID squad)
 			}
 
 			if (Unit_IsSelected(u)) {
-				cx += Tile_GetPosX(u->o.position);
-				cy += Tile_GetPosY(u->o.position);
+				cx += (u->o.position.s.x >> 4);
+				cy += (u->o.position.s.y >> 4);
 				count++;
 			}
 
@@ -596,9 +596,12 @@ Viewport_Hotkey(enum SquadID squad)
 			Structure *s = Structure_Find(&find);
 			while (s != NULL) {
 				if (s->squadID == squad) {
+					const StructureInfo *si = &g_table_structureInfo[s->o.type];
+					const XYSize *layout = &g_table_structure_layoutSize[si->layout];
+
 					Map_SetSelection(Tile_PackTile(s->o.position));
-					cx = Tile_GetPosX(s->o.position);
-					cy = Tile_GetPosY(s->o.position);
+					cx = (s->o.position.s.x >> 4) + TILE_SIZE * layout->width / 2;
+					cy = (s->o.position.s.y >> 4) + TILE_SIZE * layout->height / 2;
 					count = 1;
 					break;
 				}
@@ -609,7 +612,7 @@ Viewport_Hotkey(enum SquadID squad)
 	}
 
 	if (centre_on_selection && (count > 0)) {
-		Map_SetViewportPosition(Tile_PackXY(cx / count, cy / count));
+		Map_CentreViewport(cx / count, cy / count);
 	}
 }
 
@@ -644,10 +647,7 @@ Viewport_Homekey(void)
 		}
 
 		if (centre_on_selection) {
-			const int cx = Tile_GetPosX(s->o.position);
-			const int cy = Tile_GetPosY(s->o.position);
-
-			Map_SetViewportPosition(Tile_PackXY(cx, cy));
+			Map_CentreViewport((s->o.position.s.x >> 4) + TILE_SIZE, (s->o.position.s.y >> 4) + TILE_SIZE);
 		}
 	}
 }

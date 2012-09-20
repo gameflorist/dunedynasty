@@ -165,6 +165,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		return true;
 	}
 
+#if 0
 	if (click && w->index == 43) {
 		uint16 position;
 
@@ -185,9 +186,23 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 
 		return true;
 	}
+#endif
 
 	if ((click || drag) && w->index == 44) {
-		Map_SetViewportPosition(packed);
+		/* High-resolution panning. */
+		const ScreenDiv *div = &g_screenDiv[SCREENDIV_SIDEBAR];
+		const uint16 mapScale = g_scenario.mapScale;
+		const MapInfo *mapInfo = &g_mapInfos[mapScale];
+
+		/* Minimap is (div->scale * 64) * (div->scale * 64).
+		 * Each pixel represents 1 / (mapScale + 1) tiles.
+		 */
+		x = g_mouseX - div->x - div->scale * g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX;
+		y = g_mouseY - div->y - div->scale * g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
+		x = TILE_SIZE * mapInfo->minX + TILE_SIZE * x / (div->scale * (mapScale + 1));
+		y = TILE_SIZE * mapInfo->minY + TILE_SIZE * y / (div->scale * (mapScale + 1));
+
+		Map_CentreViewport(x, y);
 		return true;
 	}
 
