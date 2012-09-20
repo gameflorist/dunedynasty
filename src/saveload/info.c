@@ -171,6 +171,7 @@ bool Info_Load(FILE *fp, uint32 length)
 	if (!SaveLoad_Load(s_saveInfo, fp, NULL)) return false;
 
 	g_selectionPosition = g_selectionRectanglePosition;
+	Map_MoveDirection(0, 0);
 
 	Sprites_LoadTiles();
 

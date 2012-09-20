@@ -48,6 +48,7 @@ static void Scenario_Load_General(void)
 	Ini_GetString("BASIC", "LosePicture",  "LOSTBILD.WSA", g_scenario.pictureLose,     14, s_scenarioBuffer);
 
 	g_selectionPosition = g_selectionRectanglePosition;
+	Map_MoveDirection(0, 0);
 }
 
 static void Scenario_Load_House(uint8 houseID)

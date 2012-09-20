@@ -87,6 +87,18 @@ Map_Clamp(int x)
 void
 Map_MoveDirection(int dx, int dy)
 {
+	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+	const int tilex = Tile_GetPackedX(g_viewportPosition);
+	const int tiley = Tile_GetPackedY(g_viewportPosition);
+	const int x = TILE_SIZE * tilex + g_viewport_scrollOffsetX + viewport->width / 2 + dx;
+	const int y = TILE_SIZE * tiley + g_viewport_scrollOffsetY + viewport->height / 2 + dy;
+
+	Map_CentreViewport(x, y);
+}
+
+void
+Map_CentreViewport(int x, int y)
+{
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 	const int w = wi->width;
 	const int h = wi->height;
@@ -96,14 +108,10 @@ Map_MoveDirection(int dx, int dy)
 	int miny = TILE_SIZE * mapInfo->minY + h / 2;
 	int maxx = TILE_SIZE * (mapInfo->minX + mapInfo->sizeX) - w / 2;
 	int maxy = TILE_SIZE * (mapInfo->minY + mapInfo->sizeY) - h / 2;
+	int tilex, tiley;
 
 	if (minx > maxx) minx = maxx = (minx + maxx) / 2;
 	if (miny > maxy) miny = maxy = (miny + maxy) / 2;
-
-	int tilex = Tile_GetPackedX(g_viewportPosition);
-	int tiley = Tile_GetPackedY(g_viewportPosition);
-	int x = TILE_SIZE * tilex + g_viewport_scrollOffsetX + w / 2 + dx;
-	int y = TILE_SIZE * tiley + g_viewport_scrollOffsetY + h / 2 + dy;
 
 	x = clamp(minx, x, maxx) - w / 2;
 	y = clamp(miny, y, maxy) - h / 2;

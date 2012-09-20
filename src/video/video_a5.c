@@ -26,9 +26,11 @@
 #include "../gui/gui.h"
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
+#include "../map.h"
 #include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../sprites.h"
+#include "../tile.h"
 #include "../tools.h"
 #include "../wsa.h"
 
@@ -319,6 +321,11 @@ void
 VideoA5_ToggleFullscreen(void)
 {
 	const bool fs = (al_get_display_flags(display) & ALLEGRO_FULLSCREEN_WINDOW);
+	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+	const int tilex = Tile_GetPackedX(g_viewportPosition);
+	const int tiley = Tile_GetPackedY(g_viewportPosition);
+	const int viewport_cx = TILE_SIZE * tilex + g_viewport_scrollOffsetX + viewport->width / 2;
+	const int viewport_cy = TILE_SIZE * tiley + g_viewport_scrollOffsetY + viewport->height / 2;
 
 	al_set_display_flag(display, ALLEGRO_FULLSCREEN_WINDOW, !fs);
 	TRUE_DISPLAY_WIDTH = al_get_display_width(display);
@@ -327,6 +334,7 @@ VideoA5_ToggleFullscreen(void)
 	al_set_target_backbuffer(display);
 	A5_InitTransform(true);
 	GameLoop_TweakWidgetDimensions();
+	Map_CentreViewport(viewport_cx, viewport_cy);
 }
 
 void

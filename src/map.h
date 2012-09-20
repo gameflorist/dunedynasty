@@ -87,6 +87,7 @@ extern const LandscapeInfo g_table_landscapeInfo[LST_MAX];
 extern int Map_Clamp(int x);
 
 extern void Map_MoveDirection(int dx, int dy);
+extern void Map_CentreViewport(int x, int y);
 extern void Map_SetSelection(uint16 packed);
 extern void Map_SetSelectionSize(uint16 layout);
 extern uint16 Map_SetSelectionObjectPosition(uint16 packed);
