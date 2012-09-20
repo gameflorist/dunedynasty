@@ -90,12 +90,14 @@ uint16 g_viewportMessageCounter;                            /*!< Countdown count
 char *g_viewportMessageText;                                /*!< If not \c NULL, message text displayed in the viewport. */
 
 uint16 g_viewportPosition;                                  /*!< Top-left tile of the viewport. */
+int g_viewport_scrollOffsetX;
+int g_viewport_scrollOffsetY;
+
 uint16 g_selectionRectanglePosition;                        /*!< Position of the structure selection rectangle. */
 uint16 g_selectionPosition;                                 /*!< Current selection position (packed). */
 uint16 g_selectionWidth;                                    /*!< Width of the selection. */
 uint16 g_selectionHeight;                                   /*!< Height of the selection. */
 int16  g_selectionState = 1;                                /*!< State of the selection (\c 1 is valid, \c 0 is not valid, \c <0 valid but missing some slabs. */
-
 
 /*!< Colours used for the border of widgets. */
 static uint8 s_colourBorderSchema[5][4] = {

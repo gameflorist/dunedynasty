@@ -99,35 +99,51 @@ uint16 Map_MoveDirection(uint16 direction)
 		{ 0,  1}, {-1,  1}, {-1,  0}, {-1, -1}
 	};
 
-	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-	const int w = ceilf((float)wi->width / TILE_SIZE);
-	const int h = ceilf((float)wi->height / TILE_SIZE);
+	const int w = wi->width;
+	const int h = wi->height;
 
-	int x = Tile_GetPackedX(g_viewportPosition) + mapScrollOffset[direction].dx;
-	int y = Tile_GetPackedY(g_viewportPosition) + mapScrollOffset[direction].dy;
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+	int minx = TILE_SIZE * mapInfo->minX + w / 2;
+	int miny = TILE_SIZE * mapInfo->minY + h / 2;
+	int maxx = TILE_SIZE * (mapInfo->minX + mapInfo->sizeX) - w / 2;
+	int maxy = TILE_SIZE * (mapInfo->minY + mapInfo->sizeY) - h / 2;
 
-	x = max(x, mapInfo->minX);
-	y = max(y, mapInfo->minY);
+	if (minx > maxx) minx = maxx = (minx + maxx) / 2;
+	if (miny > maxy) miny = maxy = (miny + maxy) / 2;
 
-	if (x + w - 1 > mapInfo->minX + mapInfo->sizeX) {
-		x = mapInfo->minX + mapInfo->sizeX - w + 1;
+	int tilex = Tile_GetPackedX(g_viewportPosition);
+	int tiley = Tile_GetPackedY(g_viewportPosition);
+	int x = TILE_SIZE * tilex + g_viewport_scrollOffsetX + w / 2;
+	int y = TILE_SIZE * tiley + g_viewport_scrollOffsetY + h / 2;
 
-		if (x < mapInfo->minX)
-			x = (x + mapInfo->minX) / 2;
+	if (direction < 8) {
+		x += 4 * mapScrollOffset[direction].dx;
+		y += 4 * mapScrollOffset[direction].dy;
 	}
 
-	if (y + h - 1 > mapInfo->minY + mapInfo->sizeY) {
-		y = mapInfo->minY + mapInfo->sizeY - h + 1;
+	x = clamp(minx, x, maxx) - w / 2;
+	y = clamp(miny, y, maxy) - h / 2;
 
-		if (y < mapInfo->minY)
-			y = (y + mapInfo->minY) / 2;
+	if (x >= 0) {
+		tilex = x / TILE_SIZE;
+		g_viewport_scrollOffsetX = x % TILE_SIZE;
+	}
+	else {
+		tilex = 0;
+		g_viewport_scrollOffsetX = x;
 	}
 
-	if (x < 0) x = 0;
-	if (y < 0) y = 0;
+	if (y >= 0) {
+		tiley = y / TILE_SIZE;
+		g_viewport_scrollOffsetY = y % TILE_SIZE;
+	}
+	else {
+		tiley = 0;
+		g_viewport_scrollOffsetY = y;
+	}
 
-	g_viewportPosition = Tile_PackXY(x, y);
+	g_viewportPosition = Tile_PackXY(tilex, tiley);
 	return g_viewportPosition;
 }
 
@@ -452,16 +468,14 @@ bool Map_IsPositionUnveiled(uint16 position)
 bool Map_IsPositionInViewport(tile32 position, uint16 *retX, uint16 *retY)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-
-	int16 x, y;
-
-	x = (position.s.x >> 4) - (Tile_GetPackedX(g_viewportPosition) << 4);
-	y = (position.s.y >> 4) - (Tile_GetPackedY(g_viewportPosition) << 4);
+	const int x = (position.s.x >> 4) - (Tile_GetPackedX(g_viewportPosition) * TILE_SIZE) - g_viewport_scrollOffsetX;
+	const int y = (position.s.y >> 4) - (Tile_GetPackedY(g_viewportPosition) * TILE_SIZE) - g_viewport_scrollOffsetY;
 
 	if (retX != NULL) *retX = x;
 	if (retY != NULL) *retY = y;
 
-	return (-TILE_SIZE <= x && x < wi->width) && (-TILE_SIZE <= y && y < wi->height);
+	return ((-TILE_SIZE <= x && x < TILE_SIZE + wi->width) &&
+	        (-TILE_SIZE <= y && y < TILE_SIZE + wi->height));
 }
 
 static bool Map_UpdateWall(uint16 packed)

@@ -54,6 +54,9 @@ extern uint16 g_productionStringID;
 extern uint16 g_viewportMessageCounter;
 extern char *g_viewportMessageText;
 extern uint16 g_viewportPosition;
+extern int g_viewport_scrollOffsetX;
+extern int g_viewport_scrollOffsetY;
+
 extern uint16 g_selectionRectanglePosition;
 extern uint16 g_selectionPosition;
 extern uint16 g_selectionWidth;

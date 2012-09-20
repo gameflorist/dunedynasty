@@ -111,13 +111,11 @@ Viewport_SelectRegion(void)
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
 	const enum SelectionMode mode = Viewport_GetSelectionMode();
-	const Widget *w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 43);
-	assert(w != NULL);
 
 	/* Select individual unit or structure. */
 	if (dx*dx + dy*dy < radius*radius) {
-		const int tilex = x0 + (selection_box_x2 - w->offsetX) / TILE_SIZE;
-		const int tiley = y0 + (selection_box_y2 - w->offsetY) / TILE_SIZE;
+		const int tilex = x0 + (selection_box_x2 + g_viewport_scrollOffsetX) / TILE_SIZE;
+		const int tiley = y0 + (selection_box_y2 + g_viewport_scrollOffsetY) / TILE_SIZE;
 
 		if (!(Map_InRange(tilex) && Map_InRange(tiley)))
 			return;
@@ -151,10 +149,10 @@ Viewport_SelectRegion(void)
 
 	/* Box selection. */
 	else if (mode == SELECTION_MODE_NONE || mode == SELECTION_MODE_CONTROLLABLE_UNIT) {
-		const int x1 = selection_box_x1 - w->offsetX;
-		const int x2 = selection_box_x2 - w->offsetX;
-		const int y1 = selection_box_y1 - w->offsetY;
-		const int y2 = selection_box_y2 - w->offsetY;
+		const int x1 = selection_box_x1;
+		const int x2 = selection_box_x2;
+		const int y1 = selection_box_y1;
+		const int y2 = selection_box_y2;
 
 		PoolFindStruct find;
 
@@ -334,8 +332,8 @@ Viewport_Click(Widget *w)
 
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
-	const int tilex = Map_Clamp(x0 + mouseX / TILE_SIZE);
-	const int tiley = Map_Clamp(y0 + mouseY / TILE_SIZE);
+	const int tilex = Map_Clamp(x0 + (mouseX + g_viewport_scrollOffsetX) / TILE_SIZE);
+	const int tiley = Map_Clamp(y0 + (mouseY + g_viewport_scrollOffsetY) / TILE_SIZE);
 	const uint16 packed = Tile_PackXY(tilex, tiley);
 
 	if ((w->state.s.buttonState & 0x04) != 0) {
@@ -686,7 +684,7 @@ Viewport_DrawTilesInRange(int x0, int y0,
 		}
 	}
 
-#if 1
+#if 0
 	/* Debugging. */
 	for (int x = x0, left = viewportX1; (x < MAP_SIZE_MAX) && (left <= viewportX2); x++, left += TILE_SIZE)
 		GUI_DrawText_Wrapper("%d", left, viewportY1, 15, 0, 0x21, x);
@@ -700,8 +698,8 @@ void
 Viewport_DrawTiles(void)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-	const int viewportX1 = 0;
-	const int viewportY1 = 0;
+	const int viewportX1 = -g_viewport_scrollOffsetX;
+	const int viewportY1 = -g_viewport_scrollOffsetY;
 	const int viewportX2 = wi->width - 1;
 	const int viewportY2 = wi->height - 1;
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
@@ -720,8 +718,8 @@ Viewport_DrawTileFog(void)
 		return;
 
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-	const int viewportX1 = 0;
-	const int viewportY1 = 0;
+	const int viewportX1 = -g_viewport_scrollOffsetX;
+	const int viewportY1 = -g_viewport_scrollOffsetY;
 	const int viewportX2 = wi->width - 1;
 	const int viewportY2 = wi->height - 1;
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
@@ -747,13 +745,12 @@ Viewport_DrawRallyPoint(void)
 	    (s->o.type == STRUCTURE_BARRACKS) ||
 	    (s->o.type == STRUCTURE_STARPORT) ||
 	    (s->o.type == STRUCTURE_REPAIR)) {
-		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 		const int tx = Tile_GetPackedX(g_viewportPosition);
 		const int ty = Tile_GetPackedY(g_viewportPosition);
-		const int x1 = wi->offsetX + (TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - tx)) + (TILE_SIZE * g_selectionWidth)/2;
-		const int y1 = wi->offsetY + (TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - ty)) + (TILE_SIZE * g_selectionHeight)/2;
-		const int x2 = wi->offsetX + (TILE_SIZE * (Tile_GetPackedX(s->rallyPoint) - tx)) + TILE_SIZE/2;
-		const int y2 = wi->offsetY + (TILE_SIZE * (Tile_GetPackedY(s->rallyPoint) - ty)) + TILE_SIZE/2;
+		const int x1 = -g_viewport_scrollOffsetX + (TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - tx)) + (TILE_SIZE * g_selectionWidth)/2;
+		const int y1 = -g_viewport_scrollOffsetY + (TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - ty)) + (TILE_SIZE * g_selectionHeight)/2;
+		const int x2 = -g_viewport_scrollOffsetX + (TILE_SIZE * (Tile_GetPackedX(s->rallyPoint) - tx)) + TILE_SIZE/2;
+		const int y2 = -g_viewport_scrollOffsetY + (TILE_SIZE * (Tile_GetPackedY(s->rallyPoint) - ty)) + TILE_SIZE/2;
 
 		Prim_Line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, 14, 1.0f);
 		Shape_DrawTint(SHAPE_CURSOR_TARGET, x2, y2, 14, 0, 0x8000);
