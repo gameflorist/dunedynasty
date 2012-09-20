@@ -215,8 +215,6 @@ static uint8 *GUI_Widget_Viewport_Draw_GetSprite(uint16 spriteID, uint8 houseID)
  */
 void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScreen)
 {
-	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-
 	uint16 x;
 	uint16 y;
 	uint16 i;
@@ -319,7 +317,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		Unit *u = Unit_Find(&find);
 		while (u != NULL) {
 			if (20 <= u->o.index && u->o.index <= 101)
-				Viewport_DrawUnit(u, wi->offsetX, wi->offsetY, false);
+				Viewport_DrawUnit(u, 0, 0, false);
 
 			u = Unit_Find(&find);
 		}
@@ -392,8 +390,9 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 #endif
 
 	if ((g_viewportMessageCounter & 1) != 0 && g_viewportMessageText != NULL && (minX[6] <= 14 || maxX[6] >= 0 || arg08 || forceRedraw)) {
-		const int x = wi->offsetX + wi->width / 2;
-		const int y = wi->offsetY + wi->height - 61;
+		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+		const int x = wi->width / 2;
+		const int y = wi->height - 61;
 
 		GUI_DrawText_Wrapper(g_viewportMessageText, x, y, 15, 0, 0x132);
 		minX[6] = -1;

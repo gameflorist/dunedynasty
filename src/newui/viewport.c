@@ -68,13 +68,7 @@ Viewport_ClampSelectionBoxX(int x)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 
-	if (x <= wi->offsetX)
-		return wi->offsetX;
-
-	if (x >= wi->offsetX + wi->width - 1)
-		return wi->offsetX + wi->width - 1;
-
-	return x;
+	return clamp(0, x, wi->width - 1);
 }
 
 static int
@@ -82,13 +76,7 @@ Viewport_ClampSelectionBoxY(int y)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 
-	if (y <= wi->offsetY)
-		return wi->offsetY;
-
-	if (y >= wi->offsetY + wi->height - 1)
-		return wi->offsetY + wi->height - 1;
-
-	return y;
+	return clamp(0, y, wi->height - 1);
 }
 
 static enum SelectionMode
@@ -698,7 +686,7 @@ Viewport_DrawTilesInRange(int x0, int y0,
 		}
 	}
 
-#if 0
+#if 1
 	/* Debugging. */
 	for (int x = x0, left = viewportX1; (x < MAP_SIZE_MAX) && (left <= viewportX2); x++, left += TILE_SIZE)
 		GUI_DrawText_Wrapper("%d", left, viewportY1, 15, 0, 0x21, x);
