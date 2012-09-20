@@ -541,6 +541,10 @@ MenuBar_TickOptionsOverlay(void)
 uint16
 GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 {
+	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+	const enum ScreenDivID prev_div = A5_SaveTransform();
+
 	WidgetProperties *w = &g_widgetProperties[WINDOWID_MODAL_MESSAGE];
 	char textBuffer[768];
 
@@ -562,7 +566,7 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 
 	/* Centre the dialog box to the viewport. */
 	const int old_x = w->xBase;
-	w->xBase = (g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width / g_mouse_transform_scale - w->width)/2;
+	w->xBase = ((viewport->scale * viewport->width) / div->scale - w->width) / 2;
 
 	GUI_Widget_DrawBorder(WINDOWID_MODAL_MESSAGE, 1, 1);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
@@ -597,7 +601,7 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 		}
 	}
 
-	A5_UseTransform(SCREENDIV_MAIN);
+	A5_UseTransform(prev_div);
 
 	/* Not sure. */
 	return 0;
