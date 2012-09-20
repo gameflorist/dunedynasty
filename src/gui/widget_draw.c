@@ -80,6 +80,7 @@ void GUI_Widget_TextButton_Draw(Widget *w)
  */
 void GUI_Widget_SpriteButton_Draw(Widget *w)
 {
+#if 0
 	uint16 oldScreenID;
 	uint16 positionX, positionY;
 	uint16 width, height;
@@ -130,6 +131,9 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 	GUI_Mouse_Show_InRegion();
 
 	GFX_Screen_SetActive(0);
+#else
+	VARIABLE_NOT_USED(w);
+#endif
 }
 
 /**
