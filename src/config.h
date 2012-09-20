@@ -19,7 +19,7 @@ typedef struct GameCfg {
 	int gameSpeed;
 	bool hints;
 	bool autoScroll;
-	int autoScrollDelay;
+	int scrollSpeed;
 } GameCfg;
 
 extern GameCfg g_gameConfig;

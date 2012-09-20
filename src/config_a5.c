@@ -27,7 +27,7 @@ typedef struct GameOption {
 		CONFIG_FLOAT_1_3,
 		CONFIG_INT,
 		CONFIG_INT_0_4,
-		CONFIG_INT_1_10,
+		CONFIG_INT_1_16,
 		CONFIG_LANGUAGE,
 		CONFIG_STRING,
 		CONFIG_WINDOW
@@ -51,7 +51,7 @@ GameCfg g_gameConfig = {
 	2,      /* gameSpeed */
 	true,   /* hints */
 	true,   /* autoScroll */
-	5,      /* autoScrollDelay */
+	4,      /* scrollSpeed */
 };
 
 /*--------------------------------------------------------------*/
@@ -67,7 +67,7 @@ static const GameOption s_game_option[] = {
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
 	{ "game",   "auto_scroll",      CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
-	{ "game",   "auto_scroll_delay",CONFIG_INT_1_10,.d._int = &g_gameConfig.autoScrollDelay },
+	{ "game",   "scroll_speed",     CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
 	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },
@@ -287,8 +287,8 @@ GameOptions_Load(void)
 				Config_GetInt(str, 0, 4, opt->d._int);
 				break;
 
-			case CONFIG_INT_1_10:
-				Config_GetInt(str, 1, 10, opt->d._int);
+			case CONFIG_INT_1_16:
+				Config_GetInt(str, 1, 16, opt->d._int);
 				break;
 
 			case CONFIG_LANGUAGE:
@@ -375,7 +375,7 @@ GameOptions_Save(void)
 
 			case CONFIG_INT:
 			case CONFIG_INT_0_4:
-			case CONFIG_INT_1_10:
+			case CONFIG_INT_1_16:
 				Config_SetInt(s_configFile, opt->section, opt->key, *(opt->d._int));
 				break;
 

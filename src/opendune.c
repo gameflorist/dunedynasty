@@ -834,36 +834,36 @@ static void InGame_Numpad_Move(uint16 key)
 			return;
 #endif
 
-		case SCANCODE_KEYPAD_4: /* NUMPAD 4 / ARROW LEFT */
-			Map_MoveDirection(6);
-			return;
-
-		case SCANCODE_KEYPAD_6: /* NUMPAD 6 / ARROW RIGHT */
-			Map_MoveDirection(2);
-			return;
-
 		case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
-			Map_MoveDirection(0);
-			return;
-
-		case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
-			Map_MoveDirection(4);
-			return;
-
-		case SCANCODE_KEYPAD_7: /* NUMPAD 7 / HOME */
-			Map_MoveDirection(7);
-			return;
-
-		case SCANCODE_KEYPAD_1: /* NUMPAD 1 / END */
-			Map_MoveDirection(5);
+			Map_MoveDirection( 0 * g_gameConfig.scrollSpeed, -1 * g_gameConfig.scrollSpeed);
 			return;
 
 		case SCANCODE_KEYPAD_9: /* NUMPAD 9 / PAGE UP */
-			Map_MoveDirection(1);
+			Map_MoveDirection( 1 * g_gameConfig.scrollSpeed, -1 * g_gameConfig.scrollSpeed);
+			return;
+
+		case SCANCODE_KEYPAD_6: /* NUMPAD 6 / ARROW RIGHT */
+			Map_MoveDirection( 1 * g_gameConfig.scrollSpeed,  0 * g_gameConfig.scrollSpeed);
 			return;
 
 		case SCANCODE_KEYPAD_3: /* NUMPAD 3 / PAGE DOWN */
-			Map_MoveDirection(3);
+			Map_MoveDirection( 1 * g_gameConfig.scrollSpeed,  1 * g_gameConfig.scrollSpeed);
+			return;
+
+		case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
+			Map_MoveDirection( 0 * g_gameConfig.scrollSpeed,  1 * g_gameConfig.scrollSpeed);
+			return;
+
+		case SCANCODE_KEYPAD_1: /* NUMPAD 1 / END */
+			Map_MoveDirection(-1 * g_gameConfig.scrollSpeed,  1 * g_gameConfig.scrollSpeed);
+			return;
+
+		case SCANCODE_KEYPAD_4: /* NUMPAD 4 / ARROW LEFT */
+			Map_MoveDirection(-1 * g_gameConfig.scrollSpeed,  0 * g_gameConfig.scrollSpeed);
+			return;
+
+		case SCANCODE_KEYPAD_7: /* NUMPAD 7 / HOME */
+			Map_MoveDirection(-1 * g_gameConfig.scrollSpeed, -1 * g_gameConfig.scrollSpeed);
 			return;
 
 		case SCANCODE_1:

@@ -84,21 +84,9 @@ Map_Clamp(int x)
 	return clamp(0, x, MAP_SIZE_MAX - 1);
 }
 
-/**
- * Move the viewport position in the given direction.
- *
- * @param direction The direction to move in.
- * @return The new viewport position.
-*/
-uint16 Map_MoveDirection(uint16 direction)
+void
+Map_MoveDirection(int dx, int dy)
 {
-	const struct {
-		int dx, dy;
-	} mapScrollOffset[] = {
-		{ 0, -1}, { 1, -1}, { 1,  0}, { 1,  1},
-		{ 0,  1}, {-1,  1}, {-1,  0}, {-1, -1}
-	};
-
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 	const int w = wi->width;
 	const int h = wi->height;
@@ -114,13 +102,8 @@ uint16 Map_MoveDirection(uint16 direction)
 
 	int tilex = Tile_GetPackedX(g_viewportPosition);
 	int tiley = Tile_GetPackedY(g_viewportPosition);
-	int x = TILE_SIZE * tilex + g_viewport_scrollOffsetX + w / 2;
-	int y = TILE_SIZE * tiley + g_viewport_scrollOffsetY + h / 2;
-
-	if (direction < 8) {
-		x += 4 * mapScrollOffset[direction].dx;
-		y += 4 * mapScrollOffset[direction].dy;
-	}
+	int x = TILE_SIZE * tilex + g_viewport_scrollOffsetX + w / 2 + dx;
+	int y = TILE_SIZE * tiley + g_viewport_scrollOffsetY + h / 2 + dy;
 
 	x = clamp(minx, x, maxx) - w / 2;
 	y = clamp(miny, y, maxy) - h / 2;
@@ -144,7 +127,6 @@ uint16 Map_MoveDirection(uint16 direction)
 	}
 
 	g_viewportPosition = Tile_PackXY(tilex, tiley);
-	return g_viewportPosition;
 }
 
 /**

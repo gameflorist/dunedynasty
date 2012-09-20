@@ -37,7 +37,6 @@
 #include "../video/video.h"
 
 static uint32 s_tickCursor;                                 /*!< Stores last time Viewport changed the cursor spriteID. */
-static uint32 s_tickMapScroll;                              /*!< Stores last time Viewport ran MapScroll function. */
 
 /**
  * Handles the Click events for the Viewport widget.
@@ -46,7 +45,6 @@ static uint32 s_tickMapScroll;                              /*!< Stores last tim
  */
 bool GUI_Widget_Viewport_Click(Widget *w)
 {
-	uint16 direction;
 	int x, y;
 	uint16 packed;
 	bool click, drag;
@@ -90,24 +88,25 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		drag = true;
 	}
 
-	direction = 0xFFFF;
+	int scroll_dx = 0, scroll_dy = 0;
 	switch (w->index) {
 		default: break;
-		case 39: direction = 0; break;
-		case 40: direction = 2; break;
-		case 41: direction = 6; break;
-		case 42: direction = 4; break;
+		case 39: scroll_dy = -1; break;
+		case 40: scroll_dx =  1; break;
+		case 41: scroll_dx = -1; break;
+		case 42: scroll_dy =  1; break;
 	}
 
-	if (direction != 0xFFFF) {
-		if (!click && !drag) {
-			if (s_tickMapScroll + g_gameConfig.autoScrollDelay >= g_timerGame) return true;
-			if (g_gameConfig.autoScroll == 0) return true;
+	if (scroll_dx != 0 || scroll_dy != 0) {
+		if (click || drag) {
+			const int speed = max(1, 2 * g_gameConfig.scrollSpeed / g_screenDiv[SCREENDIV_VIEWPORT].scale);
+			Map_MoveDirection(speed * scroll_dx, speed * scroll_dy);
+		}
+		else if (g_gameConfig.autoScroll) {
+			const int speed = max(1, g_gameConfig.scrollSpeed / g_screenDiv[SCREENDIV_VIEWPORT].scale);
+			Map_MoveDirection(speed * scroll_dx, speed * scroll_dy);
 		}
 
-		s_tickMapScroll = g_timerGame;
-
-		Map_MoveDirection(direction);
 		return true;
 	}
 
