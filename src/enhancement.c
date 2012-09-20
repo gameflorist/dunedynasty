@@ -18,6 +18,12 @@ bool g_dune2_enhanced = true;
 bool enhancement_brutal_ai = false;
 
 /**
+ * Draw structure and unit health bars in directly in the viewport.
+ * Toggle in game with back-quote.
+ */
+bool enhancement_draw_health_bars = true;
+
+/**
  * Fix the often incorrect warning message regarding the direction of
  * incoming enemies in the early missions.
  */

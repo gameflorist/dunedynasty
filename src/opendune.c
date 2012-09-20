@@ -31,6 +31,7 @@
 #include "config.h"
 #include "crashlog/crashlog.h"
 #include "cutscene.h"
+#include "enhancement.h"
 #include "explosion.h"
 #include "file.h"
 #include "gfx.h"
@@ -911,6 +912,10 @@ static void InGame_Numpad_Move(uint16 key)
 				GameLoop_TweakWidgetDimensions();
 				Map_MoveDirection(0, oldh - viewport->height);
 			}
+			break;
+
+		case SCANCODE_TILDE:
+			enhancement_draw_health_bars = !enhancement_draw_health_bars;
 			break;
 
 		case SCANCODE_MINUS:

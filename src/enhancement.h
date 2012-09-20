@@ -19,6 +19,7 @@ enum SmoothUnitAnimationMode {
 
 extern bool g_dune2_enhanced;
 extern bool enhancement_brutal_ai;
+extern bool enhancement_draw_health_bars;
 extern bool enhancement_fix_enemy_approach_direction_warning;
 extern bool enhancement_fix_everlasting_unit_wobble;
 extern bool enhancement_fix_firing_rates_and_ranges;

@@ -761,6 +761,48 @@ Viewport_DrawRallyPoint(void)
 }
 
 static void
+Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
+{
+	const int w = max(1, width * curr / max);
+
+	/* From ActionPanel_DrawHealthBar. */
+	uint8 colour = 4;
+	if (curr <= max / 2) colour = 5;
+	if (curr <= max / 4) colour = 8;
+
+	Prim_Rect(x - 0.33f, y - 0.33f, x + width + 1.33f, y + 1.33f, 12, 0.0f);
+
+	if (w < width)
+		Prim_Hline(x + w + 1, y, x + width, 12);
+
+	Prim_Hline(x, y, x + w, colour);
+}
+
+void
+Viewport_DrawSelectionHealthBars(void)
+{
+	if (!enhancement_draw_health_bars)
+		return;
+
+	int iter;
+
+	Unit *u = Unit_FirstSelected(&iter);
+	while (u != NULL) {
+		const uint16 packed = Tile_PackTile(u->o.position);
+
+		if (Map_IsValidPosition(packed) && Map_IsPositionUnveiled(packed)) {
+			const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+			int x, y;
+
+			Map_IsPositionInViewport(u->o.position, &x, &y);
+			Viewport_DrawHealthBar(x - 7, y - TILE_SIZE / 2 - 3, 13, u->o.hitpoints, ui->o.hitpoints);
+		}
+
+		u = Unit_NextSelected(&iter);
+	}
+}
+
+static void
 Viewport_DrawSelectedUnit(int x, int y)
 {
 	if (enhancement_new_selection_cursor) {
