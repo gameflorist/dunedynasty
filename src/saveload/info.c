@@ -129,7 +129,7 @@ static Unit *s_unitSelected; /* XXX: need to select this. */
 static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GSLD   (g_scenario,  g_saveScenario),
 	SLD_GENTRY (SLDT_UINT16, g_playerCreditsNoSilo),
-	SLD_GENTRY (SLDT_UINT16, g_minimapPosition),
+	SLD_GENTRY (SLDT_UINT16, g_viewportPosition),
 	SLD_GENTRY (SLDT_UINT16, g_selectionRectanglePosition),
 	SLD_GCALLB (SLDT_INT8,   g_selectionType, &SaveLoad_SelectionType),
 	SLD_GENTRY2(SLDT_INT8,   g_structureActiveType, SLDT_UINT16),
@@ -170,7 +170,6 @@ bool Info_Load(FILE *fp, uint32 length)
 	if (SaveLoad_GetLength(s_saveInfo) != length) return false;
 	if (!SaveLoad_Load(s_saveInfo, fp, NULL)) return false;
 
-	g_viewportPosition = g_minimapPosition;
 	g_selectionPosition = g_selectionRectanglePosition;
 
 	Sprites_LoadTiles();

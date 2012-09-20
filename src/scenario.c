@@ -39,7 +39,7 @@ static void Scenario_Load_General(void)
 	g_scenario.loseFlags         = Ini_GetInteger("BASIC", "LoseFlags",   0,                            s_scenarioBuffer);
 	g_scenario.mapSeed           = Ini_GetInteger("MAP",   "Seed",        0,                            s_scenarioBuffer);
 	g_scenario.timeOut           = Ini_GetInteger("BASIC", "TimeOut",     0,                            s_scenarioBuffer);
-	g_minimapPosition            = Ini_GetInteger("BASIC", "TacticalPos", g_minimapPosition,            s_scenarioBuffer);
+	g_viewportPosition           = Ini_GetInteger("BASIC", "TacticalPos", g_viewportPosition,           s_scenarioBuffer);
 	g_selectionRectanglePosition = Ini_GetInteger("BASIC", "CursorPos",   g_selectionRectanglePosition, s_scenarioBuffer);
 	g_scenario.mapScale          = Ini_GetInteger("BASIC", "MapScale",    0,                            s_scenarioBuffer);
 
@@ -47,7 +47,6 @@ static void Scenario_Load_General(void)
 	Ini_GetString("BASIC", "WinPicture",   "WIN1.WSA",     g_scenario.pictureWin,      14, s_scenarioBuffer);
 	Ini_GetString("BASIC", "LosePicture",  "LOSTBILD.WSA", g_scenario.pictureLose,     14, s_scenarioBuffer);
 
-	g_viewportPosition  = g_minimapPosition;
 	g_selectionPosition = g_selectionRectanglePosition;
 }
 

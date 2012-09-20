@@ -913,7 +913,6 @@ void Map_SetViewportPosition(uint16 packed)
 	if (y < 0) y = 0;
 
 	g_viewportPosition = Tile_PackXY(x, y);
-	g_minimapPosition = g_viewportPosition;
 }
 
 /**
@@ -1070,7 +1069,7 @@ uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID)
 			}
 
 			case 5: /* Visible */
-				ret = Tile_PackXY(Tile_GetPackedX(g_minimapPosition) + Tools_RandomRange(0, 14), Tile_GetPackedY(g_minimapPosition) + Tools_RandomRange(0, 9));
+				ret = Tile_PackXY(Tile_GetPackedX(g_viewportPosition) + Tools_RandomRange(0, 14), Tile_GetPackedY(g_viewportPosition) + Tools_RandomRange(0, 9));
 				if (houseID == g_playerHouseID && !Map_IsValidPosition(ret)) ret = 0;
 				break;
 

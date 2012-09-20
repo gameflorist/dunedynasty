@@ -89,7 +89,6 @@ uint16 g_viewportMessageCounter;                            /*!< Countdown count
 char *g_viewportMessageText;                                /*!< If not \c NULL, message text displayed in the viewport. */
 
 uint16 g_viewportPosition;                                  /*!< Top-left tile of the viewport. */
-uint16 g_minimapPosition;                                   /*!< Top-left tile of the border in the minimap. */
 uint16 g_selectionRectanglePosition;                        /*!< Position of the structure selection rectangle. */
 uint16 g_selectionPosition;                                 /*!< Current selection position (packed). */
 uint16 g_selectionWidth;                                    /*!< Width of the selection. */
@@ -2335,6 +2334,7 @@ void GUI_DrawScreen(uint16 screenID)
 	Animation_Tick();
 	Unit_Sort();
 
+#if 0
 	if (!g_viewport_forceRedraw && g_viewportPosition != g_minimapPosition) {
 		uint16 viewportX = Tile_GetPackedX(g_viewportPosition);
 		uint16 viewportY = Tile_GetPackedY(g_viewportPosition);
@@ -2373,12 +2373,12 @@ void GUI_DrawScreen(uint16 screenID)
 			}
 		}
 	}
+#endif
 
 	if (loc10) {
 		Map_SetSelectionObjectPosition(0xFFFF);
 	}
 
-	g_minimapPosition = g_viewportPosition;
 	g_selectionRectanglePosition = g_selectionPosition;
 
 	if (g_viewportMessageCounter != 0 && s_timerViewportMessage < Timer_GetTicks()) {
@@ -2399,7 +2399,7 @@ void GUI_DrawScreen(uint16 screenID)
 	GFX_Screen_SetActive(oldScreenID);
 
 	Map_SetSelectionObjectPosition(g_selectionRectanglePosition);
-	Map_UpdateMinimapPosition(g_minimapPosition, false);
+	Map_UpdateMinimapPosition(g_viewportPosition, false);
 
 	GUI_Mouse_Show_InWidget();
 }

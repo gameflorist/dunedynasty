@@ -122,10 +122,13 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		y = g_mouseY;
 	}
 
+#if 0
 	if (w->index == 43) {
 		x =  x / 16 + Tile_GetPackedX(g_minimapPosition);
 		y = (y - 40) / 16 + Tile_GetPackedY(g_minimapPosition);
-	} else if (w->index == 44) {
+	}
+#endif
+	if (w->index == 44) {
 		const int x0 = w->offsetX;
 		const int y0 = w->offsetY;
 
@@ -359,8 +362,9 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	}
 
 	if (!Unit_AnySelected() && (Structure_Get_ByPackedTile(g_selectionRectanglePosition) != NULL || g_selectionType == SELECTIONTYPE_PLACE || g_debugScenario)) {
-		const int x1 = wi->offsetX + TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - Tile_GetPackedX(g_minimapPosition));
-		const int y1 = wi->offsetY + TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - Tile_GetPackedY(g_minimapPosition));
+		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
+		const int x1 = wi->offsetX + TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - Tile_GetPackedX(g_viewportPosition));
+		const int y1 = wi->offsetY + TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - Tile_GetPackedY(g_viewportPosition));
 		const int x2 = x1 + (TILE_SIZE * g_selectionWidth) - 1;
 		const int y2 = y1 + (TILE_SIZE * g_selectionHeight) - 1;
 
@@ -718,7 +722,7 @@ void GUI_Widget_Viewport_RedrawMap(uint16 screenID)
 
 	for (i = 0; i < 4096; i++) GUI_Widget_Viewport_DrawTile(i);
 
-	Map_UpdateMinimapPosition(g_minimapPosition, true);
+	Map_UpdateMinimapPosition(g_viewportPosition, true);
 
 	if (screenID != 0) return;
 
