@@ -1,15 +1,23 @@
 #ifndef TIMER_TIMER_H
 #define TIMER_TIMER_H
 
-#include "timer_common.h"
+#include <inttypes.h>
+#include <stdbool.h>
 
-#include "timer_a5.h"
+enum TimerType {
+	TIMER_GUI   = 0,
+	TIMER_GAME  = 1
+};
 
-#define Timer_SetTimer      TimerA5_SetTimer
-#define Timer_Wait()        TimerA5_Sleep(1)
-#define Timer_Sleep         TimerA5_Sleep
-#define Timer_GameTicks()   TimerA5_GetTicks(TIMER_GAME)
-#define Timer_GetTicks()    TimerA5_GetTicks(TIMER_GUI)
+#define Timer_Wait()        Timer_Sleep(1)
+#define Timer_GameTicks()   Timer_GetTimer(TIMER_GAME)
+#define Timer_GetTicks()    Timer_GetTimer(TIMER_GUI)
+
+extern int64_t g_timerGame;
+
+extern bool Timer_SetTimer(enum TimerType timer, bool set);
+extern int64_t Timer_GetTimer(enum TimerType timer);
+extern void Timer_Sleep(int tics);
 
 #if 0
 #include "timer_opendune.h"

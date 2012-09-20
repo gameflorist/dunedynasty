@@ -1,7 +1,7 @@
 #ifndef TIMER_TIMER_OPENDUNE_H
 #define TIMER_TIMER_OPENDUNE_H
 
-#include "timer_common.h"
+#include "timer.h"
 
 extern uint32 g_timerGUI;
 extern uint32 g_timerInput;

@@ -1,9 +1,7 @@
-#ifndef TIMER_TIMER_A5_H
-#define TIMER_TIMER_A5_H
+#ifndef TIMER_TIMERA5_H
+#define TIMER_TIMERA5_H
 
-#include <inttypes.h>
-#include <stdbool.h>
-#include "timer_common.h"
+#include "timer.h"
 
 extern bool TimerA5_Init(void);
 extern void TimerA5_Uninit(void);
