@@ -212,7 +212,7 @@ MenuBar_Draw(enum HouseType houseID)
 	Prim_FillRect_i(16, sidebar->height - 64, 80, sidebar->height, 0);
 
 	if (!MenuBar_DrawRadarAnimation()) {
-		GUI_Widget_Viewport_RedrawMap(0);
+		GUI_Widget_Viewport_RedrawMap();
 	}
 
 	A5_UseTransform(prev_transform);

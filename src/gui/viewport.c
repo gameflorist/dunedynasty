@@ -471,24 +471,18 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
  *
  * @param packed The tile to draw.
  */
-void GUI_Widget_Viewport_DrawTile(uint16 packed)
+static void
+GUI_Widget_Viewport_DrawTile(int x, int y)
 {
-	uint16 x;
-	uint16 y;
+	const uint16 packed = Tile_PackXY(x,y);
+	const int mapScale = g_scenario.mapScale + 1;
+
 	uint8 colour;
 	uint16 spriteID;
 	Tile *t;
-	uint16 mapScale;
 
 	colour = 12;
 	spriteID = 0xFFFF;
-
-	if (Tile_IsOutOfMap(packed) || !Map_IsValidPosition(packed)) return;
-
-	x = Tile_GetPackedX(packed);
-	y = Tile_GetPackedY(packed);
-
-	mapScale = g_scenario.mapScale + 1;
 
 	if (mapScale == 0) return;
 
@@ -565,27 +559,14 @@ void GUI_Widget_Viewport_DrawTile(uint16 packed)
 	}
 }
 
-/**
- * Redraw the whole map.
- *
- * @param screenID To which screen we should draw the map. Can only be 0 or 2. Any non-zero is forced to 2.
- */
-void GUI_Widget_Viewport_RedrawMap(uint16 screenID)
+void GUI_Widget_Viewport_RedrawMap(void)
 {
-	uint16 oldScreenID = 2;
-	uint16 i;
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
 
-	if (screenID == 0) oldScreenID = GFX_Screen_SetActive(2);
-
-	for (i = 0; i < 4096; i++) GUI_Widget_Viewport_DrawTile(i);
+	for (int y = 0; y < mapInfo->sizeY; y++) {
+		for (int x = 0; x < mapInfo->sizeX; x++)
+			GUI_Widget_Viewport_DrawTile(mapInfo->minX + x, mapInfo->minY + y);
+	}
 
 	Map_UpdateMinimapPosition(g_viewportPosition, true);
-
-	if (screenID != 0) return;
-
-	GFX_Screen_SetActive(oldScreenID);
-
-	GUI_Mouse_Hide_InWidget(3);
-	GUI_Screen_Copy(32, 136, 32, 136, 8, 64, 2, 0);
-	GUI_Mouse_Show_InWidget();
 }
