@@ -585,9 +585,6 @@ Viewport_Hotkey(enum SquadID squad)
 			u = Unit_Find(&find);
 		}
 
-		if (!modified_selection)
-			centre_on_selection = true;
-
 		if (!Unit_AnySelected()) {
 			find.houseID = g_playerHouseID;
 			find.type = 0xFFFF;
@@ -599,6 +596,9 @@ Viewport_Hotkey(enum SquadID squad)
 					const StructureInfo *si = &g_table_structureInfo[s->o.type];
 					const XYSize *layout = &g_table_structure_layoutSize[si->layout];
 
+					if (Tile_PackTile(s->o.position) != g_selectionPosition)
+						modified_selection = true;
+
 					Map_SetSelection(Tile_PackTile(s->o.position));
 					cx = (s->o.position.s.x >> 4) + TILE_SIZE * layout->width / 2;
 					cy = (s->o.position.s.y >> 4) + TILE_SIZE * layout->height / 2;
@@ -609,6 +609,9 @@ Viewport_Hotkey(enum SquadID squad)
 				s = Structure_Find(&find);
 			}
 		}
+
+		if (!modified_selection)
+			centre_on_selection = true;
 	}
 
 	if (centre_on_selection && (count > 0)) {
