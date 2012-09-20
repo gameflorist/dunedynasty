@@ -787,6 +787,9 @@ Viewport_DrawSelectionHealthBars(void)
 	int iter;
 
 	Unit *u = Unit_FirstSelected(&iter);
+
+	const bool unit_selected = (u != NULL);
+
 	while (u != NULL) {
 		const uint16 packed = Tile_PackTile(u->o.position);
 
@@ -799,6 +802,20 @@ Viewport_DrawSelectionHealthBars(void)
 		}
 
 		u = Unit_NextSelected(&iter);
+	}
+
+	if (unit_selected || (g_selectionType == SELECTIONTYPE_PLACE))
+		return;
+
+	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+	if (s != NULL) {
+		if (Map_IsPositionUnveiled(g_selectionPosition)) {
+			const StructureInfo *si = &g_table_structureInfo[s->o.type];
+			const int x = TILE_SIZE * (Tile_GetPackedX(g_selectionPosition) - Tile_GetPackedX(g_viewportPosition)) - g_viewport_scrollOffsetX;
+			const int y = TILE_SIZE * (Tile_GetPackedY(g_selectionPosition) - Tile_GetPackedY(g_viewportPosition)) - g_viewport_scrollOffsetY;
+
+			Viewport_DrawHealthBar(x + 1, y - 2, TILE_SIZE * g_selectionWidth - 3, s->o.hitpoints, si->o.hitpoints);
+		}
 	}
 }
 
