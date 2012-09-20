@@ -222,6 +222,7 @@ VideoA5_Init(void)
 	if (display == NULL)
 		return false;
 
+	/* al_set_new_bitmap_flags(ALLEGRO_MAG_LINEAR); */
 	TRUE_DISPLAY_WIDTH = al_get_display_width(display);
 	TRUE_DISPLAY_HEIGHT = al_get_display_height(display);
 
