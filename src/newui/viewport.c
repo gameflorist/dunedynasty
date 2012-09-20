@@ -53,7 +53,7 @@ static int selection_box_x2;
 static int selection_box_y1;
 static int selection_box_y2;
 
-static void Viewport_InterpolateMovement(const Unit *u, uint16 *x, uint16 *y);
+static void Viewport_InterpolateMovement(const Unit *u, int *x, int *y);
 
 /*--------------------------------------------------------------*/
 
@@ -164,8 +164,8 @@ Viewport_SelectRegion(void)
 		Unit *u = Unit_Find(&find);
 		while (u != NULL) {
 			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
-			uint16 ux, uy;
 
+			int ux, uy;
 			Map_IsPositionInViewport(u->o.position, &ux, &uy);
 
 			if ((oi->flags.tabSelectable) && (x1 <= ux && ux <= x2) && (y1 <= uy && uy <= y2)) {
@@ -786,7 +786,7 @@ Viewport_DrawSandworm(const Unit *u)
 		return;
 
 	const enum ShapeID shapeID = g_table_unitInfo[UNIT_SANDWORM].groundSpriteID;
-	uint16 x, y;
+	int x, y;
 
 	if (Map_IsPositionInViewport(u->o.position, &x, &y))
 		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200);
@@ -877,7 +877,7 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 	if (!g_map[packed].isUnveiled && !g_debugScenario)
 		return;
 
-	uint16 x, y;
+	int x, y;
 
 	if (render_for_blur_effect) {
 		Map_IsPositionInViewport(u->o.position, &x, &y);
@@ -893,8 +893,8 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 		y += windowY;
 	}
 
-	x += g_table_tilediff[0][u->wobbleIndex].s.x;
-	y += g_table_tilediff[0][u->wobbleIndex].s.y;
+	x += (int16)g_table_tilediff[0][u->wobbleIndex].s.x;
+	y += (int16)g_table_tilediff[0][u->wobbleIndex].s.y;
 
 	uint16 s_spriteFlags = 0;
 	uint16 index;
@@ -960,6 +960,11 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 
 	if (Unit_IsSelected(u))
 		Viewport_DrawSelectedUnit(x, y);
+
+#if 0
+	/* Debugging. */
+	GUI_DrawText_Wrapper("id:%x", x - TILE_SIZE / 2, y, 15, 0, 0x11, u->o.index);
+#endif
 }
 
 void
@@ -986,7 +991,7 @@ Viewport_DrawAirUnit(const Unit *u)
 	if (!g_map[curPos].isUnveiled && !g_debugScenario)
 		return;
 
-	uint16 x, y;
+	int x, y;
 	if (!Map_IsPositionInViewport(u->o.position, &x, &y))
 		return;
 
@@ -1209,7 +1214,7 @@ Viewport_RenderBrush(int x, int y)
 }
 
 static void
-Viewport_InterpolateMovement(const Unit *u, uint16 *x, uint16 *y)
+Viewport_InterpolateMovement(const Unit *u, int *x, int *y)
 {
 	const int frame = clamp(0, (3 + g_timerGame - g_tickUnitUnknown1), 2);
 
@@ -1220,8 +1225,7 @@ Viewport_InterpolateMovement(const Unit *u, uint16 *x, uint16 *y)
 	float speed = u->speedRemainder;
 	speed += Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false) * frame / 3.0f;
 
-	uint16 destx;
-	uint16 desty;
+	int destx, desty;
 	Map_IsPositionInViewport(u->currentDestination, &destx, &desty);
 
 	const int dx = abs(destx - *x);
@@ -1232,6 +1236,6 @@ Viewport_InterpolateMovement(const Unit *u, uint16 *x, uint16 *y)
 
 	const tile32 pos = Tile_MoveByDirection(origin, u->orientation[0].current, dist);
 
-	*x = pos.s.x;
-	*y = pos.s.y;
+	*x = (int16)pos.s.x;
+	*y = (int16)pos.s.y;
 }

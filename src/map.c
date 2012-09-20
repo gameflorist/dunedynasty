@@ -455,7 +455,7 @@ bool Map_IsPositionUnveiled(uint16 position)
  * @param retY Pointer to Y inside the viewport.
  * @return True if and only if the position is in the viewport.
  */
-bool Map_IsPositionInViewport(tile32 position, uint16 *retX, uint16 *retY)
+bool Map_IsPositionInViewport(tile32 position, int *retX, int *retY)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 	const int x = (position.s.x >> 4) - (Tile_GetPackedX(g_viewportPosition) * TILE_SIZE) - g_viewport_scrollOffsetX;

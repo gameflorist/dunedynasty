@@ -343,7 +343,7 @@ Explosion_Draw(void)
 		if (!g_map[packed].isUnveiled)
 			continue;
 
-		uint16 x, y;
+		int x, y;
 		if (!Map_IsPositionInViewport(e->position, &x, &y))
 			continue;
 
