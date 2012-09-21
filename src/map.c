@@ -336,7 +336,7 @@ void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 	y1 = clamp(minimap->offsetY, y1, minimap->offsetY + minimap->height - 1);
 	y2 = clamp(minimap->offsetY, y2, minimap->offsetY + minimap->height - 1);
 
-	GUI_DrawWiredRectangle(x1, y1, x2, y2, 15);
+	Prim_Rect_i(x1, y1, x2, y2, 15);
 #endif
 }
 

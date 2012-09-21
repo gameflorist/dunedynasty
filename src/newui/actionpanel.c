@@ -696,7 +696,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 
 	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, &w, &h);
 
-	GUI_DrawWiredRectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 12);
+	Prim_Rect_i(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 12);
 
 	if (BuildQueue_IsEmpty(&s->queue)) {
 		GUI_DrawFilledRectRGBA(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8, 0XFF);

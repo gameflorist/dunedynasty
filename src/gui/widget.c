@@ -206,7 +206,7 @@ void GUI_Widget_Draw(Widget *w)
 		} break;
 
 		case DRAW_MODE_WIRED_RECTANGLE: {
-			GUI_DrawWiredRectangle(positionLeft, positionTop, positionRight, positionBottom, fgColour);
+			Prim_Rect_i(positionLeft, positionTop, positionRight, positionBottom, fgColour);
 		} break;
 
 		case DRAW_MODE_XORFILLED_RECTANGLE: {

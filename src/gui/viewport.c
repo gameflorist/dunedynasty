@@ -368,7 +368,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		const int x2 = x1 + (TILE_SIZE * g_selectionWidth) - 1;
 		const int y2 = y1 + (TILE_SIZE * g_selectionHeight) - 1;
 
-		GUI_DrawWiredRectangle(x1, y1, x2, y2, 0xFF);
+		Prim_Rect_i(x1, y1, x2, y2, 0xFF);
 
 		if (g_selectionState == 0 && g_selectionType == SELECTIONTYPE_PLACE) {
 			GUI_DrawLine(x1, y1, x2, y2, 0xFF);

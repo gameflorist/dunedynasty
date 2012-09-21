@@ -118,7 +118,7 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 	width     = w->width;
 	height    = w->height;
 
-	GUI_DrawWiredRectangle(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
+	Prim_Rect_i(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
 
 	GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], positionX, positionY, 0, 0x100, g_paletteMapping1, buttonDown ? 1 : 0);
 
@@ -342,7 +342,7 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 	width     = w->width;
 	height    = w->height;
 
-	GUI_DrawWiredRectangle(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
+	Prim_Rect_i(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
 	GUI_DrawBorder(positionX, positionY, width, height, buttonDown ? 0 : 1, true);
 
 	colour = 0xF;

@@ -960,7 +960,7 @@ Viewport_DrawSelectionBox(void)
 	const int x2 = Viewport_ClampSelectionBoxX(g_mouseX);
 	const int y2 = Viewport_ClampSelectionBoxY(g_mouseY);
 
-	GUI_DrawWiredRectangle(selection_box_x1, selection_box_y1, x2, y2, 0xFF);
+	Prim_Rect_i(selection_box_x1, selection_box_y1, x2, y2, 0xFF);
 }
 
 static void
