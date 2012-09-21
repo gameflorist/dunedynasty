@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <stdio.h>
+#include "buildcfg.h"
 #include "os/math.h"
 
 #include "config.h"

@@ -6,13 +6,14 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_memfile.h>
 #include <stdio.h>
+#include "buildcfg.h"
 
 #include "audio_a5.h"
 
 #include "adl/sound_adlib.h"
 #include "audlib/audlib_a5.h"
 
-#if WITH_FLUIDSYNTH
+#ifdef WITH_FLUIDSYNTH
 # include "allegro_midi.h"
 #else
 # include "disable_midi.h"

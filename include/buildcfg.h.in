@@ -1,0 +1,8 @@
+#ifndef BUILDCFG_H
+#define BUILDCFG_H
+
+#cmakedefine DUNE_DATA_DIR "@DUNE_DATA_DIR@"
+
+#cmakedefine WITH_FLUIDSYNTH
+
+#endif

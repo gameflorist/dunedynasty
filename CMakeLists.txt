@@ -8,9 +8,6 @@ if(NOT DUNE_DATA_DIR)
 	set(DUNE_DATA_DIR ".")
 endif(NOT DUNE_DATA_DIR)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDUNE_DATA_DIR='\"${DUNE_DATA_DIR}\"'")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDUNE_DATA_DIR='\"${DUNE_DATA_DIR}\"'")
-
 include(FindPkgConfig)
 
 pkg_check_modules(ALLEGRO5 REQUIRED allegro-5.0)
@@ -24,8 +21,6 @@ include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
 if(WITH_FLUIDSYNTH)
     pkg_check_modules(FLUIDSYNTH fluidsynth)
     if(FLUIDSYNTH_FOUND)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWITH_FLUIDSYNTH=1")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DWITH_FLUIDSYNTH=1")
 	include_directories(SYSTEM ${FLUIDSYNTH_INCLUDE_DIRS})
     else(FLUIDSYNTH_FOUND)
 	message("FluidSynth not found")
@@ -34,11 +29,12 @@ if(WITH_FLUIDSYNTH)
 endif(WITH_FLUIDSYNTH)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "dist")
+configure_file("${CMAKE_SOURCE_DIR}/include/buildcfg.h.in" "${PROJECT_BINARY_DIR}/include/buildcfg.h")
 
 # ----------------------------------------------------------------
 
 include(FileList.cmake)
-include_directories("include")
+include_directories("include" "${PROJECT_BINARY_DIR}/include")
 
 add_executable(dunedynasty ${DUNEDYNASTY_SRC_FILES})
 

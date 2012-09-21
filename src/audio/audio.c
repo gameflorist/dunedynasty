@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include "buildcfg.h"
 #include "../os/math.h"
 
 #include "audio.h"
@@ -70,7 +71,7 @@ Audio_ScanMusic(void)
 	MusicInfoGlob glob[NUM_MUSIC_SETS];
 	bool enable_dune2_c55;
 
-#if WITH_FLUIDSYNTH
+#ifdef WITH_FLUIDSYNTH
 	if (stat(sound_font_path, &st) == 0) {
 		if (verbose) fprintf(stdout, "[enable]  MIDI sound font: %s\n", sound_font_path);
 		enable_dune2_c55 = true;
