@@ -1,4 +1,5 @@
 .svn/
+Build/
 CMakeCache.txt
 CMakeFiles/
 Makefile

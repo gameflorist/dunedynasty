@@ -33,18 +33,20 @@ if(WITH_FLUIDSYNTH)
     endif(FLUIDSYNTH_FOUND)
 endif(WITH_FLUIDSYNTH)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin")
+
 # ----------------------------------------------------------------
 
 include(FileList.cmake)
 include_directories("include")
 
-add_executable(bin/dunedynasty ${DUNEDYNASTY_SRC_FILES})
+add_executable(dunedynasty ${DUNEDYNASTY_SRC_FILES})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition -Wno-multichar -pedantic")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wno-unused-parameter")
 
-target_link_libraries(bin/dunedynasty
+target_link_libraries(dunedynasty
 	${ALLEGRO5_ACODEC_LDFLAGS}
 	${ALLEGRO5_AUDIO_LDFLAGS}
 	${ALLEGRO5_IMAGE_LDFLAGS}
@@ -54,13 +56,13 @@ target_link_libraries(bin/dunedynasty
 	)
 
 if(WITH_FLUIDSYNTH)
-    target_link_libraries(bin/dunedynasty
+    target_link_libraries(dunedynasty
 	${FLUIDSYNTH_LDFLAGS}
 	)
 endif(WITH_FLUIDSYNTH)
 
 
-#add_executable(bin/allegro_adl
+#add_executable(allegro_adl
 #	src/audio/allegro_adl.cpp
 #	src/audio/adl/fmopl.cpp
 #	src/audio/adl/opl_dosbox.cpp
@@ -68,18 +70,18 @@ endif(WITH_FLUIDSYNTH)
 #	src/audio/adl/sound_adlib.cpp
 #	)
 #
-#target_link_libraries(bin/allegro_adl
+#target_link_libraries(allegro_adl
 #	${ALLEGRO5_LDFLAGS}
 #	${ALLEGRO5_AUDIO_LDFLAGS}
 #	)
 
 #if(FLUIDSYNTH_FOUND)
-#    add_executable(bin/allegro_midi
+#    add_executable(allegro_midi
 #	src/audio/allegro_midi.cpp
 #	src/audio/xmi/xmidi.cpp
 #	)
 #
-#    target_link_libraries(bin/allegro_midi
+#    target_link_libraries(allegro_midi
 #	${ALLEGRO5_LDFLAGS}
 #	${ALLEGRO5_AUDIO_LDFLAGS}
 #	${FLUIDSYNTH_LDFLAGS}
