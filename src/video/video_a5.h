@@ -16,9 +16,6 @@ extern void VideoA5_ShowCursor(void);
 extern void VideoA5_HideCursor(void);
 
 extern void VideoA5_DrawLine(int x1, int y1, int x2, int y2, uint8 c);
-extern void VideoA5_DrawRectangle(int x1, int y1, int x2, int y2, uint8 c);
-extern void VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c);
-extern void VideoA5_DrawFilledRectRGBA(int x1, int y1, int x2, int y2, unsigned char r, unsigned char g, unsigned char b, int alpha);
 extern void VideoA5_ShadeScreen(int alpha);
 
 extern void VideoA5_InitSprites(void);

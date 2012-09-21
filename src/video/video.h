@@ -20,6 +20,7 @@ enum CPSID {
 
 struct FadeInAux;
 
+#include "prim.h"
 #include "video_a5.h"
 
 #define Video_Init()            true
@@ -45,9 +46,9 @@ struct FadeInAux;
 #define Video_InitFadeInShape   VideoA5_InitFadeInShape
 
 #define GUI_DrawLine            VideoA5_DrawLine
-#define GUI_DrawWiredRectangle  VideoA5_DrawRectangle
-#define GUI_DrawFilledRectangle VideoA5_DrawFilledRectangle
-#define GUI_DrawFilledRectRGBA  VideoA5_DrawFilledRectRGBA
+#define GUI_DrawWiredRectangle  Prim_Rect_i
+#define GUI_DrawFilledRectangle Prim_FillRect_i
+#define GUI_DrawFilledRectRGBA  Prim_FillRect_RGBA
 #define Video_ShadeScreen       VideoA5_ShadeScreen
 
 #define GUI_Mouse_Show()

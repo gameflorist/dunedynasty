@@ -95,10 +95,12 @@ static const uint8 font_palette[][8] = {
 	{ 0x00, 0xFF, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0x00 }, /* Intro. */
 };
 
+/* Exposed for prim_a5.c. */
+ALLEGRO_COLOR paltoRGB[256];
+
 static ALLEGRO_DISPLAY *display;
 /* static ALLEGRO_DISPLAY *display2; */
 static ALLEGRO_BITMAP *screen;
-static ALLEGRO_COLOR paltoRGB[256];
 static unsigned char paletteRGB[3 * 256];
 
 static CPSStore *s_cps;
@@ -495,26 +497,6 @@ VideoA5_DrawLine(int x1, int y1, int x2, int y2, uint8 c)
 	else {
 		al_draw_line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, paltoRGB[c], 1.0f);
 	}
-}
-
-void
-VideoA5_DrawRectangle(int x1, int y1, int x2, int y2, uint8 c)
-{
-	al_draw_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, paltoRGB[c], 1.0f);
-}
-
-void
-VideoA5_DrawFilledRectangle(int x1, int y1, int x2, int y2, uint8 c)
-{
-	al_draw_filled_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, paltoRGB[c]);
-}
-
-void
-VideoA5_DrawFilledRectRGBA(int x1, int y1, int x2, int y2, unsigned char r, unsigned char g, unsigned char b, int alpha)
-{
-	alpha = clamp(0x00, alpha, 0xFF);
-
-	al_draw_filled_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, al_map_rgba(r, g, b, alpha));
 }
 
 void
