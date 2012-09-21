@@ -77,7 +77,7 @@ ActionPanel_DrawHealthBar(int curr, int max)
 	if (curr <= max / 4) colour = 8;
 
 	GUI_DrawBorder(x - 1, y - 1, 24 + 2, h + 2, 1, true);
-	GUI_DrawFilledRectangle(x, y, x + w - 1, y + h - 1, colour);
+	Prim_FillRect_i(x, y, x + w - 1, y + h - 1, colour);
 
 	Shape_Draw(SHAPE_HEALTH_INDICATOR, 36, 18, WINDOWID_ACTIONPANEL_FRAME, 0x4000);
 	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_DMG), wi->xBase + 40, wi->yBase + 23, 29, 0, 0x11);
@@ -699,7 +699,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 	Prim_Rect_i(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 12);
 
 	if (BuildQueue_IsEmpty(&s->queue)) {
-		GUI_DrawFilledRectRGBA(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8, 0XFF);
+		Prim_FillRect_RGBA(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8, 0XFF);
 		GUI_DrawBorder(x1, y1, w, h, 1, false);
 		fg = 0xE;
 	}
@@ -792,11 +792,11 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 				const int timeLeft = buildTime - (s->countDown + 255) / 256;
 				const int percentDone = 100 * timeLeft / buildTime;
 
-				GUI_DrawFilledRectRGBA(x1 + 2, y1 + 12, x1 + w - 3, y1 + 12 + g_fontCurrent->height + 3, 0x00, 0x00, 0x00, 0x80);
+				Prim_FillRect_RGBA(x1 + 2, y1 + 12, x1 + w - 3, y1 + 12 + g_fontCurrent->height + 3, 0x00, 0x00, 0x00, 0x80);
 				GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 14, fg, 0, 0x121, percentDone);
 			}
 			else if (g_productionStringID != STR_BUILD_IT) {
-				GUI_DrawFilledRectRGBA(x1 + 2, y1 + 12, x1 + w - 3, y1 + 12 + g_fontCurrent->height + 3, 0x00, 0x00, 0x00, 0x80);
+				Prim_FillRect_RGBA(x1 + 2, y1 + 12, x1 + w - 3, y1 + 12 + g_fontCurrent->height + 3, 0x00, 0x00, 0x00, 0x80);
 				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), x1 + w / 2, y1 + 14, fg, 0, 0x121);
 			}
 		}

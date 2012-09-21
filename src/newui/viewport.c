@@ -1012,7 +1012,7 @@ Viewport_RenderBrush(int x, int y)
 	const int viewportX2 = viewportX1 + 3 * TILE_SIZE;
 	const int viewportY2 = viewportY1 + 3 * TILE_SIZE;
 
-	GUI_DrawFilledRectangle(viewportX1, viewportY1, viewportX2, viewportY2, 0);
+	Prim_FillRect_i(viewportX1, viewportY1, viewportX2, viewportY2, 0);
 
 	/* Draw tiles. */
 	Viewport_DrawTilesInRange(tile_left + tile_dx, tile_top + tile_dy,

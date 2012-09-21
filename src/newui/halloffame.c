@@ -67,7 +67,7 @@ HallOfFame_DrawBackground(enum HouseType houseID, bool hallOfFame)
 	}
 
 	if (hallOfFame) {
-		GUI_DrawFilledRectangle(8, 80, 311, 191, 116);
+		Prim_FillRect_i(8, 80, 311, 191, 116);
 	}
 }
 
@@ -164,10 +164,10 @@ HallOfFame_DrawMeter(enum HouseType houseID, const HallOfFameData *fame, int met
 			}
 
 			c[idx] = clamp(35 * 4, c[idx], 63 * 4);
-			GUI_DrawFilledRectRGBA(x, y, x + w - 1, y + h - 1, c[0], c[1], c[2], 0xFF);
+			Prim_FillRect_RGBA(x, y, x + w - 1, y + h - 1, c[0], c[1], c[2], 0xFF);
 		}
 		else {
-			GUI_DrawFilledRectangle(x, y, x + w - 1, y + h - 1, 209);
+			Prim_FillRect_i(x, y, x + w - 1, y + h - 1, 209);
 		}
 
 		GUI_DrawLine(x + 1, y + h, x + w, y + h, 12);
@@ -217,7 +217,7 @@ HallOfFame_DrawBuildingsDestroyed(enum HouseType houseID, int scenarioID, const 
 	const int y = 92 + 36 * 2;
 
 	if (scenarioID == 1) {
-		GUI_DrawFilledRectangle(8, 152, 8 + 304 - 1, 191, 116);
+		Prim_FillRect_i(8, 152, 8 + 304 - 1, 191, 116);
 	}
 	else {
 		Video_DrawCPSRegion("FAME.CPS", 8, 80, 8, 152, 304, 36);

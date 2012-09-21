@@ -1204,7 +1204,7 @@ void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top)
 
 	halfWidth = (Font_GetStringWidth(string) / 2) + 4;
 
-	GUI_DrawFilledRectangle(SCREEN_WIDTH / 2 - halfWidth, top, SCREEN_WIDTH / 2 + halfWidth, top + 6, 116);
+	Prim_FillRect_i(SCREEN_WIDTH / 2 - halfWidth, top, SCREEN_WIDTH / 2 + halfWidth, top + 6, 116);
 	GUI_DrawText_Wrapper(string, SCREEN_WIDTH / 2, top, 0xF, 0, 0x121);
 }
 
@@ -1287,15 +1287,15 @@ void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16
 	width  -= 1;
 	height -= 1;
 
-	if (fill) GUI_DrawFilledRectangle(left, top, left + width, top + height, colourSchema[0]);
+	if (fill) Prim_FillRect_i(left, top, left + width, top + height, colourSchema[0]);
 
 	GUI_DrawLine(left, top + height, left + width, top + height, colourSchema[1]);
 	GUI_DrawLine(left + width, top, left + width, top + height, colourSchema[1]);
 	GUI_DrawLine(left, top, left + width, top, colourSchema[2]);
 	GUI_DrawLine(left, top, left, top + height, colourSchema[2]);
 
-	GUI_DrawFilledRectangle(left, top + height, left, top + height, colourSchema[3]);
-	GUI_DrawFilledRectangle(left + width, top, left + width, top, colourSchema[3]);
+	Prim_FillRect_i(left, top + height, left, top + height, colourSchema[3]);
+	Prim_FillRect_i(left + width, top, left + width, top, colourSchema[3]);
 }
 
 /**
@@ -2192,7 +2192,7 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 	uint8 i;
 
 	oldScreenID = GFX_Screen_SetActive(2);
-	GUI_DrawFilledRectangle(8, 80, 311, 178, 116);
+	Prim_FillRect_i(8, 80, 311, 178, 116);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 
 	battleString = String_Get_ByIndex(STR_BATTLE);

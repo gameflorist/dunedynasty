@@ -1017,5 +1017,5 @@ uint16 Widget_SetAndPaintCurrentWidget(uint16 index)
  */
 void Widget_PaintCurrentWidget(void)
 {
-	GUI_DrawFilledRectangle(g_curWidgetXBase, g_curWidgetYBase, (g_curWidgetXBase + g_curWidgetWidth) - 1, g_curWidgetYBase + g_curWidgetHeight - 1, g_curWidgetFGColourNormal);
+	Prim_FillRect_i(g_curWidgetXBase, g_curWidgetYBase, (g_curWidgetXBase + g_curWidgetWidth) - 1, g_curWidgetYBase + g_curWidgetHeight - 1, g_curWidgetFGColourNormal);
 }

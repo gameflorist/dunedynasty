@@ -60,7 +60,7 @@ static void GUI_EditBox_BlinkCursor(uint16 positionX, bool resetBlink)
 		editBoxShowCursor = !editBoxShowCursor;
 	}
 
-	GUI_DrawFilledRectangle(positionX, g_curWidgetYBase, positionX + Font_GetCharWidth('W'), g_curWidgetYBase + g_curWidgetHeight - 1, (editBoxShowCursor) ? g_curWidgetFGColourBlink : g_curWidgetFGColourNormal);
+	Prim_FillRect_i(positionX, g_curWidgetYBase, positionX + Font_GetCharWidth('W'), g_curWidgetYBase + g_curWidgetHeight - 1, (editBoxShowCursor) ? g_curWidgetFGColourBlink : g_curWidgetFGColourNormal);
 }
 
 /**

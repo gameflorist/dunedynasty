@@ -231,7 +231,7 @@ MainMenu_Draw(void)
 		const int y = 104;
 
 		GUI_InitColors(colours, 0, 15);
-		GUI_DrawFilledRectangle(0, y, SCREEN_WIDTH, y + g_fontIntro->height, 0);
+		Prim_FillRect_i(0, y, SCREEN_WIDTH, y + g_fontIntro->height, 0);
 		GUI_DrawText(subtitle, x, y, 144, 0);
 	}
 

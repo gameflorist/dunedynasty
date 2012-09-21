@@ -422,10 +422,10 @@ void GUI_Widget_Scrollbar_Draw(Widget *w)
 	}
 
 	/* Draw background */
-	GUI_DrawFilledRectangle(positionX, positionY, positionX + width - 1, positionY + height - 1, w->bgColourNormal);
+	Prim_FillRect_i(positionX, positionY, positionX + width - 1, positionY + height - 1, w->bgColourNormal);
 
 	/* Draw where we currently are */
-	GUI_DrawFilledRectangle(positionX + scrollLeft, positionY + scrollTop, positionX + scrollRight, positionY + scrollBottom, (scrollbar->pressed == 0) ? w->fgColourNormal : w->fgColourSelected);
+	Prim_FillRect_i(positionX + scrollLeft, positionY + scrollTop, positionX + scrollRight, positionY + scrollBottom, (scrollbar->pressed == 0) ? w->fgColourNormal : w->fgColourSelected);
 
 	if (g_screenActiveID == 0) {
 		GUI_Mouse_Show_InRegion();

@@ -564,7 +564,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 				uint16 oldScreenID = g_screenActiveID;
 
 				GFX_Screen_SetActive(0);
-				GUI_DrawFilledRectangle(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase + g_curWidgetWidth, g_curWidgetYBase + g_curWidgetHeight, 0);
+				Prim_FillRect_i(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase + g_curWidgetWidth, g_curWidgetYBase + g_curWidgetHeight, 0);
 				GFX_Screen_SetActive(oldScreenID);
 			}
 
@@ -704,7 +704,7 @@ void GUI_Widget_Viewport_DrawTile(uint16 packed)
 
 		x += wi->offsetX;
 		y += wi->offsetY;
-		GUI_DrawFilledRectangle(x, y, x, y, colour);
+		Prim_FillRect_i(x, y, x, y, colour);
 	}
 }
 
