@@ -957,10 +957,23 @@ Viewport_DrawSelectionBox(void)
 	if (!selection_box_active)
 		return;
 
-	const int x2 = Viewport_ClampSelectionBoxX(g_mouseX);
-	const int y2 = Viewport_ClampSelectionBoxY(g_mouseY);
+	int x1 = selection_box_x1;
+	int y1 = selection_box_y1;
+	int x2 = Viewport_ClampSelectionBoxX(g_mouseX);
+	int y2 = Viewport_ClampSelectionBoxY(g_mouseY);
 
-	Prim_Rect_i(selection_box_x1, selection_box_y1, x2, y2, 0xFF);
+	/* Make x1 <= x2, y1 <= y2 so that rectangles are not rounded off. */
+	if (selection_box_x1 > x2) {
+		x1 = x2;
+		x2 = selection_box_x1;
+	}
+
+	if (selection_box_y1 > y2) {
+		y1 = y2;
+		y2 = selection_box_y1;
+	}
+
+	Prim_Rect_i(x1, y1, x2, y2, 0xFF);
 }
 
 static void
