@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(dunedynasty)
+set(DUNE_DYNASTY_VERSION 1.1)
 
 set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
 option(WITH_FLUIDSYNTH "FluidSynth" ON)
@@ -57,6 +58,22 @@ if(WITH_FLUIDSYNTH)
 	)
 endif(WITH_FLUIDSYNTH)
 
+install(TARGETS dunedynasty DESTINATION "bin")
+install(FILES
+	${CMAKE_SOURCE_DIR}/COPYING
+	${CMAKE_SOURCE_DIR}/README.txt
+	${CMAKE_SOURCE_DIR}/enhancement.txt
+	${CMAKE_SOURCE_DIR}/opendune.txt
+	${CMAKE_SOURCE_DIR}/dist/dunedynasty.cfg-sample
+	DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
+
+if(IS_ABSOLUTE ${DUNE_DATA_DIR})
+    foreach(subdir data d2tm_adlib d2tm_mt32 d2tm_sc55 dune2000 fed2k_mt32)
+	install(FILES ${CMAKE_SOURCE_DIR}/dist/${subdir}/FILELIST.TXT DESTINATION "${DUNE_DATA_DIR}/${subdir}")
+    endforeach(subdir)
+endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
+
+# ----------------------------------------------------------------
 
 #add_executable(allegro_adl
 #	src/audio/allegro_adl.cpp
