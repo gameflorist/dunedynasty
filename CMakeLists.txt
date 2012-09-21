@@ -33,7 +33,7 @@ if(WITH_FLUIDSYNTH)
     endif(FLUIDSYNTH_FOUND)
 endif(WITH_FLUIDSYNTH)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "dist")
 
 # ----------------------------------------------------------------
 
