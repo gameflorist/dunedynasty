@@ -45,21 +45,18 @@ typedef struct WSAHeader {
 	WSAFlags flags;                                         /*!< Flags of WSA. */
 } WSAHeader;
 
-MSVC_PACKED_BEGIN
 /**
  * The header of a WSA file as on the disk.
  */
 typedef struct WSAFileHeader {
-	/* 0000(2)   */ PACK uint16 frames;                     /*!< Amount of animation frames in this WSA. */
-	/* 0002(2)   */ PACK uint16 width;                      /*!< Width of WSA. */
-	/* 0004(2)   */ PACK uint16 height;                     /*!< Height of WSA. */
-	/* 0006(2)   */ PACK uint16 requiredBufferSize;         /*!< The size the buffer has to be at least to process this WSA. */
-	/* 0008(2)   */ PACK uint16 isSpecial;                  /*!< Indicates if the WSA has a special buffer. */
-	/* 000A(4)   */ PACK uint32 animationOffsetStart;       /*!< Offset where animation starts. */
-	/* 000E(4)   */ PACK uint32 animationOffsetEnd;         /*!< Offset where animation ends. */
-} GCC_PACKED WSAFileHeader;
-MSVC_PACKED_END
-assert_compile(sizeof(WSAFileHeader) == 0x12);
+	uint16 frames;                  /*!< Amount of animation frames in this WSA. */
+	uint16 width;                   /*!< Width of WSA. */
+	uint16 height;                  /*!< Height of WSA. */
+	uint16 requiredBufferSize;      /*!< The size the buffer has to be at least to process this WSA. */
+	uint16 isSpecial;               /*!< Indicates if the WSA has a special buffer. */
+	uint32 animationOffsetStart;    /*!< Offset where animation starts. */
+	uint32 animationOffsetEnd;      /*!< Offset where animation ends. */
+} WSAFileHeader;
 
 /**
  * Get the amount of frames a WSA has.
@@ -207,7 +204,13 @@ void *WSA_LoadFile(const char *filename, void *wsa, uint32 wsaSize, bool reserve
 	memset(&flags, 0, sizeof(flags));
 
 	fileno = File_Open(filename, 1);
-	File_Read(fileno, &fileheader, sizeof(WSAFileHeader));
+	File_Read(fileno, &fileheader.frames, sizeof(fileheader.frames));
+	File_Read(fileno, &fileheader.width, sizeof(fileheader.width));
+	File_Read(fileno, &fileheader.height, sizeof(fileheader.height));
+	File_Read(fileno, &fileheader.requiredBufferSize, sizeof(fileheader.requiredBufferSize));
+	File_Read(fileno, &fileheader.isSpecial, sizeof(fileheader.isSpecial));
+	File_Read(fileno, &fileheader.animationOffsetStart, sizeof(fileheader.animationOffsetStart));
+	File_Read(fileno, &fileheader.animationOffsetEnd, sizeof(fileheader.animationOffsetEnd));
 
 	lengthSpecial = 0;
 	if (fileheader.isSpecial) {
