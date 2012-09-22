@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include "fourcc.h"
 #include "types.h"
 #include "../os/endian.h"
 #include "../os/math.h"
@@ -557,7 +558,7 @@ static void FillSavegameDesc(bool save)
 		if (!File_Exists_Personal(filename)) continue;
 
 		fileId = ChunkFile_Open_Personal(filename);
-		ChunkFile_Read(fileId, HTOBE32('NAME'), desc, 50);
+		ChunkFile_Read(fileId, HTOBE32(CC_NAME), desc, 50);
 		ChunkFile_Close(fileId);
 		continue;
 	}

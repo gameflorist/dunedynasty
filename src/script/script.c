@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include "fourcc.h"
 #include "types.h"
 #include "../os/endian.h"
 #include "../os/error.h"
@@ -593,7 +594,7 @@ uint16 Script_LoadFromFile(const char *filename, ScriptInfo *scriptInfo, const S
 
 	index = ChunkFile_Open(filename);
 
-	length = ChunkFile_Seek(index, HTOBE32('TEXT'));
+	length = ChunkFile_Seek(index, HTOBE32(CC_TEXT));
 	total += length;
 
 	if (length != 0) {
@@ -604,10 +605,10 @@ uint16 Script_LoadFromFile(const char *filename, ScriptInfo *scriptInfo, const S
 			scriptInfo->text = calloc(1, length);
 		}
 
-		ChunkFile_Read(index, HTOBE32('TEXT'), scriptInfo->text, length);
+		ChunkFile_Read(index, HTOBE32(CC_TEXT), scriptInfo->text, length);
 	}
 
-	length = ChunkFile_Seek(index, HTOBE32('ORDR'));
+	length = ChunkFile_Seek(index, HTOBE32(CC_ORDR));
 	total += length;
 
 	if (length == 0) {
@@ -624,13 +625,13 @@ uint16 Script_LoadFromFile(const char *filename, ScriptInfo *scriptInfo, const S
 	}
 
 	scriptInfo->offsetsCount = (length >> 1) & 0xFFFF;
-	ChunkFile_Read(index, HTOBE32('ORDR'), scriptInfo->offsets, length);
+	ChunkFile_Read(index, HTOBE32(CC_ORDR), scriptInfo->offsets, length);
 
 	for(i = 0; i < (int16)((length >> 1) & 0xFFFF); i++) {
 		scriptInfo->offsets[i] = BETOH16(scriptInfo->offsets[i]);
 	}
 
-	length = ChunkFile_Seek(index, HTOBE32('DATA'));
+	length = ChunkFile_Seek(index, HTOBE32(CC_DATA));
 	total += length;
 
 	if (length == 0) {
@@ -647,7 +648,7 @@ uint16 Script_LoadFromFile(const char *filename, ScriptInfo *scriptInfo, const S
 	}
 
 	scriptInfo->startCount = (length >> 1) & 0xFFFF;
-	ChunkFile_Read(index, HTOBE32('DATA'), scriptInfo->start, length);
+	ChunkFile_Read(index, HTOBE32(CC_DATA), scriptInfo->start, length);
 
 	ChunkFile_Close(index);
 

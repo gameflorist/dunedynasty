@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "fourcc.h"
 #include "types.h"
 #include "os/endian.h"
 #include "os/error.h"
@@ -472,7 +474,7 @@ ChunkFile_Open_Ex(const char *filename, bool is_global_data)
 
 	File_Read(index, &header, 4);
 
-	if (header != HTOBE32('FORM')) {
+	if (header != HTOBE32(CC_FORM)) {
 		File_Close(index);
 		return FILE_INVALID;
 	}

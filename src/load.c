@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "fourcc.h"
 #include "types.h"
 #include "os/endian.h"
 #include "os/error.h"
@@ -51,7 +52,7 @@ static bool Load_Main(FILE *fp)
 
 	/* All OpenDUNE / Dune2 savegames should start with 'FORM' */
 	if (fread(&header, sizeof(uint32), 1, fp) != 1) return false;
-	if (BETOH32(header) != 'FORM') {
+	if (BETOH32(header) != CC_FORM) {
 		Error("Invalid magic header in savegame. Not an OpenDUNE / Dune2 savegame.");
 		return false;
 	}
@@ -61,13 +62,13 @@ static bool Load_Main(FILE *fp)
 
 	/* The next 'chunk' is fake, and has no length field */
 	if (fread(&header, sizeof(uint32), 1, fp) != 1) return false;
-	if (BETOH32(header) != 'SCEN') return false;
+	if (BETOH32(header) != CC_SCEN) return false;
 
 	position = ftell(fp);
 
 	/* Find the 'INFO' chunk, as it contains the savegame version */
 	version = 0;
-	length = Load_FindChunk(fp, 'INFO');
+	length = Load_FindChunk(fp, CC_INFO);
 	if (length == 0) return false;
 
 	/* Read the savegame version */
@@ -83,7 +84,7 @@ static bool Load_Main(FILE *fp)
 
 		/* Find the 'PLYR' chunk */
 		fseek(fp, position, SEEK_SET);
-		length = Load_FindChunk(fp, 'PLYR');
+		length = Load_FindChunk(fp, CC_PLYR);
 		if (length == 0) return false;
 
 		/* Find the human player */
@@ -104,13 +105,13 @@ static bool Load_Main(FILE *fp)
 		length = BETOH32(length);
 
 		switch (BETOH32(header)) {
-			case 'NAME': break; /* 'NAME' chunk is of no interest to us */
-			case 'INFO': break; /* 'INFO' chunk is already read */
-			case 'MAP ': if (!Map_Load      (fp, length)) return false; break;
-			case 'PLYR': if (!House_Load    (fp, length)) return false; break;
-			case 'UNIT': if (!Unit_Load     (fp, length)) return false; break;
-			case 'BLDG': if (!Structure_Load(fp, length)) return false; break;
-			case 'TEAM': if (!Team_Load     (fp, length)) return false; break;
+			case CC_NAME: break; /* 'NAME' chunk is of no interest to us */
+			case CC_INFO: break; /* 'INFO' chunk is already read */
+			case CC_MAP : if (!Map_Load      (fp, length)) return false; break;
+			case CC_PLYR: if (!House_Load    (fp, length)) return false; break;
+			case CC_UNIT: if (!Unit_Load     (fp, length)) return false; break;
+			case CC_BLDG: if (!Structure_Load(fp, length)) return false; break;
+			case CC_TEAM: if (!Team_Load     (fp, length)) return false; break;
 
 			default:
 				Error("Unknown chunk in savegame: %c%c%c%c (length: %d). Skipped.\n", header, header >> 8, header >> 16, header >> 24, length);
