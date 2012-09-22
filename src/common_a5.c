@@ -124,6 +124,12 @@ A5_InitOptions(void)
 	if (al_init() != true)
 		return false;
 
+#ifdef ALLEGRO_WINDOWS
+	al_set_app_name("Dune Dynasty");
+#else
+	al_set_app_name("dunedynasty");
+#endif
+
 	ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
 	ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
 	ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
