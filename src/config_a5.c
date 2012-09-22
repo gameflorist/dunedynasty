@@ -230,16 +230,19 @@ ConfigA5_InitDataDirectories(void)
 	const char *user_path_cstr = al_path_cstr(user_data_path, ALLEGRO_NATIVE_PATH_SEP);
 	char filename[1024];
 
-	/* Find global data directory. */
-	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), data_path_cstr);
-	File_MakeCompleteFilename(filename, sizeof(filename), "dune.pak", true);
-	if (!al_filename_exists(filename)) {
-		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
+	/* Find global data directory.  Test we can read DUNE.PAK. */
+	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", data_path_cstr);
+	FILE *fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
+	if (fp != NULL) {
+		fclose(fp);
+	}
+	else {
+		strncpy(g_dune_data_dir, DUNE_DATA_DIR, sizeof(g_dune_data_dir));
 	}
 
 	/* Find personal directory, and create subdirectories. */
-	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), user_path_cstr);
-	File_MakeCompleteFilename(filename, sizeof(filename), "", false);
+	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), "%s", user_path_cstr);
+	File_MakeCompleteFilename(filename, sizeof(filename), false, "", false);
 	if (!al_make_directory(filename)) {
 		fprintf(stderr, "Could not create %s!\n", filename);
 	}

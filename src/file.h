@@ -5,6 +5,8 @@
 #ifndef FILE_H
 #define FILE_H
 
+#include <stdio.h>
+
 enum {
 	FILEINFO_MAX     = 682,
 	FILEINFO_INVALID = 0xFFFF,
@@ -32,7 +34,8 @@ typedef struct FileInfo {
 extern char g_dune_data_dir[1024];
 extern char g_personal_data_dir[1024];
 
-extern void File_MakeCompleteFilename(char *buf, size_t len, const char *filename, bool is_global_data);
+extern void File_MakeCompleteFilename(char *buf, size_t len, bool is_global_data, const char *filename, bool convert_to_lowercase);
+extern FILE *File_Open_CaseInsensitive(bool is_global_data, const char *filename, const char *mode);
 extern void File_Close(uint8 index);
 extern uint32 File_Read(uint8 index, void *buffer, uint32 length);
 extern uint32 File_Write(uint8 index, void *buffer, uint32 length);

@@ -36,14 +36,42 @@ char g_personal_data_dir[1024];
 extern FileInfo g_table_fileInfo[FILEINFO_MAX];
 
 void
-File_MakeCompleteFilename(char *buf, size_t len, const char *filename, bool is_global_data)
+File_MakeCompleteFilename(char *buf, size_t len, bool is_global_data, const char *filename, bool convert_to_lowercase)
 {
+	int i;
+
 	if (is_global_data) {
-		snprintf(buf, len, "%s/%s/%s", g_dune_data_dir, DUNE2_DATA_PREFIX, filename);
+		i = snprintf(buf, len, "%s/%s/", g_dune_data_dir, DUNE2_DATA_PREFIX);
 	}
 	else {
-		snprintf(buf, len, "%s/%s/%s", g_personal_data_dir, DUNE2_SAVE_PREFIX, filename);
+		i = snprintf(buf, len, "%s/%s/", g_personal_data_dir, DUNE2_SAVE_PREFIX);
 	}
+
+	strncpy(buf + i, filename, len - i);
+	buf[len - 1] = '\0';
+
+	if (convert_to_lowercase) {
+		for (int j = i; buf[j] != '\0'; j++) {
+			if ('A' <= buf[j] && buf[j] <= 'Z')
+				buf[j] = buf[j] + 'a' - 'A';
+		}
+	}
+}
+
+FILE *
+File_Open_CaseInsensitive(bool is_global_data, const char *filename, const char *mode)
+{
+	char buf[1024];
+	FILE *fp;
+
+	File_MakeCompleteFilename(buf, sizeof(buf), is_global_data, filename, false);
+	fp = fopen(buf, mode);
+	if (fp != NULL)
+		return fp;
+
+	File_MakeCompleteFilename(buf, sizeof(buf), is_global_data, filename, true);
+	fp = fopen(buf, mode);
+	return fp;
 }
 
 /**
@@ -72,21 +100,11 @@ static uint16 FileInfo_FindIndex_ByName(const char *filename)
  */
 static uint8 _File_Open(const char *filename, bool is_global_data, uint8 mode)
 {
+	const char *mode_str = (mode == 2) ? "wb" : ((mode == 3) ? "wb+" : "rb");
+
 	const char *pakName;
-	char filenameComplete[1024];
-	char pakNameComplete[1024];
 	uint8 fileIndex;
 	uint16 fileInfoIndex;
-
-	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), filename, is_global_data);
-	/* XXX -- This should be removed when all references are changed to lowercase */
-	{
-		char *f;
-
-		for (f = filenameComplete; *f != '\0'; f++) {
-			if (*f >= 'A' && *f <= 'Z') *f += 32;
-		}
-	}
 
 	if ((mode & 1) == 0 && (mode & 2) == 0) return FILE_INVALID;
 
@@ -97,7 +115,7 @@ static uint8 _File_Open(const char *filename, bool is_global_data, uint8 mode)
 	if (fileIndex == FILE_MAX) return FILE_INVALID;
 
 	/* Check if we can find the file outside any PAK file */
-	s_file[fileIndex].fp = fopen(filenameComplete, (mode == 2) ? "wb" : ((mode == 3) ? "wb+" : "rb"));
+	s_file[fileIndex].fp = File_Open_CaseInsensitive(is_global_data, filename, mode_str);
 	if (s_file[fileIndex].fp != NULL) {
 		s_file[fileIndex].start    = 0;
 		s_file[fileIndex].position = 0;
@@ -124,16 +142,7 @@ static uint8 _File_Open(const char *filename, bool is_global_data, uint8 mode)
 	if (!g_table_fileInfo[fileInfoIndex].flags.inPAKFile) return FILE_INVALID;
 
 	pakName = g_table_fileInfo[g_table_fileInfo[fileInfoIndex].parentIndex].filename;
-	File_MakeCompleteFilename(pakNameComplete, sizeof(pakNameComplete), pakName, is_global_data);
-	/* XXX -- This should be removed when all references are changed to lowercase */
-	{
-		char *f;
-
-		for (f = pakNameComplete; *f != '\0'; f++) {
-			if (*f >= 'A' && *f <= 'Z') *f += 32;
-		}
-	}
-	s_file[fileIndex].fp = fopen(pakNameComplete, "rb");
+	s_file[fileIndex].fp = File_Open_CaseInsensitive(is_global_data, pakName, "rb");
 	if (s_file[fileIndex].fp == NULL) return FILE_INVALID;
 
 	/* If this file is not yet read from the PAK, read the complete index
@@ -375,16 +384,11 @@ File_Delete_Personal(const char *filename)
 {
 	char filenameComplete[1024];
 
-	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), filename, false);
-	/* XXX -- This should be removed when all references are changed to lowercase */
-	{
-		char *f;
+	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), false, filename, false);
+	if (unlink(filenameComplete) == 0)
+		return;
 
-		for (f = filenameComplete; *f != '\0'; f++) {
-			if (*f >= 'A' && *f <= 'Z') *f += 32;
-		}
-	}
-
+	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), false, filename, true);
 	unlink(filenameComplete);
 }
 

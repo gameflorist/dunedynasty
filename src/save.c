@@ -128,7 +128,6 @@ bool
 SaveFile(const char *filename, const char *description)
 {
 	FILE *fp;
-	char filenameComplete[1024];
 	bool res;
 
 	/* In debug-scenario mode, the whole map is uncovered. Cover it now in
@@ -174,10 +173,9 @@ SaveFile(const char *filename, const char *description)
 		}
 	}
 
-	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), filename, false);
-	fp = fopen(filenameComplete, "wb");
+	fp = File_Open_CaseInsensitive(false, filename, "wb");
 	if (fp == NULL) {
-		Error("Failed to open file '%s' for writing.\n", filenameComplete);
+		Error("Failed to open file '%s' for writing.\n", filename);
 		return false;
 	}
 

@@ -130,17 +130,15 @@ bool
 LoadFile(const char *filename)
 {
 	FILE *fp;
-	char filenameComplete[1024];
 	bool res;
 
 	Audio_PlayVoice(VOICE_STOP);
 
 	Game_Init();
 
-	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), filename, false);
-	fp = fopen(filenameComplete, "rb");
+	fp = File_Open_CaseInsensitive(false, filename, "rb");
 	if (fp == NULL) {
-		Error("Failed to open file '%s' for reading.\n", filenameComplete);
+		Error("Failed to open file '%s' for reading.\n", filename);
 
 		/* TODO -- Load failures should not result in termination */
 		exit(0);
