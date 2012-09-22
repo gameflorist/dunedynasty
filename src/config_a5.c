@@ -399,6 +399,12 @@ GameOptions_Save(void)
 		}
 	}
 
+	/* Music configuration. */
+	for (enum MusicSet music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
+		if (al_get_config_value(s_configFile, "music", g_music_set_prefix[music_set]) == NULL)
+			al_set_config_value(s_configFile, "music", g_music_set_prefix[music_set], "1");
+	}
+
 	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
 	al_save_config_file(filename, s_configFile);
 }
