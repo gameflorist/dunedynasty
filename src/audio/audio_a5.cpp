@@ -69,16 +69,24 @@ AudioA5_Init(void)
 {
 	if (!al_install_audio()) {
 		fprintf(stderr, "al_install_audio() failed.\n");
-		g_enable_audio = false;
-		g_enable_subtitles = true;
-		return;
+		goto audio_init_failed;
 	}
 	else {
 		g_enable_audio = true;
 	}
 
-	al_voice = al_create_voice(SRATE, ALLEGRO_AUDIO_DEPTH_FLOAT32, ALLEGRO_CHANNEL_CONF_2);
+	al_voice = al_create_voice(SRATE, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2);
+	if (al_voice == NULL) {
+		fprintf(stderr, "al_create_voice() failed.\n");
+		goto audio_init_failed;
+	}
+
 	al_mixer = al_create_mixer(SRATE, ALLEGRO_AUDIO_DEPTH_FLOAT32, ALLEGRO_CHANNEL_CONF_2);
+	if (al_mixer == NULL) {
+		fprintf(stderr, "al_create_mixer() failed.\n");
+		goto audio_init_failed;
+	}
+
 	al_attach_mixer_to_voice(al_mixer, al_voice);
 
 	for (int i = 0; i < MAX_SAMPLE_INSTANCES; i++) {
@@ -98,6 +106,18 @@ AudioA5_Init(void)
 	}
 
 	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_1].dune2_adlib);
+	return;
+
+audio_init_failed:
+
+	al_destroy_mixer(al_mixer);
+	al_mixer = NULL;
+
+	al_destroy_voice(al_voice);
+	al_voice = NULL;
+
+	g_enable_audio = false;
+	g_enable_subtitles = true;
 }
 
 void
