@@ -204,7 +204,7 @@ VideoA5_Init(void)
 {
 	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width*8;
 	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
-	int display_flags = ALLEGRO_GENERATE_EXPOSE_EVENTS;
+	int display_flags = ALLEGRO_OPENGL | ALLEGRO_GENERATE_EXPOSE_EVENTS;
 
 	if (g_gameConfig.windowMode == WM_FULLSCREEN) {
 		display_flags |= ALLEGRO_FULLSCREEN;
