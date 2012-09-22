@@ -288,7 +288,7 @@ GameOptions_Load(void)
 				break;
 
 			case CONFIG_STRING:
-				strncpy(opt->d._string, str, 1024);
+				snprintf(opt->d._string, 1024, "%s", str);
 				break;
 
 			case CONFIG_WINDOW:
