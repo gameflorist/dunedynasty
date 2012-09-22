@@ -1604,7 +1604,15 @@ VideoA5_InitCursor(void)
 	};
 
 	for (int i = 0; i < CURSOR_MAX; i++) {
+#ifdef ALLEGRO_WINDOWS
+		al_lock_bitmap(s_shape[i][HOUSE_HARKONNEN], ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_READONLY);
+#endif
+
 		s_cursor[i] = al_create_mouse_cursor(s_shape[i][HOUSE_HARKONNEN], focus[i].x, focus[i].y);
+
+#ifdef ALLEGRO_WINDOWS
+		al_unlock_bitmap(s_shape[i][HOUSE_HARKONNEN]);
+#endif
 	}
 
 	al_set_mouse_cursor(display, s_cursor[0]);
