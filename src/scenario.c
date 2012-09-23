@@ -261,12 +261,6 @@ static void Scenario_Load_Structure(const char *key, char *settings)
 		structureType = Structure_StringToType(settings);
 		if (structureType == STRUCTURE_INVALID) return;
 
-		/* ENHANCEMENT -- Atreides shouldn't get WOR since they can't do anything with it. */
-		if (enhancement_fix_scenario_typos) {
-			if (houseType == HOUSE_ATREIDES && structureType == STRUCTURE_WOR_TROOPER)
-				structureType = STRUCTURE_BARRACKS;
-		}
-
 		Structure_Create(STRUCTURE_INDEX_INVALID, structureType, houseType, position);
 		return;
 	}
@@ -323,6 +317,12 @@ static void Scenario_Load_Structure(const char *key, char *settings)
 
 	{
 		Structure *s;
+
+		/* ENHANCEMENT -- Atreides shouldn't get WOR since they can't do anything with it. */
+		if (enhancement_fix_scenario_typos) {
+			if (houseType == HOUSE_ATREIDES && structureType == STRUCTURE_WOR_TROOPER)
+				structureType = STRUCTURE_BARRACKS;
+		}
 
 		s = Structure_Create(index, structureType, houseType, position);
 		if (s == NULL) return;
