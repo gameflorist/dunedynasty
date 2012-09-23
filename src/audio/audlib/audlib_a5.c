@@ -79,6 +79,7 @@ static AUDSTREAM *load_aud_stream_inner(ALLEGRO_FILE *fp, AUDSTREAM *aud)
     outsize = al_fread32le(fp);
     flags = al_fgetc(fp);
     type = al_fgetc(fp);
+    (void)outsize;
 
     if (type == 1) {
 	/* unsupported compression type */
@@ -155,6 +156,8 @@ static inline int get_next_chunk(AUDSTREAM *aud)
     size = al_fread16le(aud->fp);
     outsize = al_fread16le(aud->fp);
     id = al_fread32le(aud->fp);
+    (void)outsize;
+    (void)id;
 
     if (aud->data_size < size) {
 	aud->data_size = size;
