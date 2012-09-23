@@ -44,7 +44,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/newui/viewport.c
 	src/object.c
 	src/opendune.c
-	src/os/error.c
 	src/pool/house.c
 	src/pool/structure.c
 	src/pool/team.c
@@ -105,6 +104,18 @@ if(WITH_FLUIDSYNTH)
 	)
 endif(WITH_FLUIDSYNTH)
 
+if(WIN32)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES}
+	src/os/error_win32.c
+	)
+else(WIN32)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES}
+	src/os/error.c
+	)
+endif(WIN32)
+
 set(OPENDUNE_UNUSED_SRC_FILES
 	src/audio/driver.c
 	src/audio/dsp_alsa.c
@@ -123,7 +134,6 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/gui/security.c
 	src/input/input_opendune.c
 	src/input/mouse_opendune.c
-	src/os/error_win32.c
 	src/timer/timer_opendune.c
 	src/video/video_opendune.c
 	src/video/video_sdl.c
