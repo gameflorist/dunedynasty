@@ -444,121 +444,39 @@ void GUI_Widget_Scrollbar_Draw(Widget *w)
  */
 static uint16 GUI_Widget_ActionPanel_GetActionType(bool forceDraw)
 {
-	static uint16 displayedActionType       = 1;
-	static uint16 displayedHitpoints        = 0xFFFF;
-	static uint16 displayedIndex            = 0xFFFF;
-	static uint16 displayedCountdown        = 0xFFFF;
-	static uint16 displayedObjectType       = 0xFFFF;
-	static uint16 displayedStructureLoFlags = 0;
-	static uint16 displayedStructureHiFlags = 0;
-	static uint16 displayedLinkedID         = 0xFFFF;
-	static uint16 displayedHouseID          = 0xFFFF;
-	static uint16 displayedActiveAction     = 0xFFFF;
-	static uint16 displayedMissileCountdown = 0;
-	static uint16 displayedUpgradeTime      = 0xFFFF;
-	static uint16 displayedStarportTime     = 0xFFFF;
-
 	uint16 actionType = 0;
-	Structure *s = NULL;
-	Unit *u = NULL;
+	VARIABLE_NOT_USED(forceDraw);
 
 	if (g_selectionType == SELECTIONTYPE_PLACE) {
-		if (displayedActionType != 7 || forceDraw) actionType = 7; /* Placement */
+		actionType = 7; /* Placement */
 	} else if (g_unitHouseMissile != NULL) {
-		if (displayedMissileCountdown != g_houseMissileCountdown || forceDraw) actionType = 8; /* House Missile */
+		actionType = 8; /* House Missile */
 	} else if (Unit_AnySelected()) {
 		if (g_selectionType == SELECTIONTYPE_TARGET) {
 			uint16 activeAction = g_activeAction;
 
-			if (activeAction != displayedActiveAction || forceDraw) {
-				switch (activeAction) {
-					case ACTION_ATTACK: actionType = 4; break; /* Attack */
-					case ACTION_MOVE:   actionType = 5; break; /* Movement */
-					default:            actionType = 6; break; /* Harvest */
-				}
+			switch (activeAction) {
+				case ACTION_ATTACK: actionType = 4; break; /* Attack */
+				case ACTION_MOVE:   actionType = 5; break; /* Movement */
+				default:            actionType = 6; break; /* Harvest */
 			}
-
-			if (actionType == displayedActionType && !forceDraw) actionType = 0;
 		} else {
-			u = Unit_GetForActionPanel();
-
-			if (forceDraw
-				|| u->o.index     != displayedIndex
-				|| u->o.hitpoints != displayedHitpoints
-				|| u->o.houseID   != displayedHouseID
-				|| u->actionID    != displayedActiveAction) {
-					actionType = 2; /* Unit */
-			}
+			actionType = 2; /* Unit */
 		}
 	} else if (!Tile_IsOutOfMap(g_selectionPosition) && (g_map[g_selectionPosition].isUnveiled || g_debugScenario)) {
 		if (Map_GetLandscapeType(g_selectionPosition) == LST_STRUCTURE) {
+			Structure *s;
+
 			s = Structure_Get_ByPackedTile(g_selectionPosition);
 
-			if (forceDraw
-				|| s->o.hitpoints       != displayedHitpoints
-				|| s->o.index           != displayedIndex
-				|| s->countDown         != displayedCountdown
-				|| s->upgradeTimeLeft   != displayedUpgradeTime
-				|| s->o.linkedID        != displayedLinkedID
-				|| s->objectType        != displayedObjectType
-				|| s->o.flags.half.high != displayedStructureHiFlags
-				|| s->o.houseID         != displayedHouseID
-				|| House_Get_ByIndex(s->o.houseID)->starportTimeLeft != displayedStarportTime
-				|| s->o.flags.half.low  != displayedStructureLoFlags) {
-					g_variable_37B2 = (s->o.hitpoints > (g_table_structureInfo[s->o.type].o.hitpoints / 2)) ? 1 : 0;
-					actionType = 3; /* Structure */
-			}
+			g_variable_37B2 = (s->o.hitpoints > (g_table_structureInfo[s->o.type].o.hitpoints / 2)) ? 1 : 0;
+			actionType = 3; /* Structure */
 		} else {
 			actionType = 1;
 		}
 	} else {
 		actionType = 1;
 	}
-
-	switch (actionType) {
-		case 8: /* House Missile */
-			displayedMissileCountdown = g_houseMissileCountdown;
-			displayedIndex = 0xFFFF;
-			break;
-
-		case 1:
-		case 4: /* Attack */
-		case 5: /* Movement */
-		case 6: /* Harvest */
-		case 7: /* Placement */
-			displayedIndex = 0xFFFF;
-			displayedMissileCountdown = 0xFFFF;
-			if (!forceDraw && actionType == displayedActionType) actionType = 0;
-			break;
-
-		case 2: /* Unit */
-			displayedHitpoints        = u->o.hitpoints;
-			displayedIndex            = u->o.index;
-			displayedActiveAction     = u->actionID;
-			displayedMissileCountdown = 0xFFFF;
-			displayedHouseID          = u->o.houseID;
-			break;
-
-		case 3: /* Structure */
-			displayedHitpoints        = s->o.hitpoints;
-			displayedIndex            = s->o.index;
-			displayedObjectType       = s->objectType;
-			displayedCountdown        = s->countDown;
-			displayedUpgradeTime      = s->upgradeTimeLeft;
-			displayedStructureHiFlags = s->o.flags.half.high;
-			displayedLinkedID         = s->o.linkedID;
-			displayedStructureLoFlags = s->o.flags.half.low;
-			displayedHouseID          = s->o.houseID;
-			displayedMissileCountdown = 0xFFFF;
-			displayedStarportTime     = House_Get_ByIndex(s->o.houseID)->starportTimeLeft;
-			break;
-
-		case 0:
-		default:
-			break;
-	}
-
-	if (actionType != 0) displayedActionType = actionType;
 
 	return actionType;
 }
