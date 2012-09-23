@@ -2,10 +2,10 @@
 
 #include <assert.h>
 #include <allegro5/allegro.h>
-#include <strings.h>
 #include "types.h"
 #include "../os/math.h"
 #include "../os/sleep.h"
+#include "../os/strings.h"
 
 #include "menu.h"
 
