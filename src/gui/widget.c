@@ -238,7 +238,6 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 	uint16 buttonState;
 	uint16 returnValue;
 	enum Scancode key;
-	bool fakeClick;
 
 	/* Get the key from the buffer, if there was any key pressed */
 	key = 0;
@@ -437,14 +436,14 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 			}
 		}
 
-		fakeClick = false;
+		/* fakeClick = false; */
 		/* Check if we are hovering and have mouse button down */
 		if (widgetHover && (buttonState & 0x2200) != 0) {
 			w->state.s.hover1 = true;
 			w->state.s.hover2 = true;
 
 			if (!w->flags.s.clickAsHover && !w->state.s.selected) {
-				fakeClick = true;
+				/* fakeClick = true; */
 				w->state.s.selected = true;
 			}
 		}

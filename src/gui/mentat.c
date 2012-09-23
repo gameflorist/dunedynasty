@@ -592,7 +592,6 @@ static void GUI_Mentat_ShowHelp(void)
 	char *desc;
 	char *picture;
 	char *text;
-	bool loc12;
 
 	subject = s_helpSubjects;
 
@@ -619,7 +618,10 @@ static void GUI_Mentat_ShowHelp(void)
 
 	while (*text != '*' && *text != '?') text++;
 
+#if 0
+	bool loc12;
 	loc12 = (*text == '*');
+#endif
 
 	*text++ = '\0';
 
