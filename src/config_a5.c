@@ -54,11 +54,14 @@ GameCfg g_gameConfig = {
 	4,      /* scrollSpeed */
 };
 
+static int saved_screen_width = 640;
+static int saved_screen_height = 480;
+
 /*--------------------------------------------------------------*/
 
 static const GameOption s_game_option[] = {
-	{ "game",   "screen_width",     CONFIG_INT,     .d._int = &TRUE_DISPLAY_WIDTH },
-	{ "game",   "screen_height",    CONFIG_INT,     .d._int = &TRUE_DISPLAY_HEIGHT },
+	{ "game",   "screen_width",     CONFIG_INT,     .d._int = &saved_screen_width },
+	{ "game",   "screen_height",    CONFIG_INT,     .d._int = &saved_screen_height },
 	{ "game",   "window_mode",      CONFIG_WINDOW,  .d._window = &g_gameConfig.windowMode },
 	{ "game",   "menubar_scale",    CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scale },
 	{ "game",   "sidebar_scale",    CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scale },
@@ -345,6 +348,9 @@ GameOptions_Load(void)
 			}
 		}
 	}
+
+	TRUE_DISPLAY_WIDTH = saved_screen_width;
+	TRUE_DISPLAY_HEIGHT = saved_screen_height;
 }
 
 void
