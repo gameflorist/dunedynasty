@@ -225,23 +225,46 @@ static void
 ConfigA5_InitDataDirectories(void)
 {
 	ALLEGRO_PATH *dune_data_path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
-	ALLEGRO_PATH *user_data_path = al_get_standard_path(ALLEGRO_USER_SETTINGS_PATH);
-	const char *data_path_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
-	const char *user_path_cstr = al_path_cstr(user_data_path, ALLEGRO_NATIVE_PATH_SEP);
+	ALLEGRO_PATH *user_data_path = al_get_standard_path(ALLEGRO_USER_DATA_PATH);
+	ALLEGRO_PATH *user_settings_path = al_get_standard_path(ALLEGRO_USER_SETTINGS_PATH);
+	const char *dune_data_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
+	const char *user_data_cstr = al_path_cstr(user_data_path, ALLEGRO_NATIVE_PATH_SEP);
+	const char *user_settings_cstr = al_path_cstr(user_settings_path, ALLEGRO_NATIVE_PATH_SEP);
 	char filename[1024];
+	FILE *fp;
 
 	/* Find global data directory.  Test we can read DUNE.PAK. */
-	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", data_path_cstr);
-	FILE *fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
-	if (fp != NULL) {
-		fclose(fp);
+
+	/* 1. Try current executable directory/data/DUNE.PAK. */
+	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
+	fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
+
+	/* 2. Try ~/.local/share/dunedynasty/data/DUNE.PAK. */
+	if (fp == NULL) {
+		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", user_data_cstr);
+		fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
+	}
+
+	/* 3. If /something/bin/dunedynasty, try /something/share/dunedynasty/data/DUNE.PAK. */
+	if (fp == NULL) {
+		if (strcmp(al_get_path_tail(dune_data_path), "bin") == 0) {
+			al_replace_path_component(dune_data_path, -1, "share/dunedynasty");
+			dune_data_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
+			snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
+			fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
+		}
+	}
+
+	/* 4. Try DUNE_DATA_DIR/data/DUNE.PAK. */
+	if (fp == NULL) {
+		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
 	}
 	else {
-		strncpy(g_dune_data_dir, DUNE_DATA_DIR, sizeof(g_dune_data_dir));
+		fclose(fp);
 	}
 
 	/* Find personal directory, and create subdirectories. */
-	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), "%s", user_path_cstr);
+	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), "%s", user_settings_cstr);
 	File_MakeCompleteFilename(filename, sizeof(filename), false, "", false);
 	if (!al_make_directory(filename)) {
 		fprintf(stderr, "Could not create %s!\n", filename);
