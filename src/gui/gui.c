@@ -82,7 +82,7 @@ static uint32 s_ticksPlayed;
 
 uint16 g_cursorSpriteID;
 
-uint16 g_variable_37B2;
+bool g_variable_37B2;
 bool g_var_37B8;
 
 uint16 g_viewportMessageCounter;                            /*!< Countdown counter for displaying #g_viewportMessageText, bit 0 means 'display the text'. */
@@ -522,7 +522,8 @@ void GUI_PaletteAnimate(void)
 
 		uint16 colour;
 
-		colour = (g_variable_37B2 == 0 && animationToggle) ? 6 : 15;
+		/* When structure damaged more than 50%, blink repair text. */
+		colour = (g_variable_37B2 == false && animationToggle) ? 6 : 15;
 		memcpy(g_palette1 + 3 * 239, g_palette1 + 3 * colour, 3);
 
 		GFX_SetPalette(g_palette1);

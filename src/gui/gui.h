@@ -62,7 +62,7 @@ extern int16  g_selectionState;
 
 extern uint16 g_cursorSpriteID;
 
-extern uint16 g_variable_37B2;
+extern bool g_variable_37B2;
 extern bool g_var_37B8;
 
 extern void GUI_DisplayText(const char *str, int16 importance, ...);
