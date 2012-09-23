@@ -37,7 +37,16 @@ configure_file("${CMAKE_SOURCE_DIR}/include/buildcfg.h.in" "${PROJECT_BINARY_DIR
 include(FileList.cmake)
 include_directories("include" "${PROJECT_BINARY_DIR}/include")
 
-add_executable(dunedynasty WIN32 ${DUNEDYNASTY_SRC_FILES})
+if(MINGW)
+	# Work around cmake bug #12480 when cross-compiling.
+	# Fixed in cmake commit 6ddb1e5b
+	include(Platform/Windows-windres)
+endif(MINGW)
+
+add_executable(dunedynasty WIN32
+	${DUNEDYNASTY_SRC_FILES}
+	${CMAKE_SOURCE_DIR}/src/icon/icon.rc
+	)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition -pedantic")
