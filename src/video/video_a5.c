@@ -1446,6 +1446,7 @@ VideoA5_FontIndex(const Font *font, const uint8 *pal)
 		if (memcmp(pal+2, font_palette[3]+2, 5) == 0) return 7;
 	}
 
+#if 0
 	{
 		const char *name =
 			(font == g_fontNew6p) ? "New6p" :
@@ -1464,6 +1465,9 @@ VideoA5_FontIndex(const Font *font, const uint8 *pal)
 		fprintf(stderr, " },\n");
 		exit(1);
 	}
+#else
+	return 0;
+#endif
 }
 
 static void
