@@ -1225,12 +1225,27 @@ int SDL_main(int argc, char **argv)
 int main(int argc, char **argv)
 #endif /* __APPLE__ */
 {
+	VARIABLE_NOT_USED(argc);
+	VARIABLE_NOT_USED(argv);
+
+	CrashLog_Init();
+	Mouse_Init();
+
+	if (A5_InitOptions() == false)
+		exit(1);
+
 #if defined(_WIN32)
 	#if defined(__MINGW32__) && defined(__STRICT_ANSI__)
 		int __cdecl __MINGW_NOTHROW _fileno (FILE*);
 	#endif
-	FILE *err = fopen("error.log", "w");
-	FILE *out = fopen("output.log", "w");
+
+	char filename[1024];
+
+	snprintf(filename, sizeof(filename), "%s/error.log", g_personal_data_dir);
+	FILE *err = fopen(filename, "w");
+
+	snprintf(filename, sizeof(filename), "%s/output.log", g_personal_data_dir);
+	FILE *out = fopen(filename, "w");
 
 	#if defined(_MSC_VER)
 		_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
@@ -1240,15 +1255,6 @@ int main(int argc, char **argv)
 	if (out != NULL) _dup2(_fileno(out), _fileno(stdout));
 	FreeConsole();
 #endif
-	CrashLog_Init();
-
-	Mouse_Init();
-
-	VARIABLE_NOT_USED(argc);
-	VARIABLE_NOT_USED(argv);
-
-	if (A5_InitOptions() == false)
-		exit(1);
 
 	if (!Unknown_25C4_000E()) exit(1);
 
