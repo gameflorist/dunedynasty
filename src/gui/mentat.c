@@ -8,7 +8,6 @@
 #include "fourcc.h"
 #include "types.h"
 #include "../os/endian.h"
-#include "../os/sleep.h"
 #include "../os/strings.h"
 
 #include "mentat.h"
@@ -16,8 +15,6 @@
 #include "font.h"
 #include "gui.h"
 #include "widget.h"
-#include "../audio/driver.h"
-#include "../audio/sound.h"
 #include "../config.h"
 #include "../enhancement.h"
 #include "../file.h"
@@ -25,7 +22,6 @@
 #include "../house.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
-#include "../load.h"
 #include "../newui/mentat.h"
 #include "../newui/scrollbar.h"
 #include "../opendune.h"
@@ -39,6 +35,7 @@
 #include "../video/video.h"
 #include "../wsa.h"
 
+#if 0
 /**
  * Information about the mentat.
  */
@@ -50,14 +47,12 @@ static const uint8 s_unknownHouseData[6][8] = {
 	{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
 	{0x40,0x50,0x38,0x60,0x00,0x00,0x00,0x00}, /* Intro houses (mercenaries) mentat. */
 };
-
+#endif
 
 static uint8 *s_mentatSprites[3][5];
 
 bool g_interrogation;      /*!< Asking a security question (changes mentat eye movement). */
 bool g_disableOtherMovement; /*!< Disable moving of the other object. */
-
-static bool s_selectMentatHelp = false; /*!< Selecting from the list of in-game help subjects. */
 
 static char s_mentatFilename[13];
 
@@ -72,8 +67,6 @@ void GUI_Mentat_HelpListLoop(int key)
 {
 	if (key != 0x8001) {
 		Widget *w = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
-
-		s_selectMentatHelp = true;
 
 		switch (key) {
 			case 0x80 | MOUSE_ZAXIS:
@@ -96,8 +89,6 @@ void GUI_Mentat_HelpListLoop(int key)
 
 			default: break;
 		}
-
-		s_selectMentatHelp = false;
 	}
 }
 
