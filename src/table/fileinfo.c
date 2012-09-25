@@ -8874,5 +8874,44 @@ FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
+	},
+
+	{ /* 682 */
+		/* filename             */ "HMERC.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 9,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 683 */
+		/* filename             */ "AMERC.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 10,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 684 */
+		/* filename             */ "OMERC.VOC",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 11,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ true,
+		},
 	}
 };

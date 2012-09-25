@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 enum {
-	FILEINFO_MAX     = 682,
+	FILEINFO_MAX     = 685,
 	FILEINFO_INVALID = 0xFFFF,
 
 	FILE_MAX = 20,

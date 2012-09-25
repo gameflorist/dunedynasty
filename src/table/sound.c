@@ -400,7 +400,7 @@ const SoundData g_table_voices[SAMPLEID_MAX] = {
 	{"%cORDOS.VOC",    20}, /*  32 */
 	{"%cFREMEN.VOC",   20}, /*  33 */
 	{"%cSARD.VOC",     20}, /*  34 */
-	{"FILLER.VOC",     20}, /*  35 */
+	{"%cMERC.VOC",     20}, /*  35 */
 	{"%cUNIT.VOC",     20}, /*  36 */
 	{"%cSTRUCT.VOC",   20}, /*  37 */
 	{"%cONE.VOC",      19}, /*  38 */
