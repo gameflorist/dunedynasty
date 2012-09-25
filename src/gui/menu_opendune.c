@@ -1635,6 +1635,46 @@ void GUI_Mentat_Display(const char *wsaFilename, uint8 houseID)
 	GFX_Screen_SetActive(oldScreenID);
 }
 
+/**
+ * Select a new subject, move the list of help subjects displayed, if necessary.
+ * @param difference Number of subjects to jump.
+ */
+void GUI_Mentat_SelectHelpSubject(int16 difference)
+{
+	if (difference > 0) {
+		if (difference + s_topHelpList + 11 > s_numberHelpSubjects) {
+			difference = s_numberHelpSubjects - (s_topHelpList + 11);
+		}
+		s_topHelpList += difference;
+
+		while (difference-- != 0) {
+			s_helpSubjects = String_NextString(s_helpSubjects);
+		}
+		return;
+	}
+
+	if (difference < 0) {
+		difference = -difference;
+
+		if ((int16)s_topHelpList < difference) {
+			difference = s_topHelpList;
+		}
+
+		s_topHelpList -= difference;
+
+		while (difference-- != 0) {
+			s_helpSubjects = String_PrevString(s_helpSubjects);
+		}
+		return;
+	}
+}
+
+void GUI_Mentat_ScrollBar_Draw(Widget *w)
+{
+	GUI_Mentat_SelectHelpSubject(GUI_Get_Scrollbar_Position(w) - s_topHelpList);
+	GUI_Mentat_Draw(false);
+}
+
 static bool GUI_Mentat_DrawInfo(char *text, uint16 left, uint16 top, uint16 height, uint16 skip, int16 lines, uint16 flags)
 {
 	uint16 oldScreenID;

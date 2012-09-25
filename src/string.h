@@ -13,8 +13,5 @@ extern char *String_Get_ByIndex(uint16 stringID);
 extern void String_TranslateSpecial(char *source, char *dest);
 extern void String_Init(void);
 extern void String_Uninit(void);
-extern uint8 *String_NextString(uint8 *ptr);
-extern uint8 *String_PrevString(uint8 *ptr);
-
 
 #endif /* STRING_H */

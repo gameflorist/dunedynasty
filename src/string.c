@@ -213,6 +213,7 @@ void String_Uninit(void)
 	s_strings = NULL;
 }
 
+#if 0
 /**
  * Go to the next string.
  * @param ptr Pointer to the current string.
@@ -238,3 +239,4 @@ uint8 *String_PrevString(uint8 *ptr)
 	ptr -= *ptr - 1;
 	return ptr;
 }
+#endif

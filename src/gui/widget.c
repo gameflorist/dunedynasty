@@ -892,9 +892,6 @@ uint16 GUI_Widget_Scrollbar_Init(Widget *w, int16 scrollMax, int16 scrollPageSiz
 
 	GUI_Widget_Scrollbar_CalculateSize(scrollbar);
 	GUI_Widget_Scrollbar_CalculatePosition(scrollbar);
-	GUI_Widget_Scrollbar_Draw(w);
-
-	if (scrollbar->drawProc != NULL) scrollbar->drawProc(w);
 
 	return position;
 }
