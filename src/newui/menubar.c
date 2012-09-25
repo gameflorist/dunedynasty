@@ -260,7 +260,7 @@ MenuBar_ClickMentat(Widget *w)
 	Timer_SetTimer(TIMER_GAME, false);
 
 	g_widgetLinkedListTail = NULL;
-	g_widgetMentatFirst = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 200, 168, 377, 5);
+	g_widgetMentatFirst = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 200, 168, SHAPE_EXIT, 5);
 	GUI_Mentat_Create_HelpScreen_Widgets();
 	GUI_Mentat_LoadHelpSubjects(true);
 	return true;
