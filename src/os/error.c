@@ -10,7 +10,7 @@
 
 #include "error.h"
 
-void Error(char *format, ...) {
+void Error(const char *format, ...) {
 	va_list ap;
 
 	va_start(ap, format);

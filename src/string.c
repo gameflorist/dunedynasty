@@ -62,7 +62,8 @@ uint16 String_Decompress(char *source, char *dest)
  * @param name The string to append extension to.
  * @return The new string.
  */
-char *String_GenerateFilename(char *name)
+char *
+String_GenerateFilename(const char *name)
 {
 	static char filename[14];
 
@@ -103,7 +104,8 @@ void String_TranslateSpecial(char *source, char *dest)
 	*dest = '\0';
 }
 
-static void String_Load(char *filename, bool compressed)
+static void
+String_Load(const char *filename, bool compressed)
 {
 	void *buf;
 	uint16 count;
