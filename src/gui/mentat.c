@@ -61,7 +61,7 @@ static bool s_selectMentatHelp = false; /*!< Selecting from the list of in-game 
 
 static char s_mentatFilename[13];
 
-static bool GUI_Mentat_List_Click(struct Widget *w);
+static void GUI_Mentat_ShowHelp(void);
 
 #if 0
 /* Moved to gui/menu_opendune.c. */
@@ -87,10 +87,11 @@ void GUI_Mentat_HelpListLoop(int key)
 			case MOUSE_LMB:
 				break;
 
+			case 0x8003:
 			case SCANCODE_ENTER:
 			case SCANCODE_KEYPAD_5:
 			case SCANCODE_SPACE:
-				GUI_Mentat_List_Click(GUI_Widget_Get_ByIndex(g_widgetMentatTail, s_selectedHelpSubject + 3));
+				GUI_Mentat_ShowHelp();
 				break;
 
 			default: break;
@@ -426,11 +427,6 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 /** Create the widgets of the mentat help screen. */
 void GUI_Mentat_Create_HelpScreen_Widgets(void)
 {
-	static char empty[2] = "";
-	uint16 ypos;
-	Widget *w;
-	int i;
-
 	if (g_widgetMentatScrollbar != NULL) {
 		GUI_Widget_Free_WithScrollbar(g_widgetMentatScrollbar);
 		g_widgetMentatScrollbar = NULL;
@@ -439,12 +435,17 @@ void GUI_Mentat_Create_HelpScreen_Widgets(void)
 	free(g_widgetMentatScrollUp); g_widgetMentatScrollUp = NULL;
 	free(g_widgetMentatScrollDown); g_widgetMentatScrollDown = NULL;
 
+#if 0
+	static char empty[2] = "";
+	uint16 ypos;
+	Widget *w;
+
 	g_widgetMentatTail = NULL;
 	ypos = 8;
 
 	w = calloc(13, sizeof(Widget));
 
-	for (i = 0; i < 13; i++) {
+	for (int i = 0; i < 13; i++) {
 		w->index = i + 2;
 
 		w->flags.all = 0;
@@ -479,9 +480,11 @@ void GUI_Mentat_Create_HelpScreen_Widgets(void)
 
 	GUI_Widget_MakeInvisible(g_widgetMentatTail);
 	GUI_Widget_MakeInvisible(w - 1);
+#endif
 
 	g_widgetMentatScrollbar = GUI_Widget_Allocate_WithScrollbar(15, 8, 168, 24, 8, 72, &Scrollbar_DrawItems);
 
+	g_widgetMentatTail = ScrollListArea_Allocate(g_widgetMentatScrollbar);
 	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatScrollbar);
 
 	g_widgetMentatScrollDown = GUI_Widget_Allocate3(16, 0, 168, 96, SHAPE_SCROLLBAR_DOWN, SHAPE_SCROLLBAR_DOWN_PRESSED, GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15), 1);
@@ -645,65 +648,9 @@ static void GUI_Mentat_ShowHelp(void)
 #endif
 }
 
-/**
- * Handles Click event for list in mentat window.
- *
- * @param w The widget.
- */
-static bool
-GUI_Mentat_List_Click(Widget *w)
-{
-#if 0
-	uint16 index;
-	Widget *w2;
-
-	index = s_selectedHelpSubject + 3;
-
-	if (w->index != index) {
-		w2 = GUI_Widget_Get_ByIndex(g_widgetMentatTail, index);
-
-		GUI_Widget_MakeNormal(w, false);
-		GUI_Widget_MakeNormal(w2, false);
-
-		if (w2->stringID == 0x31) {
-			w2->fgColourDown   = 15;
-			w2->fgColourNormal = 15;
-		}
-
-		if (w->stringID == 0x31) {
-			w->fgColourDown   = 8;
-			w->fgColourNormal = 8;
-		}
-
-		s_selectedHelpSubject = w->index - 3;
-		return true;
-	}
-
-	if ((w->state.s.buttonState & 0x11) == 0 && !s_selectMentatHelp) return true;
-	if (w->stringID != 0x31) return true;
-
-	GUI_Widget_MakeNormal(w, false);
-#else
-	Widget *w2 = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
-	WidgetScrollbar *ws = w2->data;
-
-	s_selectedHelpSubject = ws->scrollPosition + w->index - 3;
-	if ((w->state.s.buttonState & 0x11) == 0) return true;
-#endif
-
-	GUI_Mentat_ShowHelp();
-
-#if 0
-	GUI_Mentat_Draw(true);
-
-	Input_HandleInput(0x841);
-	Input_HandleInput(0x842);
-#endif
-	return false;
-}
-
 #if 0
 /* Moved to gui/menu_opendune.c. */
+static bool GUI_Mentat_List_Click(Widget *w);
 extern void GUI_Mentat_ScrollBar_Draw(Widget *w);
 static bool GUI_Mentat_DrawInfo(char *text, uint16 left, uint16 top, uint16 height, uint16 skip, int16 lines, uint16 flags);
 extern uint16 GUI_Mentat_Loop(const char *wsaFilename, char *pictureDetails, char *text, bool arg12, Widget *w);

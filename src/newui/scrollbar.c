@@ -8,10 +8,12 @@
 #include "../gui/gui.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
+#include "../string.h"
+#include "../table/strings.h"
 
 static ScrollbarItem *s_scrollbar_item;
 static int s_scrollbar_max_items;
-int s_selectedHelpSubject;
+static int s_selectedHelpSubject;
 
 ScrollbarItem *
 Scrollbar_AllocItem(Widget *w)
@@ -253,4 +255,52 @@ Scrollbar_DrawItems(Widget *w)
 
 		GUI_DrawText_Wrapper(si->text, x, y, colour, 0, 0x11);
 	}
+}
+
+static bool
+ScrollListArea_Click(Widget *w)
+{
+	const WidgetProperties *wi = &g_widgetProperties[w->parentID];
+	WidgetScrollbar *ws = w->data;
+
+	if (wi->yBase + w->offsetY <= g_mouseY && g_mouseY < wi->yBase + w->offsetY + w->height) {
+		const int y = (g_mouseY - w->offsetY - wi->yBase) / 8;
+
+		s_selectedHelpSubject = ws->scrollPosition + y;
+	}
+
+	if ((w->state.s.buttonState & 0x11) == 0) return true;
+
+	return false;
+}
+
+Widget *
+ScrollListArea_Allocate(Widget *scrollbar)
+{
+	Widget *w = calloc(1, sizeof(Widget));
+
+	w->index = 3;
+
+	w->flags.all = 0;
+	w->flags.s.buttonFilterLeft = 9;
+	w->flags.s.buttonFilterRight = 1;
+
+	w->clickProc = &ScrollListArea_Click;
+
+	w->drawParameterNormal.text = String_Get_ByIndex(STR_NULL);
+	w->drawParameterSelected.text = w->drawParameterNormal.text;
+	w->drawParameterDown.text = w->drawParameterNormal.text;
+	w->drawModeNormal = DRAW_MODE_TEXT;
+
+	w->state.all = 0;
+
+	w->offsetX = 24;
+	w->offsetY = 16;
+	w->width = 0x88;
+	w->height = 8 * 11;
+	w->parentID = WINDOWID_MENTAT_PICTURE;
+
+	w->data = scrollbar->data;
+
+	return w;
 }

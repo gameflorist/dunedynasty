@@ -1669,6 +1669,63 @@ void GUI_Mentat_SelectHelpSubject(int16 difference)
 	}
 }
 
+/**
+ * Handles Click event for list in mentat window.
+ *
+ * @param w The widget.
+ */
+static bool
+GUI_Mentat_List_Click(Widget *w)
+{
+#if 0
+	uint16 index;
+	Widget *w2;
+
+	index = s_selectedHelpSubject + 3;
+
+	if (w->index != index) {
+		w2 = GUI_Widget_Get_ByIndex(g_widgetMentatTail, index);
+
+		GUI_Widget_MakeNormal(w, false);
+		GUI_Widget_MakeNormal(w2, false);
+
+		if (w2->stringID == 0x31) {
+			w2->fgColourDown   = 15;
+			w2->fgColourNormal = 15;
+		}
+
+		if (w->stringID == 0x31) {
+			w->fgColourDown   = 8;
+			w->fgColourNormal = 8;
+		}
+
+		s_selectedHelpSubject = w->index - 3;
+		return true;
+	}
+
+	if ((w->state.s.buttonState & 0x11) == 0 && !s_selectMentatHelp) return true;
+	if (w->stringID != 0x31) return true;
+
+	GUI_Widget_MakeNormal(w, false);
+#else
+	Widget *w2 = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
+	WidgetScrollbar *ws = w2->data;
+
+	s_selectedHelpSubject = ws->scrollPosition + w->index - 3;
+	if ((w->state.s.buttonState & 0x11) == 0) return true;
+#endif
+
+	GUI_Mentat_ShowHelp();
+
+#if 0
+	GUI_Mentat_Draw(true);
+
+	Input_HandleInput(0x841);
+	Input_HandleInput(0x842);
+#endif
+	return false;
+}
+
 void GUI_Mentat_ScrollBar_Draw(Widget *w)
 {
 	GUI_Mentat_SelectHelpSubject(GUI_Get_Scrollbar_Position(w) - s_topHelpList);
