@@ -80,13 +80,18 @@ static Widget *briefing_proceed_repeat_widgets;
 static void
 MainMenu_InitWidgets(void)
 {
-	const int menuitem[] = {
-		STR_PLAY_A_GAME,
-		STR_REPLAY_INTRODUCTION,
-		STR_LOAD_GAME,
-		STR_HALL_OF_FAME,
-		STR_EXIT_GAME,
-		STR_NULL
+	struct {
+		enum MenuAction index;
+		const char *string;
+		uint16 stringID;
+		int shortcut2;
+	} menuitem[] = {
+		{ MENU_PLAY_A_GAME,  NULL, STR_PLAY_A_GAME, -1 },
+		{ MENU_INTRODUCTION, NULL, STR_REPLAY_INTRODUCTION, -1 },
+		{ MENU_LOAD_GAME,    NULL, STR_LOAD_GAME, -1, },
+		{ MENU_HALL_OF_FAME, NULL, STR_HALL_OF_FAME, -1 },
+		{ MENU_EXIT_GAME,    NULL, STR_EXIT_GAME, -1 },
+		{ 0, NULL, STR_NULL, 0 }
 	};
 
 	WidgetProperties *prop13 = &g_widgetProperties[WINDOWID_MAINMENU_FRAME];
@@ -98,10 +103,11 @@ MainMenu_InitWidgets(void)
 
 	main_menu_widgets = NULL;
 	prop13->height = 11;
-	for (int i = 0; menuitem[i] != STR_NULL; i++) {
+	for (int i = 0; (menuitem[i].string != NULL) || (menuitem[i].stringID != STR_NULL); i++) {
+		const char *str = (menuitem[i].string != NULL) ? menuitem[i].string : String_Get_ByIndex(menuitem[i].stringID);
 		Widget *w;
 
-		w = GUI_Widget_Allocate(menuitem[i], 0, 0, 0, SHAPE_INVALID, STR_NULL);
+		w = GUI_Widget_Allocate(menuitem[i].index, 0, 0, 0, SHAPE_INVALID, STR_NULL);
 
 		w->parentID = WINDOWID_MAINMENU_FRAME;
 		w->offsetX = prop21->xBase;
@@ -111,15 +117,21 @@ MainMenu_InitWidgets(void)
 		w->drawModeNormal = DRAW_MODE_TEXT;
 		w->drawModeSelected = DRAW_MODE_TEXT;
 		w->drawModeDown = DRAW_MODE_TEXT;
-		w->drawParameterNormal.text = String_Get_ByIndex(menuitem[i]);
+		w->drawParameterNormal.text = str;
 		w->drawParameterSelected.text = w->drawParameterNormal.text;
 		w->drawParameterDown.text = w->drawParameterNormal.text;
 		w->fgColourSelected = prop21->fgColourSelected;
 		w->fgColourDown = prop21->fgColourSelected;
 		w->flags.s.clickAsHover = false;
 
-		w->stringID = menuitem[i];
-		GUI_Widget_SetShortcuts(w);
+		if (menuitem[i].stringID != STR_NULL) {
+			w->stringID = menuitem[i].stringID;
+			GUI_Widget_SetShortcuts(w);
+		}
+
+		if (menuitem[i].shortcut2 > 0) {
+			w->shortcut2 = menuitem[i].shortcut2;
+		}
 
 		GUI_Widget_MakeNormal(main_menu_widgets, false);
 		main_menu_widgets = GUI_Widget_Link(main_menu_widgets, w);
@@ -305,27 +317,27 @@ MainMenu_Loop(void)
 	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
 
 	switch (widgetID) {
-		case 0x8000 | STR_PLAY_A_GAME:
+		case 0x8000 | MENU_PLAY_A_GAME:
 			g_campaignID = 0;
 			g_playerHouseID = HOUSE_MERCENARY;
 			MainMenu_SetupBlink(widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
-		case 0x8000 | STR_REPLAY_INTRODUCTION:
+		case 0x8000 | MENU_INTRODUCTION:
 			MainMenu_SetupBlink(widgetID);
 			return MENU_BLINK_CONFIRM | MENU_INTRODUCTION;
 
-		case 0x8000 | STR_LOAD_GAME:
+		case 0x8000 | MENU_LOAD_GAME:
 			GUI_Widget_InitSaveLoad(false);
 			MainMenu_SetupBlink(widgetID);
 			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
 
-		case 0x8000 | STR_HALL_OF_FAME:
+		case 0x8000 | MENU_HALL_OF_FAME:
 			g_playerHouseID = HOUSE_MERCENARY;
 			MainMenu_SetupBlink(widgetID);
 			return MENU_BLINK_CONFIRM | MENU_HALL_OF_FAME;
 
-		case 0x8000 | STR_EXIT_GAME:
+		case 0x8000 | MENU_EXIT_GAME:
 			MainMenu_SetupBlink(widgetID);
 			return MENU_BLINK_CONFIRM | MENU_EXIT_GAME;
 
