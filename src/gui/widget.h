@@ -44,7 +44,7 @@ struct Widget;
  */
 typedef union WidgetDrawParameter {
 	uint16 unknown;                                         /*!< Parameter for DRAW_MODE_UNKNOWN3. */
-	void *sprite;                                           /*!< Parameter for DRAW_MODE_SPRITE. */
+	uint16 sprite;                                          /*!< Parameter for Shape_DrawRemap. */
 	const char *text;                                       /*!< Parameter for DRAW_MODE_TEXT. */
 	void (*proc)(struct Widget *);                          /*!< Parameter for DRAW_MODE_CUSTOM_PROC. */
 } WidgetDrawParameter;
@@ -201,7 +201,7 @@ extern uint8   GUI_Widget_GetShortcut(uint8 c);
 extern void GUI_Widget_SetShortcuts(Widget *w);
 extern Widget *GUI_Widget_Allocate(uint16 index, uint16 shortcut, uint16 offsetX, uint16 offsetY, uint16 spriteID, uint16 stringID);
 extern Widget *GUI_Widget_Allocate_WithScrollbar(uint16 index, uint16 parentID, uint16 offsetX, uint16 offsetY, int16 width, int16 height, ScrollbarDrawProc *drawProc);
-extern Widget *GUI_Widget_Allocate3(uint16 index, uint16 parentID, uint16 offsetX, uint16 offsetY, void *sprite1, void *sprite2, Widget *widget2, uint16 unknown1A);
+extern Widget *GUI_Widget_Allocate3(uint16 index, uint16 parentID, uint16 offsetX, uint16 offsetY, uint16 sprite1, uint16 sprite2, Widget *widget2, uint16 unknown1A);
 extern void    GUI_Widget_MakeNormal(Widget *w, bool clickProc);
 extern void    GUI_Widget_MakeSelected(Widget *w, bool clickProc);
 extern Widget *GUI_Widget_Link(Widget *w1, Widget *w2);

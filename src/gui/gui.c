@@ -683,49 +683,6 @@ uint16 GUI_SplitText(char *str, uint16 maxwidth, char delimiter)
  *        0x4000 = position relative to window
  *        0x8000 = centre sprite
  */
-void GUI_DrawSprite(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...)
-{
-	int16 x = posX;
-	int16 y = posY;
-	int spriteID = -1;
-	uint8 houseID = HOUSE_HARKONNEN;
-	VARIABLE_NOT_USED(screenID);
-
-	for (int i = 0; i < 512; i++) {
-		if (sprite == g_sprites[i]) {
-			spriteID = i;
-			break;
-		}
-	}
-
-	/* XXX: Attempt to find house by remap colour. */
-	if (spriteID >= 0) {
-		va_list ap;
-
-		va_start(ap, flags);
-
-		if ((flags & 0x2000) != 0) {
-			uint8 *loc3E = va_arg(ap, uint8*);
-			for (int i = 15; i >= 0; i--) {
-				if ((loc3E[i] >= 0x90) && ((loc3E[i] - 0x90) % 16 <= 0x08)) {
-					houseID = (loc3E[i] - 0x90) / 16;
-					break;
-				}
-			}
-		}
-		else if (flags & 0x100) {
-			uint8 *remap = va_arg(ap, uint8*);
-
-			if (remap[0x90] >= 0x90)
-				houseID = (remap[0x90] - 0x90) / 16;
-		}
-
-		va_end(ap);
-
-		Shape_DrawRemap(spriteID, houseID, x, y, windowID, flags & 0xC003);
-	}
-}
-
 void GUI_DrawSprite_(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...)
 {
 	const uint16 s_variable_60[8]   = {1, 3, 2, 5, 4, 3, 2, 1};

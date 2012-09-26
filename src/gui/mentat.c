@@ -317,14 +317,7 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 
 	if (speakingMode == 1) {
 		if (movingMouthTimer < Timer_GetTicks()) {
-			uint8 *sprite;
-
 			movingMouthSprite = Tools_RandomRange(0, 4);
-			sprite = s_mentatSprites[1][movingMouthSprite];
-
-			GUI_Mouse_Hide_InRegion(s_mouthLeft, s_mouthTop, s_mouthLeft + Sprite_GetWidth(sprite), s_mouthTop + Sprite_GetHeight(sprite));
-			GUI_DrawSprite(0, sprite, s_mouthLeft, s_mouthTop, 0, 0);
-			GUI_Mouse_Show_InRegion();
 
 			switch (movingMouthSprite) {
 				case 0:
@@ -561,13 +554,13 @@ void GUI_Mentat_Create_HelpScreen_Widgets(void)
 
 	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatScrollbar);
 
-	g_widgetMentatScrollDown = GUI_Widget_Allocate3(16, 0, 168, 96, g_sprites[SHAPE_SCROLLBAR_DOWN], g_sprites[SHAPE_SCROLLBAR_DOWN_PRESSED], GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15), 1);
+	g_widgetMentatScrollDown = GUI_Widget_Allocate3(16, 0, 168, 96, SHAPE_SCROLLBAR_DOWN, SHAPE_SCROLLBAR_DOWN_PRESSED, GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15), 1);
 	g_widgetMentatScrollDown->shortcut  = 0;
 	g_widgetMentatScrollDown->shortcut2 = 0;
 	g_widgetMentatScrollDown->parentID  = 8;
 	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatScrollDown);
 
-	g_widgetMentatScrollUp = GUI_Widget_Allocate3(17, 0, 168, 16, g_sprites[SHAPE_SCROLLBAR_UP], g_sprites[SHAPE_SCROLLBAR_UP_PRESSED], GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15), 0);
+	g_widgetMentatScrollUp = GUI_Widget_Allocate3(17, 0, 168, 16, SHAPE_SCROLLBAR_UP, SHAPE_SCROLLBAR_UP_PRESSED, GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15), 0);
 	g_widgetMentatScrollUp->shortcut  = 0;
 	g_widgetMentatScrollUp->shortcut2 = 0;
 	g_widgetMentatScrollUp->parentID  = 8;

@@ -76,7 +76,6 @@ extern void GUI_PaletteAnimate(void);
 extern void GUI_UpdateProductionStringID(void);
 extern uint16 GUI_DisplayModalMessage(const char *str, uint16 stringID, ...);
 extern uint16 GUI_SplitText(char *str, uint16 maxwidth, char delimiter);
-extern void GUI_DrawSprite(uint16 memory, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...);
 extern void GUI_DrawSprite_(uint16 memory, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...);
 extern uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvestedEnemy, uint8 houseID);
 extern void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top);

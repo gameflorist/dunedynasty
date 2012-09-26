@@ -189,7 +189,11 @@ void GUI_Widget_Draw(Widget *w)
 		case DRAW_MODE_NONE: break;
 
 		case DRAW_MODE_SPRITE: {
+#if 0
 			GUI_DrawSprite(g_screenActiveID, drawParam.sprite, positionLeft, positionTop, 0, 0x100, g_remap, 1);
+#else
+			Shape_DrawRemap(drawParam.sprite, g_playerHouseID, positionLeft, positionTop, 0, 0);
+#endif
 		} break;
 
 		case DRAW_MODE_TEXT: {
@@ -646,13 +650,11 @@ Widget *GUI_Widget_Allocate(uint16 index, uint16 shortcut, uint16 offsetX, uint1
 
 		default:
 			drawMode = DRAW_MODE_SPRITE;
-			drawParam1.sprite = g_sprites[spriteID];
-			drawParam2.sprite = g_sprites[spriteID + 1];
+			drawParam1.sprite = spriteID;
+			drawParam2.sprite = spriteID + 1;
 
-			if (drawParam1.sprite == NULL) break;
-
-			w->width  = Sprite_GetWidth(drawParam1.sprite);
-			w->height = Sprite_GetHeight(drawParam1.sprite);
+			w->width  = Shape_Width(drawParam1.sprite);
+			w->height = Shape_Height(drawParam1.sprite);
 			break;
 	}
 
@@ -755,7 +757,7 @@ Widget *GUI_Widget_Allocate_WithScrollbar(uint16 index, uint16 parentID, uint16 
  * Allocate a widget.
  * @return Allocated widget.
  */
-Widget *GUI_Widget_Allocate3(uint16 index, uint16 parentID, uint16 offsetX, uint16 offsetY, void *sprite1, void *sprite2, Widget *widget2, uint16 unknown1A)
+Widget *GUI_Widget_Allocate3(uint16 index, uint16 parentID, uint16 offsetX, uint16 offsetY, uint16 sprite1, uint16 sprite2, Widget *widget2, uint16 unknown1A)
 {
 	Widget *w;
 
@@ -770,8 +772,8 @@ Widget *GUI_Widget_Allocate3(uint16 index, uint16 parentID, uint16 offsetX, uint
 	w->drawModeDown     = DRAW_MODE_SPRITE;
 	w->drawModeSelected = DRAW_MODE_SPRITE;
 
-	w->width  = Sprite_GetWidth(sprite1) * 8;
-	w->height = Sprite_GetHeight(sprite1);
+	w->width  = Shape_Width(sprite1);
+	w->height = Shape_Height(sprite1);
 
 	w->flags.all = 0;
 	w->flags.s.requiresClick     = true;
