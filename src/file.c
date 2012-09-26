@@ -36,14 +36,14 @@ char g_personal_data_dir[1024];
 extern FileInfo g_table_fileInfo[FILEINFO_MAX];
 
 void
-File_MakeCompleteFilename(char *buf, size_t len, bool is_global_data, const char *filename, bool convert_to_lowercase)
+File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const char *filename, bool convert_to_lowercase)
 {
-	int i;
+	int i = 0;
 
-	if (is_global_data) {
+	if (dir == SEARCHDIR_GLOBAL_DATA_DIR) {
 		i = snprintf(buf, len, "%s/%s/", g_dune_data_dir, DUNE2_DATA_PREFIX);
 	}
-	else {
+	else if (dir == SEARCHDIR_PERSONAL_DATA_DIR) {
 		i = snprintf(buf, len, "%s/%s/", g_personal_data_dir, DUNE2_SAVE_PREFIX);
 	}
 
@@ -59,17 +59,17 @@ File_MakeCompleteFilename(char *buf, size_t len, bool is_global_data, const char
 }
 
 FILE *
-File_Open_CaseInsensitive(bool is_global_data, const char *filename, const char *mode)
+File_Open_CaseInsensitive(enum SearchDirectory dir, const char *filename, const char *mode)
 {
 	char buf[1024];
 	FILE *fp;
 
-	File_MakeCompleteFilename(buf, sizeof(buf), is_global_data, filename, false);
+	File_MakeCompleteFilename(buf, sizeof(buf), dir, filename, false);
 	fp = fopen(buf, mode);
 	if (fp != NULL)
 		return fp;
 
-	File_MakeCompleteFilename(buf, sizeof(buf), is_global_data, filename, true);
+	File_MakeCompleteFilename(buf, sizeof(buf), dir, filename, true);
 	fp = fopen(buf, mode);
 	return fp;
 }
@@ -98,7 +98,8 @@ static uint16 FileInfo_FindIndex_ByName(const char *filename)
  * @param mode The mode to open the file in. Bit 1 means reading, bit 2 means writing.
  * @return An index value refering to the opened file, or FILE_INVALID.
  */
-static uint8 _File_Open(const char *filename, bool is_global_data, uint8 mode)
+static uint8
+_File_Open(enum SearchDirectory dir, const char *filename, uint8 mode)
 {
 	const char *mode_str = (mode == 2) ? "wb" : ((mode == 3) ? "wb+" : "rb");
 
@@ -115,7 +116,7 @@ static uint8 _File_Open(const char *filename, bool is_global_data, uint8 mode)
 	if (fileIndex == FILE_MAX) return FILE_INVALID;
 
 	/* Check if we can find the file outside any PAK file */
-	s_file[fileIndex].fp = File_Open_CaseInsensitive(is_global_data, filename, mode_str);
+	s_file[fileIndex].fp = File_Open_CaseInsensitive(dir, filename, mode_str);
 	if (s_file[fileIndex].fp != NULL) {
 		s_file[fileIndex].start    = 0;
 		s_file[fileIndex].position = 0;
@@ -142,7 +143,7 @@ static uint8 _File_Open(const char *filename, bool is_global_data, uint8 mode)
 	if (!g_table_fileInfo[fileInfoIndex].flags.inPAKFile) return FILE_INVALID;
 
 	pakName = g_table_fileInfo[g_table_fileInfo[fileInfoIndex].parentIndex].filename;
-	s_file[fileIndex].fp = File_Open_CaseInsensitive(is_global_data, pakName, "rb");
+	s_file[fileIndex].fp = File_Open_CaseInsensitive(dir, pakName, "rb");
 	if (s_file[fileIndex].fp == NULL) return FILE_INVALID;
 
 	/* If this file is not yet read from the PAK, read the complete index
@@ -226,11 +227,11 @@ static uint8 _File_Open(const char *filename, bool is_global_data, uint8 mode)
  * @return True if and only if the file can be found.
  */
 bool
-File_Exists_Ex(const char *filename, bool is_global_data)
+File_Exists_Ex(enum SearchDirectory dir, const char *filename)
 {
 	uint8 index;
 
-	index = _File_Open(filename, is_global_data, 1);
+	index = _File_Open(dir, filename, 1);
 	if (index == FILE_INVALID) {
 		return false;
 	}
@@ -247,11 +248,11 @@ File_Exists_Ex(const char *filename, bool is_global_data)
  * @return An index value refering to the opened file, or FILE_INVALID.
  */
 uint8
-File_Open_Ex(const char *filename, bool is_global_data, uint8 mode)
+File_Open_Ex(enum SearchDirectory dir, const char *filename, uint8 mode)
 {
 	uint8 res;
 
-	res = _File_Open(filename, is_global_data, mode);
+	res = _File_Open(dir, filename, mode);
 
 	if (res == FILE_INVALID) {
 		Error("ERROR: unable to open file '%s'.\n", filename);
@@ -401,11 +402,11 @@ File_Delete_Personal(const char *filename)
  * @return The amount of bytes truly read, or 0 if there was a failure.
  */
 uint32
-File_ReadBlockFile_Ex(const char *filename, bool is_global_data, void *buffer, uint32 length)
+File_ReadBlockFile_Ex(enum SearchDirectory dir, const char *filename, void *buffer, uint32 length)
 {
 	uint8 index;
 
-	index = File_Open_Ex(filename, is_global_data, 1);
+	index = File_Open_Ex(dir, filename, 1);
 	length = File_Read(index, buffer, length);
 	File_Close(index);
 	return length;
@@ -418,13 +419,14 @@ File_ReadBlockFile_Ex(const char *filename, bool is_global_data, void *buffer, u
  * @param mallocFlags The type of memory to allocate.
  * @return The CS:IP of the allocated memory where the file has been read.
  */
-void *File_ReadWholeFile(const char *filename)
+void *
+File_ReadWholeFile_Ex(enum SearchDirectory dir, const char *filename)
 {
 	uint8 index;
 	uint32 length;
 	void *buffer;
 
-	index = File_Open(filename, 1);
+	index = File_Open_Ex(dir, filename, 1);
 	length = File_GetSize(index);
 
 	buffer = malloc(length + 1);
@@ -466,15 +468,16 @@ uint32 File_ReadFile(const char *filename, void *buf)
  * @return An index value refering to the opened file, or FILE_INVALID.
  */
 uint8
-ChunkFile_Open_Ex(const char *filename, bool is_global_data)
+ChunkFile_Open_Ex(enum SearchDirectory dir, const char *filename)
 {
 	uint8 index;
 	uint32 header;
 
-	index = File_Open_Ex(filename, is_global_data, 1);
+	/* XXX: what is with this? */
+	index = File_Open_Ex(dir, filename, 1);
 	File_Close(index);
 
-	index = File_Open_Ex(filename, is_global_data, 1);
+	index = File_Open_Ex(dir, filename, 1);
 
 	File_Read(index, &header, 4);
 

@@ -173,7 +173,7 @@ SaveFile(const char *filename, const char *description)
 		}
 	}
 
-	fp = File_Open_CaseInsensitive(false, filename, "wb");
+	fp = File_Open_CaseInsensitive(SEARCHDIR_PERSONAL_DATA_DIR, filename, "wb");
 	if (fp == NULL) {
 		Error("Failed to open file '%s' for writing.\n", filename);
 		return false;

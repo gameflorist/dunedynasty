@@ -272,12 +272,12 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 	/* Find global data directory.  Test we can read DUNE.PAK. */
 
 	/* 1. Try current executable directory/data/DUNE.PAK. */
-	fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
+	fp = File_Open_CaseInsensitive(SEARCHDIR_GLOBAL_DATA_DIR, "DUNE.PAK", "rb");
 
 	/* 2. Try ~/.local/share/dunedynasty/data/DUNE.PAK. */
 	if (fp == NULL) {
 		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", user_data_cstr);
-		fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
+		fp = File_Open_CaseInsensitive(SEARCHDIR_GLOBAL_DATA_DIR, "DUNE.PAK", "rb");
 	}
 
 	/* 3. If /something/bin/dunedynasty, try /something/share/dunedynasty/data/DUNE.PAK. */
@@ -286,7 +286,7 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 			al_replace_path_component(dune_data_path, -1, "share/dunedynasty");
 			dune_data_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
 			snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
-			fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
+			fp = File_Open_CaseInsensitive(SEARCHDIR_GLOBAL_DATA_DIR, "DUNE.PAK", "rb");
 		}
 	}
 
@@ -311,7 +311,7 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 		s_configFile = al_load_config_file(filename);
 	}
 
-	File_MakeCompleteFilename(filename, sizeof(filename), false, "", false);
+	File_MakeCompleteFilename(filename, sizeof(filename), SEARCHDIR_PERSONAL_DATA_DIR, "", false);
 	if (!al_make_directory(filename)) {
 		fprintf(stderr, "Could not create %s!\n", filename);
 	}

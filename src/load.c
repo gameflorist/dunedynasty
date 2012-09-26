@@ -136,7 +136,7 @@ LoadFile(const char *filename)
 
 	Game_Init();
 
-	fp = File_Open_CaseInsensitive(false, filename, "rb");
+	fp = File_Open_CaseInsensitive(SEARCHDIR_PERSONAL_DATA_DIR, filename, "rb");
 	if (fp == NULL) {
 		Error("Failed to open file '%s' for reading.\n", filename);
 
