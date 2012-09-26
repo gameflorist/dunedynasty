@@ -72,8 +72,8 @@ Scrollbar_Clamp(const WidgetScrollbar *ws)
 		s_selectedHelpSubject = ws->scrollPosition + ws->scrollPageSize - 1;
 }
 
-bool
-Scrollbar_ArrowUp_Click(Widget *w)
+static void
+Scrollbar_SelectUp(Widget *w)
 {
 	WidgetScrollbar *ws = w->data;
 
@@ -82,12 +82,10 @@ Scrollbar_ArrowUp_Click(Widget *w)
 
 	s_selectedHelpSubject--;
 	Scrollbar_Clamp(ws);
-
-	return false;
 }
 
-bool
-Scrollbar_ArrowDown_Click(Widget *w)
+static void
+Scrollbar_SelectDown(Widget *w)
 {
 	WidgetScrollbar *ws = w->data;
 
@@ -96,7 +94,25 @@ Scrollbar_ArrowDown_Click(Widget *w)
 
 	s_selectedHelpSubject++;
 	Scrollbar_Clamp(ws);
+}
 
+bool
+Scrollbar_ArrowUp_Click(Widget *w)
+{
+	WidgetScrollbar *ws = w->data;
+
+	Scrollbar_Scroll(ws, -1);
+	Scrollbar_Clamp(ws);
+	return false;
+}
+
+bool
+Scrollbar_ArrowDown_Click(Widget *w)
+{
+	WidgetScrollbar *ws = w->data;
+
+	Scrollbar_Scroll(ws, 1);
+	Scrollbar_Clamp(ws);
 	return false;
 }
 
@@ -105,32 +121,32 @@ Scrollbar_HandleEvent(Widget *w, int key)
 {
 	WidgetScrollbar *ws = w->data;
 
-	if ((key & 0x7F) == MOUSE_ZAXIS) {
-		if (g_mouseDZ < 0) {
-			key = SCANCODE_KEYPAD_2;
-		}
-		else if (g_mouseDZ > 0) {
-			key = SCANCODE_KEYPAD_8;
-		}
-	}
-
 	switch (key) {
+		case 0x80 | MOUSE_ZAXIS:
+			if (g_mouseDZ > 0) {
+				Scrollbar_ArrowUp_Click(w);
+			}
+			else if (g_mouseDZ < 0) {
+				Scrollbar_ArrowDown_Click(w);
+			}
+			break;
+
 		case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
-			Scrollbar_ArrowUp_Click(w);
+			Scrollbar_SelectUp(w);
 			break;
 
 		case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
-			Scrollbar_ArrowDown_Click(w);
+			Scrollbar_SelectDown(w);
 			break;
 
 		case SCANCODE_KEYPAD_9: /* NUMPAD 9 / PAGE UP */
 			for (int i = 0; i < ws->scrollPageSize; i++)
-				Scrollbar_ArrowUp_Click(w);
+				Scrollbar_SelectUp(w);
 			break;
 
 		case SCANCODE_KEYPAD_3: /* NUMPAD 3 / PAGE DOWN */
 			for (int i = 0; i < ws->scrollPageSize; i++)
-				Scrollbar_ArrowDown_Click(w);
+				Scrollbar_SelectDown(w);
 			break;
 	}
 }
