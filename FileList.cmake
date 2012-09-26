@@ -40,6 +40,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/newui/mentat.c
 	src/newui/menu.c
 	src/newui/menubar.c
+	src/newui/scrollbar.c
 	src/newui/strategicmap.c
 	src/newui/viewport.c
 	src/object.c

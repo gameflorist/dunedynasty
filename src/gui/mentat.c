@@ -27,6 +27,7 @@
 #include "../input/mouse.h"
 #include "../load.h"
 #include "../newui/mentat.h"
+#include "../newui/scrollbar.h"
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../shape.h"
@@ -92,7 +93,7 @@ void GUI_Mentat_HelpListLoop(int key)
 					break;
 				}
 
-				GUI_Widget_Scrollbar_ArrowUp_Click(g_widgetMentatScrollbar);
+				Scrollbar_ArrowUp_Click(g_widgetMentatScrollbar);
 				break;
 
 			case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
@@ -101,17 +102,17 @@ void GUI_Mentat_HelpListLoop(int key)
 					break;
 				}
 
-				GUI_Widget_Scrollbar_ArrowDown_Click(g_widgetMentatScrollbar);
+				Scrollbar_ArrowDown_Click(g_widgetMentatScrollbar);
 				break;
 
 			case SCANCODE_PGUP: /* NUMPAD 9 / PAGE UP */
 				for (int i = 0; i < 11; i++)
-					GUI_Widget_Scrollbar_ArrowUp_Click(g_widgetMentatScrollbar);
+					Scrollbar_ArrowUp_Click(g_widgetMentatScrollbar);
 				break;
 
 			case SCANCODE_PGDN: /* NUMPAD 3 / PAGE DOWN */
 				for (int i = 0; i < 11; i++)
-					GUI_Widget_Scrollbar_ArrowDown_Click(g_widgetMentatScrollbar);
+					Scrollbar_ArrowDown_Click(g_widgetMentatScrollbar);
 				break;
 
 			case MOUSE_LMB:

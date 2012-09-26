@@ -13,6 +13,7 @@
 #include "../input/mouse.h"
 #include "../gfx.h"
 #include "../house.h"
+#include "../newui/scrollbar.h"
 #include "../string.h"
 #include "../sprites.h"
 #include "../table/strings.h"
@@ -731,7 +732,7 @@ Widget *GUI_Widget_Allocate_WithScrollbar(uint16 index, uint16 parentID, uint16 
 	w->drawParameterNormal.proc   = &GUI_Widget_Scrollbar_Draw;
 	w->drawParameterSelected.proc = &GUI_Widget_Scrollbar_Draw;
 	w->drawParameterDown.proc     = &GUI_Widget_Scrollbar_Draw;
-	w->clickProc                  = &GUI_Widget_Scrollbar_Click;
+	w->clickProc                  = &Scrollbar_Click;
 
 	ws = (WidgetScrollbar *)calloc(1, sizeof(WidgetScrollbar));
 
@@ -787,9 +788,9 @@ Widget *GUI_Widget_Allocate3(uint16 index, uint16 parentID, uint16 offsetX, uint
 	w->drawParameterDown.sprite     = sprite2;
 
 	if (unknown1A != 0x0) {
-		w->clickProc = &GUI_Widget_Scrollbar_ArrowDown_Click;
+		w->clickProc = &Scrollbar_ArrowDown_Click;
 	} else {
-		w->clickProc = &GUI_Widget_Scrollbar_ArrowUp_Click;
+		w->clickProc = &Scrollbar_ArrowUp_Click;
 	}
 
 	w->data = widget2->data;

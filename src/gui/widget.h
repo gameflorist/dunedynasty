@@ -221,9 +221,6 @@ extern void GUI_Widget_Viewport_RedrawMap(void);
 
 /* widget_click.c */
 extern bool GUI_Widget_SpriteTextButton_Click(Widget *w);
-extern bool GUI_Widget_Scrollbar_ArrowUp_Click(Widget *w);
-extern bool GUI_Widget_Scrollbar_ArrowDown_Click(Widget *w);
-extern bool GUI_Widget_Scrollbar_Click(Widget *w);
 extern bool GUI_Widget_TextButton_Click(Widget *w);
 extern bool GUI_Widget_Name_Click(Widget *w);
 extern bool GUI_Widget_Cancel_Click(Widget *w);
