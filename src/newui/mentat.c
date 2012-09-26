@@ -395,6 +395,30 @@ MentatHelp_Draw(enum MentatID mentatID, MentatState *mentat)
 	Mentat_Draw(mentatID);
 }
 
+void
+MentatHelp_TickPauseDescription(MentatState *mentat)
+{
+	if (Timer_GetTicks() >= mentat->desc_timer) {
+		MentatBriefing_SplitDesc(mentat);
+
+		if (mentat->desc_lines == 1) {
+			mentat->state = MENTAT_SHOW_TEXT;
+			MentatBriefing_SplitText(mentat);
+		}
+		else {
+			mentat->state = MENTAT_SHOW_DESCRIPTION;
+			mentat->desc_timer = Timer_GetTicks() + 15;
+		}
+	}
+}
+
+void
+MentatHelp_TickShowDescription(MentatState *mentat)
+{
+	if (Timer_GetTicks() >= mentat->desc_timer)
+		MentatBriefing_AdvanceDesc(mentat);
+}
+
 bool
 MentatHelp_Tick(MentatState *mentat)
 {
@@ -418,22 +442,10 @@ MentatHelp_Tick(MentatState *mentat)
 		}
 	}
 	else if (mentat->state == MENTAT_PAUSE_DESCRIPTION) {
-		if (Timer_GetTicks() >= mentat->desc_timer) {
-			MentatBriefing_SplitDesc(mentat);
-
-			if (mentat->desc_lines == 1) {
-				mentat->state = MENTAT_SHOW_TEXT;
-				MentatBriefing_SplitText(mentat);
-			}
-			else {
-				mentat->state = MENTAT_SHOW_DESCRIPTION;
-				mentat->desc_timer = Timer_GetTicks() + 15;
-			}
-		}
+		MentatHelp_TickPauseDescription(mentat);
 	}
 	else if (mentat->state == MENTAT_SHOW_DESCRIPTION) {
-		if (Timer_GetTicks() >= mentat->desc_timer)
-			MentatBriefing_AdvanceDesc(mentat);
+		MentatHelp_TickShowDescription(mentat);
 	}
 	else if (mentat->state == MENTAT_SHOW_TEXT) {
 		if (Input_IsInputAvailable()) {

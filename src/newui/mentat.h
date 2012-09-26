@@ -70,6 +70,8 @@ extern void MentatSecurity_Draw(MentatState *mentat);
 extern bool MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start);
 
 extern void MentatHelp_Draw(enum MentatID mentatID, MentatState *mentat);
+extern void MentatHelp_TickPauseDescription(MentatState *mentat);
+extern void MentatHelp_TickShowDescription(MentatState *mentat);
 extern bool MentatHelp_Tick(MentatState *mentat);
 
 #endif
