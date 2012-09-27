@@ -73,3 +73,11 @@ Prim_FillRect_RGBA(float x1, float y1, float x2, float y2,
 
 	al_draw_filled_rectangle(x1 + 0.01f, y1 + 0.01f, x2 + 0.99f, y2 + 0.99f, al_map_rgba(r, g, b, alpha));
 }
+
+/*--------------------------------------------------------------*/
+
+void
+Prim_FillTriangle(float x1, float y1, float x2, float y2, float x3, float y3, uint8 c)
+{
+	al_draw_filled_triangle(x1, y1, x2, y2, x3, y3, paltoRGB[c]);
+}
