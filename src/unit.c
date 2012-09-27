@@ -1932,7 +1932,8 @@ void Unit_Select(Unit *unit)
  * @param destination To where on the map this Unit should move.
  * @return The new created Unit, or NULL if something failed.
  */
-Unit *Unit_CreateWrapper(uint8 houseID, UnitType typeID, uint16 destination)
+Unit *
+Unit_CreateWrapper(uint8 houseID, enum UnitType typeID, uint16 destination)
 {
 	tile32 tile;
 	House *h;
@@ -2125,7 +2126,8 @@ void Unit_SetSpeed(Unit *unit, uint16 speed)
  * @param target The target of the new bullet Unit.
  * @return The new created Unit, or NULL if something failed.
  */
-Unit *Unit_CreateBullet(tile32 position, UnitType type, uint8 houseID, uint16 damage, uint16 target)
+Unit *
+Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 damage, uint16 target)
 {
 	const UnitInfo *ui;
 	tile32 tile;
@@ -2322,7 +2324,8 @@ void Unit_Hide(Unit *unit)
  * @param createCarryall Create a carryall if none found.
  * @return The found Unit, or NULL if none found.
  */
-Unit *Unit_CallUnitByType(UnitType type, uint8 houseID, uint16 target, bool createCarryall)
+Unit *
+Unit_CallUnitByType(enum UnitType type, uint8 houseID, uint16 target, bool createCarryall)
 {
 	PoolFindStruct find;
 	Unit *unit = NULL;

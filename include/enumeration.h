@@ -69,4 +69,37 @@ enum StructureFlag {
 	FLAG_STRUCTURE_OUTPOST              = 1 << STRUCTURE_OUTPOST            /* 0x04____ */
 };
 
+enum UnitType {
+	UNIT_CARRYALL           = 0,
+	UNIT_ORNITHOPTER        = 1,
+	UNIT_INFANTRY           = 2,
+	UNIT_TROOPERS           = 3,
+	UNIT_SOLDIER            = 4,
+	UNIT_TROOPER            = 5,
+	UNIT_SABOTEUR           = 6,
+	UNIT_LAUNCHER           = 7,
+	UNIT_DEVIATOR           = 8,
+	UNIT_TANK               = 9,
+	UNIT_SIEGE_TANK         = 10,
+	UNIT_DEVASTATOR         = 11,
+	UNIT_SONIC_TANK         = 12,
+	UNIT_TRIKE              = 13,
+	UNIT_RAIDER_TRIKE       = 14,
+	UNIT_QUAD               = 15,
+	UNIT_HARVESTER          = 16,
+	UNIT_MCV                = 17,
+	UNIT_MISSILE_HOUSE      = 18,
+	UNIT_MISSILE_ROCKET     = 19,
+	UNIT_MISSILE_TURRET     = 20,
+	UNIT_MISSILE_DEVIATOR   = 21,
+	UNIT_MISSILE_TROOPER    = 22,
+	UNIT_BULLET             = 23,
+	UNIT_SONIC_BLAST        = 24,
+	UNIT_SANDWORM           = 25,
+	UNIT_FRIGATE            = 26,
+
+	UNIT_MAX        = 27,
+	UNIT_INVALID    = 0xFF
+};
+
 #endif

@@ -581,7 +581,7 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 	const UnitInfo *ui;
 	Unit *u;
 	uint16 target;
-	UnitType typeID;
+	enum UnitType typeID;
 	uint16 distance;
 	bool fireTwice;
 	uint16 damage;
