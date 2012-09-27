@@ -34,8 +34,11 @@ Gameplay changes
 - The player can now build concrete slabs and wall segments even if
     the building-per-map limit is reached.
 - The saboteur is now visible to the player.
+
 - The maximum number of saboteurs that can be present on the map at
     any given time reduced from 3 to 2.
+    *** Reverted this change.
+
 - Ornithopter hit points increased from 10 to 25.
 
 - Troopers and Launchers are now able to fire at air units.
@@ -43,6 +46,8 @@ Gameplay changes
 
 - The maximum number of Sandworms that can be present on the map at a
     time reduced from 3 to 2.
+    *** Reverted this change.
+
 - The number of units a Sandworm will swallow before disappearing
     reduced from 4 to 3.
 - Fremen units and Sandworms are no longer ignored by turrets.
@@ -193,6 +198,7 @@ have been incorporated.  (Bugs are fixed in the code.)
 
 References:
 http://forum.dune2k.com/topic/20168-dune-2-v107-fix/
+http://forum.opendune.org/viewtopic.php?f=7&t=21
 
 
 Gameplay fixes
@@ -202,6 +208,47 @@ Gameplay fixes
 
 - Looped reinforcements are now enabled in certain missions.
   *** This is enabled by OpenDUNE.
+
+- Remove the Gun Turret's ability to fire at Carryalls (happens in the
+    EU version of Dune II, and also in the Sega Mega Drive version).
+- Fix the bug with the Saboteur occasionally detonating when ordered
+    to move to a rock cell immediately adjacent to the rock/sand border.
+- Fix the bug that happens sometimes when a Saboteur is destroyed, it
+    somehow leaves a "trace" on the map: a green dot is still shown on
+    the minimap, and the tile itself can not be built upon or occupied
+    by other units.
+
+- Perhaps it is a good idea to disable the AI's ability to place its
+    rebuilt structures over the player's buildings.
+    *** It doesn't seem to, maybe fixed by OpenDUNE?
+
+
+Glitches and improvement suggestions
+------------------------------------
+
+- Fix the graphical glitch with large sprites that cuts the top part
+    of a units' image.
+
+- Use the special Fremen and Sardaukar Trooper sidebar icons.
+    *** Note: makes deviated Fremen and Sardaukar distinguishable.
+
+[n] Maybe also double the Fremen Troopers' hit points compared to the
+    regular Troopers, as in the Sega version.
+
+- Add the "infantry squad remains" tile to the situation when an
+    infantry/trooper squad spawns a single soldier/trooper, like in
+    the Sega version.
+- Add a proper follow (escort) mode (in Dune II, a unit will only
+    follow another unit until either of the units stops moving).
+    *** Not yet.
+
+[n] Make ground vehicles' shadows transparent, like the air units' shadows.
+    *** Shadows are drawn into the original sprites.
+
+- Restore unused speech clips and sound effects.
+
+- Restore the "special bloom" map feature.
+    *** Not yet.
 
 
 Mission-specific fixes
