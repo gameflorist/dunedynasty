@@ -678,7 +678,12 @@ static uint16 GUI_Widget_Scrollbar_CalculateSize(WidgetScrollbar *scrollbar)
 
 	if (w == NULL) return 0;
 
-	size = scrollbar->scrollPageSize * (max(w->width, w->height) - 2) / scrollbar->scrollMax;
+	if (scrollbar->scrollMax <= 0) {
+		size = (max(w->width, w->height) - 2);
+	}
+	else {
+		size = scrollbar->scrollPageSize * (max(w->width, w->height) - 2) / scrollbar->scrollMax;
+	}
 
 	if (scrollbar->size != size) {
 		scrollbar->size = size;
