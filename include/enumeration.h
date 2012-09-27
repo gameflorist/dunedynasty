@@ -124,4 +124,16 @@ enum UnitActionType {
 
 typedef enum UnitActionType ActionType;
 
+enum UnitMovementType {
+	MOVEMENT_FOOT       = 0,
+	MOVEMENT_TRACKED    = 1,
+	MOVEMENT_HARVESTER  = 2,
+	MOVEMENT_WHEELED    = 3,
+	MOVEMENT_WINGER     = 4,
+	MOVEMENT_SLITHER    = 5,
+
+	MOVEMENT_MAX        = 6,
+	MOVEMENT_INVALID    = 0xFF
+};
+
 #endif

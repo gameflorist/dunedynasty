@@ -6,6 +6,7 @@
 #define MAP_H
 
 #include <stdio.h>
+#include "enumeration.h"
 
 enum {
 	MAP_SIZE_MAX = 64
@@ -62,7 +63,7 @@ typedef struct MapInfo {
  * Information about LandscapeType.
  */
 typedef struct LandscapeInfo {
-	uint8  movementSpeed[6];                                /*!< Per MovementType the speed a Unit has on this LandscapeType. */
+	uint8  movementSpeed[MOVEMENT_MAX];                     /*!< Per MovementType the speed a Unit has on this LandscapeType. */
 	bool   letUnitWobble;                                   /*!< True if a Unit on this LandscapeType should wobble around while moving on it. */
 	bool   isValidForStructure;                             /*!< True if a Structure with notOnConcrete false can be build on this LandscapeType. */
 	bool   isSand;                                          /*!< True if the LandscapeType is a sand tile (sand, dune, spice, thickspice, bloom). */
