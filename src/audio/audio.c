@@ -39,7 +39,7 @@ enum MusicSet default_music_pack;
 static enum MusicID curr_music;
 static char music_message[128];
 
-static enum HouseType s_curr_sample_set = HOUSE_INVALID;
+static enum SampleSet s_curr_sample_set = SAMPLESET_INVALID;
 
 static int64_t s_sample_last_played[SAMPLEID_MAX];
 static enum SampleID s_voice_queue[256];
@@ -242,7 +242,7 @@ Audio_PlayEffect(enum SoundID effectID)
 }
 
 static char
-Audio_GetSamplePrefix(enum HouseType houseID)
+Audio_GetSamplePrefix(enum SampleSet setID)
 {
 	switch (g_gameConfig.language) {
 		case LANGUAGE_FRENCH:
@@ -252,8 +252,23 @@ Audio_GetSamplePrefix(enum HouseType houseID)
 			return 'G';
 
 		default:
-			if (houseID < HOUSE_MAX)
-				return g_table_houseInfo[houseID].prefixChar;
+			break;
+	}
+
+	switch (setID) {
+		case SAMPLESET_HARKONNEN:
+			return 'H';
+
+		case SAMPLESET_ATREIDES:
+			return 'A';
+
+		case SAMPLESET_ORDOS:
+			return 'O';
+
+		case SAMPLESET_BENE_GESSERIT:
+			return 'M';
+
+		default:
 			break;
 	}
 
@@ -274,7 +289,7 @@ Audio_LoadSample(const char *filename, enum SampleID sampleID)
 }
 
 static void
-Audio_LoadSampleForHouse(enum HouseType houseID, enum SampleID sampleID)
+Audio_LoadSampleFromSet(enum SampleSet setID, enum SampleID sampleID)
 {
 	const SoundData *s = &g_table_voices[sampleID];
 	const char *filename;
@@ -285,12 +300,12 @@ Audio_LoadSampleForHouse(enum HouseType houseID, enum SampleID sampleID)
 	switch (s->string[0]) {
 		case '+':
 			/* +: common to all houses. */
-			if (s_curr_sample_set != HOUSE_INVALID)
+			if (s_curr_sample_set != SAMPLESET_INVALID)
 				return;
 
-			/* +%c: common to all houses, substitue with language prefix. */
+			/* +%c: common to all houses, substitute with language prefix. */
 			if (s->string[1] == '%') {
-				char prefix = Audio_GetSamplePrefix(HOUSE_INVALID);
+				char prefix = Audio_GetSamplePrefix(SAMPLESET_INVALID);
 				snprintf(buf, sizeof(buf), s->string + 1, prefix);
 				filename = buf;
 			}
@@ -298,20 +313,20 @@ Audio_LoadSampleForHouse(enum HouseType houseID, enum SampleID sampleID)
 
 		case '-':
 			/* -: common to all houses. */
-			if (s_curr_sample_set != HOUSE_INVALID)
+			if (s_curr_sample_set != SAMPLESET_INVALID)
 				return;
 			break;
 
 		case '/':
-			/* /: mercenary only. */
-			if (houseID != HOUSE_MERCENARY)
+			/* /: bene gesserit only (called mercenary in dune 2). */
+			if (setID != SAMPLESET_BENE_GESSERIT)
 				return;
 			break;
 
 		case '?':
 			/* ?%c: load as required, substitute with house or language prefix. */
 			if (s->string[1] == '%') {
-				char prefix = Audio_GetSamplePrefix(houseID);
+				char prefix = Audio_GetSamplePrefix(setID);
 				snprintf(buf, sizeof(buf), s->string + 1, prefix);
 				filename = buf;
 			}
@@ -320,7 +335,7 @@ Audio_LoadSampleForHouse(enum HouseType houseID, enum SampleID sampleID)
 		case '%':
 			/* %c: substitute with house or language prefix. */
 			{
-				char prefix = Audio_GetSamplePrefix(houseID);
+				char prefix = Audio_GetSamplePrefix(setID);
 				snprintf(buf, sizeof(buf), s->string, prefix);
 				filename = buf;
 			}
@@ -334,19 +349,19 @@ Audio_LoadSampleForHouse(enum HouseType houseID, enum SampleID sampleID)
 }
 
 void
-Audio_LoadSampleSet(enum HouseType houseID)
+Audio_LoadSampleSet(enum SampleSet setID)
 {
 	if (!g_enable_audio)
 		return;
 
-	if (s_curr_sample_set == houseID)
+	if (s_curr_sample_set == setID)
 		return;
 
 	for (enum SampleID sampleID = 0; sampleID < SAMPLEID_MAX; sampleID++) {
-		Audio_LoadSampleForHouse(houseID, sampleID);
+		Audio_LoadSampleFromSet(setID, sampleID);
 	}
 
-	s_curr_sample_set = houseID;
+	s_curr_sample_set = setID;
 }
 
 void

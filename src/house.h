@@ -8,6 +8,7 @@
 #include <inttypes.h>
 #include "enumeration.h"
 #include "types.h"
+#include "table/sound.h"
 
 /**
  * Types of special %House Weapons available in the game.
@@ -71,6 +72,7 @@ typedef struct HouseInfo {
 	uint16 musicLose;                                       /*!< Music played when you lose a mission. */
 	uint16 musicBriefing;                                   /*!< Music played during initial briefing of mission. */
 	const char *voiceFilename;                              /*!< Pointer to filename with the voices of the house. */
+	enum SampleSet sampleSet;
 } HouseInfo;
 
 extern const HouseInfo g_table_houseInfo[];

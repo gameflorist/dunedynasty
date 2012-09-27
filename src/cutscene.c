@@ -1211,7 +1211,7 @@ void GameLoop_GameEndAnimation(void)
 	enum MusicID musicID;
 
 	Video_HideCursor();
-	Audio_LoadSampleSet(HOUSE_MERCENARY);
+	Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
 
 	switch (g_playerHouseID) {
 		case HOUSE_HARKONNEN:
@@ -1400,7 +1400,7 @@ void GameLoop_GameIntroAnimation(void)
 	Gameloop_Logos();
 
 	g_playerHouseID = HOUSE_INVALID;
-	Audio_LoadSampleSet(HOUSE_MERCENARY);
+	Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
 
 	if (!Cutscene_InputSkipScene()) {
 		const HouseAnimation_Animation   *animation   = g_table_houseAnimation_animation[HOUSEANIMATION_INTRO];

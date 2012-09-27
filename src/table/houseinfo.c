@@ -19,7 +19,8 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicWin             */ MUSIC_WIN_HARKONNEN,
 		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
 		/* musicBriefing        */ MUSIC_BRIEFING_HARKONNEN,
-		/* voiceFilename        */ "nhark.voc"
+		/* voiceFilename        */ "nhark.voc",
+		/* sampleSet            */ SAMPLESET_HARKONNEN
 	},
 
 	{ /* 1 */
@@ -35,7 +36,8 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicWin             */ MUSIC_WIN_ATREIDES,
 		/* musicLose            */ MUSIC_LOSE_ATREIDES,
 		/* musicBriefing        */ MUSIC_BRIEFING_ATREIDES,
-		/* voiceFilename        */ "nattr.voc"
+		/* voiceFilename        */ "nattr.voc",
+		/* sampleSet            */ SAMPLESET_ATREIDES
 	},
 
 	{ /* 2 */
@@ -51,7 +53,8 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicWin             */ MUSIC_WIN_ORDOS,
 		/* musicLose            */ MUSIC_LOSE_ORDOS,
 		/* musicBriefing        */ MUSIC_BRIEFING_ORDOS,
-		/* voiceFilename        */ "nordo.voc"
+		/* voiceFilename        */ "nordo.voc",
+		/* sampleSet            */ SAMPLESET_ORDOS
 	},
 
 	{ /* 3 */
@@ -67,7 +70,8 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicWin             */ MUSIC_WIN_ORDOS,
 		/* musicLose            */ MUSIC_LOSE_ORDOS,
 		/* musicBriefing        */ MUSIC_INVALID,
-		/* voiceFilename        */ "afremen.voc"
+		/* voiceFilename        */ "afremen.voc",
+		/* sampleSet            */ SAMPLESET_ATREIDES
 	},
 
 	{ /* 4 */
@@ -83,7 +87,8 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicWin             */ MUSIC_WIN_HARKONNEN,
 		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
 		/* musicBriefing        */ MUSIC_INVALID,
-		/* voiceFilename        */ "asard.voc"
+		/* voiceFilename        */ "asard.voc",
+		/* sampleSet            */ SAMPLESET_HARKONNEN
 	},
 
 	{ /* 5 */
@@ -99,6 +104,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicWin             */ MUSIC_WIN_ATREIDES,
 		/* musicLose            */ MUSIC_LOSE_ATREIDES,
 		/* musicBriefing        */ MUSIC_INVALID,
-		/* voiceFilename        */ "amerc.voc"
+		/* voiceFilename        */ "amerc.voc",
+		/* sampleSet            */ SAMPLESET_ORDOS
 	}
 };

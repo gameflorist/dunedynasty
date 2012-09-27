@@ -768,7 +768,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 	GUI_DrawFilledRectangle(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase + g_curWidgetWidth, g_curWidgetYBase + g_curWidgetHeight, 12);
 
 	if (!loc02) {
-		Audio_LoadSampleSet(HOUSE_MERCENARY);
+		Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
 
 		GUI_SetPaletteAnimated(g_palette2, 15);
 
@@ -1076,7 +1076,7 @@ void GameLoop_Main(bool new_game)
 	Sprites_LoadTiles();
 
 	GUI_Palette_CreateRemap(g_playerHouseID);
-	Audio_LoadSampleSet(g_playerHouseID);
+	Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 
 	if (new_game)
 		Game_LoadScenario(g_playerHouseID, g_scenarioID);
@@ -1473,7 +1473,7 @@ void Game_Prepare(void)
 		if (s != NULL) Map_SetSelectionSize(g_table_structureInfo[s->o.type].layout);
 	}
 
-	Audio_LoadSampleSet(g_playerHouseID);
+	Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 
 	g_tickHousePowerMaintenance = max(g_timerGame + 70, g_tickHousePowerMaintenance);
 	g_viewport_forceRedraw = true;

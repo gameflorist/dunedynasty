@@ -1,7 +1,6 @@
 #ifndef AUDIO_AUDIO_H
 #define AUDIO_AUDIO_H
 
-#include "../house.h"
 #include "../table/sound.h"
 
 extern bool g_enable_audio;
@@ -25,7 +24,7 @@ extern void Audio_PlayMusic(enum MusicID musicID);
 extern void Audio_PlayMusicIfSilent(enum MusicID musicID);
 extern void Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only);
 extern void Audio_PlayEffect(enum SoundID effectID);
-extern void Audio_LoadSampleSet(enum HouseType houseID);
+extern void Audio_LoadSampleSet(enum SampleSet setID);
 extern void Audio_PlaySample(enum SampleID sampleID, int volume, float pan);
 extern void Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position);
 extern void Audio_PlaySound(enum SoundID soundID);

@@ -409,13 +409,13 @@ PickHouse_Loop(void)
 			g_playerHouseID = widgetID & (~0x8000);
 			g_scenarioID = 1;
 
-			Audio_LoadSampleSet(HOUSE_MERCENARY);
+			Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
 			Audio_PlayVoice(VOICE_HARKONNEN + g_playerHouseID);
 
 			while (Audio_Poll())
 				Timer_Sleep(1);
 
-			Audio_LoadSampleSet(g_playerHouseID);
+			Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 
 			return MENU_CONFIRM_HOUSE;
 
