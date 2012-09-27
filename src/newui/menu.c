@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include "types.h"
+#include "../os/common.h"
 #include "../os/math.h"
 #include "../os/sleep.h"
 #include "../os/strings.h"
@@ -140,21 +141,25 @@ static void
 PickHouse_InitWidgets(void)
 {
 	const struct {
+		uint16 index;
 		int x, y;
+		int w, h;
 		enum Scancode shortcut;
-	} menuitem[3] = {
-		{ 208, 56, SCANCODE_H },
-		{  16, 56, SCANCODE_A },
-		{ 112, 56, SCANCODE_O },
+	} menuitem[6] = {
+		{ HOUSE_HARKONNEN, 208, 56, 96, 104, SCANCODE_H },
+		{ HOUSE_ATREIDES,   16, 56, 96, 104, SCANCODE_A },
+		{ HOUSE_ORDOS,     112, 56, 96, 104, SCANCODE_O },
+		{ 14, 118, 180, 5, 10, SCANCODE_KEYPAD_4 },
+		{ 16, 196, 180, 5, 10, SCANCODE_KEYPAD_6 },
+		{ 10, 118, 180, 196 + 5 - 118, 10, 0 },
 	};
 
-	for (enum HouseType house = HOUSE_HARKONNEN; house <= HOUSE_ORDOS; house++) {
+	for (unsigned int i = 0; i < lengthof(menuitem); i++) {
 		Widget *w;
 
-		w = GUI_Widget_Allocate(house, menuitem[house].shortcut, menuitem[house].x, menuitem[house].y, SHAPE_INVALID, STR_NULL);
-
-		w->width = 96;
-		w->height = 104;
+		w = GUI_Widget_Allocate(menuitem[i].index, menuitem[i].shortcut, menuitem[i].x, menuitem[i].y, SHAPE_INVALID, STR_NULL);
+		w->width = menuitem[i].w;
+		w->height = menuitem[i].h;
 		w->flags.all = 0x0;
 		w->flags.s.loseSelect = true;
 		w->flags.s.buttonFilterLeft = 1;
@@ -292,6 +297,7 @@ MainMenu_Loop(void)
 
 	switch (widgetID) {
 		case 0x8000 | STR_PLAY_A_GAME:
+			g_campaignID = 0;
 			g_playerHouseID = HOUSE_MERCENARY;
 			MainMenu_SetupBlink(widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
@@ -358,13 +364,19 @@ PickHouse_Draw(void)
 {
 	Video_DrawCPS(String_GenerateFilename("HERALD"));
 
-	GUI_Widget_DrawAll(pick_house_widgets);
+	const Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, 10);
+	uint8 fg = (w->state.s.hover1) ? 130 : 133;
+
+	GUI_DrawText_Wrapper("Start level: %d", (SCREEN_WIDTH - 72) / 2, SCREEN_HEIGHT - 20, fg, 0, 0x22, g_campaignID + 1);
+	Prim_FillTriangle(119.5f, 184.5f, 122.0f, 182.0f, 122.0f, 187.0f, fg);
+	Prim_FillTriangle(198.5f, 182.0f, 201.5f, 184.5f, 198.5f, 187.0f, fg);
 }
 
 static int
 PickHouse_Loop(void)
 {
 	const int widgetID = GUI_Widget_HandleEvents(pick_house_widgets);
+	bool redraw = false;
 
 	switch (widgetID) {
 		case SCANCODE_ESCAPE:
@@ -374,7 +386,6 @@ PickHouse_Loop(void)
 		case 0x8000 | HOUSE_ATREIDES:
 		case 0x8000 | HOUSE_ORDOS:
 			g_playerHouseID = widgetID & (~0x8000);
-			g_campaignID = 0;
 			g_scenarioID = 1;
 
 			Audio_LoadSampleSet(HOUSE_MERCENARY);
@@ -385,11 +396,29 @@ PickHouse_Loop(void)
 
 			return MENU_CONFIRM_HOUSE;
 
+		case 0x8000 | 14:
+			if (g_campaignID >= 1) {
+				g_campaignID--;
+				redraw = true;
+			}
+			break;
+
+		case 0x8000 | 16:
+			if (g_campaignID < 8) {
+				g_campaignID++;
+				redraw = true;
+			}
+			break;
+
 		default:
 			break;
 	}
 
-	return MENU_PICK_HOUSE;
+	Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, 10);
+	if (w->state.s.hover1 != w->state.s.hover1Last)
+		redraw = true;
+
+	return (redraw ? MENU_REDRAW : 0) | MENU_PICK_HOUSE;
 }
 
 /*--------------------------------------------------------------*/
@@ -546,9 +575,8 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 			break;
 
 		case 0x8001: /* yes */
-			g_campaignID = 0;
 			g_scenarioID = 1;
-			return MENU_BRIEFING;
+			return (g_campaignID == 0) ? MENU_BRIEFING : MENU_STRATEGIC_MAP;
 
 		case 0x8002: /* no */
 			return MENU_PICK_HOUSE;
@@ -889,6 +917,10 @@ Menu_Run(void)
 			switch (curr_menu & 0xFF) {
 				case MENU_MAIN_MENU:
 					MainMenu_Initialise();
+					break;
+
+				case MENU_PICK_HOUSE:
+					g_strategicRegionBits = 0;
 					break;
 
 				case MENU_CONFIRM_HOUSE:
