@@ -206,7 +206,7 @@ Viewport_SelectRegion(void)
 }
 
 void
-Viewport_Target(Unit *u, enum ActionType action, uint16 packed)
+Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 {
 	uint16 encoded;
 
@@ -441,7 +441,7 @@ Viewport_Click(Widget *w)
 		int iter;
 		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
 			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
-			enum ActionType action = ACTION_INVALID;
+			enum UnitActionType action = ACTION_INVALID;
 
 			if (Unit_GetHouseID(u) != g_playerHouseID)
 				continue;

@@ -102,4 +102,26 @@ enum UnitType {
 	UNIT_INVALID    = 0xFF
 };
 
+enum UnitActionType {
+	ACTION_ATTACK       = 0,
+	ACTION_MOVE         = 1,
+	ACTION_RETREAT      = 2,
+	ACTION_GUARD        = 3,
+	ACTION_AREA_GUARD   = 4,
+	ACTION_HARVEST      = 5,
+	ACTION_RETURN       = 6,
+	ACTION_STOP         = 7,
+	ACTION_AMBUSH       = 8,
+	ACTION_SABOTAGE     = 9,
+	ACTION_DIE          = 10,
+	ACTION_HUNT         = 11,
+	ACTION_DEPLOY       = 12,
+	ACTION_DESTRUCT     = 13,
+
+	ACTION_MAX      = 14,
+	ACTION_INVALID  = 0xFF
+};
+
+typedef enum UnitActionType ActionType;
+
 #endif

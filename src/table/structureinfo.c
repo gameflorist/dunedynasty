@@ -8,7 +8,6 @@
 
 #include "../sprites.h"
 #include "../structure.h"
-#include "../unit.h"
 #include "strings.h"
 
 StructureInfo g_table_structureInfo[] = {
