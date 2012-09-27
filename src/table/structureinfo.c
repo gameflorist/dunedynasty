@@ -3,9 +3,9 @@
 /** @file src/table/structureinfo.c StructureInfo file table. */
 
 #include <stdio.h>
+#include "enumeration.h"
 #include "types.h"
 
-#include "../house.h"
 #include "../sprites.h"
 #include "../structure.h"
 #include "../unit.h"

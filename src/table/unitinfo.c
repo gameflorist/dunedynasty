@@ -3,9 +3,9 @@
 /** @file src/table/unitinfo.c UnitInfo file table. */
 
 #include <stdio.h>
+#include "enumeration.h"
 #include "types.h"
 
-#include "../house.h"
 #include "../structure.h"
 #include "../table/sound.h"
 #include "../unit.h"

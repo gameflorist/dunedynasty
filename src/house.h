@@ -6,31 +6,8 @@
 #define HOUSE_H
 
 #include <inttypes.h>
+#include "enumeration.h"
 #include "types.h"
-
-/**
- * Types of %Houses available in the game.
- */
-typedef enum HouseType {
-	HOUSE_HARKONNEN = 0,
-	HOUSE_ATREIDES  = 1,
-	HOUSE_ORDOS     = 2,
-	HOUSE_FREMEN    = 3,
-	HOUSE_SARDAUKAR = 4,
-	HOUSE_MERCENARY = 5,
-
-	HOUSE_MAX       = 6,
-	HOUSE_INVALID   = 0xFF
-} HouseType;
-
-enum HouseFlag {
-	FLAG_HOUSE_HARKONNEN    = 1 << HOUSE_HARKONNEN, /* 0x01 */
-	FLAG_HOUSE_ATREIDES     = 1 << HOUSE_ATREIDES,  /* 0x02 */
-	FLAG_HOUSE_ORDOS        = 1 << HOUSE_ORDOS,     /* 0x04 */
-	FLAG_HOUSE_FREMEN       = 1 << HOUSE_FREMEN,    /* 0x08 */
-	FLAG_HOUSE_SARDAUKAR    = 1 << HOUSE_SARDAUKAR, /* 0x10 */
-	FLAG_HOUSE_MERCENARY    = 1 << HOUSE_MERCENARY  /* 0x20 */
-};
 
 /**
  * Types of special %House Weapons available in the game.
@@ -99,7 +76,7 @@ typedef struct HouseInfo {
 extern const HouseInfo g_table_houseInfo[];
 
 extern House *g_playerHouse;
-extern HouseType g_playerHouseID;
+extern enum HouseType g_playerHouseID;
 extern uint16 g_houseMissileCountdown;
 extern uint16 g_playerCreditsNoSilo;
 extern uint16 g_playerCredits;
