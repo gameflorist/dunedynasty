@@ -20,6 +20,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
 		/* musicBriefing        */ MUSIC_BRIEFING_HARKONNEN,
 		/* voiceFilename        */ "nhark.voc",
+		/* mentat               */ MENTAT_RADNOR,
 		/* sampleSet            */ SAMPLESET_HARKONNEN
 	},
 
@@ -37,6 +38,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicLose            */ MUSIC_LOSE_ATREIDES,
 		/* musicBriefing        */ MUSIC_BRIEFING_ATREIDES,
 		/* voiceFilename        */ "nattr.voc",
+		/* mentat               */ MENTAT_CYRIL,
 		/* sampleSet            */ SAMPLESET_ATREIDES
 	},
 
@@ -54,6 +56,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicLose            */ MUSIC_LOSE_ORDOS,
 		/* musicBriefing        */ MUSIC_BRIEFING_ORDOS,
 		/* voiceFilename        */ "nordo.voc",
+		/* mentat               */ MENTAT_AMMON,
 		/* sampleSet            */ SAMPLESET_ORDOS
 	},
 
@@ -65,12 +68,13 @@ const HouseInfo g_table_houseInfo[] = {
 		/* minimapColor         */ 192,
 		/* specialCountDown     */ 300,
 		/* starportDeliveryTime */ 0,
-		/* prefixChar           */ 'O',
+		/* prefixChar           */ 'A',
 		/* specialWeapon        */ HOUSE_WEAPON_FREMEN,
 		/* musicWin             */ MUSIC_WIN_ORDOS,
 		/* musicLose            */ MUSIC_LOSE_ORDOS,
 		/* musicBriefing        */ MUSIC_INVALID,
 		/* voiceFilename        */ "afremen.voc",
+		/* mentat               */ MENTAT_CYRIL,
 		/* sampleSet            */ SAMPLESET_ATREIDES
 	},
 
@@ -88,6 +92,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
 		/* musicBriefing        */ MUSIC_INVALID,
 		/* voiceFilename        */ "asard.voc",
+		/* mentat               */ MENTAT_RADNOR,
 		/* sampleSet            */ SAMPLESET_HARKONNEN
 	},
 
@@ -99,12 +104,13 @@ const HouseInfo g_table_houseInfo[] = {
 		/* minimapColor         */ 224,
 		/* specialCountDown     */ 300,
 		/* starportDeliveryTime */ 0,
-		/* prefixChar           */ 'M',
+		/* prefixChar           */ 'O',
 		/* specialWeapon        */ HOUSE_WEAPON_SABOTEUR,
 		/* musicWin             */ MUSIC_WIN_ATREIDES,
 		/* musicLose            */ MUSIC_LOSE_ATREIDES,
 		/* musicBriefing        */ MUSIC_INVALID,
 		/* voiceFilename        */ "amerc.voc",
+		/* mentat               */ MENTAT_AMMON,
 		/* sampleSet            */ SAMPLESET_ORDOS
 	}
 };

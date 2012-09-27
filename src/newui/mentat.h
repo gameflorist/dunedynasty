@@ -2,6 +2,7 @@
 #define NEWUI_MENTAT_H
 
 #include <inttypes.h>
+#include "enumeration.h"
 #include "../house.h"
 
 enum BriefingState {
@@ -50,10 +51,10 @@ extern int movingMouthSprite;
 extern int otherSprite;
 extern MentatState g_mentat_state;
 
-extern void Mentat_GetEyePositions(enum HouseType houseID, int *left, int *top, int *right, int *bottom);
-extern void Mentat_GetMouthPositions(enum HouseType houseID, int *left, int *top, int *right, int *bottom);
-extern void Mentat_DrawBackground(enum HouseType houseID);
-extern void Mentat_Draw(enum HouseType houseID);
+extern void Mentat_GetEyePositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom);
+extern void Mentat_GetMouthPositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom);
+extern void Mentat_DrawBackground(enum MentatID mentatID);
+extern void Mentat_Draw(enum MentatID mentatID);
 
 extern void MentatBriefing_SplitText(MentatState *mentat);
 extern void MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry, MentatState *mentat);
@@ -68,7 +69,7 @@ extern void MentatSecurity_PrepareQuestion(bool pick_new_question, MentatState *
 extern void MentatSecurity_Draw(MentatState *mentat);
 extern bool MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start);
 
-extern void MentatHelp_Draw(enum HouseType houseID, MentatState *mentat);
+extern void MentatHelp_Draw(enum MentatID mentatID, MentatState *mentat);
 extern bool MentatHelp_Tick(MentatState *mentat);
 
 #endif

@@ -22,6 +22,14 @@ enum HouseFlag {
 	FLAG_HOUSE_MERCENARY    = 1 << HOUSE_MERCENARY  /* 0x20 */
 };
 
+enum MentatID {
+	MENTAT_RADNOR,
+	MENTAT_CYRIL,
+	MENTAT_AMMON,
+	MENTAT_BENE_GESSERIT,
+	MENTAT_MAX
+};
+
 enum StructureType {
 	STRUCTURE_SLAB_1x1          = 0,
 	STRUCTURE_SLAB_2x2          = 1,

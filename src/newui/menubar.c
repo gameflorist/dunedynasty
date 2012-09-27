@@ -299,9 +299,11 @@ MenuBar_TickMentatOverlay(void)
 void
 MenuBar_DrawMentatOverlay(void)
 {
+	const enum MentatID mentatID = g_table_houseInfo[g_playerHouseID].mentat;
+
 	A5_UseTransform(SCREENDIV_MENU);
 
-	MentatHelp_Draw(g_playerHouseID, &g_mentat_state);
+	MentatHelp_Draw(mentatID, &g_mentat_state);
 
 	A5_UseTransform(SCREENDIV_MAIN);
 }

@@ -66,12 +66,13 @@ typedef struct HouseInfo {
 	uint8  minimapColor;                                    /*!< The color used on the minimap. */
 	uint16 specialCountDown;                                /*!< Time between activation of Special Weapon. */
 	uint16 starportDeliveryTime;                            /*!< Time it takes for a starport delivery. */
-	uint16 prefixChar;                                      /*!< Char used as prefix for some filenames. */
+	char prefixChar;                                        /*!< Char used as prefix for some filenames. */
 	uint16 specialWeapon;                                   /*!< Which Special Weapon this House has. @see HouseWeapon. */
 	uint16 musicWin;                                        /*!< Music played when you won a mission. */
 	uint16 musicLose;                                       /*!< Music played when you lose a mission. */
 	uint16 musicBriefing;                                   /*!< Music played during initial briefing of mission. */
 	const char *voiceFilename;                              /*!< Pointer to filename with the voices of the house. */
+	enum MentatID mentat;
 	enum SampleSet sampleSet;
 } HouseInfo;
 

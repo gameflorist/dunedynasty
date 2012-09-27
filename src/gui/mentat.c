@@ -111,7 +111,7 @@ void GUI_Mentat_LoadHelpSubjects(bool init)
 	uint32 length;
 	uint32 counter;
 
-	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "MENTAT%c", g_table_houseInfo[g_playerHouseID].name[0]);
+	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "MENTAT%c", g_table_houseInfo[g_playerHouseID].prefixChar);
 	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "%s", String_GenerateFilename(s_mentatFilename));
 
 	fileID = ChunkFile_Open(s_mentatFilename);
@@ -209,20 +209,20 @@ extern void GUI_Mentat_ShowLose(void);
 #endif
 
 static void
-GUI_Mentat_SetSprites(enum HouseType houseID)
+GUI_Mentat_SetSprites(enum MentatID mentatID)
 {
 	memset(s_mentatSprites, 0, sizeof(s_mentatSprites));
 
 	for (int i = 0; i < 5; i++) {
-		s_mentatSprites[0][i] = g_sprites[387 + houseID * 15 + i];
+		s_mentatSprites[0][i] = g_sprites[387 + mentatID * 15 + i];
 	}
 
 	for (int i = 0; i < 5; i++) {
-		s_mentatSprites[1][i] = g_sprites[392 + houseID * 15 + i];
+		s_mentatSprites[1][i] = g_sprites[392 + mentatID * 15 + i];
 	}
 
 	for (int i = 0; i < 4; i++) {
-		s_mentatSprites[2][i] = g_sprites[398 + houseID * 15 + i];
+		s_mentatSprites[2][i] = g_sprites[398 + mentatID * 15 + i];
 	}
 }
 
@@ -246,9 +246,11 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 	int s_eyesLeft, s_eyesTop, s_eyesRight, s_eyesBottom;
 	int s_mouthLeft, s_mouthTop, s_mouthRight, s_mouthBottom;
 
-	GUI_Mentat_SetSprites(g_playerHouseID);
-	Mentat_GetEyePositions(g_playerHouseID, &s_eyesLeft, &s_eyesTop, &s_eyesRight, &s_eyesBottom);
-	Mentat_GetMouthPositions(g_playerHouseID, &s_mouthLeft, &s_mouthTop, &s_mouthRight, &s_mouthBottom);
+	const enum MentatID mentatID = g_table_houseInfo[g_playerHouseID].mentat;
+
+	GUI_Mentat_SetSprites(mentatID);
+	Mentat_GetEyePositions(mentatID, &s_eyesLeft, &s_eyesTop, &s_eyesRight, &s_eyesBottom);
+	Mentat_GetMouthPositions(mentatID, &s_mouthLeft, &s_mouthTop, &s_mouthRight, &s_mouthBottom);
 
 	uint16 i;
 
@@ -261,21 +263,22 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 			}
 		}
 
-		switch (g_playerHouseID) {
-			case HOUSE_HARKONNEN:
-				movingOtherTimer = Timer_GetTicks() + 300 * 60;
-				break;
-			case HOUSE_ATREIDES:
+		switch (mentatID) {
+			case MENTAT_CYRIL:
 				movingOtherTimer = Timer_GetTicks() + 60 * Tools_RandomRange(1,3);
 				break;
-			case HOUSE_ORDOS:
+
+			case MENTAT_AMMON:
 				if (otherSprite != 0) {
 					movingOtherTimer = Timer_GetTicks() + 6;
 				} else {
 					movingOtherTimer = Timer_GetTicks() + 60 * Tools_RandomRange(10, 19);
 				}
 				break;
-			default:
+
+			case MENTAT_RADNOR:
+			case MENTAT_BENE_GESSERIT:
+			case MENTAT_MAX:
 				break;
 		}
 	}

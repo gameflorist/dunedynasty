@@ -23,17 +23,36 @@
 #include "../wsa.h"
 
 static const struct {
-	int eyesX, eyesY;
-	int mouthX, mouthY;
-	int shoulderX, shoulderY;
-	int accessoryX, accessoryY;
-} mentat_data[HOUSE_MAX] = {
-	{ 0x20,0x58, 0x20,0x68, 0x80,0x68, 0x00,0x00 },
-	{ 0x28,0x50, 0x28,0x60, 0x80,0x80, 0x48,0x98 },
-	{ 0x10,0x50, 0x10,0x60, 0x80,0x80, 0x58,0x90 },
-	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 },
-	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 },
-	{ 0x40,0x50, 0x38,0x60, 0x00,0x00, 0x00,0x00 },
+	const char *background;
+	enum ShapeID eyes; int eyesX, eyesY;
+	enum ShapeID mouth; int mouthX, mouthY;
+	enum ShapeID shoulder; int shoulderX, shoulderY;
+	enum ShapeID accessory; int accessoryX, accessoryY;
+} mentat_data[MENTAT_MAX] = {
+	{	"MENTATH.CPS",
+		SHAPE_MENTAT_EYES + 15 * 0, 0x20,0x58,
+		SHAPE_MENTAT_MOUTH + 15 * 0, 0x20,0x68,
+		SHAPE_MENTAT_SHOULDER + 15 * 0, 0x80,0x68,
+		SHAPE_INVALID, 0,0
+	},
+	{	"MENTATA.CPS",
+		SHAPE_MENTAT_EYES + 15 * 1, 0x28,0x50,
+		SHAPE_MENTAT_MOUTH + 15 * 1, 0x28,0x60,
+		SHAPE_MENTAT_SHOULDER + 15 * 1, 0x80,0x80,
+		SHAPE_MENTAT_ACCESSORY + 15 * 1, 0x48,0x98
+	},
+	{	"MENTATO.CPS",
+		SHAPE_MENTAT_EYES + 15 * 2, 0x10,0x50,
+		SHAPE_MENTAT_MOUTH + 15 * 2, 0x10,0x60,
+		SHAPE_MENTAT_SHOULDER + 15 * 2, 0x80,0x80,
+		SHAPE_MENTAT_ACCESSORY + 15 * 2, 0x58,0x90
+	},
+	{	"MENTATM.CPS",
+		SHAPE_MENTAT_EYES + 15 * 5, 0x40,0x50,
+		SHAPE_MENTAT_MOUTH + 15 * 5, 0x38,0x60,
+		SHAPE_INVALID, 0,0,
+		SHAPE_INVALID, 0,0
+	},
 };
 
 int movingEyesSprite;
@@ -43,86 +62,78 @@ int otherSprite;
 MentatState g_mentat_state;
 
 void
-Mentat_GetEyePositions(enum HouseType houseID, int *left, int *top, int *right, int *bottom)
+Mentat_GetEyePositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom)
 {
-	const enum ShapeID shapeID = SHAPE_MENTAT_EYES + houseID * 15;
-	assert(houseID < HOUSE_MAX);
+	assert(mentatID < MENTAT_MAX);
 
-	*left = mentat_data[houseID].eyesX;
-	*top = mentat_data[houseID].eyesY;
-	*right = *left + Shape_Width(shapeID);
-	*bottom = *top + Shape_Height(shapeID);
+	*left = mentat_data[mentatID].eyesX;
+	*top = mentat_data[mentatID].eyesY;
+	*right = *left + Shape_Width(mentat_data[mentatID].eyes);
+	*bottom = *top + Shape_Height(mentat_data[mentatID].eyes);
 }
 
 void
-Mentat_GetMouthPositions(enum HouseType houseID, int *left, int *top, int *right, int *bottom)
+Mentat_GetMouthPositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom)
 {
-	const enum ShapeID shapeID = SHAPE_MENTAT_MOUTH + houseID * 15;
-	assert(houseID < HOUSE_MAX);
+	assert(mentatID < MENTAT_MAX);
 
-	*left = mentat_data[houseID].mouthX;
-	*top = mentat_data[houseID].mouthY;
-	*right = *left + Shape_Width(shapeID);
-	*bottom = *top + Shape_Height(shapeID);
+	*left = mentat_data[mentatID].mouthX;
+	*top = mentat_data[mentatID].mouthY;
+	*right = *left + Shape_Width(mentat_data[mentatID].mouth);
+	*bottom = *top + Shape_Height(mentat_data[mentatID].mouth);
 }
 
 void
-Mentat_DrawBackground(enum HouseType houseID)
+Mentat_DrawBackground(enum MentatID mentatID)
 {
-	const char *mentat_background[HOUSE_MAX] = {
-		"MENTATH.CPS", "MENTATA.CPS", "MENTATO.CPS",
-		"MENTATM.CPS", "MENTATM.CPS", "MENTATM.CPS"
-	};
-	assert(houseID < HOUSE_MAX);
+	assert(mentatID < MENTAT_MAX);
 
-	Video_DrawCPS(mentat_background[houseID]);
+	Video_DrawCPS(mentat_data[mentatID].background);
 }
 
 static void
-Mentat_DrawEyes(enum HouseType houseID)
+Mentat_DrawEyes(enum MentatID mentatID)
 {
-	const enum ShapeID shapeID = SHAPE_MENTAT_EYES + houseID * 15 + movingEyesSprite;
+	const enum ShapeID shapeID = mentat_data[mentatID].eyes + movingEyesSprite;
 
-	Shape_Draw(shapeID, mentat_data[houseID].eyesX, mentat_data[houseID].eyesY, 0, 0);
+	Shape_Draw(shapeID, mentat_data[mentatID].eyesX, mentat_data[mentatID].eyesY, 0, 0);
 }
 
 static void
-Mentat_DrawMouth(enum HouseType houseID)
+Mentat_DrawMouth(enum MentatID mentatID)
 {
-	const enum ShapeID shapeID = SHAPE_MENTAT_MOUTH + houseID * 15 + movingMouthSprite;
+	const enum ShapeID shapeID = mentat_data[mentatID].mouth + movingMouthSprite;
 
-	Shape_Draw(shapeID, mentat_data[houseID].mouthX, mentat_data[houseID].mouthY, 0, 0);
+	Shape_Draw(shapeID, mentat_data[mentatID].mouthX, mentat_data[mentatID].mouthY, 0, 0);
 }
 
 static void
-Mentat_DrawShoulder(enum HouseType houseID)
+Mentat_DrawShoulder(enum MentatID mentatID)
 {
-	if (houseID <= HOUSE_ORDOS) {
-		const enum ShapeID shapeID = SHAPE_MENTAT_SHOULDER + houseID * 15;
+	const enum ShapeID shapeID = mentat_data[mentatID].shoulder;
 
-		Shape_Draw(shapeID, mentat_data[houseID].shoulderX, mentat_data[houseID].shoulderY, 0, 0);
-	}
+	if (shapeID != SHAPE_INVALID)
+		Shape_Draw(shapeID, mentat_data[mentatID].shoulderX, mentat_data[mentatID].shoulderY, 0, 0);
 }
 
 static void
-Mentat_DrawAccessory(enum HouseType houseID)
+Mentat_DrawAccessory(enum MentatID mentatID)
 {
-	if (houseID == HOUSE_ATREIDES || houseID == HOUSE_ORDOS) {
-		const enum ShapeID shapeID = SHAPE_MENTAT_ACCESSORY + houseID * 15 + abs(otherSprite);
+	const enum ShapeID shapeID = mentat_data[mentatID].accessory;
 
-		Shape_Draw(shapeID, mentat_data[houseID].accessoryX, mentat_data[houseID].accessoryY, 0, 0);
-	}
+	if (shapeID != SHAPE_INVALID)
+		Shape_Draw(shapeID + abs(otherSprite), mentat_data[mentatID].accessoryX, mentat_data[mentatID].accessoryY, 0, 0);
 }
 
 void
-Mentat_Draw(enum HouseType houseID)
+Mentat_Draw(enum MentatID mentatID)
 {
-	assert(houseID < HOUSE_MAX);
+	assert(mentatID < MENTAT_MAX);
 
-	Mentat_DrawEyes(houseID);
-	Mentat_DrawMouth(houseID);
-	Mentat_DrawShoulder(houseID);
-	Mentat_DrawAccessory(houseID);
+	Mentat_DrawEyes(mentatID);
+	Mentat_DrawMouth(mentatID);
+	Mentat_DrawShoulder(mentatID);
+	Mentat_DrawAccessory(mentatID);
 }
 
 /*--------------------------------------------------------------*/
@@ -361,9 +372,9 @@ MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start)
 /*--------------------------------------------------------------*/
 
 void
-MentatHelp_Draw(enum HouseType houseID, MentatState *mentat)
+MentatHelp_Draw(enum MentatID mentatID, MentatState *mentat)
 {
-	Mentat_DrawBackground(houseID);
+	Mentat_DrawBackground(mentatID);
 	MentatBriefing_DrawWSA(mentat);
 
 	if (mentat->state == MENTAT_SHOW_CONTENTS) {
@@ -381,7 +392,7 @@ MentatHelp_Draw(enum HouseType houseID, MentatState *mentat)
 		GUI_Widget_Draw(g_widgetMentatFirst);
 	}
 
-	Mentat_Draw(houseID);
+	Mentat_Draw(mentatID);
 }
 
 bool

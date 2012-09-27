@@ -509,11 +509,11 @@ Briefing_Initialise(enum MenuAction menu, MentatState *mentat)
 static void
 Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 {
-	const enum HouseType houseID = (curr_menu == MENU_CONFIRM_HOUSE) ? HOUSE_MERCENARY : g_playerHouseID;
+	const enum MentatID mentatID = (curr_menu == MENU_CONFIRM_HOUSE) ? MENTAT_BENE_GESSERIT : g_table_houseInfo[g_playerHouseID].mentat;
 
-	Mentat_DrawBackground(houseID);
+	Mentat_DrawBackground(mentatID);
 	MentatBriefing_DrawWSA(mentat);
-	Mentat_Draw(houseID);
+	Mentat_Draw(mentatID);
 
 	if (mentat->state == MENTAT_SHOW_TEXT || mentat->state == MENTAT_SECURITY_INCORRECT) {
 		MentatBriefing_DrawText(mentat);
