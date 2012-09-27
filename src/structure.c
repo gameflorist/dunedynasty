@@ -50,7 +50,7 @@ static int64_t s_tickStructurePalace    = 0; /*!< Indicates next time Palace fun
 
 uint16 g_structureIndex;
 
-static int16 Structure_IsValidBuildLandscape(uint16 position, StructureType type);
+static int16 Structure_IsValidBuildLandscape(uint16 position, enum StructureType type);
 static int Structure_GetAvailable(const Structure *s, int i);
 
 /**
@@ -809,7 +809,7 @@ uint32 Structure_GetStructuresBuilt(House *h)
  * @return 0 if the position is not valid, 1 if the position is valid and have enough slabs, <0 if the position is valid but miss some slabs.
  */
 static int16
-Structure_IsValidBuildLandscape(uint16 position, StructureType type)
+Structure_IsValidBuildLandscape(uint16 position, enum StructureType type)
 {
 	const StructureInfo *si;
 	const uint16 *layoutTile;
@@ -866,7 +866,8 @@ Structure_IsValidBuildLandscape(uint16 position, StructureType type)
 	return -neededSlabs;
 }
 
-int16 Structure_IsValidBuildLocation(uint16 position, StructureType type)
+int16
+Structure_IsValidBuildLocation(uint16 position, enum StructureType type)
 {
 	const StructureInfo *si;
 	uint8 i;
@@ -1880,7 +1881,7 @@ Structure_GetAvailable(const Structure *s, int i)
 		uint32 structuresRequired = si->o.structuresRequired;
 
 		if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {
-			structuresRequired &= ~(1 << STRUCTURE_BARRACKS);
+			structuresRequired &= ~FLAG_STRUCTURE_BARRACKS;
 			availableCampaign = 2;
 		}
 
@@ -2012,7 +2013,7 @@ uint32 Structure_GetBuildable(Structure *s)
 				structuresRequired = localsi->o.structuresRequired;
 
 				if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {
-					structuresRequired &= ~(1 << STRUCTURE_BARRACKS);
+					structuresRequired &= ~FLAG_STRUCTURE_BARRACKS;
 					availableCampaign = 2;
 				}
 

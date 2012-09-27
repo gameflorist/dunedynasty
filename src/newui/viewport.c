@@ -305,7 +305,7 @@ Viewport_Place(void)
 		House_UpdateRadarState(h);
 
 		if (h->powerProduction < h->powerUsage) {
-			if ((h->structuresBuilt & (1 << STRUCTURE_OUTPOST)) != 0) {
+			if ((h->structuresBuilt & FLAG_STRUCTURE_OUTPOST) != 0) {
 				GUI_DisplayText(String_Get_ByIndex(STR_NOT_ENOUGH_POWER_FOR_RADAR_BUILD_WINDTRAPS), 3);
 			}
 		}
