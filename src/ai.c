@@ -165,19 +165,19 @@ StructureAI_FilterBuildOptions(enum StructureType s, enum HouseType houseID, uin
 	switch (s) {
 		case STRUCTURE_HEAVY_VEHICLE:
 			if (!StructureAI_ShouldBuildHarvesters(houseID))
-				buildable &= ~(1 << UNIT_HARVESTER);
+				buildable &= ~FLAG_UNIT_HARVESTER;
 
-			buildable &= ~(1 << UNIT_MCV);
+			buildable &= ~FLAG_UNIT_MCV;
 			break;
 
 		case STRUCTURE_HIGH_TECH:
 			if (!StructureAI_ShouldBuildCarryalls(houseID))
-				buildable &= ~(1 << UNIT_CARRYALL);
+				buildable &= ~FLAG_UNIT_CARRYALL;
 			break;
 
 		case STRUCTURE_BARRACKS:
 			if (!StructureAI_ShouldBuildInfantry(houseID))
-				buildable &= ~((1 << UNIT_INFANTRY) | (1 << UNIT_SOLDIER));
+				buildable &= ~(FLAG_UNIT_INFANTRY | FLAG_UNIT_SOLDIER);
 			break;
 
 		default:
@@ -194,8 +194,8 @@ StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType hou
 
 	switch (s) {
 		case STRUCTURE_HEAVY_VEHICLE:
-			buildable &= ~(1 << UNIT_HARVESTER);
-			buildable &= ~(1 << UNIT_MCV);
+			buildable &= ~FLAG_UNIT_HARVESTER;
+			buildable &= ~FLAG_UNIT_MCV;
 			break;
 
 		case STRUCTURE_HIGH_TECH:
@@ -204,7 +204,7 @@ StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType hou
 			find.type    = UNIT_CARRYALL;
 
 			if (Unit_Find(&find))
-				buildable &= ~(1 << UNIT_CARRYALL);
+				buildable &= ~FLAG_UNIT_CARRYALL;
 			break;
 
 		default:
