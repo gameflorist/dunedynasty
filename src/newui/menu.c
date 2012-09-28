@@ -394,6 +394,8 @@ PickHouse_Loop(void)
 			while (Audio_Poll())
 				Timer_Sleep(1);
 
+			Audio_LoadSampleSet(g_playerHouseID);
+
 			return MENU_CONFIRM_HOUSE;
 
 		case 0x8000 | 14:
