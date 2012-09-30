@@ -2631,9 +2631,8 @@ void Unit_RemovePlayer(Unit *unit)
 		return;
 
 	if (g_selectionType == SELECTIONTYPE_TARGET) {
-		g_veiledSpriteID = 0;
-		g_bloomSpriteID = 0;
-		g_landscapeSpriteID = 0xFFFF;
+		g_unitActive = 0;
+		g_activeAction = 0xFFFF;
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 	}
