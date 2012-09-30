@@ -932,6 +932,8 @@ static void InGame_Numpad_Move(uint16 key)
 			/* Fall though. */
 		case SCANCODE_MINUS:
 		case SCANCODE_EQUALS:
+		case SCANCODE_KEYPAD_MINUS:
+		case SCANCODE_KEYPAD_PLUS:
 			{
 				const float scaling_factor[] = { 1.0f, 1.5f, 2.0f, 3.0f };
 				ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
@@ -966,7 +968,7 @@ static void InGame_Numpad_Move(uint16 key)
 					}
 				}
 				else {
-					if (key == SCANCODE_EQUALS) {
+					if (key == SCANCODE_EQUALS || key == SCANCODE_KEYPAD_PLUS) {
 						new_scale = curr + 1;
 					}
 					else {
