@@ -489,7 +489,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* priorityTarget       */ 700,
 		/* availableHouse       */ FLAG_HOUSE_ORDOS,
 		},
-		/* indexStart           */ 20,
+		/* indexStart           */ 19,
 		/* indexEnd             */ 21,
 		{ /* flags */
 		/* isBullet             */ false,
@@ -1877,7 +1877,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* availableHouse       */ FLAG_HOUSE_FREMEN,
 		},
 		/* indexStart           */ 16,
-		/* indexEnd             */ 17,
+		/* indexEnd             */ 18,
 		{ /* flags */
 		/* isBullet             */ false,
 		/* explodeOnDeath       */ false,

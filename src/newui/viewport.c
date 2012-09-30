@@ -1267,7 +1267,7 @@ Viewport_RenderBrush(int x, int y)
 				continue;
 
 			const int index = t->index - 1;
-			if (!(20 <= index && index <= 101))
+			if (!(19 <= index && index <= 101))
 				continue;
 
 			const Unit *u = Unit_Get_ByIndex(index);
