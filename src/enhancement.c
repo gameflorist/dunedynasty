@@ -90,6 +90,12 @@ bool enhancement_i_mean_where_i_clicked = true;
 bool enhancement_insatiable_sandworms = true;
 
 /**
+ * Saboteurs are masters of stealth; make them visible only in the
+ * minimap like in v1.0 (due to a bug).
+ */
+bool enhancement_invisible_saboteurs = false;
+
+/**
  * The original selection cursor can be a little obstructive with
  * multiple units selected.
  */

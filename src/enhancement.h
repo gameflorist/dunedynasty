@@ -31,6 +31,7 @@ extern bool enhancement_fix_typos;
 extern bool enhancement_fog_covers_units;
 extern bool enhancement_i_mean_where_i_clicked;
 extern bool enhancement_insatiable_sandworms;
+extern bool enhancement_invisible_saboteurs;
 extern bool enhancement_new_selection_cursor;
 extern bool enhancement_nonblocking_radar_animation;
 extern bool enhancement_play_additional_voices;

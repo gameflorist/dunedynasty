@@ -329,7 +329,8 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 		Unit *u = Unit_Find(&find);
 		while (u != NULL) {
-			if (19 <= u->o.index && u->o.index <= 101)
+			if ((19 <= u->o.index && u->o.index <= 21 && !enhancement_invisible_saboteurs) ||
+			    (22 <= u->o.index && u->o.index <= 101))
 				Viewport_DrawUnit(u, 0, 0, false);
 
 			u = Unit_Find(&find);

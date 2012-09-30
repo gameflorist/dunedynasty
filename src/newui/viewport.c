@@ -1267,8 +1267,12 @@ Viewport_RenderBrush(int x, int y)
 				continue;
 
 			const int index = t->index - 1;
-			if (!(19 <= index && index <= 101))
+			if ((19 <= index && index <= 21 && !enhancement_invisible_saboteurs) ||
+			    (22 <= index && index <= 101)) {
+			}
+			else {
 				continue;
+			}
 
 			const Unit *u = Unit_Get_ByIndex(index);
 			const UnitInfo *ui = &g_table_unitInfo[u->o.type];
