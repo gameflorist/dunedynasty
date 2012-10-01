@@ -40,6 +40,8 @@ Download
 [Download] the source code or Windows binaries from the [SourceForge]
 project page.
 
+Read the list of [changes].
+
 
 Compiling from source
 ---------------------
@@ -80,8 +82,16 @@ Place them into one of the following places:
 
         C:\users\nobody\Application Data\Dune Dynasty\data
 
+    or
+
+        C:\users\nobody\AppData\Roaming\Dune Dynasty\data
+
+    or
+
+        C:\Documents and Settings\nobody\Application Data\Dune Dynasty\data
+
  3. The system-wide directory as configured in the CMake variable
-    $DUNE_DATA_DIR/data.
+    `$DUNE_DATA_DIR/data`.
 
 Once the data files are in place, you may start the game by running
 `dunedynasty.exe` or `dunedynasty`.
@@ -103,23 +113,23 @@ Keyboard shortcuts are mostly just the first letter of the action.
     H           Select construction yard
     P           Place constructed structure
 
-    F1          Mentat
-    F2          Options
-    F5          Show current song
-    F6          Decrease music volume
-    F7          Increase music volume
-
-    `           Toggle health bars
-    -, +        Zoom in or out
-    [, ]        Toggle size of menu and side bars
-
-    Alt-Enter   Toggle windowed mode
-    F11         Toggle windowed mode
-    F12         Save screenshot into data directory
-
     Ctrl-1      Assign control group 1
     Ctrl-2      Assign control group 2, etc.
     1-0         Jump to control group 1-0
+    `           Toggle health bars
+
+    -, +        Zoom in or out
+    [, ]        Toggle size of menu and side bars
+    Alt-Enter   Toggle windowed mode
+
+    F1          Mentat
+    F2          Options
+    F3          Click structure icon
+    F5          Show current song
+    F6          Decrease music volume
+    F7          Increase music volume
+    F11         Toggle windowed mode
+    F12         Save screenshot into data directory
 
 Double tap H or a control group number to centre on the
 construction yard or the control group.
@@ -128,13 +138,18 @@ construction yard or the control group.
 Configuration
 -------------
 
-On Unix the configuration file is located at:
+The configuration file will be read from one of two places:
 
-    ~/.config/dunedynasty/dunedynasty.cfg
+ 1. In the same directory as the dunedynasty executable.
 
-On Windows the configuration file will be located somewhere like:
+ 2. In a personal data directory.
+    On Unix the configuration file is located at:
 
-    C:\users\nobody\Application Data\Dune Dynasty\dunedynasty.cfg
+        ~/.config/dunedynasty/dunedynasty.cfg
+
+    On Windows the configuration file will be located somewhere like:
+
+        C:\users\nobody\Application Data\Dune Dynasty\dunedynasty.cfg
 
 See the sample file `dunedynasty.cfg-sample` for a list of configuration
 options.  You can modify the existing `dunedynasty.cfg` file or
@@ -163,16 +178,32 @@ Note that many of the external music sets are provided in .mp3 format.
 Currently you must convert them to Ogg Vorbis (.ogg) or FLAC formats.
 
 If you want to disable any music set, edit the [music] section of the
-config file.  e.g. to disable the Adlib music:
+config file.  If a particular track is missing, it will look for a
+suitable replacement in the default music pack, or use the Adlib music
+if that also fails.  e.g. to play Sega Mega Drive music, and MT-32
+rips only as required:
 
     [music]
     dune2_adlib=0
+    dune2_sc55=0
+    ...
+    dune2_smd=1
+    default=fed2k_mt32
+
+In addition, individual songs can be disabled.  e.g. if you want to
+include Dune 2000 music, but exclude "Robotix":
+
+    [music/dune2000]
+    ROBOTIX=0
 
 
 Saved games
 -----------
 
-Saved games are located in a personal data directory.
+Saved games are located in the `save` directory next to `dunedynasty.cfg`.
+If no configuration file exists, they will be in placed in a personal
+data directory.
+
 On Unix this will be:
 
     ~/.config/dunedynasty/save
@@ -201,7 +232,9 @@ The Allegro 5 developers.
 The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else
 who worked on the Adlib/OPL/MIDI player code.
 
-Peter, for help on various bits of the code, the music, and AUDlib.
+Peter, for help on various bits of the code, the music code, and AUDlib.
+
+Nyerguds, for many bug reports and suggestions.
 
 Westwood Studios, for an amazing game!
 
@@ -218,5 +251,6 @@ David Wang <dswang@users.sourceforge.net>
 [CMake]: http://www.cmake.org/
 [FluidSynth]: http://sourceforge.net/apps/trac/fluidsynth/
 [Download]: http://sourceforge.net/projects/dunedynasty/files/
-[Screenshot]: http://sourceforge.net/projects/dunedynasty/screenshots/screenshot_hark.png "Screenshot"
+[Screenshot]: http://sourceforge.net/projects/dunedynasty/screenshots/screenshot_hark2.png "Screenshot"
 [SourceForge]: http://sourceforge.net/projects/dunedynasty/
+[changes]: changes.html
