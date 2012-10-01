@@ -45,6 +45,7 @@
 #include "input/input.h"
 #include "input/mouse.h"
 #include "map.h"
+#include "newui/actionpanel.h"
 #include "newui/menu.h"
 #include "newui/menubar.h"
 #include "newui/viewport.h"
@@ -909,6 +910,7 @@ static void InGame_Numpad_Move(uint16 key)
 				div->scale = (div->scale >= 1.5f) ? 1.0f : 2.0f;
 				A5_InitTransform(false);
 				GameLoop_TweakWidgetDimensions();
+				g_factoryWindowTotal = -1;
 				Map_MoveDirection(0, oldh - viewport->height);
 			}
 			break;

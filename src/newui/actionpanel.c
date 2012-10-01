@@ -213,8 +213,7 @@ ActionPanel_ProductionButtonStride(const Widget *widget, bool is_starport, int *
 {
 	const int h = widget->height
 		- 3  /* top margin */
-		- (widget->height >= 52 ? 20 : 0) /* arrows */
-		- 2  /* bottom margin */
+		- (widget->height >= 58 ? 21 : 5) /* arrows */
 		- (is_starport ? 12 : 0);
 
 	const int items_per_screen = h / 58;
@@ -244,7 +243,7 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 
 	if (items_per_screen <= 1) {
 		y = widget->offsetY + widget->height - height
-			- (widget->height >= 52 ? 20 : 0)
+			- (widget->height >= 58 ? 21 : 3)
 			- (is_starport ? 12 : 0)
 			+ stride * item + s->factoryOffsetY;
 	}
@@ -263,7 +262,7 @@ ActionPanel_ScrollButtonDimensions(const Widget *widget, int height, bool up,
 {
 	int x, y;
 
-	if (widget->height < 52) {
+	if (widget->height < 58) {
 		x = widget->offsetX + widget->width - 24 - 1;
 		y = widget->offsetY + height / 2 + 1 - (up ? 15 : 0);
 	}
@@ -372,7 +371,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	int mouseY;
 	Mouse_TransformToDiv(widget->div, NULL, &mouseY);
 
-	if (mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
+	if (mouseY >= widget->offsetY + height - (widget->height >= 58 ? 21 : 5))
 		return false;
 
 	const bool lmb = (widget->state.s.buttonState & 0x04);
@@ -591,7 +590,7 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	int mouseY;
 	Mouse_TransformToDiv(widget->div, NULL, &mouseY);
 
-	if (mouseY >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
+	if (mouseY >= widget->offsetY + height - (widget->height >= 58 ? 21 : 5))
 		return false;
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
@@ -669,7 +668,7 @@ ActionPanel_DrawScrollButtons(const Widget *widget, bool is_starport)
 	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP_PRESSED, x1, y1, 0, 0);
 	}
-	else if (widget->height >= 52 || Mouse_InRegion_Div(widget->div, x1, y1, x2, y2 + 15)) {
+	else if (widget->height >= 58 || Mouse_InRegion_Div(widget->div, x1, y1, x2, y2 + 15)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP, x1, y1, 0, 0);
 	}
 
@@ -677,7 +676,7 @@ ActionPanel_DrawScrollButtons(const Widget *widget, bool is_starport)
 	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN_PRESSED, x1, y1, 0, 0);
 	}
-	else if (widget->height >= 52 || Mouse_InRegion_Div(widget->div, x1, y1 - 15, x2, y2)) {
+	else if (widget->height >= 58 || Mouse_InRegion_Div(widget->div, x1, y1 - 15, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN, x1, y1, 0, 0);
 	}
 }
@@ -710,6 +709,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 {
 	const ScreenDiv *div = &g_screenDiv[SCREENDIV_SIDEBAR];
 	const int height = (s->o.type == STRUCTURE_STARPORT) ? widget->height - 12 : widget->height;
+	const int itemlist_height = height - (widget->height >= 58 ? 21 : 5);
 
 	if (g_productionStringID == STR_UPGRADINGD_DONE) {
 		const int percentDone = 100 - s->upgradeTimeLeft;
@@ -725,18 +725,18 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 	}
 
 	Prim_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, height - 3, 1, false, true, 0);
-	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * height);
+	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * itemlist_height);
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
 		const uint16 object_type = g_factoryWindowItems[item].objectType;
 		const enum ShapeID shapeID = g_factoryWindowItems[item].shapeID;
 
 		const char *name;
-		int x1, y1, y2, w, h;
+		int x1, y1, w, h;
 		int fg = 0xF;
 
-		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, NULL, &y2, &w, &h);
-		if (y2 >= widget->offsetY + height - (widget->height >= 52 ? 20 : 0))
+		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, NULL, NULL, &w, &h);
+		if (y1 > widget->offsetY + itemlist_height)
 			break;
 
 		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
@@ -813,6 +813,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		}
 	}
 
+	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * height);
 	ActionPanel_DrawScrollButtons(widget, (s->o.type == STRUCTURE_STARPORT));
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
