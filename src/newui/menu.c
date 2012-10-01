@@ -397,6 +397,8 @@ PickHouse_Loop(void)
 static enum MenuAction
 Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 {
+	bool redraw = Input_IsInputAvailable();
+
 	const int res = GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, 9, NULL, NULL, 0);
 
 	if (res == SCANCODE_ENTER) {
@@ -424,7 +426,7 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 		}
 	}
 
-	return MENU_REDRAW | MENU_SECURITY;
+	return (redraw ? MENU_REDRAW : 0) | MENU_SECURITY;
 }
 
 static void
@@ -524,7 +526,9 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 			widgetID = GUI_Widget_HandleEvents(briefing_yes_no_widgets);
 		}
 		else if (curr_menu == MENU_SECURITY) {
-			return Security_InputLoop(g_playerHouseID, mentat);
+			enum MenuAction ret = Security_InputLoop(g_playerHouseID, mentat);
+
+			return (redraw ? MENU_REDRAW : 0) | ret;
 		}
 		else {
 			widgetID = GUI_Widget_HandleEvents(briefing_proceed_repeat_widgets);
