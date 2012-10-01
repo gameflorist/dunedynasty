@@ -381,7 +381,6 @@ static void Window_WidgetClick_Create(void)
 	}
 
 	g_widgetLinkedListHead = NULL;
-	g_widgetLinkedListTail = NULL;
 
 	for (wi = g_table_gameWidgetInfo; wi->index >= 0; wi++) {
 		Widget *w;
