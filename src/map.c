@@ -1359,7 +1359,7 @@ static void Map_UnveilTile_Neighbour(uint16 packed)
 			static const int16 mapOffset[] = {-64, 1, 64, -1};
 			uint16 neighbour = packed + mapOffset[i];
 
-			if (!Map_InRangePacked(neighbour)) {
+			if (Tile_IsOutOfMap(neighbour)) {
 				spriteID |= 1 << i;
 				continue;
 			}
