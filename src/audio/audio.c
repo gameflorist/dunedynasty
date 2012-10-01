@@ -59,6 +59,7 @@ Audio_GlobMusicInfo(MusicInfo *m, MusicInfoGlob glob[NUM_MUSIC_SETS])
 	glob[MUSICSET_D2TM_ADLIB].ext = &m->d2tm_adlib;
 	glob[MUSICSET_D2TM_MT32].ext = &m->d2tm_mt32;
 	glob[MUSICSET_D2TM_SC55].ext = &m->d2tm_sc55;
+	glob[MUSICSET_DUNE2_SMD].ext = &m->dune2_smd;
 	glob[MUSICSET_DUNE2000].ext = &m->dune2000;
 }
 

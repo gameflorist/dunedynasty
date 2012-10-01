@@ -1,0 +1,23 @@
+Put Dune 2 Sega Mega Drive music here, and convert to FLAC or OGG.
+http://nyerguds.arsaneus-design.com/dune/dunesega/
+
+01_intro.ogg
+02_cyrilscouncil.ogg
+03_ammonsadvice.ogg
+04_radnorsscheme.ogg
+05_thelegotune.ogg
+06_turbulence.ogg
+07_spicetrip.ogg
+08_commandpost.ogg
+09_trenching.ogg
+10_starport.ogg
+11_evasiveaction.ogg
+12_chosendestiny.ogg
+13_conquest.ogg
+14_slitherin.ogg
+15_harkonnenrules.ogg
+16_atreidesdirge.ogg
+17_ordosdirge.ogg
+18_harkonnendirge.ogg
+19_finale.ogg
+20_credits.ogg
