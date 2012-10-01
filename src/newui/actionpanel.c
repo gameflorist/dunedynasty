@@ -744,26 +744,31 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 		if ((s->o.type == STRUCTURE_STARPORT) && (g_starportAvailable[object_type] < 0)) {
 			Shape_DrawGreyScale(shapeID, x1, y1, w, h, 0, 0);
-
-			GUI_DrawText_Wrapper("OUT OF", x1 + w / 2, y1 +  7, 6, 0, 0x132);
-			GUI_DrawText_Wrapper("STOCK",  x1 + w / 2, y1 + 18, 6, 0, 0x132);
 		}
 		else if (g_factoryWindowItems[item].available < 0) {
 			Shape_DrawGreyScale(shapeID, x1, y1, w, h, 0, 0);
+
+			/* Draw layout. */
+			if (s->o.type == STRUCTURE_CONSTRUCTION_YARD)
+				ActionPanel_DrawStructureLayout(object_type, x1, y1);
 		}
 		else {
 			Shape_DrawScale(shapeID, x1, y1, w, h, 0, 0);
-		}
 
-		/* Draw layout. */
-		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD)
-			ActionPanel_DrawStructureLayout(object_type, x1, y1);
+			/* Draw layout. */
+			if (s->o.type == STRUCTURE_CONSTRUCTION_YARD)
+				ActionPanel_DrawStructureLayout(object_type, x1, y1);
+		}
 
 		/* Draw abbreviated name. */
 		GUI_DrawText_Wrapper(name, x1 + w / 2, y1 - 9, 5, 0, 0x121);
 
 		/* Draw production status. */
-		if (s->objectType == object_type) {
+		if ((s->o.type == STRUCTURE_STARPORT) && (g_starportAvailable[object_type] < 0)) {
+			GUI_DrawText_Wrapper("OUT OF", x1 + w / 2, y1 +  7, 6, 0, 0x132);
+			GUI_DrawText_Wrapper("STOCK",  x1 + w / 2, y1 + 18, 6, 0, 0x132);
+		}
+		else if (s->objectType == object_type) {
 			/* Production icon is 32x24, stretched up to 52x39. */
 			if (g_productionStringID != STR_BUILD_IT) {
 				const float x1f = x1 + 52.0f/32.0f;
@@ -793,6 +798,16 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			}
 			else if (g_productionStringID != STR_BUILD_IT) {
 				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), x1 + w / 2, y1 + 14, fg, 0, 0x121);
+			}
+		}
+		else if (g_factoryWindowItems[item].available < 0) {
+			GUI_DrawText_Wrapper("UPGRADE", x1 + w / 2, y1 +  7, 6, 0, 0x132);
+
+			if (s->upgradeTimeLeft >= 100) {
+				GUI_DrawText_Wrapper("NEEDED", x1 + w / 2, y1 + 18, 6, 0, 0x132);
+			}
+			else {
+				GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 18, 6, 0, 0x132, 100 - s->upgradeTimeLeft);
 			}
 		}
 
