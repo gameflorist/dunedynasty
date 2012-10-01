@@ -7,6 +7,7 @@
 
 #include "mentat.h"
 
+#include "../enhancement.h"
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
@@ -280,10 +281,6 @@ MentatSecurity_PickQuestion(MentatState *mentat)
 
 	mentat->security_question = Tools_RandomRange(0, questionsCount - 1) * 3 + STR_SECURITY_QUESTIONS;
 	mentat->wsa = WSA_LoadFile(String_Get_ByIndex(mentat->security_question + 1), GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
-
-#if 0
-	printf("Correct answer is: %s.\n", String_Get_ByIndex(mentat->security_question + 2));
-#endif
 }
 
 void
@@ -310,7 +307,15 @@ MentatSecurity_PrepareQuestion(bool pick_new_question, MentatState *mentat)
 	mentat->text = mentat->buf;
 	MentatBriefing_SplitText(mentat);
 
-	mentat->security_prompt[0] = '\0';
+	/* If we accept any answer, then fill in the real answer so people
+	 * won't go looking up the manual.
+	 */
+	if (enhancement_security_question == SECURITY_QUESTION_ACCEPT_ALL) {
+		snprintf(mentat->security_prompt, sizeof(mentat->security_prompt), "%s", String_Get_ByIndex(mentat->security_question + 2));
+	}
+	else {
+		mentat->security_prompt[0] = '\0';
+	}
 }
 
 void
