@@ -1664,6 +1664,10 @@ extern FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost);
 
 char *GUI_String_Get_ByIndex(int16 stringID)
 {
+	const uint16 speedStrings[5] = {
+		STR_SLOWEST, STR_SLOW, STR_NORMAL, STR_FAST, STR_FASTEST
+	};
+
 	extern char g_savegameDesc[5][51];
 
 	switch (stringID) {
@@ -1681,24 +1685,20 @@ char *GUI_String_Get_ByIndex(int16 stringID)
 			stringID = (g_enable_sounds ? STR_ON : STR_OFF);
 			break;
 
-		case -12: {
-			static uint16 gameSpeedStrings[] = {
-				STR_SLOWEST,
-				STR_SLOW,
-				STR_NORMAL,
-				STR_FAST,
-				STR_FASTEST
-			};
-
-			stringID = gameSpeedStrings[g_gameConfig.gameSpeed];
-		} break;
+		case -12:
+			stringID = speedStrings[g_gameConfig.gameSpeed];
+			break;
 
 		case -13:
 			stringID = (g_gameConfig.hints != 0) ? STR_ON : STR_OFF;
 			break;
 
 		case -14:
-			stringID = (g_gameConfig.autoScroll != 0) ? STR_ON : STR_OFF;
+			     if (g_gameConfig.scrollSpeed <= 2) stringID = speedStrings[0];
+			else if (g_gameConfig.scrollSpeed <= 3) stringID = speedStrings[1];
+			else if (g_gameConfig.scrollSpeed <= 4) stringID = speedStrings[2];
+			else if (g_gameConfig.scrollSpeed <= 6) stringID = speedStrings[3];
+			else stringID = speedStrings[4];
 			break;
 
 		default: break;

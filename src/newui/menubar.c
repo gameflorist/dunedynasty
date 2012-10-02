@@ -430,7 +430,18 @@ MenuBar_TickGameControls(void)
 			break;
 
 		case 0x8000 | 34: /* STR_AUTO_SCROLL_IS */
-			g_gameConfig.autoScroll ^= 0x1;
+			if (g_gameConfig.scrollSpeed <= 2) {
+				g_gameConfig.scrollSpeed = 3;
+			}
+			else if (g_gameConfig.scrollSpeed <= 4) {
+				g_gameConfig.scrollSpeed++;
+			}
+			else {
+				g_gameConfig.scrollSpeed += 2;
+
+				if (g_gameConfig.scrollSpeed > 8)
+					g_gameConfig.scrollSpeed = 2;
+			}
 			break;
 
 		case 0x8000 | 35: /* STR_PREVIOUS */
