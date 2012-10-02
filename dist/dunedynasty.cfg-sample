@@ -10,8 +10,8 @@
 
 [game]
 window_mode=windowed
-; window_mode=fullscreen
-; window_mode=fullscreenwindow
+# window_mode=fullscreen
+# window_mode=fullscreenwindow
 screen_width=640
 screen_height=480
 menubar_scale=1.000000
@@ -26,12 +26,13 @@ scroll_speed=4
 [audio]
 enable_music=1
 enable_effects=1
-enable_sound=1
-enable_voice=1
+enable_sbsounds=1
+enable_voices=1
 enable_subtitles=0
 music_volume=0.900000
 sound_volume=0.750000
 voice_volume=1.000000
+opl_mame=true
 sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
 
 [enhancement]
@@ -42,6 +43,9 @@ repeat_reinforcements=1
 
 # MUSIC CONFIGURATION
 # Enable or disable entire music sets.
+#
+# If a track is not present in any of the enabled music sets, it will
+# use the track from the default music pack or dune2_adlib.
 [music]
 dune2_adlib=1
 dune2_c55=1
@@ -49,7 +53,9 @@ fed2k_mt32=1
 d2tm_adlib=1
 d2tm_mt32=1 # Subset of fed2k_mt32.
 d2tm_sc55=1
+dune2_smd=1
 dune2000=1
+default=dune2_adlib
 
 # Dune 2 Adlib
 # Uncomment to disable individual tracks.
@@ -63,6 +69,7 @@ dune2000=1
 ; dune9.ADL_4	= f # Idle 7
 ; dune9.ADL_5	= f # Idle 8
 ; dune18.ADL_6	= f # Idle 9
+; dune1.ADL_2	= f # Bonus (Idle)        -- disabled by default
 ; dune10.ADL_7	= f # Attack 1
 ; dune11.ADL_7	= f # Attack 2
 ; dune12.ADL_7	= f # Attack 3
@@ -79,14 +86,14 @@ dune2000=1
 ; dune1.ADL_5	= f # Lose Atreides
 ; dune1.ADL_3	= f # Lose Ordos
 ; dune7.ADL_6	= f # Menu
-; dune16.ADL_7	= f # Strategic Map
-; dune0.ADL_2	= f # Intro               -- Missing in: d2tm_adlib.
-; dune19.ADL_4	= f # End Game Harkonnen  -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
-; dune19.ADL_2	= f # End Game Atreides   -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
-; dune19.ADL_3	= f # End Game Ordos      -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
-; dune0.ADL_4	= f # Logos               -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
-; dune16.ADL_8	= f # Cutscene            -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
-; dune20.ADL_2	= f # Credits             -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55.
+; dune16.ADL_7	= f # Strategic Map       -- Missing in: dune2000.
+; dune0.ADL_2	= f # Intro               -- Missing in: d2tm_adlib, dune2_smd, dune2000.
+; dune19.ADL_4	= f # End Game Harkonnen  -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55, dune2_smd, dune2000.
+; dune19.ADL_2	= f # End Game Atreides   -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55, dune2_smd, dune2000.
+; dune19.ADL_3	= f # End Game Ordos      -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55, dune2_smd, dune2000.
+; dune0.ADL_4	= f # Logos               -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55, dune2_smd, dune2000.
+; dune16.ADL_8	= f # Cutscene            -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55, dune2_smd, dune2000.
+; dune20.ADL_2	= f # Credits             -- Missing in: d2tm_adlib, d2tm_mt32, d2tm_sc55, dune2000.
 
 # Dune 2 C55
 # Remember to set a sound font above!
@@ -100,6 +107,7 @@ dune2000=1
 ; dune9.C55_4	= f # Idle 7
 ; dune9.C55_5	= f # Idle 8
 ; dune18.C55_6	= f # Idle 9
+; dune1.C55_2	= f # Bonus (Idle)        -- disabled by default
 ; dune10.C55_7	= f # Attack 1
 ; dune11.C55_7	= f # Attack 2
 ; dune12.C55_7	= f # Attack 3
@@ -140,6 +148,7 @@ dune2_mt32_06_12	= 0.65  # Idle 6
 dune2_mt32_09_13	= 0.65  # Idle 7
 dune2_mt32_09_14	= 0.65  # Idle 8
 dune2_mt32_18_24	= 0.65  # Idle 9
+dune2_mt32_01_3 	=-0.65  # Bonus (Idle), disabled by default
 dune2_mt32_10_17	= 0.65  # Attack 1
 dune2_mt32_11_18	= 0.65  # Attack 2
 dune2_mt32_12_19	= 0.65  # Attack 3
@@ -164,7 +173,6 @@ dune2_mt32_07_13	= 0.65  # Menu
 dune2_mt32_16_24	= 0.65  # Cutscene
 dune2_mt32_16_23	= 0.65  # Strategic Map
 dune2_mt32_20_22	= 0.65  # Credits
-dune2_mt32_01_3 	= 0.65  # Bonus
 
 # Dune 2 The Maker Adlib addon
 # Missing: End Game, Logos, Intro, Cutscene, Credits.
@@ -258,6 +266,30 @@ intro   	= 0.65  # Same as fed2k_mt32 - Intro
 menu    	= 0.65  # Same as fed2k_mt32 - Menu
 nextconq	= 0.65  # Same as fed2k_mt32 - Strategic Map
 
+# Dune 2 Sega Mega Drive music addon
+# Missing: Attack, End Game, Logos, Intro, Cutscene.
+[music/dune2_smd]
+07_spicetrip      = 0.50  # [***  ] Idle 3
+06_turbulence     = 0.50  # [**   ] Idle 5
+05_thelegotune    = 0.50  # [     ] Idle
+08_commandpost    = 0.50  # [*    ] Idle
+09_trenching      = 0.50  # [     ] Idle
+10_starport       =-0.50  # Bonus (Idle), disabled by default
+02_cyrilscouncil  = 0.50  # Briefing Atreides
+03_ammonsadvice   = 0.50  # Briefing Ordos
+04_radnorsscheme  = 0.50  # Briefing Harkonnen
+13_conquest       = 0.50  # Win Atreides
+14_slitherin      = 0.50  # Win Ordos
+15_harkonnenrules = 0.50  # Win Harkonnen
+18_harkonnendirge = 0.50  # Lose Harkonnen
+16_atreidesdirge  = 0.50  # Lose Atreides
+17_ordosdirge     = 0.50  # Lose Ordos
+12_chosendestiny  = 0.50  # Menu
+11_evasiveaction  = 0.50  # Strategic Map
+20_credits        = 0.50  # Credits
+01_intro          =-0.50  # Unused
+19_finale         =-0.50  # Unused
+
 # Dune 2000 music addon
 # Stars denote resemblence, or the difficulty I had mapping them.
 # "The Ambush" sounds like something, but I can't find it!
@@ -266,16 +298,16 @@ SPICESCT	= 1.0 # [**   ] Idle 2 - "Spice Scouting"
 RISEHARK	= 1.0 # [***  ] Idle 3 - "Rise of Harkonnen"
 UNDERCON	= 1.0 # [*****] Idle 5 - "Under Construction"
 ATREGAIN	= 1.0 # [***  ] Idle 6 - "The Atreides Gain"
+AMBUSH  	= 1.0 # [*    ] Idle - "The Ambush"
+ENTORDOS	= 1.0 # [     ] Idle - "Enter the Ordos"
+FREMEN  	= 1.0 # [     ] Idle - "The Fremen"
+LANDSAND	= 1.0 # [     ] Idle - "Land of Sand"
+WAITGAME	= 1.0 # [     ] Idle - "The Waiting Game"
+PLOTTING	= 1.0 # [     ] Idle - "Plotting"
+SOLDAPPR	= 1.0 # [     ] Idle - "The Soldiers Approach"
+ROBOTIX 	=-1.0 # [     ] Idle - "Robotix"
 ARAKATAK	= 1.0 # [**** ] Attack 1 - "Attack on Arrakis"
 HARK_BAT	= 1.0 # [*****] Attack 3 - "Harkonnen Battle"
 FIGHTPWR	= 1.0 # [**** ] Attack 5 - "Fight for Power"
-AMBUSH  	= 1.0 # [*    ] Idle 1 - "The Ambush"
-ENTORDOS	= 1.0 # [     ] Idle 4 - "Enter the Ordos"
-FREMEN  	= 1.0 # [     ] Idle 7 - "The Fremen"
-LANDSAND	= 1.0 # [     ] Idle 8 - "Land of Sand"
-WAITGAME	= 1.0 # [     ] Idle 9 - "The Waiting Game"
 OPTIONS 	= 1.0 # [     ] Menu
-PLOTTING	=-1.0 # [     ] Unused Idle - "Plotting"
-SOLDAPPR	=-1.0 # [     ] Unused Idle - "The Soldiers Approach"
-ROBOTIX 	=-1.0 # [     ] Unused Idle - "Robotix"
 SCORE   	=-1.0 # [     ] Unused
