@@ -1389,6 +1389,8 @@ static void Gameloop_Logos(void)
  */
 void GameLoop_GameIntroAnimation(void)
 {
+	const enum HouseType h = g_playerHouseID;
+
 	GUI_ChangeSelectionType(SELECTIONTYPE_INTRO);
 	Video_HideCursor();
 
@@ -1417,4 +1419,6 @@ void GameLoop_GameIntroAnimation(void)
 	GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
 	Video_ShowCursor();
 	Audio_PlayMusic(MUSIC_STOP);
+
+	g_playerHouseID = h;
 }
