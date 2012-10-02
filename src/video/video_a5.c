@@ -1522,9 +1522,7 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 	else if ((flags & 0x300) == 0x200) {
 		/* Blur tile (sandworm, sonic wave). */
 		const int s_variable_60[8] = {1, 3, 2, 5, 4, 3, 2, 1};
-		static int effect = 0;
-
-		effect = (effect + 1) & 0x7;
+		const int effect = (flags >> 4) & 0x7;
 
 		ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
 		ALLEGRO_BITMAP *brush = s_shape[shapeID][houseID];

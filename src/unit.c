@@ -1496,9 +1496,26 @@ bool Unit_Move(Unit *unit, uint16 distance)
 		Unit_SetOrientation(unit, unit->orientation[0].current + (Tools_Random_256() & 0xF), false, 0);
 	}
 
-	unit->wobbleIndex = 0;
-	if (ui->flags.canWobble && unit->o.flags.s.isWobbling) {
-		unit->wobbleIndex = Tools_Random_256() & 7;
+	if (ui->o.flags.blurTile) {
+		/* Use wobbleIndex for blur effect instead of a global
+		 * variable because we only want the unit's wobble amount to
+		 * change when it moves.
+		 *
+		 * Sandworms are in three segments, so increase its frames by
+		 * 3 at a time.
+		 */
+		if (unit->o.type == UNIT_SANDWORM) {
+			unit->wobbleIndex = (unit->wobbleIndex + 3) & 7;
+		}
+		else {
+			unit->wobbleIndex = (unit->wobbleIndex + 1) & 7;
+		}
+	}
+	else {
+		unit->wobbleIndex = 0;
+		if (ui->flags.canWobble && unit->o.flags.s.isWobbling) {
+			unit->wobbleIndex = Tools_Random_256() & 7;
+		}
 	}
 
 	d = Tile_GetDistance(newPosition, unit->currentDestination);

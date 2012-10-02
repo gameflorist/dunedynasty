@@ -1,4 +1,17 @@
-/* shape.c */
+/* shape.c
+ *
+ * Flags are:
+ *  0x__01 = flip horizontally.
+ *  0x__02 = flip vertically.
+ *  0x__70 = blur effect frame.  New, originally just a static variable.
+ *  0x01__ = remap for house.  Use Shape_DrawRemap instead.
+ *  0x02__ = blur effect.
+ *  0x03__ = shadow.
+ *  0x10__ = ?
+ *  0x20__ = remap (greymap?).  Use Shape_DrawGrey instead.
+ *  0x40__ = position relative to window.
+ *  0x80__ = centre sprite.
+ */
 
 #include <assert.h>
 #include <stdlib.h>
@@ -59,7 +72,7 @@ void
 Shape_Draw(enum ShapeID shapeID, int x, int y, enum WindowID windowID, int flags)
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
-	Video_DrawShape(shapeID, HOUSE_HARKONNEN, x, y, flags & 0x303);
+	Video_DrawShape(shapeID, HOUSE_HARKONNEN, x, y, flags & 0x373);
 }
 
 void
@@ -75,7 +88,7 @@ void
 Shape_DrawRemap(enum ShapeID shapeID, enum HouseType houseID, int x, int y, enum WindowID windowID, int flags)
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
-	Video_DrawShape(shapeID, houseID, x, y, flags & 0x303);
+	Video_DrawShape(shapeID, houseID, x, y, flags & 0x373);
 }
 
 void

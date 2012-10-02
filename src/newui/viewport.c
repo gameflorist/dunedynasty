@@ -864,13 +864,13 @@ Viewport_DrawSandworm(const Unit *u)
 	int x, y;
 
 	if (Map_IsPositionInViewport(u->o.position, &x, &y))
-		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200);
+		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200 | ((u->wobbleIndex & 0x7) << 4));
 
 	if (Map_IsPositionInViewport(u->targetLast, &x, &y))
-		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200);
+		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200 | (((u->wobbleIndex + 1) & 0x7) << 4));
 
 	if (Map_IsPositionInViewport(u->targetPreLast, &x, &y))
-		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200);
+		Shape_Draw(shapeID, x, y, WINDOWID_VIEWPORT, 0xC200 | (((u->wobbleIndex + 2) & 0x7) << 4));
 
 	if (Unit_IsSelected(u)) {
 		if (Map_IsPositionInViewport(u->o.position, &x, &y))
@@ -1010,7 +1010,8 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 	}
 
 	if (u->o.type != UNIT_SANDWORM && u->o.flags.s.isHighlighted) s_spriteFlags |= 0x100;
-	if (ui->o.flags.blurTile) s_spriteFlags |= 0x200;
+	if (ui->o.flags.blurTile)
+		s_spriteFlags |= 0x200 | ((u->wobbleIndex & 0x7) << 4);
 
 	Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, 0, s_spriteFlags | 0xA000);
 
@@ -1136,7 +1137,7 @@ Viewport_DrawAirUnit(const Unit *u)
 	}
 
 	if (ui->o.flags.blurTile)
-		s_spriteFlags |= 0x200;
+		s_spriteFlags |= 0x200 | ((u->wobbleIndex & 0x7) << 4);
 
 	if (smooth_rotation) {
 		Shape_DrawRemapRotate(index, Unit_GetHouseID(u), x, y, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x7FFF) | 0x2000);
