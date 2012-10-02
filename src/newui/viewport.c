@@ -1224,38 +1224,34 @@ Viewport_DrawInterface(enum HouseType houseID, int blurx, int blury)
 void
 Viewport_RenderBrush(int x, int y)
 {
-	/* Top-left tile. */
+	/* Top-left tile in viewport. */
 	const int tile_left = Tile_GetPackedX(g_viewportPosition);
 	const int tile_top  = Tile_GetPackedY(g_viewportPosition);
 
-	/* Make brush coordinates relative to viewport. */
-	x -= g_widgetProperties[WINDOWID_VIEWPORT].xBase;
-	y -= g_widgetProperties[WINDOWID_VIEWPORT].yBase;
+	/* Translate x, y to absolute coordinates. */
+	const int sx = TILE_SIZE * tile_left + g_viewport_scrollOffsetX + x;
+	const int sy = TILE_SIZE * tile_top  + g_viewport_scrollOffsetY + y;
 
 	/* Tile containing top-left corner of brush. */
-	const int tile_dx = x / TILE_SIZE;
-	const int tile_dy = y / TILE_SIZE;
+	const int tile_x0 = sx / TILE_SIZE;
+	const int tile_y0 = sy / TILE_SIZE;
 
-	/* Where the brush should be sourced. */
-	const int sx = x - tile_dx * TILE_SIZE;
-	const int sy = y - tile_dy * TILE_SIZE;
-
-	const int viewportX1 = -sx;
-	const int viewportY1 = -sy;
+	const int viewportX1 = -(sx - TILE_SIZE * tile_x0);
+	const int viewportY1 = -(sy - TILE_SIZE * tile_y0);
 	const int viewportX2 = viewportX1 + 3 * TILE_SIZE;
 	const int viewportY2 = viewportY1 + 3 * TILE_SIZE;
 
 	Prim_FillRect_i(viewportX1, viewportY1, viewportX2, viewportY2, 0);
 
 	/* Draw tiles. */
-	Viewport_DrawTilesInRange(tile_left + tile_dx, tile_top + tile_dy,
+	Viewport_DrawTilesInRange(tile_x0, tile_y0,
 			viewportX1, viewportY1, viewportX2, viewportY2, true, false);
 
 	/* Draw ground units (not sandworms, projectiles, etc.). */
 	for (int dy = 0; dy < 3; dy++) {
 		for (int dx = 0; dx < 3; dx++) {
-			const int tilex = tile_left + tile_dx + dx;
-			const int tiley = tile_top + tile_dy + dy;
+			const int tilex = tile_x0 + dx;
+			const int tiley = tile_y0 + dy;
 
 			if (!(Map_InRange(tilex) && Map_InRange(tiley)))
 				continue;
@@ -1285,7 +1281,7 @@ Viewport_RenderBrush(int x, int y)
 	}
 
 	/* Draw fog. */
-	Viewport_DrawTilesInRange(tile_left + tile_dx, tile_top + tile_dy,
+	Viewport_DrawTilesInRange(tile_x0, tile_y0,
 			viewportX1, viewportY1, viewportX2, viewportY2, false, true);
 
 	/* Render interface. */
