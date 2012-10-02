@@ -821,7 +821,13 @@ uint16 Unit_IsValidMovementIntoStructure(Unit *unit, Structure *s)
 		if (unit->o.type == UNIT_SABOTEUR && unit->targetMove == structEnc) return 2;
 		/* Entering houses is only possible for foot-units and if the structure is conquerable.
 		 * Everyone else can only move close to the building. */
-		if (ui->movementType == MOVEMENT_FOOT && si->o.flags.conquerable) return unit->targetMove == structEnc ? 2 : 1;
+		if (ui->movementType == MOVEMENT_FOOT && si->o.flags.conquerable) {
+			/* ENHANCEMENT -- due to the low weapon range, soldiers tend to capture structures when ordered to attack. */
+			if (enhancement_fix_firing_rates_and_ranges && (unit->actionID == ACTION_ATTACK))
+				return 1;
+
+			return unit->targetMove == structEnc ? 2 : 1;
+		}
 		return 0;
 	}
 

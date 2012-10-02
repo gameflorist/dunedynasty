@@ -36,8 +36,8 @@ bool enhancement_fix_enemy_approach_direction_warning = true;
 bool enhancement_fix_everlasting_unit_wobble = true;
 
 /**
- * In the original game, sonic blasts' travel distance and units'
- * relative firing rates vary with the game speed.
+ * Make sonic blasts' distance and units' relative firing rates more
+ * consistent across game speeds, and make infantry attack structures.
  */
 bool enhancement_fix_firing_rates_and_ranges = true;
 
