@@ -825,7 +825,39 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 static void InGame_Numpad_Move(uint16 key)
 {
-	if (key == 0) return;
+	const struct {
+		enum Scancode code;
+		int dx, dy;
+	} keypad[8] = {
+		{ SCANCODE_KEYPAD_1, -1,  1 },
+		{ SCANCODE_KEYPAD_2,  0,  1 },
+		{ SCANCODE_KEYPAD_3,  1,  1 },
+		{ SCANCODE_KEYPAD_4, -1,  0 },
+		{ SCANCODE_KEYPAD_6,  1,  0 },
+		{ SCANCODE_KEYPAD_7, -1, -1 },
+		{ SCANCODE_KEYPAD_8,  0, -1 },
+		{ SCANCODE_KEYPAD_9,  1, -1 }
+	};
+
+	int dx = 0, dy = 0;
+
+	for (unsigned int i = 0; i < lengthof(keypad); i++) {
+		if ((key == keypad[i].code) ||
+		    (key == 0 && Input_Test(keypad[i].code))) {
+			dx += keypad[i].dx;
+			dy += keypad[i].dy;
+		}
+	}
+
+	if (dx != 0 || dy != 0) {
+		dx = clamp(-1, dx, 1);
+		dy = clamp(-1, dy, 1);
+		Map_MoveDirection(dx * g_gameConfig.scrollSpeed, dy * g_gameConfig.scrollSpeed);
+		return;
+	}
+
+	if (key == 0)
+		return;
 
 	switch (key) {
 #if 0
@@ -834,38 +866,6 @@ static void InGame_Numpad_Move(uint16 key)
 			Map_SelectNext(false);
 			return;
 #endif
-
-		case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
-			Map_MoveDirection( 0 * g_gameConfig.scrollSpeed, -1 * g_gameConfig.scrollSpeed);
-			return;
-
-		case SCANCODE_KEYPAD_9: /* NUMPAD 9 / PAGE UP */
-			Map_MoveDirection( 1 * g_gameConfig.scrollSpeed, -1 * g_gameConfig.scrollSpeed);
-			return;
-
-		case SCANCODE_KEYPAD_6: /* NUMPAD 6 / ARROW RIGHT */
-			Map_MoveDirection( 1 * g_gameConfig.scrollSpeed,  0 * g_gameConfig.scrollSpeed);
-			return;
-
-		case SCANCODE_KEYPAD_3: /* NUMPAD 3 / PAGE DOWN */
-			Map_MoveDirection( 1 * g_gameConfig.scrollSpeed,  1 * g_gameConfig.scrollSpeed);
-			return;
-
-		case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
-			Map_MoveDirection( 0 * g_gameConfig.scrollSpeed,  1 * g_gameConfig.scrollSpeed);
-			return;
-
-		case SCANCODE_KEYPAD_1: /* NUMPAD 1 / END */
-			Map_MoveDirection(-1 * g_gameConfig.scrollSpeed,  1 * g_gameConfig.scrollSpeed);
-			return;
-
-		case SCANCODE_KEYPAD_4: /* NUMPAD 4 / ARROW LEFT */
-			Map_MoveDirection(-1 * g_gameConfig.scrollSpeed,  0 * g_gameConfig.scrollSpeed);
-			return;
-
-		case SCANCODE_KEYPAD_7: /* NUMPAD 7 / HOME */
-			Map_MoveDirection(-1 * g_gameConfig.scrollSpeed, -1 * g_gameConfig.scrollSpeed);
-			return;
 
 		case SCANCODE_1:
 		case SCANCODE_2:
