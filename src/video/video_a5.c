@@ -645,7 +645,7 @@ VideoA5_ExportCPS(const char *filename, unsigned char *buf)
 
 	bool use_benepal = false;
 	if ((strncmp(cps->filename, "MENTATM.CPS", sizeof(cps->filename)) == 0) ||
-	    (strncmp(cps->filename, "MISC", sizeof(cps->filename)) == 0)) {
+	    (strncmp(cps->filename, "MISC", 4) == 0)) {
 		use_benepal = true;
 	}
 
