@@ -222,7 +222,7 @@ Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *
 /*--------------------------------------------------------------*/
 
 static void
-ConfigA5_InitDataDirectories(void)
+ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 {
 	ALLEGRO_PATH *dune_data_path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
 	ALLEGRO_PATH *user_data_path = al_get_standard_path(ALLEGRO_USER_DATA_PATH);
@@ -233,10 +233,12 @@ ConfigA5_InitDataDirectories(void)
 	char filename[1024];
 	FILE *fp;
 
+	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
+	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), "%s", dune_data_cstr);
+
 	/* Find global data directory.  Test we can read DUNE.PAK. */
 
 	/* 1. Try current executable directory/data/DUNE.PAK. */
-	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
 	fp = File_Open_CaseInsensitive(true, "DUNE.PAK", "rb");
 
 	/* 2. Try ~/.local/share/dunedynasty/data/DUNE.PAK. */
@@ -264,7 +266,18 @@ ConfigA5_InitDataDirectories(void)
 	}
 
 	/* Find personal directory, and create subdirectories. */
-	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), "%s", user_settings_cstr);
+
+	/* 1. Try current executable directory/dunedynasty.cfg. */
+	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
+	s_configFile = al_load_config_file(filename);
+
+	/* 2. Try ~/.config/dunedynasty/dunedynasty.cfg. */
+	if (s_configFile == NULL) {
+		snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), "%s", user_settings_cstr);
+		snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
+		s_configFile = al_load_config_file(filename);
+	}
+
 	File_MakeCompleteFilename(filename, sizeof(filename), false, "", false);
 	if (!al_make_directory(filename)) {
 		fprintf(stderr, "Could not create %s!\n", filename);
@@ -280,12 +293,7 @@ ConfigA5_InitDataDirectories(void)
 void
 GameOptions_Load(void)
 {
-	char filename[1024];
-
-	ConfigA5_InitDataDirectories();
-
-	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
-	s_configFile = al_load_config_file(filename);
+	ConfigA5_InitDataDirectoriesAndLoadConfigFile();
 	if (s_configFile == NULL)
 		return;
 
