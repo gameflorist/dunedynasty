@@ -1470,10 +1470,18 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 		g_var_37B8 = true;
 
 		switch (oldSelectionType) {
-			case SELECTIONTYPE_TARGET:
 			case SELECTIONTYPE_PLACE:
 				Map_SetSelection(g_structureActivePosition);
 				/* Fall-through */
+
+			/* ENHANCEMENT -- Originally, SELECTIONTYPE_TARGET was
+			 * above SELECTIONTYPE_PLACE, so that if the selected unit
+			 * moved a tile between activating the target command and
+			 * clicking, the unit loses its selection (another unit
+			 * might be selected).  This works badly with multiple
+			 * selection.
+			 */
+			case SELECTIONTYPE_TARGET:
 			case SELECTIONTYPE_STRUCTURE:
 				GUI_DisplayText(NULL, -1);
 				break;
