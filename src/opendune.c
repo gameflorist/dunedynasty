@@ -1015,7 +1015,7 @@ GameLoop_TweakWidgetDimensions(void)
 void GameLoop_Main(bool new_game)
 {
 	static int64_t l_timerNext = 0;
-	static uint32 l_timerUnitStatus = 0;
+	static int64_t l_timerUnitStatus = 0;
 	static int16  l_selectionState = -2;
 
 	uint16 key;
@@ -1037,7 +1037,11 @@ void GameLoop_Main(bool new_game)
 
 	g_gameMode = GM_NORMAL;
 	g_gameOverlay = GAMEOVERLAY_NONE;
+	Timer_RegisterSource();
+
 	while (g_gameMode == GM_NORMAL) {
+		Timer_WaitForEvent();
+
 #if 0
 		if (g_gameMode == GM_PICKHOUSE) {
 			Music_Play(28);
@@ -1164,8 +1168,9 @@ void GameLoop_Main(bool new_game)
 		if (!g_var_38F8) break;
 
 		Video_Tick();
-		sleepIdle();
 	}
+
+	Timer_UnregisterSource();
 
 #if 0
 	if (s_enableLog != 0) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, "DUNE.LOG");

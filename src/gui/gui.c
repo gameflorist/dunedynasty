@@ -1823,10 +1823,12 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 			if (y2 == height) y2 = 0;
 		}
 
-		/* XXX -- This delays the system so you can in fact see the animation */
+		/* XXX -- This delays the system so you can in fact see the animation.
+		 * XXX -- This effect isn't reproduced in Dune Dynasty.
+		 */
 		if ((y % 4) == 0) {
 			Video_Tick();
-			Timer_Sleep(1);
+			/* Timer_Sleep(1); */
 		}
 	}
 

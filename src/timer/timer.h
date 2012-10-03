@@ -17,6 +17,9 @@ extern int64_t g_timerGame;
 extern bool Timer_SetTimer(enum TimerType timer, bool set);
 extern int64_t Timer_GetTimer(enum TimerType timer);
 extern void Timer_Sleep(int tics);
+extern void Timer_RegisterSource(void);
+extern void Timer_UnregisterSource(void);
+extern void Timer_WaitForEvent(void);
 
 #if 0
 #include "timer_opendune.h"
