@@ -152,12 +152,16 @@ static bool GUI_Widget_TextButton_Click_(Widget *w, ActionType ref, Unit *u)
 
 	ai = &g_table_actionInfo[action];
 
+	/* For single selection, we enter this loop when the selection
+	 * type changes from SELECTIONTYPE_UNIT to SELECTIONTYPE_TARGET.
+	 * For multiple selection, we need to abort the outer loop.
+	 */
 	if (ai->selectionType != g_selectionType) {
 		g_unitActive = u;
 		g_activeAction = action;
 		GUI_ChangeSelectionType(ai->selectionType);
 
-		return true;
+		return false;
 	}
 
 	Object_Script_Variable4_Clear(&u->o);
@@ -167,9 +171,8 @@ static bool GUI_Widget_TextButton_Click_(Widget *w, ActionType ref, Unit *u)
 
 	Unit_SetAction(u, action);
 
-	/* XXX: What? */
 	if (ui->movementType == MOVEMENT_FOOT)
-		Audio_PlaySample(ai->selectionType, 255, 0.0f);
+		Audio_PlaySample(ai->soundID, 255, 0.0f);
 
 	if (unitAction == action) return true;
 
@@ -193,7 +196,8 @@ bool GUI_Widget_TextButton_Click(Widget *w)
 
 	int iter;
 	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
-		GUI_Widget_TextButton_Click_(w, action, u);
+		if (GUI_Widget_TextButton_Click_(w, action, u) == false)
+			break;
 	}
 
 	return true;
