@@ -28,7 +28,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -93,7 +93,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -158,7 +158,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -223,7 +223,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -288,7 +288,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -353,7 +353,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -418,7 +418,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -483,7 +483,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -548,7 +548,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -613,7 +613,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -678,7 +678,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -743,7 +743,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -808,7 +808,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -873,7 +873,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -938,7 +938,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -1003,7 +1003,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -1068,7 +1068,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -1133,7 +1133,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},
@@ -1198,7 +1198,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ false,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ false
 		},

@@ -176,7 +176,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -249,7 +249,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ true,
 		/* priority             */ true
 		},
@@ -322,7 +322,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -395,7 +395,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ false,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ true,
 		/* priority             */ true
 		},
@@ -541,7 +541,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ true,
 		/* priority             */ true
 		},
@@ -614,7 +614,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -687,7 +687,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -760,7 +760,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -833,7 +833,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -906,7 +906,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -979,7 +979,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -1052,7 +1052,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -1125,7 +1125,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},
@@ -1271,7 +1271,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* canBePickedUp        */ true,
 		/* noMessageOnDeath     */ false,
 		/* tabSelectable        */ true,
-		/* scriptNoSlowdown     */ false,
+		/* scriptNoSlowdown     */ true,
 		/* targetAir            */ false,
 		/* priority             */ true
 		},

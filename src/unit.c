@@ -425,9 +425,12 @@ void GameLoop_Unit(void)
 			if (u->o.script.delay == 0) {
 				if (Script_IsLoaded(&u->o.script)) {
 					int opcodesLeft = SCRIPT_UNIT_OPCODES_PER_TICK + 2;
+
+#if 0
 					if (!ui->o.flags.scriptNoSlowdown && !Map_IsPositionInViewport(u->o.position, NULL, NULL)) {
 						opcodesLeft = 3;
 					}
+#endif
 
 					u->o.script.variables[3] = g_playerHouseID;
 
