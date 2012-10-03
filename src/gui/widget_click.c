@@ -16,6 +16,7 @@
 #include "widget.h"
 #include "../audio/audio.h"
 #include "../config.h"
+#include "../enhancement.h"
 #include "../file.h"
 #include "../gfx.h"
 #include "../house.h"
@@ -199,6 +200,9 @@ bool GUI_Widget_TextButton_Click(Widget *w)
 		if (GUI_Widget_TextButton_Click_(w, action, u) == false)
 			break;
 	}
+
+	if (enhancement_play_additional_voices)
+		Audio_PlaySample(SAMPLE_BUTTON, 128, 0.0f);
 
 	return true;
 }
