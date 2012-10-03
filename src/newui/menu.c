@@ -392,7 +392,7 @@ PickHouse_Loop(void)
 			Audio_PlayVoice(VOICE_HARKONNEN + g_playerHouseID);
 
 			while (Audio_Poll())
-				Timer_Wait();
+				Timer_Sleep(1);
 
 			return MENU_CONFIRM_HOUSE;
 

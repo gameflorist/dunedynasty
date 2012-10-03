@@ -186,7 +186,7 @@ Cutscene_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		/* XXX -- This delays the system so you can in fact see the animation */
 		if ((y % 4) == 0) {
 			Cutscene_CopyScreen();
-			Timer_Wait();
+			Timer_Sleep(1);
 		}
 	}
 }
@@ -1345,7 +1345,7 @@ static void Gameloop_Logos(void)
 	for (int timeout = 0; timeout < 60; timeout++) {
 		if (!Cutscene_InputSkipScene()) {
 			Cutscene_CopyScreen();
-			Timer_Wait();
+			Timer_Sleep(1);
 			continue;
 		}
 

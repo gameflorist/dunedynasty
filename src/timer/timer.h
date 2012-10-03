@@ -9,7 +9,6 @@ enum TimerType {
 	TIMER_GAME  = 1
 };
 
-#define Timer_Wait()        Timer_Sleep(1)
 #define Timer_GameTicks()   Timer_GetTimer(TIMER_GAME)
 #define Timer_GetTicks()    Timer_GetTimer(TIMER_GUI)
 
