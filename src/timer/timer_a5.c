@@ -11,6 +11,8 @@
 static ALLEGRO_TIMER *s_timer[2];
 static ALLEGRO_EVENT_QUEUE *s_timer_queue;
 
+int64_t g_timerGame;
+
 bool
 TimerA5_Init(void)
 {
@@ -34,8 +36,10 @@ TimerA5_Uninit(void)
 	al_destroy_timer(s_timer[TIMER_GAME]);
 }
 
+/*--------------------------------------------------------------*/
+
 bool
-TimerA5_SetTimer(enum TimerType timer, bool set)
+Timer_SetTimer(enum TimerType timer, bool set)
 {
 	assert(timer <= TIMER_GAME);
 
@@ -50,7 +54,7 @@ TimerA5_SetTimer(enum TimerType timer, bool set)
 }
 
 void
-TimerA5_Sleep(int tics)
+Timer_Sleep(int tics)
 {
 	ALLEGRO_EVENT_SOURCE *source = al_get_timer_event_source(s_timer[TIMER_GUI]);
 
@@ -67,7 +71,7 @@ TimerA5_Sleep(int tics)
 }
 
 int64_t
-TimerA5_GetTicks(enum TimerType timer)
+Timer_GetTimer(enum TimerType timer)
 {
 	assert(timer <= TIMER_GAME);
 

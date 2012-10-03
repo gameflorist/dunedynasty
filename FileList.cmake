@@ -88,7 +88,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/table/windowdesc.c
 	src/team.c
 	src/tile.c
-	src/timer/timer.c
 	src/timer/timer_a5.c
 	src/tools.c
 	src/unit.c

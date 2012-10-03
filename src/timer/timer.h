@@ -1,8 +1,8 @@
 #ifndef TIMER_TIMER_H
 #define TIMER_TIMER_H
 
-#include <inttypes.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 enum TimerType {
 	TIMER_GUI   = 0,
