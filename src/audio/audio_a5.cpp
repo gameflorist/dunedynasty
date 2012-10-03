@@ -233,7 +233,7 @@ AudioA5_InitAud(const char *filename)
 
 	snprintf(fn, sizeof(fn), "%s/%s.AUD", g_dune_data_dir, filename);
 
-	ALLEGRO_FILE *f = al_fopen(fn, "r");
+	ALLEGRO_FILE *f = al_fopen(fn, "rb");
 	if (f == NULL)
 		return NULL;
 
@@ -268,6 +268,7 @@ AudioA5_FreeMusicStream(void)
 
 		case MUSICSTREAM_AUD:
 			if (s_aud != NULL) {
+				al_unregister_event_source(g_a5_input_queue, al_get_audio_stream_event_source(s_music_stream));
 				unload_aud_stream(s_aud);
 				s_aud = NULL;
 				s_music_stream = NULL;
@@ -354,6 +355,7 @@ AudioA5_InitExternalMusic(const ExtMusicInfo *ext)
 		next_aud = AudioA5_InitAud(ext->filename);
 		if (next_aud != NULL) {
 			stream = get_aud_stream(next_aud);
+			al_register_event_source(g_a5_input_queue, al_get_audio_stream_event_source(stream));
 			next_music_stream_type = MUSICSTREAM_AUD;
 		}
 	}
