@@ -430,7 +430,10 @@ Viewport_Click(Widget *w)
 
 		bool attack = false;
 
-		if (target_u != NULL) {
+		if (lst == LST_BLOOM_FIELD) {
+			attack = true;
+		}
+		else if (target_u != NULL) {
 			if (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(target_u)))
 				attack = true;
 		}
