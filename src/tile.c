@@ -26,15 +26,14 @@ bool Tile_IsValid(tile32 tile)
 	return (tile.d.ux == 0x0 && tile.d.uy == 0x0);
 }
 
-/**
- * Return the X- and Y- position/offset of a tile, in some weird order.
- *
- * @param tile The tile32 to get the X- and Y-position/offset from.
- * @return The X-position, X-offset, Y-position, and Y-offset of a tile, in
- *  that order, 8bits per item.
- */
-uint32 Tile_GetSpecialXY(tile32 tile)
+static uint32
+Tile_MakeTile32(uint16 x, uint16 y)
 {
+	tile32 tile;
+
+	tile.s.x = x;
+	tile.s.y = y;
+
 	return (tile.d.px + (tile.d.ox << 8)) + ((tile.d.py + (tile.d.oy << 8)) << 16);
 }
 
@@ -261,7 +260,7 @@ void Tile_RemoveFogInRadius(tile32 tile, uint16 radius)
 
 	x = Tile_GetPackedX(packed);
 	y = Tile_GetPackedY(packed);
-	/* tile.tile = Tile_GetSpecialXY(tile); */
+	tile.tile = Tile_MakeTile32(x, y);
 
 	for (i = -radius; i <= radius; i++) {
 		for (j = -radius; j <= radius; j++) {
@@ -271,9 +270,7 @@ void Tile_RemoveFogInRadius(tile32 tile, uint16 radius)
 			if ((y + j) < 0 || (y + j) >= 64) continue;
 
 			packed = Tile_PackXY(x + i, y + j);
-
-			/* t.tile = Tile_GetSpecialXY(Tile_UnpackTile(packed)); */
-			t = Tile_UnpackTile(packed);
+			t.tile = Tile_MakeTile32(x + i, y + j);
 
 			if (Tile_GetDistanceRoundedUp(tile, t) > radius) continue;
 

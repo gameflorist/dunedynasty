@@ -163,7 +163,7 @@ uint16 Script_Team_GetAverageDistance(ScriptEngine *script)
 	position.s.x /= count;
 	position.s.y /= count;
 
-	t->position.tile = Tile_GetSpecialXY(position);
+	t->position = position;
 
 	find.houseID = t->houseID;
 	find.index   = 0xFFFF;
