@@ -512,7 +512,10 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 		}
 
 		if (g_feedback[loc06].messageId != 0) {
-			GameLoop_DrawText(String_Get_ByIndex(subtitle->stringID), subtitle->top);
+			if ((g_feedback[loc06].messageId == 1) ||
+			    (g_feedback[loc06].messageId == 2 && g_enable_subtitles)) {
+				GameLoop_DrawText(String_Get_ByIndex(subtitle->stringID), subtitle->top);
+			}
 		}
 	} else {
 		if (subtitle->stringID != STR_NULL) {
