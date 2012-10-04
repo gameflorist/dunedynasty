@@ -657,6 +657,7 @@ void GUI_Widget_InitSaveLoad(bool save)
 }
 
 /* return values:
+ * -3: scroll button pressed.
  * -2: game was loaded.
  * -1: cancel clicked.
  *  0: stay in save/load game loop.
@@ -666,6 +667,7 @@ int GUI_Widget_SaveLoad_Click(bool save)
 {
 	Widget *w = g_widgetLinkedListTail;
 	uint16 key = GUI_Widget_HandleEvents(w);
+	int ret = 0;
 
 	UpdateArrows(save, false);
 
@@ -688,11 +690,13 @@ int GUI_Widget_SaveLoad_Click(bool save)
 			case 0x25: /* Up */
 				s_savegameIndexBase = min(s_savegameCountOnDisk - (save ? 0 : 1), s_savegameIndexBase + 1);
 				FillSavegameDesc(save);
+				ret = -3;
 				break;
 
 			case 0x26: /* Down */
 				s_savegameIndexBase = max(0, s_savegameIndexBase - 1);
 				FillSavegameDesc(save);
+				ret = -3;
 				break;
 
 			case 0x23: /* Cancel */
@@ -711,7 +715,7 @@ int GUI_Widget_SaveLoad_Click(bool save)
 		GUI_Widget_MakeNormal(w2, false);
 	}
 
-	return 0;
+	return ret;
 }
 
 /**

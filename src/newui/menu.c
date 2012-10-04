@@ -645,6 +645,9 @@ LoadGame_Loop(void)
 	else if (ret == -2) {
 		return StartGame_Loop(false);
 	}
+	else if (ret == -3) {
+		redraw = true;
+	}
 
 	Widget *w = g_widgetLinkedListTail;
 	while (w != NULL) {
