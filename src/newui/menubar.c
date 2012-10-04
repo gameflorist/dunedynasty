@@ -42,6 +42,7 @@ static enum {
 } radar_animation_state;
 
 static int64_t radar_animation_timer;
+static int s_save_entry;
 
 void
 MenuBar_HideMentatAndOptions(void)
@@ -270,10 +271,7 @@ MenuBar_ClickMentat(Widget *w)
 void
 MenuBar_TickMentatOverlay(void)
 {
-	Video_ShadeScreen(128);
-	A5_UseTransform(SCREENDIV_MENU);
-
-	if (MentatHelp_Tick(g_playerHouseID, &g_mentat_state)) {
+	if (MentatHelp_Tick(&g_mentat_state)) {
 		free(g_widgetMentatFirst);
 		g_widgetMentatFirst = NULL;
 
@@ -296,6 +294,15 @@ MenuBar_TickMentatOverlay(void)
 		Sprites_UnloadTiles();
 		Sprites_LoadTiles();
 	}
+}
+
+void
+MenuBar_DrawMentatOverlay(void)
+{
+	Video_ShadeScreen(128);
+	A5_UseTransform(SCREENDIV_MENU);
+
+	MentatHelp_Draw(g_playerHouseID, &g_mentat_state);
 
 	A5_UseTransform(SCREENDIV_MAIN);
 }
@@ -320,12 +327,6 @@ MenuBar_ClickOptions(Widget *w)
 static void
 MenuBar_TickOptions(void)
 {
-	const WindowDesc *desc = &g_optionsWindowDesc;
-
-	Video_ShadeScreen(128);
-	GUI_Widget_DrawWindow(desc);
-	GUI_Widget_DrawAll(g_widgetLinkedListTail);
-
 	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_LOAD_A_GAME */
@@ -373,17 +374,8 @@ MenuBar_TickOptions(void)
 static void
 MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 {
-	static int l_save_entry;
-
-	Video_ShadeScreen(128);
-
 	if (overlay == GAMEOVERLAY_SAVE_ENTRY) {
-		const WindowDesc *desc = &g_savegameNameWindowDesc;
-
-		GUI_Widget_DrawWindow(desc);
-		GUI_Widget_DrawAll(g_widgetLinkedListTail);
-
-		const int ret = GUI_Widget_Savegame_Click(l_save_entry);
+		const int ret = GUI_Widget_Savegame_Click(s_save_entry);
 
 		if (ret == -1) {
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
@@ -394,11 +386,6 @@ MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 		}
 	}
 	else {
-		const WindowDesc *desc = &g_saveLoadWindowDesc;
-
-		GUI_Widget_DrawWindow(desc);
-		GUI_Widget_DrawAll(g_widgetLinkedListTail);
-
 		const bool save = (overlay == GAMEOVERLAY_SAVE_GAME);
 		const int ret = GUI_Widget_SaveLoad_Click(save);
 
@@ -412,7 +399,7 @@ MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 		else if (ret > 0) {
 			g_gameOverlay = GAMEOVERLAY_SAVE_ENTRY;
 			GUI_Window_Create(&g_savegameNameWindowDesc);
-			l_save_entry = ret - 0x1E;
+			s_save_entry = ret - 0x1E;
 		}
 	}
 }
@@ -420,12 +407,6 @@ MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 static void
 MenuBar_TickGameControls(void)
 {
-	const WindowDesc *desc = &g_gameControlWindowDesc;
-
-	Video_ShadeScreen(128);
-	GUI_Widget_DrawWindow(desc);
-	GUI_Widget_DrawAll(g_widgetLinkedListTail);
-
 	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_MUSIC_IS */
@@ -467,12 +448,6 @@ MenuBar_TickGameControls(void)
 static void
 MenuBar_TickConfirmation(enum GameOverlay overlay)
 {
-	const WindowDesc *desc = &g_yesNoWindowDesc;
-
-	Video_ShadeScreen(128);
-	GUI_Widget_DrawWindow(desc);
-	GUI_Widget_DrawAll(g_widgetLinkedListTail);
-
 	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
 	switch (widgetID) {
 		case 0x8000 | 30: /* Yes */
@@ -500,8 +475,6 @@ MenuBar_TickConfirmation(enum GameOverlay overlay)
 void
 MenuBar_TickOptionsOverlay(void)
 {
-	A5_UseTransform(SCREENDIV_MENU);
-
 	switch (g_gameOverlay) {
 		case GAMEOVERLAY_OPTIONS:
 			MenuBar_TickOptions();
@@ -527,13 +500,52 @@ MenuBar_TickOptionsOverlay(void)
 			break;
 	}
 
-	A5_UseTransform(SCREENDIV_MAIN);
-
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		Timer_SetTimer(TIMER_GAME, true);
 		Structure_Recount();
 		Unit_Recount();
 	}
+}
+
+void
+MenuBar_DrawOptionsOverlay(void)
+{
+	A5_UseTransform(SCREENDIV_MENU);
+
+	Video_ShadeScreen(128);
+
+	switch (g_gameOverlay) {
+		case GAMEOVERLAY_OPTIONS:
+			GUI_Widget_DrawWindow(&g_optionsWindowDesc);
+			break;
+
+		case GAMEOVERLAY_LOAD_GAME:
+		case GAMEOVERLAY_SAVE_GAME:
+			GUI_Widget_DrawWindow(&g_saveLoadWindowDesc);
+			break;
+
+		case GAMEOVERLAY_SAVE_ENTRY:
+			GUI_Widget_DrawWindow(&g_savegameNameWindowDesc);
+			GUI_Widget_Savegame_Click(s_save_entry);
+			break;
+
+		case GAMEOVERLAY_GAME_CONTROLS:
+			GUI_Widget_DrawWindow(&g_gameControlWindowDesc);
+			break;
+
+		case GAMEOVERLAY_CONFIRM_RESTART:
+		case GAMEOVERLAY_CONFIRM_PICK_HOUSE:
+		case GAMEOVERLAY_CONFIRM_QUIT:
+			GUI_Widget_DrawWindow(&g_yesNoWindowDesc);
+			break;
+
+		default:
+			break;
+	}
+
+	GUI_Widget_DrawAll(g_widgetLinkedListTail);
+
+	A5_UseTransform(SCREENDIV_MAIN);
 }
 
 /*--------------------------------------------------------------*/

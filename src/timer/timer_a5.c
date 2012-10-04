@@ -9,7 +9,7 @@
 #include "../common_a5.h"
 
 static ALLEGRO_TIMER *s_timer[2];
-static ALLEGRO_EVENT_QUEUE *s_timer_queue;
+ALLEGRO_EVENT_QUEUE *s_timer_queue;
 
 int64_t g_timerGame;
 
@@ -81,8 +81,8 @@ Timer_UnregisterSource(void)
 void
 Timer_WaitForEvent(void)
 {
-	al_wait_for_event(s_timer_queue, NULL);
-	al_drop_next_event(s_timer_queue);
+	ALLEGRO_EVENT ev;
+	al_wait_for_event(s_timer_queue, &ev);
 }
 
 void
@@ -96,4 +96,10 @@ Timer_Sleep(int tics)
 	}
 
 	Timer_UnregisterSource();
+}
+
+bool
+Timer_QueueIsEmpty(void)
+{
+	return al_event_queue_is_empty(s_timer_queue);
 }

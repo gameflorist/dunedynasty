@@ -68,6 +68,7 @@ extern void MentatSecurity_PrepareQuestion(bool pick_new_question, MentatState *
 extern void MentatSecurity_Draw(MentatState *mentat);
 extern bool MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start);
 
-extern bool MentatHelp_Tick(enum HouseType houseID, MentatState *mentat);
+extern void MentatHelp_Draw(enum HouseType houseID, MentatState *mentat);
+extern bool MentatHelp_Tick(MentatState *mentat);
 
 #endif

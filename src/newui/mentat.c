@@ -360,7 +360,7 @@ MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start)
 
 /*--------------------------------------------------------------*/
 
-static void
+void
 MentatHelp_Draw(enum HouseType houseID, MentatState *mentat)
 {
 	Mentat_DrawBackground(houseID);
@@ -385,10 +385,8 @@ MentatHelp_Draw(enum HouseType houseID, MentatState *mentat)
 }
 
 bool
-MentatHelp_Tick(enum HouseType houseID, MentatState *mentat)
+MentatHelp_Tick(MentatState *mentat)
 {
-	MentatHelp_Draw(houseID, mentat);
-
 	if (Timer_GetTicks() >= mentat->speaking_timer) {
 		mentat->speaking_mode = 0;
 	}

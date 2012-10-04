@@ -13,9 +13,11 @@ extern void MenuBar_StartRadarAnimation(bool activate);
 
 extern bool MenuBar_ClickMentat(Widget *w);
 extern void MenuBar_TickMentatOverlay(void);
+extern void MenuBar_DrawMentatOverlay(void);
 
 extern bool MenuBar_ClickOptions(Widget *w);
 extern void MenuBar_TickOptionsOverlay(void);
+extern void MenuBar_DrawOptionsOverlay(void);
 
 extern uint16 GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...);
 

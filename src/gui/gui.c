@@ -1348,7 +1348,6 @@ void GUI_DrawInterfaceAndRadar(void)
 	}
 
 	GFX_Screen_SetActive(oldScreenID);
-	Input_History_Clear();
 }
 
 /**

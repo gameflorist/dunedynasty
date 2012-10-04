@@ -1041,6 +1041,16 @@ void GameLoop_Main(bool new_game)
 
 	while (g_gameMode == GM_NORMAL) {
 		Timer_WaitForEvent();
+		const int64_t curr_ticks = Timer_GameTicks();
+
+		if (g_gameOverlay == GAMEOVERLAY_NONE && g_timerGame != curr_ticks) {
+			g_timerGame = curr_ticks;
+		}
+		else if (g_gameOverlay != GAMEOVERLAY_NONE) {
+		}
+		else {
+			continue;
+		}
 
 #if 0
 		if (g_gameMode == GM_PICKHOUSE) {
@@ -1121,7 +1131,7 @@ void GameLoop_Main(bool new_game)
 			key = 0;
 		}
 
-		GUI_DrawInterfaceAndRadar();
+		Input_History_Clear();
 
 		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE) {
 			if (Unit_AnySelected()) {
@@ -1138,15 +1148,11 @@ void GameLoop_Main(bool new_game)
 
 			InGame_Numpad_Move(key);
 
-			g_timerGame = Timer_GameTicks();
-
 			UnitAI_SquadLoop();
 			GameLoop_Team();
 			GameLoop_Unit();
 			GameLoop_Structure();
 			GameLoop_House();
-
-			GUI_DrawScreen(0);
 		}
 
 		if (g_var_38F8 && !g_debugScenario) {
@@ -1167,7 +1173,20 @@ void GameLoop_Main(bool new_game)
 
 		if (!g_var_38F8) break;
 
-		Video_Tick();
+		if (Timer_QueueIsEmpty()) {
+			GUI_DrawInterfaceAndRadar();
+
+			if (g_gameOverlay == GAMEOVERLAY_NONE) {
+			}
+			else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
+				MenuBar_DrawMentatOverlay();
+			}
+			else {
+				MenuBar_DrawOptionsOverlay();
+			}
+
+			Video_Tick();
+		}
 	}
 
 	Timer_UnregisterSource();
