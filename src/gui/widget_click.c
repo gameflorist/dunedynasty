@@ -668,6 +668,16 @@ int GUI_Widget_SaveLoad_Click(bool save)
 	uint16 key = GUI_Widget_HandleEvents(w);
 
 	UpdateArrows(save, false);
+
+	if (key == (0x80 | MOUSE_ZAXIS)) {
+		if ((g_mouseDZ > 0) && (!g_table_windowWidgets[7].flags.s.invisible)) {
+			key = 0x8025;
+		}
+		else if ((g_mouseDZ < 0) && (!g_table_windowWidgets[8].flags.s.invisible)) {
+			key = 0x8026;
+		}
+	}
+
 	if (key & 0x8000) {
 		Widget *w2;
 
