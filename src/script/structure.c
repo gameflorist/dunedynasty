@@ -298,7 +298,13 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 	if (s->rallyPoint != 0xFFFF) {
 		const int encoded = Tools_Index_Encode(s->rallyPoint, IT_TILE);
 
-		Unit_SetAction(u, ACTION_MOVE);
+		if (u->o.type == UNIT_HARVESTER) {
+			Unit_SetAction(u, ACTION_HARVEST);
+		}
+		else {
+			Unit_SetAction(u, ACTION_MOVE);
+		}
+
 		Unit_SetDestination(u, encoded);
 	}
 

@@ -769,6 +769,7 @@ Viewport_DrawRallyPoint(void)
 	    (s->o.type == STRUCTURE_WOR_TROOPER) ||
 	    (s->o.type == STRUCTURE_BARRACKS) ||
 	    (s->o.type == STRUCTURE_STARPORT) ||
+	    (s->o.type == STRUCTURE_REFINERY) ||
 	    (s->o.type == STRUCTURE_REPAIR)) {
 		const int tx = Tile_GetPackedX(g_viewportPosition);
 		const int ty = Tile_GetPackedY(g_viewportPosition);
