@@ -1631,7 +1631,14 @@ bool Unit_Move(Unit *unit, uint16 distance)
 				if (unit->o.type == UNIT_SABOTEUR && (Map_GetLandscapeType(Tile_PackTile(newPosition)) == LST_WALL || (unit->targetMove != 0 && Tile_GetDistance(unit->o.position, Tools_Index_GetTile(unit->targetMove)) < 32))) {
 					Map_MakeExplosion(4, newPosition, 500, 0);
 
-					Unit_Free(unit);
+					/* ENHANCEMENT -- Use Unit_Remove so that the saboteur is cleared from the map. */
+					if (g_dune2_enhanced) {
+						Unit_Remove(unit);
+					}
+					else {
+						Unit_Free(unit);
+					}
+
 					return true;
 				}
 
