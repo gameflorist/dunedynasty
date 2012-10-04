@@ -919,6 +919,17 @@ static void InGame_Numpad_Move(uint16 key)
 			enhancement_draw_health_bars = !enhancement_draw_health_bars;
 			break;
 
+		case 0x80 | MOUSE_ZAXIS:
+			if (g_mouseDZ == 0) {
+				return;
+			}
+			else {
+				const WidgetProperties *w = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
+
+				if (Mouse_InRegion_Div(SCREENDIV_SIDEBAR, w->xBase, w->yBase, w->xBase + w->width - 1, w->yBase + w->height - 1))
+					return;
+			}
+			/* Fall though. */
 		case SCANCODE_MINUS:
 		case SCANCODE_EQUALS:
 			{
@@ -931,15 +942,43 @@ static void InGame_Numpad_Move(uint16 key)
 						break;
 				}
 
-				int new_scale = curr + (key == SCANCODE_EQUALS ? 1 : -1);
+				const int tilex = Tile_GetPackedX(g_viewportPosition);
+				const int tiley = Tile_GetPackedY(g_viewportPosition);
+				int viewport_cx = g_viewport_scrollOffsetX + viewport->width / 2;
+				int viewport_cy = g_viewport_scrollOffsetY + viewport->height / 2;
+				int new_scale;
+
+				/* For mouse wheel zooming in, zoom towards the cursor. */
+				if ((key == (0x80 | MOUSE_ZAXIS)) && (g_mouseDZ > 0)) {
+					const ScreenDiv *div = &g_screenDiv[SCREENDIV_VIEWPORT];
+
+					if (Mouse_InRegion_Div(SCREENDIV_VIEWPORT, 0, 0, div->width, div->height)) {
+						int mousex, mousey;
+
+						new_scale = curr + 1;
+
+						Mouse_TransformToDiv(SCREENDIV_VIEWPORT, &mousex, &mousey);
+						viewport_cx = (0.50 * viewport_cx) + (0.50 * mousex);
+						viewport_cy = (0.50 * viewport_cy) + (0.50 * mousey);
+					}
+					else {
+						new_scale = curr + 1;
+					}
+				}
+				else {
+					if (key == SCANCODE_EQUALS) {
+						new_scale = curr + 1;
+					}
+					else {
+						new_scale = curr - 1;
+					}
+				}
+
 				new_scale = clamp(0, new_scale, (int)lengthof(scaling_factor) - 1);
+				viewport_cx += TILE_SIZE * tilex;
+				viewport_cy += TILE_SIZE * tiley;
 
 				if (new_scale != curr) {
-					const int tilex = Tile_GetPackedX(g_viewportPosition);
-					const int tiley = Tile_GetPackedY(g_viewportPosition);
-					const int viewport_cx = TILE_SIZE * tilex + g_viewport_scrollOffsetX + viewport->width / 2;
-					const int viewport_cy = TILE_SIZE * tiley + g_viewport_scrollOffsetY + viewport->height / 2;
-
 					viewport->scale = scaling_factor[new_scale];
 					A5_InitTransform(false);
 					GameLoop_TweakWidgetDimensions();
