@@ -2437,6 +2437,15 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 	if (s->o.hitpoints < si->o.hitpoints / 4) {
 		House *h;
 
+		if (enhancement_play_additional_voices) {
+			if (g_playerHouseID == s->o.houseID) {
+				Audio_PlayVoice(VOICE_HARKONNEN_STRUCTURE_CAPTURED + g_playerHouseID);
+			}
+			else {
+				Audio_PlayVoice(VOICE_ENEMY_STRUCTURE_CAPTURED);
+			}
+		}
+
 		h = House_Get_ByIndex(s->o.houseID);
 		s->o.houseID = Unit_GetHouseID(unit);
 		h->structuresBuilt = Structure_GetStructuresBuilt(h);
