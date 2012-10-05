@@ -30,6 +30,7 @@ extern void Video_SetCursor(int cursor);
 extern void Video_ShowCursor(void);
 extern void Video_HideCursor(void);
 extern void Video_ShadeScreen(int alpha);
+extern void Video_HoldBitmapDrawing(bool hold);
 
 extern void Video_DrawFadeIn(const struct FadeInAux *aux);
 extern bool Video_TickFadeIn(struct FadeInAux *aux);

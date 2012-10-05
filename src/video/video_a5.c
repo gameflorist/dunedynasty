@@ -602,6 +602,12 @@ Video_ShadeScreen(int alpha)
 	A5_UseTransform(prev_transform);
 }
 
+void
+Video_HoldBitmapDrawing(bool hold)
+{
+	al_hold_bitmap_drawing(hold);
+}
+
 /*--------------------------------------------------------------*/
 
 #if 0

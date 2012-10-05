@@ -673,6 +673,8 @@ Viewport_DrawTilesInRange(int x0, int y0,
 	viewportX2 = left;
 	viewportY2 = top;
 
+	Video_HoldBitmapDrawing(true);
+
 	y = y0;
 	for (top = viewportY1; top <= viewportY2; top += TILE_SIZE, y++) {
 		const int curPos = Tile_PackXY(x0, y);
@@ -698,6 +700,8 @@ Viewport_DrawTilesInRange(int x0, int y0,
 			}
 		}
 	}
+
+	Video_HoldBitmapDrawing(false);
 
 #if 0
 	/* Debugging. */
