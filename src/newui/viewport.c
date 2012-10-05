@@ -21,6 +21,7 @@
 #include "../pool/pool.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
+#include "../scenario.h"
 #include "../sprites.h"
 #include "../string.h"
 #include "../structure.h"
@@ -660,13 +661,24 @@ Viewport_DrawTilesInRange(int x0, int y0,
 		int viewportX1, int viewportY1, int viewportX2, int viewportY2,
 		bool draw_tile, bool draw_fog)
 {
-	int top = viewportY1;
-	for (int y = y0; (y < MAP_SIZE_MAX) && (top <= viewportY2); y++, top += TILE_SIZE) {
-		int left = viewportX1;
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+	int left, top;
+	int x, y;
 
-		for (int x = x0; (x < MAP_SIZE_MAX) && (left <= viewportX2); x++, left += TILE_SIZE) {
-			const int curPos = Tile_PackXY(x, y);
-			const Tile *t = &g_map[curPos];
+	/* Find bottom and right boundaries. */
+	left = viewportX1;
+	top = viewportY1;
+	for (x = x0; (x < mapInfo->minX + mapInfo->sizeX) && (left < viewportX2); x++, left += TILE_SIZE) {}
+	for (y = y0; (y < mapInfo->minY + mapInfo->sizeY) && (top < viewportY2); y++, top += TILE_SIZE) {}
+	viewportX2 = left;
+	viewportY2 = top;
+
+	y = y0;
+	for (top = viewportY1; top <= viewportY2; top += TILE_SIZE, y++) {
+		const int curPos = Tile_PackXY(x0, y);
+		const Tile *t = &g_map[curPos];
+
+		for (left = viewportX1; left <= viewportX2; left += TILE_SIZE, t++) {
 			const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
 
 			if (draw_tile && (t->overlaySpriteID != g_veiledSpriteID)) {
