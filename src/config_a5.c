@@ -74,8 +74,8 @@ static const GameOption s_game_option[] = {
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
 	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },
-	{ "audio",  "enable_sound",     CONFIG_BOOL,    .d._bool = &g_enable_sounds },
-	{ "audio",  "enable_voice",     CONFIG_BOOL,    .d._bool = &g_enable_voices },
+	{ "audio",  "enable_sbsounds",  CONFIG_BOOL,    .d._bool = &g_enable_sounds },
+	{ "audio",  "enable_voices",    CONFIG_BOOL,    .d._bool = &g_enable_voices },
 	{ "audio",  "enable_subtitles", CONFIG_BOOL,    .d._bool = &g_enable_subtitles },
 	{ "audio",  "music_volume",     CONFIG_FLOAT,   .d._float = &music_volume },
 	{ "audio",  "sound_volume",     CONFIG_FLOAT,   .d._float = &sound_volume },
