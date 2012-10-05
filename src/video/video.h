@@ -21,16 +21,19 @@ enum CPSID {
 struct FadeInAux;
 
 #include "prim.h"
+
+extern void Video_SetPalette(const uint8 *palette, int from, int length);
+extern void Video_SetClippingArea(int x, int y, int w, int h);
+extern void Video_SetCursor(int cursor);
+extern void Video_ShowCursor(void);
+extern void Video_HideCursor(void);
+extern void Video_ShadeScreen(int alpha);
+
 #include "video_a5.h"
 
 #define Video_Init()            true
 #define Video_Uninit()
 #define Video_Tick              VideoA5_Tick
-#define Video_SetPalette        VideoA5_SetPalette
-#define Video_SetClippingArea   VideoA5_SetClippingArea
-#define Video_SetCursor         VideoA5_SetCursor
-#define Video_ShowCursor        VideoA5_ShowCursor
-#define Video_HideCursor        VideoA5_HideCursor
 
 #define Video_DrawCPS                VideoA5_DrawCPS
 #define Video_DrawCPSRegion          VideoA5_DrawCPSRegion
@@ -45,8 +48,6 @@ struct FadeInAux;
 #define Video_TickFadeIn        VideoA5_TickFadeIn
 #define Video_InitFadeInCPS     VideoA5_InitFadeInCPS
 #define Video_InitFadeInShape   VideoA5_InitFadeInShape
-
-#define Video_ShadeScreen       VideoA5_ShadeScreen
 
 #define GUI_Mouse_Show()
 #define GUI_Mouse_Hide()

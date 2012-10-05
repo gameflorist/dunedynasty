@@ -146,7 +146,7 @@ static void
 VideoA5_ReadPalette(const char *filename)
 {
 	File_ReadBlockFile(filename, paletteRGB, 3 * 256);
-	VideoA5_SetPalette(paletteRGB, 0, 256);
+	Video_SetPalette(paletteRGB, 0, 256);
 }
 
 static void
@@ -447,8 +447,10 @@ VideoA5_Tick(void)
 	al_clear_to_color(paltoRGB[0]);
 }
 
+/*--------------------------------------------------------------*/
+
 void
-VideoA5_SetPalette(const uint8 *palette, int from, int length)
+Video_SetPalette(const uint8 *palette, int from, int length)
 {
 	const uint8 *p = palette;
 	assert(from + length <= 256);
@@ -466,13 +468,13 @@ VideoA5_SetPalette(const uint8 *palette, int from, int length)
 }
 
 void
-VideoA5_SetClippingArea(int x, int y, int w, int h)
+Video_SetClippingArea(int x, int y, int w, int h)
 {
 	al_set_clipping_rectangle(x, y, w, h);
 }
 
 void
-VideoA5_SetCursor(int spriteID)
+Video_SetCursor(int spriteID)
 {
 	assert(spriteID < CURSOR_MAX);
 
@@ -481,21 +483,19 @@ VideoA5_SetCursor(int spriteID)
 }
 
 void
-VideoA5_ShowCursor(void)
+Video_ShowCursor(void)
 {
 	al_show_mouse_cursor(display);
 }
 
 void
-VideoA5_HideCursor(void)
+Video_HideCursor(void)
 {
 	al_hide_mouse_cursor(display);
 }
 
-/*--------------------------------------------------------------*/
-
 void
-VideoA5_ShadeScreen(int alpha)
+Video_ShadeScreen(int alpha)
 {
 	const enum ScreenDivID prev_transform = A5_SaveTransform();
 

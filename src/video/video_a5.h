@@ -9,13 +9,6 @@ extern void VideoA5_Uninit(void);
 extern void VideoA5_ToggleFullscreen(void);
 extern void VideoA5_CaptureScreenshot(void);
 extern void VideoA5_Tick(void);
-extern void VideoA5_SetPalette(const uint8 *palette, int from, int length);
-extern void VideoA5_SetClippingArea(int x, int y, int w, int h);
-extern void VideoA5_SetCursor(int cursor);
-extern void VideoA5_ShowCursor(void);
-extern void VideoA5_HideCursor(void);
-
-extern void VideoA5_ShadeScreen(int alpha);
 
 extern void VideoA5_InitSprites(void);
 extern void VideoA5_DrawCPS(const char *filename);
