@@ -192,6 +192,27 @@ Menu_Init(void)
 	A5_UseTransform(SCREENDIV_MENU);
 }
 
+static void
+Menu_FreeWidgets(Widget *w)
+{
+	while (w != NULL) {
+		Widget *next = w->next;
+
+		free(w);
+
+		w = next;
+	}
+}
+
+static void
+Menu_Uninit(void)
+{
+	Menu_FreeWidgets(main_menu_widgets);
+	Menu_FreeWidgets(pick_house_widgets);
+	Menu_FreeWidgets(briefing_yes_no_widgets);
+	Menu_FreeWidgets(briefing_proceed_repeat_widgets);
+}
+
 /*--------------------------------------------------------------*/
 
 static void
@@ -1085,4 +1106,6 @@ Menu_Run(void)
 			curr_menu = (res & ~MENU_REDRAW);
 		}
 	}
+
+	Menu_Uninit();
 }

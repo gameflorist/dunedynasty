@@ -272,6 +272,7 @@ ConfigA5_InitDataDirectories(void)
 
 	al_destroy_path(dune_data_path);
 	al_destroy_path(user_data_path);
+	al_destroy_path(user_settings_path);
 	fprintf(stdout, "Dune data directory: %s\n", g_dune_data_dir);
 	fprintf(stdout, "Personal data directory: %s\n", g_personal_data_dir);
 }
