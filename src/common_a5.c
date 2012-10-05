@@ -181,6 +181,8 @@ A5_Init(void)
 void
 A5_Uninit(void)
 {
+	al_set_target_bitmap(s_transform[SCREENDIV_MAIN]);
+
 	s_transform[SCREENDIV_MAIN] = NULL;
 
 	for (enum ScreenDivID div = SCREENDIV_MAIN + 1; div < SCREENDIV_MAX; div++) {
