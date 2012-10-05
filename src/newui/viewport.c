@@ -427,10 +427,13 @@ Viewport_Click(Widget *w)
 		const Unit *target_u = Unit_Get_ByPackedTile(packed);
 		const Structure *target_s = Structure_Get_ByPackedTile(packed);
 		const enum LandscapeType lst = Map_GetLandscapeType(packed);
+		const bool unveiled = g_map[packed].isUnveiled;
 
 		bool attack = false;
 
-		if (lst == LST_BLOOM_FIELD) {
+		if (!unveiled) {
+		}
+		else if (lst == LST_BLOOM_FIELD) {
 			attack = true;
 		}
 		else if (target_u != NULL) {
@@ -462,7 +465,7 @@ Viewport_Click(Widget *w)
 				 * soldier on sand.  Use move command instead if
 				 * ordered back to rock, e.g. to evade a worm attack.
 				 */
-				else if ((oi->actionsPlayer[i] == ACTION_HARVEST) && (g_table_landscapeInfo[lst].isSand)) {
+				else if ((oi->actionsPlayer[i] == ACTION_HARVEST) && g_table_landscapeInfo[lst].isSand && unveiled) {
 					action = (u->amount < 100) ? ACTION_HARVEST : ACTION_MOVE;
 				}
 			}
