@@ -319,7 +319,7 @@ AudioA5_InitMidiMusic(const MidiFileInfo *mid)
 	AudioA5_FreeMusicStream();
 
 	bool play = play_xmidi(s_midi, buf, length, track);
-	delete buf;
+	delete[] buf;
 
 	if (!play)
 		return;
