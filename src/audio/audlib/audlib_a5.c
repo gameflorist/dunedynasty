@@ -9,7 +9,7 @@
 #include <allegro5/allegro_audio.h>
 #include "audlib_a5.h"
 
-#define FRAG_COUNT	2
+#define FRAG_COUNT	4
 #define BUFFER_SIZE	2048	/* must be a multiple of 2048 */
 
 #define AUD_HEADER_LEN	12
