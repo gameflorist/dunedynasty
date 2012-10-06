@@ -97,11 +97,6 @@ AudioA5_Init(void)
 
 	if (sound_font_path[0] != '\0') {
 		s_midi = create_midi_player(sound_font_path);
-		if (s_midi != NULL) {
-			ALLEGRO_AUDIO_STREAM *midi_stream = get_midi_player_audio_stream(s_midi);
-
-			al_attach_audio_stream_to_mixer(midi_stream, al_mixer);
-		}
 	}
 
 	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_1].dune2_adlib);
@@ -258,7 +253,14 @@ AudioA5_FreeMusicStream(void)
 
 		case MUSICSTREAM_MIDI:
 			stop_midi_player(s_midi);
-			s_music_stream = NULL;
+
+			/* Note: the MIDI player likes to keep its own audio
+			 * stream, so don't destroy it, just detach it.
+			 */
+			if (s_music_stream != NULL) {
+				al_detach_audio_stream(s_music_stream);
+				s_music_stream = NULL;
+			}
 			break;
 
 		case MUSICSTREAM_FLAC:
@@ -401,7 +403,11 @@ AudioA5_StopMusic(void)
 		case MUSICSTREAM_MIDI:
 			if (s_midi != NULL) {
 				stop_midi_player(s_midi);
-				s_music_stream = NULL;
+
+				if (s_music_stream != NULL) {
+					al_detach_audio_stream(s_music_stream);
+					s_music_stream = NULL;
+				}
 			}
 			break;
 
