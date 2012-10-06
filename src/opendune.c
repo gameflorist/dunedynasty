@@ -605,7 +605,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 		loc10 = true;
 
-		hasSave = File_Exists_Personal("_save000.dat");
+		hasSave = File_Exists_Personal("_SAVE000.DAT");
 		hasFame = File_Exists_Personal("SAVEFAME.DAT");
 
 		stringID = STR_REPLAY_INTRODUCTION;
