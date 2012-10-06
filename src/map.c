@@ -106,8 +106,8 @@ Map_CentreViewport(int x, int y)
 	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
 	int minx = TILE_SIZE * mapInfo->minX + w / 2;
 	int miny = TILE_SIZE * mapInfo->minY + h / 2;
-	int maxx = TILE_SIZE * (mapInfo->minX + mapInfo->sizeX) - w / 2;
-	int maxy = TILE_SIZE * (mapInfo->minY + mapInfo->sizeY) - h / 2;
+	int maxx = TILE_SIZE * (mapInfo->minX + mapInfo->sizeX) - w + (w / 2);
+	int maxy = TILE_SIZE * (mapInfo->minY + mapInfo->sizeY) - h + (h / 2);
 	int tilex, tiley;
 
 	if (minx > maxx) minx = maxx = (minx + maxx) / 2;
