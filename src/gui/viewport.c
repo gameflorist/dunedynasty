@@ -99,11 +99,11 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 
 	if (scroll_dx != 0 || scroll_dy != 0) {
 		if (click || drag) {
-			const int speed = max(1, 2 * g_gameConfig.scrollSpeed / g_screenDiv[SCREENDIV_VIEWPORT].scale);
+			const int speed = max(1, 2 * g_gameConfig.scrollSpeed);
 			Map_MoveDirection(speed * scroll_dx, speed * scroll_dy);
 		}
 		else if (g_gameConfig.autoScroll) {
-			const int speed = max(1, g_gameConfig.scrollSpeed / g_screenDiv[SCREENDIV_VIEWPORT].scale);
+			const int speed = max(1, g_gameConfig.scrollSpeed);
 			Map_MoveDirection(speed * scroll_dx, speed * scroll_dy);
 		}
 
