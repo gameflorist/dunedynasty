@@ -46,6 +46,7 @@ Scrollbar_GetSelectedItem(const Widget *w)
 {
 	const WidgetScrollbar *ws = w->data;
 	assert(0 <= s_selectedHelpSubject && s_selectedHelpSubject < ws->scrollMax);
+	VARIABLE_NOT_USED(ws);
 
 	return &s_scrollbar_item[s_selectedHelpSubject];
 }
