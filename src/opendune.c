@@ -1105,19 +1105,18 @@ void GameLoop_Main(bool new_game)
 
 		const bool narrator_speaking = Audio_Poll();
 		if (!narrator_speaking) {
-			if (!g_enable_audio) {
+			if (!g_enable_audio || !g_enable_music) {
 				g_musicInBattle = 0;
 			} else if (g_musicInBattle > 0) {
 				Audio_PlayMusic(MUSIC_ATTACK1 + Tools_RandomRange(0, 5));
 				l_timerNext = Timer_GetTicks() + 300;
 				g_musicInBattle = -1;
 			} else {
-				g_musicInBattle = 0;
-
-				if (g_enable_music && (Timer_GetTicks() > l_timerNext)) {
+				if (Timer_GetTicks() > l_timerNext) {
 					if (!Audio_MusicIsPlaying()) {
 						Audio_PlayMusic(MUSIC_IDLE1 + Tools_RandomRange(0, 8));
 						l_timerNext = Timer_GetTicks() + 300;
+						g_musicInBattle = 0;
 					}
 				}
 			}
