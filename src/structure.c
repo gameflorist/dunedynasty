@@ -2277,12 +2277,16 @@ void Structure_InitFactoryItems(const Structure *s)
 				g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
 			}
 
+#if 0
 			if (i == STRUCTURE_SLAB_1x1 || i == STRUCTURE_SLAB_2x2) {
 				g_factoryWindowItems[g_factoryWindowTotal].sortPriority = 0x64;
 			}
 			else {
 				g_factoryWindowItems[g_factoryWindowTotal].sortPriority = oi->sortPriority;
 			}
+#else
+			g_factoryWindowItems[g_factoryWindowTotal].sortPriority = oi->sortPriority;
+#endif
 
 			g_factoryWindowTotal++;
 		}

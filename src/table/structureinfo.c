@@ -40,7 +40,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* buildTime            */ 16,
 		/* availableCampaign    */ 1,
 		/* structuresRequired   */ 0,
-		/* sortPriority         */ 2,
+		/* sortPriority         */ 100, /* was 2, but 100 is used (special case). */
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_ATTACK, ACTION_ATTACK, ACTION_ATTACK },
 		/* available            */ 0,
@@ -105,7 +105,7 @@ StructureInfo g_table_structureInfo[] = {
 		/* buildTime            */ 16,
 		/* availableCampaign    */ 4,
 		/* structuresRequired   */ 0,
-		/* sortPriority         */ 4,
+		/* sortPriority         */ 101, /* was 4, but 100 is used (special case).  Put this ABOVE concrete reliably. */
 		/* upgradeLevelRequired */ 1,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_ATTACK, ACTION_ATTACK, ACTION_ATTACK },
 		/* available            */ 0,
