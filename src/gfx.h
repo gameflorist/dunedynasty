@@ -51,4 +51,8 @@ extern void GFX_SetPalette(uint8 *palette);
 extern void GFX_CopyFromBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 *buffer);
 extern void GFX_CopyToBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 *buffer);
 
+extern void GFX_ScreenShake_Start(int num_ticks);
+extern bool GFX_ScreenShake_Tick(void);
+extern int GFX_ScreenShake_Offset(void);
+
 #endif /* GFX_H */

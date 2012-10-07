@@ -438,3 +438,40 @@ void GFX_CopyToBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 
 		buffer += width;
 	}
 }
+
+/*--------------------------------------------------------------*/
+
+/* Simulate the screen shakes present in the game.  That is, shift the
+ * screen 4 pixels up for (2 * num_ticks) frames.
+ */
+static int s_screen_shake_ticks = 0;
+
+void
+GFX_ScreenShake_Start(int num_ticks)
+{
+	s_screen_shake_ticks = 2 * num_ticks;
+}
+
+bool
+GFX_ScreenShake_Tick(void)
+{
+	if (s_screen_shake_ticks == 0)
+		return false;
+
+	/* Don't actually need to return true so often, by
+	 * s_screen_shake_ticks has a maximum of 2 anyway.
+	 */
+	s_screen_shake_ticks--;
+	return true;
+}
+
+int
+GFX_ScreenShake_Offset(void)
+{
+	if (s_screen_shake_ticks == 0) {
+		return 0;
+	}
+	else {
+		return -4 * TRUE_DISPLAY_HEIGHT / SCREEN_HEIGHT;
+	}
+}

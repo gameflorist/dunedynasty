@@ -823,7 +823,12 @@ static void GameLoop_GameIntroAnimationMenu(void)
 	return;
 }
 
-static void InGame_Numpad_Move(uint16 key)
+/* Process input not caught by widgets, including keypad scrolling,
+ * squad selection, and changing zoom levels.  Also handles screen
+ * shake logic.
+ */
+static void
+GameLoop_ProcessUnhandledInput(uint16 key)
 {
 	const struct {
 		enum Scancode code;
@@ -853,11 +858,7 @@ static void InGame_Numpad_Move(uint16 key)
 		dx = clamp(-1, dx, 1);
 		dy = clamp(-1, dy, 1);
 		Map_MoveDirection(dx * g_gameConfig.scrollSpeed, dy * g_gameConfig.scrollSpeed);
-		return;
 	}
-
-	if (key == 0)
-		return;
 
 	switch (key) {
 #if 0
@@ -913,7 +914,7 @@ static void InGame_Numpad_Move(uint16 key)
 				g_factoryWindowTotal = -1;
 				Map_MoveDirection(0, oldh - viewport->height);
 			}
-			break;
+			return;
 
 		case SCANCODE_TILDE:
 			enhancement_draw_health_bars = !enhancement_draw_health_bars;
@@ -921,13 +922,13 @@ static void InGame_Numpad_Move(uint16 key)
 
 		case 0x80 | MOUSE_ZAXIS:
 			if (g_mouseDZ == 0) {
-				return;
+				break;
 			}
 			else {
 				const WidgetProperties *w = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
 
 				if (Mouse_InRegion_Div(SCREENDIV_SIDEBAR, w->xBase, w->yBase, w->xBase + w->width - 1, w->yBase + w->height - 1))
-					return;
+					break;
 			}
 			/* Fall though. */
 		case SCANCODE_MINUS:
@@ -985,6 +986,7 @@ static void InGame_Numpad_Move(uint16 key)
 					A5_InitTransform(false);
 					GameLoop_TweakWidgetDimensions();
 					Map_CentreViewport(viewport_cx, viewport_cy);
+					return;
 				}
 			}
 			break;
@@ -1000,8 +1002,15 @@ static void InGame_Numpad_Move(uint16 key)
 			break;
 #endif
 
-		default: return;
+		default:
+			break;
 	}
+
+	/* If we did not init the transform, we may still need to do some
+	 * translation transforms for screen shakes.
+	 */
+	if (GFX_ScreenShake_Tick())
+		A5_InitTransform(false);
 }
 
 void
@@ -1190,7 +1199,7 @@ void GameLoop_Main(bool new_game)
 				}
 			}
 
-			InGame_Numpad_Move(key);
+			GameLoop_ProcessUnhandledInput(key);
 
 			UnitAI_SquadLoop();
 			GameLoop_Team();

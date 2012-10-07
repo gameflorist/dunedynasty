@@ -119,15 +119,15 @@ static void Explosion_Func_PlayVoice(Explosion *e, uint16 voiceID)
 	Audio_PlaySoundAtTile(voiceID, e->position);
 }
 
-/**
- * A No-Op for Explosion.
- * @param e The Explosion.
- * @param parameter Unused parameter.
- */
-static void Explosion_Func_NoOperation(Explosion *e, uint16 parameter)
+static void
+Explosion_Func_ScreenShake(Explosion *e, uint16 parameter)
 {
-	VARIABLE_NOT_USED(e);
 	VARIABLE_NOT_USED(parameter);
+
+	if (!Map_IsPositionUnveiled(Tile_PackTile(e->position)))
+		return;
+
+	GFX_ScreenShake_Start(1);
 }
 
 /**
@@ -309,7 +309,7 @@ void Explosion_Tick(void)
 				case EXPLOSION_SET_ROW:            Explosion_Func_SetRow(e, parameter); break;
 				case EXPLOSION_TILE_DAMAGE:        Explosion_Func_TileDamage(e, parameter); break;
 				case EXPLOSION_PLAY_VOICE:         Explosion_Func_PlayVoice(e, parameter); break;
-				case EXPLOSION_NOOP:               Explosion_Func_NoOperation(e, parameter); break;
+				case EXPLOSION_SCREEN_SHAKE:       Explosion_Func_ScreenShake(e, parameter); break;
 				case EXPLOSION_SET_ANIMATION:      Explosion_Func_SetAnimation(e, parameter); break;
 				case EXPLOSION_BLOOM_EXPLOSION:    Explosion_Func_BloomExplosion(e, parameter); break;
 			}

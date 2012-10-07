@@ -35,7 +35,7 @@ A5_InitScreenDiv(ALLEGRO_BITMAP *parent, enum ScreenDivID divID,
 	div->height = h / div->scale;
 
 	al_destroy_bitmap(s_transform[divID]);
-	s_transform[divID] = al_create_sub_bitmap(parent, x1, y1, w, h);
+	s_transform[divID] = al_create_sub_bitmap(parent, x1, y1 + GFX_ScreenShake_Offset(), w, h);
 	al_set_target_bitmap(s_transform[divID]);
 
 	if (divID == SCREENDIV_MAIN) {
