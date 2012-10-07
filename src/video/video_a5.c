@@ -1203,7 +1203,7 @@ VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 
 	*retx = x + w + 1;
 	*rety = y;
-	*ret_row_h = (x == 0) ? h : max(row_h, h);
+	*ret_row_h = (x <= 1) ? h : max(row_h, h);
 	return bmp;
 }
 
