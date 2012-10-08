@@ -1198,9 +1198,10 @@ VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
-	const int idx = ICONID_MAX - (iconID - 304) - 1;
-	assert(304 <= iconID && iconID <= 308);
-	assert(s_icon[idx][HOUSE_HARKONNEN] == NULL);
+	const int idx = ICONID_MAX - (iconID - g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8]) - 1;
+
+	if (s_icon[idx][HOUSE_HARKONNEN] != NULL)
+		return;
 
 	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, TILE_SIZE, TILE_SIZE, TILE_SIZE, &x, &y);
 	GFX_DrawSprite_(iconID, x, y, HOUSE_HARKONNEN);
@@ -1307,8 +1308,10 @@ VideoA5_InitIcons(unsigned char *buf)
 		VideoA5_ExportIconGroup(buf, icon_data[i].group, icon_data[i].num_common, x, y, &x, &y);
 	}
 
-	/* Windtraps. */
-	for (uint16 iconID = 304; iconID <= 308; iconID++) {
+	/* Windtraps.  304..308 in EU v1.07, 310..314 in US v1.0. */
+	for (uint16 i = 8; i <= 15; i++) {
+		const uint16 iconID = g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + i];
+
 		VideoA5_ExportWindtrapOverlay(buf, iconID, x, y, &x, &y);
 	}
 
@@ -1329,8 +1332,8 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 	al_draw_bitmap(s_icon[iconID][houseID], x, y, 0);
 
 	/* Windtraps. */
-	if (304 <= iconID && iconID <= 308) {
-		const int idx = ICONID_MAX - (iconID - 304) - 1;
+	if (g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8] <= iconID && iconID <= g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 15]) {
+		const int idx = ICONID_MAX - (iconID - g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8]) - 1;
 		assert(s_icon[idx][HOUSE_HARKONNEN] != NULL);
 
 		al_draw_tinted_bitmap(s_icon[idx][HOUSE_HARKONNEN], paltoRGB[WINDTRAP_COLOUR], x, y, 0);
