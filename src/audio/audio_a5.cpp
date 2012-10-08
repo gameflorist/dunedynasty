@@ -58,7 +58,7 @@ static ALLEGRO_SAMPLE_INSTANCE *s_instance[MAX_SAMPLE_INSTANCES];
 static ALLEGRO_VOICE *al_voice;
 static ALLEGRO_MIXER *al_mixer;
 
-static ALLEGRO_AUDIO_STREAM *AudioA5_InitAdlib(const MidiFileInfo *mid);
+static ALLEGRO_AUDIO_STREAM *AudioA5_InitAdlib(const MusicInfo *mid);
 static void AudioA5_FreeMusicStream(void);
 
 /*--------------------------------------------------------------*/
@@ -99,7 +99,7 @@ AudioA5_Init(void)
 		s_midi = create_midi_player(sound_font_path);
 	}
 
-	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_1].dune2_adlib);
+	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1]);
 	return;
 
 audio_init_failed:
@@ -150,7 +150,7 @@ AudioA5_Uninit(void)
 /*--------------------------------------------------------------*/
 
 static char *
-AudioA5_LoadInternalMusic(const MidiFileInfo *mid, uint32 *ret_length)
+AudioA5_LoadInternalMusic(const MusicInfo *mid, uint32 *ret_length)
 {
 	const char *filename = mid->filename;
 	uint16 file_index = File_Open(filename, 1);
@@ -175,7 +175,7 @@ AudioA5_LoadInternalMusic(const MidiFileInfo *mid, uint32 *ret_length)
 
 /* Note: We can only have one instance of SoundAdlibPC. */
 static ALLEGRO_AUDIO_STREAM *
-AudioA5_InitAdlib(const MidiFileInfo *mid)
+AudioA5_InitAdlib(const MusicInfo *mid)
 {
 	ALLEGRO_AUDIO_STREAM *stream;
 
@@ -284,7 +284,7 @@ AudioA5_FreeMusicStream(void)
 }
 
 void
-AudioA5_InitMusic(const MidiFileInfo *mid)
+AudioA5_InitAdlibMusic(const MusicInfo *mid)
 {
 	const int track = mid->track;
 
@@ -306,7 +306,7 @@ AudioA5_InitMusic(const MidiFileInfo *mid)
 }
 
 void
-AudioA5_InitMidiMusic(const MidiFileInfo *mid)
+AudioA5_InitMidiMusic(const MusicInfo *mid)
 {
 	const int track = mid->track;
 
@@ -327,7 +327,7 @@ AudioA5_InitMidiMusic(const MidiFileInfo *mid)
 		return;
 
 	if (s_effect_stream == NULL)
-		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_1].dune2_adlib);
+		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1]);
 
 	s_music_stream = get_midi_player_audio_stream(s_midi);
 	al_set_audio_stream_gain(s_music_stream, music_volume);
@@ -336,7 +336,7 @@ AudioA5_InitMidiMusic(const MidiFileInfo *mid)
 }
 
 void
-AudioA5_InitExternalMusic(const ExtMusicInfo *ext)
+AudioA5_InitExternalMusic(const MusicInfo *ext)
 {
 	enum MusicStreamType next_music_stream_type = MUSICSTREAM_NONE;
 	ALLEGRO_AUDIO_STREAM *stream = NULL;
@@ -372,7 +372,7 @@ AudioA5_InitExternalMusic(const ExtMusicInfo *ext)
 	AudioA5_FreeMusicStream();
 
 	if (s_effect_stream == NULL)
-		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_1].dune2_adlib);
+		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1]);
 
 	s_music_stream = stream;
 	s_aud = next_aud;

@@ -83,6 +83,15 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "opl_mame",         CONFIG_BOOL,    .d._bool = &g_opl_mame },
 	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
 
+	{ "music",  "dune2_adlib",      CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_ADLIB].enable },
+	{ "music",  "dune2_c55",        CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_C55].enable },
+	{ "music",  "fed2k_mt32",       CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_FED2K_MT32].enable },
+	{ "music",  "d2tm_adlib",       CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_ADLIB].enable },
+	{ "music",  "d2tm_mt32",        CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_MT32].enable },
+	{ "music",  "d2tm_sc55",        CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_SC55].enable },
+	{ "music",  "dune2_smd",        CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_SMD].enable },
+	{ "music",  "dune2000",         CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2000].enable },
+
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
 	{ "enhancement",    "raise_scenario_unit_cap",  CONFIG_BOOL,.d._bool = &enhancement_raise_scenario_unit_cap },
@@ -202,11 +211,8 @@ Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *ke
 }
 
 static void
-Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *key, bool enable, ExtMusicInfo *ext)
+Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *key, MusicInfo *ext)
 {
-	if (!ext->enable)
-		return;
-
 	const char *str = al_get_config_value(config, category, key);
 	if (str == NULL)
 		return;
@@ -214,9 +220,6 @@ Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *
 	Config_GetFloat(str, 0.0f, 2.0f, &ext->volume);
 
 	if (ext->volume <= 0.0f)
-		ext->enable = false;
-
-	if (!enable)
 		ext->enable = false;
 }
 
@@ -345,43 +348,29 @@ GameOptions_Load(void)
 	}
 
 	/* Music configuration. */
-	for (enum MusicSet music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
+	for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
+		MusicInfo *m = &g_table_music[musicID];
+
+		if (!g_table_music_set[m->music_set].enable) {
+			m->enable = false;
+			continue;
+		}
+
 		char category[1024];
-		bool enable_set = true;
+		snprintf(category, sizeof(category), "music/%s", g_table_music_set[m->music_set].prefix);
 
-		const char *str = al_get_config_value(s_configFile, "music", g_music_set_prefix[music_set]);
-		if (str != NULL)
-			Config_GetBool(str, &enable_set);
+		if (m->music_set <= MUSICSET_DUNE2_C55) {
+			char key[1024];
+			snprintf(key, sizeof(key), "%s_%d", m->filename, m->track);
 
-		snprintf(category, sizeof(category), "music/%s", g_music_set_prefix[music_set]);
+			const char *str = al_get_config_value(s_configFile, category, key);
+			if (str != NULL)
+				Config_GetBool(str, &m->enable);
+		}
+		else {
+			const char *key = m->filename + strlen(g_table_music_set[m->music_set].prefix) + 1;
 
-		for (enum MusicID musicID = MUSIC_LOSE_ORDOS; musicID < MUSICID_MAX; musicID++) {
-			MusicInfoGlob glob[NUM_MUSIC_SETS];
-			MusicInfo *m = &g_table_music[musicID];
-
-			Audio_GlobMusicInfo(m, glob);
-
-			if (music_set <= MUSICSET_DUNE2_C55) {
-				MidiFileInfo *mid = glob[music_set].mid;
-
-				if (!enable_set) {
-					mid->enable = false;
-				}
-				else {
-					char key[1024];
-
-					snprintf(key, sizeof(key), "%s_%d", mid->filename, mid->track);
-					str = al_get_config_value(s_configFile, category, key);
-					if (str != NULL)
-						Config_GetBool(str, &mid->enable);
-				}
-			}
-			else {
-				ExtMusicInfo *ext = glob[music_set].ext;
-				const char *key = ext->filename + strlen(g_music_set_prefix[music_set]) + 1;
-
-				Config_GetMusicVolume(s_configFile, category, key, enable_set, ext);
-			}
+			Config_GetMusicVolume(s_configFile, category, key, m);
 		}
 	}
 
@@ -433,12 +422,6 @@ GameOptions_Save(void)
 				Config_SetWindowMode(s_configFile, opt->section, opt->key, *(opt->d._window));
 				break;
 		}
-	}
-
-	/* Music configuration. */
-	for (enum MusicSet music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
-		if (al_get_config_value(s_configFile, "music", g_music_set_prefix[music_set]) == NULL)
-			al_set_config_value(s_configFile, "music", g_music_set_prefix[music_set], "1");
 	}
 
 	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);

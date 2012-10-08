@@ -34,8 +34,7 @@ float voice_volume = 1.0f;
 bool g_opl_mame = true;
 char sound_font_path[1024];
 
-static MusicInfoGlob curr_music;
-static enum MusicSet curr_music_set;
+static enum MusicID curr_music;
 static char music_message[128];
 
 static enum HouseType s_curr_sample_set = HOUSE_INVALID;
@@ -52,25 +51,11 @@ Audio_DisplayMusicName(void)
 }
 
 void
-Audio_GlobMusicInfo(MusicInfo *m, MusicInfoGlob glob[NUM_MUSIC_SETS])
-{
-	glob[MUSICSET_DUNE2_ADLIB].mid = &m->dune2_adlib;
-	glob[MUSICSET_DUNE2_C55].mid = &m->dune2_c55;
-	glob[MUSICSET_FED2K_MT32].ext = &m->fed2k_mt32;
-	glob[MUSICSET_D2TM_ADLIB].ext = &m->d2tm_adlib;
-	glob[MUSICSET_D2TM_MT32].ext = &m->d2tm_mt32;
-	glob[MUSICSET_D2TM_SC55].ext = &m->d2tm_sc55;
-	glob[MUSICSET_DUNE2_SMD].ext = &m->dune2_smd;
-	glob[MUSICSET_DUNE2000].ext = &m->dune2000;
-}
-
-void
 Audio_ScanMusic(void)
 {
 	bool verbose = false;
 	struct stat st;
 	char buf[1024];
-	MusicInfoGlob glob[NUM_MUSIC_SETS];
 	bool enable_dune2_c55;
 
 #ifdef WITH_FLUIDSYNTH
@@ -89,48 +74,42 @@ Audio_ScanMusic(void)
 	}
 #endif /* WITH_FLUIDSYNTH */
 
-	if (!enable_dune2_c55) {
-		for (enum MusicID musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
-			g_table_music[musicID].dune2_c55.enable = false;
-		}
-	}
-
-	for (enum MusicID musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
+	for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
 		MusicInfo *m = &g_table_music[musicID];
 
-		Audio_GlobMusicInfo(m, glob);
+		if (!g_table_music_set[m->music_set].enable)
+			m->enable = false;
 
-		for (int i = MUSICSET_FED2K_MT32; i < NUM_MUSIC_SETS; i++) {
-			ExtMusicInfo *ext = glob[i].ext;
+		if (m->music_set == MUSICSET_DUNE2_C55 && !enable_dune2_c55)
+			m->enable = false;
 
-			if (ext->filename == NULL)
-				continue;
+		if (!m->enable) {
+			if (verbose) fprintf(stdout, "[disable] %s\n", m->filename);
+			continue;
+		}
 
-			if (!ext->enable) {
-				if (verbose) fprintf(stdout, "[disable] %s\n", ext->filename);
-				continue;
-			}
-
-			snprintf(buf, sizeof(buf), "%s/%s.flac", g_dune_data_dir, ext->filename);
+		/* External music. */
+		if (m->music_set > MUSICSET_DUNE2_C55) {
+			snprintf(buf, sizeof(buf), "%s/%s.flac", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0) {
 				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
 				continue;
 			}
 
-			snprintf(buf, sizeof(buf), "%s/%s.ogg", g_dune_data_dir, ext->filename);
+			snprintf(buf, sizeof(buf), "%s/%s.ogg", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0) {
 				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
 				continue;
 			}
 
-			snprintf(buf, sizeof(buf), "%s/%s.AUD", g_dune_data_dir, ext->filename);
+			snprintf(buf, sizeof(buf), "%s/%s.AUD", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0) {
 				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
 				continue;
 			}
 
-			ext->enable = false;
-			if (verbose) fprintf(stdout, "[missing] %s\n", ext->filename);
+			m->enable = false;
+			if (verbose) fprintf(stdout, "[missing] %s\n", m->filename);
 		}
 	}
 }
@@ -146,52 +125,53 @@ Audio_PlayMusic(enum MusicID musicID)
 	if ((!g_enable_audio) || (!g_enable_music) || (musicID == MUSIC_INVALID))
 		return;
 
-	MusicInfo *m = &g_table_music[musicID];
-	MusicInfoGlob glob[NUM_MUSIC_SETS];
-	enum MusicSet music_set;
-	int num_sets = 0;
+	enum MusicID song, end;
+	int num_songs = 0;
+	int i;
 
-	Audio_GlobMusicInfo(m, glob);
-
-	for (music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
-		if (*(glob[music_set].enable)) {
-			num_sets++;
+	/* Pick random song between musicID and end. */
+	for (i = 0;; i++) {
+		if (g_table_music_cutoffs[i] <= musicID && musicID < g_table_music_cutoffs[i + 1]) {
+			end = g_table_music_cutoffs[i + 1];
+			break;
 		}
 	}
 
-	if (num_sets <= 0)
+	for (song = musicID; song < end; song++) {
+		if (g_table_music[song].enable)
+			num_songs++;
+	}
+
+	if (num_songs <= 0)
 		return;
 
-	int i = Tools_RandomRange(0, num_sets - 1);
-	for (music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
-		if (*(glob[music_set].enable)) {
-			if (i == 0)
+	i = Tools_RandomRange(0, num_songs - 1);
+	for (song = musicID;; song++) {
+		if (g_table_music[song].enable) {
+			if (i <= 0)
 				break;
+
 			i--;
 		}
 	}
 
-	if (music_set <= MUSICSET_DUNE2_C55) {
-		MidiFileInfo *mid = glob[music_set].mid;
-
-		if (music_set == MUSICSET_DUNE2_ADLIB) {
-			AudioA5_InitMusic(mid);
+	MusicInfo *m = &g_table_music[song];
+	if (m->music_set <= MUSICSET_DUNE2_C55) {
+		if (m->music_set == MUSICSET_DUNE2_ADLIB) {
+			AudioA5_InitAdlibMusic(m);
 		}
 		else {
-			AudioA5_InitMidiMusic(mid);
+			AudioA5_InitMidiMusic(m);
 		}
 
-		snprintf(music_message, sizeof(music_message), "Playing %s, track %d", mid->filename, mid->track);
+		snprintf(music_message, sizeof(music_message), "Playing %s, track %d", m->filename, m->track);
 	}
 	else {
-		ExtMusicInfo *ext = glob[music_set].ext;
-
-		AudioA5_InitExternalMusic(ext);
-		snprintf(music_message, sizeof(music_message), "Playing %s", ext->filename);
+		AudioA5_InitExternalMusic(m);
+		snprintf(music_message, sizeof(music_message), "Playing %s", m->filename);
 	}
 
-	curr_music = glob[music_set];
-	curr_music_set = music_set;
+	curr_music = song;
 }
 
 void
@@ -204,36 +184,34 @@ Audio_PlayMusicIfSilent(enum MusicID musicID)
 void
 Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only)
 {
+	if (!(curr_music < MUSICID_MAX))
+		return;
+
+	MusicInfo *m = &g_table_music[curr_music];
 	float volume;
 
 	/* Adjust single track. */
-	if (adjust_current_track_only && (curr_music_set > MUSICSET_DUNE2_C55)) {
-		ExtMusicInfo *ext = curr_music.ext;
+	if (adjust_current_track_only && (m->music_set > MUSICSET_DUNE2_C55)) {
+		m->volume += increase ? 0.05f : -0.05f;
+		m->volume = clamp(0.0f, m->volume, 2.0f);
 
-		ext->volume += increase ? 0.05f : -0.05f;
-		ext->volume = clamp(0.0f, ext->volume, 2.0f);
-
-		volume = music_volume * curr_music.ext->volume;
+		volume = music_volume * m->volume;
 		snprintf(music_message, sizeof(music_message), "Playing %s, volume %.2f x %.2f",
-				ext->filename, music_volume, ext->volume);
+				m->filename, music_volume, m->volume);
 	}
 	else {
 		music_volume += increase ? 0.05f : -0.05f;
 		music_volume = clamp(0.0f, music_volume, 1.0f);
 
-		if (curr_music_set <= MUSICSET_DUNE2_C55) {
-			MidiFileInfo *mid = curr_music.mid;
-
+		if (m->music_set <= MUSICSET_DUNE2_C55) {
 			volume = music_volume;
 			snprintf(music_message, sizeof(music_message), "Playing %s, track %d, volume %.2f",
-					mid->filename, mid->track, volume);
+					m->filename, m->track, volume);
 		}
 		else {
-			ExtMusicInfo *ext = curr_music.ext;
-
-			volume = music_volume * ext->volume;
+			volume = music_volume * m->volume;
 			snprintf(music_message, sizeof(music_message), "Playing %s, volume %.2f x %.2f",
-					ext->filename, music_volume, ext->volume);
+					m->filename, music_volume, m->volume);
 		}
 	}
 

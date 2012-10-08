@@ -19,7 +19,6 @@ extern bool g_opl_mame;
 extern char sound_font_path[1024];
 
 extern void Audio_DisplayMusicName(void);
-extern void Audio_GlobMusicInfo(MusicInfo *m, MusicInfoGlob glob[NUM_MUSIC_SETS]);
 extern void Audio_ScanMusic(void);
 extern void Audio_PlayMusic(enum MusicID musicID);
 extern void Audio_PlayMusicIfSilent(enum MusicID musicID);

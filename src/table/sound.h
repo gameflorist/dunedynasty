@@ -24,52 +24,38 @@ enum MusicSet {
 
 enum MusicID {
 	MUSIC_STOP = 0,
-	MUSIC_1 = 1,
+	MUSIC_23 = 1,
+	MUSIC_35 = 3,
+	MUSIC_37 = 5,
 
-	MUSIC_LOSE_ORDOS = 2,
-	MUSIC_LOSE_HARKONNEN = 3,
-	MUSIC_LOSE_ATREIDES = 4,
+	MUSIC_LOGOS = 7,
+	MUSIC_INTRO = 10,
+	MUSIC_CUTSCENE = 15,
+	MUSIC_CREDITS = 18,
+	MUSIC_MAIN_MENU = 22,
+	MUSIC_STRATEGIC_MAP = 30,
 
-	MUSIC_WIN_ORDOS = 5,
-	MUSIC_WIN_HARKONNEN = 6,
-	MUSIC_WIN_ATREIDES = 7,
+	MUSIC_BRIEFING_HARKONNEN = 37,
+	MUSIC_BRIEFING_ATREIDES = 44,
+	MUSIC_BRIEFING_ORDOS = 51,
 
-	MUSIC_IDLE1 = 8,
-	MUSIC_IDLE2 = 9,
-	MUSIC_IDLE3 = 10,
-	MUSIC_IDLE4 = 11,
-	MUSIC_IDLE5 = 12,
-	MUSIC_IDLE6 = 13,
-	MUSIC_IDLE7 = 14,
-	MUSIC_IDLE8 = 15,
-	MUSIC_IDLE9 = 16,
+	MUSIC_WIN_HARKONNEN = 58,
+	MUSIC_WIN_ATREIDES = 65,
+	MUSIC_WIN_ORDOS = 72,
 
-	MUSIC_ATTACK1 = 17,
-	MUSIC_ATTACK2 = 18,
-	MUSIC_ATTACK3 = 19,
-	MUSIC_ATTACK4 = 20,
-	MUSIC_ATTACK5 = 21,
-	MUSIC_ATTACK6 = 22,
+	MUSIC_LOSE_HARKONNEN = 79,
+	MUSIC_LOSE_ATREIDES = 86,
+	MUSIC_LOSE_ORDOS = 93,
 
-	MUSIC_23 = 23,
+	MUSIC_END_GAME_HARKONNEN = 100,
+	MUSIC_END_GAME_ATREIDES = 103,
+	MUSIC_END_GAME_ORDOS = 106,
 
-	MUSIC_BRIEFING_HARKONNEN = 24,
-	MUSIC_BRIEFING_ATREIDES = 25,
-	MUSIC_BRIEFING_ORDOS = 26,
+	MUSIC_IDLE1 = 109,
+	MUSIC_BONUS = 180,
+	MUSIC_ATTACK1 = 184,
 
-	MUSIC_INTRO = 27,
-	MUSIC_MAIN_MENU = 28,
-	MUSIC_STRATEGIC_MAP = 29,
-	MUSIC_END_GAME_HARKONNEN = 30,
-	MUSIC_END_GAME_ATREIDES = 31,
-	MUSIC_END_GAME_ORDOS = 32,
-	MUSIC_CREDITS = 33,
-	MUSIC_CUTSCENE = 34,
-	MUSIC_35 = 35,
-	MUSIC_LOGOS = 36,
-	MUSIC_37 = 37,
-
-	MUSICID_MAX = 38,
+	MUSICID_MAX = 223,
 	MUSIC_INVALID = 0xFFFF
 };
 
@@ -368,33 +354,18 @@ enum VoiceID {
 	VOICE_INVALID = 0xFFFF
 };
 
-typedef struct MidiFileInfo {
+typedef struct MusicSetInfo {
 	bool enable;
-	const char *filename;
-	int track;
-} MidiFileInfo;
-
-typedef struct ExtMusicInfo {
-	bool enable;
-	float volume;
-	const char *filename;
-} ExtMusicInfo;
-
-typedef union MusicInfoGlob {
-	bool *enable;
-	MidiFileInfo *mid;
-	ExtMusicInfo *ext;
-} MusicInfoGlob;
+	const char *prefix;
+} MusicSetInfo;
 
 typedef struct MusicInfo {
-	MidiFileInfo dune2_adlib;
-	MidiFileInfo dune2_c55;
-	ExtMusicInfo fed2k_mt32;
-	ExtMusicInfo d2tm_adlib;
-	ExtMusicInfo d2tm_mt32;
-	ExtMusicInfo d2tm_sc55;
-	ExtMusicInfo dune2_smd;
-	ExtMusicInfo dune2000;
+	bool enable;
+	enum MusicSet music_set;
+
+	const char *filename;
+	int track;
+	float volume;
 } MusicInfo;
 
 /** Information about sound files. */
@@ -410,7 +381,8 @@ typedef struct Feedback {
 	enum SoundID soundId;
 } Feedback;
 
-extern const char *g_music_set_prefix[NUM_MUSIC_SETS];
+extern const enum MusicID g_table_music_cutoffs[21];
+extern MusicSetInfo g_table_music_set[NUM_MUSIC_SETS];
 extern MusicInfo g_table_music[MUSICID_MAX];
 extern const SoundData g_table_voices[SAMPLEID_MAX];
 extern const enum SampleID g_table_voiceMapping[SOUNDID_MAX];
