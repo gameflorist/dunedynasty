@@ -299,7 +299,6 @@ MenuBar_TickMentatOverlay(void)
 void
 MenuBar_DrawMentatOverlay(void)
 {
-	Video_ShadeScreen(128);
 	A5_UseTransform(SCREENDIV_MENU);
 
 	MentatHelp_Draw(g_playerHouseID, &g_mentat_state);

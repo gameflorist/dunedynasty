@@ -1179,14 +1179,14 @@ void GameLoop_Main(bool new_game)
 		if (frames_skipped > 4 || Timer_QueueIsEmpty()) {
 			frames_skipped = 0;
 
-			GUI_DrawInterfaceAndRadar();
-
 			if (g_gameOverlay == GAMEOVERLAY_NONE) {
+				GUI_DrawInterfaceAndRadar();
 			}
 			else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
 				MenuBar_DrawMentatOverlay();
 			}
 			else {
+				GUI_DrawInterfaceAndRadar();
 				MenuBar_DrawOptionsOverlay();
 			}
 
