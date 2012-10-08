@@ -190,8 +190,8 @@ Viewport_SelectRegion(void)
 			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 			const int sx = Tile_GetPosX(s->o.position);
 			const int sy = Tile_GetPosY(s->o.position);
-			const int xx = TILE_SIZE * (Tile_GetPosX(s->o.position) - x0);
-			const int yy = TILE_SIZE * (Tile_GetPosY(s->o.position) - y0);
+			const int xx = TILE_SIZE * (Tile_GetPosX(s->o.position) - x0) - g_viewport_scrollOffsetX;
+			const int yy = TILE_SIZE * (Tile_GetPosY(s->o.position) - y0) - g_viewport_scrollOffsetY;
 			const int sw = TILE_SIZE * g_table_structure_layoutSize[si->layout].width;
 			const int sh = TILE_SIZE * g_table_structure_layoutSize[si->layout].height;
 
