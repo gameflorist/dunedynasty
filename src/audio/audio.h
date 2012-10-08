@@ -17,6 +17,7 @@ extern float voice_volume;
 
 extern bool g_opl_mame;
 extern char sound_font_path[1024];
+extern enum MusicSet default_music_pack;
 
 extern void Audio_DisplayMusicName(void);
 extern void Audio_ScanMusic(void);

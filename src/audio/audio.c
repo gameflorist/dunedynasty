@@ -1,9 +1,10 @@
 /* audio.c */
 
 #include <assert.h>
+#include <math.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include "buildcfg.h"
+#include "../os/common.h"
 #include "../os/math.h"
 
 #include "audio.h"
@@ -34,6 +35,7 @@ float voice_volume = 1.0f;
 bool g_opl_mame = true;
 char sound_font_path[1024];
 
+enum MusicSet default_music_pack;
 static enum MusicID curr_music;
 static char music_message[128];
 
@@ -55,61 +57,63 @@ Audio_ScanMusic(void)
 {
 	bool verbose = false;
 	struct stat st;
-	char buf[1024];
-	bool enable_dune2_c55;
-
-#ifdef WITH_FLUIDSYNTH
-	if (stat(sound_font_path, &st) == 0) {
-		if (verbose) fprintf(stdout, "[enable]  MIDI sound font: %s\n", sound_font_path);
-		enable_dune2_c55 = true;
-	}
-	else {
-		if (verbose) fprintf(stdout, "[missing] sound font not found: %s\n", sound_font_path);
-		enable_dune2_c55 = false;
-	}
-#else
-	{
-		if (verbose) fprintf(stdout, "[disable] MIDI support\n");
-		enable_dune2_c55 = false;
-	}
-#endif /* WITH_FLUIDSYNTH */
 
 	for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
 		MusicInfo *m = &g_table_music[musicID];
 
 		if (!g_table_music_set[m->music_set].enable)
-			m->enable = false;
-
-		if (m->music_set == MUSICSET_DUNE2_C55 && !enable_dune2_c55)
-			m->enable = false;
-
-		if (!m->enable) {
-			if (verbose) fprintf(stdout, "[disable] %s\n", m->filename);
-			continue;
-		}
+			m->enable &=~MUSIC_WANT;
 
 		/* External music. */
 		if (m->music_set > MUSICSET_DUNE2_C55) {
+			char buf[1024];
+
 			snprintf(buf, sizeof(buf), "%s/%s.flac", g_dune_data_dir, m->filename);
-			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
-				continue;
-			}
+			if (stat(buf, &st) == 0)
+				goto found_song;
 
 			snprintf(buf, sizeof(buf), "%s/%s.ogg", g_dune_data_dir, m->filename);
-			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
-				continue;
-			}
+			if (stat(buf, &st) == 0)
+				goto found_song;
 
 			snprintf(buf, sizeof(buf), "%s/%s.AUD", g_dune_data_dir, m->filename);
-			if (stat(buf, &st) == 0) {
-				if (verbose) fprintf(stdout, "[enable]  %s\n", buf);
-				continue;
-			}
+			if (stat(buf, &st) == 0)
+				goto found_song;
 
-			m->enable = false;
+			m->enable &=~MUSIC_FOUND;
 			if (verbose) fprintf(stdout, "[missing] %s\n", m->filename);
+			continue;
+
+found_song:
+
+			m->enable |= MUSIC_FOUND;
+			if (verbose) fprintf(stdout, "[found]   %s\n", buf);
+		}
+	}
+
+	/* Use default music pack or Adlib if song is otherwise missing. */
+	for (int i = 0; g_table_music_cutoffs[i] < MUSICID_MAX; i++) {
+		enum MusicID musicID = g_table_music_cutoffs[i];
+		enum MusicID end = g_table_music_cutoffs[i + 1];
+		enum MusicID def = musicID;
+		assert(g_table_music[musicID].music_set == MUSICSET_DUNE2_ADLIB);
+
+		for (; musicID < end; musicID++) {
+			const enum MusicSet music_set = g_table_music[musicID].music_set;
+
+			if (g_table_music[musicID].enable == MUSIC_ENABLE) {
+				break;
+			}
+			else if ((music_set == default_music_pack) && (g_table_music[musicID].enable & MUSIC_FOUND)) {
+				def = musicID;
+			}
+		}
+
+		if (musicID >= end) {
+			g_table_music[def].enable = MUSIC_ENABLE;
+			g_table_music[def].volume = max(0.25f, fabsf(g_table_music[def].volume));
+
+			if (verbose) fprintf(stdout, "[default] %s\n", g_table_music[def].filename);
 		}
 	}
 }
@@ -138,7 +142,7 @@ Audio_PlayMusic(enum MusicID musicID)
 	}
 
 	for (song = musicID; song < end; song++) {
-		if (g_table_music[song].enable)
+		if (g_table_music[song].enable == MUSIC_ENABLE)
 			num_songs++;
 	}
 
@@ -147,7 +151,7 @@ Audio_PlayMusic(enum MusicID musicID)
 
 	i = Tools_RandomRange(0, num_songs - 1);
 	for (song = musicID;; song++) {
-		if (g_table_music[song].enable) {
+		if (g_table_music[song].enable == MUSIC_ENABLE) {
 			if (i <= 0)
 				break;
 

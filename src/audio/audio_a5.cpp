@@ -24,6 +24,7 @@ extern "C" {
 #include "../common_a5.h"
 #include "../file.h"
 #include "../house.h"
+#include "../table/sound.h"
 }
 
 /* Sample instance 0 for narrator voices.
@@ -97,6 +98,21 @@ AudioA5_Init(void)
 
 	if (sound_font_path[0] != '\0') {
 		s_midi = create_midi_player(sound_font_path);
+
+#ifdef WITH_FLUIDSYNTH
+		if (s_midi == NULL)
+			fprintf(stderr, "create_midi_player() failed.\nGiven sound font: %s\n", sound_font_path);
+#endif
+	}
+	else {
+		s_midi = NULL;
+	}
+
+	if (s_midi == NULL) {
+		for (int musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
+			if (g_table_music[musicID].music_set == MUSICSET_DUNE2_C55)
+				g_table_music[musicID].enable &=~MUSIC_FOUND;
+		}
 	}
 
 	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1]);

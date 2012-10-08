@@ -59,6 +59,12 @@ enum MusicID {
 	MUSIC_INVALID = 0xFFFF
 };
 
+enum MusicFlags {
+	MUSIC_WANT      = 0x1,
+	MUSIC_FOUND     = 0x2,
+	MUSIC_ENABLE    = (MUSIC_FOUND | MUSIC_WANT)
+};
+
 enum SampleID {
 	SAMPLE_SCREAM1 = 0,
 	SAMPLE_EXPLODE_SAND = 1,
@@ -360,7 +366,7 @@ typedef struct MusicSetInfo {
 } MusicSetInfo;
 
 typedef struct MusicInfo {
-	bool enable;
+	unsigned int enable;
 	enum MusicSet music_set;
 
 	const char *filename;
