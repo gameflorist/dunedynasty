@@ -266,8 +266,7 @@ VideoA5_Init(void)
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
 	font_texture = al_create_bitmap(w, h);
-	wsa_special_texture = al_create_bitmap(w, h);
-	if (screen == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || font_texture == NULL || wsa_special_texture == NULL)
+	if (screen == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || font_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -379,6 +378,7 @@ VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCo
 {
 	const int w = al_get_bitmap_width(dest);
 	const int h = al_get_bitmap_height(dest);
+	const int src_stride = max(SCREEN_WIDTH, w);
 
 	ALLEGRO_LOCKED_REGION *reg;
 
@@ -393,7 +393,7 @@ VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCo
 		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
 
 		for (int x = 0; x < w; x++) {
-			const unsigned char c = raw[w*y + x];
+			const unsigned char c = raw[src_stride * y + x];
 
 			if (c == 0) {
 				if (mode != SKIP_COLOUR_0) {
@@ -1587,22 +1587,31 @@ VideoA5_InitWSA(unsigned char *buf)
 
 	int x = 0, y = 0;
 
-	al_set_target_bitmap(wsa_special_texture);
+	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
+
+	ALLEGRO_BITMAP *wsacpy = al_create_bitmap(64, 64);
+	ALLEGRO_BITMAP *membmp = al_create_bitmap(1024, 1024);
+
+	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
+
+	al_set_target_bitmap(membmp);
 
 	for (int frame = 0; frame < num_frames; frame++) {
 		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 64, 64, 64, &x, &y);
 		WSA_DisplayFrame(wsa, frame, 0, 0, 0);
 
-		VideoA5_CopyBitmap(buf, screen, BLACK_COLOUR_0);
-		al_draw_bitmap_region(screen, 0, 0, 64, 64, x, y, 0);
+		VideoA5_CopyBitmap(buf, wsacpy, BLACK_COLOUR_0);
+		al_draw_bitmap(wsacpy, x, y, 0);
 
 		x += 64 + 1;
 	}
 
 #if OUTPUT_TEXTURES
-	al_save_bitmap("wsa_special.png", wsa_special_texture);
+	al_save_bitmap("wsa_special.png", membmp);
 #endif
 
+	al_destroy_bitmap(wsacpy);
+	wsa_special_texture = VideoA5_ConvertToVideoBitmap(membmp);
 	WSA_Unload(wsa);
 }
 
