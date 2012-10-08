@@ -106,12 +106,10 @@ static ALLEGRO_BITMAP *screen;
 static unsigned char paletteRGB[3 * 256];
 
 static CPSStore *s_cps;
-static ALLEGRO_BITMAP *cps_special_texture;
+static ALLEGRO_BITMAP *interface_texture; /* cps, wsa, and fonts. */
 static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *region_texture;
-static ALLEGRO_BITMAP *font_texture;
-static ALLEGRO_BITMAP *wsa_special_texture;
 static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
@@ -261,12 +259,16 @@ VideoA5_Init(void)
 	/* VideoA5_InitDisplayIcon(dune2_32x32_xpm, 32, 32, 23); */
 	/* VideoA5_InitDisplayIcon(dune2_32x32a_xpm, 32, 32, 13); */
 
+	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
+	interface_texture = al_create_bitmap(w, h);
+
+	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
-	font_texture = al_create_bitmap(w, h);
-	if (screen == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || font_texture == NULL)
+
+	if (interface_texture == NULL || screen == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -325,8 +327,8 @@ VideoA5_Uninit(void)
 		s_cps = next;
 	}
 
-	al_destroy_bitmap(cps_special_texture);
-	cps_special_texture = NULL;
+	al_destroy_bitmap(interface_texture);
+	interface_texture = NULL;
 
 	al_destroy_bitmap(icon_texture);
 	icon_texture = NULL;
@@ -336,12 +338,6 @@ VideoA5_Uninit(void)
 
 	al_destroy_bitmap(region_texture);
 	region_texture = NULL;
-
-	al_destroy_bitmap(font_texture);
-	font_texture = NULL;
-
-	al_destroy_bitmap(wsa_special_texture);
-	wsa_special_texture = NULL;
 
 	al_destroy_bitmap(screen);
 	screen = NULL;
@@ -743,11 +739,10 @@ VideoA5_InitCPS(void)
 	CPSStore *cps_screen = VideoA5_ExportCPS("SCREEN.CPS", buf);
 	CPSStore *cps_fame = VideoA5_LoadCPS("FAME.CPS");
 	CPSStore *cps_mapmach = VideoA5_LoadCPS("MAPMACH.CPS");
-	ALLEGRO_BITMAP *membmp = al_create_bitmap(1024, 1024);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
 
-	al_set_target_bitmap(membmp);
+	al_set_target_bitmap(interface_texture);
 
 	for (enum CPSID cpsID = CPS_MENUBAR_LEFT; cpsID <= CPS_STATUSBAR_RIGHT; cpsID++) {
 		coord = &cps_special_coord[cpsID];
@@ -795,21 +790,14 @@ VideoA5_InitCPS(void)
 	VideoA5_DrawBitmapRegion_Padded(cps_mapmach->bmp, &cps_special_coord[CPS_CONQUEST_DE], coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty, false, false);
 
 	Sprites_LoadImage("MAPMACH.CPS", 2, NULL);
-	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(membmp, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(interface_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_EN].cy, coord->tx, cps_special_coord[CPS_CONQUEST_EN].ty + 30, coord->w, 20, CONQUEST_COLOUR);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_FR].cy, coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty + 30, coord->w, 20, CONQUEST_COLOUR);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_DE].cy, coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty + 30, coord->w, 20, CONQUEST_COLOUR);
-	al_unlock_bitmap(membmp);
-
-#if OUTPUT_TEXTURES
-	al_save_bitmap("cps_special.png", membmp);
-	al_save_bitmap("cps_fame.png", cps_fame->bmp);
-	al_save_bitmap("cps_mapmach.png", cps_mapmach->bmp);
-#endif
+	al_unlock_bitmap(interface_texture);
 
 	/* Create cps_special_texture, free cps_screen, and convert cps_fame, cps_mapmach to video bitmaps. */
 	VideoA5_FreeCPS(cps_screen);
-	cps_special_texture = VideoA5_ConvertToVideoBitmap(membmp);
 	cps_fame->bmp = VideoA5_ConvertToVideoBitmap(cps_fame->bmp);
 	cps_mapmach->bmp = VideoA5_ConvertToVideoBitmap(cps_mapmach->bmp);
 }
@@ -847,8 +835,8 @@ VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y)
 	if (CPS_CONQUEST_EN <= cpsID && cpsID <= CPS_CONQUEST_DE) {
 		const ALLEGRO_COLOR col = al_map_rgb(tint[houseID][0], tint[houseID][1], tint[houseID][2]);
 
-		al_draw_bitmap_region(cps_special_texture, sx, sy, coord->w, coord->h, x, y, 0);
-		al_draw_tinted_bitmap_region(cps_special_texture, col, sx, sy + 30, coord->w, 20, x, y, 0);
+		al_draw_bitmap_region(interface_texture, sx, sy, coord->w, coord->h, x, y, 0);
+		al_draw_tinted_bitmap_region(interface_texture, col, sx, sy + 30, coord->w, 20, x, y, 0);
 		return;
 	}
 
@@ -863,7 +851,7 @@ VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y)
 		}
 	}
 
-	al_draw_bitmap_region(cps_special_texture, sx, sy, coord->w, coord->h, x, y, 0);
+	al_draw_bitmap_region(interface_texture, sx, sy, coord->w, coord->h, x, y, 0);
 }
 
 void
@@ -884,7 +872,7 @@ VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int
 		sy += 4 * houseID;
 	}
 
-	al_draw_scaled_bitmap(cps_special_texture, sx, sy, coord->w, coord->h,
+	al_draw_scaled_bitmap(interface_texture, sx, sy, coord->w, coord->h,
 			x, y, scale * coord->w, scale * coord->h, 0);
 }
 
@@ -1514,9 +1502,8 @@ VideoA5_FontIndex(const Font *font, const uint8 *pal)
 static void
 VideoA5_ExportFont(Font *font, const uint8 *pal, int y, int *rety)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
-	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
-	const int fnt = VideoA5_FontIndex(font, pal);
+	const int WINDOW_W = 512;
+	const int WINDOW_H = 1024;
 
 	int x = 0;
 
@@ -1531,7 +1518,31 @@ VideoA5_ExportFont(Font *font, const uint8 *pal, int y, int *rety)
 			VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, font->height, font->height, &x, &y);
 			GUI_DrawChar_(c, x, y);
 
-			s_font[fnt][c] = al_create_sub_bitmap(font_texture, x, y, w, font->height);
+			x += w + 1;
+		}
+	}
+
+	*rety = y + font->height + 1;
+}
+
+static void
+VideoA5_CreateFontCharacters(Font *font, const uint8 *pal, int y, int *rety)
+{
+	const int WINDOW_W = 512;
+	const int WINDOW_H = 1024;
+	const int fnt = VideoA5_FontIndex(font, pal);
+
+	int x = 0;
+
+	Font_Select(font);
+
+	for (int c = 0; c < 256; c++) {
+		if ((c < font->count) && (font->chars[c].data != NULL)) {
+			/* Image width is Font_GetCharWidth(c) + 1. */
+			const int w = Font_GetCharWidth(c) + 1;
+
+			VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, font->height, font->height, &x, &y);
+			s_font[fnt][c] = al_create_sub_bitmap(interface_texture, x, y, w, font->height);
 			assert(s_font[fnt][c] != NULL);
 
 			x += w + 1;
@@ -1544,22 +1555,36 @@ VideoA5_ExportFont(Font *font, const uint8 *pal, int y, int *rety)
 static void
 VideoA5_InitFonts(unsigned char *buf)
 {
-	int y = 0;
+	int y = 512;
 
-	VideoA5_ExportFont(g_fontNew6p, font_palette[0], y, &y);
-	VideoA5_ExportFont(g_fontNew6p, font_palette[1], y, &y);
-	VideoA5_ExportFont(g_fontNew6p, font_palette[2], y, &y);
-	VideoA5_ExportFont(g_fontNew8p, font_palette[0], y, &y);
-	VideoA5_ExportFont(g_fontNew8p, font_palette[1], y, &y);
-	VideoA5_ExportFont(g_fontNew8p, font_palette[2], y, &y);
-	VideoA5_ExportFont(g_fontIntro, font_palette[0], y, &y);
-	VideoA5_ExportFont(g_fontIntro, font_palette[3], y, &y);
+	if (buf != NULL) {
+		/* Phase 1: draw the characters into interface_texture, which
+		 * is a memory bitmap.
+		 */
+		VideoA5_ExportFont(g_fontNew6p, font_palette[0], y, &y);
+		VideoA5_ExportFont(g_fontNew6p, font_palette[1], y, &y);
+		VideoA5_ExportFont(g_fontNew6p, font_palette[2], y, &y);
+		VideoA5_ExportFont(g_fontNew8p, font_palette[0], y, &y);
+		VideoA5_ExportFont(g_fontNew8p, font_palette[1], y, &y);
+		VideoA5_ExportFont(g_fontNew8p, font_palette[2], y, &y);
+		VideoA5_ExportFont(g_fontIntro, font_palette[0], y, &y);
+		VideoA5_ExportFont(g_fontIntro, font_palette[3], y, &y);
 
-	VideoA5_CopyBitmap(buf, font_texture, TRANSPARENT_COLOUR_0);
-
-#if OUTPUT_TEXTURES
-	al_save_bitmap("fonts.png", font_texture);
-#endif
+		VideoA5_CopyBitmap(buf, interface_texture, SKIP_COLOUR_0);
+	}
+	else {
+		/* Phase 2: create subbitmaps for each character, after
+		 * interface_texture converted into video bitmap.
+		 */
+		VideoA5_CreateFontCharacters(g_fontNew6p, font_palette[0], y, &y);
+		VideoA5_CreateFontCharacters(g_fontNew6p, font_palette[1], y, &y);
+		VideoA5_CreateFontCharacters(g_fontNew6p, font_palette[2], y, &y);
+		VideoA5_CreateFontCharacters(g_fontNew8p, font_palette[0], y, &y);
+		VideoA5_CreateFontCharacters(g_fontNew8p, font_palette[1], y, &y);
+		VideoA5_CreateFontCharacters(g_fontNew8p, font_palette[2], y, &y);
+		VideoA5_CreateFontCharacters(g_fontIntro, font_palette[0], y, &y);
+		VideoA5_CreateFontCharacters(g_fontIntro, font_palette[3], y, &y);
+	}
 }
 
 void
@@ -1577,8 +1602,8 @@ VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y)
 static void
 VideoA5_InitWSA(unsigned char *buf)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
-	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	const int WINDOW_W = 512;
+	const int WINDOW_H = 512;
 
 	void *wsa = WSA_LoadFile("STATIC.WSA", GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), true);
 	assert(wsa != NULL);
@@ -1590,28 +1615,22 @@ VideoA5_InitWSA(unsigned char *buf)
 	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
 
 	ALLEGRO_BITMAP *wsacpy = al_create_bitmap(64, 64);
-	ALLEGRO_BITMAP *membmp = al_create_bitmap(1024, 1024);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
 
-	al_set_target_bitmap(membmp);
+	al_set_target_bitmap(interface_texture);
 
 	for (int frame = 0; frame < num_frames; frame++) {
 		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 64, 64, 64, &x, &y);
 		WSA_DisplayFrame(wsa, frame, 0, 0, 0);
 
 		VideoA5_CopyBitmap(buf, wsacpy, BLACK_COLOUR_0);
-		al_draw_bitmap(wsacpy, x, y, 0);
+		al_draw_bitmap(wsacpy, 512 + x, y, 0);
 
 		x += 64 + 1;
 	}
 
-#if OUTPUT_TEXTURES
-	al_save_bitmap("wsa_special.png", membmp);
-#endif
-
 	al_destroy_bitmap(wsacpy);
-	wsa_special_texture = VideoA5_ConvertToVideoBitmap(membmp);
 	WSA_Unload(wsa);
 }
 
@@ -1634,15 +1653,15 @@ VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int
 void
 VideoA5_DrawWSAStatic(int frame, int x, int y)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
-	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	const int WINDOW_W = 512;
+	const int WINDOW_H = 512;
 	const int tx = frame % (WINDOW_W / 65);
 	const int ty = frame / (WINDOW_H / 65);
-	const int sx = 65 * tx;
+	const int sx = 512 + 65 * tx;
 	const int sy = 65 * ty;
 	assert(0 <= frame && frame < 21);
 
-	al_draw_bitmap_region(wsa_special_texture, sx, sy, 64, 64, x, y, 0);
+	al_draw_bitmap_region(interface_texture, sx, sy, 64, 64, x, y, 0);
 }
 
 /*--------------------------------------------------------------*/
@@ -1684,21 +1703,26 @@ VideoA5_InitSprites(void)
 
 	VideoA5_ReadPalette("IBM.PAL");
 
-	VideoA5_InitCPS();
-
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitIcons(buf);
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitShapes(buf);
+	VideoA5_InitCursor();
 
+	memset(buf, 0, WINDOW_W * WINDOW_H);
+	VideoA5_InitCPS();
+	memset(buf, 0, WINDOW_W * WINDOW_H);
+	VideoA5_InitWSA(buf);
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitFonts(buf);
 
-	memset(buf, 0, WINDOW_W * WINDOW_H);
-	VideoA5_InitWSA(buf);
+#if OUTPUT_TEXTURES
+	al_save_bitmap("interface.png", interface_texture);
+#endif
 
-	VideoA5_InitCursor();
+	interface_texture = VideoA5_ConvertToVideoBitmap(interface_texture);
+	VideoA5_InitFonts(NULL);
 
 	al_set_target_backbuffer(display);
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
