@@ -142,6 +142,35 @@ VideoA5_GetNextXY(int texture_width, int texture_height,
 	*rety = y;
 }
 
+/* VideoA5_SetBitmapFlags:
+ *
+ * Assume you create a memory bitmap, then restore back to video bitmap.
+ * Keeps old flags around for easy use.
+ */
+static void
+VideoA5_SetBitmapFlags(int flags)
+{
+	static int old_flags;
+
+	if (flags == ALLEGRO_MEMORY_BITMAP) {
+		old_flags = al_get_new_bitmap_flags();
+		al_set_new_bitmap_flags(ALLEGRO_MEMORY_BITMAP);
+	}
+	else {
+		al_set_new_bitmap_flags(old_flags);
+	}
+}
+
+static ALLEGRO_BITMAP *
+VideoA5_ConvertToVideoBitmap(ALLEGRO_BITMAP *membmp)
+{
+	assert(!(al_get_new_bitmap_flags() & ALLEGRO_MEMORY_BITMAP));
+
+	ALLEGRO_BITMAP *vidbmp = al_clone_bitmap(membmp);
+	al_destroy_bitmap(membmp);
+	return vidbmp;
+}
+
 static void
 VideoA5_ReadPalette(const char *filename)
 {
@@ -233,13 +262,12 @@ VideoA5_Init(void)
 	/* VideoA5_InitDisplayIcon(dune2_32x32a_xpm, 32, 32, 13); */
 
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
-	cps_special_texture = al_create_bitmap(w, h);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
 	font_texture = al_create_bitmap(w, h);
 	wsa_special_texture = al_create_bitmap(w, h);
-	if (screen == NULL || cps_special_texture == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || font_texture == NULL || wsa_special_texture == NULL)
+	if (screen == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || font_texture == NULL || wsa_special_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -709,11 +737,17 @@ VideoA5_InitCPS(void)
 {
 	const struct CPSSpecialCoord *coord;
 	unsigned char *buf = GFX_Screen_Get_ByIndex(2);
+
+	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
+
 	CPSStore *cps_screen = VideoA5_ExportCPS("SCREEN.CPS", buf);
 	CPSStore *cps_fame = VideoA5_LoadCPS("FAME.CPS");
 	CPSStore *cps_mapmach = VideoA5_LoadCPS("MAPMACH.CPS");
+	ALLEGRO_BITMAP *membmp = al_create_bitmap(1024, 1024);
 
-	al_set_target_bitmap(cps_special_texture);
+	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
+
+	al_set_target_bitmap(membmp);
 
 	for (enum CPSID cpsID = CPS_MENUBAR_LEFT; cpsID <= CPS_STATUSBAR_RIGHT; cpsID++) {
 		coord = &cps_special_coord[cpsID];
@@ -761,17 +795,23 @@ VideoA5_InitCPS(void)
 	VideoA5_DrawBitmapRegion_Padded(cps_mapmach->bmp, &cps_special_coord[CPS_CONQUEST_DE], coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty, false, false);
 
 	Sprites_LoadImage("MAPMACH.CPS", 2, NULL);
-	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(cps_special_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(membmp, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_EN].cy, coord->tx, cps_special_coord[CPS_CONQUEST_EN].ty + 30, coord->w, 20, CONQUEST_COLOUR);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_FR].cy, coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty + 30, coord->w, 20, CONQUEST_COLOUR);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_DE].cy, coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty + 30, coord->w, 20, CONQUEST_COLOUR);
-	al_unlock_bitmap(cps_special_texture);
+	al_unlock_bitmap(membmp);
 
 #if OUTPUT_TEXTURES
-	al_save_bitmap("cps_special.png", cps_special_texture);
+	al_save_bitmap("cps_special.png", membmp);
+	al_save_bitmap("cps_fame.png", cps_fame->bmp);
+	al_save_bitmap("cps_mapmach.png", cps_mapmach->bmp);
 #endif
 
+	/* Create cps_special_texture, free cps_screen, and convert cps_fame, cps_mapmach to video bitmaps. */
 	VideoA5_FreeCPS(cps_screen);
+	cps_special_texture = VideoA5_ConvertToVideoBitmap(membmp);
+	cps_fame->bmp = VideoA5_ConvertToVideoBitmap(cps_fame->bmp);
+	cps_mapmach->bmp = VideoA5_ConvertToVideoBitmap(cps_mapmach->bmp);
 }
 
 void
