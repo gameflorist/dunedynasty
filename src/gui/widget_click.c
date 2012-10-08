@@ -214,19 +214,31 @@ bool GUI_Widget_TextButton_Click(Widget *w)
  */
 bool GUI_Widget_Name_Click(Widget *w)
 {
-	Object *o;
-	uint16 packed;
-
+	int cx = 0, cy = 0, count = 0;
 	VARIABLE_NOT_USED(w);
 
-	o = Object_GetByPackedTile(g_selectionPosition);
+	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+	if (s != NULL) {
+		cx = (s->o.position.s.x >> 4) + TILE_SIZE * g_selectionWidth / 2;
+		cy = (s->o.position.s.y >> 4) + TILE_SIZE * g_selectionHeight / 2;
+		Map_CentreViewport(cx, cy);
+		return false;
+	}
 
-	if (o == NULL) return false;
+	int iter;
+	Unit *u = Unit_FirstSelected(&iter);
 
-	packed = Tile_PackTile(o->position);
+	while (u != NULL) {
+		cx += (u->o.position.s.x >> 4);
+		cy += (u->o.position.s.y >> 4);
+		count++;
 
-	Map_CentreViewport(o->position.s.x >> 4, o->position.s.y >> 4);
-	Map_SetSelection(packed);
+		u = Unit_NextSelected(&iter);
+	}
+
+	if (count > 0) {
+		Map_CentreViewport(cx / count, cy / count);
+	}
 
 	return false;
 }
