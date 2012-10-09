@@ -45,7 +45,6 @@ enum MusicStreamType {
 static const int SRATE = 48000;
 static const int NUMFRAGS = 4;
 static const int FRAGLEN = 2048;
-static bool mame = true;
 
 static enum MusicStreamType curr_music_stream_type;
 static ALLEGRO_AUDIO_STREAM *s_music_stream;
@@ -198,7 +197,7 @@ AudioA5_InitAdlib(const MidiFileInfo *mid)
 
 	ALLEGRO_FILE *f = al_open_memfile(buf, length, "r");
 	delete s_adlib;
-	s_adlib = new SoundAdlibPC(f, SRATE, mame);
+	s_adlib = new SoundAdlibPC(f, SRATE, g_opl_mame);
 	al_fclose(f);
 	delete[] buf;
 

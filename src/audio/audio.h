@@ -15,6 +15,7 @@ extern float music_volume;
 extern float sound_volume;
 extern float voice_volume;
 
+extern bool g_opl_mame;
 extern char sound_font_path[1024];
 
 extern void Audio_DisplayMusicName(void);

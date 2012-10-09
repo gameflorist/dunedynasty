@@ -80,6 +80,7 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "music_volume",     CONFIG_FLOAT,   .d._float = &music_volume },
 	{ "audio",  "sound_volume",     CONFIG_FLOAT,   .d._float = &sound_volume },
 	{ "audio",  "voice_volume",     CONFIG_FLOAT,   .d._float = &voice_volume },
+	{ "audio",  "opl_mame",         CONFIG_BOOL,    .d._bool = &g_opl_mame },
 	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
 
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },

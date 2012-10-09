@@ -31,6 +31,7 @@ float music_volume = 0.85f;
 float sound_volume = 0.65f;
 float voice_volume = 1.0f;
 
+bool g_opl_mame = true;
 char sound_font_path[1024];
 
 static MusicInfoGlob curr_music;
