@@ -80,14 +80,15 @@ void GUI_Widget_TextButton_Draw(Widget *w)
  */
 void GUI_Widget_SpriteButton_Draw(Widget *w)
 {
-#if 0
-	uint16 oldScreenID;
 	uint16 positionX, positionY;
 	uint16 width, height;
-	uint16 spriteID;
 	bool buttonDown;
 
 	if (w == NULL) return;
+
+#if 0
+	uint16 oldScreenID;
+	uint16 spriteID;
 
 	spriteID = 0;
 	if (Unit_AnySelected()) {
@@ -110,6 +111,7 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 	if (oldScreenID == 0) {
 		GFX_Screen_SetActive(2);
 	}
+#endif
 
 	buttonDown = w->state.s.hover2;
 
@@ -118,6 +120,7 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 	width     = w->width;
 	height    = w->height;
 
+#if 0
 	Prim_Rect_i(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
 
 	GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], positionX, positionY, 0, 0x100, g_paletteMapping1, buttonDown ? 1 : 0);
@@ -132,7 +135,7 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 
 	GFX_Screen_SetActive(0);
 #else
-	VARIABLE_NOT_USED(w);
+	Prim_DrawBorder(positionX, positionY, width, height, 1, true, false, buttonDown ? 0 : 1);
 #endif
 }
 
@@ -628,6 +631,9 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 				if (oi->flags.factory && !isNotPlayerOwned) {
 					GUI_Widget_MakeVisible(widget28);
 				}
+#else
+				if (g_productionStringID == STR_PLACE_IT)
+					GUI_Widget_MakeVisible(widget28);
 #endif
 				/* Fall through */
 			case 7: /* Placement */

@@ -334,6 +334,20 @@ ActionPanel_ScrollFactory(const Widget *widget, Structure *s)
 	return true;
 }
 
+void
+ActionPanel_BeginPlacementMode(Structure *construction_yard)
+{
+	Structure *ns = Structure_Get_ByIndex(construction_yard->o.linkedID);
+
+	g_structureActive = ns;
+	g_structureActiveType = construction_yard->objectType;
+	g_selectionState = Structure_IsValidBuildLocation(g_selectionRectanglePosition, g_structureActiveType);
+	g_structureActivePosition = g_selectionPosition;
+	construction_yard->o.linkedID = STRUCTURE_INVALID;
+
+	GUI_ChangeSelectionType(SELECTIONTYPE_PLACE);
+}
+
 bool
 ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 {
@@ -346,17 +360,8 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 		return false;
 
 	if (widget->state.s.keySelected) {
-		if (g_productionStringID == STR_PLACE_IT) {
-			Structure *ns = Structure_Get_ByIndex(s->o.linkedID);
-
-			g_structureActive = ns;
-			g_structureActiveType = s->objectType;
-			g_selectionState = Structure_IsValidBuildLocation(g_selectionRectanglePosition, g_structureActiveType);
-			g_structureActivePosition = g_selectionPosition;
-			s->o.linkedID = STRUCTURE_INVALID;
-
-			GUI_ChangeSelectionType(SELECTIONTYPE_PLACE);
-		}
+		if (g_productionStringID == STR_PLACE_IT)
+			ActionPanel_BeginPlacementMode(s);
 		return true;
 	}
 
@@ -399,16 +404,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			case STR_PLACE_IT:
 			case STR_ON_HOLD:
 				if (lmb && (g_productionStringID == STR_PLACE_IT)) {
-					Structure *ns;
-
-					ns = Structure_Get_ByIndex(s->o.linkedID);
-					g_structureActive = ns;
-					g_structureActiveType = s->objectType;
-					g_selectionState = Structure_IsValidBuildLocation(g_selectionRectanglePosition, g_structureActiveType);
-					g_structureActivePosition = g_selectionPosition;
-					s->o.linkedID = STRUCTURE_INVALID;
-
-					GUI_ChangeSelectionType(SELECTIONTYPE_PLACE);
+					ActionPanel_BeginPlacementMode(s);
 				}
 				else if (lmb && (g_productionStringID == STR_ON_HOLD)) {
 					s->o.flags.s.repairing = false;

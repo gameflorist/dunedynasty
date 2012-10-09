@@ -35,6 +35,7 @@ extern void ActionPanel_DrawActionDescription(uint16 stringID, int x, int y, uin
 extern void ActionPanel_DrawMissileCountdown(uint8 fg, int count);
 extern void ActionPanel_DrawFactory(const Widget *widget, Structure *s);
 extern void ActionPanel_DrawPalace(const Widget *w, Structure *s);
+extern void ActionPanel_BeginPlacementMode(Structure *construction_yard);
 extern bool ActionPanel_ClickFactory(const Widget *widget, Structure *s);
 extern bool ActionPanel_ClickStarport(const Widget *widget, Structure *s);
 extern bool ActionPanel_ClickPalace(const Widget *widget, Structure *s);

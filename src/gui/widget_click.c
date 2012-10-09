@@ -272,6 +272,7 @@ bool GUI_Widget_Cancel_Click(Widget *w)
 	return true;
 }
 
+#if 0
 /**
  * Handles Click event for current selection picture.
  *
@@ -297,6 +298,23 @@ bool GUI_Widget_Picture_Click(Widget *w)
 
 	return false;
 }
+#else
+bool
+GUI_Widget_Picture_Click(Widget *w)
+{
+	VARIABLE_NOT_USED(w);
+
+	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+	if (s == NULL)
+		return false;
+
+	if ((s->o.type == STRUCTURE_CONSTRUCTION_YARD) && (g_productionStringID == STR_PLACE_IT)) {
+		ActionPanel_BeginPlacementMode(s);
+	}
+
+	return false;
+}
+#endif
 
 /**
  * Handles Click event for "Repair/Upgrade" button.
