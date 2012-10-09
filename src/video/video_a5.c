@@ -116,6 +116,7 @@ static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
 static ALLEGRO_MOUSE_CURSOR *s_cursor[CURSOR_MAX];
 
 static bool take_screenshot = false;
+static bool show_fps = false;
 static FadeInAux s_fadeInAux;
 
 /* VideoA5_GetNextXY:
@@ -370,6 +371,12 @@ VideoA5_ToggleFullscreen(void)
 }
 
 void
+VideoA5_ToggleFPS(void)
+{
+	show_fps = !show_fps;
+}
+
+void
 VideoA5_CaptureScreenshot(void)
 {
 	take_screenshot = true;
@@ -472,6 +479,10 @@ VideoA5_Tick(void)
 	al_set_target_backbuffer(display);
 #endif
 
+	static double l_last_time;
+	static double l_last_fps;
+	static int l_fps;
+
 	if (take_screenshot) {
 		struct tm *tm;
 		time_t timep;
@@ -488,6 +499,25 @@ VideoA5_Tick(void)
 
 		al_save_bitmap(filepath, al_get_backbuffer(display));
 		fprintf(stdout, "screenshot: %s\n", filepath);
+	}
+
+	if (show_fps) {
+		const double curr_time = al_get_time();
+		char str[16];
+
+		/* Don't clobber the current font state. */
+		int len = snprintf(str, sizeof(str), "FPS:%4.2f", l_last_fps);
+		for (int i = 0; i < len; i++) {
+			const unsigned char c = str[i];
+			al_draw_tinted_bitmap(s_font[2][c], paltoRGB[15], 2 + 6 * i, 40, 0);
+		}
+
+		l_fps++;
+		if (curr_time - l_last_time >= 0.5f) {
+			l_last_fps = l_fps / (curr_time - l_last_time);
+			l_last_time = al_get_time();
+			l_fps = 0;
+		}
 	}
 
 	al_flip_display();

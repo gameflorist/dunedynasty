@@ -7,6 +7,7 @@
 extern bool VideoA5_Init(void);
 extern void VideoA5_Uninit(void);
 extern void VideoA5_ToggleFullscreen(void);
+extern void VideoA5_ToggleFPS(void);
 extern void VideoA5_CaptureScreenshot(void);
 extern void VideoA5_Tick(void);
 
