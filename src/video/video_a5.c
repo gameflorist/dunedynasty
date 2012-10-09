@@ -174,6 +174,12 @@ VideoA5_ReadPalette(const char *filename)
 {
 	File_ReadBlockFile(filename, paletteRGB, 3 * 256);
 	Video_SetPalette(paletteRGB, 0, 256);
+
+	/* Make pure white colour. */
+	paltoRGB[0xFF] = al_map_rgb(0xFF, 0xFF, 0xFF);
+	paletteRGB[3*0xFF + 0] = 0xFF;
+	paletteRGB[3*0xFF + 1] = 0xFF;
+	paletteRGB[3*0xFF + 2] = 0xFF;
 }
 
 static void
@@ -433,6 +439,20 @@ VideoA5_CreateWhiteMask(unsigned char *src, ALLEGRO_LOCKED_REGION *reg,
 				row[reg->pixel_size * (dx + x) + 2] = 0x00;
 				row[reg->pixel_size * (dx + x) + 3] = 0x00;
 			}
+		}
+	}
+}
+
+static void
+VideoA5_CreateWhiteMaskIndexed(unsigned char *buf,
+		int stride, int sx, int sy, int dx, int dy, int w, int h, int ref)
+{
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			const int src = stride * (sy + y) + (sx + x);
+			const int dst = stride * (dy + y) + (dx + x);
+
+			buf[dst] = (buf[src] == ref) ? 0xFF : 0x00;
 		}
 	}
 }
