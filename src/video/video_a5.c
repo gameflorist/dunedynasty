@@ -1299,10 +1299,6 @@ VideoA5_InitShapes(unsigned char *buf)
 		}
 	}
 
-	VideoA5_CopyBitmap(buf, region_texture, TRANSPARENT_COLOUR_0);
-	memset(buf, 0, WINDOW_W * WINDOW_H);
-
-	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(region_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 	for (int shapeID = SHAPE_ARROW; shapeID <= SHAPE_ARROW_FINAL; shapeID++) {
 		const int tintID = SHAPE_ARROW_TINT + 4 * (shapeID - SHAPE_ARROW);
 		const int w = Shape_Width(shapeID);
@@ -1311,17 +1307,18 @@ VideoA5_InitShapes(unsigned char *buf)
 		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 4 * w, h, row_h, &x, &y);
 		GUI_DrawSprite_(0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0);
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 3; i >= 0; i--) {
 			s_shape[tintID + i][0] = al_create_sub_bitmap(region_texture, x + i * w, y, w, h);
 			assert(s_shape[tintID + i][0] != NULL);
 
-			VideoA5_CreateWhiteMask(buf, reg, WINDOW_W, x, y, x + i * w, y, w, h, ARROW_COLOUR + i);
+			VideoA5_CreateWhiteMaskIndexed(buf, WINDOW_W, x, y, x + i * w, y, w, h, ARROW_COLOUR + i);
 		}
 
 		x += 4 * w + 1;
 		row_h = max(row_h, h);
 	}
-	al_unlock_bitmap(region_texture);
+
+	VideoA5_CopyBitmap(buf, region_texture, TRANSPARENT_COLOUR_0);
 
 #if OUTPUT_TEXTURES
 	al_save_bitmap("shapes.png", shape_texture);
