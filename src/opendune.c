@@ -1039,6 +1039,7 @@ void GameLoop_Main(bool new_game)
 	g_gameOverlay = GAMEOVERLAY_NONE;
 	Timer_RegisterSource();
 
+	int frames_skipped = 0;
 	while (g_gameMode == GM_NORMAL) {
 		Timer_WaitForEvent();
 		const int64_t curr_ticks = Timer_GameTicks();
@@ -1173,7 +1174,9 @@ void GameLoop_Main(bool new_game)
 
 		if (!g_var_38F8) break;
 
-		if (Timer_QueueIsEmpty()) {
+		if (frames_skipped > 4 || Timer_QueueIsEmpty()) {
+			frames_skipped = 0;
+
 			GUI_DrawInterfaceAndRadar();
 
 			if (g_gameOverlay == GAMEOVERLAY_NONE) {
@@ -1186,6 +1189,9 @@ void GameLoop_Main(bool new_game)
 			}
 
 			Video_Tick();
+		}
+		else {
+			frames_skipped++;
 		}
 	}
 
