@@ -870,6 +870,7 @@ Menu_Run(void)
 	enum MenuAction curr_menu = MENU_FADE_IN | MENU_MAIN_MENU;
 	enum MenuAction next_menu = curr_menu;
 	int64_t fade_start = Timer_GetTicks();
+	int64_t last_redraw_time = 0;
 	bool initialise_menu = true;
 	bool redraw = true;
 
@@ -909,8 +910,9 @@ Menu_Run(void)
 		}
 
 		/* Draw. */
-		if (redraw) {
+		if (redraw && (last_redraw_time < Timer_GetTicks())) {
 			redraw = false;
+			last_redraw_time = Timer_GetTicks();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 
 			switch (curr_menu & 0xFF) {
