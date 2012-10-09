@@ -1512,7 +1512,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 		if (u != NULL && g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT && u->o.flags.s.allocated) {
 			Unit_Unselect(u);
 			Unit_UntargetMe(u);
-			u->o.script.returnValue = 1;
+			u->o.script.variables[1] = 1;
 			Unit_SetAction(u, ACTION_DIE);
 		} else {
 			uint16 type = Map_GetLandscapeType(packed);
