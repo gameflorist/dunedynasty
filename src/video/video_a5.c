@@ -1053,9 +1053,7 @@ VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 	s_icon[idx][HOUSE_HARKONNEN] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
 	assert(s_icon[idx][HOUSE_HARKONNEN] != NULL);
 
-	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(s_icon[idx][HOUSE_HARKONNEN], ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
-	VideoA5_CreateWhiteMask(buf, reg, WINDOW_W, x, y, 0, 0, TILE_SIZE, TILE_SIZE, WINDTRAP_COLOUR);
-	al_unlock_bitmap(s_icon[idx][HOUSE_HARKONNEN]);
+	VideoA5_CreateWhiteMaskIndexed(buf, WINDOW_W, x, y, x, y, TILE_SIZE, TILE_SIZE, WINDTRAP_COLOUR);
 
 	*retx = x + TILE_SIZE + 1;
 	*rety = y;
@@ -1154,12 +1152,12 @@ VideoA5_InitIcons(unsigned char *buf)
 		VideoA5_ExportIconGroup(buf, icon_data[i].group, icon_data[i].num_common, x, y, &x, &y);
 	}
 
-	VideoA5_CopyBitmap(buf, icon_texture, TRANSPARENT_COLOUR_0);
-
 	/* Windtraps. */
 	for (uint16 iconID = 304; iconID <= 308; iconID++) {
 		VideoA5_ExportWindtrapOverlay(buf, iconID, x, y, &x, &y);
 	}
+
+	VideoA5_CopyBitmap(buf, icon_texture, TRANSPARENT_COLOUR_0);
 
 #if OUTPUT_TEXTURES
 	al_save_bitmap("icons.png", icon_texture);
