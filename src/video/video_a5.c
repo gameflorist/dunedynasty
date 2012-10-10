@@ -269,9 +269,9 @@ VideoA5_Init(void)
 
 	al_set_new_display_flags(display_flags);
 	al_set_new_display_option(ALLEGRO_VSYNC, 1, ALLEGRO_SUGGEST);
+	al_set_new_display_option(ALLEGRO_STENCIL_SIZE, 8, ALLEGRO_SUGGEST);
 	display = al_create_display(TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 	al_set_window_title(display, "Dune Dynasty");
-	/* display2 = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT); */
 	if (display == NULL)
 		return false;
 
@@ -1481,7 +1481,7 @@ VideoA5_InitShapes(unsigned char *buf)
 #endif
 }
 
-#if 1
+#if 0
 /* Requires read/write to texture, separate alpha blending. */
 static void
 VideoA5_DrawBlur_SeparateBlender(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
@@ -1528,6 +1528,35 @@ VideoA5_DrawBlur_DestMinusSrc(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
 }
 #endif
 
+#if 1
+/* Requires OpenGL, stencil buffer. */
+static void
+VideoA5_DrawBlur_GLStencil(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
+{
+	/* Draw brush onto stencil buffer. */
+	glClear(GL_STENCIL_BUFFER_BIT);
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_STENCIL_TEST);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+	glAlphaFunc(GL_GREATER, 0.5f);
+	glStencilFunc(GL_ALWAYS, 0x1, 0x1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+	al_draw_bitmap(brush, x, y, 0);
+
+	/* Stencil is 1 where we should draw. */
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glAlphaFunc(GL_ALWAYS, 0);
+	glStencilFunc(GL_EQUAL, 0x1, 0x1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	Viewport_RenderBrush(x + blurx, y, blurx);
+
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_STENCIL_TEST);
+}
+#endif
+
 void
 VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags)
 {
@@ -1555,8 +1584,9 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 
 		ALLEGRO_BITMAP *brush = s_shape[shapeID][houseID];
 
-		VideoA5_DrawBlur_SeparateBlender(brush, x, y, s_variable_60[effect]);
+		/* VideoA5_DrawBlur_SeparateBlender(brush, x, y, s_variable_60[effect]); */
 		/* VideoA5_DrawBlur_DestMinusSrc(brush, x, y, s_variable_60[effect]); */
+		VideoA5_DrawBlur_GLStencil(brush, x, y, s_variable_60[effect]);
 	}
 	else if ((flags & 0x300) == 0x300) {
 		/* Shadow. */

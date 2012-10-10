@@ -963,9 +963,6 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 	else {
 		if (!Map_IsPositionInViewport(u->o.position, &x, &y))
 			return;
-
-		x += windowX;
-		y += windowY;
 	}
 
 	x += (int16)g_table_tilediff[0][u->wobbleIndex].s.x;
@@ -1176,43 +1173,31 @@ Viewport_DrawSelectionBox(void)
 }
 
 static void
-Viewport_DrawInterface(enum HouseType houseID, int blurx, int blury)
+Viewport_DrawInterface(enum HouseType houseID, int x, int blurx)
 {
 	const ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
 	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
 
-	const int x = g_screenDiv[SCREENDIV_VIEWPORT].width - blurx;
-
-	if (x >= 3 * TILE_SIZE)
+	if (x + 3 * TILE_SIZE < g_screenDiv[SCREENDIV_VIEWPORT].width)
 		return;
+
+	x = g_screenDiv[SCREENDIV_VIEWPORT].width - blurx;
 
 	/* Scaling factor between sidebar -> viewport->scale. */
 	float scale = sidebar->scale / viewport->scale;
-	float screen_blury = viewport->y + viewport->scale * blury;
 
-	for (int y = sidebar->height - 85 - 52; y + 52 - 1 >= 40 + 17; y -= 52) {
+	for (int y = sidebar->height - 85 - 52; y + 52 - 1 >= 17; y -= 52) {
+#if 0
 		/* Translate y in sidebar's coordinates -> screen -> viewport coordinates. */
 		float screen_y = sidebar->y + sidebar->scale * y;
-		float desty = (screen_y - screen_blury) / viewport->scale;
+		float desty = (screen_y - viewport->y) / viewport->scale;
+#endif
 
-		Video_DrawCPSSpecialScale(CPS_SIDEBAR_MIDDLE, houseID, x, desty, scale);
+		Video_DrawCPSSpecialScale(CPS_SIDEBAR_MIDDLE, houseID, x, y * scale, scale);
 	}
 
-	{
-		int y = 0;
-		float screen_y = sidebar->y + sidebar->scale * y;
-		float desty = (screen_y - screen_blury) / viewport->scale;
-
-		Video_DrawCPSSpecialScale(CPS_SIDEBAR_TOP, houseID, x, desty, scale);
-	}
-
-	{
-		int y = sidebar->height - 85;
-		float screen_y = sidebar->y + sidebar->scale * y;
-		float desty = (screen_y - screen_blury) / viewport->scale;
-
-		Video_DrawCPSSpecialScale(CPS_SIDEBAR_BOTTOM, houseID, x, desty, scale);
-	}
+	Video_DrawCPSSpecialScale(CPS_SIDEBAR_TOP, houseID, x, 0, scale);
+	Video_DrawCPSSpecialScale(CPS_SIDEBAR_BOTTOM, houseID, x, (sidebar->height - 85) * scale, scale);
 }
 
 /* Viewport_RenderBrush:
@@ -1223,7 +1208,7 @@ Viewport_DrawInterface(enum HouseType houseID, int blurx, int blury)
  * buffer.
  */
 void
-Viewport_RenderBrush(int x, int y)
+Viewport_RenderBrush(int x, int y, int blurx)
 {
 	/* Top-left tile in viewport. */
 	const int tile_left = Tile_GetPackedX(g_viewportPosition);
@@ -1237,12 +1222,10 @@ Viewport_RenderBrush(int x, int y)
 	const int tile_x0 = sx / TILE_SIZE;
 	const int tile_y0 = sy / TILE_SIZE;
 
-	const int viewportX1 = -(sx - TILE_SIZE * tile_x0);
-	const int viewportY1 = -(sy - TILE_SIZE * tile_y0);
+	const int viewportX1 = TILE_SIZE * (tile_x0 - tile_left) - g_viewport_scrollOffsetX - blurx;
+	const int viewportY1 = TILE_SIZE * (tile_y0 - tile_top)  - g_viewport_scrollOffsetY;
 	const int viewportX2 = viewportX1 + 3 * TILE_SIZE;
 	const int viewportY2 = viewportY1 + 3 * TILE_SIZE;
-
-	Prim_FillRect_i(viewportX1, viewportY1, viewportX2, viewportY2, 0);
 
 	/* Draw tiles. */
 	Viewport_DrawTilesInRange(tile_x0, tile_y0,
@@ -1277,7 +1260,7 @@ Viewport_RenderBrush(int x, int y)
 			if (ui->o.flags.blurTile)
 				continue;
 
-			Viewport_DrawUnit(u, x, y, true);
+			Viewport_DrawUnit(u, blurx, 0, true);
 		}
 	}
 
@@ -1286,7 +1269,7 @@ Viewport_RenderBrush(int x, int y)
 			viewportX1, viewportY1, viewportX2, viewportY2, false, true);
 
 	/* Render interface. */
-	Viewport_DrawInterface(g_playerHouseID, x, y);
+	Viewport_DrawInterface(g_playerHouseID, x, blurx);
 }
 
 static void
