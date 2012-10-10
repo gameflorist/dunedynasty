@@ -1031,7 +1031,7 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 		Shape_Draw(shapeID, x, y - 14, 0, 0x8000);
 	}
 
-	if (Unit_IsSelected(u))
+	if (Unit_IsSelected(u) && !render_for_blur_effect)
 		Viewport_DrawSelectedUnit(x, y);
 
 #if 0
