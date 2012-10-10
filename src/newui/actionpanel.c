@@ -809,6 +809,9 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			else {
 				GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 18, 6, 0, 0x132, 100 - s->upgradeTimeLeft);
 			}
+
+			/* Make upgrade cost yellow to distinguish it from unit cost. */
+			fg = 5;
 		}
 
 		/* Draw credits. */

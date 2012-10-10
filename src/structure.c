@@ -3,6 +3,7 @@
 /** @file src/structure.c %Structure handling routines. */
 
 #include <assert.h>
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include "types.h"
@@ -2207,8 +2208,8 @@ void Structure_InitFactoryItems(const Structure *s)
 		srand(seed);
 	}
 
+	const StructureInfo *si = &g_table_structureInfo[s->o.type];
 	if (s->o.type != STRUCTURE_CONSTRUCTION_YARD) {
-		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 		const int end = (s->o.type == STRUCTURE_STARPORT) ? UNIT_MCV + 1 : 8;
 
 		for (int i = 0; i < end; i++) {
@@ -2241,6 +2242,9 @@ void Structure_InitFactoryItems(const Structure *s)
 			if (s->o.type == STRUCTURE_STARPORT) {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = GUI_FactoryWindow_CalculateStarportPrice(oi->buildCredits);
 			}
+			else if (available == -1) {
+				g_factoryWindowItems[g_factoryWindowTotal].credits = floor(si->o.buildCredits / 40) * 20;
+			}
 			else {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
 			}
@@ -2258,8 +2262,14 @@ void Structure_InitFactoryItems(const Structure *s)
 
 			g_factoryWindowItems[g_factoryWindowTotal].objectType = i;
 			g_factoryWindowItems[g_factoryWindowTotal].available = available;
-			g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
 			g_factoryWindowItems[g_factoryWindowTotal].shapeID = oi->spriteID;
+
+			if (available == -1) {
+				g_factoryWindowItems[g_factoryWindowTotal].credits = floor(si->o.buildCredits / 40) * 20;
+			}
+			else {
+				g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
+			}
 
 			if (i == STRUCTURE_SLAB_1x1 || i == STRUCTURE_SLAB_2x2) {
 				g_factoryWindowItems[g_factoryWindowTotal].sortPriority = 0x64;
