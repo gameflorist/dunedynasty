@@ -604,10 +604,10 @@ static FadeInAux *
 VideoA5_InitFadeInSprite(int w, int h, bool fade_in)
 {
 	FadeInAux *aux = &s_fadeInAux;
-	assert(w < SCREEN_WIDTH);
-	assert(h < SCREEN_HEIGHT);
+	assert(w == al_get_bitmap_width(scratch));
+	assert(h == al_get_bitmap_height(scratch));
 
-	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap_region(screen, 0, 0, w, h, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(scratch, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 	for (int y = 0; y < h; y++) {
 		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
 
@@ -615,7 +615,7 @@ VideoA5_InitFadeInSprite(int w, int h, bool fade_in)
 			row[reg->pixel_size*x + 3] = fade_in ? 0x00 : 0xFF;
 		}
 	}
-	al_unlock_bitmap(screen);
+	al_unlock_bitmap(scratch);
 
 	for (int i = 0; i < w; i++) {
 		aux->cols[i] = i;
@@ -651,7 +651,9 @@ VideoA5_InitFadeInSprite(int w, int h, bool fade_in)
 void
 VideoA5_DrawFadeIn(const FadeInAux *aux, int x, int y)
 {
-	al_draw_bitmap_region(screen, 0, 0, aux->width, aux->height, x, y, 0);
+	VARIABLE_NOT_USED(aux);
+
+	al_draw_bitmap(scratch, x, y, 0);
 }
 
 bool
@@ -662,7 +664,7 @@ VideoA5_TickFadeIn(FadeInAux *aux)
 	if (aux->frame >= aux->height)
 		return true;
 
-	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap_region(screen, 0, 0, aux->width, aux->height, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(scratch, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 
 	int j = aux->frame;
 	for (int i = 0; i < aux->width; i++) {
@@ -687,7 +689,7 @@ VideoA5_TickFadeIn(FadeInAux *aux)
 		}
 	}
 
-	al_unlock_bitmap(screen);
+	al_unlock_bitmap(scratch);
 
 	aux->frame++;
 	return false;
@@ -946,7 +948,8 @@ VideoA5_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fad
 	ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
 	CPSStore *cps = VideoA5_LoadCPS(filename);
 
-	al_set_target_bitmap(screen);
+	VideoA5_ResizeScratchBitmap(w, h);
+	al_set_target_bitmap(scratch);
 	al_draw_bitmap_region(cps->bmp, x, y, w, h, 0, 0, 0);
 	al_set_target_bitmap(old_target);
 
@@ -1499,15 +1502,10 @@ VideoA5_InitFadeInShape(enum ShapeID shapeID, enum HouseType houseID)
 	assert(houseID < HOUSE_MAX);
 	assert(s_shape[shapeID][houseID] != NULL);
 
-	ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
-	ALLEGRO_BITMAP *bmp = s_shape[shapeID][houseID];
+	al_destroy_bitmap(scratch);
+	scratch = al_clone_bitmap(s_shape[shapeID][houseID]);
 
-	al_set_target_bitmap(screen);
-	al_clear_to_color(al_map_rgba(0x00, 0x00, 0x00, 0x00));
-	al_draw_bitmap(bmp, 0, 0, 0);
-	al_set_target_bitmap(old_target);
-
-	return VideoA5_InitFadeInSprite(al_get_bitmap_width(bmp), al_get_bitmap_height(bmp), true);
+	return VideoA5_InitFadeInSprite(al_get_bitmap_width(scratch), al_get_bitmap_height(scratch), true);
 }
 
 /*--------------------------------------------------------------*/
