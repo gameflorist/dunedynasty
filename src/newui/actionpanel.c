@@ -774,10 +774,15 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 				const float x1f = x1 + 52.0f/32.0f;
 				const float x2f = x1 + w - 1.0f - 52.0f/32.0f;
 
-				Prim_FillRect_RGBA(x1f, y1 + 12.0f, x2f, y1 + 12.0f + g_fontCurrent->height + 3.0f, 0x00, 0x00, 0x00, 0x80);
+				if (g_productionStringID == STR_ON_HOLD) {
+					Prim_FillRect_RGBA(x1f, y1 + 2.0f, x2f, y1 + 36.0f, 0x00, 0x00, 0x00, 0x80);
+				}
+				else {
+					Prim_FillRect_RGBA(x1f, y1 + 12.0f, x2f, y1 + 12.0f + g_fontCurrent->height + 3.0f, 0x00, 0x00, 0x00, 0x80);
+				}
 			}
 
-			if (g_productionStringID == STR_D_DONE) {
+			if (g_productionStringID == STR_D_DONE || g_productionStringID == STR_ON_HOLD) {
 				int buildTime;
 
 				if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
@@ -794,7 +799,13 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 				const int timeLeft = buildTime - (s->countDown + 255) / 256;
 				const int percentDone = 100 * timeLeft / buildTime;
 
-				GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 14, fg, 0, 0x121, percentDone);
+				if (g_productionStringID == STR_D_DONE) {
+					GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 14, fg, 0, 0x121, percentDone);
+				}
+				else {
+					GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 10, fg, 0, 0x121, percentDone);
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_ON_HOLD), x1 + w / 2, y1 + 18, fg, 0, 0x121);
+				}
 			}
 			else if (g_productionStringID != STR_BUILD_IT) {
 				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), x1 + w / 2, y1 + 14, fg, 0, 0x121);
