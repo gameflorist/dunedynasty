@@ -96,7 +96,7 @@ AudioA5_Init(void)
 
 	al_init_acodec_addon();
 
-	if (sound_font_path[0] != '\0') {
+	if (g_table_music_set[MUSICSET_DUNE2_C55].enable && (sound_font_path[0] != '\0')) {
 		s_midi = create_midi_player(sound_font_path);
 
 #ifdef WITH_FLUIDSYNTH
