@@ -106,6 +106,7 @@ static ALLEGRO_BITMAP *screen;
 static unsigned char paletteRGB[3 * 256];
 
 static CPSStore *s_cps;
+static ALLEGRO_BITMAP *scratch; /* temporary bitmap for non-speed-critical images. */
 static ALLEGRO_BITMAP *interface_texture; /* cps, wsa, and fonts. */
 static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
@@ -168,6 +169,15 @@ VideoA5_ConvertToVideoBitmap(ALLEGRO_BITMAP *membmp)
 	ALLEGRO_BITMAP *vidbmp = al_clone_bitmap(membmp);
 	al_destroy_bitmap(membmp);
 	return vidbmp;
+}
+
+static void
+VideoA5_ResizeScratchBitmap(int w, int h)
+{
+	if ((al_get_bitmap_width(scratch) != w) || (al_get_bitmap_height(scratch) != h)) {
+		al_destroy_bitmap(scratch);
+		scratch = al_create_bitmap(w, h);
+	}
 }
 
 static void
@@ -271,11 +281,12 @@ VideoA5_Init(void)
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
+	scratch = al_create_bitmap(16, 16);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
 
-	if (interface_texture == NULL || screen == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL)
+	if (scratch == NULL || interface_texture == NULL || screen == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -333,6 +344,9 @@ VideoA5_Uninit(void)
 
 		s_cps = next;
 	}
+
+	al_destroy_bitmap(scratch);
+	scratch = NULL;
 
 	al_destroy_bitmap(interface_texture);
 	interface_texture = NULL;
@@ -1689,8 +1703,9 @@ VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int
 
 	const unsigned char *buf = GFX_Screen_Get_ByIndex(0);
 
-	VideoA5_CopyBitmap(buf, screen, BLACK_COLOUR_0);
-	al_draw_bitmap_region(screen, sx, sy, w, h, dx, dy, 0);
+	VideoA5_ResizeScratchBitmap(w, h);
+	VideoA5_CopyBitmap(&buf[SCREEN_WIDTH * sy + sx], scratch, BLACK_COLOUR_0);
+	al_draw_bitmap(scratch, dx, dy, 0);
 
 	return true;
 }
