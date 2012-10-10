@@ -560,17 +560,18 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 /**
  * Update part of the palette one step.
  * @param finishNow Finish all steps now.
- * @return Direction of change for the next call.
+ * @return whether to redraw.
  * @note If \a finishNow, the new palette is not written to the screen.
  * @see PalettePartDirection
  */
-static uint16 GameLoop_PalettePart_Update(bool finishNow)
+static bool
+GameLoop_PalettePart_Update(bool finishNow)
 {
 	Audio_Poll();
 
-	if (s_palettePartDirection == PPD_STOPPED) return 0;
+	if (s_palettePartDirection == PPD_STOPPED) return false;
 
-	if (s_paletteAnimationTimeout >= Timer_GetTicks() && !finishNow) return s_palettePartDirection;
+	if (s_paletteAnimationTimeout >= Timer_GetTicks() && !finishNow) return false;
 
 	s_paletteAnimationTimeout = Timer_GetTicks() + 7;
 	if (--s_palettePartCount == 0 || finishNow) {
@@ -593,13 +594,13 @@ static uint16 GameLoop_PalettePart_Update(bool finishNow)
 		}
 	}
 
-	if (finishNow) return s_palettePartDirection;
+	if (finishNow) return true;
 
 	memcpy(&g_palette_998A[215 * 3], s_palettePartCurrent, 18);
 
 	GFX_SetPalette(g_palette_998A);
 
-	return s_palettePartDirection;
+	return true;
 }
 
 static void GameLoop_PlayAnimation(void)
@@ -744,10 +745,17 @@ static void GameLoop_PlayAnimation(void)
 				return;
 			}
 
+			bool redraw = true;
 			do {
-				GameLoop_PalettePart_Update(false);
-				Cutscene_CopyScreen();
-				Timer_Wait();
+				if (GameLoop_PalettePart_Update(false))
+					redraw = true;
+
+				if (redraw) {
+					redraw = false;
+					Cutscene_CopyScreen();
+				}
+
+				Timer_Sleep(1);
 			} while ((Timer_GetTicks() < timeout) && (Timer_GetTicks() < loc10));
 		}
 
@@ -1283,8 +1291,10 @@ static void Gameloop_Logos(void)
 	/* Voice_LoadVoices(0xFFFF); */
 
 	while (Timer_GetTicks() < timeout1) {
-		if (!Cutscene_InputSkipScene()) {
+		if (Input_Tick(true))
 			Cutscene_CopyScreen();
+
+		if (!Cutscene_InputSkipScene()) {
 			sleepIdle();
 			continue;
 		}
@@ -1356,9 +1366,11 @@ static void Gameloop_Logos(void)
 	Cutscene_SetPaletteAnimated(g_palette_998A, 30);
 
 	for (int timeout = 0; timeout < 180; timeout++) {
-		if (!Cutscene_InputSkipScene()) {
+		if (Input_Tick(true))
 			Cutscene_CopyScreen();
-			Timer_Wait();
+
+		if (!Cutscene_InputSkipScene()) {
+			Timer_Sleep(1);
 			continue;
 		}
 
