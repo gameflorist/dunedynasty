@@ -1481,6 +1481,7 @@ VideoA5_InitShapes(unsigned char *buf)
 #endif
 }
 
+#if 1
 /* Requires read/write to texture, separate alpha blending. */
 static void
 VideoA5_DrawBlur_SeparateBlender(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
@@ -1501,6 +1502,31 @@ VideoA5_DrawBlur_SeparateBlender(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
 	al_draw_bitmap(brush, x, y, 0);
 }
+#endif
+
+#if 0
+/* Requires read/write to texture, DEST_MINUS_SRC blender.
+ * Requires INVERTED masks (0x00000000 in the centre, 0xFFFFFFFF around).
+ */
+static void
+VideoA5_DrawBlur_DestMinusSrc(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
+{
+	ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
+	const int w = al_get_bitmap_width(brush);
+	const int h = al_get_bitmap_height(brush);
+
+	VideoA5_ResizeScratchBitmap(w, h);
+	al_set_target_bitmap(scratch);
+	Viewport_RenderBrush(x + blurx, y);
+
+	al_set_blender(ALLEGRO_DEST_MINUS_SRC, ALLEGRO_ONE, ALLEGRO_ONE);
+	al_draw_bitmap(brush, 0.0f, 0.0f, 0);
+
+	al_set_target_bitmap(old_target);
+	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+	al_draw_bitmap_region(scratch, 0.0f, 0.0f, w, h, x, y, 0);
+}
+#endif
 
 void
 VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags)
@@ -1530,6 +1556,7 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 		ALLEGRO_BITMAP *brush = s_shape[shapeID][houseID];
 
 		VideoA5_DrawBlur_SeparateBlender(brush, x, y, s_variable_60[effect]);
+		/* VideoA5_DrawBlur_DestMinusSrc(brush, x, y, s_variable_60[effect]); */
 	}
 	else if ((flags & 0x300) == 0x300) {
 		/* Shadow. */
