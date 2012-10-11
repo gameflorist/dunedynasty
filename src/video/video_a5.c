@@ -831,7 +831,6 @@ VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int
 	assert(houseID < HOUSE_MAX);
 
 	const struct CPSSpecialCoord *coord = &cps_special_coord[cpsID];
-	const ALLEGRO_COLOR tint = al_map_rgb(0xFF, 0xFF, 0xFF);
 	int sx = coord->tx + 17 * houseID;
 	int sy = coord->ty;
 
@@ -842,9 +841,8 @@ VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int
 		sy += 4 * houseID;
 	}
 
-	al_draw_tinted_scaled_rotated_bitmap_region(cps_special_texture,
-			sx, sy, coord->w, coord->h, tint, 0.0f, 0.0f,
-			x, y, scale, scale, 0.0f, 0);
+	al_draw_scaled_bitmap(cps_special_texture, sx, sy, coord->w, coord->h,
+			x, y, scale * coord->w, scale * coord->h, 0);
 }
 
 FadeInAux *
