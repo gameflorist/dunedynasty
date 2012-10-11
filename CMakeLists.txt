@@ -11,13 +11,17 @@ endif(NOT DUNE_DATA_DIR)
 
 include(FindPkgConfig)
 
-pkg_check_modules(ALLEGRO5 REQUIRED allegro-5.0)
-pkg_check_modules(ALLEGRO5_ACODEC REQUIRED allegro_acodec-5.0)
-pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-5.0)
-pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-5.0)
-pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-5.0)
-pkg_check_modules(ALLEGRO5_PRIMITIVES REQUIRED allegro_primitives-5.0)
+set(ALLEGRO_VERSION 5.0)
+pkg_check_modules(ALLEGRO5 REQUIRED allegro-${ALLEGRO_VERSION})
+pkg_check_modules(ALLEGRO5_ACODEC REQUIRED allegro_acodec-${ALLEGRO_VERSION})
+pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-${ALLEGRO_VERSION})
+pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-${ALLEGRO_VERSION})
+pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-${ALLEGRO_VERSION})
+pkg_check_modules(ALLEGRO5_PRIMITIVES REQUIRED allegro_primitives-${ALLEGRO_VERSION})
 include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
+
+find_package(OpenGL)
+include_directories(SYSTEM ${OPENGL_INCLUDE_DIRS})
 
 if(WITH_FLUIDSYNTH)
     pkg_check_modules(FLUIDSYNTH fluidsynth)
@@ -59,6 +63,7 @@ target_link_libraries(dunedynasty
 	${ALLEGRO5_MEMFILE_LDFLAGS}
 	${ALLEGRO5_PRIMITIVES_LDFLAGS}
 	${ALLEGRO5_LDFLAGS}
+	${OPENGL_LIBRARIES}
 	)
 
 if(WITH_FLUIDSYNTH)
@@ -69,6 +74,7 @@ endif(WITH_FLUIDSYNTH)
 
 install(TARGETS dunedynasty DESTINATION "bin")
 install(FILES
+	${CMAKE_SOURCE_DIR}/CHANGES.txt
 	${CMAKE_SOURCE_DIR}/COPYING
 	${CMAKE_SOURCE_DIR}/README.txt
 	${CMAKE_SOURCE_DIR}/enhancement.txt
