@@ -106,8 +106,6 @@ static const uint8 font_palette[][8] = {
 ALLEGRO_COLOR paltoRGB[256];
 
 static ALLEGRO_DISPLAY *display;
-/* static ALLEGRO_DISPLAY *display2; */
-static ALLEGRO_BITMAP *screen;
 static unsigned char paletteRGB[3 * 256];
 
 static CPSStore *s_cps;
@@ -289,14 +287,13 @@ VideoA5_Init(void)
 	interface_texture = al_create_bitmap(w, h);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
-	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 	scratch = al_create_bitmap(16, 16);
 	s_minimap = al_create_bitmap(64, 64);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
 
-	if (scratch == NULL || interface_texture == NULL || screen == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL)
+	if (scratch == NULL || interface_texture == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -372,9 +369,6 @@ VideoA5_Uninit(void)
 
 	al_destroy_bitmap(region_texture);
 	region_texture = NULL;
-
-	al_destroy_bitmap(screen);
-	screen = NULL;
 }
 
 void
@@ -494,18 +488,6 @@ VideoA5_CreateWhiteMaskIndexed(unsigned char *buf,
 void
 VideoA5_Tick(void)
 {
-#if 0
-	const unsigned char *raw = GFX_Screen_Get_ByIndex(0);
-
-	al_set_target_backbuffer(display2);
-	VideoA5_CopyBitmap(raw, screen, BLACK_COLOUR_0);
-	al_draw_bitmap(screen, 0, 0, 0);
-	VideoA5_DrawShape(0, 0, g_mouseX, g_mouseY, 0);
-	al_flip_display();
-
-	al_set_target_backbuffer(display);
-#endif
-
 	static double l_last_time;
 	static double l_last_fps;
 	static int l_fps;
@@ -1499,6 +1481,27 @@ VideoA5_InitShapes(unsigned char *buf)
 #endif
 }
 
+/* Requires read/write to texture, separate alpha blending. */
+static void
+VideoA5_DrawBlur_SeparateBlender(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
+{
+	ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
+	const int w = al_get_bitmap_width(brush);
+	const int h = al_get_bitmap_height(brush);
+
+	VideoA5_ResizeScratchBitmap(w, h);
+	al_set_target_bitmap(scratch);
+	Viewport_RenderBrush(x + blurx, y);
+
+	al_set_target_bitmap(brush);
+	al_set_separate_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, ALLEGRO_DEST_MINUS_SRC, ALLEGRO_ZERO, ALLEGRO_ONE);
+	al_draw_bitmap_region(scratch, 0, 0, w, h, 0, 0, 0);
+
+	al_set_target_bitmap(old_target);
+	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
+	al_draw_bitmap(brush, x, y, 0);
+}
+
 void
 VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags)
 {
@@ -1524,22 +1527,9 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 		const int s_variable_60[8] = {1, 3, 2, 5, 4, 3, 2, 1};
 		const int effect = (flags >> 4) & 0x7;
 
-		ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
 		ALLEGRO_BITMAP *brush = s_shape[shapeID][houseID];
 
-		const int w = al_get_bitmap_width(brush);
-		const int h = al_get_bitmap_height(brush);
-
-		al_set_target_bitmap(screen);
-		Viewport_RenderBrush(x + s_variable_60[effect], y);
-
-		al_set_target_bitmap(brush);
-		al_set_separate_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, ALLEGRO_DEST_MINUS_SRC, ALLEGRO_ZERO, ALLEGRO_ONE);
-		al_draw_bitmap_region(screen, 0, 0, w, h, 0, 0, 0);
-
-		al_set_target_bitmap(old_target);
-		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
-		al_draw_bitmap(brush, x, y, 0);
+		VideoA5_DrawBlur_SeparateBlender(brush, x, y, s_variable_60[effect]);
 	}
 	else if ((flags & 0x300) == 0x300) {
 		/* Shadow. */
