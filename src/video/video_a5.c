@@ -31,6 +31,7 @@
 #include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../sprites.h"
+#include "../table/widgetinfo.h"
 #include "../tile.h"
 #include "../tools.h"
 #include "../wsa.h"
@@ -119,6 +120,9 @@ static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
 static ALLEGRO_MOUSE_CURSOR *s_cursor[CURSOR_MAX];
+
+static ALLEGRO_BITMAP *s_minimap;
+static uint8 s_minimap_colour[MAP_SIZE_MAX * MAP_SIZE_MAX];
 
 static bool take_screenshot = false;
 static bool show_fps = false;
@@ -287,6 +291,7 @@ VideoA5_Init(void)
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
 	screen = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 	scratch = al_create_bitmap(16, 16);
+	s_minimap = al_create_bitmap(64, 64);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
@@ -352,6 +357,9 @@ VideoA5_Uninit(void)
 
 	al_destroy_bitmap(scratch);
 	scratch = NULL;
+
+	al_destroy_bitmap(s_minimap);
+	s_minimap = NULL;
 
 	al_destroy_bitmap(interface_texture);
 	interface_texture = NULL;
@@ -1837,6 +1845,79 @@ VideoA5_DrawWSAStatic(int frame, int x, int y)
 	assert(0 <= frame && frame < 21);
 
 	al_draw_bitmap_region(interface_texture, sx, sy, 64, 64, x, y, 0);
+}
+
+/*--------------------------------------------------------------*/
+
+void
+Video_DrawMinimap(int map_scale)
+{
+	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
+	const MapInfo *mapInfo = &g_mapInfos[map_scale];
+	bool redraw = false;
+
+	for (int y = 0; y < mapInfo->sizeY; y++) {
+		uint16 packed = Tile_PackXY(mapInfo->minX, mapInfo->minY + y);
+		int i = mapInfo->sizeX * y;
+
+		for (int x = 0; x < mapInfo->sizeX; x++, i++, packed++) {
+			const Tile *t = &g_map[packed];
+			uint8 colour = 12;
+
+			if (t->isUnveiled && g_playerHouse->flags.radarActivated) {
+				Unit *u;
+
+				if (t->hasUnit && ((u = Unit_Get_ByPackedTile(packed)) != NULL)) {
+					if (u->o.type == UNIT_SANDWORM) {
+						colour = 0xFF;
+					}
+					else {
+						colour = g_table_houseInfo[Unit_GetHouseID(u)].minimapColor;
+					}
+				}
+				else {
+					uint16 type = Map_GetLandscapeType(packed);
+
+					if (g_table_landscapeInfo[type].radarColour == 0xFFFF) {
+						colour = g_table_houseInfo[t->houseID].minimapColor;
+					}
+					else {
+						colour = g_table_landscapeInfo[type].radarColour;
+					}
+				}
+			}
+			else if (t->hasStructure && t->houseID == g_playerHouseID) {
+				colour = g_table_houseInfo[t->houseID].minimapColor;
+			}
+
+			if (s_minimap_colour[i] != colour) {
+				s_minimap_colour[i] = colour;
+				redraw = true;
+			}
+		}
+	}
+
+	if (redraw) {
+		ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(s_minimap, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
+
+		for (int y = 0; y < mapInfo->sizeY; y++) {
+			unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
+
+			for (int x = 0; x < mapInfo->sizeX; x++) {
+				const unsigned char c = s_minimap_colour[mapInfo->sizeX * y + x];
+
+				row[reg->pixel_size*x + 0] = paletteRGB[3*c + 0];
+				row[reg->pixel_size*x + 1] = paletteRGB[3*c + 1];
+				row[reg->pixel_size*x + 2] = paletteRGB[3*c + 2];
+				row[reg->pixel_size*x + 3] = 0xFF;
+			}
+		}
+
+		al_unlock_bitmap(s_minimap);
+	}
+
+	al_draw_scaled_bitmap(s_minimap, 0.0f, 0.0f, mapInfo->sizeX, mapInfo->sizeY,
+			wi->offsetX, wi->offsetY, (map_scale + 1.0f) * mapInfo->sizeX, (map_scale + 1.0f) * mapInfo->sizeY, 0);
 }
 
 /*--------------------------------------------------------------*/

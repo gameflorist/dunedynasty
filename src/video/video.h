@@ -37,6 +37,8 @@ extern bool Video_TickFadeIn(struct FadeInAux *aux);
 extern struct FadeInAux *Video_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fade_in);
 extern struct FadeInAux *Video_InitFadeInShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y);
 
+extern void Video_DrawMinimap(int map_scale);
+
 #include "video_a5.h"
 
 #define Video_Init()            true

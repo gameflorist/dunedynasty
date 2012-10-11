@@ -467,6 +467,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	Widget_SetCurrentWidget(oldValue_07AE_0000);
 }
 
+#if 0
 /**
  * Draw a single tile on the screen.
  *
@@ -559,15 +560,20 @@ GUI_Widget_Viewport_DrawTile(int x, int y)
 		Prim_FillRect_i(x, y, x, y, colour);
 	}
 }
+#endif
 
 void GUI_Widget_Viewport_RedrawMap(void)
 {
+#if 0
 	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
 
 	for (int y = 0; y < mapInfo->sizeY; y++) {
 		for (int x = 0; x < mapInfo->sizeX; x++)
 			GUI_Widget_Viewport_DrawTile(mapInfo->minX + x, mapInfo->minY + y);
 	}
+#else
+	Video_DrawMinimap(g_scenario.mapScale);
+#endif
 
 	Map_UpdateMinimapPosition(g_viewportPosition, true);
 }
