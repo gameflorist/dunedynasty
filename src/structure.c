@@ -148,6 +148,9 @@ void GameLoop_Structure(void)
 					}
 				} else {
 					s->o.flags.s.upgrading = false;
+
+					/* ENHANCEMENT -- Resume production if upgrade stops from low credits. */
+					if (g_dune2_enhanced) s->o.flags.s.onHold = false;
 				}
 			} else if (s->o.flags.s.repairing) {
 				uint16 repairCost;
@@ -176,6 +179,9 @@ void GameLoop_Structure(void)
 					}
 				} else {
 					s->o.flags.s.repairing = false;
+
+					/* ENHANCEMENT -- Resume production if repairing stops from low credits. */
+					if (g_dune2_enhanced) s->o.flags.s.onHold = false;
 				}
 			} else {
 				if (!s->o.flags.s.onHold && s->countDown != 0 && s->o.linkedID != 0xFF && s->state == STRUCTURE_STATE_BUSY && si->o.flags.factory) {
