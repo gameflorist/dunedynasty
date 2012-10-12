@@ -10,6 +10,7 @@
  */
 
 #include <assert.h>
+#include <GL/gl.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
@@ -63,6 +64,8 @@ typedef struct CPSStore {
 typedef struct FadeInAux {
 	bool fade_in;   /* false to fade out. */
 	int frame;      /* 0 <= frame < height. */
+
+	ALLEGRO_BITMAP *bmp;
 	int x, y;
 	int width;
 	int height;
@@ -601,6 +604,7 @@ Video_ShadeScreen(int alpha)
 
 /*--------------------------------------------------------------*/
 
+#if 0
 /* Requires read/write to texture. */
 static void
 VideoA5_InitDissolve_LockedBitmap(ALLEGRO_BITMAP *src, FadeInAux *aux)
@@ -629,6 +633,8 @@ VideoA5_InitDissolve_LockedBitmap(ALLEGRO_BITMAP *src, FadeInAux *aux)
 	}
 
 	al_unlock_bitmap(scratch);
+
+	aux->bmp = NULL;
 }
 
 static void
@@ -667,6 +673,78 @@ VideoA5_TickDissolve_LockedBitmap(FadeInAux *aux)
 
 	al_unlock_bitmap(scratch);
 }
+#endif
+
+#if 1
+/* Requires OpenGL, stencil buffer. */
+static void
+VideoA5_InitDissolve_GLStencil(ALLEGRO_BITMAP *src, FadeInAux *aux)
+{
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+	aux->bmp = src;
+}
+
+static void
+VideoA5_DrawDissolve_GLStencil(const FadeInAux *aux)
+{
+	glEnable(GL_STENCIL_TEST);
+
+	if (aux->fade_in) {
+		/* Stencil is 1 where we should draw. */
+		glStencilFunc(GL_EQUAL, 0x1, 0x1);
+	}
+	else {
+		/* Stencil is 0 where we should draw. */
+		glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
+	}
+
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	if ((al_get_bitmap_width(aux->bmp) == aux->width) && (al_get_bitmap_height(aux->bmp) == aux->height)) {
+		al_draw_bitmap(aux->bmp, aux->x, aux->y, 0);
+	}
+	else {
+		al_draw_bitmap_region(aux->bmp, aux->x, aux->y, aux->width, aux->height, aux->x, aux->y, 0);
+	}
+
+	glDisable(GL_STENCIL_TEST);
+}
+
+static void
+VideoA5_TickDissolve_GLStencil(FadeInAux *aux)
+{
+	glEnable(GL_STENCIL_TEST);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+	glStencilFunc(GL_ALWAYS, 0x1, 0x1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+	glBegin(GL_QUADS);
+
+	int j = aux->frame;
+	for (int i = 0; i < aux->width; i++) {
+		const int x = aux->x + aux->cols[i];
+		const int y = aux->y + aux->rows[j];
+		const GLfloat x1 = x + 0.01f;
+		const GLfloat x2 = x + 0.99f;
+		const GLfloat y1 = y + 0.01f;
+		const GLfloat y2 = y + 0.99f;
+
+		glVertex2f(x1, y1);
+		glVertex2f(x1, y2);
+		glVertex2f(x2, y2);
+		glVertex2f(x2, y1);
+
+		if (++j >= aux->height)
+			j = 0;
+	}
+
+	glEnd();
+
+	glDisable(GL_STENCIL_TEST);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+}
+#endif
 
 static FadeInAux *
 VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool fade_in)
@@ -706,7 +784,8 @@ VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool f
 	aux->width = w;
 	aux->height = h;
 
-	VideoA5_InitDissolve_LockedBitmap(src, aux);
+	/* VideoA5_InitDissolve_LockedBitmap(src, aux); */
+	VideoA5_InitDissolve_GLStencil(src, aux);
 
 	return aux;
 }
@@ -714,7 +793,8 @@ VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool f
 void
 Video_DrawFadeIn(const FadeInAux *aux)
 {
-	VideoA5_DrawDissolve_LockedBitmap(aux);
+	/* VideoA5_DrawDissolve_LockedBitmap(aux); */
+	VideoA5_DrawDissolve_GLStencil(aux);
 }
 
 bool
@@ -725,7 +805,8 @@ Video_TickFadeIn(FadeInAux *aux)
 	if (aux->frame >= aux->height)
 		return true;
 
-	VideoA5_TickDissolve_LockedBitmap(aux);
+	/* VideoA5_TickDissolve_LockedBitmap(aux); */
+	VideoA5_TickDissolve_GLStencil(aux);
 
 	aux->frame++;
 	return false;
