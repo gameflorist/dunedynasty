@@ -76,7 +76,7 @@ ActionPanel_DrawHealthBar(int curr, int max)
 	if (curr <= max / 2) colour = 5;
 	if (curr <= max / 4) colour = 8;
 
-	GUI_DrawBorder(x - 1, y - 1, 24 + 2, h + 2, 1, true);
+	Prim_DrawBorder(x - 1, y - 1, 24 + 2, h + 2, 1, false, true, 1);
 	Prim_FillRect_i(x, y, x + w - 1, y + h - 1, colour);
 
 	Shape_Draw(SHAPE_HEALTH_INDICATOR, 36, 18, WINDOWID_ACTIONPANEL_FRAME, 0x4000);
@@ -690,17 +690,15 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 
 	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, &w, &h);
 
-	Prim_Rect_i(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 12);
-
 	if (BuildQueue_IsEmpty(&s->queue)) {
 		Prim_FillRect_RGBA(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8, 0XFF);
-		GUI_DrawBorder(x1, y1, w, h, 1, false);
+		Prim_DrawBorder(x1, y1, w, h, 1, true, false, 1);
 		fg = 0xE;
 	}
 	else {
 		const bool buttonDown = (widget->state.s.hover1 && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2));
 
-		GUI_DrawBorder(x1, y1, w, h, buttonDown ? 0 : 1, true);
+		Prim_DrawBorder(x1, y1, w, h, 1, true, true, buttonDown ? 0 : 1);
 		fg = 0xF;
 	}
 
@@ -726,7 +724,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
-	GUI_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, height - 3, 0, true);
+	Prim_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, height - 3, 1, false, true, 0);
 	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * height);
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
@@ -858,7 +856,7 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 	g_factoryWindowTotal = 0;
 
 	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x, &y, NULL, NULL, &w, &h);
-	GUI_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, widget->height - 3, 0, true);
+	Prim_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, widget->height - 3, 1, false, true, 0);
 	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * (widget->height - 5));
 
 	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);

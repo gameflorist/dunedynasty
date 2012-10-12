@@ -1235,37 +1235,10 @@ void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colours, uint8 reference, 
 	}
 }
 
-/**
- * Draw a border.
- *
- * @param left Left position of the border.
- * @param top Top position of the border.
- * @param width Width of the border.
- * @param height Height of the border.
- * @param colourSchemaIndex Index of the colourSchema used.
- * @param fill True if you want the border to be filled.
- */
-void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill)
-{
 #if 0
-	const uint8 *colourSchema = s_colourBorderSchema[colourSchemaIndex];
-
-	width  -= 1;
-	height -= 1;
-
-	if (fill) Prim_FillRect_i(left, top, left + width, top + height, colourSchema[0]);
-
-	Prim_Hline(left, top + height, left + width, colourSchema[1]);
-	Prim_Vline(left + width, top, top + height, colourSchema[1]);
-	Prim_Hline(left, top, left + width, colourSchema[2]);
-	Prim_Vline(left, top, top + height, colourSchema[2]);
-
-	Prim_FillRect_i(left, top + height, left, top + height, colourSchema[3]);
-	Prim_FillRect_i(left + width, top, left + width, top, colourSchema[3]);
-#else
-	Prim_DrawBorder(left, top, width, height, 1, false, fill, colourSchemaIndex);
+/* Moved to video/video_opendune.c. */
+extern void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill);
 #endif
-}
 
 /**
  * Display a hint to the user. Only show each hint exactly once.

@@ -123,6 +123,34 @@ void GUI_DrawFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, u
 	}
 }
 
+/**
+ * Draw a border.
+ *
+ * @param left Left position of the border.
+ * @param top Top position of the border.
+ * @param width Width of the border.
+ * @param height Height of the border.
+ * @param colourSchemaIndex Index of the colourSchema used.
+ * @param fill True if you want the border to be filled.
+ */
+void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill)
+{
+	const uint8 *colourSchema = s_colourBorderSchema[colourSchemaIndex];
+
+	width  -= 1;
+	height -= 1;
+
+	if (fill) Prim_FillRect_i(left, top, left + width, top + height, colourSchema[0]);
+
+	Prim_Hline(left, top + height, left + width, colourSchema[1]);
+	Prim_Vline(left + width, top, top + height, colourSchema[1]);
+	Prim_Hline(left, top, left + width, colourSchema[2]);
+	Prim_Vline(left, top, top + height, colourSchema[2]);
+
+	Prim_FillRect_i(left, top + height, left, top + height, colourSchema[3]);
+	Prim_FillRect_i(left + width, top, left + width, top, colourSchema[3]);
+}
+
 void GUI_DrawProgressbar(uint16 current, uint16 max)
 {
 	static uint16 l_info[11] = { 293, 52, 24, 7, 1, 0, 0, 0, 4, 5, 8 };

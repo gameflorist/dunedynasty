@@ -342,8 +342,7 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 	width     = w->width;
 	height    = w->height;
 
-	Prim_Rect_i(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
-	GUI_DrawBorder(positionX, positionY, width, height, buttonDown ? 0 : 1, true);
+	Prim_DrawBorder(positionX, positionY, width, height, 1, true, true, buttonDown ? 0 : 1);
 
 	colour = 0xF;
 	if (buttonSelected) {
@@ -794,24 +793,20 @@ void GUI_Widget_DrawBorder(uint16 widgetIndex, uint16 borderType, bool pressed)
 	uint16 height = g_widgetProperties[widgetIndex].height;
 
 	uint16 colourSchemaIndex = (pressed) ? 2 : 0;
-	uint16 colourSchemaIndexDiff;
-	uint16 size;
+	uint16 colourSchemaIndexDiff = borderIndexSize[borderType][0];
+	uint16 size = borderIndexSize[borderType][1];
 
-	if (g_screenActiveID == 0) {
-		GUI_Mouse_Hide_InRegion(left, top, left + width, top + height);
+	/* This is actually quite common. */
+	if (borderType == 2) {
+		Prim_DrawBorder(left, top, width, height, 2, false, true, colourSchemaIndex + 1);
 	}
+	else {
+		Prim_DrawBorder(left, top, width, height, 1, false, true, colourSchemaIndex + 1);
 
-	GUI_DrawBorder(left, top, width, height, colourSchemaIndex + 1, true);
-
-	colourSchemaIndexDiff = borderIndexSize[borderType][0];
-	size = borderIndexSize[borderType][1];
-
-	if (size != 0) {
-		GUI_DrawBorder(left + size, top + size, width - (size * 2), height - (size * 2), colourSchemaIndexDiff + colourSchemaIndex, false);
-	}
-
-	if (g_screenActiveID == 0) {
-		GUI_Mouse_Show_InRegion();
+		if (size != 0) {
+			Prim_DrawBorder(left + size, top + size, width - (size * 2), height - (size * 2),
+					1, false, false, colourSchemaIndexDiff + colourSchemaIndex);
+		}
 	}
 }
 

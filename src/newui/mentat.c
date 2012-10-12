@@ -326,8 +326,8 @@ MentatSecurity_Draw(MentatState *mentat)
 
 	MentatBriefing_DrawText(mentat);
 
-	GUI_DrawBorder(wi->xBase - 6, wi->yBase - 6, wi->width + 12, wi->height + 12, 1, true);
-	GUI_DrawBorder(wi->xBase - 2, wi->yBase - 2, wi->width + 4, wi->height + 4, 2, false);
+	Prim_DrawBorder(wi->xBase - 6, wi->yBase - 6, wi->width + 12, wi->height + 12, 1, false, true, 1);
+	Prim_DrawBorder(wi->xBase - 2, wi->yBase - 2, wi->width + 4, wi->height + 4, 1, false, false, 2);
 
 	GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, 9, NULL, NULL, 0);
 	Widget_SetCurrentWidget(old_widget);
