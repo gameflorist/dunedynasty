@@ -1855,6 +1855,8 @@ Video_DrawMinimap(int map_scale)
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
 	const MapInfo *mapInfo = &g_mapInfos[map_scale];
 	bool redraw = false;
+	int sandworm_position[4 * 2];
+	int num_sandworms = 0;
 
 	for (int y = 0; y < mapInfo->sizeY; y++) {
 		uint16 packed = Tile_PackXY(mapInfo->minX, mapInfo->minY + y);
@@ -1869,13 +1871,19 @@ Video_DrawMinimap(int map_scale)
 
 				if (t->hasUnit && ((u = Unit_Get_ByPackedTile(packed)) != NULL)) {
 					if (u->o.type == UNIT_SANDWORM) {
-						colour = 0xFF;
+						/* Really shouldn't have more than 3, but anyway. */
+						if (num_sandworms < 4) {
+							sandworm_position[2*num_sandworms + 0] = x;
+							sandworm_position[2*num_sandworms + 1] = y;
+							num_sandworms++;
+						}
 					}
 					else {
 						colour = g_table_houseInfo[Unit_GetHouseID(u)].minimapColor;
 					}
 				}
-				else {
+
+				if (colour == 12) {
 					uint16 type = Map_GetLandscapeType(packed);
 
 					if (g_table_landscapeInfo[type].radarColour == 0xFFFF) {
@@ -1918,6 +1926,16 @@ Video_DrawMinimap(int map_scale)
 
 	al_draw_scaled_bitmap(s_minimap, 0.0f, 0.0f, mapInfo->sizeX, mapInfo->sizeY,
 			wi->offsetX, wi->offsetY, (map_scale + 1.0f) * mapInfo->sizeX, (map_scale + 1.0f) * mapInfo->sizeY, 0);
+
+	/* Always redraw sandworms because they glow. */
+	for (int i = 0; i < num_sandworms; i++) {
+		const float x1 = wi->offsetX + (map_scale + 1.0f) *  sandworm_position[2*i + 0] + 0.01f;
+		const float y1 = wi->offsetY + (map_scale + 1.0f) *  sandworm_position[2*i + 1] + 0.01f;
+		const float x2 = wi->offsetX + (map_scale + 1.0f) * (sandworm_position[2*i + 0] + 1) - 0.01f;
+		const float y2 = wi->offsetY + (map_scale + 1.0f) * (sandworm_position[2*i + 1] + 1) - 0.01f;
+
+		al_draw_filled_rectangle(x1, y1, x2, y2, paltoRGB[0xFF]);
+	}
 }
 
 /*--------------------------------------------------------------*/
