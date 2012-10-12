@@ -960,15 +960,8 @@ Menu_Run(void)
 		ALLEGRO_EVENT event;
 
 		al_wait_for_event(g_a5_input_queue, &event);
-		switch (event.type) {
-			case ALLEGRO_EVENT_DISPLAY_EXPOSE:
-				redraw = true;
-				break;
-
-			default:
-				InputA5_ProcessEvent(&event, true);
-				break;
-		}
+		if (InputA5_ProcessEvent(&event, true))
+			redraw = true;
 
 		curr_menu = (curr_menu & ~MENU_REDRAW);
 

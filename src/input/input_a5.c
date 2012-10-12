@@ -91,7 +91,7 @@ InputA5_KeycodeToScancode(int kc)
 	return -1;
 }
 
-void
+bool
 InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 {
 	enum Scancode mouse_event = 0;
@@ -101,6 +101,9 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			PrepareEnd();
 			exit(0);
 			break;
+
+		case ALLEGRO_EVENT_DISPLAY_EXPOSE:
+			return true;
 
 		case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
 			mouse_event |= SCANCODE_RELEASE;
@@ -116,14 +119,16 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			if ((event->keyboard.keycode == ALLEGRO_KEY_F11) ||
 			    (event->keyboard.keycode == ALLEGRO_KEY_ENTER && (event->keyboard.modifiers & (ALLEGRO_KEYMOD_ALT | ALLEGRO_KEYMOD_ALTGR)))) {
 				VideoA5_ToggleFullscreen();
+				return true;
 			}
 			else if (event->keyboard.keycode == ALLEGRO_KEY_F10) {
 				VideoA5_ToggleFPS();
+				return true;
 			}
 			else if (event->keyboard.keycode == ALLEGRO_KEY_F12) {
 				VideoA5_CaptureScreenshot();
+				return true;
 			}
-
 			break;
 
 		case ALLEGRO_EVENT_KEY_DOWN:
@@ -145,15 +150,23 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			AudioA5_PollMusic();
 			break;
 	}
+
+	return false;
 }
 
-void
+bool
 InputA5_Tick(bool apply_mouse_transform)
 {
+	bool redraw = false;
+
 	while (!al_is_event_queue_empty(g_a5_input_queue)) {
 		ALLEGRO_EVENT event;
 
 		al_get_next_event(g_a5_input_queue, &event);
-		InputA5_ProcessEvent(&event, apply_mouse_transform);
+
+		if (InputA5_ProcessEvent(&event, apply_mouse_transform))
+			redraw = true;
 	}
+
+	return redraw;
 }
