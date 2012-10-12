@@ -265,7 +265,7 @@ MainMenu_Draw(void)
 	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
 	GUI_Widget_DrawAll(main_menu_widgets);
 
-	GUI_DrawText_Wrapper("v1.07", SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x222);
+	GUI_DrawText_Wrapper("v1.07", SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x221);
 }
 
 static void
