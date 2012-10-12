@@ -365,6 +365,9 @@ void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uin
 	s = string;
 	x = left;
 	y = top;
+
+	Video_HoldBitmapDrawing(true);
+
 	while (*s != '\0') {
 		uint16 width;
 
@@ -388,6 +391,8 @@ void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uin
 		x += width;
 		s++;
 	}
+
+	Video_HoldBitmapDrawing(false);
 }
 
 /**
