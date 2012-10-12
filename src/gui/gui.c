@@ -2081,7 +2081,60 @@ void GUI_HallOfFame_Show(uint16 score)
 	GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 30)->data = data;
 
 	bool confirm_clear = false;
+	bool redraw = true;
 	while (true) {
+		if (Input_Tick(true))
+			redraw = true;
+
+		if (confirm_clear) {
+			const int ret = GUI_Widget_HOF_ClearList_Click(g_widgetLinkedListTail);
+
+			if (ret == -1) {
+				confirm_clear = false;
+				redraw = true;
+			}
+			else if (ret == 1) {
+				break;
+			}
+
+			Widget *widget = g_widgetLinkedListTail;
+			while (widget != NULL) {
+				if (widget->state.s.selected != widget->state.s.selectedLast) {
+					redraw = true;
+					break;
+				}
+
+				widget = GUI_Widget_GetNext(widget);
+			}
+		}
+		else {
+			const uint16 key = GUI_Widget_HandleEvents(w);
+
+			if (key == (0x8000 | 100)) { /* Clear list */
+				confirm_clear = true;
+				redraw = true;
+			}
+			else if (key == (0x8000 | 101)) { /* Resume */
+				break;
+			}
+
+			Widget *widget = w;
+			while (widget != NULL) {
+				if (widget->state.s.hover1 != widget->state.s.hover1Last) {
+					redraw = true;
+					break;
+				}
+
+				widget = GUI_Widget_GetNext(widget);
+			}
+		}
+
+		if (!redraw) {
+			Timer_Sleep(1);
+			continue;
+		}
+
+		redraw = false;
 		HallOfFame_DrawBackground(g_playerHouseID, true);
 		if (score == 0xFFFF) {
 			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_HALL_OF_FAME2), SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
@@ -2092,35 +2145,14 @@ void GUI_HallOfFame_Show(uint16 score)
 		}
 		GUI_HallOfFame_DrawData(data, true);
 
-		Input_Tick(true);
 		if (confirm_clear) {
-			const int ret = GUI_Widget_HOF_ClearList_Click(g_widgetLinkedListTail);
-
 			GUI_Widget_DrawWindow(&g_yesNoWindowDesc);
 			GUI_Widget_DrawAll(g_widgetLinkedListTail);
-
-			if (ret == -1) {
-				confirm_clear = false;
-			}
-			else if (ret == 1) {
-				break;
-			}
-		}
-		else {
-			const uint16 key = GUI_Widget_HandleEvents(w);
-
-			if (key == (0x8000 | 100)) { /* Clear list */
-				confirm_clear = true;
-			}
-			else if (key == (0x8000 | 101)) { /* Resume */
-				break;
-			}
 		}
 
 		GUI_Widget_DrawAll(w);
 
 		Video_Tick();
-		sleepIdle();
 	}
 
 	GUI_HallOfFame_DeleteButtons(w);
