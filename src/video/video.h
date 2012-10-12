@@ -1,6 +1,8 @@
 #ifndef VIDEO_VIDEO_H
 #define VIDEO_VIDEO_H
 
+#include "../shape.h"
+
 enum CPSID {
 	CPS_MENUBAR_LEFT,
 	CPS_MENUBAR_MIDDLE,
@@ -29,6 +31,11 @@ extern void Video_ShowCursor(void);
 extern void Video_HideCursor(void);
 extern void Video_ShadeScreen(int alpha);
 
+extern void Video_DrawFadeIn(const struct FadeInAux *aux);
+extern bool Video_TickFadeIn(struct FadeInAux *aux);
+extern struct FadeInAux *Video_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fade_in);
+extern struct FadeInAux *Video_InitFadeInShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y);
+
 #include "video_a5.h"
 
 #define Video_Init()            true
@@ -43,11 +50,6 @@ extern void Video_ShadeScreen(int alpha);
 #define Video_DrawChar          VideoA5_DrawChar
 #define Video_DrawWSA           VideoA5_DrawWSA
 #define Video_DrawWSAStatic     VideoA5_DrawWSAStatic
-
-#define Video_DrawFadeIn        VideoA5_DrawFadeIn
-#define Video_TickFadeIn        VideoA5_TickFadeIn
-#define Video_InitFadeInCPS     VideoA5_InitFadeInCPS
-#define Video_InitFadeInShape   VideoA5_InitFadeInShape
 
 #define GUI_Mouse_Show()
 #define GUI_Mouse_Hide()

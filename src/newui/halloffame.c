@@ -117,7 +117,7 @@ void
 HallOfFame_DrawRank(const HallOfFameData *fame)
 {
 	GUI_DrawText_Wrapper(fame->rank, SCREEN_WIDTH / 2, 49, 6, 0, 0x122);
-	Video_DrawFadeIn(fame->rank_aux, SCREEN_WIDTH / 2 - fame->rank_half_width, 49);
+	Video_DrawFadeIn(fame->rank_aux);
 }
 
 static void

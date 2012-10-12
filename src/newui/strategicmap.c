@@ -75,7 +75,7 @@ StrategicMap_DrawPlanet(const StrategicMapData *map)
 	Video_DrawCPSRegion(cps[idx], 8, 24, 8, 24, 304, 120);
 
 	if (map->region_aux != NULL)
-		Video_DrawFadeIn(map->region_aux, 8, 24);
+		Video_DrawFadeIn(map->region_aux);
 }
 
 static void
@@ -147,10 +147,8 @@ StrategicMap_DrawRegions(const StrategicMapData *map)
 static void
 StrategicMap_DrawRegionFadeIn(const StrategicMapData *map)
 {
-	const int region = map->progression[map->curr_progression].region;
-
 	if (map->region_aux != NULL)
-		Video_DrawFadeIn(map->region_aux, region_data[region].x, region_data[region].y);
+		Video_DrawFadeIn(map->region_aux);
 }
 
 static void
@@ -483,9 +481,10 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 			if (map->fast_forward || (curr_ticks - map->text_timer >= 12 * 3)) {
 				const enum ShapeID shapeID = SHAPE_MAP_PIECE + map->progression[map->curr_progression].region;
 				const enum HouseType houseID = map->progression[map->curr_progression].houseID;
+				const int region = map->progression[map->curr_progression].region;
 
 				map->state = STRATEGIC_MAP_SHOW_PROGRESSION;
-				map->region_aux = Video_InitFadeInShape(shapeID, houseID);
+				map->region_aux = Video_InitFadeInShape(shapeID, houseID, region_data[region].x, region_data[region].y);
 			}
 			break;
 
