@@ -100,7 +100,7 @@ uint16 g_selectionHeight;                                   /*!< Height of the s
 int16  g_selectionState = 1;                                /*!< State of the selection (\c 1 is valid, \c 0 is not valid, \c <0 valid but missing some slabs. */
 
 /*!< Colours used for the border of widgets. */
-static uint8 s_colourBorderSchema[5][4] = {
+uint8 s_colourBorderSchema[5][4] = {
 	{ 26,  29,  29,  29},
 	{ 20,  26,  16,  20},
 	{ 20,  16,  26,  20},
@@ -1247,6 +1247,7 @@ void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colours, uint8 reference, 
  */
 void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill)
 {
+#if 0
 	const uint8 *colourSchema = s_colourBorderSchema[colourSchemaIndex];
 
 	width  -= 1;
@@ -1261,6 +1262,9 @@ void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16
 
 	Prim_FillRect_i(left, top + height, left, top + height, colourSchema[3]);
 	Prim_FillRect_i(left + width, top, left + width, top, colourSchema[3]);
+#else
+	Prim_DrawBorder(left, top, width, height, 1, false, fill, colourSchemaIndex);
+#endif
 }
 
 /**

@@ -16,4 +16,6 @@ extern void Prim_FillRect_RGBA(float x1, float y1, float x2, float y2, unsigned 
 
 extern void Prim_FillTriangle(float x1, float y1, float x2, float y2, float x3, float y3, uint8 c);
 
+extern void Prim_DrawBorder(float x, float y, float w, float h, int thickness, bool outline, bool fill, int colour_scheme);
+
 #endif
