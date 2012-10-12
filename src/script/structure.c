@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include "types.h"
+#include "../os/math.h"
 
 #include "script.h"
 
@@ -312,7 +313,20 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 	Object_Script_Variable4_Clear(&s->o);
 
 	if (s->o.houseID != g_playerHouseID) return 1;
-	if (s->o.type == STRUCTURE_REPAIR) return 1;
+	if (s->o.type == STRUCTURE_REPAIR) {
+		/* ENHANCEMENT -- Units can be ejected from the repair bay.
+		 *
+		 * uint16 countDown = ((ui->o.hitpoints - u->o.hitpoints) * 256 / ui->o.hitpoints) * (ui->o.buildTime << 6) / 256;
+		 */
+		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+		int new_hitpoints = ui->o.hitpoints - (s->countDown * ui->o.hitpoints + (ui->o.buildTime << 6) - 1) / (ui->o.buildTime << 6);
+		new_hitpoints = clamp(u->o.hitpoints, new_hitpoints, ui->o.hitpoints);
+
+		u->o.hitpoints = new_hitpoints;
+
+		s->countDown = 0;
+		return 1;
+	}
 
 	Audio_PlayVoice(g_playerHouseID + ((u->o.type == UNIT_HARVESTER) ? VOICE_HARKONNEN_HARVESTER_DEPLOYED : VOICE_HARKONNEN_UNIT_DEPLOYED));
 

@@ -311,6 +311,9 @@ GUI_Widget_Picture_Click(Widget *w)
 	if ((s->o.type == STRUCTURE_CONSTRUCTION_YARD) && (g_productionStringID == STR_PLACE_IT)) {
 		ActionPanel_BeginPlacementMode(s);
 	}
+	else if ((s->o.type == STRUCTURE_REPAIR) && (s->o.linkedID != 0xFF)) {
+		Structure_SetState(s, STRUCTURE_STATE_READY);
+	}
 
 	return false;
 }

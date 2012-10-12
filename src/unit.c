@@ -2418,7 +2418,8 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 			} else {
 				s->countDown = 1;
 			}
-			unit->o.hitpoints = ui->o.hitpoints;
+			/* ENHANCEMENT -- Units can be ejected prematurely, so don't restore hitpoints just yet. */
+			/* unit->o.hitpoints = ui->o.hitpoints; */
 			unit->o.flags.s.isSmoking = false;
 			unit->spriteOffset = 0;
 		}
