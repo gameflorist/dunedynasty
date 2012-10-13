@@ -1121,7 +1121,7 @@ static void GameLoop_GameCredits(void)
 	uint16 i;
 	uint8 *memory;
 
-	Widget_SetCurrentWidget(20);
+	const uint16 last_widget = Widget_SetCurrentWidget(20);
 
 	Sprites_LoadImage("BIGPLAN.CPS", 3, g_palette_998A);
 
@@ -1196,6 +1196,8 @@ static void GameLoop_GameCredits(void)
 	Audio_PlayEffect(EFFECT_FADE_OUT);
 
 	GFX_ClearScreen();
+
+	Widget_SetCurrentWidget(last_widget);
 }
 
 /**
