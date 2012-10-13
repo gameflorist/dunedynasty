@@ -364,7 +364,12 @@ Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position)
 
 	const enum SampleID sampleID = g_table_voiceMapping[soundID];
 
-	Audio_PlayEffect(soundID);
+	/* Don't play both Adlib and sound blaster effects.
+	 *
+	 * XXX: extra additional explosion sounds would be nice.
+	 */
+	if (!g_enable_sounds || (sampleID == SAMPLE_INVALID))
+		Audio_PlayEffect(soundID);
 
 	if (g_enable_sounds && (sampleID != SAMPLE_INVALID)) {
 		int volume = 255;
