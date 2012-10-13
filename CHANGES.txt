@@ -1,0 +1,66 @@
+Dune Dynasty
+============
+
+Version 1.2, 2012-10-14
+-----------------------
+
+Controls and Gameplay:
+
+  - Fix crash when active unit dies while choosing a target.
+  - Add starting from mid-way through a campaign.
+  - Mouse wheel zooms viewport.
+  - Fix keyboard scrolling.
+  - Add refinery rally points.
+  - Click construction yard icon to place structures.
+  - Click repair bay icon to eject unit.
+  - Restore maximum saboteur and sandworm unit count to three of each,
+    as in Dune II v1.0.
+  - Remove unit slow-down when outside of viewport.
+
+Graphics:
+
+  - Fix crater graphics on rock.
+  - Fix sandworm and sonic tank blur effect.
+  - Improve blur effect on older video cards.
+  - Implement screen shakes.
+
+Sounds:
+
+  - Fix crash when playing AUD files on Windows.
+  - Add support for default music pack.
+  - Add support for Sega Mega Drive music.
+  - Add structure captured voice.
+  - Fix infantry acknowledgement sound.
+  - Restore soldier squish sound and animation.
+  - Reduce cracking/choppy/poppy sounds on Windows.
+
+Other:
+
+  - Add reading configuration and saved games from executable directory.
+  - Add introduction movie subtitles.
+  - Improve startup time.
+  - Improve game speed, menu lag.
+
+
+Version 1.1, 2012-09-29
+-----------------------
+
+Controls and Gameplay:
+
+  - Add scalable interface and viewport.
+  - Add structure and unit health bars.
+
+Graphics:
+
+  - Add smooth flyer rotation.
+  - Add smooth scrolling.
+
+Other:
+
+  - Fix to run on Windows.
+
+
+Version 1.0, 2012-09-16
+-----------------------
+
+  - Initial release.
