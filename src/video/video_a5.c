@@ -247,6 +247,9 @@ VideoA5_Init(void)
 	al_init_image_addon();
 	al_init_primitives_addon();
 
+	/* Flip display in case generating the sprites takes a while. */
+	al_flip_display();
+
 	return true;
 }
 
