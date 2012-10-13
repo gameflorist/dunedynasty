@@ -42,7 +42,7 @@ enum MusicStreamType {
 };
 
 /* Music configuration. */
-static const int SRATE = 48000;
+static const int SRATE = 44100;
 static const int NUMFRAGS = 4;
 static const int FRAGLEN = 2048;
 
