@@ -224,6 +224,15 @@ static void
 MainMenu_Initialise(void)
 {
 	File_ReadBlockFile("IBM.PAL", g_palette1, 3 * 256);
+
+	/* Fix the windtrap colour which you normally wouldn't see as the
+	 * palette cycling runs in the menu (but you can if you're really
+	 * quick about it).
+	 */
+	g_palette1[3*223 + 0] = 0x00;
+	g_palette1[3*223 + 1] = 0x00;
+	g_palette1[3*223 + 2] = 0x00;
+
 	Video_SetPalette(g_palette1, 0, 256);
 
 	Widget *w = main_menu_widgets;
