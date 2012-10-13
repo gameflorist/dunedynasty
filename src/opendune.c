@@ -283,8 +283,6 @@ static void GameLoop_LevelEnd(void)
 
 		Video_SetCursor(SHAPE_CURSOR_NORMAL);
 
-		GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
-
 		if (GameLoop_IsLevelWon()) {
 			Audio_PlayVoice(VOICE_YOUR_MISSION_IS_COMPLETE);
 
@@ -341,6 +339,8 @@ static void GameLoop_LevelEnd(void)
 			g_gameMode = GM_LOSE;
 #endif
 		}
+
+		GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
 
 		g_playerHouse->flags.doneFullScaleAttack = false;
 

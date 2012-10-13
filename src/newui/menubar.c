@@ -559,36 +559,44 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 	const int lines = GUI_SplitText(textBuffer, (w->width - ((shapeID == SHAPE_INVALID) ? 2*8 : 7*8)) - 6, '\r');
 	w->height = g_fontCurrent->height * max(lines, 3) + 18;
 
-	GUI_DrawInterfaceAndRadar();
-	Video_ShadeScreen(128);
-
-	A5_UseTransform(SCREENDIV_MENU);
-
-	/* Centre the dialog box to the viewport. */
-	const int old_x = w->xBase;
-	w->xBase = ((viewport->scale * viewport->width) / div->scale - w->width) / 2;
-
-	GUI_Widget_DrawBorder(WINDOWID_MODAL_MESSAGE, 1, 1);
-	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
-
-	if (shapeID != SHAPE_INVALID) {
-		Shape_Draw(shapeID, 7, 8, WINDOWID_MODAL_MESSAGE, 0x4000);
-		GUI_DrawText(textBuffer, w->xBase + 5*8, w->yBase + 8, w->fgColourBlink, 0);
-	}
-	else {
-		GUI_DrawText(textBuffer, w->xBase + 1*8, w->yBase + 8, w->fgColourBlink, 0);
-	}
-
-	w->xBase = old_x;
-
-	Video_Tick();
-
 	Input_History_Clear();
+
+	bool redraw = true;
 	while (true) {
+		if (redraw) {
+			redraw = false;
+
+			A5_UseTransform(SCREENDIV_MAIN);
+
+			GUI_DrawInterfaceAndRadar();
+			Video_ShadeScreen(128);
+
+			A5_UseTransform(SCREENDIV_MENU);
+
+			/* Centre the dialog box to the viewport. */
+			const int old_x = w->xBase;
+			w->xBase = ((viewport->scale * viewport->width) / div->scale - w->width) / 2;
+
+			GUI_Widget_DrawBorder(WINDOWID_MODAL_MESSAGE, 1, 1);
+			GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
+
+			if (shapeID != SHAPE_INVALID) {
+				Shape_Draw(shapeID, 7, 8, WINDOWID_MODAL_MESSAGE, 0x4000);
+				GUI_DrawText(textBuffer, w->xBase + 5*8, w->yBase + 8, w->fgColourBlink, 0);
+			}
+			else {
+				GUI_DrawText(textBuffer, w->xBase + 1*8, w->yBase + 8, w->fgColourBlink, 0);
+			}
+
+			w->xBase = old_x;
+
+			Video_Tick();
+		}
+
 		const bool narrator_speaking = Audio_Poll();
 
-		Input_Tick(true);
-		sleepIdle();
+		if (Input_Tick(true))
+			redraw = true;
 
 		if (Input_IsInputAvailable()) {
 			const int key = Input_GetNextKey();
@@ -599,6 +607,8 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 			if ((key == MOUSE_LMB) || (key == MOUSE_RMB) || (key == SCANCODE_ESCAPE) || (key == SCANCODE_SPACE))
 				break;
 		}
+
+		sleepIdle();
 	}
 
 	A5_UseTransform(prev_div);
