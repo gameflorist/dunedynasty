@@ -795,33 +795,79 @@ static void GameLoop_PlayAnimation(void)
 	}
 }
 
-void GameLoop_LevelEndAnimation(void)
+void
+Cutscene_PlayAnimation(enum HouseAnimationType anim)
 {
 	const HouseAnimation_Animation *animation;
 	const HouseAnimation_Subtitle *subtitle;
 	const HouseAnimation_SoundEffect *soundEffect;
+	enum MusicID musicID = MUSIC_INVALID;
 
 	Input_History_Clear();
+
+	animation   = g_table_houseAnimation_animation[anim];
+	subtitle    = g_table_houseAnimation_subtitle[anim];
+	soundEffect = g_table_houseAnimation_soundEffect[anim];
+
+	switch (anim) {
+		case HOUSEANIMATION_INTRO:
+		case HOUSEANIMATION_MAX:
+			/* Note: use GameLoop_GameIntroAnimation instead. */
+			return;
+
+		case HOUSEANIMATION_LEVEL4_HARKONNEN:
+		case HOUSEANIMATION_LEVEL4_ATREIDES:
+		case HOUSEANIMATION_LEVEL4_ORDOS:
+		case HOUSEANIMATION_LEVEL8_HARKONNEN:
+		case HOUSEANIMATION_LEVEL8_ATREIDES:
+		case HOUSEANIMATION_LEVEL8_ORDOS:
+			musicID = MUSIC_CUTSCENE;
+			break;
+
+		case HOUSEANIMATION_LEVEL9_HARKONNEN:
+			Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
+			musicID = MUSIC_END_GAME_HARKONNEN;
+			break;
+
+		case HOUSEANIMATION_LEVEL9_ATREIDES:
+			Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
+			musicID = MUSIC_END_GAME_ATREIDES;
+			break;
+
+		case HOUSEANIMATION_LEVEL9_ORDOS:
+			Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
+			musicID = MUSIC_END_GAME_ORDOS;
+			break;
+	}
+
+	Video_HideCursor();
+
+	GameLoop_PrepareAnimation(animation, subtitle, 0xFFFF, soundEffect);
+	Audio_PlayMusic(musicID);
+	GameLoop_PlayAnimation();
+	Audio_PlayEffect(EFFECT_FADE_OUT);
+	GameLoop_FinishAnimation();
+
+	Video_ShowCursor();
+}
+
+void GameLoop_LevelEndAnimation(void)
+{
+	enum HouseAnimationType anim;
 
 	switch (g_campaignID) {
 		case 4:
 			switch (g_playerHouseID) {
 				case HOUSE_HARKONNEN:
-					animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL4_HARKONNEN];
-					subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL4_HARKONNEN];
-					soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL4_HARKONNEN];
+					anim = HOUSEANIMATION_LEVEL4_HARKONNEN;
 					break;
 
 				case HOUSE_ATREIDES:
-					animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL4_ARTREIDES];
-					subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL4_ARTREIDES];
-					soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL4_ARTREIDES];
+					anim = HOUSEANIMATION_LEVEL4_ATREIDES;
 					break;
 
 				case HOUSE_ORDOS:
-					animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL4_ORDOS];
-					subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL4_ORDOS];
-					soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL4_ORDOS];
+					anim = HOUSEANIMATION_LEVEL4_ORDOS;
 					break;
 
 				default: return;
@@ -830,21 +876,15 @@ void GameLoop_LevelEndAnimation(void)
 		case 8:
 			switch (g_playerHouseID) {
 				case HOUSE_HARKONNEN:
-					animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL8_HARKONNEN];
-					subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL8_HARKONNEN];
-					soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL8_HARKONNEN];
+					anim = HOUSEANIMATION_LEVEL8_HARKONNEN;
 					break;
 
 				case HOUSE_ATREIDES:
-					animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL8_ARTREIDES];
-					subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL8_ARTREIDES];
-					soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL8_ARTREIDES];
+					anim = HOUSEANIMATION_LEVEL8_ATREIDES;
 					break;
 
 				case HOUSE_ORDOS:
-					animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL8_ORDOS];
-					subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL8_ORDOS];
-					soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL8_ORDOS];
+					anim = HOUSEANIMATION_LEVEL8_ORDOS;
 					break;
 
 				default: return;
@@ -854,17 +894,7 @@ void GameLoop_LevelEndAnimation(void)
 		default: return;
 	}
 
-	GameLoop_PrepareAnimation(animation, subtitle, 0xFFFF, soundEffect);
-
-	Video_HideCursor();
-	Audio_PlayMusic(MUSIC_CUTSCENE);
-
-	GameLoop_PlayAnimation();
-
-	Video_ShowCursor();
-	Audio_PlayEffect(EFFECT_FADE_OUT);
-
-	GameLoop_FinishAnimation();
+	Cutscene_PlayAnimation(anim);
 }
 
 static void GameCredits_SwapScreen(uint16 top, uint16 height, uint16 screenID, void *buffer)
@@ -1117,11 +1147,12 @@ static void GameCredits_LoadPalette(void)
 static void GameLoop_GameCredits(void)
 {
 	const uint8 colours[] = {0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	const uint16 last_widget = Widget_SetCurrentWidget(20);
 
 	uint16 i;
 	uint8 *memory;
 
-	const uint16 last_widget = Widget_SetCurrentWidget(20);
+	Video_HideCursor();
 
 	Sprites_LoadImage("BIGPLAN.CPS", 3, g_palette_998A);
 
@@ -1198,6 +1229,8 @@ static void GameLoop_GameCredits(void)
 	GFX_ClearScreen();
 
 	Widget_SetCurrentWidget(last_widget);
+
+	Video_ShowCursor();
 }
 
 /**
@@ -1205,51 +1238,25 @@ static void GameLoop_GameCredits(void)
  */
 void GameLoop_GameEndAnimation(void)
 {
-	const HouseAnimation_Animation *animation;
-	const HouseAnimation_Subtitle *subtitle;
-	const HouseAnimation_SoundEffect *soundEffect;
-	enum MusicID musicID;
-
-	Video_HideCursor();
-	Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
+	enum HouseAnimationType anim;
 
 	switch (g_playerHouseID) {
 		case HOUSE_HARKONNEN:
-			animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL9_HARKONNEN];
-			subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL9_HARKONNEN];
-			soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL9_HARKONNEN];
-			musicID     = MUSIC_END_GAME_HARKONNEN;
+			anim = HOUSEANIMATION_LEVEL9_HARKONNEN;
 			break;
 
 		default:
 		case HOUSE_ATREIDES:
-			animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL9_ARTREIDES];
-			subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL9_ARTREIDES];
-			soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL9_ARTREIDES];
-			musicID     = MUSIC_END_GAME_ATREIDES;
+			anim = HOUSEANIMATION_LEVEL9_ATREIDES;
 			break;
 
 		case HOUSE_ORDOS:
-			animation   = g_table_houseAnimation_animation[HOUSEANIMATION_LEVEL9_ORDOS];
-			subtitle    = g_table_houseAnimation_subtitle[HOUSEANIMATION_LEVEL9_ORDOS];
-			soundEffect = g_table_houseAnimation_soundEffect[HOUSEANIMATION_LEVEL9_ORDOS];
-			musicID     = MUSIC_END_GAME_ORDOS;
+			anim = HOUSEANIMATION_LEVEL9_ORDOS;
 			break;
 	}
 
-	GameLoop_PrepareAnimation(animation, subtitle, 0xFFFF, soundEffect);
-
-	Audio_PlayMusic(musicID);
-
-	GameLoop_PlayAnimation();
-
-	Audio_PlayEffect(EFFECT_FADE_OUT);
-
-	GameLoop_FinishAnimation();
-
+	Cutscene_PlayAnimation(anim);
 	GameLoop_GameCredits();
-
-	Video_ShowCursor();
 }
 
 /**
