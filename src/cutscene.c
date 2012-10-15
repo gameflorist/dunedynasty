@@ -842,12 +842,17 @@ Cutscene_PlayAnimation(enum HouseAnimationType anim)
 
 	Video_HideCursor();
 
+	/* Need to set the palette manually.  Normally it will be black due to fading out. */
+	memset(g_palette1, 0, 256 * 3);
+	Video_SetPalette(g_palette1, 0, 256);
+
 	GameLoop_PrepareAnimation(animation, subtitle, 0xFFFF, soundEffect);
 	Audio_PlayMusic(musicID);
 	GameLoop_PlayAnimation();
 	Audio_PlayEffect(EFFECT_FADE_OUT);
 	GameLoop_FinishAnimation();
 
+	Audio_PlayMusic(MUSIC_STOP);
 	Video_ShowCursor();
 }
 
@@ -1144,7 +1149,8 @@ static void GameCredits_LoadPalette(void)
 /**
  * Shows the game credits.
  */
-static void GameLoop_GameCredits(void)
+void
+GameLoop_GameCredits(enum HouseType houseID)
 {
 	const uint8 colours[] = {0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	const uint16 last_widget = Widget_SetCurrentWidget(20);
@@ -1184,7 +1190,9 @@ static void GameLoop_GameCredits(void)
 
 	GUI_Palette_RemapScreen(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, memory);
 
-	Cutscene_Screen_FadeIn2(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, 0, 1, false);
+	/* Special treat if you win the game - Dune turns your house's colour. */
+	if (houseID != HOUSE_INVALID)
+		Cutscene_Screen_FadeIn2(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, 0, 1, false);
 
 	GameCredits_LoadPalette();
 
@@ -1225,6 +1233,7 @@ static void GameLoop_GameCredits(void)
 	Cutscene_SetPaletteAnimated(g_palette2, 60);
 
 	Audio_PlayEffect(EFFECT_FADE_OUT);
+	Audio_PlayMusic(MUSIC_STOP);
 
 	GFX_ClearScreen();
 
@@ -1256,7 +1265,7 @@ void GameLoop_GameEndAnimation(void)
 	}
 
 	Cutscene_PlayAnimation(anim);
-	GameLoop_GameCredits();
+	GameLoop_GameCredits(g_playerHouseID);
 }
 
 /**

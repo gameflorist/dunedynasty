@@ -419,11 +419,13 @@ void GUI_Widget_Scrollbar_Draw(Widget *w)
 		scrollBottom = scrollTop + scrollbar->size - 1;
 	}
 
-	/* Draw background */
-	Prim_FillRect_i(positionX, positionY, positionX + width - 1, positionY + height - 1, w->bgColourNormal);
+	if (scrollbar->scrollMax > scrollbar->scrollPageSize) {
+		/* Draw background */
+		Prim_FillRect_i(positionX, positionY, positionX + width - 1, positionY + height - 1, w->bgColourNormal);
 
-	/* Draw where we currently are */
-	Prim_FillRect_i(positionX + scrollLeft, positionY + scrollTop, positionX + scrollRight, positionY + scrollBottom, (scrollbar->pressed == 0) ? w->fgColourNormal : w->fgColourSelected);
+		/* Draw where we currently are */
+		Prim_FillRect_i(positionX + scrollLeft, positionY + scrollTop, positionX + scrollRight, positionY + scrollBottom, (scrollbar->pressed == 0) ? w->fgColourNormal : w->fgColourSelected);
+	}
 
 	/* Call custom callback function if set */
 	if (scrollbar->drawProc != NULL) scrollbar->drawProc(w);

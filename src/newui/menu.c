@@ -12,6 +12,7 @@
 
 #include "halloffame.h"
 #include "mentat.h"
+#include "scrollbar.h"
 #include "strategicmap.h"
 #include "../audio/audio.h"
 #include "../common_a5.h"
@@ -47,7 +48,6 @@ enum {
  * MENU_FADE_IN and MENU_FADE_OUT are used internally.
  */
 enum MenuAction {
-	MENU_INTRODUCTION,
 	MENU_MAIN_MENU,
 	MENU_PICK_HOUSE,
 	MENU_CONFIRM_HOUSE,
@@ -59,7 +59,9 @@ enum MenuAction {
 	MENU_LOAD_GAME,
 	MENU_BATTLE_SUMMARY,
 	MENU_HALL_OF_FAME,
-	MENU_CUTSCENE,
+	MENU_PICK_CUTSCENE,
+	MENU_PLAY_CUTSCENE,
+	MENU_CAMPAIGN_CUTSCENE,
 	MENU_STRATEGIC_MAP,
 	MENU_EXIT_GAME,
 
@@ -72,6 +74,7 @@ enum MenuAction {
 
 static Widget *main_menu_widgets;
 static Widget *pick_house_widgets;
+static Widget *pick_cutscene_widgets;
 static Widget *briefing_yes_no_widgets;
 static Widget *briefing_proceed_repeat_widgets;
 
@@ -87,8 +90,8 @@ MainMenu_InitWidgets(void)
 		int shortcut2;
 	} menuitem[] = {
 		{ MENU_PLAY_A_GAME,  NULL, STR_PLAY_A_GAME, -1 },
-		{ MENU_INTRODUCTION, NULL, STR_REPLAY_INTRODUCTION, -1 },
 		{ MENU_LOAD_GAME,    NULL, STR_LOAD_GAME, -1, },
+		{ MENU_PICK_CUTSCENE, "Replay Cutscene", STR_REPLAY_INTRODUCTION, -1 },
 		{ MENU_HALL_OF_FAME, NULL, STR_HALL_OF_FAME, -1 },
 		{ MENU_EXIT_GAME,    NULL, STR_EXIT_GAME, -1 },
 		{ 0, NULL, STR_NULL, 0 }
@@ -200,11 +203,28 @@ Briefing_InitWidgets(void)
 }
 
 static void
+PickCutscene_InitWidgets(void)
+{
+	Widget *w;
+	Widget *scrollbar;
+
+	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 200, 168, SHAPE_EXIT, STR_EXIT);
+	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, w);
+
+	scrollbar = GUI_Widget_Allocate_WithScrollbar(15, WINDOWID_MENTAT_PICTURE, 168, 24, 8, 72, &Scrollbar_DrawItems);
+	w = ScrollListArea_Allocate(scrollbar);
+
+	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, w);
+	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, scrollbar);
+}
+
+static void
 Menu_Init(void)
 {
 	MainMenu_InitWidgets();
 	PickHouse_InitWidgets();
 	Briefing_InitWidgets();
+	PickCutscene_InitWidgets();
 	StrategicMap_Init();
 	A5_UseTransform(SCREENDIV_MENU);
 }
@@ -226,14 +246,13 @@ Menu_Uninit(void)
 {
 	Menu_FreeWidgets(main_menu_widgets);
 	Menu_FreeWidgets(pick_house_widgets);
+	Menu_FreeWidgets(pick_cutscene_widgets);
 	Menu_FreeWidgets(briefing_yes_no_widgets);
 	Menu_FreeWidgets(briefing_proceed_repeat_widgets);
 }
 
-/*--------------------------------------------------------------*/
-
 static void
-MainMenu_Initialise(void)
+Menu_LoadPalette(void)
 {
 	File_ReadBlockFile("IBM.PAL", g_palette1, 3 * 256);
 
@@ -246,6 +265,14 @@ MainMenu_Initialise(void)
 	g_palette1[3*223 + 2] = 0x00;
 
 	Video_SetPalette(g_palette1, 0, 256);
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+MainMenu_Initialise(void)
+{
+	Menu_LoadPalette();
 
 	Widget *w = main_menu_widgets;
 	while (w != NULL) {
@@ -323,9 +350,9 @@ MainMenu_Loop(void)
 			MainMenu_SetupBlink(widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
-		case 0x8000 | MENU_INTRODUCTION:
+		case 0x8000 | MENU_PICK_CUTSCENE:
 			MainMenu_SetupBlink(widgetID);
-			return MENU_BLINK_CONFIRM | MENU_INTRODUCTION;
+			return MENU_BLINK_CONFIRM | MENU_PICK_CUTSCENE;
 
 		case 0x8000 | MENU_LOAD_GAME:
 			GUI_Widget_InitSaveLoad(false);
@@ -843,7 +870,7 @@ BattleSummary_InputLoop(HallOfFameData *fame)
 			if (Input_IsInputAvailable()) {
 				GUI_HallOfFame_Show(fame->score);
 				g_campaignID++;
-				return MENU_NO_TRANSITION | MENU_CUTSCENE;
+				return MENU_NO_TRANSITION | MENU_CAMPAIGN_CUTSCENE;
 			}
 
 			break;
@@ -853,6 +880,135 @@ BattleSummary_InputLoop(HallOfFameData *fame)
 	}
 
 	return MENU_BATTLE_SUMMARY;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+PickCutscene_Initialise(void)
+{
+	const struct {
+		const char *text;
+		uint32 animation;
+	} cutscenes[] = {
+		{ "Introduction",               HOUSEANIMATION_INTRO },
+		{ "Harkonnen intermission 1",   HOUSEANIMATION_LEVEL4_HARKONNEN },
+		{ "Harkonnen intermission 2",   HOUSEANIMATION_LEVEL8_HARKONNEN },
+		{ "Harkonnen end game",         HOUSEANIMATION_LEVEL9_HARKONNEN },
+		{ "Atreides intermission 1",    HOUSEANIMATION_LEVEL4_ATREIDES },
+		{ "Atreides intermission 2",    HOUSEANIMATION_LEVEL8_ATREIDES },
+		{ "Atreides end game",          HOUSEANIMATION_LEVEL9_ATREIDES },
+		{ "Ordos intermission 1",       HOUSEANIMATION_LEVEL4_ORDOS },
+		{ "Ordos intermission 2",       HOUSEANIMATION_LEVEL8_ORDOS },
+		{ "Ordos end game",             HOUSEANIMATION_LEVEL9_ORDOS },
+		{ "Credits",                    10 },
+		{ NULL, 0 }
+	};
+
+	Menu_LoadPalette();
+
+	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
+	WidgetScrollbar *ws = w->data;
+	ScrollbarItem *si;
+
+	ws->scrollMax = 0;
+
+	for (int i = 0; cutscenes[i].text != NULL; i++) {
+		si = Scrollbar_AllocItem(w);
+
+		snprintf(si->text, sizeof(si->text), "%s", cutscenes[i].text);
+		si->offset = cutscenes[i].animation;
+		si->no_desc = false;
+		si->is_category = false;
+	}
+
+	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 11, 0);
+
+	/* XXX: dodgy hack to clear the last selected widgets. */
+	GUI_Widget_HandleEvents(main_menu_widgets);
+}
+
+static void
+PickCutscene_Draw(void)
+{
+	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_MENTAT_PICTURE];
+
+	Mentat_DrawBackground(MENTAT_BENE_GESSERIT);
+	Mentat_Draw(MENTAT_BENE_GESSERIT);
+
+	Widget_SetAndPaintCurrentWidget(WINDOWID_MENTAT_PICTURE);
+	GUI_DrawText_Wrapper("Select Cutscene:", wi->xBase + 16, wi->yBase + 2, 12, 0, 0x12);
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
+	GUI_Widget_DrawAll(pick_cutscene_widgets);
+}
+
+static enum MenuAction
+PickCutscene_Loop(MentatState *mentat)
+{
+	const int64_t curr_ticks = Timer_GetTicks();
+	static ScrollbarItem *last_si;
+
+	int widgetID = GUI_Widget_HandleEvents(pick_cutscene_widgets);
+	bool redraw = false;
+
+	if (curr_ticks - mentat->wsa_timer >= 7) {
+		mentat->wsa_timer = curr_ticks;
+		redraw = true;
+	}
+
+	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
+	GUI_Mentat_Animation(0);
+
+	switch (widgetID) {
+		case 0x8000 | 1: /* exit. */
+			return MENU_MAIN_MENU;
+
+		case 0x8000 | 3: /* list entry. */
+			/* Fade in/out between playing cutscenes. */
+			Audio_PlayMusic(MUSIC_STOP);
+			return MENU_PLAY_CUTSCENE;
+	}
+
+	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
+	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
+	if (last_si != si) {
+		last_si = si;
+		redraw = true;
+	}
+
+	return (redraw ? MENU_REDRAW : 0) | MENU_PICK_CUTSCENE;
+}
+
+static enum MenuAction
+PlayCutscene_Loop(void)
+{
+	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
+	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
+
+	switch (si->offset) {
+		case HOUSEANIMATION_INTRO:
+			GameLoop_GameIntroAnimation();
+			break;
+
+		case HOUSEANIMATION_LEVEL4_HARKONNEN:
+		case HOUSEANIMATION_LEVEL4_ATREIDES:
+		case HOUSEANIMATION_LEVEL4_ORDOS:
+		case HOUSEANIMATION_LEVEL8_HARKONNEN:
+		case HOUSEANIMATION_LEVEL8_ATREIDES:
+		case HOUSEANIMATION_LEVEL8_ORDOS:
+		case HOUSEANIMATION_LEVEL9_HARKONNEN:
+		case HOUSEANIMATION_LEVEL9_ATREIDES:
+		case HOUSEANIMATION_LEVEL9_ORDOS:
+			Cutscene_PlayAnimation(si->offset);
+			break;
+
+		case 10: /* Credits. */
+			GameLoop_GameCredits(HOUSE_INVALID);
+			break;
+	}
+
+	return MENU_PICK_CUTSCENE;
 }
 
 /*--------------------------------------------------------------*/
@@ -958,6 +1114,10 @@ Menu_Run(void)
 					BattleSummary_Initialise(g_playerHouseID, &g_hall_of_fame_state);
 					break;
 
+				case MENU_PICK_CUTSCENE:
+					PickCutscene_Initialise();
+					break;
+
 				case MENU_STRATEGIC_MAP:
 					StrategicMap_Initialise(g_playerHouseID, g_campaignID, &g_strategic_map_state);
 					break;
@@ -998,6 +1158,10 @@ Menu_Run(void)
 					BattleSummary_Draw(g_playerHouseID, g_scenarioID, &g_hall_of_fame_state);
 					break;
 
+				case MENU_PICK_CUTSCENE:
+					PickCutscene_Draw();
+					break;
+
 				case MENU_STRATEGIC_MAP:
 					StrategicMap_Draw(g_playerHouseID, &g_strategic_map_state, fade_start);
 					break;
@@ -1027,11 +1191,6 @@ Menu_Run(void)
 
 		enum MenuAction res = curr_menu;
 		switch ((int)curr_menu) {
-			case MENU_INTRODUCTION:
-				GameLoop_GameIntroAnimation();
-				res = MENU_MAIN_MENU;
-				break;
-
 			case MENU_MAIN_MENU:
 				res = MainMenu_Loop();
 				break;
@@ -1086,7 +1245,15 @@ Menu_Run(void)
 				res = MENU_MAIN_MENU;
 				break;
 
-			case MENU_CUTSCENE:
+			case MENU_PICK_CUTSCENE:
+				res = PickCutscene_Loop(&g_mentat_state);
+				break;
+
+			case MENU_PLAY_CUTSCENE:
+				res = PlayCutscene_Loop();
+				break;
+
+			case MENU_CAMPAIGN_CUTSCENE:
 				if (g_campaignID == 9) {
 					GameLoop_GameEndAnimation();
 					res = MENU_MAIN_MENU;

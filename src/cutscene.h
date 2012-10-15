@@ -1,6 +1,8 @@
 #ifndef CUTSCENE_H
 #define CUTSCENE_H
 
+#include "enumeration.h"
+
 enum HouseAnimationType {
 	HOUSEANIMATION_INTRO            = 0,
 	HOUSEANIMATION_LEVEL4_HARKONNEN = 1,
@@ -18,6 +20,7 @@ enum HouseAnimationType {
 
 extern void Cutscene_PlayAnimation(enum HouseAnimationType anim);
 extern void GameLoop_LevelEndAnimation(void);
+extern void GameLoop_GameCredits(enum HouseType houseID);
 extern void GameLoop_GameEndAnimation(void);
 extern void GameLoop_GameIntroAnimation(void);
 
