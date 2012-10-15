@@ -1090,7 +1090,8 @@ void GameLoop_Main(bool new_game)
 				}
 			}
 
-			GameLoop_ProcessUnhandledInput(key);
+			if (g_gameOverlay == GAMEOVERLAY_NONE)
+				GameLoop_ProcessUnhandledInput(key);
 
 			UnitAI_SquadLoop();
 			GameLoop_Team();
