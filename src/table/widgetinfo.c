@@ -213,7 +213,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* index       */ 43,
 		/* clickProc   */ &Viewport_Click,
 		/* shortcut    */ 0,
-		/* flags       */ 20224,
+		/* flags       */ 0x4F40, /* Was 0x4F00 == 20224. */
 		/* spriteID    */ -1,
 		/* offsetX     */ 0,
 		/* offsetY     */ 40,
@@ -226,7 +226,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* index       */ 44,
 		/* clickProc   */ &GUI_Widget_Viewport_Click,
 		/* shortcut    */ 0,
-		/* flags       */ 20288,
+		/* flags       */ 0x4F40, /* 0x4F40 == 20288. */
 		/* spriteID    */ -1,
 		/* offsetX     */ 256 - 240,
 		/* offsetY     */ 136 - 40,
@@ -239,7 +239,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* index       */ 45,
 		/* clickProc   */ &Viewport_Click,
 		/* shortcut    */ 0,
-		/* flags       */ 20224,
+		/* flags       */ 0x4F40, /* Was 0x4F00 == 20224. */
 		/* spriteID    */ -1,
 		/* offsetX     */ 0,
 		/* offsetY     */ 0,

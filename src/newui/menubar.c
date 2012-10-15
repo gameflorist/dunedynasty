@@ -45,30 +45,6 @@ static int64_t radar_animation_timer;
 static int s_save_entry;
 
 void
-MenuBar_HideMentatAndOptions(void)
-{
-	Widget *w;
-
-	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 1);
-	GUI_Widget_MakeInvisible(w);
-
-	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 2);
-	GUI_Widget_MakeInvisible(w);
-}
-
-void
-MenuBar_ShowMentatAndOptions(void)
-{
-	Widget *w;
-
-	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 1);
-	GUI_Widget_MakeVisible(w);
-
-	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 2);
-	GUI_Widget_MakeVisible(w);
-}
-
-void
 MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 {
 	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENUBAR];
@@ -178,25 +154,11 @@ MenuBar_Draw(enum HouseType houseID)
 
 	/* Mentat. */
 	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 1);
-	if (w->flags.s.invisible) {
-		GUI_Widget_MakeVisible(w);
-		GUI_Widget_Draw(w);
-		GUI_Widget_MakeInvisible(w);
-	}
-	else {
-		GUI_Widget_Draw(w);
-	}
+	GUI_Widget_Draw(w);
 
 	/* Options. */
 	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 2);
-	if (w->flags.s.invisible) {
-		GUI_Widget_MakeVisible(w);
-		GUI_Widget_Draw(w);
-		GUI_Widget_MakeInvisible(w);
-	}
-	else {
-		GUI_Widget_Draw(w);
-	}
+	GUI_Widget_Draw(w);
 
 	GUI_DrawCredits(g_playerHouseID, (g_playerCredits == 0xFFFF) ? 2 : 1);
 	GUI_DisplayText(NULL, 0);

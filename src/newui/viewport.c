@@ -357,7 +357,6 @@ Viewport_Click(Widget *w)
 			selection_box_y2 = swap;
 		}
 
-		MenuBar_ShowMentatAndOptions();
 		Viewport_SelectRegion();
 		return true;
 	}
@@ -399,9 +398,6 @@ Viewport_Click(Widget *w)
 				Map_SetSelection(0xFFFF);
 				Unit_UnselectAll();
 			}
-
-			/* Disable the mentat and options buttons when dragging. */
-			MenuBar_HideMentatAndOptions();
 		}
 
 		return true;
@@ -410,7 +406,6 @@ Viewport_Click(Widget *w)
 		/* RMB cancels selection box. */
 		if ((w->state.s.buttonState & 0x80) == 0) {
 			selection_box_active = false;
-			MenuBar_ShowMentatAndOptions();
 		}
 
 		return true;
@@ -419,7 +414,6 @@ Viewport_Click(Widget *w)
 	}
 	else {
 		selection_box_active = false;
-		MenuBar_ShowMentatAndOptions();
 	}
 
 	/* 0x10, 0x20, 0x40, 0x80: rmb clicked, held, released, not held. */
