@@ -21,6 +21,7 @@
 #include "../pool/unit.h"
 #include "../string.h"
 #include "../table/strings.h"
+#include "../timer/timer.h"
 #include "../unit.h"
 #include "../video/video.h"
 
@@ -700,6 +701,69 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 	GUI_DrawText_Wrapper("Send Order", x1 + w/2, y1 + 1, fg, 0, 0x121);
 }
 
+static void
+ActionPanel_HighlightIcon(int x1, int y1)
+{
+	static int64_t paletteChangeTimer;
+	static int paletteColour;
+	static int paletteChange = 8;
+
+	unsigned char r, g, b;
+
+	if (paletteChangeTimer <= Timer_GetTicks()) {
+		paletteChangeTimer = Timer_GetTicks() + 3;
+		paletteColour += paletteChange;
+	}
+
+	if (paletteColour < 0 || paletteColour > 63) {
+		paletteChange = -paletteChange;
+		paletteColour += paletteChange;
+	}
+
+	switch (g_playerHouseID) {
+		case HOUSE_HARKONNEN:
+			r = 4 * 63;
+			g = 4 * paletteColour;
+			b = 4 * paletteColour;
+			break;
+
+		case HOUSE_ATREIDES:
+			r = 4 * paletteColour;
+			g = 4 * paletteColour;
+			b = 4 * 63;
+			break;
+
+		case HOUSE_ORDOS:
+			r = 4 * paletteColour;
+			g = 4 * 63;
+			b = 4 * paletteColour;
+			break;
+
+		case HOUSE_FREMEN:
+			r = 4 * 63;
+			g = 4 * 63 - 2 * paletteColour;
+			b = 4 * 63 - 4 * paletteColour;
+			break;
+
+		case HOUSE_SARDAUKAR:
+			r = 4 * 63;
+			g = 4 * 63 - 4 * paletteColour;
+			b = 4 * 63 - 1 * paletteColour;
+			break;
+
+		case HOUSE_MERCENARY:
+			r = 4 * 63;
+			g = 4 * 63 - 1 * paletteColour;
+			b = 4 * 63 - 4 * paletteColour;
+			break;
+
+		default:
+			return;
+	}
+
+	Prim_Rect_RGBA(x1 + 1.0f, y1, x1 + 52.0f, y1 + 38.0f, r, g, b, 0xFF, 3.0f);
+}
+
 void
 ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 {
@@ -806,9 +870,14 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 					GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 10, fg, 0, 0x121, percentDone);
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_ON_HOLD), x1 + w / 2, y1 + 18, fg, 0, 0x121);
 				}
+
+				Prim_Rect(x1 + 1.0f, y1 + 1.0f, x1 + 51.0f, y1 + 38.0f, 0xFF, 2.0f);
 			}
 			else if (g_productionStringID != STR_BUILD_IT) {
 				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), x1 + w / 2, y1 + 14, fg, 0, 0x121);
+
+				if (g_productionStringID == STR_PLACE_IT)
+					ActionPanel_HighlightIcon(x1, y1);
 			}
 		}
 		else if (g_factoryWindowItems[item].available < 0) {
