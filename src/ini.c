@@ -82,7 +82,7 @@ char *Ini_GetString(const char *category, const char *key, const char *defaultVa
 
 				/* Now validate the size and if we match at all */
 				if (*value != '=' || strncasecmp(current, key, keyLength) != 0) {
-					current = strchr(current, '\r');
+					current = strchr(current, '\n');
 					if (current == NULL) break;
 					while (isspace((uint8)*current)) current++;
 					if (current > end) break;
@@ -96,7 +96,7 @@ char *Ini_GetString(const char *category, const char *key, const char *defaultVa
 				current = value + 1;
 
 				/* Find the end of the line */
-				lineEnd = strchr(current, '\r');
+				lineEnd = strchr(current, '\n');
 				if (lineEnd == NULL) break;
 				while (isspace((uint8)*lineEnd)) lineEnd++;
 				if (lineEnd > end) break;
@@ -137,7 +137,7 @@ char *Ini_GetString(const char *category, const char *key, const char *defaultVa
 			dest += strlen(dest) + 1;
 
 			/* Find the next line, ignoring all \r\n */
-			current = strchr(current, '\r');
+			current = strchr(current, '\n');
 			if (current == NULL) break;
 			while (isspace((uint8)*current)) current++;
 			if (current > end) break;
