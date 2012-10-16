@@ -8877,6 +8877,19 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	},
 
 	{ /* 682 */
+		/* filename             */ "PROFILE.INI",
+		/* fileSize             */ 0,
+		/* buffer               */ NULL,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 0,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inMemory             */ false,
+		/* inPAKFile            */ false,
+		},
+	},
+
+	{ /* 683 */
 		/* filename             */ "HMERC.VOC",
 		/* fileSize             */ 0,
 		/* buffer               */ NULL,
@@ -8889,7 +8902,7 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 		},
 	},
 
-	{ /* 683 */
+	{ /* 684 */
 		/* filename             */ "AMERC.VOC",
 		/* fileSize             */ 0,
 		/* buffer               */ NULL,
@@ -8902,7 +8915,7 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 		},
 	},
 
-	{ /* 684 */
+	{ /* 685 */
 		/* filename             */ "OMERC.VOC",
 		/* fileSize             */ 0,
 		/* buffer               */ NULL,

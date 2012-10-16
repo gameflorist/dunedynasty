@@ -10,7 +10,7 @@
 #include "../structure.h"
 #include "strings.h"
 
-StructureInfo g_table_structureInfo[] = {
+const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 	{ /* 0 */
 		{ /* objectInfo */
 		/* stringID_abbrev      */ STR_CONCRETE,
@@ -1246,6 +1246,8 @@ StructureInfo g_table_structureInfo[] = {
 		},
 	}
 };
+
+StructureInfo g_table_structureInfo[STRUCTURE_MAX];
 
 /** Array with position offset per tile in a structure layout. */
 const uint16 g_table_structure_layoutTiles[][9] = {

@@ -120,7 +120,8 @@ extern const char *g_table_movementTypeName[];
 
 extern const uint16 g_table_actionsAI[];
 extern const ActionInfo g_table_actionInfo[];
-extern UnitInfo g_table_unitInfo[];
+extern const UnitInfo g_table_unitInfo_original[UNIT_MAX];
+extern UnitInfo g_table_unitInfo[UNIT_MAX];
 
 extern Unit *g_unitActive;
 extern Unit *g_unitHouseMissile;

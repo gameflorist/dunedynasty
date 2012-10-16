@@ -409,6 +409,9 @@ static void ReadProfileIni(char *filename)
 	char buffer[120];
 	uint16 locsi;
 
+	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
+	memcpy(g_table_unitInfo, g_table_unitInfo_original, sizeof(g_table_unitInfo_original));
+
 	if (filename == NULL) return;
 	if (!File_Exists(filename)) return;
 
@@ -420,7 +423,7 @@ static void ReadProfileIni(char *filename)
 	keys = source + strlen(source) + 5000;
 	*keys = '\0';
 
-	Ini_GetString("construct", NULL, keys, keys, 2000, source);
+	Ini_GetString("construct", NULL, NULL, keys, 2000, source);
 
 	for (key = keys; *key != '\0'; key += strlen(key) + 1) {
 		ObjectInfo *oi = NULL;
@@ -445,7 +448,7 @@ static void ReadProfileIni(char *filename)
 
 		if (oi == NULL) continue;
 
-		Ini_GetString("construct", key, buffer, buffer, 120, source);
+		Ini_GetString("construct", key, NULL, buffer, sizeof(buffer), source);
 		count = sscanf(buffer, "%hu,%hu,%hu,%hu,%hu,%hu,%hu,%hu", &buildCredits, &buildTime, &hitpoints, &fogUncoverRadius, &availableCampaign, &priorityBuild, &priorityTarget, &sortPriority);
 		oi->buildCredits      = buildCredits;
 		oi->buildTime         = buildTime;
@@ -482,7 +485,7 @@ static void ReadProfileIni(char *filename)
 
 	*keys = '\0';
 
-	Ini_GetString("combat", NULL, keys, keys, 2000, source);
+	Ini_GetString("combat", NULL, NULL, keys, 2000, source);
 
 	for (key = keys; *key != '\0'; key += strlen(key) + 1) {
 		uint16 damage;
@@ -490,7 +493,7 @@ static void ReadProfileIni(char *filename)
 		uint16 fireDelay;
 		uint16 fireDistance;
 
-		Ini_GetString("combat", key, buffer, buffer, 120, source);
+		Ini_GetString("combat", key, NULL, buffer, sizeof(buffer), source);
 		String_Trim(buffer);
 		if (sscanf(buffer, "%hu,%hu,%hu,%hu", &fireDistance, &damage, &fireDelay, &movingSpeed) < 4) continue;
 
@@ -1267,6 +1270,9 @@ void GameLoop_Main(bool new_game)
 
 static bool Unknown_25C4_000E(void)
 {
+	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
+	memcpy(g_table_unitInfo, g_table_unitInfo_original, sizeof(g_table_unitInfo_original));
+
 	if (!Video_Init()) return false;
 
 	/* g_var_7097 = -1; */

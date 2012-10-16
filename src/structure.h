@@ -75,6 +75,7 @@ typedef struct XYSize {
 struct House;
 struct Widget;
 
+extern const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX];
 extern StructureInfo g_table_structureInfo[];
 extern const uint16  g_table_structure_layoutTiles[][9];
 extern const uint16  g_table_structure_layoutEdgeTiles[][8];
