@@ -4,6 +4,7 @@
 #include "../gui/widget.h"
 #include "../unit.h"
 
+extern void Viewport_Init(void);
 extern void Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed);
 extern void Viewport_Place(void);
 extern void Viewport_Hotkey(enum SquadID squad);
@@ -16,6 +17,7 @@ extern void Viewport_DrawAirUnit(const Unit *u);
 extern void Viewport_DrawRallyPoint(void);
 extern void Viewport_DrawSelectionHealthBars(void);
 extern void Viewport_DrawSelectionBox(void);
+extern void Viewport_DrawPanCursor(void);
 extern void Viewport_RenderBrush(int x, int y, int blurx);
 extern bool Viewport_Click(Widget *w);
 

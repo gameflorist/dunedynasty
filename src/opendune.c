@@ -963,6 +963,7 @@ void GameLoop_Main(bool new_game)
 
 	Sprites_UnloadTiles();
 	Sprites_LoadTiles();
+	Viewport_Init();
 
 	GUI_Palette_CreateRemap(g_playerHouseID);
 	Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);

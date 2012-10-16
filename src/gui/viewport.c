@@ -339,6 +339,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	Viewport_DrawRallyPoint();
 	Viewport_DrawSelectionHealthBars();
 	Viewport_DrawSelectionBox();
+	Viewport_DrawPanCursor();
 
 	/* Draw placement box over fog. */
 	if (g_selectionType == SELECTIONTYPE_PLACE) {

@@ -8,6 +8,7 @@
 
 #include "menubar.h"
 #include "../audio/audio.h"
+#include "../common_a5.h"
 #include "../config.h"
 #include "../enhancement.h"
 #include "../gfx.h"
@@ -33,6 +34,14 @@
 #include "../unit.h"
 #include "../video/video.h"
 
+enum ViewportClickAction {
+	VIEWPORT_CLICK_NONE,
+	VIEWPORT_LMB,           /* LMB pressed, drag undecided. */
+	VIEWPORT_SELECTION_BOX,
+	VIEWPORT_RMB,           /* RMB pressed, drag undecided. */
+	VIEWPORT_PAN
+};
+
 enum SelectionMode {
 	SELECTION_MODE_NONE,
 	SELECTION_MODE_CONTROLLABLE_UNIT,
@@ -48,15 +57,25 @@ static const uint16 values_32A4[8][2] = {
 };
 
 /* Selection box is in screen coordinates. */
-static bool selection_box_active = false;
-static int selection_box_x1;
+static enum ViewportClickAction viewport_click_action = VIEWPORT_CLICK_NONE;
+static int64_t viewport_click_time;
+static int viewport_click_x;
+static int viewport_click_y;
+static bool selection_box_add_to_selection;
 static int selection_box_x2;
-static int selection_box_y1;
 static int selection_box_y2;
+static int viewport_pan_dx;
+static int viewport_pan_dy;
 
 static void Viewport_InterpolateMovement(const Unit *u, int *x, int *y);
 
 /*--------------------------------------------------------------*/
+
+void
+Viewport_Init(void)
+{
+	viewport_click_action = VIEWPORT_CLICK_NONE;
+}
 
 static bool
 Map_InRange(int xy)
@@ -107,8 +126,8 @@ static void
 Viewport_SelectRegion(void)
 {
 	const int radius = 5;
-	const int dx = selection_box_x2 - selection_box_x1;
-	const int dy = selection_box_y2 - selection_box_y1;
+	const int dx = selection_box_x2 - viewport_click_x;
+	const int dy = selection_box_y2 - viewport_click_y;
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
 	const enum SelectionMode mode = Viewport_GetSelectionMode();
@@ -150,9 +169,9 @@ Viewport_SelectRegion(void)
 
 	/* Box selection. */
 	else if (mode == SELECTION_MODE_NONE || mode == SELECTION_MODE_CONTROLLABLE_UNIT) {
-		const int x1 = selection_box_x1;
+		const int x1 = viewport_click_x;
+		const int y1 = viewport_click_y;
 		const int x2 = selection_box_x2;
-		const int y1 = selection_box_y1;
 		const int y2 = selection_box_y2;
 
 		PoolFindStruct find;
@@ -337,29 +356,7 @@ Viewport_Click(Widget *w)
 	const int tiley = Map_Clamp(y0 + (mouseY + g_viewport_scrollOffsetY) / TILE_SIZE);
 	const uint16 packed = Tile_PackXY(tilex, tiley);
 
-	if ((w->state.s.buttonState & 0x04) != 0) {
-		if (!selection_box_active)
-			return true;
-
-		selection_box_active = false;
-		selection_box_x2 = Viewport_ClampSelectionBoxX(mouseX);
-		selection_box_y2 = Viewport_ClampSelectionBoxY(mouseY);
-
-		if (selection_box_x1 > selection_box_x2) {
-			const int swap = selection_box_x1;
-			selection_box_x1 = selection_box_x2;
-			selection_box_x2 = swap;
-		}
-
-		if (selection_box_y1 > selection_box_y2) {
-			const int swap = selection_box_y1;
-			selection_box_y1 = selection_box_y2;
-			selection_box_y2 = swap;
-		}
-
-		Viewport_SelectRegion();
-		return true;
-	}
+	bool perform_context_sensitive_action = false;
 
 	const enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
 	if (cursorID != g_cursorSpriteID)
@@ -368,8 +365,8 @@ Viewport_Click(Widget *w)
 	if (w->index == 45)
 		return true;
 
-	/* 0x01, 0x02, 0x04, 0x08: lmb clicked, held, released, not held. */
-	if ((w->state.s.buttonState & 0x01) != 0) {
+	if (w->state.s.buttonState & 0x01) {
+		/* Clicking LMB performs target. */
 		if (g_selectionType == SELECTIONTYPE_TARGET) {
 			GUI_DisplayText(NULL, -1);
 
@@ -385,39 +382,135 @@ Viewport_Click(Widget *w)
 
 			g_activeAction = 0xFFFF;
 			GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
+			return true;
 		}
+
+		/* Clicking LMB places structure. */
 		else if (g_selectionType == SELECTIONTYPE_PLACE) {
 			Viewport_Place();
+			return true;
 		}
-		else {
-			selection_box_active = true;
-			selection_box_x1 = mouseX;
-			selection_box_y1 = mouseY;
 
-			if ((Input_Test(SCANCODE_LSHIFT) == false) && (Input_Test(SCANCODE_RSHIFT) == false)) {
-				Map_SetSelection(0xFFFF);
-				Unit_UnselectAll();
+		/* Clicking LMB begins selection box. */
+		else if (viewport_click_action == VIEWPORT_CLICK_NONE) {
+			viewport_click_action = VIEWPORT_LMB;
+			viewport_click_time = Timer_GetTicks();
+			viewport_click_x = mouseX;
+			viewport_click_y = mouseY;
+
+			if (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT)) {
+				selection_box_add_to_selection = true;
+			}
+			else {
+				selection_box_add_to_selection = false;
 			}
 		}
 
-		return true;
+		/* Clicking LMB cancels pan. */
+		else {
+			viewport_click_action = VIEWPORT_CLICK_NONE;
+			Video_ShowCursor();
+		}
 	}
-	else if ((w->state.s.buttonState & 0x02) != 0) {
-		/* RMB cancels selection box. */
-		if ((w->state.s.buttonState & 0x80) == 0) {
-			selection_box_active = false;
+
+	if (w->state.s.buttonState & 0x10) {
+		/* Clicking RMB begins panning. */
+		if (viewport_click_action == VIEWPORT_CLICK_NONE) {
+			viewport_click_action = VIEWPORT_RMB;
+			viewport_click_time = Timer_GetTicks();
+			viewport_click_x = g_mouseClickX;
+			viewport_click_y = g_mouseClickY;
+			viewport_pan_dx = 0;
+			viewport_pan_dy = 0;
 		}
 
-		return true;
-	}
-	else if ((w->state.s.buttonState & 0x04) != 0) {
-	}
-	else {
-		selection_box_active = false;
+		/* Clicking RMB cancels selection box. */
+		else {
+			viewport_click_action = VIEWPORT_CLICK_NONE;
+		}
 	}
 
-	/* 0x10, 0x20, 0x40, 0x80: rmb clicked, held, released, not held. */
-	if (((w->state.s.buttonState & 0x10) != 0) && (g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE)) {
+	if (w->state.s.buttonState & 0x22) {
+		if (viewport_click_action == VIEWPORT_LMB) {
+			const int dx = viewport_click_x - mouseX;
+			const int dy = viewport_click_y - mouseY;
+
+			if ((dx*dx + dy*dy >= 5*5) || (Timer_GetTicks() - viewport_click_time >= 10))
+				viewport_click_action = VIEWPORT_SELECTION_BOX;
+		}
+
+		else if (viewport_click_action == VIEWPORT_RMB) {
+			const int dx = viewport_click_x - g_mouseX;
+			const int dy = viewport_click_y - g_mouseY;
+
+			if (dx*dx + dy*dy >= 15*15) {
+				viewport_click_action = VIEWPORT_PAN;
+				viewport_click_x = g_mouseX;
+				viewport_click_y = g_mouseY;
+				Video_HideCursor();
+			}
+		}
+
+		/* Dragging RMB pans viewport. */
+		else if (viewport_click_action == VIEWPORT_PAN) {
+			const int dx = g_mouseX - viewport_click_x;
+			const int dy = g_mouseY - viewport_click_y;
+
+			Map_MoveDirection(dx, dy);
+			Video_WarpCursor(viewport_click_x, viewport_click_y);
+		}
+	}
+
+	if (w->state.s.buttonState & 0x04) {
+		/* Releasing LMB performs selection box. */
+		if ((viewport_click_action == VIEWPORT_LMB) || (viewport_click_action == VIEWPORT_SELECTION_BOX)) {
+			selection_box_x2 = Viewport_ClampSelectionBoxX(mouseX);
+			selection_box_y2 = Viewport_ClampSelectionBoxY(mouseY);
+
+			if (viewport_click_x > selection_box_x2) {
+				const int swap = viewport_click_x;
+				viewport_click_x = selection_box_x2;
+				selection_box_x2 = swap;
+			}
+
+			if (viewport_click_y > selection_box_y2) {
+				const int swap = viewport_click_y;
+				viewport_click_y = selection_box_y2;
+				selection_box_y2 = swap;
+			}
+
+			if (!selection_box_add_to_selection) {
+				Map_SetSelection(0xFFFF);
+				Unit_UnselectAll();
+			}
+
+			Viewport_SelectRegion();
+		}
+
+		viewport_click_action = VIEWPORT_CLICK_NONE;
+	}
+
+	if (w->state.s.buttonState & 0x40) {
+		/* Releasing RMB cancels pan, but not target, placement. */
+		if (viewport_click_action == VIEWPORT_PAN) {
+		}
+
+		/* Releasing RMB cancels target, placement. */
+		else if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE) {
+			GUI_Widget_Cancel_Click(NULL);
+		}
+
+		/* Releasing RMB performs context sensitive action. */
+		else if (viewport_click_action == VIEWPORT_RMB) {
+			perform_context_sensitive_action = true;
+		}
+
+		/* Releasing RMB stops panning. */
+		viewport_click_action = VIEWPORT_CLICK_NONE;
+		Video_ShowCursor();
+	}
+
+	if (perform_context_sensitive_action) {
 		const Unit *target_u = Unit_Get_ByPackedTile(packed);
 		const Structure *target_s = Structure_Get_ByPackedTile(packed);
 		const enum LandscapeType lst = Map_GetLandscapeType(packed);
@@ -474,11 +567,6 @@ Viewport_Click(Widget *w)
 			Structure_SetRallyPoint(s, packed);
 		}
 	}
-	else if ((w->state.s.buttonState & 0x40) != 0) {
-		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE) {
-			GUI_Widget_Cancel_Click(NULL);
-		}
-	}
 
 	if (g_selectionType == SELECTIONTYPE_TARGET) {
 		Map_SetSelection(Unit_FindTargetAround(packed));
@@ -487,7 +575,7 @@ Viewport_Click(Widget *w)
 		Map_SetSelection(packed);
 	}
 
-	return false;
+	return true;
 }
 
 void
@@ -1152,29 +1240,47 @@ Viewport_DrawAirUnit(const Unit *u)
 void
 Viewport_DrawSelectionBox(void)
 {
-	if (!selection_box_active)
+	if (viewport_click_action != VIEWPORT_SELECTION_BOX)
 		return;
 
 	int mouseX, mouseY;
 	Mouse_TransformToDiv(SCREENDIV_VIEWPORT, &mouseX, &mouseY);
 
-	int x1 = selection_box_x1;
-	int y1 = selection_box_y1;
+	int x1 = viewport_click_x;
+	int y1 = viewport_click_y;
 	int x2 = Viewport_ClampSelectionBoxX(mouseX);
 	int y2 = Viewport_ClampSelectionBoxY(mouseY);
 
 	/* Make x1 <= x2, y1 <= y2 so that rectangles are not rounded off. */
-	if (selection_box_x1 > x2) {
+	if (x1 > x2) {
 		x1 = x2;
-		x2 = selection_box_x1;
+		x2 = viewport_click_x;
 	}
 
-	if (selection_box_y1 > y2) {
+	if (y1 > y2) {
 		y1 = y2;
-		y2 = selection_box_y1;
+		y2 = viewport_click_y;
 	}
 
 	Prim_Rect_i(x1, y1, x2, y2, 0xFF);
+}
+
+void
+Viewport_DrawPanCursor(void)
+{
+	if (viewport_click_action != VIEWPORT_PAN)
+		return;
+
+	const int x = viewport_click_x;
+	const int y = viewport_click_y;
+
+	/* Note: cursor shapes are 16x16 sprites, aligned to top-left corner, so manually centre. */
+	A5_UseTransform(SCREENDIV_MAIN);
+	Shape_Draw(SHAPE_CURSOR_UP,    x -  5, y - 13, 0, 0);
+	Shape_Draw(SHAPE_CURSOR_RIGHT, x +  5, y -  5, 0, 0);
+	Shape_Draw(SHAPE_CURSOR_DOWN,  x -  5, y +  5, 0, 0);
+	Shape_Draw(SHAPE_CURSOR_LEFT,  x - 13, y -  5, 0, 0);
+	A5_UseTransform(SCREENDIV_VIEWPORT);
 }
 
 static void

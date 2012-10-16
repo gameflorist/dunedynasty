@@ -583,6 +583,12 @@ Video_HideCursor(void)
 }
 
 void
+Video_WarpCursor(int x, int y)
+{
+	al_set_mouse_xy(display, x, y);
+}
+
+void
 Video_ShadeScreen(int alpha)
 {
 	const enum ScreenDivID prev_transform = A5_SaveTransform();

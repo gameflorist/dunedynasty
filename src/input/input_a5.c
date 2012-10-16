@@ -112,6 +112,7 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			mouse_event |= MOUSE_LMB - (event->mouse.button - 1);
 			/* Fall through. */
 		case ALLEGRO_EVENT_MOUSE_AXES:
+		case ALLEGRO_EVENT_MOUSE_WARPED:
 			Mouse_EventHandler(apply_mouse_transform, event->mouse.x, event->mouse.y, event->mouse.dz, mouse_event);
 			break;
 

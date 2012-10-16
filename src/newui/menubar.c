@@ -544,6 +544,7 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 	const int lines = GUI_SplitText(textBuffer, (w->width - ((shapeID == SHAPE_INVALID) ? 2*8 : 7*8)) - 6, '\r');
 	w->height = g_fontCurrent->height * max(lines, 3) + 18;
 
+	Video_ShowCursor();
 	Input_History_Clear();
 
 	bool redraw = true;
