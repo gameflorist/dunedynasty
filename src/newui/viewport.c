@@ -38,6 +38,7 @@ enum ViewportClickAction {
 	VIEWPORT_CLICK_NONE,
 	VIEWPORT_LMB,           /* LMB pressed, drag undecided. */
 	VIEWPORT_SELECTION_BOX,
+	VIEWPORT_FAST_SCROLL,
 	VIEWPORT_RMB,           /* RMB pressed, drag undecided. */
 	VIEWPORT_PAN
 };
@@ -346,6 +347,46 @@ Viewport_Place(void)
 	}
 }
 
+static bool
+Viewport_ScrollMap(Widget *w)
+{
+	enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
+	const WidgetInfo *wi;
+	int dx = 0, dy = 0;
+
+	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP];
+	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dy--;
+
+	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT];
+	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dx++;
+
+	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN];
+	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dy++;
+
+	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT];
+	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dx--;
+
+	if (dx < 0) cursorID = SHAPE_CURSOR_LEFT;
+	else if (dx > 0) cursorID = SHAPE_CURSOR_RIGHT;
+
+	if (dy < 0) cursorID = SHAPE_CURSOR_UP;
+	else if (dy > 0) cursorID = SHAPE_CURSOR_DOWN;
+
+	if (viewport_click_action == VIEWPORT_FAST_SCROLL) {
+		const int speed = max(1, 2 * g_gameConfig.scrollSpeed);
+		Map_MoveDirection(speed * dx, speed * dy);
+	}
+	else if (g_gameConfig.autoScroll || ((!g_gameConfig.autoScroll) && (w->state.s.buttonState & 0x22))) {
+		const int speed = max(1, g_gameConfig.scrollSpeed);
+		Map_MoveDirection(speed * dx, speed * dy);
+	}
+
+	if (cursorID != g_cursorSpriteID)
+		Video_SetCursor(cursorID);
+
+	return false;
+}
+
 bool
 Viewport_Click(Widget *w)
 {
@@ -360,9 +401,8 @@ Viewport_Click(Widget *w)
 
 	bool perform_context_sensitive_action = false;
 
-	const enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
-	if (cursorID != g_cursorSpriteID)
-		Video_SetCursor(cursorID);
+	if (Viewport_ScrollMap(w))
+		return true;
 
 	if (w->index == 45)
 		return true;
@@ -393,7 +433,7 @@ Viewport_Click(Widget *w)
 			return true;
 		}
 
-		/* Clicking LMB begins selection box. */
+		/* Clicking LMB begins selection box or fast scroll. */
 		else if (viewport_click_action == VIEWPORT_CLICK_NONE) {
 			viewport_click_action = VIEWPORT_LMB;
 			viewport_click_time = Timer_GetTicks();
@@ -437,8 +477,29 @@ Viewport_Click(Widget *w)
 			const int dx = viewport_click_x - mouseX;
 			const int dy = viewport_click_y - mouseY;
 
-			if ((dx*dx + dy*dy >= 5*5) || (Timer_GetTicks() - viewport_click_time >= 10))
+			/* Dragging LMB begins selection box. */
+			if (dx*dx + dy*dy >= 5*5) {
 				viewport_click_action = VIEWPORT_SELECTION_BOX;
+			}
+
+			/* Holding LMB begins selection box or fast scroll. */
+			else if (Timer_GetTicks() - viewport_click_time >= 10) {
+				const WidgetInfo *wi;
+
+				viewport_click_action = VIEWPORT_SELECTION_BOX;
+
+				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP];
+				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
+
+				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT];
+				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
+
+				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN];
+				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
+
+				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT];
+				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
+			}
 		}
 
 		else if (viewport_click_action == VIEWPORT_RMB) {
