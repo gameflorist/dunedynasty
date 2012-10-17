@@ -894,6 +894,40 @@ Viewport_Homekey(void)
 	}
 }
 
+static bool
+Viewport_TileIsDebris(uint16 iconID)
+{
+	/* 3x2, 3x3. */
+	if ((g_iconMap[g_iconMap[ICM_ICONGROUP_HOUSE_PALACE] +  9] <= iconID && iconID <= g_iconMap[g_iconMap[ICM_ICONGROUP_HOUSE_PALACE] + 11]) ||
+	    (g_iconMap[g_iconMap[ICM_ICONGROUP_HOUSE_PALACE] + 12] <= iconID && iconID <= g_iconMap[g_iconMap[ICM_ICONGROUP_HOUSE_PALACE] + 14]) ||
+	    (g_iconMap[g_iconMap[ICM_ICONGROUP_HOUSE_PALACE] + 15] <= iconID && iconID <= g_iconMap[g_iconMap[ICM_ICONGROUP_HOUSE_PALACE] + 17]))
+		return true;
+
+	/* 2x2. */
+	if (iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY] + 4] ||
+	    iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY] + 5] ||
+	    iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY] + 6] ||
+	    iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY] + 7])
+		return true;
+
+	/* 1x1. */
+	if (iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_BASE_DEFENSE_TURRET] + 1])
+		return true;
+
+	/* Centre of starport is special. */
+	if (iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_STARPORT_FACILITY] + 13])
+		return true;
+
+	/* Outpost is special. */
+	if (iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_RADAR_OUTPOST] + 4] ||
+	    iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_RADAR_OUTPOST] + 5] ||
+	    iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_RADAR_OUTPOST] + 6] ||
+	    iconID == g_iconMap[g_iconMap[ICM_ICONGROUP_RADAR_OUTPOST] + 7])
+		return true;
+
+	return false;
+}
+
 static void
 Viewport_DrawTilesInRange(int x0, int y0,
 		int viewportX1, int viewportY1, int viewportX2, int viewportY2,
@@ -919,13 +953,19 @@ Viewport_DrawTilesInRange(int x0, int y0,
 
 	y = y0;
 	for (top = viewportY1; top < viewportY2; top += TILE_SIZE, y++) {
-		const int curPos = Tile_PackXY(x0, y);
+		int curPos = Tile_PackXY(x0, y);
 		const Tile *t = &g_map[curPos];
 
-		for (left = viewportX1; left < viewportX2; left += TILE_SIZE, t++) {
+		for (left = viewportX1; left < viewportX2; left += TILE_SIZE, curPos++, t++) {
 			const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
 
 			if (draw_tile && (t->overlaySpriteID != g_veiledSpriteID)) {
+				if (Viewport_TileIsDebris(t->groundSpriteID)) {
+					const uint16 iconID = g_mapSpriteID[curPos] & ~0x8000;
+
+					Video_DrawIcon(iconID, HOUSE_HARKONNEN, left, top);
+				}
+
 				Video_DrawIcon(t->groundSpriteID, t->houseID, left, top);
 
 				if ((t->overlaySpriteID != 0) && !overlay_is_fog)
