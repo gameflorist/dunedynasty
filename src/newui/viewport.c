@@ -353,9 +353,8 @@ Viewport_Place(void)
 }
 
 static bool
-Viewport_ScrollMap(Widget *w)
+Viewport_ScrollMap(Widget *w, enum ShapeID *cursorID)
 {
-	enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
 	const WidgetInfo *wi;
 	int dx = 0, dy = 0;
 
@@ -374,11 +373,11 @@ Viewport_ScrollMap(Widget *w)
 	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT];
 	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dx--;
 
-	if (dx < 0) cursorID = SHAPE_CURSOR_LEFT;
-	else if (dx > 0) cursorID = SHAPE_CURSOR_RIGHT;
+	if (dx < 0) *cursorID = SHAPE_CURSOR_LEFT;
+	else if (dx > 0) *cursorID = SHAPE_CURSOR_RIGHT;
 
-	if (dy < 0) cursorID = SHAPE_CURSOR_UP;
-	else if (dy > 0) cursorID = SHAPE_CURSOR_DOWN;
+	if (dy < 0) *cursorID = SHAPE_CURSOR_UP;
+	else if (dy > 0) *cursorID = SHAPE_CURSOR_DOWN;
 
 	if (viewport_click_action == VIEWPORT_FAST_SCROLL) {
 		const int speed = max(1, 2 * g_gameConfig.scrollSpeed);
@@ -389,8 +388,29 @@ Viewport_ScrollMap(Widget *w)
 		Map_MoveDirection(speed * dx, speed * dy);
 	}
 
-	if (cursorID != g_cursorSpriteID)
-		Video_SetCursor(cursorID);
+	return false;
+}
+
+static bool
+Viewport_GenericCommandCanAttack(uint16 packed)
+{
+	const bool unveiled = g_map[packed].isUnveiled;
+	if (!unveiled)
+		return false;
+
+	const enum LandscapeType lst = Map_GetLandscapeType(packed);
+	if (lst == LST_BLOOM_FIELD)
+		return true;
+	if ((lst == LST_WALL) && (!House_AreAllied(g_playerHouseID, g_map[packed].houseID)))
+		return true;
+
+	const Unit *target_u = Unit_Get_ByPackedTile(packed);
+	if ((target_u != NULL) && (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(target_u))))
+		return true;
+
+	const Structure *target_s = Structure_Get_ByPackedTile(packed);
+	if ((target_s != NULL) && (!House_AreAllied(g_playerHouseID, target_s->o.houseID)))
+		return true;
 
 	return false;
 }
@@ -398,10 +418,20 @@ Viewport_ScrollMap(Widget *w)
 bool
 Viewport_Click(Widget *w)
 {
-	if (Viewport_ScrollMap(w))
-		return true;
+	static int64_t l_tickCursor;
 
-	if (w->index == 45)
+	if (w->index == 45) {
+		if (g_timerGame - l_tickCursor > 10) {
+			const enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
+			l_tickCursor = g_timerGame;
+			Video_SetCursor(cursorID);
+		}
+
+		return true;
+	}
+
+	enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
+	if (Viewport_ScrollMap(w, &cursorID))
 		return true;
 
 	int mouseX, mouseY;
@@ -426,6 +456,37 @@ Viewport_Click(Widget *w)
 		const int tilex = Map_Clamp(x0 + (mouseX + g_viewport_scrollOffsetX) / TILE_SIZE);
 		const int tiley = Map_Clamp(y0 + (mouseY + g_viewport_scrollOffsetY) / TILE_SIZE);
 		packed = Tile_PackXY(tilex, tiley);
+	}
+
+	/* Context-sensitive mouse cursor. */
+	if ((w->index == 43) &&
+			(viewport_click_action == VIEWPORT_CLICK_NONE) &&
+			(cursorID != SHAPE_CURSOR_TARGET) &&
+			Unit_AnySelected() &&
+			Viewport_GenericCommandCanAttack(packed)) {
+		int iter;
+
+		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
+			if (Unit_GetHouseID(u) != g_playerHouseID)
+				continue;
+
+			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
+
+			if ((oi->actionsPlayer[0] == ACTION_ATTACK) ||
+			    (oi->actionsPlayer[1] == ACTION_ATTACK) ||
+			    (oi->actionsPlayer[2] == ACTION_ATTACK) ||
+			    (oi->actionsPlayer[3] == ACTION_ATTACK)) {
+				cursorID = SHAPE_CURSOR_TARGET;
+				break;
+			}
+		}
+	}
+
+	if (cursorID != g_cursorSpriteID) {
+		if (g_timerGame - l_tickCursor > 10) {
+			l_tickCursor = g_timerGame;
+			Video_SetCursor(cursorID);
+		}
 	}
 
 	if (w->state.s.buttonState & 0x01) {
@@ -660,30 +721,9 @@ Viewport_Click(Widget *w)
 	}
 
 	if (perform_context_sensitive_action) {
-		const Unit *target_u = Unit_Get_ByPackedTile(packed);
-		const Structure *target_s = Structure_Get_ByPackedTile(packed);
 		const enum LandscapeType lst = Map_GetLandscapeType(packed);
 		const bool unveiled = g_map[packed].isUnveiled;
-
-		bool attack = false;
-
-		if (!unveiled) {
-		}
-		else if (lst == LST_BLOOM_FIELD) {
-			attack = true;
-		}
-		else if (lst == LST_WALL) {
-			if (!House_AreAllied(g_playerHouseID, g_map[packed].houseID))
-				attack = true;
-		}
-		else if (target_u != NULL) {
-			if (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(target_u)))
-				attack = true;
-		}
-		else if (target_s != NULL) {
-			if (!House_AreAllied(g_playerHouseID, target_s->o.houseID))
-				attack = true;
-		}
+		const bool attack = Viewport_GenericCommandCanAttack(packed);
 
 		int iter;
 		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
