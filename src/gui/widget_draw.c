@@ -634,8 +634,10 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 					GUI_Widget_MakeVisible(widget28);
 				}
 #else
-				if ((g_productionStringID == STR_PLACE_IT) ||
-					(s->o.type == STRUCTURE_REPAIR && s->o.linkedID != 0xFF)) {
+				if (!isNotPlayerOwned &&
+						((g_productionStringID == STR_PLACE_IT) ||
+						 (s->o.type == STRUCTURE_PALACE && s->countDown == 0) ||
+						 (s->o.type == STRUCTURE_REPAIR && s->o.linkedID != 0xFF))) {
 					GUI_Widget_MakeVisible(widget28);
 				}
 #endif
