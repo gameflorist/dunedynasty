@@ -1,27 +1,32 @@
 # Dune Dynasty sample config file.
 #
 # Copy this file to your personal data directory:
-# ${HOME}/.config/dunedynasty/dunedynasty.cfg.
-#
-# window_mode is one of:
-#  windowed
-#  fullscreen
-#  fullscreenwindow
+# ${HOME}/.config/dunedynasty/dunedynasty.cfg
+# C:\users\nobody\Application Data\Dune Dynasty\data
 
 [game]
+language=ENG
+game_speed=2
+hints=1
+campaign=
+
+[graphics]
+# driver is one of: opengl, direct3d
+driver=opengl
+# window_mode is one of: windowed, fullscreen, fullscreenwindow
 window_mode=windowed
-# window_mode=fullscreen
-# window_mode=fullscreenwindow
 screen_width=640
 screen_height=480
 menubar_scale=1.000000
 sidebar_scale=1.000000
 viewport_scale=2.000000
-language=ENG
-game_speed=2
-hints=1
+
+[controls]
 auto_scroll=1
 scroll_speed=4
+scroll_along_screen_edge=1
+left_click_orders=0
+hold_control_to_zoom=0
 
 [audio]
 enable_music=1
@@ -37,7 +42,7 @@ sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
 
 [enhancement]
 brutal_ai=0
-insatiable_sandworms=1
+insatiable_sandworms=0
 raise_scenario_unit_cap=0
 repeat_reinforcements=1
 
