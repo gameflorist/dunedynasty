@@ -932,7 +932,7 @@ static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 
 	uint16 spritePos = 0;
 	struct {
 		uint16 x;
-		uint16 y;
+		int16 y;
 		char *text;
 		uint8  separator;
 		uint8  charHeight;
