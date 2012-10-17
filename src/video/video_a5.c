@@ -1321,6 +1321,7 @@ VideoA5_InitIcons(unsigned char *buf)
 	/* Structure construction and debris. */
 	VideoA5_ExportStructureIcons(STRUCTURE_LIGHT_VEHICLE, STRUCTURE_LAYOUT_2x2, 0, true, x, y, &x, &y);
 	VideoA5_ExportStructureIcons(STRUCTURE_LIGHT_VEHICLE, STRUCTURE_LAYOUT_2x2, 4, true, x, y, &x, &y);
+	VideoA5_ExportStructureIcons(STRUCTURE_OUTPOST,       STRUCTURE_LAYOUT_2x2, 4, true, x, y, &x, &y);
 	VideoA5_ExportStructureIcons(STRUCTURE_HEAVY_VEHICLE, STRUCTURE_LAYOUT_3x2, 0, true, x, y, &x, &y);
 	VideoA5_ExportStructureIcons(STRUCTURE_PALACE, STRUCTURE_LAYOUT_3x3, 0, true, x, y, &x, &y);
 	VideoA5_ExportStructureIcons(STRUCTURE_PALACE, STRUCTURE_LAYOUT_3x3, 9, true, x + TILE_SIZE * 3 + 2, y - TILE_SIZE * 3 - 2, &x, &y);
