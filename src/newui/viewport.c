@@ -192,7 +192,9 @@ Viewport_SelectRegion(void)
 			int ux, uy;
 			Map_IsPositionInViewport(u->o.position, &ux, &uy);
 
-			if ((oi->flags.tabSelectable) && (x1 <= ux && ux <= x2) && (y1 <= uy && uy <= y2)) {
+			if ((oi->flags.tabSelectable) &&
+			    (x1 < ux + TILE_SIZE / 4 && ux - TILE_SIZE / 4 < x2) &&
+			    (y1 < uy + TILE_SIZE / 4 && uy - TILE_SIZE / 4 < y2)) {
 				if (!Unit_IsSelected(u))
 					Unit_Select(u);
 			}
