@@ -39,6 +39,7 @@ enum ViewportClickAction {
 	VIEWPORT_LMB,           /* LMB pressed, drag undecided. */
 	VIEWPORT_SELECTION_BOX,
 	VIEWPORT_FAST_SCROLL,
+	VIEWPORT_PAN_MINIMAP,
 	VIEWPORT_RMB,           /* RMB pressed, drag undecided. */
 	VIEWPORT_PAN
 };
@@ -354,6 +355,9 @@ Viewport_ScrollMap(Widget *w)
 	const WidgetInfo *wi;
 	int dx = 0, dy = 0;
 
+	if (viewport_click_action == VIEWPORT_PAN_MINIMAP)
+		return false;
+
 	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP];
 	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dy--;
 
@@ -390,22 +394,35 @@ Viewport_ScrollMap(Widget *w)
 bool
 Viewport_Click(Widget *w)
 {
-	int mouseX, mouseY;
-	Mouse_TransformToDiv(SCREENDIV_VIEWPORT, &mouseX, &mouseY);
-
-	const int x0 = Tile_GetPackedX(g_viewportPosition);
-	const int y0 = Tile_GetPackedY(g_viewportPosition);
-	const int tilex = Map_Clamp(x0 + (mouseX + g_viewport_scrollOffsetX) / TILE_SIZE);
-	const int tiley = Map_Clamp(y0 + (mouseY + g_viewport_scrollOffsetY) / TILE_SIZE);
-	const uint16 packed = Tile_PackXY(tilex, tiley);
-
-	bool perform_context_sensitive_action = false;
-
 	if (Viewport_ScrollMap(w))
 		return true;
 
 	if (w->index == 45)
 		return true;
+
+	int mouseX, mouseY;
+	uint16 packed;
+	bool perform_context_sensitive_action = false;
+
+	/* Minimap. */
+	if (w->index == 44) {
+		Mouse_TransformToDiv(SCREENDIV_SIDEBAR, &mouseX, &mouseY);
+
+		const int mapScale = g_scenario.mapScale;
+		const MapInfo *mapInfo = &g_mapInfos[mapScale];
+		const int tilex = Map_Clamp(mapInfo->minX + (mouseX - w->offsetX) / (mapScale + 1));
+		const int tiley = Map_Clamp(mapInfo->minY + (mouseY - w->offsetY) / (mapScale + 1));
+		packed = Tile_PackXY(tilex, tiley);
+	}
+	else {
+		Mouse_TransformToDiv(SCREENDIV_VIEWPORT, &mouseX, &mouseY);
+
+		const int x0 = Tile_GetPackedX(g_viewportPosition);
+		const int y0 = Tile_GetPackedY(g_viewportPosition);
+		const int tilex = Map_Clamp(x0 + (mouseX + g_viewport_scrollOffsetX) / TILE_SIZE);
+		const int tiley = Map_Clamp(y0 + (mouseY + g_viewport_scrollOffsetY) / TILE_SIZE);
+		packed = Tile_PackXY(tilex, tiley);
+	}
 
 	if (w->state.s.buttonState & 0x01) {
 		/* Clicking LMB performs target. */
@@ -431,6 +448,11 @@ Viewport_Click(Widget *w)
 		else if (g_selectionType == SELECTIONTYPE_PLACE) {
 			Viewport_Place();
 			return true;
+		}
+
+		/* Clicking LMB begins minimap panning. */
+		else if (w->index == 44) {
+			viewport_click_action = VIEWPORT_PAN_MINIMAP;
 		}
 
 		/* Clicking LMB begins selection box or fast scroll. */
@@ -500,6 +522,26 @@ Viewport_Click(Widget *w)
 				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT];
 				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
 			}
+		}
+
+		else if (viewport_click_action == VIEWPORT_PAN_MINIMAP) {
+			/* High-resolution panning. */
+			const ScreenDiv *div = &g_screenDiv[SCREENDIV_SIDEBAR];
+			const uint16 mapScale = g_scenario.mapScale;
+			const MapInfo *mapInfo = &g_mapInfos[mapScale];
+
+			float x = ((float)g_mouseX - g_screenDiv[w->div].x) / g_screenDiv[w->div].scale;
+			float y = ((float)g_mouseY - g_screenDiv[w->div].y) / g_screenDiv[w->div].scale;
+
+			/* Minimap is (div->scale * 64) * (div->scale * 64).
+			 * Each pixel represents 1 / (mapScale + 1) tiles.
+			 */
+			x = g_mouseX - div->x - div->scale * g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX;
+			y = g_mouseY - div->y - div->scale * g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
+			x = TILE_SIZE * mapInfo->minX + TILE_SIZE * x / (div->scale * (mapScale + 1));
+			y = TILE_SIZE * mapInfo->minY + TILE_SIZE * y / (div->scale * (mapScale + 1));
+
+			Map_CentreViewport(x, y);
 		}
 
 		else if (viewport_click_action == VIEWPORT_RMB) {

@@ -36,6 +36,7 @@
 #include "../unit.h"
 #include "../video/video.h"
 
+#if 0
 static uint32 s_tickCursor;                                 /*!< Stores last time Viewport changed the cursor spriteID. */
 
 /**
@@ -50,6 +51,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 	bool click, drag;
 
 	if ((w->state.s.buttonState & 0x44) != 0) {
+		/* This variable prevents a target order from initiating minimap scrolling. */
 		g_var_37B8 = true;
 		return false;
 	}
@@ -118,12 +120,11 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		y = ((float)g_mouseY - g_screenDiv[w->div].y) / g_screenDiv[w->div].scale;
 	}
 
-#if 0
 	if (w->index == 43) {
 		x =  x / 16 + Tile_GetPackedX(g_minimapPosition);
 		y = (y - 40) / 16 + Tile_GetPackedY(g_minimapPosition);
 	}
-#endif
+
 	if (w->index == 44) {
 		const int x0 = w->offsetX;
 		const int y0 = w->offsetY;
@@ -165,7 +166,6 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		return true;
 	}
 
-#if 0
 	if (click && w->index == 43) {
 		uint16 position;
 
@@ -186,7 +186,6 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 
 		return true;
 	}
-#endif
 
 	if ((click || drag) && w->index == 44) {
 		/* High-resolution panning. */
@@ -214,6 +213,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 
 	return true;
 }
+#endif
 
 #if 0
 /* Moved to video/video_opendune.c. */

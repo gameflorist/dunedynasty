@@ -224,7 +224,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	},
 	{ /* 16 */
 		/* index       */ 44,
-		/* clickProc   */ &GUI_Widget_Viewport_Click,
+		/* clickProc   */ &Viewport_Click,
 		/* shortcut    */ 0,
 		/* flags       */ 0x4F40, /* 0x4F40 == 20288. */
 		/* spriteID    */ -1,

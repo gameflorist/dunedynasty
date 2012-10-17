@@ -85,7 +85,6 @@ static uint32 s_ticksPlayed;
 uint16 g_cursorSpriteID;
 
 bool g_variable_37B2;
-bool g_var_37B8;
 
 uint16 g_viewportMessageCounter;                            /*!< Countdown counter for displaying #g_viewportMessageText, bit 0 means 'display the text'. */
 char *g_viewportMessageText;                                /*!< If not \c NULL, message text displayed in the viewport. */
@@ -1470,7 +1469,7 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 
 		g_selectionType = selectionType;
 		g_selectionTypeNew = selectionType;
-		g_var_37B8 = true;
+		/* g_var_37B8 = true; */
 
 		switch (oldSelectionType) {
 			case SELECTIONTYPE_PLACE:
