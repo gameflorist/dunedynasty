@@ -2018,7 +2018,7 @@ Video_DrawMinimap(int map_scale)
 /*--------------------------------------------------------------*/
 
 static void
-VideoA5_InitCursor(void)
+VideoA5_InitCursor(unsigned char *buf)
 {
 	/* From gui/viewport.c */
 	const struct {
@@ -2027,19 +2027,37 @@ VideoA5_InitCursor(void)
 		{ 0, 0 }, { 5, 0 }, { 8, 5 }, { 5, 8 }, { 0, 5 }, { 8, 8 }
 	};
 
+	/* Double-sized mouse cursors on 640x400 and above. */
+	const int scale = (TRUE_DISPLAY_WIDTH >= 640) ? 2 : 1;
+	const int sw = al_get_bitmap_width(s_shape[SHAPE_CURSOR_NORMAL][HOUSE_HARKONNEN]);
+	const int sh = al_get_bitmap_height(s_shape[SHAPE_CURSOR_NORMAL][HOUSE_HARKONNEN]);
+	const int dw = scale * sw;
+	const int dh = scale * sh;
+
+	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
+
+	ALLEGRO_BITMAP *bmp = al_create_bitmap(dw, dh);
+	assert(bmp != NULL);
+
+	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
+
+	al_set_target_bitmap(bmp);
+
 	for (int i = 0; i < CURSOR_MAX; i++) {
-#ifdef ALLEGRO_WINDOWS
-		al_lock_bitmap(s_shape[i][HOUSE_HARKONNEN], ALLEGRO_PIXEL_FORMAT_ANY, ALLEGRO_LOCK_READONLY);
-#endif
+		ALLEGRO_BITMAP *src = s_shape[i][HOUSE_HARKONNEN];
 
-		s_cursor[i] = al_create_mouse_cursor(s_shape[i][HOUSE_HARKONNEN], focus[i].x, focus[i].y);
+		memset(buf, 0, SCREEN_WIDTH * sh);
+		al_clear_to_color(al_map_rgba(0x00, 0x00, 0x00, 0x00));
 
-#ifdef ALLEGRO_WINDOWS
-		al_unlock_bitmap(s_shape[i][HOUSE_HARKONNEN]);
-#endif
+		GUI_DrawSprite_(0, g_sprites[i], 0, 0, 0, 0);
+		VideoA5_CopyBitmap(buf, src, TRANSPARENT_COLOUR_0);
+		al_draw_scaled_bitmap(src, 0.0f, 0.0f, sw, sh, 0.0f, 0.0f, dw, dh, 0);
+
+		s_cursor[i] = al_create_mouse_cursor(bmp, scale * focus[i].x, scale * focus[i].y);
 	}
 
 	al_set_mouse_cursor(display, s_cursor[0]);
+	al_destroy_bitmap(bmp);
 }
 
 void
@@ -2059,7 +2077,7 @@ VideoA5_InitSprites(void)
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitShapes(buf);
-	VideoA5_InitCursor();
+	VideoA5_InitCursor(buf);
 
 	memset(buf, 0, WINDOW_W * WINDOW_H);
 	VideoA5_InitCPS();
