@@ -76,6 +76,7 @@ static const GameOption s_game_option[] = {
 	{ "game",   "campaign",         CONFIG_CAMPAIGN,.d._int = &g_campaign_selected },
 	{ "game",   "auto_scroll",      CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
 	{ "game",   "scroll_speed",     CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },
+	{ "game",   "scroll_along_screen_edge", CONFIG_BOOL,.d._bool = &enhancement_scroll_along_screen_edge },
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
 	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },

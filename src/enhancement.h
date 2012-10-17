@@ -38,6 +38,7 @@ extern bool enhancement_play_additional_voices;
 extern bool enhancement_raise_scenario_unit_cap;
 extern bool enhancement_read_scenario_structure_health;
 extern bool enhancement_repeat_reinforcements;
+extern bool enhancement_scroll_along_screen_edge;
 extern enum SecurityQuestionMode enhancement_security_question;
 extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;
 extern bool enhancement_special_trooper_portaits;
