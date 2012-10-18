@@ -180,10 +180,13 @@ PickHouse_InitWidgets(void)
 		int x, y;
 		int w, h;
 		enum Scancode shortcut;
-	} menuitem[6] = {
+	} menuitem[] = {
 		{ HOUSE_HARKONNEN, 208, 56, 96, 104, SCANCODE_H },
 		{ HOUSE_ATREIDES,   16, 56, 96, 104, SCANCODE_A },
 		{ HOUSE_ORDOS,     112, 56, 96, 104, SCANCODE_O },
+		{ HOUSE_FREMEN,     16, 56, 96, 104, SCANCODE_F },
+		{ HOUSE_SARDAUKAR, 208, 56, 96, 104, SCANCODE_S },
+		{ HOUSE_MERCENARY, 112, 56, 96, 104, SCANCODE_M },
 		{ 14, 118, 180, 5, 10, SCANCODE_KEYPAD_4 },
 		{ 16, 196, 180, 5, 10, SCANCODE_KEYPAD_6 },
 		{ 10, 118, 180, 196 + 5 - 118, 10, 0 },
@@ -534,7 +537,6 @@ MainMenu_Loop(void)
 	switch (widgetID) {
 		case 0x8000 | MENU_PLAY_A_GAME:
 			g_campaignID = 0;
-			g_playerHouseID = HOUSE_MERCENARY;
 			Campaign_Load();
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
@@ -550,7 +552,6 @@ MainMenu_Loop(void)
 			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
 
 		case 0x8000 | MENU_HALL_OF_FAME:
-			g_playerHouseID = HOUSE_MERCENARY;
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_HALL_OF_FAME;
 
@@ -644,11 +645,14 @@ PickHouse_Loop(void)
 		case 0x8000 | HOUSE_HARKONNEN:
 		case 0x8000 | HOUSE_ATREIDES:
 		case 0x8000 | HOUSE_ORDOS:
+		case 0x8000 | HOUSE_FREMEN:
+		case 0x8000 | HOUSE_SARDAUKAR:
+		case 0x8000 | HOUSE_MERCENARY:
 			g_playerHouseID = widgetID & (~0x8000);
 			g_scenarioID = 1;
 
 			Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
-			Audio_PlayVoice(VOICE_HARKONNEN + g_playerHouseID);
+			Audio_PlayVoice(VOICE_HARKONNEN + g_table_houseRemap6to3[g_playerHouseID]);
 
 			while (Audio_Poll())
 				Timer_Sleep(1);
@@ -693,6 +697,8 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 
 	if (res == SCANCODE_ENTER) {
 		const char *answer = String_Get_ByIndex(mentat->security_question + 2);
+
+		houseID = g_table_houseRemap6to3[houseID];
 
 		if ((enhancement_security_question == SECURITY_QUESTION_ACCEPT_ALL) ||
 			(strcasecmp(mentat->security_prompt, answer) == 0)) {
@@ -759,9 +765,10 @@ Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 	else if (mentat->state == MENTAT_IDLE) {
 		if (curr_menu == MENU_CONFIRM_HOUSE) {
 			const char *misc = String_GenerateFilename("MISC");
+			const enum HouseType houseID = g_table_houseRemap6to3[g_playerHouseID];
 
 			Video_DrawCPSRegion(misc, 0, 0, 0, 0, 26*8, 24);
-			Video_DrawCPSRegion(misc, 0, 24 * (g_playerHouseID + 1), 26*8, 0, 13*8, 24);
+			Video_DrawCPSRegion(misc, 0, 24 * (houseID + 1), 26*8, 0, 13*8, 24);
 
 			GUI_Widget_DrawAll(briefing_yes_no_widgets);
 		}
@@ -803,6 +810,10 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 
 			case MENU_BRIEFING_LOSE:
 				Audio_PlayMusic(g_table_houseInfo[houseID].musicLose);
+				break;
+
+			case MENU_CONFIRM_HOUSE:
+				/* Don't play music, but leave main menu music alone. */
 				break;
 
 			default:
@@ -1079,7 +1090,7 @@ BattleSummary_InputLoop(HallOfFameData *fame)
 	switch (fame->state) {
 		case HALLOFFAME_WAIT_FOR_INPUT:
 			if (Input_IsInputAvailable()) {
-				GUI_HallOfFame_Show(fame->score);
+				GUI_HallOfFame_Show(g_playerHouseID, fame->score);
 				g_campaignID++;
 				return MENU_NO_TRANSITION | MENU_CAMPAIGN_CUTSCENE;
 			}
@@ -1416,7 +1427,7 @@ Menu_Run(void)
 				break;
 
 			case MENU_CONFIRM_HOUSE:
-				res = Briefing_Loop(curr_menu, HOUSE_MERCENARY, &g_mentat_state);
+				res = Briefing_Loop(curr_menu, HOUSE_INVALID, &g_mentat_state);
 				break;
 
 			case MENU_SECURITY:
@@ -1452,7 +1463,7 @@ Menu_Run(void)
 				break;
 
 			case MENU_HALL_OF_FAME:
-				GUI_HallOfFame_Show(0xFFFF);
+				GUI_HallOfFame_Show(HOUSE_INVALID, 0xFFFF);
 				res = MENU_MAIN_MENU;
 				break;
 

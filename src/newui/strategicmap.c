@@ -86,6 +86,8 @@ StrategicMap_DrawEmblem(enum HouseType houseID)
 	} emblem[3] = {
 		{ 0*8, 152 }, { 33*8, 152 }, { 1*8, 24 }
 	};
+
+	houseID = g_table_houseRemap6to3[houseID];
 	assert(houseID <= HOUSE_ORDOS);
 
 	Video_DrawCPSRegion("MAPMACH.CPS", emblem[houseID].x, emblem[houseID].y, emblem[HOUSE_HARKONNEN].x, emblem[HOUSE_HARKONNEN].y, 7*8, 40);

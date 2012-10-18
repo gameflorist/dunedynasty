@@ -70,9 +70,9 @@ const HouseInfo g_table_houseInfo[] = {
 		/* starportDeliveryTime */ 0,
 		/* prefixChar           */ 'A',
 		/* specialWeapon        */ HOUSE_WEAPON_FREMEN,
-		/* musicWin             */ MUSIC_WIN_ORDOS,
-		/* musicLose            */ MUSIC_LOSE_ORDOS,
-		/* musicBriefing        */ MUSIC_INVALID,
+		/* musicWin             */ MUSIC_WIN_ATREIDES,
+		/* musicLose            */ MUSIC_LOSE_ATREIDES,
+		/* musicBriefing        */ MUSIC_BRIEFING_ATREIDES,
 		/* voiceFilename        */ "afremen.voc",
 		/* mentat               */ MENTAT_CYRIL,
 		/* sampleSet            */ SAMPLESET_ATREIDES
@@ -90,7 +90,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* specialWeapon        */ HOUSE_WEAPON_MISSILE,
 		/* musicWin             */ MUSIC_WIN_HARKONNEN,
 		/* musicLose            */ MUSIC_LOSE_HARKONNEN,
-		/* musicBriefing        */ MUSIC_INVALID,
+		/* musicBriefing        */ MUSIC_BRIEFING_HARKONNEN,
 		/* voiceFilename        */ "asard.voc",
 		/* mentat               */ MENTAT_RADNOR,
 		/* sampleSet            */ SAMPLESET_HARKONNEN
@@ -106,11 +106,16 @@ const HouseInfo g_table_houseInfo[] = {
 		/* starportDeliveryTime */ 0,
 		/* prefixChar           */ 'O',
 		/* specialWeapon        */ HOUSE_WEAPON_SABOTEUR,
-		/* musicWin             */ MUSIC_WIN_ATREIDES,
-		/* musicLose            */ MUSIC_LOSE_ATREIDES,
-		/* musicBriefing        */ MUSIC_INVALID,
+		/* musicWin             */ MUSIC_WIN_ORDOS,
+		/* musicLose            */ MUSIC_LOSE_ORDOS,
+		/* musicBriefing        */ MUSIC_BRIEFING_ORDOS,
 		/* voiceFilename        */ "amerc.voc",
 		/* mentat               */ MENTAT_AMMON,
 		/* sampleSet            */ SAMPLESET_ORDOS
 	}
+};
+
+const enum HouseType g_table_houseRemap6to3[HOUSE_MAX] = {
+	HOUSE_HARKONNEN, HOUSE_ATREIDES, HOUSE_ORDOS,
+	HOUSE_ATREIDES, HOUSE_HARKONNEN, HOUSE_ORDOS
 };

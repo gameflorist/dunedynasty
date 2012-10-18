@@ -58,7 +58,8 @@ HallOfFame_DrawBackground(enum HouseType houseID, bool hallOfFame)
 {
 	Video_DrawCPS("FAME.CPS");
 
-	if (houseID <= HOUSE_ORDOS) {
+	if (houseID != HOUSE_INVALID) {
+		houseID = g_table_houseRemap6to3[houseID];
 		HallOfFame_DrawEmblem(houseID, houseID);
 	}
 	else {

@@ -163,6 +163,8 @@ void
 MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry,
 		MentatState *mentat)
 {
+	houseID = g_table_houseRemap6to3[houseID];
+
 	const int stringID
 		= STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER
 		+ (houseID * 40) + ((campaignID + 1) * 4) + entry;
@@ -242,7 +244,7 @@ MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntr
 	assert(entry <= MENTAT_BRIEFING_ADVICE);
 
 	if (scenarioID <= 0) {
-		const char *wsaFilename = House_GetWSAHouseFilename(houseID);
+		const char *wsaFilename = House_GetWSAHouseFilename(g_table_houseRemap6to3[houseID]);
 
 		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
 	}
@@ -297,6 +299,8 @@ MentatSecurity_PickQuestion(MentatState *mentat)
 void
 MentatSecurity_Initialise(enum HouseType houseID, MentatState *mentat)
 {
+	houseID = g_table_houseRemap6to3[houseID];
+
 	g_disableOtherMovement = true;
 	g_interrogation = true;
 	mentat->security_lives = 3;

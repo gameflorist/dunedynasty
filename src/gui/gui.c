@@ -1954,7 +1954,8 @@ static uint16 GUI_HallOfFame_InsertScore(HallOfFameStruct *data, uint16 score)
 	return 0;
 }
 
-void GUI_HallOfFame_Show(uint16 score)
+void
+GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 {
 	HallOfFameData *fame = &g_hall_of_fame_state;
 	const uint16 old_widget = g_curWidgetIndex;
@@ -2025,7 +2026,7 @@ void GUI_HallOfFame_Show(uint16 score)
 			Widget_SetAndPaintCurrentWidget(19);
 			GFX_Screen_SetActive(oldScreenID);
 
-			HallOfFame_DrawBackground(g_playerHouseID, true);
+			HallOfFame_DrawBackground(houseID, true);
 			HallOfFame_DrawScoreTime(fame->score, fame->time);
 			HallOfFame_DrawRank(fame);
 
@@ -2126,7 +2127,7 @@ void GUI_HallOfFame_Show(uint16 score)
 		}
 
 		redraw = false;
-		HallOfFame_DrawBackground(g_playerHouseID, true);
+		HallOfFame_DrawBackground(houseID, true);
 		if (score == 0xFFFF) {
 			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_HALL_OF_FAME2), SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
 		}

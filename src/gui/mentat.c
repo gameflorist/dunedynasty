@@ -546,13 +546,15 @@ static void GUI_Mentat_ShowHelp(void)
 	*text++ = '\0';
 
 	if (noDesc) {
-		uint16 index;
+		const enum HouseType houseID = g_table_houseRemap6to3[g_playerHouseID];
 
 		picture = g_scenario.pictureBriefing;
 		desc    = NULL;
 		text    = (char *)g_readBuffer;
 
-		index = *text - 44 + g_campaignID * 4 + STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER + g_playerHouseID * 40;
+		const uint16 index
+			= STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER
+			+ (houseID * 40) + (g_campaignID * 4) + (*text - 44);
 
 		strncpy(g_readBuffer, String_Get_ByIndex(index), g_readBufferSize);
 	} else {

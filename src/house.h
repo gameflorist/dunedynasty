@@ -77,6 +77,7 @@ typedef struct HouseInfo {
 } HouseInfo;
 
 extern const HouseInfo g_table_houseInfo[];
+extern const enum HouseType g_table_houseRemap6to3[HOUSE_MAX];
 
 extern House *g_playerHouse;
 extern enum HouseType g_playerHouseID;
