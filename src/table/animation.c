@@ -197,7 +197,7 @@ const AnimationCommandStruct g_table_animation_map[16][8] = {
 const AnimationCommandStruct g_table_animation_structure[29][16] = {
 		{ /* 0 */
 			{ ANIMATION_SET_GROUND_SPRITE , 1 },
-			{ ANIMATION_PAUSE             , 300 },
+			/*ANIMATION_PAUSE             , 300 */ /* XXX: why was this delay here? */
 			{ ANIMATION_ABORT             , 0 }
 		},
 		{ /* 1 */
