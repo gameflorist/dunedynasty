@@ -40,6 +40,7 @@
 #include "../pool/house.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
+#include "../scenario.h"
 #include "../sprites.h"
 #include "../string.h"
 #include "../structure.h"
@@ -2130,6 +2131,13 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 		HallOfFame_DrawBackground(houseID, true);
 		if (score == 0xFFFF) {
 			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_HALL_OF_FAME2), SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
+
+			if (g_campaign_selected == 0) {
+				GUI_DrawText_Wrapper("Dune II", SCREEN_WIDTH / 2, 43, 15, 0, 0x122);
+			}
+			else {
+				GUI_DrawText_Wrapper(g_campaign_list[g_campaign_selected].name, SCREEN_WIDTH / 2, 43, 15, 0, 0x122);
+			}
 		}
 		else {
 			HallOfFame_DrawScoreTime(fame->score, fame->time);

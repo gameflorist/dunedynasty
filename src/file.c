@@ -514,11 +514,11 @@ File_Delete_Personal(const char *filename)
 {
 	char filenameComplete[1024];
 
-	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), false, filename, false);
+	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), SEARCHDIR_PERSONAL_DATA_DIR, filename, false);
 	if (unlink(filenameComplete) == 0)
 		return;
 
-	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), false, filename, true);
+	File_MakeCompleteFilename(filenameComplete, sizeof(filenameComplete), SEARCHDIR_PERSONAL_DATA_DIR, filename, true);
 	unlink(filenameComplete);
 }
 
