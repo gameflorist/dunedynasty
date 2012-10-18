@@ -41,6 +41,8 @@ extern char g_dune_data_dir[1024];
 extern char g_personal_data_dir[1024];
 
 extern void FileHash_Init(void);
+extern FileInfo *FileHash_Store(const char *key);
+extern unsigned int FileHash_FindIndex(const char *key);
 
 extern void File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const char *filename, bool convert_to_lowercase);
 extern FILE *File_Open_CaseInsensitive(enum SearchDirectory dir, const char *filename, const char *mode);

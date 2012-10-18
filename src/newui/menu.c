@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <allegro5/allegro.h>
+#include <ctype.h>
 #include "types.h"
 #include "../os/common.h"
 #include "../os/math.h"
@@ -23,6 +24,7 @@
 #include "../gui/font.h"
 #include "../gui/gui.h"
 #include "../gui/mentat.h"
+#include "../ini.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
@@ -220,13 +222,135 @@ PickCutscene_InitWidgets(void)
 }
 
 static void
+Menu_AddCampaign(ALLEGRO_PATH *path)
+{
+	al_set_path_filename(path, "META.INI");
+	const char *meta = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
+
+	if (!File_Exists_Ex(SEARCHDIR_ABSOLUTE, meta))
+		return;
+
+	char *source = File_ReadWholeFile_Ex(SEARCHDIR_ABSOLUTE, meta);
+	char buffer[120];
+	int house[3];
+
+	Ini_GetString("CAMPAIGN", "House", NULL, buffer, sizeof(buffer), source);
+	String_Trim(buffer);
+
+	if (sscanf(buffer, "%d,%d,%d", &house[0], &house[1], &house[2]) < 3) {
+		free(source);
+		return;
+	}
+
+	if (!(HOUSE_HARKONNEN <= house[0] && house[0] < HOUSE_MAX)) house[0] = HOUSE_INVALID;
+	if (!(HOUSE_HARKONNEN <= house[1] && house[1] < HOUSE_MAX)) house[1] = HOUSE_INVALID;
+	if (!(HOUSE_HARKONNEN <= house[2] && house[2] < HOUSE_MAX)) house[2] = HOUSE_INVALID;
+
+	if ((house[0] == HOUSE_INVALID) && (house[1] == HOUSE_INVALID) && (house[2] == HOUSE_INVALID)) {
+		free(source);
+		return;
+	}
+
+	bool campaign_added = false;
+	char value[1024];
+	int i;
+
+	al_set_path_filename(path, NULL);
+	i = snprintf(value, sizeof(value), "%s/", al_get_path_tail(path));
+
+	Ini_GetString("PAK", "Scenarios", NULL, value + i, sizeof(value) - i, source);
+
+	while ((value[i] != '\0') && (isspace(value[i]))) {
+		i++;
+	}
+
+	/* Check PAK file listed. */
+	if (value[i] != '\0') {
+		al_set_path_filename(path, value + i);
+		const char *fullpath = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
+
+		if (File_Exists_Ex(SEARCHDIR_ABSOLUTE, fullpath))
+			campaign_added = true;
+	}
+
+	/* Check loose region files. */
+	if (!campaign_added) {
+		for (int h = 0; h < 3; h++) {
+			if (house[h] == HOUSE_INVALID)
+				continue;
+
+			snprintf(value, sizeof(value), "REGION%c.INI", g_table_houseInfo[house[h]].name[0]);
+
+			al_set_path_filename(path, value);
+			const char *fullpath = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
+
+			if (!File_Exists_Ex(SEARCHDIR_ABSOLUTE, fullpath))
+				house[h] = HOUSE_INVALID;
+		}
+	}
+
+	/* Add campaign to list. */
+	if ((house[0] != HOUSE_INVALID) || (house[1] != HOUSE_INVALID) || (house[2] != HOUSE_INVALID)) {
+		al_set_path_filename(path, NULL);
+		const char *module = al_get_path_tail(path);
+
+		Campaign *camp = Campaign_Alloc(module);
+
+		for (int h = 0; h < 3; h++) {
+			camp->house[h] = house[h];
+		}
+
+		Ini_GetString("CAMPAIGN", "Name", module, camp->name, sizeof(camp->name), source);
+	}
+
+	free(source);
+}
+
+static void
+Menu_ScanCampaigns(void)
+{
+	char dirname[1024];
+	ALLEGRO_FS_ENTRY *e, *f;
+
+	snprintf(dirname, sizeof(dirname), "%s/campaign/", g_dune_data_dir);
+
+	e = al_create_fs_entry(dirname);
+	if (!e)
+		return;
+
+	if (!al_open_directory(e)) {
+		al_destroy_fs_entry(e);
+		return;
+	}
+
+	f = al_read_directory(e);
+	while (f != NULL) {
+		ALLEGRO_PATH *path = al_create_path(al_get_fs_entry_name(f));
+
+		const bool is_directory = (al_get_path_basename(path)[0] == '\0');
+		if (is_directory)
+			Menu_AddCampaign(path);
+
+		al_destroy_path(path);
+		al_destroy_fs_entry(f);
+		f = al_read_directory(e);
+	}
+
+	al_close_directory(e);
+	al_destroy_fs_entry(e);
+}
+
+static void
 Menu_Init(void)
 {
+	Menu_ScanCampaigns();
+
 	MainMenu_InitWidgets();
 	PickHouse_InitWidgets();
 	Briefing_InitWidgets();
 	PickCutscene_InitWidgets();
 	StrategicMap_Init();
+
 	A5_UseTransform(SCREENDIV_MENU);
 }
 
@@ -245,6 +369,9 @@ Menu_FreeWidgets(Widget *w)
 static void
 Menu_Uninit(void)
 {
+	free(g_campaign_list);
+	g_campaign_total = 0;
+
 	Menu_FreeWidgets(main_menu_widgets);
 	Menu_FreeWidgets(pick_house_widgets);
 	Menu_FreeWidgets(pick_cutscene_widgets);

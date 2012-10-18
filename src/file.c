@@ -58,7 +58,7 @@ FileHash_djb2(const char *str)
 	return hash % HASH_SIZE;
 }
 
-static FileInfo *
+FileInfo *
 FileHash_Store(const char *key)
 {
 	unsigned int idx = FileHash_djb2(key);
@@ -69,7 +69,7 @@ FileHash_Store(const char *key)
 	return &s_hash_file[idx];
 }
 
-static unsigned int
+unsigned int
 FileHash_FindIndex(const char *key)
 {
 	unsigned int idx = FileHash_djb2(key);

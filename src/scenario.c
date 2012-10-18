@@ -29,9 +29,35 @@
 #include "unit.h"
 #include "gui/gui.h"
 
+Campaign *g_campaign_list;
+int g_campaign_total;
+int g_campaign_selected;
 Scenario g_scenario;
 
 static void *s_scenarioBuffer = NULL;
+
+/*--------------------------------------------------------------*/
+
+Campaign *
+Campaign_Alloc(const char *dir_name)
+{
+	Campaign *camp;
+
+	g_campaign_list = realloc(g_campaign_list, (g_campaign_total + 1) * sizeof(g_campaign_list[0]));
+	g_campaign_total++;
+
+	camp = &g_campaign_list[g_campaign_total - 1];
+	if (dir_name == NULL) { /* Dune II */
+		camp->dir_name[0] = '\0';
+	}
+	else {
+		snprintf(camp->dir_name, sizeof(camp->dir_name), "%s/", dir_name);
+	}
+
+	return camp;
+}
+
+/*--------------------------------------------------------------*/
 
 static void Scenario_Load_General(void)
 {

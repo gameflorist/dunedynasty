@@ -5,6 +5,14 @@
 #ifndef SCENARIO_H
 #define SCENARIO_H
 
+#include "enumeration.h"
+
+typedef struct Campaign {
+	char name[32];
+	char dir_name[128];
+	enum HouseType house[3];
+} Campaign;
+
 /**
  * Information about reinforcements in the scenario.
  */
@@ -38,8 +46,13 @@ typedef struct Scenario {
 	Reinforcement reinforcement[16];                        /*!< Reinforcement information. */
 } Scenario;
 
+extern Campaign *g_campaign_list;
+extern int g_campaign_total;
+extern int g_campaign_selected;
+
 extern Scenario g_scenario;
 
+extern Campaign *Campaign_Alloc(const char *dir_name);
 extern bool Scenario_Load(uint16 scenarioID, uint8 houseID);
 
 #endif /* SCENARIO_H */

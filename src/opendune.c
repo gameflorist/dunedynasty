@@ -1352,6 +1352,14 @@ int main(int argc, char **argv)
 
 	Audio_ScanMusic();
 	String_Init();
+
+	/* Create the Dune 2 campaign. */
+	Campaign *camp = Campaign_Alloc(NULL);
+	camp->house[0] = HOUSE_ATREIDES;
+	camp->house[1] = HOUSE_ORDOS;
+	camp->house[2] = HOUSE_HARKONNEN;
+	snprintf(camp->name, sizeof(camp->name), "%s", String_Get_ByIndex(STR_THE_BATTLE_FOR_ARRAKIS));
+
 	Sprites_Init();
 	Sprites_LoadTiles();
 	VideoA5_InitSprites();
