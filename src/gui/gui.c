@@ -2004,9 +2004,11 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 	if (editLine != 0) {
 		WidgetProperties backupProperties;
-		char *name;
+		char name[9];
 
-		name = data[editLine - 1].name;
+		/* name = data[editLine - 1].name; */
+		memset(name, 0, sizeof(name));
+		data[editLine - 1].name[0] = '\0';
 
 		memcpy(&backupProperties, &g_widgetProperties[19], sizeof(WidgetProperties));
 
@@ -2031,13 +2033,10 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 			HallOfFame_DrawScoreTime(fame->score, fame->time);
 			HallOfFame_DrawRank(fame);
 
-			const char backup = name[0];
-			name[0] = '\0';
 			GUI_HallOfFame_DrawData(data, false);
-			name[0] = backup;
 
 			Input_Tick(true);
-			int ret = GUI_EditBox(name, 5, 19, NULL, NULL, 0);
+			int ret = GUI_EditBox(name, 8, 19, NULL, NULL, 0);
 			if (ret == SCANCODE_ENTER) {
 				if (*name == '\0')
 					continue;
@@ -2046,6 +2045,11 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 				while (*nameEnd <= ' ' && nameEnd >= name)
 					*nameEnd-- = '\0';
+
+				/* name */
+				memcpy(data[editLine - 1].name, name, 5);
+				memcpy(data[editLine - 1].name_extended, name + 5, 3);
+				data[editLine - 1].name[5] = '\0';
 
 				break;
 			}
@@ -2199,6 +2203,8 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 		const char *p1, *p2;
 
 		if (data[i].score == 0) break;
+		if (data[i].rank >= lengthof(_rankScores)) break;
+		if (data[i].houseID >= HOUSE_MAX) break;
 
 		if (g_gameConfig.language == LANGUAGE_FRENCH) {
 			p1 = String_Get_ByIndex(_rankScores[data[i].rank].rankString);
@@ -2207,7 +2213,8 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 			p1 = g_table_houseInfo[data[i].houseID].name;
 			p2 = String_Get_ByIndex(_rankScores[data[i].rank].rankString);
 		}
-		snprintf(buffer, sizeof(buffer), "%s, %s %s", data[i].name, p1, p2);
+
+		snprintf(buffer, sizeof(buffer), "%.5s%.3s, %s %s", data[i].name, data[i].name_extended, p1, p2);
 
 		if (*data[i].name == '\0') {
 			width = battleX - 36 - Font_GetStringWidth(buffer);

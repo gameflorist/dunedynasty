@@ -31,7 +31,11 @@ typedef struct HallOfFameStruct {
 	uint16 rank;                                            /*!< Rank of the entry. */
 	uint16 campaignID;                                      /*!< Which campaign was reached. */
 	uint8  houseID;                                         /*!< Which house was playing. */
+
+	/* Dune Dynasty: extra padding bytes used to extend name. */
+	char name_extended[3];
 } HallOfFameStruct;
+assert_compile(sizeof(HallOfFameStruct) == 16);
 
 /**
  * Information for the selection type.
