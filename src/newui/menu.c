@@ -1517,11 +1517,21 @@ Menu_Run(void)
 
 			case MENU_CAMPAIGN_CUTSCENE:
 				if (g_campaignID == 9) {
-					GameLoop_GameEndAnimation();
+					/* Only show end game for Dune II campaign. */
+					if (g_campaign_list[g_campaign_selected].intermission) {
+						GameLoop_GameEndAnimation();
+					}
+					else {
+						GameLoop_GameCredits(g_playerHouseID);
+					}
+
 					res = MENU_MAIN_MENU;
 				}
 				else {
-					GameLoop_LevelEndAnimation();
+					/* Only show intermission for Dune II campaign. */
+					if (g_campaign_list[g_campaign_selected].intermission)
+						GameLoop_LevelEndAnimation();
+
 					res = MENU_STRATEGIC_MAP;
 				}
 				break;

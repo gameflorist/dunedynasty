@@ -11,6 +11,7 @@ typedef struct Campaign {
 	char name[32];
 	char dir_name[128];
 	enum HouseType house[3];
+	bool intermission;
 
 	/* Emblem tweaks. */
 	unsigned int fame_cps[HOUSE_MAX];

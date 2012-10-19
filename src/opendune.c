@@ -1358,6 +1358,7 @@ int main(int argc, char **argv)
 	camp->house[0] = HOUSE_ATREIDES;
 	camp->house[1] = HOUSE_ORDOS;
 	camp->house[2] = HOUSE_HARKONNEN;
+	camp->intermission = true;
 	camp->fame_cps[HOUSE_HARKONNEN] = camp->fame_cps[HOUSE_SARDAUKAR] = 0;
 	camp->fame_cps[HOUSE_ATREIDES] = camp->fame_cps[HOUSE_FREMEN] = 1;
 	camp->fame_cps[HOUSE_ORDOS] = camp->fame_cps[HOUSE_MERCENARY] = 2;

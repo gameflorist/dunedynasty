@@ -112,6 +112,8 @@ Campaign_ReadMetaData(Campaign *camp)
 	memset(source, 0, 32000);
 	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI", source, GFX_Screen_GetSize_ByIndex(3));
 
+	camp->intermission = Ini_GetInteger("CAMPAIGN", "Intermission", 0, source);
+
 	/* Read CPS tweaks. */
 	Campaign_ReadCPSTweaks(source, "FAME.CPS",    value, sizeof(value), g_campaign_list[0].fame_cps, camp->fame_cps);
 	Campaign_ReadCPSTweaks(source, "MAPMACH.CPS", value, sizeof(value), g_campaign_list[0].mapmach_cps, camp->mapmach_cps);
