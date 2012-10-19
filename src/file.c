@@ -51,7 +51,10 @@ File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const
 	buf[len - 1] = '\0';
 
 	if (convert_to_lowercase) {
-		for (int j = i; buf[j] != '\0'; j++) {
+		for (int j = len - 2; j >= i; j--) {
+			if (buf[j] == '/' || buf[j] == '\\')
+				break;
+
 			if ('A' <= buf[j] && buf[j] <= 'Z')
 				buf[j] = buf[j] + 'a' - 'A';
 		}
