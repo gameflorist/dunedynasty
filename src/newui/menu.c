@@ -80,6 +80,32 @@ static Widget *briefing_proceed_repeat_widgets;
 
 /*--------------------------------------------------------------*/
 
+static Widget *
+MainMenu_InitMenuItem(int nth, uint16 index, const char *string)
+{
+	const WidgetProperties *prop21 = &g_widgetProperties[WINDOWID_MAINMENU_ITEM];
+	Widget *w;
+
+	w = GUI_Widget_Allocate(index, 0, 0, 0, SHAPE_INVALID, STR_NULL);
+
+	w->parentID = WINDOWID_MAINMENU_FRAME;
+	w->offsetX = prop21->xBase;
+	w->offsetY = prop21->yBase + (g_fontCurrent->height * nth);
+	w->height = g_fontCurrent->height - 1;
+
+	w->drawModeNormal = DRAW_MODE_TEXT;
+	w->drawModeSelected = DRAW_MODE_TEXT;
+	w->drawModeDown = DRAW_MODE_TEXT;
+	w->drawParameterNormal.text = string;
+	w->drawParameterSelected.text = w->drawParameterNormal.text;
+	w->drawParameterDown.text = w->drawParameterNormal.text;
+	w->fgColourSelected = prop21->fgColourSelected;
+	w->fgColourDown = prop21->fgColourSelected;
+	w->flags.s.clickAsHover = false;
+
+	return w;
+}
+
 static void
 MainMenu_InitWidgets(void)
 {
@@ -97,35 +123,17 @@ MainMenu_InitWidgets(void)
 		{ 0, NULL, STR_NULL, 0 }
 	};
 
-	WidgetProperties *prop13 = &g_widgetProperties[WINDOWID_MAINMENU_FRAME];
-	WidgetProperties *prop21 = &g_widgetProperties[WINDOWID_MAINMENU_ITEM];
 	int maxWidth = 0;
 
 	/* Select g_fontNew8p with shadow. */
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 
 	main_menu_widgets = NULL;
-	prop13->height = 11;
-	for (int i = 0; (menuitem[i].string != NULL) || (menuitem[i].stringID != STR_NULL); i++) {
+	for (unsigned int i = 0; i < lengthof(menuitem); i++) {
 		const char *str = (menuitem[i].string != NULL) ? menuitem[i].string : String_Get_ByIndex(menuitem[i].stringID);
 		Widget *w;
 
-		w = GUI_Widget_Allocate(menuitem[i].index, 0, 0, 0, SHAPE_INVALID, STR_NULL);
-
-		w->parentID = WINDOWID_MAINMENU_FRAME;
-		w->offsetX = prop21->xBase;
-		w->offsetY = prop21->yBase + (g_fontCurrent->height * i);
-		w->height = g_fontCurrent->height - 1;
-
-		w->drawModeNormal = DRAW_MODE_TEXT;
-		w->drawModeSelected = DRAW_MODE_TEXT;
-		w->drawModeDown = DRAW_MODE_TEXT;
-		w->drawParameterNormal.text = str;
-		w->drawParameterSelected.text = w->drawParameterNormal.text;
-		w->drawParameterDown.text = w->drawParameterNormal.text;
-		w->fgColourSelected = prop21->fgColourSelected;
-		w->fgColourDown = prop21->fgColourSelected;
-		w->flags.s.clickAsHover = false;
+		w = MainMenu_InitMenuItem(i, menuitem[i].index, str);
 
 		if (menuitem[i].stringID != STR_NULL) {
 			w->stringID = menuitem[i].stringID;
@@ -136,16 +144,9 @@ MainMenu_InitWidgets(void)
 			w->shortcut2 = menuitem[i].shortcut2;
 		}
 
-		GUI_Widget_MakeNormal(main_menu_widgets, false);
 		main_menu_widgets = GUI_Widget_Link(main_menu_widgets, w);
-
-		prop13->height += g_fontCurrent->height;
 		maxWidth = max(maxWidth, Font_GetStringWidth(w->drawParameterNormal.text) + 7);
 	}
-
-	prop13->width = maxWidth + 2*8;
-	prop13->xBase = (SCREEN_WIDTH - prop13->width)/2;
-	prop13->yBase = 160 - prop13->height/2;
 
 	for (Widget *w = main_menu_widgets; w != NULL; w = GUI_Widget_GetNext(w)) {
 		w->width = maxWidth;
@@ -270,11 +271,19 @@ Menu_LoadPalette(void)
 /*--------------------------------------------------------------*/
 
 static void
-MainMenu_Initialise(void)
+MainMenu_Initialise(Widget *w)
 {
 	Menu_LoadPalette();
 
-	Widget *w = main_menu_widgets;
+	WidgetProperties *prop13 = &g_widgetProperties[WINDOWID_MAINMENU_FRAME];
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
+
+	prop13->height = 11 + 5 * g_fontCurrent->height;
+	prop13->width = w->width + 2*8;
+	prop13->xBase = (SCREEN_WIDTH - prop13->width)/2;
+	prop13->yBase = 160 - prop13->height/2;
+
 	while (w != NULL) {
 		GUI_Widget_MakeNormal(w, false);
 		w = GUI_Widget_GetNext(w);
@@ -282,7 +291,7 @@ MainMenu_Initialise(void)
 }
 
 static void
-MainMenu_Draw(void)
+MainMenu_Draw(Widget *widget)
 {
 	Video_DrawCPS(String_GenerateFilename("TITLE"));
 
@@ -294,15 +303,13 @@ MainMenu_Draw(void)
 		g_fontCharOffset = 0;
 
 		unsigned char colours[16];
+		const int x = (SCREEN_WIDTH - Font_GetStringWidth(subtitle)) / 2;
+		const int y = 104;
 
-		for (int i = 0; i < 16; i++)
-			colours[i] = 0;
+		memset(colours, 0, sizeof(colours));
 
 		for (int i = 0; i < 6; i++)
 			colours[i + 1] = 215 + i;
-
-		const int x = (SCREEN_WIDTH - Font_GetStringWidth(subtitle)) / 2;
-		const int y = 104;
 
 		GUI_InitColors(colours, 0, 15);
 		Prim_FillRect_i(0, y, SCREEN_WIDTH, y + g_fontIntro->height, 0);
@@ -311,16 +318,14 @@ MainMenu_Draw(void)
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
-	GUI_Widget_DrawAll(main_menu_widgets);
+	GUI_Widget_DrawAll(widget);
 
 	GUI_DrawText_Wrapper("v1.07", SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x221);
 }
 
 static void
-MainMenu_SetupBlink(int widgetID)
+MainMenu_SetupBlink(Widget *w, int widgetID)
 {
-	Widget *w = main_menu_widgets;
-
 	widgetID &= ~0x8000;
 
 	while (w != NULL) {
@@ -335,6 +340,19 @@ MainMenu_SetupBlink(int widgetID)
 	}
 }
 
+static bool
+MainMenu_IsDirty(Widget *w)
+{
+	while (w != NULL) {
+		if (w->state.s.hover1 != w->state.s.hover1Last)
+			return true;
+
+		w = GUI_Widget_GetNext(w);
+	}
+
+	return false;
+}
+
 static enum MenuAction
 MainMenu_Loop(void)
 {
@@ -347,40 +365,33 @@ MainMenu_Loop(void)
 		case 0x8000 | MENU_PLAY_A_GAME:
 			g_campaignID = 0;
 			g_playerHouseID = HOUSE_MERCENARY;
-			MainMenu_SetupBlink(widgetID);
+			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
 		case 0x8000 | MENU_PICK_CUTSCENE:
-			MainMenu_SetupBlink(widgetID);
+			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_CUTSCENE;
 
 		case 0x8000 | MENU_LOAD_GAME:
 			GUI_Widget_InitSaveLoad(false);
-			MainMenu_SetupBlink(widgetID);
+			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
 
 		case 0x8000 | MENU_HALL_OF_FAME:
 			g_playerHouseID = HOUSE_MERCENARY;
-			MainMenu_SetupBlink(widgetID);
+			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_HALL_OF_FAME;
 
 		case 0x8000 | MENU_EXIT_GAME:
-			MainMenu_SetupBlink(widgetID);
+			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_EXIT_GAME;
 
 		default:
 			break;
 	}
 
-	Widget *w = main_menu_widgets;
-	while (w != NULL) {
-		if (w->state.s.hover1 != w->state.s.hover1Last) {
-			redraw = true;
-			break;
-		}
-
-		w = GUI_Widget_GetNext(w);
-	}
+	if (MainMenu_IsDirty(main_menu_widgets))
+		redraw = true;
 
 	return (redraw ? MENU_REDRAW : 0) | MENU_MAIN_MENU;
 }
@@ -1097,7 +1108,7 @@ Menu_Run(void)
 
 			switch (curr_menu & 0xFF) {
 				case MENU_MAIN_MENU:
-					MainMenu_Initialise();
+					MainMenu_Initialise(main_menu_widgets);
 					break;
 
 				case MENU_PICK_HOUSE:
@@ -1137,7 +1148,7 @@ Menu_Run(void)
 
 			switch (curr_menu & 0xFF) {
 				case MENU_MAIN_MENU:
-					MainMenu_Draw();
+					MainMenu_Draw(main_menu_widgets);
 					break;
 
 				case MENU_PICK_HOUSE:
