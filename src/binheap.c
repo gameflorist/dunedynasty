@@ -105,7 +105,9 @@ BinHeap_Pop(BinHeap *heap)
 		e = c;
 	}
 
-	memcpy(e, last, heap->elem_size);
+	if (e != last)
+		memcpy(e, last, heap->elem_size);
+
 	heap->num_elem--;
 }
 
