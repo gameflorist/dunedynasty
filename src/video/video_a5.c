@@ -915,6 +915,7 @@ VideoA5_InitCPS(void)
 	unsigned char *buf = GFX_Screen_Get_ByIndex(2);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
+	al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
 
 	CPSStore *cps_screen = VideoA5_ExportCPS("SCREEN.CPS", buf);
 	CPSStore *cps_fame = VideoA5_LoadCPS("FAME.CPS");
