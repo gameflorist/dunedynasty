@@ -510,14 +510,17 @@ static void ReadProfileIni(char *filename)
 		}
 	}
 
-	if (!g_debugGame) return;
+	if (g_debugGame) {
+		for (locsi = 0; locsi < UNIT_MAX; locsi++) {
+			const UnitInfo *ui = &g_table_unitInfo[locsi];
 
-	for (locsi = 0; locsi < UNIT_MAX; locsi++) {
-		const UnitInfo *ui = &g_table_unitInfo[locsi];
-
-		sprintf(buffer, "%*s%4d,%4d,%4d,%4d", 15 - (int)strlen(ui->o.name), "", ui->fireDistance, ui->damage, ui->fireDelay, ui->movingSpeed);
-		Ini_SetString("combat", ui->o.name, buffer, source);
+			sprintf(buffer, "%*s%4d,%4d,%4d,%4d", 15 - (int)strlen(ui->o.name), "", ui->fireDistance, ui->damage, ui->fireDelay, ui->movingSpeed);
+			Ini_SetString("combat", ui->o.name, buffer, source);
+		}
 	}
+
+	/* Dune Dynasty extensions. */
+	Campaign_ReadProfileIniExtensions(source);
 }
 
 /**

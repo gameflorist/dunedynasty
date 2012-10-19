@@ -5,11 +5,13 @@
 #define _XOPEN_SOURCE
 #define _XOPEN_SOURCE_EXTENDED
 
+#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
+#include "os/common.h"
 #include "os/math.h"
 #include "os/strings.h"
 
@@ -197,6 +199,272 @@ Campaign_ReadMetaData(Campaign *camp)
 					Campaign_AddFileInPAK(value, parent);
 
 				start = sep + 1;
+			}
+		}
+	}
+}
+
+static uint16
+ObjectInfo_FlagsToUint16(const ObjectInfo *oi)
+{
+	uint16 flags = 0;
+
+	/* Note: Read/write flags as they appear in the original executable. */
+	if (oi->flags.hasShadow)            flags |= 0x0001;
+	if (oi->flags.factory)              flags |= 0x0002;
+	/* 0x0004 unused. */
+	if (oi->flags.notOnConcrete)        flags |= 0x0008;
+	if (oi->flags.busyStateIsIncoming)  flags |= 0x0010;
+	if (oi->flags.blurTile)             flags |= 0x0020;
+	if (oi->flags.hasTurret)            flags |= 0x0040;
+	if (oi->flags.conquerable)          flags |= 0x0080;
+	if (oi->flags.canBePickedUp)        flags |= 0x0100;
+	if (oi->flags.noMessageOnDeath)     flags |= 0x0200;
+	if (oi->flags.tabSelectable)        flags |= 0x0400;
+	if (oi->flags.scriptNoSlowdown)     flags |= 0x0800;
+	if (oi->flags.targetAir)            flags |= 0x1000;
+	if (oi->flags.priority)             flags |= 0x2000;
+
+	return flags;
+}
+
+static uint16
+UnitInfo_FlagsToUint16(const UnitInfo *ui)
+{
+	uint16 flags = 0;
+
+	/* Note: Read/write flags as they appear in the original executable. */
+	/* 0x0001 unused. */
+	if (ui->flags.isBullet)         flags |= 0x0002;
+	if (ui->flags.explodeOnDeath)   flags |= 0x0004;
+	if (ui->flags.sonicProtection)  flags |= 0x0008;
+	if (ui->flags.canWobble)        flags |= 0x0010;
+	if (ui->flags.isTracked)        flags |= 0x0020;
+	if (ui->flags.isGroundUnit)     flags |= 0x0040;
+	if (ui->flags.mustStayInMap)    flags |= 0x0080;
+	/* 0x0100 unused. */
+	/* 0x0200 unused. */
+	if (ui->flags.firesTwice)       flags |= 0x0400;
+	if (ui->flags.impactOnSand)     flags |= 0x0800;
+	if (ui->flags.isNotDeviatable)  flags |= 0x1000;
+	if (ui->flags.hasAnimationSet)  flags |= 0x2000;
+	if (ui->flags.notAccurate)      flags |= 0x4000;
+	if (ui->flags.isNormalUnit)     flags |= 0x8000;
+
+	return flags;
+}
+
+void
+Campaign_ReadProfileIniExtensions(char *source)
+{
+	struct {
+		char type; /* unit, structure, or objects. */
+		const char *category;
+	} scandata[] = {
+		{ 'O', "Availability" },
+		{ 'S', "Factory" },
+		{ 'S', "StructureInfo" },
+		{ 'U', "UnitObjectInfo" },
+		{ 'U', "UnitInfo" }
+	};
+
+	char *keys = source + strlen(source) + 5000;
+	char buffer[120];
+
+	for (unsigned int x = 0; x < lengthof(scandata); x++) {
+		const char *category = scandata[x].category;
+
+		*keys = '\0';
+		Ini_GetString(category, NULL, NULL, keys, 2000, source);
+
+		for (char *key = keys; *key != '\0'; key += strlen(key) + 1) {
+			ObjectInfo *oi = NULL;
+			StructureInfo *si = NULL;
+			UnitInfo *ui = NULL;
+
+			if (scandata[x].type == 'U' || scandata[x].type == 'O') {
+				const uint8 type = Unit_StringToType(key);
+
+				if (type != UNIT_INVALID) {
+					ui = &g_table_unitInfo[type];
+					oi = &g_table_unitInfo[type].o;
+				}
+			}
+
+			if (scandata[x].type == 'S' || (scandata[x].type == 'O' && oi == NULL)) {
+				const uint8 type = Structure_StringToType(key);
+
+				if (type != STRUCTURE_INVALID) {
+					si = &g_table_structureInfo[type];
+					oi = &g_table_structureInfo[type].o;
+				}
+			}
+
+			if (oi == NULL)
+				continue;
+
+			Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
+
+			switch (x) {
+				case 0: /* Availability: availableHouse, structuresRequired, upgradeLevelRequired. */
+					{
+						uint16 availableHouse;          /* (uint8) enum HouseFlag. */
+						uint32 structuresRequired;      /* 0xFFFFFFFF or StructureFlag. */
+						uint16 upgradeLevelRequired;    /* (uint8) 0 .. 3. */
+
+						const int count = sscanf(buffer, "%hX,%X,%hu",
+								&availableHouse, &structuresRequired, &upgradeLevelRequired);
+						if (count < 3) {
+							fprintf(stderr, "[%s] %s=0x%02hX,0x%06X,%hu\n", category, key,
+									oi->availableHouse, oi->structuresRequired, oi->upgradeLevelRequired);
+							break;
+						}
+
+						oi->availableHouse = availableHouse;
+						oi->structuresRequired = structuresRequired;
+						oi->upgradeLevelRequired = upgradeLevelRequired;
+					}
+					break;
+
+				case 1: /* Factory: buildableUnits[1..8], upgradeCampaign[1..3]. */
+					{
+						int16 buildableUnits[8];    /* -1 or enum UnitType. */
+						uint16 upgradeCampaign[3];  /* 0 .. 9. */
+
+						const int count = sscanf(buffer, "%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hu,%hu,%hu",
+								&buildableUnits[0], &buildableUnits[1], &buildableUnits[2], &buildableUnits[3],
+								&buildableUnits[4], &buildableUnits[5], &buildableUnits[6], &buildableUnits[7],
+								&upgradeCampaign[0], &upgradeCampaign[1], &upgradeCampaign[2]);
+						if (count < 11) {
+							fprintf(stderr, "[%s] %s=%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hu,%hu,%hu\n", category, key,
+									si->buildableUnits[0], si->buildableUnits[1], si->buildableUnits[2], si->buildableUnits[3],
+									si->buildableUnits[4], si->buildableUnits[5], si->buildableUnits[6], si->buildableUnits[7],
+									si->upgradeCampaign[0], si->upgradeCampaign[1], si->upgradeCampaign[2]);
+							break;
+						}
+
+						for (int i = 0; i < 8; i++) {
+							si->buildableUnits[i] = (0 <= buildableUnits[i] && buildableUnits[i] < UNIT_MAX) ? buildableUnits[i] : -1;
+						}
+
+						for (int i = 0; i < 3; i++) {
+							si->upgradeCampaign[i] = upgradeCampaign[i];
+						}
+					}
+					break;
+
+				case 2: /* StructureInfo: objectFlags, spawnChance, enterFilter, creditsStorage, powerUsage. */
+					{
+						StructureInfo st;
+						uint16 flags;
+
+						const int count = sscanf(buffer, "%hX,%hu,%X,%hu,%hd",
+								&flags, &st.o.spawnChance, &st.enterFilter, &st.creditsStorage, &st.powerUsage);
+						if (count < 5) {
+							fprintf(stderr, "[%s] %s=0x%04hX,%hu,0x%06X,%hu,%hd\n", category, key,
+									ObjectInfo_FlagsToUint16(oi), si->o.spawnChance,
+									si->enterFilter, si->creditsStorage, si->powerUsage);
+							break;
+						}
+
+						oi->flags.hasShadow             = (flags & 0x0001) ? 1 : 0;
+						oi->flags.factory               = (flags & 0x0002) ? 1 : 0;
+						oi->flags.notOnConcrete         = (flags & 0x0008) ? 1 : 0;
+						oi->flags.busyStateIsIncoming   = (flags & 0x0010) ? 1 : 0;
+						/* oi->flags.blurTile           = (flags & 0x0020) ? 1 : 0; */
+						/* oi->flags.hasTurret          = (flags & 0x0040) ? 1 : 0; */
+						oi->flags.conquerable           = (flags & 0x0080) ? 1 : 0;
+						/* oi->flags.canBePickedUp      = (flags & 0x0100) ? 1 : 0; */
+						/* oi->flags.noMessageOnDeath   = (flags & 0x0200) ? 1 : 0; */
+						/* oi->flags.tabSelectable      = (flags & 0x0400) ? 1 : 0; */
+						/* oi->flags.scriptNoSlowdown   = (flags & 0x0800) ? 1 : 0; */
+						/* oi->flags.targetAir          = (flags & 0x1000) ? 1 : 0; */
+						/* oi->flags.priority           = (flags & 0x2000) ? 1 : 0; */
+
+						si->enterFilter = st.enterFilter;
+						si->creditsStorage = st.creditsStorage;
+						si->powerUsage = st.powerUsage;
+					}
+					break;
+
+				case 3: /* UnitObjectInfo: objectFlags, spawnChance, actionsPlayer[1..4]. */
+					{
+						ObjectInfo ot;
+						uint16 flags;
+
+						const int count = sscanf(buffer, "%hX,%hu,%hu,%hu,%hu,%hu",
+								&flags, &ot.spawnChance,
+								&ot.actionsPlayer[0], &ot.actionsPlayer[1], &ot.actionsPlayer[2], &ot.actionsPlayer[3]);
+						if (count < 6) {
+							fprintf(stderr, "[%s] %s=0x%04hX,%hu,%hu,%hu,%hu,%hu\n", category, key,
+									ObjectInfo_FlagsToUint16(oi), oi->spawnChance,
+									oi->actionsPlayer[0], oi->actionsPlayer[1], oi->actionsPlayer[2], oi->actionsPlayer[3]);
+							break;
+						}
+
+						oi->flags.hasShadow             = (flags & 0x0001) ? 1 : 0;
+						/* oi->flags.factory            = (flags & 0x0002) ? 1 : 0; */
+						/* oi->flags.notOnConcrete      = (flags & 0x0008) ? 1 : 0; */
+						/* oi->flags.busyStateIsIncoming= (flags & 0x0010) ? 1 : 0; */
+						oi->flags.blurTile              = (flags & 0x0020) ? 1 : 0;
+						oi->flags.hasTurret             = (flags & 0x0040) ? 1 : 0;
+						/* oi->flags.conquerable        = (flags & 0x0080) ? 1 : 0; */
+						oi->flags.canBePickedUp         = (flags & 0x0100) ? 1 : 0;
+						oi->flags.noMessageOnDeath      = (flags & 0x0200) ? 1 : 0;
+						/* oi->flags.tabSelectable      = (flags & 0x0400) ? 1 : 0; */
+						/* oi->flags.scriptNoSlowdown   = (flags & 0x0800) ? 1 : 0; */
+						oi->flags.targetAir             = (flags & 0x1000) ? 1 : 0;
+						oi->flags.priority              = (flags & 0x2000) ? 1 : 0;
+						oi->spawnChance = ot.spawnChance;
+
+						for (int i = 0; i < 4; i++) {
+							oi->actionsPlayer[i] = (ot.actionsPlayer[i] < ACTION_MAX) ? ot.actionsPlayer[i] : ACTION_ATTACK;
+						}
+					}
+					break;
+
+				case 4: /* UnitInfo: unitFlags, movementType, turningSpeed, explosionType, bulletType, bulletSound. */
+					{
+						uint16 flags;
+						uint16 movementType;    /* enum UnitMovementType. */
+						uint16 turningSpeed;    /* (uint8). */
+						int16 explosionType;    /* -1 or 0 .. 19. */
+						int16 bulletType;       /* UNIT_MISSILE_HOUSE .. UNIT_SANDWORM. */
+						int16 bulletSound;      /* -1 or enum SoundID. */
+
+						const int count = sscanf(buffer, "%hX,%hu,%hu,%hd,%hd,%hd",
+								&flags, &movementType, &turningSpeed, &explosionType, &bulletType, &bulletSound);
+						if (count < 6) {
+							fprintf(stderr, "[%s] %s=0x%04hX,%hu,%hu,%hd,%hd,%hd\n", category, key,
+									UnitInfo_FlagsToUint16(ui), ui->movementType, ui->turningSpeed,
+									ui->explosionType, ui->bulletType, ui->bulletSound);
+							break;
+						}
+
+						ui->flags.isBullet          = (flags & 0x0002) ? 1 : 0;
+						ui->flags.explodeOnDeath    = (flags & 0x0004) ? 1 : 0;
+						ui->flags.sonicProtection   = (flags & 0x0008) ? 1 : 0;
+						ui->flags.canWobble         = (flags & 0x0010) ? 1 : 0;
+						ui->flags.isTracked         = (flags & 0x0020) ? 1 : 0;
+						ui->flags.isGroundUnit      = (flags & 0x0040) ? 1 : 0;
+						ui->flags.mustStayInMap     = (flags & 0x0080) ? 1 : 0;
+						ui->flags.firesTwice        = (flags & 0x0400) ? 1 : 0;
+						ui->flags.impactOnSand      = (flags & 0x0800) ? 1 : 0;
+						ui->flags.isNotDeviatable   = (flags & 0x1000) ? 1 : 0;
+						ui->flags.hasAnimationSet   = (flags & 0x2000) ? 1 : 0;
+						ui->flags.notAccurate       = (flags & 0x4000) ? 1 : 0;
+						ui->flags.isNormalUnit      = (flags & 0x8000) ? 1 : 0;
+
+						ui->movementType = (movementType < MOVEMENT_MAX) ? movementType : MOVEMENT_FOOT;
+						ui->turningSpeed = turningSpeed;
+						ui->explosionType = (0 <= explosionType && explosionType < 20) ? explosionType : -1;
+						ui->bulletType = (UNIT_MISSILE_HOUSE <= bulletType && bulletType <= UNIT_SANDWORM) ? bulletType : -1;
+						ui->bulletSound = (0 <= bulletSound && bulletSound < SOUNDID_MAX) ? bulletSound : -1;
+					}
+					break;
+
+				default:
+					assert(false);
 			}
 		}
 	}
