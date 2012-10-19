@@ -1416,6 +1416,12 @@ VideoA5_InitShapes(unsigned char *buf)
 	File_Read(fileID, greymap, 256);
 	File_Close(fileID);
 
+	/* Use colour 12 for black, colour 0 is transparent. */
+	for (int i = 0; i < 256; i++) {
+		if (greymap[i] == 0)
+			greymap[i] = 12;
+	}
+
 	al_set_target_bitmap(shape_texture);
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 
