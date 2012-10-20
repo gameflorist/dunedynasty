@@ -1098,7 +1098,14 @@ Viewport_DrawSelectionHealthBars(void)
 			int x, y;
 
 			Map_IsPositionInViewport(u->o.position, &x, &y);
-			Viewport_DrawHealthBar(x - 7, y - TILE_SIZE / 2 - 3, 13, u->o.hitpoints, ui->o.hitpoints);
+			y = y - TILE_SIZE / 2 - 3;
+
+			/* Shift the meter down if off the top of the screen. */
+			if ((u->o.position.s.y >> 4) - TILE_SIZE / 2 - 3 <= TILE_SIZE * g_mapInfos[g_scenario.mapScale].minY) {
+				y += TILE_SIZE * g_mapInfos[g_scenario.mapScale].minY - ((u->o.position.s.y >> 4) - TILE_SIZE / 2 - 3);
+			}
+
+			Viewport_DrawHealthBar(x - 7, y, 13, u->o.hitpoints, ui->o.hitpoints);
 		}
 
 		u = Unit_NextSelected(&iter);
@@ -1112,9 +1119,12 @@ Viewport_DrawSelectionHealthBars(void)
 		if (Map_IsPositionUnveiled(g_selectionPosition)) {
 			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 			const int x = TILE_SIZE * (Tile_GetPackedX(g_selectionPosition) - Tile_GetPackedX(g_viewportPosition)) - g_viewport_scrollOffsetX;
-			const int y = TILE_SIZE * (Tile_GetPackedY(g_selectionPosition) - Tile_GetPackedY(g_viewportPosition)) - g_viewport_scrollOffsetY;
+			const int ty = Tile_GetPackedY(g_selectionPosition);
 
-			Viewport_DrawHealthBar(x + 1, y - 2, TILE_SIZE * g_selectionWidth - 3, s->o.hitpoints, si->o.hitpoints);
+			const int y = TILE_SIZE * (ty - Tile_GetPackedY(g_viewportPosition)) - g_viewport_scrollOffsetY
+				+ (ty == g_mapInfos[g_scenario.mapScale].minY ? 1 : -2);
+
+			Viewport_DrawHealthBar(x + 1, y, TILE_SIZE * g_selectionWidth - 3, s->o.hitpoints, si->o.hitpoints);
 		}
 	}
 }
