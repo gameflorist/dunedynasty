@@ -1,0 +1,55 @@
+# Sample PROFILE.INI.
+#
+# Place it in your campaign directory to tweak your campaign!
+#
+# The default values will be printed to stderr (error.log) if not
+# enough parameters are provided.
+
+[Construct]
+# object=BuildCredits,BuildTime,Hitpoints,FogUncoverRadius,AvailableCampaign,PriorityBuild,PriorityTarget,SortPriority
+; e.g. Allow Heavy Factory (harvesters, but not tanks) in level 3.
+Heavy Fctry=600,144,200,3,3,0,600,28
+Tank=300,64,200,3,4,80,100,22
+
+; e.g. Allow Cannon Turret in level 4, and increase range to 3.
+Turret=125,64,200,3,4,75,150,22
+
+[Combat]
+# unit=FireDistance,Damage,FireDelay,MovingSpeed
+; e.g. Increase Light Infantry movement speed to match Troopers.
+Soldier=2,3,45,15
+Infantry=2,3,45,10
+
+
+# Dune Dynasty extensions
+
+[Availability]
+# object=HouseFlags,StructuresRequiredFlags,UpgradeLevelRequired
+; e.g. Allow Barracks and WOR before radar outpost (StructuresRequiredFlags & ~0x040000).
+Barracks=0x3E,0x000200,0
+WOR=0x3D,0x000600,0
+
+[Factory]
+# structure=BuildableUnit1,..,BuildableUnit8,UpgradeLevel1,..,UpgradeLevel3
+; e.g. Hi-Tech factory cannot build ornithopters (good for adding more IX levels).
+Hi-Tech=0,-1,-1,-1,-1,-1,-1,-1,0,0,0
+
+[StructureInfo]
+# structure=ObjectFlags,SpawnChance,EnterFilter,CreditsStorage,PowerUsage
+; e.g. Repairable MCVs (EnterFilter | 0x020000).
+Repair=0x0880,128,0x03FF80,0,20
+
+[UnitObjectInfo]
+# unit=ObjectFlags,SpawnChance,ActionsPlayer1,..,ActionsPlayer4
+; e.g. Stealthy saboteurs and raider trikes (ObjectFlags | 0x20).
+Saboteur=0x2C20,0,9,1,2,3
+Raider Trike=0x2D20,64,0,1,2,3
+
+; e.g. Devastators with rotatable turrets (ObjectFlags 0x40).
+Devastator=0x2D40,64,0,1,13,3
+
+[UnitInfo]
+# unit=UnitFlags,MovementType,TurningSpeed,ExplosionType,BulletType,BulletSound
+; e.g. Alternative Trike and Deviator weapon sounds.
+Trike=0x8474,3,2,0,23,65
+GRocket=0x7002,4,2,7,-1,114

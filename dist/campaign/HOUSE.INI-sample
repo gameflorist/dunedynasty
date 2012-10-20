@@ -1,0 +1,20 @@
+# Sample HOUSE.INI.
+# Place it in your campaign directory to tweak your campaign!
+
+[Mercenary]
+; e.g. Mercenaries more susceptible to deviation.
+Weakness=128
+
+; e.g. Mercenaries have access to faster starport deliveries.
+Frigate=5
+
+; e.g. Mercenaries buildings decay.
+LemonFactor=10
+Decay=2
+
+; e.g. Mercenaries have saboteurs.
+Special=Saboteur
+Recharge=300
+
+; e.g. Mercenaries have the Atreides narrator.
+Voice=A
