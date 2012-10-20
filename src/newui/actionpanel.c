@@ -170,7 +170,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 					GUI_DrawText_Wrapper("Holds:", 22, g_fontCurrent->height * 2 + 40, 29, 0, 0x11);
 					GUI_DrawText_Wrapper("Max:", 22, g_fontCurrent->height * 3 + 40, 29, 0, 0x11);
 					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 2 + 40, 29, 0, 0x211, creditsStored);
-					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 3 + 40, 29, 0, 0x211, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
+					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 3 + 40, 29, 0, 0x211, (si->creditsStorage / 100) * 100);
 				}
 				else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), 18, 48, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);

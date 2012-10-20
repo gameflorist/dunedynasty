@@ -1078,6 +1078,47 @@ Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
 	Prim_Hline(x, y, x + w, colour);
 }
 
+static void
+Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
+{
+	if (max < num_bricks)
+		return;
+
+	/* A spice bricks stores (max/num_bricks) credits.  However, to
+	 * avoid round-off errors, we have multiplied curr and max by
+	 * num_bricks in the following calcuations.
+	 */
+	curr = min(curr, max);
+
+	const float delta = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scale;
+	const float width = 2.0f * num_bricks;
+	const int w = 2 * (num_bricks * curr / max);
+
+	/* Black outline. */
+	Prim_FillRect(x - delta, y - delta, x + width + delta, y + 1.0f + delta, 12);
+
+	if (curr < max) {
+		/* Interpolate from 0x545454 to 0xFC4400. */
+		const int rem = (num_bricks * curr) % max;
+		unsigned char r = 0x54 + (0xFC - 0x54) * rem / max;
+		unsigned char g = 0x54 + (0x44 - 0x54) * rem / max;
+		unsigned char b = 0x54 + (0x00 - 0x54) * rem / max;
+
+		Prim_FillRect(x, y, x + w - delta, y + 1.0f, 83);
+		Prim_FillRect(x + w, y, x + width, y + 1.0f, 13);
+		Prim_FillRect_RGBA(x + w, y, x + w + 2.0f, y + 1.0f, r, g, b, 0xFF);
+	}
+	else {
+		Prim_FillRect(x, y, x + width, y + 1.0f, 83);
+	}
+
+	/* Divide into bricks. */
+	x += 2;
+	for (int i = 0; i < num_bricks - 1; i++, x += 2) {
+		Prim_Line(x, y, x, y + 1.0f + delta, 12, 0.0f);
+	}
+}
+
 void
 Viewport_DrawSelectionHealthBars(void)
 {
@@ -1098,6 +1139,7 @@ Viewport_DrawSelectionHealthBars(void)
 			int x, y;
 
 			Map_IsPositionInViewport(u->o.position, &x, &y);
+
 			y = y - TILE_SIZE / 2 - 3;
 
 			/* Shift the meter down if off the top of the screen. */
@@ -1106,6 +1148,9 @@ Viewport_DrawSelectionHealthBars(void)
 			}
 
 			Viewport_DrawHealthBar(x - 7, y, 13, u->o.hitpoints, ui->o.hitpoints);
+
+			if ((u->o.type == UNIT_HARVESTER) && (Unit_GetHouseID(u) == g_playerHouseID))
+				Viewport_DrawSpiceBricks(x - 7, y + 2, 7, u->amount, 100);
 		}
 
 		u = Unit_NextSelected(&iter);
@@ -1121,9 +1166,18 @@ Viewport_DrawSelectionHealthBars(void)
 			const int x = TILE_SIZE * (Tile_GetPackedX(g_selectionPosition) - Tile_GetPackedX(g_viewportPosition)) - g_viewport_scrollOffsetX;
 			const int ty = Tile_GetPackedY(g_selectionPosition);
 
-			const int y = TILE_SIZE * (ty - Tile_GetPackedY(g_viewportPosition)) - g_viewport_scrollOffsetY
-				+ (ty == g_mapInfos[g_scenario.mapScale].minY ? 1 : -2);
+			int y = TILE_SIZE * (ty - Tile_GetPackedY(g_viewportPosition)) - g_viewport_scrollOffsetY;
 
+			if ((s->o.type == STRUCTURE_REFINERY || s->o.type == STRUCTURE_SILO) && (s->o.houseID == g_playerHouseID)) {
+				const House *h = g_playerHouse;
+				const StructureInfo *si = &g_table_structureInfo[s->o.type];
+				int creditsStored = h->credits * si->creditsStorage / h->creditsStorage;
+				if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
+
+				Viewport_DrawSpiceBricks(x + 2, y + TILE_SIZE * g_selectionHeight - 3, 10, creditsStored, si->creditsStorage);
+			}
+
+			y += (ty == g_mapInfos[g_scenario.mapScale].minY ? 1 : -2);
 			Viewport_DrawHealthBar(x + 1, y, TILE_SIZE * g_selectionWidth - 3, s->o.hitpoints, si->o.hitpoints);
 		}
 	}
