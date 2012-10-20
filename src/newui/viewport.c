@@ -1062,6 +1062,7 @@ Viewport_DrawRallyPoint(void)
 static void
 Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
 {
+	const float delta = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scale;
 	const int w = max(1, width * curr / max);
 
 	/* From ActionPanel_DrawHealthBar. */
@@ -1069,10 +1070,10 @@ Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
 	if (curr <= max / 2) colour = 5;
 	if (curr <= max / 4) colour = 8;
 
-	Prim_Rect(x - 0.33f, y - 0.33f, x + width + 1.33f, y + 1.33f, 12, 0.0f);
+	Prim_FillRect(x - delta, y - delta, x + width + 1.0f + delta, y + 1.0f + delta, 12);
 
 	if (w < width)
-		Prim_Hline(x + w + 1, y, x + width, 12);
+		Prim_Hline(x + w + 1, y, x + width, 13);
 
 	Prim_Hline(x, y, x + w, colour);
 }
