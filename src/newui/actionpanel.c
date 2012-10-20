@@ -417,6 +417,11 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 
 					if (next_type == 0xFFFF) {
 						Structure_CancelBuild(s);
+						s->state = STRUCTURE_STATE_IDLE;
+
+						/* Only update high-tech factory to avoid resetting animations. */
+						if (s->o.type == STRUCTURE_HIGH_TECH)
+							Structure_UpdateMap(s);
 					}
 					else if (s->objectType != next_type) {
 						Structure_BuildObject(s, next_type);

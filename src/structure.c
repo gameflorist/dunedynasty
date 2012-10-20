@@ -320,6 +320,9 @@ void GameLoop_Structure(void)
 
 							object_type = BuildQueue_RemoveHead(&s->queue);
 						}
+
+						if (object_type == 0xFFFF)
+							s->state = STRUCTURE_STATE_IDLE;
 					}
 				}
 
