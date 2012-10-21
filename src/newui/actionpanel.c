@@ -772,13 +772,13 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			/* Production icon is 32x24, stretched up to 52x39. */
 			if (g_productionStringID != STR_BUILD_IT) {
 				const float x1f = x1 + 52.0f/32.0f;
-				const float x2f = x1 + w - 1.0f - 52.0f/32.0f;
+				const float x2f = x1 + w - 52.0f/32.0f;
 
 				if (g_productionStringID == STR_ON_HOLD) {
-					Prim_FillRect_RGBA(x1f, y1 + 2.0f, x2f, y1 + 36.0f, 0x00, 0x00, 0x00, 0x80);
+					Prim_FillRect_RGBA(x1f, y1 + 2.0f, x2f, y1 + 37.0f, 0x00, 0x00, 0x00, 0x80);
 				}
 				else {
-					Prim_FillRect_RGBA(x1f, y1 + 12.0f, x2f, y1 + 12.0f + g_fontCurrent->height + 3.0f, 0x00, 0x00, 0x00, 0x80);
+					Prim_FillRect_RGBA(x1f, y1 + 12.0f, x2f, y1 + 12.0f + g_fontCurrent->height + 4.0f, 0x00, 0x00, 0x00, 0x80);
 				}
 			}
 

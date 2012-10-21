@@ -164,7 +164,7 @@ HallOfFame_DrawMeter(enum HouseType houseID, const HallOfFameData *fame, int met
 			}
 
 			c[idx] = clamp(35 * 4, c[idx], 63 * 4);
-			Prim_FillRect_RGBA(x, y, x + w - 1, y + h - 1, c[0], c[1], c[2], 0xFF);
+			Prim_FillRect_RGBA(x, y, x + w, y + h, c[0], c[1], c[2], 0xFF);
 		}
 		else {
 			Prim_FillRect_i(x, y, x + w - 1, y + h - 1, 209);
