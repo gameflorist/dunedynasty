@@ -311,8 +311,7 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 		s_configFile = al_load_config_file(filename);
 	}
 
-	File_MakeCompleteFilename(filename, sizeof(filename), SEARCHDIR_PERSONAL_DATA_DIR, "", false);
-	if (!al_make_directory(filename)) {
+	if (!al_make_directory(g_personal_data_dir)) {
 		fprintf(stderr, "Could not create %s!\n", filename);
 	}
 

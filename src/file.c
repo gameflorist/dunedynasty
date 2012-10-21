@@ -2,6 +2,9 @@
 
 /** @file src/file.c %File access routines. */
 
+/* Use Allegro to create directories. */
+#include <allegro5/allegro.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -113,7 +116,7 @@ FileHash_Init(void)
 
 /*--------------------------------------------------------------*/
 
-void
+static void
 File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const char *filename, bool convert_to_lowercase)
 {
 	int i = 0;
@@ -130,7 +133,7 @@ File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const
 		}
 	}
 	else if (dir == SEARCHDIR_PERSONAL_DATA_DIR) {
-		i = snprintf(buf, len, "%s/%s/", g_personal_data_dir, DUNE2_SAVE_PREFIX);
+		i = snprintf(buf, len, "%s/%s/%s", g_personal_data_dir, DUNE2_SAVE_PREFIX, g_campaign_list[g_campaign_selected].dir_name);
 	}
 
 	strncpy(buf + i, filename, len - i);
@@ -152,6 +155,13 @@ File_Open_CaseInsensitive(enum SearchDirectory dir, const char *filename, const 
 {
 	char buf[1024];
 	FILE *fp;
+
+	/* Create directories. */
+	if (dir == SEARCHDIR_PERSONAL_DATA_DIR && mode[0] == 'w') {
+		File_MakeCompleteFilename(buf, sizeof(buf), dir, "", false);
+		if (!al_make_directory(buf))
+			return NULL;
+	}
 
 	File_MakeCompleteFilename(buf, sizeof(buf), dir, filename, false);
 	fp = fopen(buf, mode);

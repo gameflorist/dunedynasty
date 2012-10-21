@@ -11,6 +11,7 @@
 #include "file.h"
 #include "house.h"
 #include "map.h"
+#include "newui/menubar.h"
 #include "opendune.h"
 #include "os/endian.h"
 #include "os/error.h"
@@ -20,6 +21,7 @@
 #include "pool/structure.h"
 #include "pool/unit.h"
 #include "saveload/saveload.h"
+#include "shape.h"
 #include "sprites.h"
 #include "structure.h"
 #include "team.h"
@@ -175,7 +177,7 @@ SaveFile(const char *filename, const char *description)
 
 	fp = File_Open_CaseInsensitive(SEARCHDIR_PERSONAL_DATA_DIR, filename, "wb");
 	if (fp == NULL) {
-		Error("Failed to open file '%s' for writing.\n", filename);
+		GUI_DisplayModalMessage("Failed to open file '%s' for writing.", SHAPE_INVALID, filename);
 		return false;
 	}
 
