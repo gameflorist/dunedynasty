@@ -1793,6 +1793,11 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 		if (Tools_Random_256() < g_table_houseInfo[unit->o.houseID].toughness) {
 			Unit_SetAction(unit, ACTION_RETREAT);
 		}
+
+		if (enhancement_infantry_squad_death_animations) {
+			uint16 animationUnitID = g_table_landscapeInfo[Map_GetLandscapeType(Tile_PackTile(unit->o.position))].isSand ? 0 : 1;
+			Animation_Start(g_table_animation_unitScript2[animationUnitID], unit->o.position, 0, Unit_GetHouseID(unit), 4);
+		}
 	}
 
 	if (ui->movementType != MOVEMENT_TRACKED && ui->movementType != MOVEMENT_HARVESTER && ui->movementType != MOVEMENT_WHEELED) return false;

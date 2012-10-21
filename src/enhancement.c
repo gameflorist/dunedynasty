@@ -84,6 +84,12 @@ bool enhancement_fog_covers_units = true;
 bool enhancement_i_mean_where_i_clicked = true;
 
 /**
+ * Use the infantry squad death animations like in the Sega Mega Drive
+ * version of Dune II.
+ */
+bool enhancement_infantry_squad_death_animations = true;
+
+/**
  * In the original game, sandworms disappear after eating a set number
  * of units.
  */
