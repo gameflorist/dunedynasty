@@ -36,6 +36,7 @@
 #include "../video/video.h"
 
 enum {
+	SUBTITLE_FADE_TICKS = 6,
 	MENU_FADE_TICKS = 10
 };
 
@@ -74,6 +75,7 @@ enum MenuAction {
 	MENU_REDRAW = 0x8000
 };
 
+static int64_t subtitle_timer;
 static Widget *main_menu_widgets;
 static Widget *pick_house_widgets;
 static Widget *pick_cutscene_widgets;
@@ -153,6 +155,21 @@ MainMenu_InitWidgets(void)
 	for (Widget *w = main_menu_widgets; w != NULL; w = GUI_Widget_GetNext(w)) {
 		w->width = maxWidth;
 	}
+
+	/* Add widget to change campaign. */
+	Widget *w = GUI_Widget_Allocate(100, 0, 0, 104, SHAPE_INVALID, STR_NULL);
+	w->width = SCREEN_WIDTH;
+	w->height = g_fontIntro->height;
+	w->drawModeNormal = DRAW_MODE_NONE;
+	w->drawModeSelected = DRAW_MODE_NONE;
+	w->drawModeDown = DRAW_MODE_NONE;
+	w->drawParameterNormal.text = g_campaign_list[g_campaign_selected].name;
+	w->drawParameterSelected.text = w->drawParameterNormal.text;
+	w->drawParameterDown.text = w->drawParameterNormal.text;
+	w->flags.s.clickAsHover = false;
+	main_menu_widgets = GUI_Widget_Link(main_menu_widgets, w);
+
+	subtitle_timer = -2 * SUBTITLE_FADE_TICKS;
 }
 
 static void
@@ -351,6 +368,12 @@ Menu_Init(void)
 	PickCutscene_InitWidgets();
 	StrategicMap_Init();
 
+	Widget *w = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
+
+	if (g_campaign_total <= 1) {
+		GUI_Widget_MakeInvisible(w);
+	}
+
 	A5_UseTransform(SCREENDIV_MENU);
 }
 
@@ -422,26 +445,45 @@ MainMenu_Draw(Widget *widget)
 {
 	Video_DrawCPS(String_GenerateFilename("TITLE"));
 
-	/* Restore the "The Building of a Dynasty" subtitle to match the narrator. */
-	if (enhancement_play_additional_voices) {
-		const char *subtitle = String_Get_ByIndex(STR_THE_BATTLE_FOR_ARRAKIS);
+	const int64_t curr_ticks = Timer_GetTicks();
+	const Widget *w = GUI_Widget_Get_ByIndex(widget, 100);
+	const char *subtitle;
+	int alpha = 0;
+	int colour = (w->state.s.hover1) ? 192 : 144;
 
-		Font_Select(g_fontIntro);
-		g_fontCharOffset = 0;
-
-		unsigned char colours[16];
-		const int x = (SCREEN_WIDTH - Font_GetStringWidth(subtitle)) / 2;
-		const int y = 104;
-
-		memset(colours, 0, sizeof(colours));
-
-		for (int i = 0; i < 6; i++)
-			colours[i + 1] = 215 + i;
-
-		GUI_InitColors(colours, 0, 15);
-		Prim_FillRect_i(0, y, SCREEN_WIDTH, y + g_fontIntro->height, 0);
-		GUI_DrawText(subtitle, x, y, 144, 0);
+	if (curr_ticks - subtitle_timer < SUBTITLE_FADE_TICKS) {
+		/* Interesting colours: 192, 216, 231, 240. */
+		subtitle = w->drawParameterDown.text;
+		alpha = 0xFF * (curr_ticks - subtitle_timer) / SUBTITLE_FADE_TICKS;
+		colour = 192;
 	}
+	else {
+		subtitle = w->drawParameterNormal.text;
+
+		if (curr_ticks - subtitle_timer - SUBTITLE_FADE_TICKS < SUBTITLE_FADE_TICKS) {
+			alpha = 0xFF - 0xFF * (curr_ticks - subtitle_timer - SUBTITLE_FADE_TICKS) / SUBTITLE_FADE_TICKS;
+			colour = 144;
+		}
+	}
+
+	Font_Select(g_fontIntro);
+	g_fontCharOffset = 0;
+
+	unsigned char colours[16];
+	const int x = (SCREEN_WIDTH - Font_GetStringWidth(subtitle)) / 2;
+	const int y = 104;
+
+	memset(colours, 0, sizeof(colours));
+
+	for (int i = 0; i < 6; i++)
+		colours[i + 1] = 215 + i;
+
+	GUI_InitColors(colours, 0, 15);
+	Prim_FillRect_i(0, y, SCREEN_WIDTH, y + g_fontIntro->height, 0);
+	GUI_DrawText(subtitle, x, y, colour, 0);
+
+	if (alpha > 0)
+		Prim_FillRect_RGBA(0, y, SCREEN_WIDTH, y + g_fontIntro->height, 0, 0, 0, alpha);
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
@@ -483,6 +525,7 @@ MainMenu_IsDirty(Widget *w)
 static enum MenuAction
 MainMenu_Loop(void)
 {
+	const int64_t curr_ticks = Timer_GetTicks();
 	const int widgetID = GUI_Widget_HandleEvents(main_menu_widgets);
 	bool redraw = false;
 
@@ -513,9 +556,35 @@ MainMenu_Loop(void)
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_EXIT_GAME;
 
+		case 0x8000 | 100: /* Switch campaign. */
+			if (curr_ticks - subtitle_timer < 2 * SUBTITLE_FADE_TICKS)
+				break;
+
+			Widget *subtitle = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
+			subtitle->drawParameterDown.text = subtitle->drawParameterNormal.text;
+
+			if (subtitle->state.s.buttonState & 0x04) {
+				g_campaign_selected++;
+				if (g_campaign_selected >= g_campaign_total)
+					g_campaign_selected = 0;
+			}
+			else {
+				g_campaign_selected--;
+				if (g_campaign_selected < 0)
+					g_campaign_selected = g_campaign_total - 1;
+			}
+
+			subtitle->drawParameterNormal.text = g_campaign_list[g_campaign_selected].name;
+
+			subtitle_timer = Timer_GetTicks();
+			break;
+
 		default:
 			break;
 	}
+
+	if (curr_ticks - subtitle_timer <= 2 * SUBTITLE_FADE_TICKS)
+		redraw = true;
 
 	if (MainMenu_IsDirty(main_menu_widgets))
 		redraw = true;
