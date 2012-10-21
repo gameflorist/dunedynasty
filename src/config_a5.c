@@ -413,7 +413,8 @@ GameOptions_Load(void)
 			}
 		}
 		else {
-			const char *key = m->filename + strlen(g_table_music_set[m->music_set].prefix) + 1;
+			const char *key = strrchr(m->filename, '/') + 1;
+			assert(key != NULL);
 
 			Config_GetMusicVolume(s_configFile, category, key, m);
 		}
