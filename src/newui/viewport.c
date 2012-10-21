@@ -828,6 +828,8 @@ Viewport_Hotkey(enum SquadID squad)
 
 			s = Structure_Find(&find);
 		}
+
+		Audio_PlaySample(SAMPLE_BUTTON, 128, 0.0f);
 	}
 	else {
 		const bool key_shift = (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT));
