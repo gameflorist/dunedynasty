@@ -12,6 +12,7 @@
 #include "animation.h"
 #include "audio/audio.h"
 #include "binheap.h"
+#include "enhancement.h"
 #include "house.h"
 #include "map.h"
 #include "shape.h"
@@ -124,8 +125,17 @@ Explosion_Func_ScreenShake(Explosion *e, uint16 parameter)
 {
 	VARIABLE_NOT_USED(parameter);
 
-	if (!Map_IsPositionUnveiled(Tile_PackTile(e->position)))
-		return;
+	/* ENHANCEMENT -- Screenshake even if explosion is only partially unveiled. */
+	if (g_dune2_enhanced) {
+		const Tile *t = &g_map[Tile_PackTile(e->position)];
+
+		if (!t->isUnveiled)
+			return;
+	}
+	else {
+		if (!Map_IsPositionUnveiled(Tile_PackTile(e->position)))
+			return;
+	}
 
 	GFX_ScreenShake_Start(1);
 }
