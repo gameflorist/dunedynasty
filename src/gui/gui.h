@@ -60,6 +60,8 @@ extern char *g_viewportMessageText;
 extern uint16 g_viewportPosition;
 extern int g_viewport_scrollOffsetX;
 extern int g_viewport_scrollOffsetY;
+extern float g_viewport_desiredDX;
+extern float g_viewport_desiredDY;
 
 extern uint16 g_selectionRectanglePosition;
 extern uint16 g_selectionPosition;

@@ -93,6 +93,8 @@ char *g_viewportMessageText;                                /*!< If not \c NULL,
 uint16 g_viewportPosition;                                  /*!< Top-left tile of the viewport. */
 int g_viewport_scrollOffsetX;
 int g_viewport_scrollOffsetY;
+float g_viewport_desiredDX;
+float g_viewport_desiredDY;
 
 uint16 g_selectionRectanglePosition;                        /*!< Position of the structure selection rectangle. */
 uint16 g_selectionPosition;                                 /*!< Current selection position (packed). */

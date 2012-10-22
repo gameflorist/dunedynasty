@@ -13,6 +13,7 @@ extern int g_mouseY;
 extern int g_mouseDZ;
 extern int g_mouseClickX;
 extern int g_mouseClickY;
+extern bool g_warpMouse;
 
 extern void Mouse_Init(void);
 extern void Mouse_TransformToDiv(enum ScreenDivID div, int *mouseX, int *mouseY);

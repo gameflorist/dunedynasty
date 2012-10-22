@@ -75,6 +75,8 @@ void
 Viewport_Init(void)
 {
 	viewport_click_action = VIEWPORT_CLICK_NONE;
+	g_viewport_desiredDX = 0.0f;
+	g_viewport_desiredDY = 0.0f;
 }
 
 static bool
@@ -447,17 +449,20 @@ Viewport_Click(Widget *w)
 				viewport_click_action = VIEWPORT_PAN;
 				viewport_click_x = g_mouseX;
 				viewport_click_y = g_mouseY;
+				g_mouseClickX = g_mouseX;
+				g_mouseClickY = g_mouseY;
 				Video_HideCursor();
 			}
 		}
 
 		/* Dragging RMB pans viewport. */
 		else if (viewport_click_action == VIEWPORT_PAN) {
-			const int dx = g_mouseX - viewport_click_x;
-			const int dy = g_mouseY - viewport_click_y;
+			const int dx = g_mouseX - g_mouseClickX;
+			const int dy = g_mouseY - g_mouseClickY;
 
-			Map_MoveDirection(dx, dy);
-			Video_WarpCursor(viewport_click_x, viewport_click_y);
+			g_viewport_desiredDX += dx;
+			g_viewport_desiredDY += dy;
+			g_warpMouse = true;
 		}
 	}
 

@@ -15,6 +15,7 @@ int g_mouseY;
 int g_mouseDZ;
 int g_mouseClickX;
 int g_mouseClickY;
+bool g_warpMouse;
 
 void
 Mouse_Init(void)

@@ -11,6 +11,7 @@
 	#include <io.h>
 	#include <windows.h>
 #endif /* _WIN32 */
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -744,9 +745,19 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 	}
 
 	if (dx != 0 || dy != 0) {
-		dx = clamp(-1, dx, 1);
-		dy = clamp(-1, dy, 1);
-		Map_MoveDirection(dx * g_gameConfig.scrollSpeed, dy * g_gameConfig.scrollSpeed);
+		dx = g_gameConfig.scrollSpeed * clamp(-1, dx, 1);
+		dy = g_gameConfig.scrollSpeed * clamp(-1, dy, 1);
+	}
+
+	if ((fabsf(g_viewport_desiredDX) >= 4.0f) || (fabsf(g_viewport_desiredDY) >= 4.0f)) {
+		dx += 0.25 * g_viewport_desiredDX;
+		dy += 0.25 * g_viewport_desiredDY;
+		if (fabsf(g_viewport_desiredDX) >= 4.0f) g_viewport_desiredDX *= 0.75;
+		if (fabsf(g_viewport_desiredDY) >= 4.0f) g_viewport_desiredDY *= 0.75;
+	}
+
+	if (dx != 0 || dy != 0) {
+		Map_MoveDirection(dx, dy);
 	}
 
 	switch (key) {
@@ -986,6 +997,11 @@ void GameLoop_Main(bool new_game)
 
 	int frames_skipped = 0;
 	while (g_gameMode == GM_NORMAL) {
+		if (g_warpMouse) {
+			g_warpMouse = false;
+			Video_WarpCursor(g_mouseClickX, g_mouseClickY);
+		}
+
 		Timer_WaitForEvent();
 		const int64_t curr_ticks = Timer_GameTicks();
 
