@@ -163,14 +163,10 @@ void
 MentatBriefing_InitText(enum HouseType houseID, int campaignID, enum BriefingEntry entry,
 		MentatState *mentat)
 {
-	houseID = g_table_houseRemap6to3[houseID];
-
-	const int stringID
-		= STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER
-		+ (houseID * 40) + ((campaignID + 1) * 4) + entry;
+	const int stringID = ((campaignID + 1) * 4) + entry;
 	assert(entry <= MENTAT_BRIEFING_ADVICE);
 
-	strncpy(mentat->buf, String_Get_ByIndex(stringID), sizeof(mentat->buf));
+	strncpy(mentat->buf, String_GetMentatString(houseID, stringID), sizeof(mentat->buf));
 	mentat->desc = NULL;
 	mentat->text = mentat->buf;
 	MentatBriefing_SplitText(mentat);

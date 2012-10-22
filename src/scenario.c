@@ -27,6 +27,7 @@
 #include "pool/structure.h"
 #include "pool/unit.h"
 #include "sprites.h"
+#include "string.h"
 #include "structure.h"
 #include "team.h"
 #include "tile.h"
@@ -205,6 +206,7 @@ Campaign_Load(void)
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
 
 	Campaign_ReadMetaData(camp);
+	String_ReloadMentatText();
 }
 
 /*--------------------------------------------------------------*/

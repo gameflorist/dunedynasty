@@ -10,6 +10,7 @@
 #include <assert.h>
 #include "types.h"
 #include "os/common.h"
+#include "os/math.h"
 #include "os/strings.h"
 
 #include "string.h"
@@ -17,12 +18,14 @@
 #include "config.h"
 #include "enhancement.h"
 #include "file.h"
+#include "house.h"
 #include "opendune.h"
 #include "scenario.h"
 #include "table/strings.h"
 
 static char **s_strings = NULL;
 static uint16 s_stringsCount = 0;
+static char *s_strings_mentat[HOUSE_MAX][40];
 
 const char * const g_languageSuffixes[] = { "ENG", "FRE", "GER", "ITA", "SPA" };
 static char *s_stringDecompress = " etainosrlhcdupmtasio wb rnsdalmh ieorasnrtlc synstcloer dtgesionr ufmsw tep.icae oiadur laeiyodeia otruetoakhlr eiu,.oansrctlaileoiratpeaoip bm";
@@ -85,6 +88,12 @@ char *String_Get_ByIndex(uint16 stringID)
 	return s_strings[stringID];
 }
 
+char *
+String_GetMentatString(enum HouseType houseID, int stringID)
+{
+	return s_strings_mentat[houseID][stringID];
+}
+
 /**
  * Translates 0x1B 0xXX occurences into extended ASCII values (0x7F + 0xXX).
  *
@@ -143,6 +152,65 @@ String_Load(const char *filename, bool compressed)
 	if (s_stringsCount == STR_LOAD_GAME) s_strings[s_stringsCount++] = strdup(s_strings[STR_LOAD_A_GAME]);
 
 	free(buf);
+}
+
+void
+String_ReloadMentatText(void)
+{
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		for (unsigned int i = 0; i < 40; i++) {
+			/* Default string. */
+			const uint16 stringID
+				= STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER
+				+ 40 * g_table_houseRemap6to3[houseID] + i;
+
+			char *def = String_Get_ByIndex(stringID);
+
+			if (s_strings_mentat[houseID][i] && s_strings_mentat[houseID][i] != def)
+				free(s_strings_mentat[houseID][i]);
+
+			s_strings_mentat[houseID][i] = def;
+		}
+
+		if (g_campaign_selected == 0)
+			continue;
+
+		if (!((g_campaign_list[g_campaign_selected].house[0] == houseID) ||
+		      (g_campaign_list[g_campaign_selected].house[1] == houseID) ||
+		      (g_campaign_list[g_campaign_selected].house[2] == houseID)))
+			continue;
+
+		char filename[10];
+		snprintf(filename, sizeof(filename), "TEXT%c.%s", g_table_houseInfo[houseID].name[0], g_languageSuffixes[g_gameConfig.language]);
+
+		if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, filename))
+			continue;
+
+		void *buf = File_ReadWholeFile_Ex(SEARCHDIR_CAMPAIGN_DIR, filename);
+		uint16 count = min(40, (*(uint16 *)buf / 2));
+
+		for (unsigned int i = 0; i < count; i++) {
+			const bool compressed = true;
+			char *src = (char *)buf + ((uint16 *)buf)[i];
+			char *dst;
+
+			if (strlen(src) <= 1)
+				continue;
+
+			if (compressed) {
+				dst = (char *)calloc(strlen(src) * 2 + 1, sizeof(char));
+				String_Decompress(src, dst);
+				String_TranslateSpecial(dst, dst);
+			}
+			else {
+				dst = strdup(src);
+			}
+
+			s_strings_mentat[houseID][i] = dst;
+		}
+
+		free(buf);
+	}
 }
 
 /**

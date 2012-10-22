@@ -594,8 +594,8 @@ ChunkFile_Open_Ex(enum SearchDirectory dir, const char *filename)
 	uint32 header;
 
 	/* XXX: what is with this? */
-	index = File_Open_Ex(dir, filename, 1);
-	File_Close(index);
+	/* index = File_Open_Ex(dir, filename, 1); */
+	/* File_Close(index); */
 
 	index = File_Open_Ex(dir, filename, 1);
 

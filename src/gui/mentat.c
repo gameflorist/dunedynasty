@@ -102,10 +102,15 @@ void GUI_Mentat_LoadHelpSubjects(bool init)
 	uint32 length;
 	uint32 counter;
 
-	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "MENTAT%c", g_table_houseInfo[g_playerHouseID].prefixChar);
+	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "MENTAT%c", g_table_houseInfo[g_playerHouseID].name[0]);
 	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "%s", String_GenerateFilename(s_mentatFilename));
 
-	fileID = ChunkFile_Open(s_mentatFilename);
+	/* Be careful here as Fremen, Sardaukar, and Mercenaries don't have mentat advice. */
+	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename)) {
+		s_mentatFilename[6] = g_table_houseInfo[g_playerHouseID].prefixChar;
+	}
+
+	fileID = ChunkFile_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename);
 	length = ChunkFile_Read(fileID, HTOBE32(CC_NAME), helpSubjects, GFX_Screen_GetSize_ByIndex(5));
 	ChunkFile_Close(fileID);
 
@@ -520,16 +525,24 @@ static void GUI_Mentat_ShowHelp(void)
 	noDesc = si->no_desc;
 	offset = si->offset;
 
-	fileID = ChunkFile_Open(s_mentatFilename);
-	ChunkFile_Read(fileID, HTOBE32(CC_INFO), &info, 12);
-	ChunkFile_Close(fileID);
+	memset(&info, 0, sizeof(info));
+	fileID = ChunkFile_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename);
+	uint32 bufread = ChunkFile_Read(fileID, HTOBE32(CC_INFO), &info, 12);
 
-	info.length = HTOBE32(info.length);
+	if (bufread >= 12) {
+		info.length = HTOBE32(info.length);
+	}
+	else {
+		/* Note: some files are buggy and don't give a proper length. */
+		info.length = File_GetSize(fileID);
+	}
+
+	ChunkFile_Close(fileID);
 
 	text = g_readBuffer;
 	compressedText = malloc(info.length);
 
-	fileID = File_Open(s_mentatFilename, 1);
+	fileID = File_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename, 1);
 	File_Seek(fileID, offset, 0);
 	File_Read(fileID, compressedText, info.length);
 	String_Decompress(compressedText, text);
@@ -546,17 +559,13 @@ static void GUI_Mentat_ShowHelp(void)
 	*text++ = '\0';
 
 	if (noDesc) {
-		const enum HouseType houseID = g_table_houseRemap6to3[g_playerHouseID];
-
 		picture = g_scenario.pictureBriefing;
 		desc    = NULL;
 		text    = (char *)g_readBuffer;
 
-		const uint16 index
-			= STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER
-			+ (houseID * 40) + (g_campaignID * 4) + (*text - 44);
+		const uint16 index = (g_campaignID * 4) + (*text - 44);
 
-		strncpy(g_readBuffer, String_Get_ByIndex(index), g_readBufferSize);
+		strncpy(g_readBuffer, String_GetMentatString(g_playerHouseID, index), g_readBufferSize);
 	} else {
 		picture = (char *)g_readBuffer;
 		desc    = text;
