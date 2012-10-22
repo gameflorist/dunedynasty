@@ -1485,4 +1485,7 @@ void PrepareEnd(void)
 	GFX_Uninit();
 	Video_Uninit();
 	A5_Uninit();
+
+	free(g_campaign_list);
+	g_campaign_total = 0;
 }

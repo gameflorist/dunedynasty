@@ -14,6 +14,7 @@
 #include "file.h"
 #include "gfx.h"
 #include "opendune.h"
+#include "scenario.h"
 #include "string.h"
 
 #define CONFIG_FILENAME "dunedynasty.cfg"
@@ -24,6 +25,7 @@ typedef struct GameOption {
 
 	enum OptionType {
 		CONFIG_BOOL,
+		CONFIG_CAMPAIGN,
 		CONFIG_FLOAT,
 		CONFIG_FLOAT_1_3,
 		CONFIG_INT,
@@ -71,6 +73,7 @@ static const GameOption s_game_option[] = {
 	{ "game",   "language",         CONFIG_LANGUAGE,.d._uint = &g_gameConfig.language },
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
+	{ "game",   "campaign",         CONFIG_CAMPAIGN,.d._int = &g_campaign_selected },
 	{ "game",   "auto_scroll",      CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
 	{ "game",   "scroll_speed",     CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },
 
@@ -122,6 +125,33 @@ Config_SetBool(ALLEGRO_CONFIG *config, const char *section, const char *key, boo
 	const char *str = (value == true) ? "1" : "0";
 
 	al_set_config_value(config, section, key, str);
+}
+
+void
+Config_GetCampaign(void)
+{
+	g_campaign_selected = 0;
+
+	if (s_configFile == NULL)
+		return;
+
+	/* This needs to be read after all the campaigns are scanned. */
+	const char *str = al_get_config_value(s_configFile, "game", "campaign");
+	if (str == NULL)
+		return;
+
+	for (int i = 0; i < g_campaign_total; i++) {
+		if (strcmp(str, g_campaign_list[i].dir_name) == 0) {
+			g_campaign_selected = i;
+			return;
+		}
+	}
+}
+
+static void
+Config_SetCampaign(ALLEGRO_CONFIG *config, const char *section, const char *key, int value)
+{
+	al_set_config_value(config, section, key, g_campaign_list[value].dir_name);
 }
 
 static void
@@ -341,6 +371,10 @@ GameOptions_Load(void)
 				Config_GetBool(str, opt->d._bool);
 				break;
 
+			case CONFIG_CAMPAIGN:
+				/* Campaign will be read else-where. */
+				break;
+
 			case CONFIG_FLOAT:
 				Config_GetFloat(str, 0.0f, 1.0f, opt->d._float);
 				break;
@@ -442,6 +476,10 @@ GameOptions_Save(void)
 		switch (opt->type) {
 			case CONFIG_BOOL:
 				Config_SetBool(s_configFile, opt->section, opt->key, *(opt->d._bool));
+				break;
+
+			case CONFIG_CAMPAIGN:
+				Config_SetCampaign(s_configFile, opt->section, opt->key, *(opt->d._int));
 				break;
 
 			case CONFIG_FLOAT:

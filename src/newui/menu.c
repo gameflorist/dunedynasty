@@ -17,6 +17,7 @@
 #include "strategicmap.h"
 #include "../audio/audio.h"
 #include "../common_a5.h"
+#include "../config.h"
 #include "../cutscene.h"
 #include "../enhancement.h"
 #include "../file.h"
@@ -376,6 +377,11 @@ Menu_Init(void)
 	if (g_campaign_total <= 1) {
 		GUI_Widget_MakeInvisible(w);
 	}
+	else {
+		Config_GetCampaign();
+		w->drawParameterNormal.text = g_campaign_list[g_campaign_selected].name;
+		w->drawParameterDown.text = w->drawParameterNormal.text;
+	}
 
 	A5_UseTransform(SCREENDIV_MENU);
 }
@@ -395,9 +401,6 @@ Menu_FreeWidgets(Widget *w)
 static void
 Menu_Uninit(void)
 {
-	free(g_campaign_list);
-	g_campaign_total = 0;
-
 	Menu_FreeWidgets(main_menu_widgets);
 	Menu_FreeWidgets(pick_house_widgets);
 	Menu_FreeWidgets(pick_cutscene_widgets);
