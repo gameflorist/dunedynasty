@@ -449,7 +449,6 @@ MenuBar_TickGameControls(void)
 		case 0x8000 | 35: /* STR_PREVIOUS */
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
 			GUI_Window_Create(&g_optionsWindowDesc);
-			GameOptions_Save();
 			break;
 
 		default:

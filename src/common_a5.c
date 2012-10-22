@@ -181,6 +181,8 @@ A5_Init(void)
 void
 A5_Uninit(void)
 {
+	GameOptions_Save();
+
 	al_set_target_bitmap(s_transform[SCREENDIV_MAIN]);
 
 	s_transform[SCREENDIV_MAIN] = NULL;
