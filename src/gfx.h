@@ -35,6 +35,8 @@ extern uint16 g_screenActiveID;
 
 extern ScreenDiv g_screenDiv[SCREENDIV_MAX];
 
+extern void GFX_InitDefaultViewportScales(bool adjust_viewport);
+
 extern void GFX_Init(void);
 extern void GFX_Uninit(void);
 extern uint16 GFX_Screen_SetActive(uint16 screenID);

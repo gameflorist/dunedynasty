@@ -386,6 +386,7 @@ VideoA5_ToggleFullscreen(void)
 	TRUE_DISPLAY_WIDTH = al_get_display_width(display);
 	TRUE_DISPLAY_HEIGHT = al_get_display_height(display);
 
+	GFX_InitDefaultViewportScales(false);
 	al_set_target_backbuffer(display);
 	A5_InitTransform(true);
 	GameLoop_TweakWidgetDimensions();

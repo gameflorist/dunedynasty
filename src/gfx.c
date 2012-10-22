@@ -37,6 +37,37 @@ ScreenDiv g_screenDiv[SCREENDIV_MAX] = {
 	{ 1.0f,   0,  40, 240, 160 }, /* SCREENDIV_VIEWPORT */
 };
 
+void
+GFX_InitDefaultViewportScales(bool adjust_viewport)
+{
+	ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
+	ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
+	ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+
+	/* Default viewport scales. */
+	if (TRUE_DISPLAY_WIDTH <= 320) {
+		menubar->scale = 1.0f;
+		sidebar->scale = 1.0f;
+
+		if (adjust_viewport)
+			viewport->scale = 1.0f;
+	}
+	else if (TRUE_DISPLAY_WIDTH <= 640) {
+		menubar->scale = 1.0f;
+		sidebar->scale = 1.0f;
+
+		if (adjust_viewport)
+			viewport->scale = 2.0f;
+	}
+	else {
+		menubar->scale = 2.0f;
+		sidebar->scale = 2.0f;
+
+		if (adjust_viewport)
+			viewport->scale = 2.0f;
+	}
+}
+
 /**
  * Get the codesegment of the active screen buffer.
  * @return The codesegment of the screen buffer.
