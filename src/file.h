@@ -29,16 +29,18 @@ typedef struct FileInfo {
 	uint32 fileSize;                                        /*!< The size of this file. */
 	void *buffer;                                           /*!< In case the file is read in the memory, this is the location of the data. */
 	uint32 filePosition;                                    /*!< Where in the file we currently are (doesn't have to start at zero when in PAK file). */
-	uint8  parentIndex;                                     /*!< In which FileInfo this file can be found. */
+	uint16 parentIndex;                                     /*!< In which FileInfo this file can be found. */
 	struct {
 		BIT_U8 isLoaded:1;                                  /*!< File is mapped in the memory. */
 		BIT_U8 inMemory:1;                                  /*!< File is loaded in alloc'd memory. */
-    	BIT_U8 inPAKFile:1;                                 /*!< File can be in other PAK file. */
+		BIT_U8 inPAKFile:1;                                 /*!< File can be in other PAK file. */
 	} flags;                                                /*!< General flags of the FileInfo. */
 } FileInfo;
 
 extern char g_dune_data_dir[1024];
 extern char g_personal_data_dir[1024];
+
+extern void FileHash_Init(void);
 
 extern void File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const char *filename, bool convert_to_lowercase);
 extern FILE *File_Open_CaseInsensitive(enum SearchDirectory dir, const char *filename, const char *mode);

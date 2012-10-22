@@ -1310,6 +1310,7 @@ int main(int argc, char **argv)
 	VARIABLE_NOT_USED(argv);
 
 	CrashLog_Init();
+	FileHash_Init();
 	Mouse_Init();
 
 	if (A5_InitOptions() == false)

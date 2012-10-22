@@ -7,7 +7,7 @@
 
 #include "../file.h"
 
-FileInfo g_table_fileInfo[FILEINFO_MAX] = {
+const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 0 */
 		/* filename             */ "DUNE.PAK",
 		/* fileSize             */ 439833,
