@@ -162,6 +162,23 @@ HallOfFame_DrawMeter(enum HouseType houseID, const HallOfFameData *fame, int met
 				c[idx] = 63 * 4 - 4.0f/3.0f * dt;
 			}
 
+			switch (houseID) {
+				case HOUSE_FREMEN:
+					c[1] = c[0] / 2;
+					break;
+
+				case HOUSE_SARDAUKAR:
+					c[2] = 35 * 2 + c[0] / 2;
+					break;
+
+				case HOUSE_MERCENARY:
+					c[1] = 35 * 2 + c[0] / 2;
+					break;
+
+				default:
+					break;
+			}
+
 			c[idx] = clamp(35 * 4, c[idx], 63 * 4);
 			Prim_FillRect_RGBA(x, y, x + w, y + h, c[0], c[1], c[2], 0xFF);
 		}
