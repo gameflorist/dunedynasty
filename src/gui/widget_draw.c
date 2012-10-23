@@ -696,7 +696,8 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 						if (actions[i] == actionCurrent) {
 							GUI_Widget_MakeSelected(buttons[i], false);
 						} else {
-							GUI_Widget_MakeNormal(buttons[i], false);
+							/* GUI_Widget_MakeNormal(buttons[i], false); */
+							buttons[i]->state.s.selected = false;
 						}
 					}
 				} break;
@@ -719,13 +720,13 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 							widget24->stringID = STR_REPAIR;
 
 							GUI_Widget_MakeVisible(widget24);
-							GUI_Widget_MakeNormal(widget24, false);
+							/* GUI_Widget_MakeNormal(widget24, false); */
 						}
 					} else if (s->upgradeTimeLeft != 0) {
 						widget24->stringID = STR_UPGRADE;
 
 						GUI_Widget_MakeVisible(widget24);
-						GUI_Widget_MakeNormal(widget24, false);
+						/* GUI_Widget_MakeNormal(widget24, false); */
 					}
 
 					if ((oi->flags.factory && o->type != STRUCTURE_STARPORT) ||
