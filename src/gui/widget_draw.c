@@ -732,7 +732,6 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 					    (o->type == STRUCTURE_STARPORT && (h->starportLinkedID == 0xFFFF)) ||
 					    (o->type == STRUCTURE_PALACE && s->countDown == 0)) {
 						GUI_Widget_MakeVisible(widget2C);
-						GUI_Widget_Draw(widget2C);
 					}
 
 					ActionPanel_DrawStructureDescription(s);
