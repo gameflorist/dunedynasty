@@ -651,8 +651,15 @@ PickHouse_Loop(void)
 			g_playerHouseID = widgetID & (~0x8000);
 			g_scenarioID = 1;
 
-			Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
-			Audio_PlayVoice(VOICE_HARKONNEN + g_table_houseRemap6to3[g_playerHouseID]);
+			/* Fremen, Sardaukar, and Mercenaries don't have special house samples. */
+			if (g_playerHouseID <= HOUSE_ORDOS) {
+				Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
+			}
+			else {
+				Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
+			}
+
+			Audio_PlayVoice(VOICE_HARKONNEN + g_playerHouseID);
 
 			while (Audio_Poll())
 				Timer_Sleep(1);
