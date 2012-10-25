@@ -476,6 +476,7 @@ Campaign_Load(void)
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
 
 	Campaign_ReadMetaData(camp);
+	ReadProfileIni();
 	String_ReloadMentatText();
 }
 

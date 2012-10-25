@@ -401,7 +401,8 @@ static void Window_WidgetClick_Create(void)
 	}
 }
 
-static void ReadProfileIni(char *filename)
+void
+ReadProfileIni(void)
 {
 	char *source;
 	char *key;
@@ -412,14 +413,13 @@ static void ReadProfileIni(char *filename)
 	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
 	memcpy(g_table_unitInfo, g_table_unitInfo_original, sizeof(g_table_unitInfo_original));
 
-	if (filename == NULL) return;
-	if (!File_Exists(filename)) return;
+	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI"))
+		return;
 
 	source = GFX_Screen_Get_ByIndex(3);
-
 	memset(source, 0, 32000);
-	File_ReadBlockFile(filename, source, GFX_Screen_GetSize_ByIndex(3));
 
+	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI", source, GFX_Screen_GetSize_ByIndex(3));
 	keys = source + strlen(source) + 5000;
 	*keys = '\0';
 
@@ -558,7 +558,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 	g_readBufferSize = 0x2EE0;
 	g_readBuffer = calloc(1, g_readBufferSize);
 
-	ReadProfileIni("PROFILE.INI");
+	/* ReadProfileIni("PROFILE.INI"); */
 
 	free(g_readBuffer); g_readBuffer = NULL;
 
