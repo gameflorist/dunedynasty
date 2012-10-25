@@ -11,6 +11,11 @@ typedef struct Campaign {
 	char name[32];
 	char dir_name[128];
 	enum HouseType house[3];
+
+	/* Emblem tweaks. */
+	unsigned int fame_cps[HOUSE_MAX];
+	unsigned int mapmach_cps[HOUSE_MAX];
+	unsigned int misc_cps[HOUSE_MAX];
 } Campaign;
 
 /**

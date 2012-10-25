@@ -11,6 +11,7 @@
 #include "../gui/font.h"
 #include "../gui/gui.h"
 #include "../opendune.h"
+#include "../scenario.h"
 #include "../string.h"
 #include "../table/strings.h"
 #include "../timer/timer.h"
@@ -39,18 +40,15 @@ static const struct {
 HallOfFameData g_hall_of_fame_state;
 
 static void
-HallOfFame_DrawEmblem(enum HouseType houseL, enum HouseType houseR)
+HallOfFame_DrawEmblem(unsigned char emblemL, unsigned char emblemR)
 {
-	const struct {
-		int x, y;
-	} emblem[3] = {
-		{ 8, 136 }, { 8 + 56 * 1, 136 }, { 8 + 56 * 2, 136 }
-	};
-	assert(houseL <= HOUSE_ORDOS);
-	assert(houseR <= HOUSE_ORDOS);
+	int x;
 
-	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", emblem[houseL].x, emblem[houseL].y, 0, 8, 7*8, 56);
-	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", emblem[houseR].x, emblem[houseR].y, SCREEN_WIDTH - 7*8, 8, 7*8, 56);
+	x = 8 + 56 * emblemL;
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", x, 136, 0, 8, 7*8, 56);
+
+	x = 8 + 56 * emblemR;
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", x, 136, SCREEN_WIDTH - 7*8, 8, 7*8, 56);
 }
 
 void
@@ -59,12 +57,12 @@ HallOfFame_DrawBackground(enum HouseType houseID, bool hallOfFame)
 	Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS");
 
 	if (houseID != HOUSE_INVALID) {
-		houseID = g_table_houseRemap6to3[houseID];
-		HallOfFame_DrawEmblem(houseID, houseID);
+		const int emblemID = g_campaign_list[g_campaign_selected].fame_cps[houseID];
+		HallOfFame_DrawEmblem(emblemID, emblemID);
 	}
 	else {
 		/* XXX: would be nice to use the highest score's house. */
-		HallOfFame_DrawEmblem(HOUSE_HARKONNEN, HOUSE_ATREIDES);
+		HallOfFame_DrawEmblem(0, 1);
 	}
 
 	if (hallOfFame) {

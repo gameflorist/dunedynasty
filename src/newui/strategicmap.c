@@ -16,6 +16,7 @@
 #include "../ini.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
+#include "../scenario.h"
 #include "../sprites.h"
 #include "../string.h"
 #include "../table/sound.h"
@@ -79,7 +80,7 @@ StrategicMap_DrawPlanet(const StrategicMapData *map)
 }
 
 static void
-StrategicMap_DrawEmblem(enum HouseType houseID)
+StrategicMap_DrawEmblem(unsigned char emblemID)
 {
 	const struct {
 		int x, y;
@@ -87,11 +88,19 @@ StrategicMap_DrawEmblem(enum HouseType houseID)
 		{ 0*8, 152 }, { 33*8, 152 }, { 1*8, 24 }
 	};
 
-	houseID = g_table_houseRemap6to3[houseID];
-	assert(houseID <= HOUSE_ORDOS);
+	int x, y;
 
-	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS", emblem[houseID].x, emblem[houseID].y, emblem[HOUSE_HARKONNEN].x, emblem[HOUSE_HARKONNEN].y, 7*8, 40);
-	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS", emblem[houseID].x, emblem[houseID].y, emblem[HOUSE_ATREIDES].x, emblem[HOUSE_ATREIDES].y, 7*8, 40);
+	if (emblemID < 3) {
+		x = emblem[emblemID].x;
+		y = emblem[emblemID].y;
+	}
+	else {
+		x = emblem[2].x + 56 * (emblemID - 2);
+		y = emblem[2].y;
+	}
+
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS", x, y, emblem[0].x, emblem[0].y, 7*8, 40);
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS", x, y, emblem[1].x, emblem[1].y, 7*8, 40);
 }
 
 static void
@@ -103,7 +112,7 @@ StrategicMap_DrawBackground(enum HouseType houseID)
 		CPS_CONQUEST_EN;
 
 	Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS");
-	StrategicMap_DrawEmblem(houseID);
+	StrategicMap_DrawEmblem(g_campaign_list[g_campaign_selected].mapmach_cps[houseID]);
 	Video_DrawCPSSpecial(conquest, houseID, 8, 0);
 }
 

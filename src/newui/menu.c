@@ -552,6 +552,7 @@ MainMenu_Loop(void)
 			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
 
 		case 0x8000 | MENU_HALL_OF_FAME:
+			Campaign_Load();
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_HALL_OF_FAME;
 
@@ -804,10 +805,10 @@ Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 	else if (mentat->state == MENTAT_IDLE) {
 		if (curr_menu == MENU_CONFIRM_HOUSE) {
 			const char *misc = String_GenerateFilename("MISC");
-			const enum HouseType houseID = g_table_houseRemap6to3[g_playerHouseID];
+			const int offset = g_campaign_list[g_campaign_selected].misc_cps[g_playerHouseID];
 
 			Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, misc, 0, 0, 0, 0, 26*8, 24);
-			Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, misc, 0, 24 * (houseID + 1), 26*8, 0, 13*8, 24);
+			Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, misc, 0, 24 * (offset + 1), 26*8, 0, 13*8, 24);
 
 			GUI_Widget_DrawAll(briefing_yes_no_widgets);
 		}

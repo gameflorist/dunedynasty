@@ -77,6 +77,26 @@ Campaign_AddFileInPAK(const char *filename, int parent)
 }
 
 static void
+Campaign_ReadCPSTweaks(char *source, const char *key, char *value, size_t size,
+		const unsigned int *def, unsigned int *dest)
+{
+	unsigned int tmp[HOUSE_MAX];
+
+	Ini_GetString("CPS", key, NULL, value, size, source);
+
+	if (sscanf(value, "%u,%u,%u,%u,%u,%u",
+				&tmp[HOUSE_HARKONNEN], &tmp[HOUSE_ATREIDES], &tmp[HOUSE_ORDOS],
+				&tmp[HOUSE_FREMEN], &tmp[HOUSE_SARDAUKAR], &tmp[HOUSE_MERCENARY]) < 6) {
+		memcpy(dest, def, HOUSE_MAX * sizeof(dest[0]));
+	}
+	else {
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+			dest[houseID] = min(tmp[houseID], HOUSE_MAX);
+		}
+	}
+}
+
+static void
 Campaign_ReadMetaData(Campaign *camp)
 {
 	if (camp->dir_name[0] == '\0') /* Dune II */
@@ -86,12 +106,18 @@ Campaign_ReadMetaData(Campaign *camp)
 		return;
 
 	char value[120];
-	int i = snprintf(value, sizeof(value), "%s", camp->dir_name);
 
 	char *source = GFX_Screen_Get_ByIndex(3);
 	memset(source, 0, 32000);
 	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI", source, GFX_Screen_GetSize_ByIndex(3));
 
+	/* Read CPS tweaks. */
+	Campaign_ReadCPSTweaks(source, "FAME.CPS",    value, sizeof(value), g_campaign_list[0].fame_cps, camp->fame_cps);
+	Campaign_ReadCPSTweaks(source, "MAPMACH.CPS", value, sizeof(value), g_campaign_list[0].mapmach_cps, camp->mapmach_cps);
+	Campaign_ReadCPSTweaks(source, "MISC.CPS",    value, sizeof(value), g_campaign_list[0].misc_cps, camp->misc_cps);
+
+	/* Add PAK file entries. */
+	int i = snprintf(value, sizeof(value), "%s", camp->dir_name);
 	char *keys = source + strlen(source) + 5000;
 	*keys = '\0';
 	Ini_GetString("PAK", NULL, NULL, keys, 2000, source);

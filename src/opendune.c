@@ -1358,6 +1358,15 @@ int main(int argc, char **argv)
 	camp->house[0] = HOUSE_ATREIDES;
 	camp->house[1] = HOUSE_ORDOS;
 	camp->house[2] = HOUSE_HARKONNEN;
+	camp->fame_cps[HOUSE_HARKONNEN] = camp->fame_cps[HOUSE_SARDAUKAR] = 0;
+	camp->fame_cps[HOUSE_ATREIDES] = camp->fame_cps[HOUSE_FREMEN] = 1;
+	camp->fame_cps[HOUSE_ORDOS] = camp->fame_cps[HOUSE_MERCENARY] = 2;
+	camp->mapmach_cps[HOUSE_HARKONNEN] = camp->mapmach_cps[HOUSE_SARDAUKAR] = 0;
+	camp->mapmach_cps[HOUSE_ATREIDES] = camp->mapmach_cps[HOUSE_FREMEN] = 1;
+	camp->mapmach_cps[HOUSE_ORDOS] = camp->mapmach_cps[HOUSE_MERCENARY] = 2;
+	camp->misc_cps[HOUSE_HARKONNEN] = camp->misc_cps[HOUSE_SARDAUKAR] = 0;
+	camp->misc_cps[HOUSE_ATREIDES] = camp->misc_cps[HOUSE_FREMEN] = 1;
+	camp->misc_cps[HOUSE_ORDOS] = camp->misc_cps[HOUSE_MERCENARY] = 2;
 	snprintf(camp->name, sizeof(camp->name), "%s", String_Get_ByIndex(STR_THE_BATTLE_FOR_ARRAKIS));
 
 	Sprites_Init();
