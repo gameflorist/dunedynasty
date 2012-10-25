@@ -67,7 +67,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* degradingAmount      */ 1,
 		/* minimapColor         */ 192,
 		/* specialCountDown     */ 300,
-		/* starportDeliveryTime */ 0,
+		/* starportDeliveryTime */ 10, /* was 0. */
 		/* prefixChar           */ 'A',
 		/* specialWeapon        */ HOUSE_WEAPON_FREMEN,
 		/* musicWin             */ MUSIC_WIN_ATREIDES,
@@ -85,7 +85,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* degradingAmount      */ 1,
 		/* minimapColor         */ 208,
 		/* specialCountDown     */ 600,
-		/* starportDeliveryTime */ 0,
+		/* starportDeliveryTime */ 10, /* was 0. */
 		/* prefixChar           */ 'H',
 		/* specialWeapon        */ HOUSE_WEAPON_MISSILE,
 		/* musicWin             */ MUSIC_WIN_HARKONNEN,
@@ -103,7 +103,7 @@ const HouseInfo g_table_houseInfo[] = {
 		/* degradingAmount      */ 1,
 		/* minimapColor         */ 224,
 		/* specialCountDown     */ 300,
-		/* starportDeliveryTime */ 0,
+		/* starportDeliveryTime */ 10, /* was 0. */
 		/* prefixChar           */ 'O',
 		/* specialWeapon        */ HOUSE_WEAPON_SABOTEUR,
 		/* musicWin             */ MUSIC_WIN_ORDOS,
