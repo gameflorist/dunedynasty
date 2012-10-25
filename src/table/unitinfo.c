@@ -1689,7 +1689,7 @@ UnitInfo g_table_unitInfo[] = {
 		/* damage               */ 0,
 		/* explosionType        */ 18,
 		/* bulletType           */ -1,
-		/* bulletSound          */ -1
+		/* bulletSound          */ -1 /* was SOUND_MINI_ROCKET. */
 	},
 
 	{ /* 23 */
