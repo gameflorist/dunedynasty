@@ -79,6 +79,25 @@ Campaign_AddFileInPAK(const char *filename, int parent)
 	fi->flags.inPAKFile = true;
 }
 
+static enum MentatID
+Campaign_ReadMentat(const char *str, enum MentatID def)
+{
+	while (*str != '\0' && isspace(*str)) str++;
+
+	if (strcasecmp(str, "Radnor") == 0)
+		return MENTAT_RADNOR;
+	if (strcasecmp(str, "Cyril") == 0)
+		return MENTAT_CYRIL;
+	if (strcasecmp(str, "Ammon") == 0)
+		return MENTAT_AMMON;
+	if (strcasecmp(str, "BeneGesserit") == 0)
+		return MENTAT_BENE_GESSERIT;
+	if (strcasecmp(str, "Custom") == 0)
+		return MENTAT_CUSTOM;
+
+	return def;
+}
+
 static void
 Campaign_ReadCPSTweaks(char *source, const char *key, char *value, size_t size,
 		const unsigned int *def, unsigned int *dest)
@@ -115,6 +134,18 @@ Campaign_ReadMetaData(Campaign *camp)
 	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI", source, GFX_Screen_GetSize_ByIndex(3));
 
 	camp->intermission = Ini_GetInteger("CAMPAIGN", "Intermission", 0, source);
+
+	/* Read houses. */
+	for (int h = 0; h < 3; h++) {
+		if (camp->house[h] == HOUSE_INVALID)
+			continue;
+
+		HouseInfo *hi = &g_table_houseInfo[camp->house[h]];
+
+		snprintf(value, sizeof(value), "Mentat%c", hi->name[0]);
+		Ini_GetString("CAMPAIGN", value, NULL, value + 8, sizeof(value) - 8, source);
+		hi->mentat = Campaign_ReadMentat(value + 8, hi->mentat);
+	}
 
 	/* Read CPS tweaks. */
 	Campaign_ReadCPSTweaks(source, "FAME.CPS",    value, sizeof(value), g_campaign_list[0].fame_cps, camp->fame_cps);
@@ -614,8 +645,8 @@ Campaign_Load(void)
 {
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
 
-	Campaign_ReadMetaData(camp);
 	Campaign_ReadHouseIni();
+	Campaign_ReadMetaData(camp);
 	Campaign_ReadProfileIni();
 	String_ReloadMentatText();
 }

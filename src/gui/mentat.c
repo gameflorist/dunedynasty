@@ -274,6 +274,7 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 
 			case MENTAT_RADNOR:
 			case MENTAT_BENE_GESSERIT:
+			case MENTAT_CUSTOM:
 			case MENTAT_MAX:
 				break;
 		}

@@ -53,6 +53,12 @@ static const struct {
 		SHAPE_INVALID, 0,0,
 		SHAPE_INVALID, 0,0
 	},
+	{	NULL,
+		SHAPE_INVALID, 0,0,
+		SHAPE_INVALID, 0,0,
+		SHAPE_INVALID, 0,0,
+		SHAPE_INVALID, 0,0
+	},
 };
 
 int movingEyesSprite;
@@ -88,23 +94,32 @@ Mentat_DrawBackground(enum MentatID mentatID)
 {
 	assert(mentatID < MENTAT_MAX);
 
-	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, mentat_data[mentatID].background);
+	if (mentatID == MENTAT_CUSTOM) {
+		char background[16];
+		snprintf(background, sizeof(background), "MENTAT%c.CPS", g_table_houseInfo[g_playerHouseID].name[0]);
+		Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, background);
+	}
+	else {
+		Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, mentat_data[mentatID].background);
+	}
 }
 
 static void
 Mentat_DrawEyes(enum MentatID mentatID)
 {
-	const enum ShapeID shapeID = mentat_data[mentatID].eyes + movingEyesSprite;
+	const enum ShapeID shapeID = mentat_data[mentatID].eyes;
 
-	Shape_Draw(shapeID, mentat_data[mentatID].eyesX, mentat_data[mentatID].eyesY, 0, 0);
+	if (shapeID != SHAPE_INVALID)
+		Shape_Draw(shapeID + movingEyesSprite, mentat_data[mentatID].eyesX, mentat_data[mentatID].eyesY, 0, 0);
 }
 
 static void
 Mentat_DrawMouth(enum MentatID mentatID)
 {
-	const enum ShapeID shapeID = mentat_data[mentatID].mouth + movingMouthSprite;
+	const enum ShapeID shapeID = mentat_data[mentatID].mouth;
 
-	Shape_Draw(shapeID, mentat_data[mentatID].mouthX, mentat_data[mentatID].mouthY, 0, 0);
+	if (shapeID != SHAPE_INVALID)
+		Shape_Draw(shapeID + movingMouthSprite, mentat_data[mentatID].mouthX, mentat_data[mentatID].mouthY, 0, 0);
 }
 
 static void
