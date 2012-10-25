@@ -535,6 +535,7 @@ MainMenu_Loop(void)
 		case 0x8000 | MENU_PLAY_A_GAME:
 			g_campaignID = 0;
 			g_playerHouseID = HOUSE_MERCENARY;
+			Campaign_Load();
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
@@ -544,6 +545,7 @@ MainMenu_Loop(void)
 
 		case 0x8000 | MENU_LOAD_GAME:
 			GUI_Widget_InitSaveLoad(false);
+			Campaign_Load();
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
 

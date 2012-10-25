@@ -2,6 +2,10 @@
 
 /** @file src/scenario.c %Scenario handling routines. */
 
+#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE_EXTENDED
+
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +17,7 @@
 
 #include "enhancement.h"
 #include "file.h"
+#include "gfx.h"
 #include "house.h"
 #include "ini.h"
 #include "map.h"
@@ -55,6 +60,125 @@ Campaign_Alloc(const char *dir_name)
 	}
 
 	return camp;
+}
+
+static void
+Campaign_AddFileInPAK(const char *filename, int parent)
+{
+	FileInfo *fi;
+
+	if (FileHash_FindIndex(filename) != (unsigned int)-1)
+		return;
+
+	fi = FileHash_Store(filename);
+	fi->filename = strdup(filename);
+	fi->parentIndex = parent;
+	fi->flags.inPAKFile = true;
+}
+
+static void
+Campaign_ReadMetaData(Campaign *camp)
+{
+	if (camp->dir_name[0] == '\0') /* Dune II */
+		return;
+
+	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI"))
+		return;
+
+	char value[120];
+	int i = snprintf(value, sizeof(value), "%s", camp->dir_name);
+
+	char *source = GFX_Screen_Get_ByIndex(3);
+	memset(source, 0, 32000);
+	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI", source, GFX_Screen_GetSize_ByIndex(3));
+
+	char *keys = source + strlen(source) + 5000;
+	*keys = '\0';
+	Ini_GetString("PAK", NULL, NULL, keys, 2000, source);
+
+	FileInfo *fi;
+	unsigned int parent;
+
+	for (char *key = keys; *key != '\0'; key += strlen(key) + 1) {
+		/* Shortcut for all regions and scenarios. */
+		if (strcasecmp(key, "Scenarios") == 0) {
+			Ini_GetString("PAK", "Scenarios", NULL, value + i, sizeof(value) - i, source);
+
+			/* Handle white-space. */
+			int j = i;
+			while ((value[j] != '\0') && isspace(value[j])) j++;
+			if (i != j) memmove(value + i, value + j, strlen(value + j) + 1);
+
+			/* Already indexed this file. */
+			parent = FileHash_FindIndex(value);
+			if (parent != (unsigned int)-1)
+				continue;
+
+			fi = FileHash_Store(value);
+			fi->filename = strdup(value);
+			parent = FileHash_FindIndex(value);
+
+			for (int h = 0; h < 3; h++) {
+				if (camp->house[h] == HOUSE_INVALID)
+					continue;
+
+				snprintf(value + i, sizeof(value) - i, "REGION%c.INI", g_table_houseInfo[camp->house[h]].name[0]);
+				Campaign_AddFileInPAK(value, parent);
+
+				for (int scen = 0; scen <= 22; scen++) {
+					snprintf(value + i, sizeof(value) - i, "SCEN%c%03d.INI", g_table_houseInfo[camp->house[h]].name[0], scen);
+					Campaign_AddFileInPAK(value, parent);
+				}
+			}
+		}
+
+		/* PAK file content lists. */
+		else {
+			snprintf(value + i, sizeof(value) - i, "%s", key);
+
+			/* Already indexed this file. */
+			parent = FileHash_FindIndex(value);
+			if (parent != (unsigned int)-1)
+				continue;
+
+			fi = FileHash_Store(value);
+			fi->filename = strdup(value);
+			parent = FileHash_FindIndex(value);
+
+			/* Get content list: file1,file2,... */
+			Ini_GetString("PAK", key, NULL, value + i, sizeof(value) - i, source);
+
+			char *start = value + i;
+			char *end = start + strlen(start);
+			while (start < end) {
+				while (isspace(*start)) start++;
+
+				char *sep = strchr(start, ',');
+				if (sep == NULL) {
+					sep = end;
+				}
+				else {
+					*sep = '\0';
+				}
+
+				memmove(value + i, start, sep - start + 1);
+				String_Trim(value + i);
+
+				if (strlen(value + i) > 0)
+					Campaign_AddFileInPAK(value, parent);
+
+				start = sep + 1;
+			}
+		}
+	}
+}
+
+void
+Campaign_Load(void)
+{
+	Campaign *camp = &g_campaign_list[g_campaign_selected];
+
+	Campaign_ReadMetaData(camp);
 }
 
 /*--------------------------------------------------------------*/
