@@ -244,7 +244,14 @@ MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntr
 	assert(entry <= MENTAT_BRIEFING_ADVICE);
 
 	if (scenarioID <= 0) {
-		const char *wsaFilename = House_GetWSAHouseFilename(g_table_houseRemap6to3[houseID]);
+		const char *wsaFilename = House_GetWSAHouseFilename(houseID);
+
+		/* Be careful here because Fremen, Sardaukar, and Mercenaries
+		 * don't have house WSAs in Dune II.
+		 */
+		if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, wsaFilename)) {
+			wsaFilename = House_GetWSAHouseFilename(g_table_houseRemap6to3[houseID]);
+		}
 
 		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
 	}

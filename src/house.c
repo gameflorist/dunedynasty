@@ -541,8 +541,11 @@ void House_CalculatePowerAndCredit(House *h)
 
 const char *House_GetWSAHouseFilename(uint8 houseID)
 {
-	static const char *houseWSAFileNames[3] = { "FHARK.WSA", "FARTR.WSA", "FORDOS.WSA" };
+	static const char *houseWSAFileNames[HOUSE_MAX] = {
+		"FHARK.WSA", "FARTR.WSA", "FORDOS.WSA",
+		"FFREMN.WSA", "FSARD.WSA", "FMERC.WSA"
+	};
 
-	if (houseID >= 3) return NULL;
+	if (houseID >= HOUSE_MAX) return NULL;
 	return houseWSAFileNames[houseID];
 }
