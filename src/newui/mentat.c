@@ -250,7 +250,7 @@ MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntr
 		char filename[16];
 		snprintf(filename, sizeof(filename), "SCEN%c%03d.INI", g_table_houseInfo[houseID].name[0], scenarioID);
 
-		char *buf = File_ReadWholeFile(filename);
+		char *buf = File_ReadWholeFile_Ex(SEARCHDIR_CAMPAIGN_DIR, filename);
 		if (buf == NULL) {
 			mentat->wsa = NULL;
 			return;

@@ -622,9 +622,11 @@ bool Scenario_Load(uint16 scenarioID, uint8 houseID)
 	g_scenarioID = scenarioID;
 
 	/* Load scenario file */
-	sprintf(filename, "SCEN%c%03d.INI", g_table_houseInfo[houseID].name[0], scenarioID);
-	if (!File_Exists(filename)) return false;
-	s_scenarioBuffer = File_ReadWholeFile(filename);
+	snprintf(filename, sizeof(filename), "SCEN%c%03d.INI", g_table_houseInfo[houseID].name[0], scenarioID);
+	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, filename))
+		return false;
+
+	s_scenarioBuffer = File_ReadWholeFile_Ex(SEARCHDIR_CAMPAIGN_DIR, filename);
 
 	memset(&g_scenario, 0, sizeof(Scenario));
 

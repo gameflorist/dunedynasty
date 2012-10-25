@@ -15,10 +15,13 @@
 
 #include "file.h"
 
+#include "scenario.h"
+
 #define HASH_SIZE 4093
 
-#define DUNE2_DATA_PREFIX   "data"
-#define DUNE2_SAVE_PREFIX   "save"
+#define DUNE2_CAMPAIGN_PREFIX   "campaign"
+#define DUNE2_DATA_PREFIX       "data"
+#define DUNE2_SAVE_PREFIX       "save"
 
 /**
  * Static information about opened files.
@@ -118,6 +121,14 @@ File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const
 	if (dir == SEARCHDIR_GLOBAL_DATA_DIR) {
 		i = snprintf(buf, len, "%s/%s/", g_dune_data_dir, DUNE2_DATA_PREFIX);
 	}
+	else if (dir == SEARCHDIR_CAMPAIGN_DIR) {
+		if (strchr(filename, '/') == NULL) { /* Dune II */
+			i = snprintf(buf, len, "%s/%s/", g_dune_data_dir, DUNE2_DATA_PREFIX);
+		}
+		else {
+			i = snprintf(buf, len, "%s/%s/", g_dune_data_dir, DUNE2_CAMPAIGN_PREFIX);
+		}
+	}
 	else if (dir == SEARCHDIR_PERSONAL_DATA_DIR) {
 		i = snprintf(buf, len, "%s/%s/", g_personal_data_dir, DUNE2_SAVE_PREFIX);
 	}
@@ -179,7 +190,7 @@ static uint16 FileInfo_FindIndex_ByName(const char *filename)
  * @return An index value refering to the opened file, or FILE_INVALID.
  */
 static uint8
-_File_Open(enum SearchDirectory dir, const char *filename, uint8 mode)
+_File_OpenInDir(enum SearchDirectory dir, const char *filename, uint8 mode)
 {
 	const char *mode_str = (mode == 2) ? "wb" : ((mode == 3) ? "wb+" : "rb");
 
@@ -242,8 +253,16 @@ _File_Open(enum SearchDirectory dir, const char *filename, uint8 mode)
 			}
 			if (pakPosition == 0) break;
 
+			/* Add campaign directory (and slash) to filename. */
+			if ((dir == SEARCHDIR_CAMPAIGN_DIR) && (g_campaign_selected != 0)) {
+				i = snprintf(pakFilename, sizeof(pakFilename), "%s", g_campaign_list[g_campaign_selected].dir_name);
+			}
+			else {
+				i = 0;
+			}
+
 			/* Read the name of the file inside the PAK */
-			for (i = 0; i < sizeof(pakFilename); i++) {
+			for (; i < sizeof(pakFilename); i++) {
 				if (fread(&pakFilename[i], 1, 1, s_file[fileIndex].fp) != 1) {
 					fclose(s_file[fileIndex].fp);
 					s_file[fileIndex].fp = NULL;
@@ -295,6 +314,29 @@ _File_Open(enum SearchDirectory dir, const char *filename, uint8 mode)
 	/* Go to the start of the file now */
 	fseek(s_file[fileIndex].fp, s_file[fileIndex].start, SEEK_SET);
 	return fileIndex;
+}
+
+static uint8
+_File_Open(enum SearchDirectory dir, const char *filename, uint8 mode)
+{
+	uint8 ret;
+
+	/* Try campaign file. */
+	if (dir == SEARCHDIR_CAMPAIGN_DIR) {
+		if (g_campaign_list[g_campaign_selected].dir_name[0] != '\0') {
+			char buf[1024];
+
+			snprintf(buf, sizeof(buf), "%s%s", g_campaign_list[g_campaign_selected].dir_name, filename);
+			ret = _File_OpenInDir(dir, buf, mode);
+			if (ret != FILE_INVALID)
+				return ret;
+		}
+
+		dir = SEARCHDIR_GLOBAL_DATA_DIR;
+	}
+
+	ret = _File_OpenInDir(dir, filename, mode);
+	return ret;
 }
 
 /**
@@ -524,12 +566,13 @@ File_ReadWholeFile_Ex(enum SearchDirectory dir, const char *filename)
  * @param buf The buffer to read into.
  * @return The length of the file.
  */
-uint32 File_ReadFile(const char *filename, void *buf)
+uint32
+File_ReadFile_Ex(enum SearchDirectory dir, const char *filename, void *buf)
 {
 	uint8 index;
 	uint32 length;
 
-	index = File_Open(filename, 1);
+	index = File_Open_Ex(dir, filename, 1);
 	length = File_Seek(index, 0, 2);
 	File_Seek(index, 0, 0);
 	File_Read(index, buf, length);

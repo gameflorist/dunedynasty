@@ -18,6 +18,7 @@ enum {
 enum SearchDirectory {
 	SEARCHDIR_ABSOLUTE,
 	SEARCHDIR_GLOBAL_DATA_DIR,
+	SEARCHDIR_CAMPAIGN_DIR,
 	SEARCHDIR_PERSONAL_DATA_DIR
 };
 
@@ -52,7 +53,6 @@ extern uint32 File_Write(uint8 index, void *buffer, uint32 length);
 extern uint32 File_Seek(uint8 index, uint32 position, uint8 mode);
 extern uint32 File_GetSize(uint8 index);
 extern void File_Delete_Personal(const char *filename);
-extern uint32 File_ReadFile(const char *filename, void *buf);
 extern void ChunkFile_Close(uint8 index);
 extern uint32 ChunkFile_Seek(uint8 index, uint32 header);
 extern uint32 ChunkFile_Read(uint8 index, uint32 header, void *buffer, uint32 buflen);
@@ -71,6 +71,7 @@ extern bool File_Exists_Ex(enum SearchDirectory dir, const char *filename);
 extern uint8 File_Open_Ex(enum SearchDirectory dir, const char *filename, uint8 mode);
 extern uint32 File_ReadBlockFile_Ex(enum SearchDirectory dir, const char *filename, void *buffer, uint32 length);
 extern void *File_ReadWholeFile_Ex(enum SearchDirectory dir, const char *filename);
+extern uint32 File_ReadFile_Ex(enum SearchDirectory dir, const char *filename, void *buf);
 extern uint8 ChunkFile_Open_Ex(enum SearchDirectory dir, const char *filename);
 
 #endif /* FILE_H */

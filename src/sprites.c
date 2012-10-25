@@ -360,7 +360,7 @@ void Sprites_CPS_LoadRegionClick(void)
 
 	g_fileRegionINI = buf;
 	snprintf(filename, sizeof(filename), "REGION%c.INI", g_table_houseInfo[g_playerHouseID].name[0]);
-	buf += File_ReadFile(filename, buf);
+	buf += File_ReadFile_Ex(SEARCHDIR_CAMPAIGN_DIR, filename, buf);
 
 	g_regions = (uint16 *)buf;
 
