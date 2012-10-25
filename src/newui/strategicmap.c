@@ -259,6 +259,12 @@ StrategicMap_ReadProgression(enum HouseType houseID, int campaignID, StrategicMa
 				snprintf(key, sizeof(key), "%sTXT%d", g_languageSuffixes[g_gameConfig.language], region);
 				Ini_GetString(category, key, NULL, map->progression[count].text, sizeof(map->progression[count].text), g_fileRegionINI);
 
+				/* Attempt non-language-specific TXT. */
+				if (map->progression[count].text[0] == '\0') {
+					snprintf(key, sizeof(key), "TXT%d", region);
+					Ini_GetString(category, key, NULL, map->progression[count].text, sizeof(map->progression[count].text), g_fileRegionINI);
+				}
+
 				if (enhancement_fix_typos && (map->progression[count].text[0] != '\0')) {
 					char *str = map->progression[count].text;
 
