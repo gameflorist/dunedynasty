@@ -1156,6 +1156,7 @@ void GameLoop_Main(bool new_game)
 
 static bool Unknown_25C4_000E(void)
 {
+	memcpy(g_table_houseInfo, g_table_houseInfo_original, sizeof(g_table_houseInfo_original));
 	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
 	memcpy(g_table_unitInfo, g_table_unitInfo_original, sizeof(g_table_unitInfo_original));
 

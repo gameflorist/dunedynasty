@@ -255,6 +255,78 @@ UnitInfo_FlagsToUint16(const UnitInfo *ui)
 }
 
 static void
+Campaign_ReadHouseIni(void)
+{
+	char *source;
+	char *key;
+	char *keys;
+	char buffer[120];
+
+	memcpy(g_table_houseInfo, g_table_houseInfo_original, sizeof(g_table_houseInfo_original));
+
+	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "HOUSE.INI"))
+		return;
+
+	source = GFX_Screen_Get_ByIndex(3);
+	memset(source, 0, 32000);
+
+	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "HOUSE.INI", source, GFX_Screen_GetSize_ByIndex(3));
+
+	keys = source + strlen(source) + 5000;
+	*keys = '\0';
+
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		const char *category = g_table_houseInfo_original[houseID].name;
+		const HouseInfo *original = &g_table_houseInfo_original[houseID];
+		HouseInfo *hi = &g_table_houseInfo[houseID];
+
+		Ini_GetString(category, NULL, NULL, keys, 2000, source);
+
+		for (key = keys; *key != '\0'; key += strlen(key) + 1) {
+			/* Weakness, LemonFactor, Decay, Recharge, Frigate, Special, Voice. */
+			if (strcasecmp(key, "Weakness") == 0) {
+				hi->toughness = Ini_GetInteger(category, key, original->toughness, source);
+			}
+			else if (strcasecmp(key, "LemonFactor") == 0) {
+				hi->degradingChance = Ini_GetInteger(category, key, original->degradingChance, source);
+			}
+			else if (strcasecmp(key, "Decay") == 0) {
+				hi->degradingAmount = Ini_GetInteger(category, key, original->degradingAmount, source);
+			}
+			else if (strcasecmp(key, "Recharge") == 0) {
+				hi->specialCountDown = Ini_GetInteger(category, key, original->specialCountDown, source);
+			}
+			else if (strcasecmp(key, "Frigate") == 0) {
+				hi->starportDeliveryTime = Ini_GetInteger(category, key, original->starportDeliveryTime, source);
+			}
+			else if (strcasecmp(key, "Special") == 0) {
+				Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
+
+				char *buf = buffer;
+				while (*buf == ' ' || *buf == '\t') buf++;
+
+				     if (buf[0] == 'M') hi->specialWeapon = HOUSE_WEAPON_MISSILE;
+				else if (buf[0] == 'F') hi->specialWeapon = HOUSE_WEAPON_FREMEN;
+				else if (buf[0] == 'S') hi->specialWeapon = HOUSE_WEAPON_SABOTEUR;
+			}
+			else if (strcasecmp(key, "Voice") == 0) {
+				Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
+
+				char *buf = buffer;
+				while (*buf == ' ' || *buf == '\t') buf++;
+
+				if ('a' <= buf[0] && buf[0] <= 'z')
+					buf[0] += 'A' - 'a';
+
+				     if (buf[0] == 'H') hi->sampleSet = SAMPLESET_HARKONNEN;
+				else if (buf[0] == 'A') hi->sampleSet = SAMPLESET_ATREIDES;
+				else if (buf[0] == 'O') hi->sampleSet = SAMPLESET_ORDOS;
+			}
+		}
+	}
+}
+
+static void
 Campaign_ReadProfileIni(void)
 {
 	struct {
@@ -542,6 +614,7 @@ Campaign_Load(void)
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
 
 	Campaign_ReadMetaData(camp);
+	Campaign_ReadHouseIni();
 	Campaign_ReadProfileIni();
 	String_ReloadMentatText();
 }

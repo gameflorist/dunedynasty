@@ -5,7 +5,7 @@
 #include "sound.h"
 #include "../house.h"
 
-const HouseInfo g_table_houseInfo[] = {
+const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 	{ /* 0 */
 		/* name                 */ "Harkonnen",
 		/* toughness            */ 200,
@@ -114,6 +114,8 @@ const HouseInfo g_table_houseInfo[] = {
 		/* sampleSet            */ SAMPLESET_ORDOS
 	}
 };
+
+HouseInfo g_table_houseInfo[HOUSE_MAX];
 
 const enum HouseType g_table_houseRemap6to3[HOUSE_MAX] = {
 	HOUSE_HARKONNEN, HOUSE_ATREIDES, HOUSE_ORDOS,
