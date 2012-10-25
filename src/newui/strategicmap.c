@@ -72,7 +72,7 @@ StrategicMap_DrawPlanet(const StrategicMapData *map)
 	const int idx = map->state - STRATEGIC_MAP_SHOW_PLANET;
 	assert(0 <= idx && idx < 3);
 
-	Video_DrawCPSRegion(cps[idx], 8, 24, 8, 24, 304, 120);
+	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, cps[idx], 8, 24, 8, 24, 304, 120);
 
 	if (map->region_aux != NULL)
 		Video_DrawFadeIn(map->region_aux);
@@ -90,8 +90,8 @@ StrategicMap_DrawEmblem(enum HouseType houseID)
 	houseID = g_table_houseRemap6to3[houseID];
 	assert(houseID <= HOUSE_ORDOS);
 
-	Video_DrawCPSRegion("MAPMACH.CPS", emblem[houseID].x, emblem[houseID].y, emblem[HOUSE_HARKONNEN].x, emblem[HOUSE_HARKONNEN].y, 7*8, 40);
-	Video_DrawCPSRegion("MAPMACH.CPS", emblem[houseID].x, emblem[houseID].y, emblem[HOUSE_ATREIDES].x, emblem[HOUSE_ATREIDES].y, 7*8, 40);
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS", emblem[houseID].x, emblem[houseID].y, emblem[HOUSE_HARKONNEN].x, emblem[HOUSE_HARKONNEN].y, 7*8, 40);
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS", emblem[houseID].x, emblem[houseID].y, emblem[HOUSE_ATREIDES].x, emblem[HOUSE_ATREIDES].y, 7*8, 40);
 }
 
 static void
@@ -102,7 +102,7 @@ StrategicMap_DrawBackground(enum HouseType houseID)
 		(g_gameConfig.language == LANGUAGE_GERMAN) ? CPS_CONQUEST_DE :
 		CPS_CONQUEST_EN;
 
-	Video_DrawCPS("MAPMACH.CPS");
+	Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS");
 	StrategicMap_DrawEmblem(houseID);
 	Video_DrawCPSSpecial(conquest, houseID, 8, 0);
 }
@@ -423,7 +423,7 @@ StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map, int64_t fade_st
 		return;
 	}
 
-	Video_DrawCPSRegion("DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
+	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "DUNERGN.CPS", 8, 24, 8, 24, 304, 120);
 	StrategicMap_DrawRegions(map);
 	StrategicMap_DrawText(map);
 

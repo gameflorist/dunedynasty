@@ -49,14 +49,14 @@ HallOfFame_DrawEmblem(enum HouseType houseL, enum HouseType houseR)
 	assert(houseL <= HOUSE_ORDOS);
 	assert(houseR <= HOUSE_ORDOS);
 
-	Video_DrawCPSRegion("FAME.CPS", emblem[houseL].x, emblem[houseL].y, 0, 8, 7*8, 56);
-	Video_DrawCPSRegion("FAME.CPS", emblem[houseR].x, emblem[houseR].y, SCREEN_WIDTH - 7*8, 8, 7*8, 56);
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", emblem[houseL].x, emblem[houseL].y, 0, 8, 7*8, 56);
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", emblem[houseR].x, emblem[houseR].y, SCREEN_WIDTH - 7*8, 8, 7*8, 56);
 }
 
 void
 HallOfFame_DrawBackground(enum HouseType houseID, bool hallOfFame)
 {
-	Video_DrawCPS("FAME.CPS");
+	Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS");
 
 	if (houseID != HOUSE_INVALID) {
 		houseID = g_table_houseRemap6to3[houseID];
@@ -204,7 +204,7 @@ HallOfFame_DrawUnitsDestroyed(enum HouseType houseID, const HallOfFameData *fame
 {
 	const int y = 92 + 36 * 1;
 
-	Video_DrawCPSRegion("FAME.CPS", 8, 80, 8, 116, 304, 36);
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", 8, 80, 8, 116, 304, 36);
 	GUI_DrawTextOnFilledRectangle(String_Get_ByIndex(STR_UNITS_DESTROYED_BY), 119);
 	HallOfFame_DrawYouEnemyLabel(y);
 
@@ -221,7 +221,7 @@ HallOfFame_DrawBuildingsDestroyed(enum HouseType houseID, int scenarioID, const 
 		Prim_FillRect_i(8, 152, 8 + 304 - 1, 191, 116);
 	}
 	else {
-		Video_DrawCPSRegion("FAME.CPS", 8, 80, 8, 152, 304, 36);
+		Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", 8, 80, 8, 152, 304, 36);
 		GUI_DrawTextOnFilledRectangle(String_Get_ByIndex(STR_BUILDINGS_DESTROYED_BY), 155);
 		HallOfFame_DrawYouEnemyLabel(y);
 

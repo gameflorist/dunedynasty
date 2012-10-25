@@ -2,6 +2,7 @@
 #define VIDEO_VIDEOA5_H
 
 #include "video.h"
+#include "../file.h"
 
 extern bool VideoA5_Init(void);
 extern void VideoA5_Uninit(void);
@@ -11,8 +12,8 @@ extern void VideoA5_CaptureScreenshot(void);
 extern void VideoA5_Tick(void);
 
 extern void VideoA5_InitSprites(void);
-extern void VideoA5_DrawCPS(const char *filename);
-extern void VideoA5_DrawCPSRegion(const char *filename, int sx, int sy, int dx, int dy, int w, int h);
+extern void VideoA5_DrawCPS(enum SearchDirectory dir, const char *filename);
+extern void VideoA5_DrawCPSRegion(enum SearchDirectory dir, const char *filename, int sx, int sy, int dx, int dy, int w, int h);
 extern void VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int y, float scale);
 extern void VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y);

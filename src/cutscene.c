@@ -1160,7 +1160,7 @@ GameLoop_GameCredits(enum HouseType houseID)
 
 	Video_HideCursor();
 
-	Sprites_LoadImage("BIGPLAN.CPS", 3, g_palette_998A);
+	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "BIGPLAN.CPS", 3, g_palette_998A);
 
 	GUI_ClearScreen(0);
 
@@ -1186,7 +1186,7 @@ GameLoop_GameCredits(enum HouseType houseID)
 		}
 	}
 
-	Sprites_LoadImage("MAPPLAN.CPS", 3, g_palette_998A);
+	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "MAPPLAN.CPS", 3, g_palette_998A);
 
 	GUI_Palette_RemapScreen(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetWidth, g_curWidgetHeight, 2, memory);
 
@@ -1352,7 +1352,7 @@ static void Gameloop_Logos(void)
 
 	GFX_ClearScreen();
 
-	Sprites_LoadImage(String_GenerateFilename("AND"), 2, g_palette_998A);
+	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("AND"), 2, g_palette_998A);
 
 	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
 
@@ -1377,7 +1377,7 @@ static void Gameloop_Logos(void)
 
 	GUI_ClearScreen(0);
 
-	Sprites_LoadImage("VIRGIN.CPS", 2, g_palette_998A);
+	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "VIRGIN.CPS", 2, g_palette_998A);
 
 	GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
 

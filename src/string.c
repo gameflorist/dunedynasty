@@ -18,6 +18,7 @@
 #include "enhancement.h"
 #include "file.h"
 #include "opendune.h"
+#include "scenario.h"
 #include "table/strings.h"
 
 static char **s_strings = NULL;

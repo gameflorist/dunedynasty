@@ -446,7 +446,7 @@ MainMenu_Initialise(Widget *w)
 static void
 MainMenu_Draw(Widget *widget)
 {
-	Video_DrawCPS(String_GenerateFilename("TITLE"));
+	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("TITLE"));
 
 	const int64_t curr_ticks = Timer_GetTicks();
 	const Widget *w = GUI_Widget_Get_ByIndex(widget, 100);
@@ -643,7 +643,7 @@ PickHouse_Initialise(void)
 static void
 PickHouse_Draw(void)
 {
-	Video_DrawCPS(String_GenerateFilename("HERALD"));
+	Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, String_GenerateFilename("HERALD"));
 
 	if (g_campaign_list[g_campaign_selected].house[0] == HOUSE_INVALID)
 		Prim_FillRect_RGBA( 16.0f, 50.0f,  16.0f + 96.0f, 150.0f, 0x00, 0x00, 0x00, 0xC0);
@@ -806,8 +806,8 @@ Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 			const char *misc = String_GenerateFilename("MISC");
 			const enum HouseType houseID = g_table_houseRemap6to3[g_playerHouseID];
 
-			Video_DrawCPSRegion(misc, 0, 0, 0, 0, 26*8, 24);
-			Video_DrawCPSRegion(misc, 0, 24 * (houseID + 1), 26*8, 0, 13*8, 24);
+			Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, misc, 0, 0, 0, 0, 26*8, 24);
+			Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, misc, 0, 24 * (houseID + 1), 26*8, 0, 13*8, 24);
 
 			GUI_Widget_DrawAll(briefing_yes_no_widgets);
 		}

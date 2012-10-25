@@ -30,6 +30,7 @@
 #include "../map.h"
 #include "../newui/viewport.h"
 #include "../opendune.h"
+#include "../scenario.h"
 #include "../sprites.h"
 #include "../table/widgetinfo.h"
 #include "../tile.h"
@@ -58,7 +59,7 @@ enum BitmapCopyMode {
 typedef struct CPSStore {
 	struct CPSStore *next;
 
-	char filename[16];
+	char filename[128];
 	ALLEGRO_BITMAP *bmp;
 } CPSStore;
 
@@ -812,26 +813,31 @@ Video_TickFadeIn(FadeInAux *aux)
 /*--------------------------------------------------------------*/
 
 static CPSStore *
-VideoA5_ExportCPS(const char *filename, unsigned char *buf)
+VideoA5_ExportCPS(enum SearchDirectory dir, const char *filename, unsigned char *buf)
 {
 	CPSStore *cps = malloc(sizeof(*cps));
 	assert(cps != NULL);
 
 	cps->next = NULL;
-	strncpy(cps->filename, filename, sizeof(cps->filename));
+	if (dir == SEARCHDIR_CAMPAIGN_DIR) {
+		snprintf(cps->filename, sizeof(cps->filename), "%s%s", g_campaign_list[g_campaign_selected].dir_name, filename);
+	}
+	else {
+		snprintf(cps->filename, sizeof(cps->filename), "%s", filename);
+	}
 
 	cps->bmp = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 	assert(cps->bmp != NULL);
 
 	bool use_benepal = false;
-	if ((strncmp(cps->filename, "MENTATM.CPS", sizeof(cps->filename)) == 0) ||
-	    (strncmp(cps->filename, "MISC", 4) == 0)) {
+	if ((strncmp(filename, "MENTATM.CPS", 11) == 0) ||
+	    (strncmp(filename, "MISC", 4) == 0)) {
 		use_benepal = true;
 	}
 
 	VideoA5_ReadPalette(use_benepal ? "BENE.PAL" : "IBM.PAL");
 	memset(buf, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
-	Sprites_LoadImage(filename, 2, NULL);
+	Sprites_LoadImage(dir, filename, 2, NULL);
 	VideoA5_CopyBitmap(buf, cps->bmp, BLACK_COLOUR_0);
 	VideoA5_ReadPalette("IBM.PAL");
 
@@ -839,19 +845,27 @@ VideoA5_ExportCPS(const char *filename, unsigned char *buf)
 }
 
 static CPSStore *
-VideoA5_LoadCPS(const char *filename)
+VideoA5_LoadCPS(enum SearchDirectory dir, const char *filename)
 {
+	char campname[1024];
 	CPSStore *cps;
+
+	if (dir == SEARCHDIR_CAMPAIGN_DIR) {
+		snprintf(campname, sizeof(campname), "%s%s", g_campaign_list[g_campaign_selected].dir_name, filename);
+	}
+	else {
+		snprintf(campname, sizeof(campname), "%s", filename);
+	}
 
 	cps = s_cps;
 	while (cps != NULL) {
-		if (strncmp(cps->filename, filename, sizeof(cps->filename)) == 0)
+		if (strncmp(cps->filename, campname, sizeof(cps->filename)) == 0)
 			return cps;
 
 		cps = cps->next;
 	}
 
-	cps = VideoA5_ExportCPS(filename, GFX_Screen_Get_ByIndex(2));
+	cps = VideoA5_ExportCPS(dir, filename, GFX_Screen_Get_ByIndex(2));
 	cps->next = s_cps;
 	s_cps = cps;
 
@@ -917,9 +931,9 @@ VideoA5_InitCPS(void)
 	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
 
-	CPSStore *cps_screen = VideoA5_ExportCPS("SCREEN.CPS", buf);
-	CPSStore *cps_fame = VideoA5_LoadCPS("FAME.CPS");
-	CPSStore *cps_mapmach = VideoA5_LoadCPS("MAPMACH.CPS");
+	CPSStore *cps_screen = VideoA5_ExportCPS(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", buf);
+	CPSStore *cps_fame = VideoA5_LoadCPS(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS");
+	CPSStore *cps_mapmach = VideoA5_LoadCPS(SEARCHDIR_GLOBAL_DATA_DIR, "MAPMACH.CPS");
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
 
@@ -943,7 +957,7 @@ VideoA5_InitCPS(void)
 	al_draw_filled_rectangle(coord->tx - 1.0f, coord->ty + coord->h, coord->tx + coord->w + 1.5f, coord->ty + coord->h + 1.0f, al_map_rgb(0, 0, 0));
 
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		Sprites_LoadImage("SCREEN.CPS", 2, NULL);
+		Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", 2, NULL);
 		GUI_Palette_CreateRemap(houseID);
 		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 2, g_remap);
 		VideoA5_CopyBitmap(buf, cps_screen->bmp, TRANSPARENT_COLOUR_0);
@@ -970,7 +984,7 @@ VideoA5_InitCPS(void)
 	VideoA5_DrawBitmapRegion_Padded(cps_mapmach->bmp, &cps_special_coord[CPS_CONQUEST_FR], coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty, false, false);
 	VideoA5_DrawBitmapRegion_Padded(cps_mapmach->bmp, &cps_special_coord[CPS_CONQUEST_DE], coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty, false, false);
 
-	Sprites_LoadImage("MAPMACH.CPS", 2, NULL);
+	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "MAPMACH.CPS", 2, NULL);
 	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(interface_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_EN].cy, coord->tx, cps_special_coord[CPS_CONQUEST_EN].ty + 30, coord->w, 20, CONQUEST_COLOUR);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_FR].cy, coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty + 30, coord->w, 20, CONQUEST_COLOUR);
@@ -984,17 +998,17 @@ VideoA5_InitCPS(void)
 }
 
 void
-VideoA5_DrawCPS(const char *filename)
+VideoA5_DrawCPS(enum SearchDirectory dir, const char *filename)
 {
-	CPSStore *cps = VideoA5_LoadCPS(filename);
+	CPSStore *cps = VideoA5_LoadCPS(dir, filename);
 
 	al_draw_bitmap(cps->bmp, 0, 0, 0);
 }
 
 void
-VideoA5_DrawCPSRegion(const char *filename, int sx, int sy, int dx, int dy, int w, int h)
+VideoA5_DrawCPSRegion(enum SearchDirectory dir, const char *filename, int sx, int sy, int dx, int dy, int w, int h)
 {
-	CPSStore *cps = VideoA5_LoadCPS(filename);
+	CPSStore *cps = VideoA5_LoadCPS(dir, filename);
 
 	al_draw_bitmap_region(cps->bmp, sx, sy, w, h, dx, dy, 0);
 }
@@ -1060,7 +1074,7 @@ VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int
 FadeInAux *
 Video_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fade_in)
 {
-	CPSStore *cps = VideoA5_LoadCPS(filename);
+	CPSStore *cps = VideoA5_LoadCPS(SEARCHDIR_GLOBAL_DATA_DIR, filename);
 
 	return VideoA5_InitFadeInSprite(cps->bmp, x, y, w, h, fade_in);
 }

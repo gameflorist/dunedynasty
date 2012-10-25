@@ -5,6 +5,8 @@
 #ifndef SPRITES_H
 #define SPRITES_H
 
+#include "file.h"
+
 enum {
 	TILE_SIZE   = 16
 };
@@ -81,7 +83,7 @@ extern uint8 Sprite_GetHeight(uint8 *sprite);
 extern uint16 Sprites_GetType(uint8 *sprite);
 extern void Sprites_LoadTiles(void);
 extern void Sprites_UnloadTiles(void);
-extern uint16 Sprites_LoadImage(const char *filename, uint16 screenID, uint8 *palette);
+extern uint16 Sprites_LoadImage(enum SearchDirectory dir, const char *filename, uint16 screenID, uint8 *palette);
 extern void Sprites_CPS_LoadRegionClick(void);
 extern bool Sprite_IsUnveiled(uint16 spriteID);
 

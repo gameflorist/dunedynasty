@@ -88,7 +88,7 @@ Mentat_DrawBackground(enum MentatID mentatID)
 {
 	assert(mentatID < MENTAT_MAX);
 
-	Video_DrawCPS(mentat_data[mentatID].background);
+	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, mentat_data[mentatID].background);
 }
 
 static void

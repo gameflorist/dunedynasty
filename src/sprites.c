@@ -264,7 +264,7 @@ void Sprites_UnloadTiles(void)
  * @param palette Where to store the palette, if any.
  * @return The size of the loaded image.
  */
-static uint32 Sprites_LoadCPSFile(const char *filename, uint16 screenID, uint8 *palette)
+static uint32 Sprites_LoadCPSFile(enum SearchDirectory dir, const char *filename, uint16 screenID, uint8 *palette)
 {
 	uint8 index;
 	uint16 size;
@@ -274,10 +274,8 @@ static uint32 Sprites_LoadCPSFile(const char *filename, uint16 screenID, uint8 *
 
 	buffer = GFX_Screen_Get_ByIndex(screenID);
 
-	index = File_Open(filename, 1);
-
+	index = File_Open_Ex(dir, filename, 1);
 	File_Read(index, &size, 2);
-
 	File_Read(index, buffer, 8);
 
 	size -= 8;
@@ -313,18 +311,18 @@ static uint32 Sprites_LoadCPSFile(const char *filename, uint16 screenID, uint8 *
  * @param palette Where to store the palette, if any.
  * @return The size of the loaded image.
  */
-uint16 Sprites_LoadImage(const char *filename, uint16 screenID, uint8 *palette)
+uint16 Sprites_LoadImage(enum SearchDirectory dir, const char *filename, uint16 screenID, uint8 *palette)
 {
 	uint8 index;
 	uint32 header;
 
-	index = File_Open(filename, 1);
+	index = File_Open_Ex(dir, filename, 1);
 	if (index == 0xFF) return 0;
 
 	File_Read(index, &header, 4);
 	File_Close(index);
 
-	return Sprites_LoadCPSFile(filename, screenID, palette) / 8000;
+	return Sprites_LoadCPSFile(dir, filename, screenID, palette) / 8000;
 }
 
 #if 0
@@ -354,7 +352,7 @@ void Sprites_CPS_LoadRegionClick(void)
 	buf = GFX_Screen_Get_ByIndex(5);
 
 	g_fileRgnclkCPS = buf;
-	Sprites_LoadCPSFile("RGNCLK.CPS", 5, NULL);
+	Sprites_LoadCPSFile(SEARCHDIR_GLOBAL_DATA_DIR, "RGNCLK.CPS", 5, NULL);
 	for (i = 0; i < 120; i++) memcpy(buf + (i * 304), buf + 7688 + (i * 320), 304);
 	buf += 120 * 304;
 
