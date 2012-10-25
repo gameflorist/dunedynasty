@@ -284,32 +284,33 @@ Campaign_ReadHouseIni(void)
 
 		for (key = keys; *key != '\0'; key += strlen(key) + 1) {
 			/* Weakness, LemonFactor, Decay, Recharge, Frigate, Special, Voice. */
-			if (strcasecmp(key, "Weakness") == 0) {
+			if (strncasecmp(key, "Weakness", 8) == 0) {
 				hi->toughness = Ini_GetInteger(category, key, original->toughness, source);
 			}
-			else if (strcasecmp(key, "LemonFactor") == 0) {
+			else if (strncasecmp(key, "LemonFactor", 11) == 0) {
 				hi->degradingChance = Ini_GetInteger(category, key, original->degradingChance, source);
 			}
-			else if (strcasecmp(key, "Decay") == 0) {
+			else if (strncasecmp(key, "Decay", 5) == 0) {
 				hi->degradingAmount = Ini_GetInteger(category, key, original->degradingAmount, source);
 			}
-			else if (strcasecmp(key, "Recharge") == 0) {
+			else if ((strcasecmp(key, "Recharge") == 0) || (strncasecmp(key, "Palace recharge", 15) == 0)) {
 				hi->specialCountDown = Ini_GetInteger(category, key, original->specialCountDown, source);
 			}
-			else if (strcasecmp(key, "Frigate") == 0) {
+			else if (strncasecmp(key, "Frigate", 7) == 0) {
 				hi->starportDeliveryTime = Ini_GetInteger(category, key, original->starportDeliveryTime, source);
 			}
-			else if (strcasecmp(key, "Special") == 0) {
+			else if ((strcasecmp(key, "Special") == 0) || (strncasecmp(key, "Palace special", 14) == 0)) {
 				Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
 
 				char *buf = buffer;
 				while (*buf == ' ' || *buf == '\t') buf++;
 
 				     if (buf[0] == 'M') hi->specialWeapon = HOUSE_WEAPON_MISSILE;
+				else if (buf[0] == 'D') hi->specialWeapon = HOUSE_WEAPON_MISSILE;
 				else if (buf[0] == 'F') hi->specialWeapon = HOUSE_WEAPON_FREMEN;
 				else if (buf[0] == 'S') hi->specialWeapon = HOUSE_WEAPON_SABOTEUR;
 			}
-			else if (strcasecmp(key, "Voice") == 0) {
+			else if (strncasecmp(key, "Voice", 5) == 0) {
 				Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
 
 				char *buf = buffer;
