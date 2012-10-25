@@ -940,8 +940,11 @@ static void Scenario_Load_Structure(const char *key, char *settings)
 
 		/* ENHANCEMENT -- Atreides shouldn't get WOR since they can't do anything with it. */
 		if (enhancement_fix_scenario_typos) {
-			if (houseType == HOUSE_ATREIDES && structureType == STRUCTURE_WOR_TROOPER)
+			if ((houseType == HOUSE_ATREIDES && structureType == STRUCTURE_WOR_TROOPER) &&
+					((g_table_unitInfo[UNIT_TROOPER].o.availableHouse  & FLAG_HOUSE_ATREIDES) == 0) &&
+					((g_table_unitInfo[UNIT_TROOPERS].o.availableHouse & FLAG_HOUSE_ATREIDES) == 0)) {
 				structureType = STRUCTURE_BARRACKS;
+			}
 		}
 
 		s = Structure_Create(index, structureType, houseType, position);
