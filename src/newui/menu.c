@@ -618,9 +618,41 @@ MainMenu_BlinkLoop(int64_t blink_start)
 /*--------------------------------------------------------------*/
 
 static void
+PickHouse_Initialise(void)
+{
+	const int offsetX[3] = { 16, 112, 208 };
+
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, houseID);
+		GUI_Widget_MakeInvisible(w);
+	}
+
+	for (int i = 0; i < 3; i++) {
+		const enum HouseType houseID = g_campaign_list[g_campaign_selected].house[i];
+
+		if (houseID != HOUSE_INVALID) {
+			Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, houseID);
+			w->offsetX = offsetX[i];
+			GUI_Widget_MakeVisible(w);
+		}
+	}
+
+	g_strategicRegionBits = 0;
+}
+
+static void
 PickHouse_Draw(void)
 {
 	Video_DrawCPS(String_GenerateFilename("HERALD"));
+
+	if (g_campaign_list[g_campaign_selected].house[0] == HOUSE_INVALID)
+		Prim_FillRect_RGBA( 16.0f, 50.0f,  16.0f + 96.0f, 150.0f, 0x00, 0x00, 0x00, 0xC0);
+
+	if (g_campaign_list[g_campaign_selected].house[1] == HOUSE_INVALID)
+		Prim_FillRect_RGBA(112.0f, 50.0f, 112.0f + 96.0f, 150.0f, 0x00, 0x00, 0x00, 0xC0);
+
+	if (g_campaign_list[g_campaign_selected].house[2] == HOUSE_INVALID)
+		Prim_FillRect_RGBA(208.0f, 50.0f, 208.0f + 96.0f, 150.0f, 0x00, 0x00, 0x00, 0xC0);
 
 	const Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, 10);
 	uint8 fg = (w->state.s.hover1) ? 130 : 133;
@@ -1328,7 +1360,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_PICK_HOUSE:
-					g_strategicRegionBits = 0;
+					PickHouse_Initialise();
 					break;
 
 				case MENU_CONFIRM_HOUSE:
