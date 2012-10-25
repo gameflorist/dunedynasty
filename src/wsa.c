@@ -147,7 +147,7 @@ static uint16 WSA_GotoNextFrame(void *wsa, uint16 frame, uint8 *dst)
 		uint32 length;
 		uint32 res;
 
-		fileno = File_Open(header->filename, 1);
+		fileno = File_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, header->filename, 1);
 
 		positionStart = WSA_GetFrameOffset_FromDisk(fileno, frame);
 		positionEnd = WSA_GetFrameOffset_FromDisk(fileno, frame + 1);
@@ -203,7 +203,7 @@ void *WSA_LoadFile(const char *filename, void *wsa, uint32 wsaSize, bool reserve
 
 	memset(&flags, 0, sizeof(flags));
 
-	fileno = File_Open(filename, 1);
+	fileno = File_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, filename, 1);
 	File_Read(fileno, &fileheader.frames, sizeof(fileheader.frames));
 	File_Read(fileno, &fileheader.width, sizeof(fileheader.width));
 	File_Read(fileno, &fileheader.height, sizeof(fileheader.height));
