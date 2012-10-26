@@ -42,6 +42,7 @@ extern bool enhancement_repeat_reinforcements;
 extern bool enhancement_scroll_along_screen_edge;
 extern enum SecurityQuestionMode enhancement_security_question;
 extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;
+extern bool enhancement_soldier_engineers;
 extern bool enhancement_special_trooper_portaits;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 

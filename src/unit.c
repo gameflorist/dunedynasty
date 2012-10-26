@@ -2503,7 +2503,17 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 		/* ENHANCEMENT: When taking over a structure, untarget it. Else you will destroy the structure you just have taken over very easily */
 		if (g_dune2_enhanced) Structure_UntargetMe(s);
 	} else {
-		Structure_Damage(s, max(unit->o.hitpoints * 2, s->o.hitpoints / 2), 1);
+		uint16 damage;
+
+		/* ENHANCEMENT -- A bug in OpenDune made soldiers into quite effective engineers. */
+		if (enhancement_soldier_engineers) {
+			damage = s->o.hitpoints / 2;
+		}
+		else {
+			damage = min(unit->o.hitpoints * 2, s->o.hitpoints / 2);
+		}
+
+		Structure_Damage(s, damage, 1);
 	}
 
 	Object_Script_Variable4_Clear(&s->o);

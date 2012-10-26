@@ -156,6 +156,12 @@ enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ACCE
 enum SmoothUnitAnimationMode enhancement_smooth_unit_animation = SMOOTH_UNIT_ANIMATION_ENABLE;
 
 /**
+ * Make soldiers entering structures do more damage, thus turning them
+ * into half-decent engineers.
+ */
+bool enhancement_soldier_engineers = false;
+
+/**
  * Use the Fremen and Sardaukar portaits for troopers and trooper
  * squads.
  */
