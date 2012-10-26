@@ -74,11 +74,6 @@ static const GameOption s_game_option[] = {
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
 	{ "game",   "campaign",         CONFIG_CAMPAIGN,.d._int = &g_campaign_selected },
-	{ "game",   "auto_scroll",      CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
-	{ "game",   "scroll_speed",     CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },
-	{ "game",   "scroll_along_screen_edge", CONFIG_BOOL,.d._bool = &enhancement_scroll_along_screen_edge },
-	{ "game",   "left_click_orders",        CONFIG_BOOL,.d._bool = &g_gameConfig.leftClickOrders },
-	{ "game",   "hold_control_to_zoom",     CONFIG_BOOL,.d._bool = &g_gameConfig.holdControlToZoom },
 
 	{ "graphics",   "driver",           CONFIG_GRAPHICS_DRIVER, .d._graphics_driver = &g_graphics_driver },
 	{ "graphics",   "window_mode",      CONFIG_WINDOW_MODE,     .d._window_mode = &g_gameConfig.windowMode },
@@ -87,6 +82,12 @@ static const GameOption s_game_option[] = {
 	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scale },
 	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scale },
 	{ "graphics",   "viewport_scale",   CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scale },
+
+	{ "controls",   "auto_scroll",              CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
+	{ "controls",   "scroll_speed",             CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },
+	{ "controls",   "scroll_along_screen_edge", CONFIG_BOOL,    .d._bool = &enhancement_scroll_along_screen_edge },
+	{ "controls",   "left_click_orders",        CONFIG_BOOL,    .d._bool = &g_gameConfig.leftClickOrders },
+	{ "controls",   "hold_control_to_zoom",     CONFIG_BOOL,    .d._bool = &g_gameConfig.holdControlToZoom },
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
 	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },
