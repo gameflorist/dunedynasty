@@ -460,7 +460,7 @@ void GameLoop_Unit(void)
  */
 uint8 Unit_GetHouseID(const Unit *u)
 {
-	if (u->deviated != 0) return HOUSE_ORDOS;
+	if (u->deviated != 0) return u->deviationHouse;
 	return u->o.houseID;
 }
 
@@ -1416,7 +1416,7 @@ void Unit_RemoveFog(Unit *unit)
  * @param probability The probability for deviation to succeed.
  * @return True if and only if the unit beacame deviated.
  */
-bool Unit_Deviate(Unit *unit, uint16 probability)
+bool Unit_Deviate(Unit *unit, uint16 probability, enum HouseType houseID)
 {
 	const UnitInfo *ui;
 
@@ -1436,11 +1436,15 @@ bool Unit_Deviate(Unit *unit, uint16 probability)
 
 	if (Tools_Random_256() >= probability) return false;
 
+	if (!enhancement_nonordos_deviation)
+		houseID = HOUSE_ORDOS;
+
 	unit->deviated = 0x78;
+	unit->deviationHouse = houseID;
 
 	Unit_UpdateMap(2, unit);
 
-	if (g_playerHouseID == HOUSE_ORDOS) {
+	if (g_playerHouseID == houseID) {
 		/* Make brutal AI know about its own deviated units. */
 		if (AI_IsBrutalAI(unit->o.houseID)) {
 			unit->o.seenByHouses = 0xFF;
@@ -1448,7 +1452,7 @@ bool Unit_Deviate(Unit *unit, uint16 probability)
 
 		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
-		if (AI_IsBrutalAI(HOUSE_ORDOS)) {
+		if (AI_IsBrutalAI(houseID)) {
 			/* Make brutal AI destruct devastators if outcome is desirable. */
 			if (UnitAI_ShouldDestructDevastator(unit)) {
 				Unit_SetAction(unit, ACTION_DESTRUCT);
@@ -1638,7 +1642,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 						if (ui->flags.impactOnSand && g_map[Tile_PackTile(unit->o.position)].index == 0 && Map_GetLandscapeType(Tile_PackTile(unit->o.position)) == LST_NORMAL_SAND) {
 							Map_MakeExplosion(8, newPosition, unit->o.hitpoints, unit->originEncoded);
 						} else if (unit->o.type == UNIT_MISSILE_DEVIATOR) {
-							Map_DeviateArea(ui->explosionType, newPosition, 32);
+							Map_DeviateArea(ui->explosionType, newPosition, 32, Unit_GetHouseID(unit));
 						} else {
 							Map_MakeExplosion((ui->explosionType + unit->o.hitpoints / 20) & 3, newPosition, unit->o.hitpoints, unit->originEncoded);
 						}

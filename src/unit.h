@@ -55,6 +55,7 @@ typedef struct Unit {
 	uint16 timer;                                           /*!< Timer used in animation, to count down when to do the next step. */
 	uint8  route[14];                                       /*!< The current route the Unit is following. */
 
+	enum HouseType deviationHouse;
 	enum SquadID squadID;
 	enum SquadID aiSquad;
 } Unit;
@@ -163,7 +164,7 @@ extern bool Unit_StartMovement(Unit *unit);
 extern void Unit_SetTarget(Unit* unit, uint16 encoded);
 extern bool Unit_Deviation_Decrease(Unit* unit, uint16 amount);
 extern void Unit_RemoveFog(Unit *unit);
-extern bool Unit_Deviate(Unit *unit, uint16 probability);
+extern bool Unit_Deviate(Unit *unit, uint16 probability, enum HouseType houseID);
 extern bool Unit_Move(Unit *unit, uint16 distance);
 extern bool Unit_Damage(Unit *unit, uint16 damage, uint16 range);
 extern void Unit_UntargetMe(Unit *unit);

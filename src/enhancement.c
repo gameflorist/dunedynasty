@@ -114,6 +114,12 @@ bool enhancement_new_selection_cursor = true;
 bool enhancement_nonblocking_radar_animation = true;
 
 /**
+ * Normally non-Ordos deviators (e.g. captured Ordos heavy factories)
+ * will still turn units to Ordos (maybe it's the gas?).
+ */
+bool enhancement_nonordos_deviation = true;
+
+/**
  * Enable some extra sounds and voices.  This restores the original
  * "The Building of a Dynasty" voice!
  */
