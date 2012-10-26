@@ -254,19 +254,34 @@ UnitInfo_FlagsToUint16(const UnitInfo *ui)
 	return flags;
 }
 
-void
-Campaign_ReadProfileIniExtensions(char *source)
+static void
+Campaign_ReadProfileIni(void)
 {
 	struct {
 		char type; /* unit, structure, or objects. */
 		const char *category;
 	} scandata[] = {
+		/* Dune II. */
+		{ 'O', "Construct" },
+		{ 'U', "Combat" },
+
+		/* Dune Dynasty extensions. */
 		{ 'O', "Availability" },
 		{ 'S', "Factory" },
 		{ 'S', "StructureInfo" },
 		{ 'U', "UnitObjectInfo" },
 		{ 'U', "UnitInfo" }
 	};
+
+	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
+	memcpy(g_table_unitInfo, g_table_unitInfo_original, sizeof(g_table_unitInfo_original));
+
+	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI"))
+		return;
+
+	char *source = GFX_Screen_Get_ByIndex(3);
+	memset(source, 0, 32000);
+	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI", source, GFX_Screen_GetSize_ByIndex(3));
 
 	char *keys = source + strlen(source) + 5000;
 	char buffer[120];
@@ -306,7 +321,58 @@ Campaign_ReadProfileIniExtensions(char *source)
 			Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
 
 			switch (x) {
-				case 0: /* Availability: availableHouse, structuresRequired, upgradeLevelRequired. */
+				case 0: /* Construct: buildCredits, buildTime, hitpoints, fogUncoverRadius, availableCampaign, priorityBuild, priorityTarget, sortPriority. */
+					{
+						ObjectInfo ot;
+						uint16 sortPriority;    /* (uint8) concrete/concrete4 are 100/101 respectively. */
+
+						const int count = sscanf(buffer, "%hu,%hu,%hu,%hu,%hu,%hu,%hu,%hu",
+								&ot.buildCredits, &ot.buildTime, &ot.hitpoints, &ot.fogUncoverRadius,
+								&ot.availableCampaign, &ot.priorityBuild, &ot.priorityTarget, &sortPriority);
+						if (count < 7) {
+							fprintf(stderr, "[%s] %s=%hu,%hu,%hu,%hu,%hu,%hu,%hu,%hu\n", category, key,
+									oi->buildCredits, oi->buildTime, oi->hitpoints, oi->fogUncoverRadius,
+									oi->availableCampaign, oi->priorityBuild, oi->priorityTarget, oi->sortPriority);
+							break;
+						}
+
+						oi->buildCredits      = ot.buildCredits;
+						oi->buildTime         = ot.buildTime;
+						oi->hitpoints         = ot.hitpoints;
+						oi->fogUncoverRadius  = ot.fogUncoverRadius;
+						oi->availableCampaign = ot.availableCampaign;
+						oi->priorityBuild     = ot.priorityBuild;
+						oi->priorityTarget    = ot.priorityTarget;
+
+						if (count >= 8) {
+							if ((si != &g_table_structureInfo[STRUCTURE_SLAB_1x1]) &&
+							    (si != &g_table_structureInfo[STRUCTURE_SLAB_2x2])) {
+								oi->sortPriority = sortPriority;
+							}
+						}
+					}
+					break;
+
+				case 1: /* Combat: fireDistance, damage, fireDelay, movingSpeed. */
+					{
+						UnitInfo ut;
+
+						const int count = sscanf(buffer, "%hu,%hu,%hu,%hu",
+								&ut.fireDistance, &ut.damage, &ut.fireDelay, &ut.movingSpeed);
+						if (count < 4) {
+							fprintf(stderr, "[%s] %s=%hu,%hu,%hu,%hu\n", category, key,
+									ui->damage, ui->movingSpeed, ui->fireDelay, ui->fireDistance);
+							break;
+						}
+
+						ui->damage       = ut.damage;
+						ui->movingSpeed  = ut.movingSpeed;
+						ui->fireDelay    = ut.fireDelay;
+						ui->fireDistance = ut.fireDistance;
+					}
+					break;
+
+				case 2: /* Availability: availableHouse, structuresRequired, upgradeLevelRequired. */
 					{
 						uint16 availableHouse;          /* (uint8) enum HouseFlag. */
 						uint32 structuresRequired;      /* 0xFFFFFFFF or StructureFlag. */
@@ -326,7 +392,7 @@ Campaign_ReadProfileIniExtensions(char *source)
 					}
 					break;
 
-				case 1: /* Factory: buildableUnits[1..8], upgradeCampaign[1..3]. */
+				case 3: /* Factory: buildableUnits[1..8], upgradeCampaign[1..3]. */
 					{
 						int16 buildableUnits[8];    /* -1 or enum UnitType. */
 						uint16 upgradeCampaign[3];  /* 0 .. 9. */
@@ -353,7 +419,7 @@ Campaign_ReadProfileIniExtensions(char *source)
 					}
 					break;
 
-				case 2: /* StructureInfo: objectFlags, spawnChance, enterFilter, creditsStorage, powerUsage. */
+				case 4: /* StructureInfo: objectFlags, spawnChance, enterFilter, creditsStorage, powerUsage. */
 					{
 						StructureInfo st;
 						uint16 flags;
@@ -387,7 +453,7 @@ Campaign_ReadProfileIniExtensions(char *source)
 					}
 					break;
 
-				case 3: /* UnitObjectInfo: objectFlags, spawnChance, actionsPlayer[1..4]. */
+				case 5: /* UnitObjectInfo: objectFlags, spawnChance, actionsPlayer[1..4]. */
 					{
 						ObjectInfo ot;
 						uint16 flags;
@@ -423,7 +489,7 @@ Campaign_ReadProfileIniExtensions(char *source)
 					}
 					break;
 
-				case 4: /* UnitInfo: unitFlags, movementType, turningSpeed, explosionType, bulletType, bulletSound. */
+				case 6: /* UnitInfo: unitFlags, movementType, turningSpeed, explosionType, bulletType, bulletSound. */
 					{
 						uint16 flags;
 						uint16 movementType;    /* enum UnitMovementType. */
@@ -476,7 +542,7 @@ Campaign_Load(void)
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
 
 	Campaign_ReadMetaData(camp);
-	ReadProfileIni();
+	Campaign_ReadProfileIni();
 	String_ReloadMentatText();
 }
 

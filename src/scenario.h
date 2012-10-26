@@ -59,7 +59,6 @@ extern int g_campaign_selected;
 extern Scenario g_scenario;
 
 extern Campaign *Campaign_Alloc(const char *dir_name);
-extern void Campaign_ReadProfileIniExtensions(char *source);
 extern void Campaign_Load(void);
 extern bool Scenario_Load(uint16 scenarioID, uint8 houseID);
 
