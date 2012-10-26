@@ -631,6 +631,10 @@ Viewport_Click(Widget *w)
 		else if (lst == LST_BLOOM_FIELD) {
 			attack = true;
 		}
+		else if (lst == LST_WALL) {
+			if (!House_AreAllied(g_playerHouseID, g_map[packed].houseID))
+				attack = true;
+		}
 		else if (target_u != NULL) {
 			if (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(target_u)))
 				attack = true;
