@@ -2940,7 +2940,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 					const int mask = (1 << hint);
 					const int hintsShown = g_hintsShown1;
 
-					if ((g_gameConfig.language == LANGUAGE_ENGLISH) && ((hintsShown & mask) == 0)) {
+					if ((g_gameConfig.language == LANGUAGE_ENGLISH) && (g_gameConfig.hints) && ((hintsShown & mask) == 0)) {
 					}
 					else {
 						Audio_PlayVoice(VOICE_WARNING_WORM_SIGN);
