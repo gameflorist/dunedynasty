@@ -425,7 +425,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 					}
 					else if (s->objectType != next_type) {
 						Structure_BuildObject(s, next_type);
-						s->o.flags.s.onHold = true;
+						s->o.flags.s.onHold = false;
 					}
 				}
 				break;
