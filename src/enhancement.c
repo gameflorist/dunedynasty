@@ -93,7 +93,7 @@ bool enhancement_infantry_squad_death_animations = true;
  * In the original game, sandworms disappear after eating a set number
  * of units.
  */
-bool enhancement_insatiable_sandworms = true;
+bool enhancement_insatiable_sandworms = false;
 
 /**
  * Saboteurs are masters of stealth; make them visible only in the
