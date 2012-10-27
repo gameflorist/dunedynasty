@@ -264,6 +264,9 @@ void GameLoop_Structure(void)
 								/* The AI places structures which are operational immediatly */
 								Structure_SetState(s, STRUCTURE_STATE_IDLE);
 
+								/* ENHANCEMENT -- Make AI not place structures on top of units. */
+								if (!enhancement_ai_respects_structure_placement) g_var_38BC++;
+
 								/* Find the position to place the structure */
 								for (i = 0; i < 5; i++) {
 									if (ns->o.type != h->ai_structureRebuild[i][0]) continue;
@@ -274,6 +277,9 @@ void GameLoop_Structure(void)
 									h->ai_structureRebuild[i][1] = 0;
 									break;
 								}
+
+								/* XXX -- if tile is occupied by structure, forget about this building. */
+								if (!enhancement_ai_respects_structure_placement) g_var_38BC--;
 
 								/* If the AI no longer had in memory where to store the structure, free it and forget about it */
 								if (i == 5) {
@@ -602,11 +608,10 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 		} return true;
 	}
 
-	if (AI_IsBrutalAI(s->o.houseID)) {
-		/* Make brutal AI actually place the structure.  It doesn't
-		 * need to obey the connectivity rules, but we'll penalise it
-		 * for rebuilding structures without concrete.
-		 */
+	/* ENHANCEMENT -- Dune 2 AI disregards tile occupancy altogether.
+	 * This prevents the AI building structures on top of units and structures.
+	 */
+	if (enhancement_ai_respects_structure_placement && (s->o.houseID != g_playerHouseID)) {
 		loc0A = Structure_IsValidBuildLandscape(position, s->o.type);
 	}
 	else {

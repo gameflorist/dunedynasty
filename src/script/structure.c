@@ -662,11 +662,10 @@ uint16 Script_Structure_Destroy(ScriptEngine *script)
 		u->o.hitpoints = g_table_unitInfo[UNIT_SOLDIER].o.hitpoints * (Tools_Random_256() & 3) / 256;
 
 		if (s->o.houseID != g_playerHouseID) {
-			/* AI units shouldn't use ACTION_ATTACK.  For brutal AI,
-			 * use ACTION_HUNT instead, mostly so the soldier will
-			 * move and we can rebuild here later.
+			/* AI units shouldn't use ACTION_ATTACK.  Use ACTION_HUNT
+			 * so the soldier will move and we can rebuild here later.
 			 */
-			if (AI_IsBrutalAI(s->o.houseID)) {
+			if (enhancement_ai_respects_structure_placement || AI_IsBrutalAI(s->o.houseID)) {
 				Unit_SetAction(u, ACTION_HUNT);
 			}
 			else {

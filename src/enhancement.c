@@ -12,8 +12,14 @@
 bool g_dune2_enhanced = true;
 
 /**
+ * In the original game, the AI is allowed to place structures
+ * on top of units, and is not penalised for lack of concrete.
+ */
+bool enhancement_ai_respects_structure_placement = true;
+
+/**
  * Various AI changes to make the game tougher.  Includes double
- * production rate, half cost, rebuild base, etc.
+ * production rate, half cost, flanking attacks, etc.
  */
 bool enhancement_brutal_ai = false;
 
