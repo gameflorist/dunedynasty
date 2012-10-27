@@ -40,9 +40,7 @@ Gameplay changes
     *** Reverted this change.
 
 - Ornithopter hit points increased from 10 to 25.
-
 - Troopers and Launchers are now able to fire at air units.
-    *** Need to check if this is still the case.
 
 - The maximum number of Sandworms that can be present on the map at a
     time reduced from 3 to 2.
@@ -74,10 +72,8 @@ Miscellaneous
 - Added two more player ranks ("Chief Warlord" and "Emperor") to the
     scoring system.
 - The Fremen colour scheme has been made a bit brighter.
-
 - Removed several animation frames of the Heavy Factory, Repair
     Facility and High-Tech Factory.
-    *** Can I restore these somehow?
 
 - Removed two Mentat database entries: "Sardaukar" and "Frigate".
     *** Restored the English text.
@@ -199,6 +195,7 @@ have been incorporated.  (Bugs are fixed in the code.)
 References:
 http://forum.dune2k.com/topic/20168-dune-2-v107-fix/
 http://forum.opendune.org/viewtopic.php?f=7&t=21
+http://forum.opendune.org/viewtopic.php?f=8&t=150
 
 
 Gameplay fixes
@@ -207,25 +204,24 @@ Gameplay fixes
     assembling attack teams of vehicles ("team bug").
 
 - Looped reinforcements are now enabled in certain missions.
-  *** This is enabled by OpenDUNE.
+    *** This is enabled by OpenDUNE.
 
-- Remove the Gun Turret's ability to fire at Carryalls (happens in the
+[n] Remove the Gun Turret's ability to fire at Carryalls (happens in the
     EU version of Dune II, and also in the Sega Mega Drive version).
+    *** See: http://forum.dune2k.com/topic/20490-dune-2-scenario-format/page__st__40
+
 - Fix the bug with the Saboteur occasionally detonating when ordered
     to move to a rock cell immediately adjacent to the rock/sand border.
 - Fix the bug that happens sometimes when a Saboteur is destroyed, it
     somehow leaves a "trace" on the map: a green dot is still shown on
     the minimap, and the tile itself can not be built upon or occupied
     by other units.
-
 - Perhaps it is a good idea to disable the AI's ability to place its
     rebuilt structures over the player's buildings.
-    *** It doesn't seem to, maybe fixed by OpenDUNE?
 
 
 Glitches and improvement suggestions
 ------------------------------------
-
 - Fix the graphical glitch with large sprites that cuts the top part
     of a units' image.
 
@@ -238,6 +234,7 @@ Glitches and improvement suggestions
 - Add the "infantry squad remains" tile to the situation when an
     infantry/trooper squad spawns a single soldier/trooper, like in
     the Sega version.
+
 - Add a proper follow (escort) mode (in Dune II, a unit will only
     follow another unit until either of the units stops moving).
     *** Not yet.
@@ -249,6 +246,15 @@ Glitches and improvement suggestions
 
 - Restore the "special bloom" map feature.
     *** Not yet.
+
+- If you start building up your base, build a Windtrap and start
+   building a Refinery, then save your game and load it, you're very
+   likely to lose all your credits before the Refinery is completed,
+   making further progress impossible.
+   *** Fixed by OpenDUNE.
+
+- If you have no buildings at the start, but only an MCV, you lose all
+    your money when deploying the MCV.
 
 
 Mission-specific fixes
