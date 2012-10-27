@@ -15,6 +15,7 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 #include <stdio.h>
+#include "../os/error.h"
 #include "../os/math.h"
 
 #include "video_a5.h"
@@ -281,10 +282,12 @@ VideoA5_Init(void)
 	al_set_new_display_option(ALLEGRO_VSYNC, 1, ALLEGRO_SUGGEST);
 	al_set_new_display_option(ALLEGRO_STENCIL_SIZE, 8, ALLEGRO_SUGGEST);
 	display = al_create_display(TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
-	al_set_window_title(display, "Dune Dynasty");
-	if (display == NULL)
+	if (display == NULL) {
+		Error("Could not create display!");
 		return false;
+	}
 
+	al_set_window_title(display, "Dune Dynasty");
 	/* al_set_new_bitmap_flags(ALLEGRO_MAG_LINEAR); */
 	TRUE_DISPLAY_WIDTH = al_get_display_width(display);
 	TRUE_DISPLAY_HEIGHT = al_get_display_height(display);
