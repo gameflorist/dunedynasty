@@ -2832,7 +2832,7 @@ void Unit_LaunchHouseMissile(uint16 packed)
 
 	Unit_Free(g_unitHouseMissile);
 
-	Audio_PlayVoice(VOICE_STOP);
+	/* Audio_PlayVoice(VOICE_STOP); */
 
 	Unit_CreateBullet(h->palacePosition, g_unitHouseMissile->o.type, g_unitHouseMissile->o.houseID, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
 

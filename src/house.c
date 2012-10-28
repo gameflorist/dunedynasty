@@ -94,8 +94,23 @@ void GameLoop_House(void)
 
 	if (tickMissileCountdown && g_houseMissileCountdown != 0) {
 		g_houseMissileCountdown--;
-		/* XXX: What? Sound_Output_Feedback(g_houseMissileCountdown + 41); */
-		Audio_PlayVoice(VOICE_ONE + g_houseMissileCountdown - 2);
+
+		const enum VoiceID voiceID = VOICE_MISSILE_LAUNCHED + g_houseMissileCountdown - 1;
+
+		/* Don't queue up the countdown numbers. */
+		if (voiceID >= VOICE_ONE) {
+			const bool narrator_speaking = Audio_Poll();
+
+			if (!narrator_speaking) {
+				Audio_PlayVoice(voiceID);
+			}
+			else if (voiceID == VOICE_FIVE) {
+				Audio_PlayEffect(EFFECT_COUNT_DOWN_TICK);
+			}
+		}
+		else if (voiceID >= VOICE_MISSILE_LAUNCHED) {
+			Audio_PlayVoice(voiceID);
+		}
 
 		if (g_houseMissileCountdown == 0) Unit_LaunchHouseMissile(Map_FindLocationTile(4, g_playerHouseID));
 	}
