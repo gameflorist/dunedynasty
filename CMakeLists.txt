@@ -33,6 +33,9 @@ if(WITH_FLUIDSYNTH)
     endif(FLUIDSYNTH_FOUND)
 endif(WITH_FLUIDSYNTH)
 
+pkg_check_modules(MAD REQUIRED mad)
+include_directories(SYSTEM ${MAD_INCLUDE_DIRS})
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "dist")
 configure_file("${CMAKE_SOURCE_DIR}/include/buildcfg.h.in" "${PROJECT_BINARY_DIR}/include/buildcfg.h")
 
@@ -115,3 +118,16 @@ endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
 #	${FLUIDSYNTH_LDFLAGS}
 #	)
 #endif(FLUIDSYNTH_FOUND)
+
+add_executable(allegro_mad
+	src/audio/allegro_mad.c
+	)
+
+set_target_properties(allegro_mad
+	PROPERTIES COMPILE_FLAGS -DTEST
+	)
+
+target_link_libraries(allegro_mad
+	${ALLEGRO5_AUDIO_LIBRARIES}
+	${MAD_LIBRARIES}
+	)
