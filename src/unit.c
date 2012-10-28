@@ -2836,7 +2836,7 @@ void Unit_LaunchHouseMissile(uint16 packed)
 
 	Unit_CreateBullet(h->palacePosition, g_unitHouseMissile->o.type, g_unitHouseMissile->o.houseID, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
 
-	if (!isAI)
+	if (isAI)
 		Audio_PlayVoice(VOICE_WARNING_MISSILE_APPROACHING);
 
 	g_houseMissileCountdown = 0;
