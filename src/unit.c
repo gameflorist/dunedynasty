@@ -2483,6 +2483,9 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 			if (u != NULL) u->o.houseID = Unit_GetHouseID(unit);
 		}
 
+		/* ENHANCEMENT -- When taking over a windtrap, the windtrap count was not incremented, leading to power information. */
+		if (enhancement_fix_typos) h->windtrapCount++;
+
 		House_CalculatePowerAndCredit(House_Get_ByIndex(s->o.houseID));
 		Structure_UpdateMap(s);
 
