@@ -93,7 +93,7 @@ extern uint16 g_structureIndex;
 extern void GameLoop_Structure(void);
 extern uint8 Structure_StringToType(const char *name);
 extern Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 position);
-extern bool Structure_Place(Structure *s, uint16 position);
+extern bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID);
 extern void Structure_CalculateHitpointsMax(struct House *h);
 extern void Structure_SetState(Structure *s, int16 animation);
 extern void Structure_SetRallyPoint(Structure *s, uint16 packed);

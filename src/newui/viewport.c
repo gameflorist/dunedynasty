@@ -291,11 +291,7 @@ Viewport_Place(void)
 	Structure *s = g_structureActive;
 	House *h = g_playerHouse;
 
-	/* Since there concrete slabs and walls are shared, we need to set the creator again. */
-	g_structureActive->creatorHouseID = g_playerHouseID;
-	g_structureActive->o.houseID = g_playerHouseID;
-
-	if (Structure_Place(s, g_selectionPosition)) {
+	if (Structure_Place(s, g_selectionPosition, g_playerHouseID)) {
 		Audio_PlaySound(SOUND_PLACEMENT);
 
 		if (s->o.type == STRUCTURE_PALACE)

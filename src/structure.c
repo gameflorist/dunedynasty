@@ -268,7 +268,7 @@ void GameLoop_Structure(void)
 								for (i = 0; i < 5; i++) {
 									if (ns->o.type != h->ai_structureRebuild[i][0]) continue;
 
-									if (!Structure_Place(ns, h->ai_structureRebuild[i][1])) continue;
+									if (!Structure_Place(ns, h->ai_structureRebuild[i][1], h->index)) continue;
 
 									h->ai_structureRebuild[i][0] = 0;
 									h->ai_structureRebuild[i][1] = 0;
@@ -475,6 +475,7 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 
 	s->countDown = 0;
 
+#if 0
 	/* AIs get the full upgrade immediatly */
 	if (houseID != g_playerHouseID) {
 		while (true) {
@@ -483,8 +484,9 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 		}
 		s->upgradeTimeLeft = 0;
 	}
+#endif
 
-	if (position != 0xFFFF && !Structure_Place(s, position)) {
+	if (position != 0xFFFF && !Structure_Place(s, position, houseID)) {
 		Structure_Free(s);
 		return NULL;
 	}
@@ -499,7 +501,7 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
  * @param position The (packed) tile to place the struction on.
  * @return True if and only if the structure is placed on the map.
  */
-bool Structure_Place(Structure *s, uint16 position)
+bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 {
 	const StructureInfo *si;
 	int16 loc0A;
@@ -508,6 +510,19 @@ bool Structure_Place(Structure *s, uint16 position)
 	if (position == 0xFFFF) return false;
 
 	si = &g_table_structureInfo[s->o.type];
+
+	/* ENHANCEMENT -- If the construction yard was captured, we need to reset the house.
+	 * This is also needed because concrete slabs and walls are shared, creating problems with saved games.
+	 * Also, upgrade the factory when it is placed so the player doesn't get the AI's free upgrades.
+	 */
+	s->o.houseID = houseID;
+	if (houseID != g_playerHouseID) {
+		while (true) {
+			if (!Structure_IsUpgradable(s)) break;
+			s->upgradeLevel++;
+		}
+		s->upgradeTimeLeft = 0;
+	}
 
 	switch (s->o.type) {
 		case STRUCTURE_WALL: {
