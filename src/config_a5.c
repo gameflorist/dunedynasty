@@ -31,19 +31,20 @@ typedef struct GameOption {
 		CONFIG_INT,
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_16,
+		CONFIG_STRING,
 		CONFIG_LANGUAGE,
 		CONFIG_MUSIC_PACK,
-		CONFIG_STRING,
-		CONFIG_WINDOW
+		CONFIG_WINDOW_MODE
 	} type;
 
 	union {
 		bool *_bool;
-		unsigned int *_uint;
 		int *_int;
 		float *_float;
 		char *_string;
-		enum WindowMode *_window;
+		enum Language *_language;
+		enum MusicSet *_music_set;
+		enum WindowMode *_window_mode;
 	} d;
 } GameOption;
 
@@ -68,11 +69,11 @@ static int saved_screen_height = 480;
 static const GameOption s_game_option[] = {
 	{ "game",   "screen_width",     CONFIG_INT,     .d._int = &saved_screen_width },
 	{ "game",   "screen_height",    CONFIG_INT,     .d._int = &saved_screen_height },
-	{ "game",   "window_mode",      CONFIG_WINDOW,  .d._window = &g_gameConfig.windowMode },
+	{ "game",   "window_mode",      CONFIG_WINDOW_MODE, .d._window_mode = &g_gameConfig.windowMode },
 	{ "game",   "menubar_scale",    CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scale },
 	{ "game",   "sidebar_scale",    CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scale },
 	{ "game",   "viewport_scale",   CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scale },
-	{ "game",   "language",         CONFIG_LANGUAGE,.d._uint = &g_gameConfig.language },
+	{ "game",   "language",         CONFIG_LANGUAGE,.d._language = &g_gameConfig.language },
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
 	{ "game",   "campaign",         CONFIG_CAMPAIGN,.d._int = &g_campaign_selected },
@@ -101,7 +102,7 @@ static const GameOption s_game_option[] = {
 	{ "music",  "d2tm_sc55",        CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_SC55].enable },
 	{ "music",  "dune2_smd",        CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_SMD].enable },
 	{ "music",  "dune2000",         CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2000].enable },
-	{ "music",  "default",          CONFIG_MUSIC_PACK,  .d._uint = &default_music_pack },
+	{ "music",  "default",          CONFIG_MUSIC_PACK,  .d._music_set = &default_music_pack },
 
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
@@ -190,9 +191,9 @@ Config_SetInt(ALLEGRO_CONFIG *config, const char *section, const char *key, int 
 }
 
 static void
-Config_GetLanguage(const char *str, unsigned int *value)
+Config_GetLanguage(const char *str, enum Language *value)
 {
-	for (unsigned int lang = LANGUAGE_ENGLISH; lang < LANGUAGE_MAX; lang++) {
+	for (enum Language lang = LANGUAGE_ENGLISH; lang < LANGUAGE_MAX; lang++) {
 		const char c_upper = g_languageSuffixes[lang][0];
 		const char c_lower = c_upper - 'A' + 'a';
 
@@ -204,7 +205,7 @@ Config_GetLanguage(const char *str, unsigned int *value)
 }
 
 static void
-Config_SetLanguage(ALLEGRO_CONFIG *config, const char *section, const char *key, unsigned int value)
+Config_SetLanguage(ALLEGRO_CONFIG *config, const char *section, const char *key, enum Language value)
 {
 	if (value >= LANGUAGE_MAX)
 		value = LANGUAGE_ENGLISH;
@@ -213,7 +214,7 @@ Config_SetLanguage(ALLEGRO_CONFIG *config, const char *section, const char *key,
 }
 
 static void
-Config_GetMusicPack(const char *str, unsigned int *value)
+Config_GetMusicPack(const char *str, enum MusicSet *value)
 {
 	for (enum MusicSet set = MUSICSET_DUNE2_ADLIB; set < NUM_MUSIC_SETS; set++) {
 		if (strcasecmp(str, g_table_music_set[set].prefix) == 0) {
@@ -226,7 +227,7 @@ Config_GetMusicPack(const char *str, unsigned int *value)
 }
 
 static void
-Config_SetMusicPack(ALLEGRO_CONFIG *config, const char *section, const char *key, unsigned int value)
+Config_SetMusicPack(ALLEGRO_CONFIG *config, const char *section, const char *key, enum MusicSet value)
 {
 	if (value >= NUM_MUSIC_SETS)
 		value = MUSICSET_DUNE2_ADLIB;
@@ -400,22 +401,20 @@ GameOptions_Load(void)
 				Config_GetInt(str, 1, 16, opt->d._int);
 				break;
 
-			case CONFIG_LANGUAGE:
-				Config_GetLanguage(str, opt->d._uint);
-				break;
-
-			case CONFIG_MUSIC_PACK:
-				Config_GetMusicPack(str, opt->d._uint);
-				break;
-
-				break;
-
 			case CONFIG_STRING:
 				snprintf(opt->d._string, 1024, "%s", str);
 				break;
 
-			case CONFIG_WINDOW:
-				Config_GetWindowMode(str, opt->d._window);
+			case CONFIG_LANGUAGE:
+				Config_GetLanguage(str, opt->d._language);
+				break;
+
+			case CONFIG_MUSIC_PACK:
+				Config_GetMusicPack(str, opt->d._music_set);
+				break;
+
+			case CONFIG_WINDOW_MODE:
+				Config_GetWindowMode(str, opt->d._window_mode);
 				break;
 		}
 	}
@@ -498,20 +497,20 @@ GameOptions_Save(void)
 				Config_SetInt(s_configFile, opt->section, opt->key, *(opt->d._int));
 				break;
 
-			case CONFIG_LANGUAGE:
-				Config_SetLanguage(s_configFile, opt->section, opt->key, *(opt->d._uint));
-				break;
-
-			case CONFIG_MUSIC_PACK:
-				Config_SetMusicPack(s_configFile, opt->section, opt->key, *(opt->d._uint));
-				break;
-
 			case CONFIG_STRING:
 				al_set_config_value(s_configFile, opt->section, opt->key, opt->d._string);
 				break;
 
-			case CONFIG_WINDOW:
-				Config_SetWindowMode(s_configFile, opt->section, opt->key, *(opt->d._window));
+			case CONFIG_LANGUAGE:
+				Config_SetLanguage(s_configFile, opt->section, opt->key, *(opt->d._language));
+				break;
+
+			case CONFIG_MUSIC_PACK:
+				Config_SetMusicPack(s_configFile, opt->section, opt->key, *(opt->d._music_set));
+				break;
+
+			case CONFIG_WINDOW_MODE:
+				Config_SetWindowMode(s_configFile, opt->section, opt->key, *(opt->d._window_mode));
 				break;
 		}
 	}
