@@ -2,11 +2,7 @@
 
 /** @file src/saveload/saveload.c General routines for load/save. */
 
-#include <stdio.h>
-#include "types.h"
-
 #include "saveload.h"
-
 
 /**
  * Get the length of the struct how it would be on disk.

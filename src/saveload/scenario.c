@@ -2,9 +2,6 @@
 
 /** @file src/saveload/scenario.c Load/save routines for Scenario. */
 
-#include <stdio.h>
-#include "types.h"
-
 #include "saveload.h"
 #include "../scenario.h"
 

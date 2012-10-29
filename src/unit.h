@@ -6,7 +6,6 @@
 #define UNIT_H
 
 #include <inttypes.h>
-#include <stdio.h>
 #include "enumeration.h"
 #include "object.h"
 
@@ -152,8 +151,6 @@ extern void Unit_Sort(void);
 extern Unit *Unit_Get_ByPackedTile(uint16 packed);
 extern uint16 Unit_IsValidMovementIntoStructure(Unit *unit, struct Structure *s);
 extern void Unit_SetDestination(Unit *u, uint16 destination);
-extern bool Unit_Save(FILE *fp);
-extern bool Unit_Load(FILE *fp, uint32 length);
 extern uint16 Unit_GetTargetUnitPriority(Unit *unit, Unit *target);
 extern uint16 Unit_FindClosestRefinery(Unit *unit);
 extern bool Unit_SetPosition(Unit *u, tile32 position);

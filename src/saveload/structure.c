@@ -1,15 +1,11 @@
 /* $Id$ */
 
-/** @file src/saveload/house.c Load/save routines for Structure. */
-
-#include <stdio.h>
-#include "types.h"
+/** @file src/saveload/structure.c Load/save routines for Structure. */
 
 #include "saveload.h"
-#include "../house.h"
-#include "../structure.h"
-#include "../pool/structure.h"
 #include "../pool/pool.h"
+#include "../pool/structure.h"
+#include "../structure.h"
 
 static const SaveLoadDesc s_saveStructure[] = {
 	SLD_SLD   (Structure,              o, g_saveObject),

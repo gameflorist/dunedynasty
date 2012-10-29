@@ -1,9 +1,6 @@
 /* $Id$ */
 
-/** @file src/saveload/house.c Load/save routines for ScriptEngine. */
-
-#include <stdio.h>
-#include "types.h"
+/** @file src/saveload/scriptengine.c Load/save routines for ScriptEngine. */
 
 #include "saveload.h"
 #include "../script/script.h"

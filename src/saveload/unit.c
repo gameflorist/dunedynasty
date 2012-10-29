@@ -1,12 +1,8 @@
 /* $Id$ */
 
-/** @file src/saveload/house.c Load/save routines for Unit. */
-
-#include <stdio.h>
-#include "types.h"
+/** @file src/saveload/unit.c Load/save routines for Unit. */
 
 #include "saveload.h"
-#include "../house.h"
 #include "../pool/unit.h"
 #include "../pool/pool.h"
 #include "../unit.h"
@@ -60,7 +56,7 @@ bool Unit_Load(FILE *fp, uint32 length)
 		Unit *u;
 		Unit ul;
 
-		/* Read the next Structure from disk */
+		/* Read the next Unit from disk */
 		if (!SaveLoad_Load(s_saveUnit, fp, &ul)) return false;
 
 		length -= SaveLoad_GetLength(s_saveUnit);
@@ -76,7 +72,7 @@ bool Unit_Load(FILE *fp, uint32 length)
 		 *  the wrong houseID. So remove those units completely from the savegame. */
 		if (ul.o.houseID == 13) continue;
 
-		/* Get the Structure from the pool */
+		/* Get the Unit from the pool */
 		u = Unit_Get_ByIndex(ul.o.index);
 		if (u == NULL) return false;
 

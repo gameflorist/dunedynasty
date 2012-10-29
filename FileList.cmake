@@ -52,6 +52,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/save.c
 	src/saveload/house.c
 	src/saveload/info.c
+	src/saveload/map.c
 	src/saveload/object.c
 	src/saveload/saveload.c
 	src/saveload/scenario.c

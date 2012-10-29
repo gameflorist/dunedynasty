@@ -5,6 +5,9 @@
 #ifndef SAVELOAD_SAVELOAD_H
 #define SAVELOAD_SAVELOAD_H
 
+#include <stdio.h>
+#include "types.h"
+
 /**
  * Types of storage we support / understand.
  */
@@ -138,9 +141,16 @@ extern bool SaveLoad_Save(const SaveLoadDesc *sld, FILE *fp, void *object);
 extern bool House_Load(FILE *fp, uint32 length);
 extern bool House_LoadOld(FILE *fp, uint32 length);
 extern bool House_Save(FILE *fp);
-
 extern bool Info_Load(FILE *fp, uint32 length);
 extern bool Info_LoadOld(FILE *fp, uint32 length);
 extern bool Info_Save(FILE *fp);
+extern bool Map_Load(FILE *fp, uint32 length);
+extern bool Map_Save(FILE *fp);
+extern bool Structure_Load(FILE *fp, uint32 length);
+extern bool Structure_Save(FILE *fp);
+extern bool Team_Load(FILE *fp, uint32 length);
+extern bool Team_Save(FILE *fp);
+extern bool Unit_Load(FILE *fp, uint32 length);
+extern bool Unit_Save(FILE *fp);
 
 #endif /* SAVELOAD_SAVELOAD_H */

@@ -2,11 +2,8 @@
 
 /** @file src/saveload/team.c Load/save routines for Team. */
 
-#include <stdio.h>
-#include "types.h"
-
+#include "enumeration.h"
 #include "saveload.h"
-#include "../house.h"
 #include "../pool/pool.h"
 #include "../pool/team.h"
 #include "../team.h"

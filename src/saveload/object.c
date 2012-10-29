@@ -2,9 +2,6 @@
 
 /** @file src/saveload/house.c Load/save routines for House. */
 
-#include <stdio.h>
-#include "types.h"
-
 #include "saveload.h"
 #include "../object.h"
 

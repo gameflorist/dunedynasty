@@ -2,11 +2,8 @@
 
 /** @file src/saveload/info.c Load/save routines for House. */
 
-#include <stdio.h>
-#include "types.h"
-
 #include "saveload.h"
-#include "../house.h"
+#include "../gui/gui.h"
 #include "../map.h"
 #include "../newui/strategicmap.h"
 #include "../opendune.h"
@@ -14,10 +11,7 @@
 #include "../pool/unit.h"
 #include "../scenario.h"
 #include "../sprites.h"
-#include "../structure.h"
 #include "../timer/timer.h"
-#include "../unit.h"
-#include "../gui/gui.h"
 
 static uint32 SaveLoad_SelectionType(void *object, uint32 value, bool loading)
 {
@@ -202,7 +196,7 @@ bool Info_LoadOld(FILE *fp, uint32 length)
  */
 bool Info_Save(FILE *fp)
 {
-	static uint16 savegameVersion = 0x0290;
+	const uint16 savegameVersion = 0x0290;
 
 	if (fwrite(&savegameVersion, sizeof(uint16), 1, fp) != 1) return false;
 
