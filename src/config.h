@@ -5,8 +5,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "types.h"
-
 enum WindowMode {
 	WM_WINDOWED,
 	WM_FULLSCREEN,
@@ -30,6 +28,7 @@ typedef struct GameCfg {
 	 * Right -> deselect, pan.
 	 */
 	bool leftClickOrders;
+	bool holdControlToZoom;
 } GameCfg;
 
 extern GameCfg g_gameConfig;

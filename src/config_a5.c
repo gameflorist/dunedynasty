@@ -57,6 +57,7 @@ GameCfg g_gameConfig = {
 	true,   /* autoScroll */
 	4,      /* scrollSpeed */
 	false,  /* leftClickOrders */
+	false,  /* holdControlToZoom */
 };
 
 static int saved_screen_width = 640;
@@ -79,6 +80,7 @@ static const GameOption s_game_option[] = {
 	{ "game",   "scroll_speed",     CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },
 	{ "game",   "scroll_along_screen_edge", CONFIG_BOOL,.d._bool = &enhancement_scroll_along_screen_edge },
 	{ "game",   "left_click_orders",        CONFIG_BOOL,.d._bool = &g_gameConfig.leftClickOrders },
+	{ "game",   "hold_control_to_zoom",     CONFIG_BOOL,.d._bool = &g_gameConfig.holdControlToZoom },
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
 	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },
