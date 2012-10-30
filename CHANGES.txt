@@ -1,6 +1,55 @@
 Dune Dynasty
 ============
 
+Version 1.3, 2012-11-04
+-----------------------
+
+Controls and Gameplay:
+
+  - Play as Fremen, Sardaukar, and Mercenaries.
+  - Units can now be deviated to non-Ordos houses.
+  - Fix mouse drag when released outside of window.
+  - Right-mouse-drag pans the viewport.
+  - Right-click in minimap issues a generic order.
+  - Add option to use left-click generic orders.
+  - Add option to only change zoom level when holding control.
+  - Add option to scroll along edge of viewport, as in Dune II.
+  - Click palace icon to release superweapon.
+  - Build queue no longer remains on hold after cancelling an item.
+  - Fix regular AI not placing down structures.
+  - By default, Fremen, Sardaukar, and Mercenaries now have a starport
+    delivery time of 10.
+
+Graphics:
+
+  - Add double-sized and context-sensitive mouse cursors.
+  - Current and completed production items now flash.
+  - Harvesters, refineries, and silos now have spice meters.
+  - Add support for lost Dune II v1.0 repair bay and high-tech factory animations.
+  - Add support for transparent rubble graphics.
+  - Fix rubble sometimes being cleared during structure explosion.
+  - Add infantry squad death animations, as in the Sega Mega Drive version.
+  - By default, Fremen, Sardaukar, and Mercenaries now have Cyril,
+    Radnor, and Ammon, respectively, as their mentats.
+
+Sounds:
+
+  - Fix bugs causing some warning sounds to not be played.
+  - Fix deathhand missile countdown when narrator is interrupted.
+  - Add missile launch announcement.
+  - By default, Fremen, Sardaukar, and Mercenaries now use the
+    Atreides, Harkonnen, and Ordos voices and music, respectively.
+
+Other:
+
+  - Add support for custom campaigns.
+  - Add modding support through PROFILE.INI and HOUSE.INI for each campaign.
+  - Unit squads, build queues, and rally points are now saved.
+  - Add replay cutscene menu.
+  - Add three additional letters in the Hall of Fame.
+  - Add Direct3D driver (experimental).
+
+
 Version 1.2, 2012-10-14
 -----------------------
 
