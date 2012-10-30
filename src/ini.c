@@ -104,6 +104,7 @@ char *Ini_GetString(const char *category, const char *key, const char *defaultVa
 				/* Copy the value */
 				if (dest != NULL) {
 					uint16 len = lineEnd - current;
+					if (len >= length) len = length - 1;
 					memcpy(dest, current, len);
 					*(dest + len) = '\0';
 
