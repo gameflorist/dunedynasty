@@ -1130,8 +1130,6 @@ void GameLoop_Main(bool new_game)
 			key = 0;
 		}
 
-		Input_History_Clear();
-
 		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE) {
 			if (Unit_AnySelected()) {
 				if (l_timerUnitStatus < g_timerGame) {
