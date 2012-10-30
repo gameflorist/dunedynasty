@@ -22,6 +22,7 @@ enum {
 	CC_UNIT = FOURCC('U','N','I','T'),
 
 	/* Dune Dynasty extensions. */
+	CC_DDB2 = FOURCC('D','D','B','2'), /* Dune Dynasty Building 2. */
 	CC_DDU2 = FOURCC('D','D','U','2'), /* Dune Dynasty Unit 2. */
 };
 

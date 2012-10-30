@@ -111,6 +111,7 @@ Save_Main(FILE *fp, const char *description)
 	if (!Save_Chunk(fp, "TEAM", &Team_Save)) return false;
 
 	/* Store Dune Dynasty extensions. */
+	if (!Save_Chunk(fp, "DDB2", &Structure_Save2)) return false;
 	if (!Save_Chunk(fp, "DDU2", &Unit_Save2)) return false;
 
 	/* Write the total length of all data in the FORM chunk */

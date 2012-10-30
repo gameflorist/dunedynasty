@@ -99,6 +99,7 @@ static bool Load_Main(FILE *fp)
 	if (!Info_Load(fp, length)) return false;
 
 	/* Rewind, and read other chunks */
+	bool load_bldg = false;
 	bool load_unit = false;
 	fseek(fp, position, SEEK_SET);
 	while (fread(&header, sizeof(uint32), 1, fp) == 1) {
@@ -111,10 +112,20 @@ static bool Load_Main(FILE *fp)
 			case CC_MAP : if (!Map_Load      (fp, length)) return false; break;
 			case CC_PLYR: if (!House_Load    (fp, length)) return false; break;
 			case CC_UNIT: if (!Unit_Load     (fp, length)) return false; load_unit = true; break;
-			case CC_BLDG: if (!Structure_Load(fp, length)) return false; break;
+			case CC_BLDG: if (!Structure_Load(fp, length)) return false; load_bldg = true; break;
 			case CC_TEAM: if (!Team_Load     (fp, length)) return false; break;
 
 		    /* Dune Dynasty extensions.  Note: must come AFTER CC_BLDG, CC_UNIT, etc. */
+			case CC_DDB2:
+				if (load_bldg) {
+					if (!Structure_Load2(fp, length))
+						return false;
+				}
+				else {
+					Error("Structure_Load2 called before Structure_Load. Skipped.\n");
+				}
+				break;
+
 			case CC_DDU2:
 				if (load_unit) {
 					if (!Unit_Load2(fp, length))

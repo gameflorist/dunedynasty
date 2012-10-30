@@ -131,7 +131,7 @@ BuildQueue_Count(const BuildQueue *queue, uint16 objectType)
 	int count = 0;
 
 	while (e != NULL) {
-		if (e->objectType == objectType)
+		if ((e->objectType == objectType) || (objectType == 0xFFFF))
 			count++;
 
 		e = e->next;

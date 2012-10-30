@@ -158,6 +158,8 @@ extern bool Map_Load(FILE *fp, uint32 length);
 extern bool Map_Save(FILE *fp);
 extern bool Structure_Load(FILE *fp, uint32 length);
 extern bool Structure_Save(FILE *fp);
+extern bool Structure_Load2(FILE *fp, uint32 length);
+extern bool Structure_Save2(FILE *fp);
 extern bool Team_Load(FILE *fp, uint32 length);
 extern bool Team_Save(FILE *fp);
 extern bool Unit_Load(FILE *fp, uint32 length);
