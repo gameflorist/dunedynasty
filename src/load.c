@@ -12,6 +12,7 @@
 
 #include "load.h"
 
+#include "ai.h"
 #include "audio/audio.h"
 #include "file.h"
 #include "gui/gui.h"
@@ -116,6 +117,8 @@ static bool Load_Main(FILE *fp)
 			case CC_TEAM: if (!Team_Load     (fp, length)) return false; break;
 
 		    /* Dune Dynasty extensions.  Note: must come AFTER CC_BLDG, CC_UNIT, etc. */
+			case CC_DDAI: if (!BrutalAI_Load (fp, length)) return false; break;
+
 			case CC_DDB2:
 				if (load_bldg) {
 					if (!Structure_Load2(fp, length))

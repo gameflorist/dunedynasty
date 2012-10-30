@@ -8,6 +8,7 @@
 
 #include "save.h"
 
+#include "ai.h"
 #include "file.h"
 #include "house.h"
 #include "map.h"
@@ -114,6 +115,7 @@ Save_Main(FILE *fp, const char *description)
 	if (!Save_Chunk(fp, "DDI2", &Info_Save2)) return false;
 	if (!Save_Chunk(fp, "DDB2", &Structure_Save2)) return false;
 	if (!Save_Chunk(fp, "DDU2", &Unit_Save2)) return false;
+	if (!Save_Chunk(fp, "DDAI", &BrutalAI_Save)) return false;
 
 	/* Write the total length of all data in the FORM chunk */
 	length = ftell(fp) - 8;

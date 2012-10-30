@@ -1,6 +1,7 @@
 #ifndef BRUTAL_AI_H
 #define BRUTAL_AI_H
 
+#include <stdio.h>
 #include "house.h"
 #include "structure.h"
 #include "unit.h"
@@ -20,5 +21,8 @@ extern void UnitAI_DetachFromSquad(Unit *unit);
 extern void UnitAI_AbortMission(Unit *unit, uint16 enemy);
 extern uint16 UnitAI_GetSquadDestination(Unit *unit, uint16 destination);
 extern void UnitAI_SquadLoop(void);
+
+extern bool BrutalAI_Load(FILE *fp, uint32 length);
+extern bool BrutalAI_Save(FILE *fp);
 
 #endif

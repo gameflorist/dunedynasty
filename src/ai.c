@@ -15,6 +15,7 @@
 #include "pool/pool.h"
 #include "pool/structure.h"
 #include "pool/unit.h"
+#include "saveload/saveload.h"
 #include "scenario.h"
 #include "structure.h"
 #include "team.h"
@@ -873,4 +874,91 @@ UnitAI_SquadLoop(void)
 		if (squad->state == AISQUAD_DISBAND)
 			UnitAI_DisbandSquad(squad);
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+static uint32 SaveLoad_BrutalAI_RecruitmentTimeout(void *object, uint32 value, bool loading);
+static uint32 SaveLoad_BrutalAI_FormationTimeout(void *object, uint32 value, bool loading);
+
+static const SaveLoadDesc s_saveBrutalAISquad[] = {
+	SLD_ENTRY2(AISquad, SLDT_UINT8,  aiSquad,   SLDT_UINT32),
+	SLD_ENTRY2(AISquad, SLDT_UINT8,  plan,      SLDT_UINT32),
+	SLD_ENTRY2(AISquad, SLDT_UINT8,  state,     SLDT_UINT32),
+	SLD_ENTRY2(AISquad, SLDT_UINT8,  houseID,   SLDT_UINT32),
+	SLD_ENTRY (AISquad, SLDT_INT32,  num_members),
+	SLD_ENTRY (AISquad, SLDT_INT32,  max_members),
+	SLD_ARRAY (AISquad, SLDT_UINT16, waypoint,  5),
+	SLD_ENTRY (AISquad, SLDT_UINT16, target),
+	SLD_CALLB (AISquad, SLDT_UINT32, recruitment_timeout, SaveLoad_BrutalAI_RecruitmentTimeout),
+	SLD_CALLB (AISquad, SLDT_UINT32, formation_timeout,   SaveLoad_BrutalAI_FormationTimeout),
+	SLD_END
+};
+assert_compile(sizeof(enum SquadID) == sizeof(uint32));
+assert_compile(sizeof(enum AISquadPlanID) == sizeof(uint32));
+assert_compile(sizeof(enum AISquadState) == sizeof(uint32));
+assert_compile(sizeof(enum HouseType) == sizeof(uint32));
+
+static uint32
+SaveLoad_BrutalAI_RecruitmentTimeout(void *object, uint32 value, bool loading)
+{
+	AISquad *squad = object;
+
+	if (loading) {
+		squad->recruitment_timeout = (value == 0) ? 0 : (g_timerGame + value);
+		return 0;
+	}
+	else {
+		if (squad->recruitment_timeout <= g_timerGame) {
+			return 0;
+		}
+		else {
+			return squad->recruitment_timeout - g_timerGame;
+		}
+	}
+}
+
+static uint32
+SaveLoad_BrutalAI_FormationTimeout(void *object, uint32 value, bool loading)
+{
+	AISquad *squad = object;
+
+	if (loading) {
+		squad->formation_timeout = (value == 0) ? 0 : (g_timerGame + value);
+		return 0;
+	}
+	else {
+		if (squad->formation_timeout <= g_timerGame) {
+			return 0;
+		}
+		else {
+			return squad->formation_timeout - g_timerGame;
+		}
+	}
+}
+
+bool
+BrutalAI_Load(FILE *fp, uint32 length)
+{
+	int i = 0;
+
+	while (length > 0) {
+		if (!SaveLoad_Load(s_saveBrutalAISquad, fp, &s_aisquad[i]))
+			return false;
+
+		length -= SaveLoad_GetLength(s_saveBrutalAISquad);
+	}
+
+	return true;
+}
+
+bool
+BrutalAI_Save(FILE *fp)
+{
+	for (int i = 0; i < SQUADID_MAX + 1; i++) {
+		if (!SaveLoad_Save(s_saveBrutalAISquad, fp, &s_aisquad[i]))
+			return false;
+	}
+
+	return true;
 }
