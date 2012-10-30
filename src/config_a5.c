@@ -16,6 +16,7 @@
 #include "opendune.h"
 #include "scenario.h"
 #include "string.h"
+#include "video/video.h"
 
 #define CONFIG_FILENAME "dunedynasty.cfg"
 
@@ -28,6 +29,7 @@ typedef struct GameOption {
 		CONFIG_CAMPAIGN,
 		CONFIG_FLOAT,
 		CONFIG_FLOAT_1_3,
+		CONFIG_GRAPHICS_DRIVER,
 		CONFIG_INT,
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_16,
@@ -42,6 +44,7 @@ typedef struct GameOption {
 		int *_int;
 		float *_float;
 		char *_string;
+		enum GraphicsDriver *_graphics_driver;
 		enum Language *_language;
 		enum MusicSet *_music_set;
 		enum WindowMode *_window_mode;
@@ -67,6 +70,7 @@ static int saved_screen_height = 480;
 /*--------------------------------------------------------------*/
 
 static const GameOption s_game_option[] = {
+	{ "game",   "graphics_driver",  CONFIG_GRAPHICS_DRIVER, .d._graphics_driver = &g_graphics_driver },
 	{ "game",   "screen_width",     CONFIG_INT,     .d._int = &saved_screen_width },
 	{ "game",   "screen_height",    CONFIG_INT,     .d._int = &saved_screen_height },
 	{ "game",   "window_mode",      CONFIG_WINDOW_MODE, .d._window_mode = &g_gameConfig.windowMode },
@@ -172,6 +176,23 @@ Config_SetFloat(ALLEGRO_CONFIG *config, const char *section, const char *key, fl
 	char str[16];
 
 	snprintf(str, sizeof(str), "%f", value);
+	al_set_config_value(config, section, key, str);
+}
+
+static void
+Config_GetGraphicsDriver(const char *str, enum GraphicsDriver *value)
+{
+	VARIABLE_NOT_USED(str);
+
+	*value = GRAPHICS_DRIVER_OPENGL;
+}
+
+static void
+Config_SetGraphicsDriver(ALLEGRO_CONFIG *config, const char *section, const char *key, enum GraphicsDriver graphics_driver)
+{
+	const char *str = "opengl";
+	VARIABLE_NOT_USED(graphics_driver);
+
 	al_set_config_value(config, section, key, str);
 }
 
@@ -389,6 +410,10 @@ GameOptions_Load(void)
 				Config_GetFloat(str, 1.0f, 3.0f, opt->d._float);
 				break;
 
+			case CONFIG_GRAPHICS_DRIVER:
+				Config_GetGraphicsDriver(str, opt->d._graphics_driver);
+				break;
+
 			case CONFIG_INT:
 				Config_GetInt(str, 0, INT_MAX, opt->d._int);
 				break;
@@ -489,6 +514,10 @@ GameOptions_Save(void)
 			case CONFIG_FLOAT:
 			case CONFIG_FLOAT_1_3:
 				Config_SetFloat(s_configFile, opt->section, opt->key, *(opt->d._float));
+				break;
+
+			case CONFIG_GRAPHICS_DRIVER:
+				Config_SetGraphicsDriver(s_configFile, opt->section, opt->key, *(opt->d._graphics_driver));
 				break;
 
 			case CONFIG_INT:

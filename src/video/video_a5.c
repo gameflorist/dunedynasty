@@ -103,6 +103,8 @@ static const uint8 font_palette[][8] = {
 	{ 0x00, 0xFF, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0x00 }, /* Intro. */
 };
 
+enum GraphicsDriver g_graphics_driver;
+
 /* Exposed for prim_a5.c. */
 ALLEGRO_COLOR paltoRGB[256];
 
@@ -259,7 +261,14 @@ VideoA5_Init(void)
 {
 	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
-	int display_flags = ALLEGRO_OPENGL | ALLEGRO_GENERATE_EXPOSE_EVENTS;
+	int display_flags = ALLEGRO_GENERATE_EXPOSE_EVENTS;
+
+	switch (g_graphics_driver) {
+		case GRAPHICS_DRIVER_OPENGL:
+		default:
+			display_flags |= ALLEGRO_OPENGL;
+			break;
+	}
 
 	if (g_gameConfig.windowMode == WM_FULLSCREEN) {
 		display_flags |= ALLEGRO_FULLSCREEN;
@@ -789,8 +798,15 @@ VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool f
 	aux->width = w;
 	aux->height = h;
 
-	/* VideoA5_InitDissolve_LockedBitmap(src, aux); */
-	VideoA5_InitDissolve_GLStencil(src, aux);
+	switch (g_graphics_driver) {
+		case GRAPHICS_DRIVER_OPENGL:
+			VideoA5_InitDissolve_GLStencil(src, aux);
+			break;
+
+		default:
+			/* VideoA5_InitDissolve_LockedBitmap(src, aux); */
+			break;
+	}
 
 	return aux;
 }
@@ -798,8 +814,15 @@ VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool f
 void
 Video_DrawFadeIn(const FadeInAux *aux)
 {
-	/* VideoA5_DrawDissolve_LockedBitmap(aux); */
-	VideoA5_DrawDissolve_GLStencil(aux);
+	switch (g_graphics_driver) {
+		case GRAPHICS_DRIVER_OPENGL:
+			VideoA5_DrawDissolve_GLStencil(aux);
+			break;
+
+		default:
+			/* VideoA5_DrawDissolve_LockedBitmap(aux); */
+			break;
+	}
 }
 
 bool
@@ -810,8 +833,15 @@ Video_TickFadeIn(FadeInAux *aux)
 	if (aux->frame >= aux->height)
 		return true;
 
-	/* VideoA5_TickDissolve_LockedBitmap(aux); */
-	VideoA5_TickDissolve_GLStencil(aux);
+	switch (g_graphics_driver) {
+		case GRAPHICS_DRIVER_OPENGL:
+			VideoA5_TickDissolve_GLStencil(aux);
+			break;
+
+		default:
+			/* VideoA5_TickDissolve_LockedBitmap(aux); */
+			break;
+	}
 
 	aux->frame++;
 	return false;
@@ -1616,9 +1646,16 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 
 		ALLEGRO_BITMAP *brush = s_shape[shapeID][houseID];
 
-		/* VideoA5_DrawBlur_SeparateBlender(brush, x, y, s_variable_60[effect]); */
-		/* VideoA5_DrawBlur_DestMinusSrc(brush, x, y, s_variable_60[effect]); */
-		VideoA5_DrawBlur_GLStencil(brush, x, y, s_variable_60[effect]);
+		switch (g_graphics_driver) {
+			case GRAPHICS_DRIVER_OPENGL:
+				VideoA5_DrawBlur_GLStencil(brush, x, y, s_variable_60[effect]);
+				break;
+
+			default:
+				/* VideoA5_DrawBlur_SeparateBlender(brush, x, y, s_variable_60[effect]); */
+				/* VideoA5_DrawBlur_DestMinusSrc(brush, x, y, s_variable_60[effect]); */
+				break;
+		}
 	}
 	else if ((flags & 0x300) == 0x300) {
 		/* Shadow. */

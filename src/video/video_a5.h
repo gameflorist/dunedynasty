@@ -4,6 +4,12 @@
 #include "video.h"
 #include "../file.h"
 
+enum GraphicsDriver {
+	GRAPHICS_DRIVER_OPENGL,
+};
+
+extern enum GraphicsDriver g_graphics_driver;
+
 extern bool VideoA5_Init(void);
 extern void VideoA5_Uninit(void);
 extern void VideoA5_ToggleFullscreen(void);
