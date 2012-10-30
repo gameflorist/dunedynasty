@@ -154,6 +154,8 @@ extern bool House_Save(FILE *fp);
 extern bool Info_Load(FILE *fp, uint32 length);
 extern bool Info_LoadOld(FILE *fp, uint32 length);
 extern bool Info_Save(FILE *fp);
+extern bool Info_Load2(FILE *fp, uint32 length);
+extern bool Info_Save2(FILE *fp);
 extern bool Map_Load(FILE *fp, uint32 length);
 extern bool Map_Save(FILE *fp);
 extern bool Structure_Load(FILE *fp, uint32 length);

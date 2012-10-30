@@ -1023,10 +1023,10 @@ void GameLoop_Main(bool new_game)
 	GUI_Palette_CreateRemap(g_playerHouseID);
 	Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 
-	if (new_game)
+	if (new_game) {
 		Game_LoadScenario(g_playerHouseID, g_scenarioID);
-
-	GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
+		GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
+	}
 
 	Timer_SetTimer(TIMER_GAME, true);
 

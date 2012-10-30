@@ -126,6 +126,16 @@ static bool Load_Main(FILE *fp)
 				}
 				break;
 
+			case CC_DDI2:
+				if (load_unit) {
+					if (!Info_Load2(fp, length))
+						return false;
+				}
+				else {
+					Error("Info_Load2 called before Unit_Load. Skipped.\n");
+				}
+				break;
+
 			case CC_DDU2:
 				if (load_unit) {
 					if (!Unit_Load2(fp, length))

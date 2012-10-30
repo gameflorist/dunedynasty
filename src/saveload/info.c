@@ -45,6 +45,7 @@ static uint32 SaveLoad_StructureActive(void *object, uint32 value, bool loading)
 	}
 }
 
+#if 0
 static uint32 SaveLoad_UnitSelected(void *object, uint32 value, bool loading)
 {
 	VARIABLE_NOT_USED(object);
@@ -65,6 +66,7 @@ static uint32 SaveLoad_UnitSelected(void *object, uint32 value, bool loading)
 		return 0xFFFF;
 	}
 }
+#endif
 
 static uint32 SaveLoad_UnitActive(void *object, uint32 value, bool loading)
 {
@@ -118,8 +120,6 @@ static uint32 SaveLoad_UnitHouseMissile(void *object, uint32 value, bool loading
 	}
 }
 
-static Unit *s_unitSelected; /* XXX: need to select this. */
-
 static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GSLD   (g_scenario,  g_saveScenario),
 	SLD_GENTRY (SLDT_UINT16, g_playerCreditsNoSilo),
@@ -129,7 +129,7 @@ static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GENTRY2(SLDT_INT8,   g_structureActiveType, SLDT_UINT16),
 	SLD_GENTRY (SLDT_UINT16, g_structureActivePosition),
 	SLD_GCALLB (SLDT_UINT16, g_structureActive, &SaveLoad_StructureActive),
-	SLD_GCALLB (SLDT_UINT16, s_unitSelected, &SaveLoad_UnitSelected),
+	SLD_EMPTY  (SLDT_UINT16), /* was SaveLoad_UnitSelected. */
 	SLD_GCALLB (SLDT_UINT16, g_unitActive, &SaveLoad_UnitActive),
 	SLD_GENTRY (SLDT_UINT16, g_activeAction),
 	SLD_GENTRY (SLDT_UINT32, g_strategicRegionBits),
@@ -150,6 +150,11 @@ static const SaveLoadDesc s_saveInfoOld[] = {
 	SLD_EMPTY2(SLDT_UINT8,  250),
 	SLD_GENTRY(SLDT_UINT16, g_scenarioID),
 	SLD_GENTRY(SLDT_UINT16, g_campaignID),
+	SLD_END
+};
+
+static const SaveLoadDesc s_saveInfo2[] = {
+	SLD_ENTRY (Unit, SLDT_UINT16, o.index),
 	SLD_END
 };
 
@@ -201,6 +206,46 @@ bool Info_Save(FILE *fp)
 	if (fwrite(&savegameVersion, sizeof(uint16), 1, fp) != 1) return false;
 
 	if (!SaveLoad_Save(s_saveInfo, fp, NULL)) return false;
+
+	return true;
+}
+
+/*--------------------------------------------------------------*/
+
+bool
+Info_Load2(FILE *fp, uint32 length)
+{
+	Unit_UnselectAll();
+
+	while (length > 0) {
+		Unit ul;
+		if (!SaveLoad_Load(s_saveInfo2, fp, &ul))
+			return false;
+
+		length -= SaveLoad_GetLength(s_saveInfo2);
+
+		Unit *u = Unit_Get_ByIndex(ul.o.index);
+		if (u == NULL)
+			return false;
+
+		Unit_AddSelected(u);
+	}
+
+	return true;
+}
+
+bool
+Info_Save2(FILE *fp)
+{
+	int iter;
+
+	Unit *u = Unit_FirstSelected(&iter);
+	while (u != NULL) {
+		if (!SaveLoad_Save(s_saveInfo2, fp, u))
+			return false;
+
+		u = Unit_NextSelected(&iter);
+	}
 
 	return true;
 }
