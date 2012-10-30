@@ -99,6 +99,7 @@ static bool Load_Main(FILE *fp)
 	if (!Info_Load(fp, length)) return false;
 
 	/* Rewind, and read other chunks */
+	bool load_unit = false;
 	fseek(fp, position, SEEK_SET);
 	while (fread(&header, sizeof(uint32), 1, fp) == 1) {
 		if (fread(&length, sizeof(uint32), 1, fp) != 1) return false;
@@ -109,9 +110,20 @@ static bool Load_Main(FILE *fp)
 			case CC_INFO: break; /* 'INFO' chunk is already read */
 			case CC_MAP : if (!Map_Load      (fp, length)) return false; break;
 			case CC_PLYR: if (!House_Load    (fp, length)) return false; break;
-			case CC_UNIT: if (!Unit_Load     (fp, length)) return false; break;
+			case CC_UNIT: if (!Unit_Load     (fp, length)) return false; load_unit = true; break;
 			case CC_BLDG: if (!Structure_Load(fp, length)) return false; break;
 			case CC_TEAM: if (!Team_Load     (fp, length)) return false; break;
+
+		    /* Dune Dynasty extensions.  Note: must come AFTER CC_BLDG, CC_UNIT, etc. */
+			case CC_DDU2:
+				if (load_unit) {
+					if (!Unit_Load2(fp, length))
+						return false;
+				}
+				else {
+					Error("Unit_Load2 called before Unit_Load. Skipped.\n");
+				}
+				break;
 
 			default:
 				Error("Unknown chunk in savegame: %c%c%c%c (length: %d). Skipped.\n", header, header >> 8, header >> 16, header >> 24, length);

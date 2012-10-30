@@ -110,6 +110,9 @@ Save_Main(FILE *fp, const char *description)
 	if (!Save_Chunk(fp, "MAP ", &Map_Save)) return false;
 	if (!Save_Chunk(fp, "TEAM", &Team_Save)) return false;
 
+	/* Store Dune Dynasty extensions. */
+	if (!Save_Chunk(fp, "DDU2", &Unit_Save2)) return false;
+
 	/* Write the total length of all data in the FORM chunk */
 	length = ftell(fp) - 8;
 	fseek(fp, 4, SEEK_SET);

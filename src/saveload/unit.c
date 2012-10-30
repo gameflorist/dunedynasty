@@ -43,6 +43,15 @@ static const SaveLoadDesc s_saveUnit[] = {
 	SLD_END
 };
 
+static const SaveLoadDesc s_saveUnit2[] = {
+	SLD_ENTRY (Unit, SLDT_UINT16, o.index),
+	SLD_ENTRY2(Unit, SLDT_UINT8,  deviationHouse, SLDT_UINT32),
+	SLD_ENTRY2(Unit, SLDT_UINT8,  squadID,        SLDT_UINT32),
+	SLD_ENTRY2(Unit, SLDT_UINT8,  aiSquad,        SLDT_UINT32),
+	SLD_END
+};
+assert_compile(sizeof(enum HouseType) == sizeof(uint32));
+assert_compile(sizeof(enum SquadID) == sizeof(uint32));
 
 /**
  * Load all Units from a file.
@@ -113,6 +122,55 @@ bool Unit_Save(FILE *fp)
 		su = *u;
 
 		if (!SaveLoad_Save(s_saveUnit, fp, &su)) return false;
+	}
+
+	return true;
+}
+
+/*--------------------------------------------------------------*/
+
+bool
+Unit_Load2(FILE *fp, uint32 length)
+{
+	while (length > 0) {
+		Unit ul;
+		if (!SaveLoad_Load(s_saveUnit2, fp, &ul))
+			return false;
+
+		length -= SaveLoad_GetLength(s_saveUnit2);
+
+		Unit *u = Unit_Get_ByIndex(ul.o.index);
+		if (u == NULL)
+			return false;
+
+		/* Extra data. */
+		u->deviationHouse = ul.deviationHouse;
+		u->squadID = ul.squadID;
+		u->aiSquad = ul.aiSquad;
+	}
+
+	if (length != 0)
+		return false;
+
+	return true;
+}
+
+bool
+Unit_Save2(FILE *fp)
+{
+	PoolFindStruct find;
+
+	find.houseID = HOUSE_INVALID;
+	find.type    = 0xFFFF;
+	find.index   = 0xFFFF;
+
+	while (true) {
+		Unit *u = Unit_Find(&find);
+		if (u == NULL)
+			break;
+
+		if (!SaveLoad_Save(s_saveUnit2, fp, u))
+			return false;
 	}
 
 	return true;

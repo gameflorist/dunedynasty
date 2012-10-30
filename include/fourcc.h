@@ -20,6 +20,9 @@ enum {
 	CC_TEAM = FOURCC('T','E','A','M'),
 	CC_TEXT = FOURCC('T','E','X','T'),
 	CC_UNIT = FOURCC('U','N','I','T'),
+
+	/* Dune Dynasty extensions. */
+	CC_DDU2 = FOURCC('D','D','U','2'), /* Dune Dynasty Unit 2. */
 };
 
 #undef FOURCC
