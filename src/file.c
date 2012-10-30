@@ -168,8 +168,12 @@ File_Open_CaseInsensitive(enum SearchDirectory dir, const char *filename, const 
 	if (fp != NULL)
 		return fp;
 
+#ifndef ALLEGRO_WINDOWS
+	/* Attempt lower-case on case-sensitive filesystems. */
 	File_MakeCompleteFilename(buf, sizeof(buf), dir, filename, true);
 	fp = fopen(buf, mode);
+#endif
+
 	return fp;
 }
 
