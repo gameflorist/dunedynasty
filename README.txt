@@ -12,7 +12,7 @@ original game engine as reverse-engineered by the [OpenDUNE] project.
 
 Dune Dynasty features these modern enhancements:
 
-  - Runs natively on Linux and Windows (OpenGL required)
+  - Runs natively on Linux and Windows (OpenGL or Direct3D)
   - High-resolution graphics, including zooming
   - Multiple unit selection with control groups
   - New build queue interface
@@ -23,6 +23,7 @@ Plus:
 
   - Emulated Ad-Lib sound and music playback
   - General MIDI playback using FluidSynth
+  - Custom campaigns
   - Bug fixes
   - Smoother unit animation
   - Brutal AI mode
@@ -171,7 +172,7 @@ External music packs
 --------------------
 
 Dune Dynasty can play various external music sets, e.g. music from Dune 2000.
-Each of these have their own subdirectory in the dist/ directory.
+Each of these have their own subdirectory in the music/ directory.
 Instructions are provided in the respective FILELIST.TXT files.
 
 Note that many of the external music sets are provided in .mp3 format.
@@ -215,6 +216,30 @@ On Windows this will be something like:
 Saved games from Dune II should work if placed there.
 
 
+Custom campaigns
+----------------
+
+Dune Dynasty can play [fan-made campaigns] such as [Super Dune II Classic],
+[Stefan Hendriks' Atreides Campaign], and [MrFlibble's Alternate Scenarios].
+These should be placed in the subdirectories inside the campaign/ directory.
+Click the "The Building of a Dynasty" subtitle to switch between campaigns.
+
+You can also create your own campaigns.  A campaign should consist of
+a META.INI file, a REGIONX.INI file for each playable House, where X
+is the first letter of the House name, and a complete set of scenarios
+for each House, named SCENX001.INI through SCENX022.INI.  See Stefan
+Hendriks' Atreides Campaign (shac/) as a simple example.
+
+Each campaign can also contain custom balance tweaks, specified in
+PROFILE.INI and HOUSE.INI.  Please refer to the sample files in the
+campaign directory for more infomation.
+
+Finally, the scenarios can either be distributed as loose INI files or
+as a single PAK file.  Data stored in PAK files must be listed in META.INI.
+See MrFlibble's Alternative Scenarios (mfas/) as a simple example of
+scenarios stored in a PAK file.
+
+
 Acknowledgements
 ----------------
 
@@ -234,7 +259,10 @@ who worked on the Adlib/OPL/MIDI player code.
 
 Peter, for help on various bits of the code, the music code, and AUDlib.
 
-Nyerguds, for many bug reports and suggestions.
+Nyerguds, for his Dune II editor.
+
+Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
+purplescrin, EagleEye.
 
 Westwood Studios, for an amazing game!
 
@@ -253,4 +281,8 @@ David Wang <dswang@users.sourceforge.net>
 [Download]: http://sourceforge.net/projects/dunedynasty/files/
 [Screenshot]: http://sourceforge.net/projects/dunedynasty/screenshots/screenshot_hark2.png "Screenshot"
 [SourceForge]: http://sourceforge.net/projects/dunedynasty/
+[Fan-made campaigns]: http://forum.dune2k.com/topic/20526-dune-ii-goodies-extras/
+[Super Dune II Classic]: http://forum.dune2k.com/topic/20065-super-dune-ii-classic/
+[Stefan Hendriks' Atreides Campaign]: http://arrakis.dune2k.com/downloads.html
+[MrFlibble's Alternate Scenarios]: http://forum.opendune.org/viewtopic.php?p=134#p134
 [changes]: changes.html
