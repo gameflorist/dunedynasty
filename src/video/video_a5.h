@@ -6,6 +6,7 @@
 
 enum GraphicsDriver {
 	GRAPHICS_DRIVER_OPENGL,
+	GRAPHICS_DRIVER_DIRECT3D,
 };
 
 extern enum GraphicsDriver g_graphics_driver;

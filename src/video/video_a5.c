@@ -14,6 +14,11 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
+
+#ifdef ALLEGRO_WINDOWS
+#include <allegro5/allegro_direct3d.h>
+#endif
+
 #include <stdio.h>
 #include "../os/error.h"
 #include "../os/math.h"
@@ -269,6 +274,12 @@ VideoA5_Init(void)
 		default:
 			display_flags |= ALLEGRO_OPENGL;
 			break;
+
+#ifdef ALLEGRO_WINDOWS
+		case GRAPHICS_DRIVER_DIRECT3D:
+			display_flags |= ALLEGRO_DIRECT3D;
+			break;
+#endif
 	}
 
 	if (g_gameConfig.windowMode == WM_FULLSCREEN) {
@@ -773,6 +784,24 @@ VideoA5_TickDissolve_GLStencil(FadeInAux *aux)
 }
 #endif
 
+#ifdef ALLEGRO_WINDOWS
+/* Requires Direct3D, stencil buffer. */
+static void
+VideoA5_InitDissolve_D3DStencil(ALLEGRO_BITMAP *src, FadeInAux *aux)
+{
+}
+
+static void
+VideoA5_DrawDissolve_D3DStencil(const FadeInAux *aux)
+{
+}
+
+static void
+VideoA5_TickDissolve_D3DStencil(FadeInAux *aux)
+{
+}
+#endif
+
 static FadeInAux *
 VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool fade_in)
 {
@@ -816,6 +845,12 @@ VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool f
 			VideoA5_InitDissolve_GLStencil(src, aux);
 			break;
 
+#ifdef ALLEGRO_WINDOWS
+		case GRAPHICS_DRIVER_DIRECT3D:
+			VideoA5_InitDissolve_D3DStencil(src, aux);
+			break;
+#endif
+
 		default:
 			/* VideoA5_InitDissolve_LockedBitmap(src, aux); */
 			break;
@@ -831,6 +866,12 @@ Video_DrawFadeIn(const FadeInAux *aux)
 		case GRAPHICS_DRIVER_OPENGL:
 			VideoA5_DrawDissolve_GLStencil(aux);
 			break;
+
+#ifdef ALLEGRO_WINDOWS
+		case GRAPHICS_DRIVER_DIRECT3D:
+			VideoA5_DrawDissolve_D3DStencil(aux);
+			break;
+#endif
 
 		default:
 			/* VideoA5_DrawDissolve_LockedBitmap(aux); */
@@ -850,6 +891,12 @@ Video_TickFadeIn(FadeInAux *aux)
 		case GRAPHICS_DRIVER_OPENGL:
 			VideoA5_TickDissolve_GLStencil(aux);
 			break;
+
+#ifdef ALLEGRO_WINDOWS
+		case GRAPHICS_DRIVER_DIRECT3D:
+			VideoA5_TickDissolve_D3DStencil(aux);
+			break;
+#endif
 
 		default:
 			/* VideoA5_TickDissolve_LockedBitmap(aux); */
@@ -1632,6 +1679,14 @@ VideoA5_DrawBlur_GLStencil(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
 }
 #endif
 
+#ifdef ALLEGRO_WINDOWS
+/* Requires Direct3D, stencil buffer. */
+static void
+VideoA5_DrawBlur_D3DStencil(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
+{
+}
+#endif
+
 void
 VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags)
 {
@@ -1663,6 +1718,12 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 			case GRAPHICS_DRIVER_OPENGL:
 				VideoA5_DrawBlur_GLStencil(brush, x, y, s_variable_60[effect]);
 				break;
+
+#ifdef ALLEGRO_WINDOWS
+			case GRAPHICS_DRIVER_DIRECT3D:
+				VideoA5_DrawBlur_D3DStencil(brush, x, y, s_variable_60[effect]);
+				break;
+#endif
 
 			default:
 				/* VideoA5_DrawBlur_SeparateBlender(brush, x, y, s_variable_60[effect]); */

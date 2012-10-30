@@ -185,13 +185,28 @@ Config_GetGraphicsDriver(const char *str, enum GraphicsDriver *value)
 	VARIABLE_NOT_USED(str);
 
 	*value = GRAPHICS_DRIVER_OPENGL;
+
+#ifdef ALLEGRO_WINDOWS
+	if (str[0] == 'D' || str[0] == 'd')
+		*value = GRAPHICS_DRIVER_DIRECT3D;
+#endif
 }
 
 static void
 Config_SetGraphicsDriver(ALLEGRO_CONFIG *config, const char *section, const char *key, enum GraphicsDriver graphics_driver)
 {
 	const char *str = "opengl";
-	VARIABLE_NOT_USED(graphics_driver);
+
+	switch (graphics_driver) {
+#ifdef ALLEGRO_WINDOWS
+		case GRAPHICS_DRIVER_DIRECT3D:
+			str = "direct3d";
+			break;
+#endif
+
+		default:
+			break;
+	}
 
 	al_set_config_value(config, section, key, str);
 }
