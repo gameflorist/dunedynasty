@@ -23,6 +23,8 @@ typedef enum SaveLoadType {
 	SLDT_CALLBACK,                                          /*!< A callback handler. */
 	SLDT_SLD,                                               /*!< A SaveLoadDesc. */
 
+	SLDT_CUSTOM,
+
 	SLDT_NULL                                               /*!< Not stored. */
 } SaveLoadType;
 
@@ -113,6 +115,9 @@ typedef enum SaveLoadType {
 #define SLD_CALLB(c, t, m, p) { offset(c, m), t, SLDT_CALLBACK, 1, NULL, item_size(c, m), p, NULL }
 #define SLD_GCALLB(t, m, p) { 0, t, SLDT_CALLBACK, 1, NULL, sizeof(m), p, &m }
 
+#define SLD_CUSTOM(c, m, p) { offset(c, m), SLDT_CUSTOM, SLDT_CUSTOM, 1, NULL, 0, p, NULL }
+#define SLD_GCUSTOM(p) { 0, SLDT_CUSTOM, SLDT_CUSTOM, 1, NULL, 0, p, NULL }
+
 /** Indicates end of array. */
 #define SLD_END { 0, SLDT_NULL, SLDT_NULL, 0, NULL, 0, NULL, NULL }
 
@@ -129,6 +134,11 @@ typedef struct SaveLoadDesc {
 	uint32 (*callback)(void *object, uint32 value, bool loading);/*!< The custom callback. */
 	void *address;                                          /*!< The address of the element. */
 } SaveLoadDesc;
+
+typedef struct SaveLoad_CustomCallbackData {
+	FILE *fp;
+	void *object;
+} SaveLoad_CustomCallbackData;
 
 extern const SaveLoadDesc g_saveObject[];
 extern const SaveLoadDesc g_saveScriptEngine[];

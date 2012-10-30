@@ -24,6 +24,8 @@ uint32 SaveLoad_GetLength(const SaveLoadDesc *sld)
 			case SLDT_INT16:    length += sizeof(int16)  * sld->count;  break;
 			case SLDT_INT32:    length += sizeof(int32)  * sld->count;  break;
 			case SLDT_SLD:      length += SaveLoad_GetLength(sld->sld) * sld->count; break;
+
+			case SLDT_CUSTOM:   break;
 		}
 		sld++;
 	}
@@ -102,9 +104,17 @@ bool SaveLoad_Load(const SaveLoadDesc *sld, FILE *fp, void *object)
 
 					value = v;
 				} break;
+
+				case SLDT_CUSTOM: {
+					SaveLoad_CustomCallbackData data;
+					data.fp = fp;
+					data.object = object;
+					if (sld->callback(&data, 0, true) == 0) return false;
+				} break;
 			}
 
 			switch (sld->type_memory) {
+				case SLDT_CUSTOM:
 				case SLDT_NULL:
 					break;
 
@@ -167,6 +177,7 @@ bool SaveLoad_Save(const SaveLoadDesc *sld, FILE *fp, void *object)
 			void *ptr = (sld->address == NULL ? ((uint8 *)object) + sld->offset : (uint8 *)sld->address) + i * sld->size;
 
 			switch (sld->type_memory) {
+				case SLDT_CUSTOM:
 				case SLDT_NULL:
 					value = 0;
 					break;
@@ -248,6 +259,13 @@ bool SaveLoad_Save(const SaveLoadDesc *sld, FILE *fp, void *object)
 					int32 v = (int32)value;
 
 					if (fwrite(&v, sizeof(int32), 1, fp) != 1) return false;
+				} break;
+
+				case SLDT_CUSTOM: {
+					SaveLoad_CustomCallbackData data;
+					data.fp = fp;
+					data.object = object;
+					if (sld->callback(&data, 0, false) == 0) return false;
 				} break;
 			}
 		}
