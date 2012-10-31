@@ -448,10 +448,6 @@ VideoA5_CaptureScreenshot(void)
 static void
 VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCopyMode mode)
 {
-	const int w = al_get_bitmap_width(dest);
-	const int h = al_get_bitmap_height(dest);
-	const int src_stride = max(SCREEN_WIDTH, w);
-
 	ALLEGRO_LOCKED_REGION *reg;
 
 	if (mode == SKIP_COLOUR_0) {
@@ -460,6 +456,13 @@ VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCo
 	else {
 		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
 	}
+
+	if (reg == NULL)
+		return;
+
+	const int w = al_get_bitmap_width(dest);
+	const int h = al_get_bitmap_height(dest);
+	const int src_stride = max(SCREEN_WIDTH, w);
 
 	for (int y = 0; y < h; y++) {
 		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
@@ -2117,6 +2120,10 @@ VideoA5_InitWSA(unsigned char *buf)
 bool
 VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int h)
 {
+	VideoA5_ResizeScratchBitmap(w, h);
+	if (scratch == NULL)
+		return false;
+
 	if (wsa != NULL) {
 		if (!WSA_DisplayFrame(wsa, frame, 0, 0, 0))
 			return false;
@@ -2124,7 +2131,6 @@ VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int
 
 	const unsigned char *buf = GFX_Screen_Get_ByIndex(0);
 
-	VideoA5_ResizeScratchBitmap(w, h);
 	VideoA5_CopyBitmap(&buf[SCREEN_WIDTH * sy + sx], scratch, BLACK_COLOUR_0);
 	al_draw_bitmap(scratch, dx, dy, 0);
 
