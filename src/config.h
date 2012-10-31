@@ -20,6 +20,16 @@ typedef struct GameCfg {
 	bool hints;
 	bool autoScroll;
 	int scrollSpeed;
+
+	/* "Right-click orders" control scheme:
+	 * Left  -> select, selection box.
+	 * Right -> order, pan.
+	 *
+	 * "Left-click orders" (Dune 2000) control scheme:
+	 * Left  -> select/order, selection box.
+	 * Right -> deselect, pan.
+	 */
+	bool leftClickOrders;
 } GameCfg;
 
 extern GameCfg g_gameConfig;

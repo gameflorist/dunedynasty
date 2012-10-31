@@ -574,8 +574,39 @@ Viewport_Click(Widget *w)
 	}
 
 	if (w->state.s.buttonState & 0x04) {
+		bool perform_selection_box = false;
+
 		/* Releasing LMB performs selection box. */
-		if ((viewport_click_action == VIEWPORT_LMB) || (viewport_click_action == VIEWPORT_SELECTION_BOX)) {
+		if (viewport_click_action == VIEWPORT_SELECTION_BOX) {
+			perform_selection_box = true;
+		}
+
+		/* Releasing LMB performs selection box (alt: context_sensitive_action). */
+		else if (viewport_click_action == VIEWPORT_LMB) {
+			if (g_gameConfig.leftClickOrders) {
+				if (Unit_AnySelected()) {
+					enum HouseType houseID = HOUSE_INVALID;
+
+					Structure *s = Structure_Get_ByPackedTile(packed);
+					if (s != NULL)
+						houseID = s->o.houseID;
+
+					if (houseID == HOUSE_INVALID) {
+						Unit *u = Unit_Get_ByPackedTile(packed);
+						if (u != NULL)
+							houseID = Unit_GetHouseID(u);
+					}
+
+					if (!House_AreAllied(houseID, g_playerHouseID))
+						perform_context_sensitive_action = true;
+				}
+			}
+
+			if (!perform_context_sensitive_action)
+				perform_selection_box = true;
+		}
+
+		if (perform_selection_box) {
 			selection_box_x2 = Viewport_ClampSelectionBoxX(mouseX);
 			selection_box_y2 = Viewport_ClampSelectionBoxY(mouseY);
 
@@ -612,9 +643,15 @@ Viewport_Click(Widget *w)
 			GUI_Widget_Cancel_Click(NULL);
 		}
 
-		/* Releasing RMB performs context sensitive action. */
+		/* Releasing RMB performs context sensitive action (alt: deselect). */
 		else if (viewport_click_action == VIEWPORT_RMB) {
-			perform_context_sensitive_action = true;
+			if (g_gameConfig.leftClickOrders) {
+				Map_SetSelection(0xFFFF);
+				Unit_UnselectAll();
+			}
+			else {
+				perform_context_sensitive_action = true;
+			}
 		}
 
 		/* Releasing RMB stops panning. */
