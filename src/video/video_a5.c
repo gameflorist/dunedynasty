@@ -387,7 +387,11 @@ VideoA5_Uninit(void)
 void
 VideoA5_ToggleFullscreen(void)
 {
-	const bool fs = (al_get_display_flags(display) & ALLEGRO_FULLSCREEN_WINDOW);
+	const int display_flags = al_get_display_flags(display);
+	if (display_flags & ALLEGRO_FULLSCREEN)
+		return;
+
+	const bool fs = (display_flags & ALLEGRO_FULLSCREEN_WINDOW);
 	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
 	const int tilex = Tile_GetPackedX(g_viewportPosition);
 	const int tiley = Tile_GetPackedY(g_viewportPosition);
