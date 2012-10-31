@@ -297,14 +297,23 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 
 	if (s->rallyPoint != 0xFFFF) {
 		const int encoded = Tools_Index_Encode(s->rallyPoint, IT_TILE);
+		enum UnitActionType action = ACTION_MOVE;
 
+		/* Harvesters should NOT harvest if we can see that the
+		 * destination is not sand.
+		 */
 		if (u->o.type == UNIT_HARVESTER) {
-			Unit_SetAction(u, ACTION_HARVEST);
-		}
-		else {
-			Unit_SetAction(u, ACTION_MOVE);
+			action = ACTION_HARVEST;
+
+			if (g_map[s->rallyPoint].isUnveiled) {
+				const enum LandscapeType lst = Map_GetLandscapeType(s->rallyPoint);
+
+				if (!g_table_landscapeInfo[lst].isSand)
+					action = ACTION_MOVE;
+			}
 		}
 
+		Unit_SetAction(u, action);
 		Unit_SetDestination(u, encoded);
 	}
 
