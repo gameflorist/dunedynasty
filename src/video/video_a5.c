@@ -1684,6 +1684,31 @@ VideoA5_DrawBlur_GLStencil(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
 static void
 VideoA5_DrawBlur_D3DStencil(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
 {
+	LPDIRECT3DDEVICE9 pDevice = al_get_d3d_device(display);
+
+	IDirect3DDevice9_Clear(pDevice, 0, NULL, D3DCLEAR_STENCIL, 0, 0, 0);                /* glClear(GL_STENCIL_BUFFER_BIT); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_ALPHATESTENABLE, TRUE);              /* glEnable(GL_ALPHA_TEST); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, TRUE);                /* glEnable(GL_STENCIL_TEST); */ /* ?glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_ALPHAFUNC, D3DCMP_GREATER);          /* glAlphaFunc(GL_GREATER, 0.5f); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_ALPHAREF, (DWORD)128);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFUNC, D3DCMP_ALWAYS);         /* glStencilFunc(GL_ALWAYS, 0x1, 0x1); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);     /* glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
+
+	al_draw_bitmap(brush, x, y, 0);
+
+	/* ?glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);           /* glAlphaFunc(GL_ALWAYS, 0); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFUNC, D3DCMP_EQUAL);          /* glStencilFunc(GL_EQUAL, 0x1, 0x1); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILREF, 1);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILMASK, 1);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);     /* glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP); */
+
+	Viewport_RenderBrush(x + blurx, y, blurx);
+
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_ALPHATESTENABLE, FALSE);             /* glDisable(GL_ALPHA_TEST); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, FALSE);               /* glDisable(GL_STENCIL_TEST); */
 }
 #endif
 
