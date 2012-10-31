@@ -93,27 +93,37 @@ found_song:
 
 	/* Use default music pack or Adlib if song is otherwise missing. */
 	for (int i = 0; g_table_music_cutoffs[i] < MUSICID_MAX; i++) {
-		enum MusicID musicID = g_table_music_cutoffs[i];
+		enum MusicID start = g_table_music_cutoffs[i];
 		enum MusicID end = g_table_music_cutoffs[i + 1];
-		enum MusicID def = musicID;
-		assert(g_table_music[musicID].music_set == MUSICSET_DUNE2_ADLIB);
+		enum MusicSet def = MUSICSET_DUNE2_ADLIB;
+		enum MusicID musicID;
+		assert(g_table_music[start].music_set == MUSICSET_DUNE2_ADLIB);
 
-		for (; musicID < end; musicID++) {
+		for (musicID = start; musicID < end; musicID++) {
 			const enum MusicSet music_set = g_table_music[musicID].music_set;
 
 			if (g_table_music[musicID].enable == MUSIC_ENABLE) {
 				break;
 			}
 			else if ((music_set == default_music_pack) && (g_table_music[musicID].enable & MUSIC_FOUND)) {
-				def = musicID;
+				def = music_set;
 			}
 		}
 
-		if (musicID >= end) {
-			g_table_music[def].enable = MUSIC_ENABLE;
-			g_table_music[def].volume = max(0.25f, fabsf(g_table_music[def].volume));
+		if (musicID < end)
+			continue;
 
-			if (verbose) fprintf(stdout, "[default] %s\n", g_table_music[def].filename);
+		for (musicID = start; musicID < end; musicID++) {
+			if (g_table_music[musicID].music_set != def)
+				continue;
+
+			if (MUSIC_BONUS <= musicID && musicID < MUSIC_ATTACK1)
+				continue;
+
+			g_table_music[musicID].enable = MUSIC_ENABLE;
+			g_table_music[musicID].volume = max(0.25f, fabsf(g_table_music[musicID].volume));
+
+			if (verbose) fprintf(stdout, "[default] %s\n", g_table_music[musicID].filename);
 		}
 	}
 }
