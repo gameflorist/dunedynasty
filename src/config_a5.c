@@ -70,13 +70,6 @@ static int saved_screen_height = 480;
 /*--------------------------------------------------------------*/
 
 static const GameOption s_game_option[] = {
-	{ "game",   "graphics_driver",  CONFIG_GRAPHICS_DRIVER, .d._graphics_driver = &g_graphics_driver },
-	{ "game",   "screen_width",     CONFIG_INT,     .d._int = &saved_screen_width },
-	{ "game",   "screen_height",    CONFIG_INT,     .d._int = &saved_screen_height },
-	{ "game",   "window_mode",      CONFIG_WINDOW_MODE, .d._window_mode = &g_gameConfig.windowMode },
-	{ "game",   "menubar_scale",    CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scale },
-	{ "game",   "sidebar_scale",    CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scale },
-	{ "game",   "viewport_scale",   CONFIG_FLOAT_1_3,   .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scale },
 	{ "game",   "language",         CONFIG_LANGUAGE,.d._language = &g_gameConfig.language },
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
@@ -86,6 +79,14 @@ static const GameOption s_game_option[] = {
 	{ "game",   "scroll_along_screen_edge", CONFIG_BOOL,.d._bool = &enhancement_scroll_along_screen_edge },
 	{ "game",   "left_click_orders",        CONFIG_BOOL,.d._bool = &g_gameConfig.leftClickOrders },
 	{ "game",   "hold_control_to_zoom",     CONFIG_BOOL,.d._bool = &g_gameConfig.holdControlToZoom },
+
+	{ "graphics",   "driver",           CONFIG_GRAPHICS_DRIVER, .d._graphics_driver = &g_graphics_driver },
+	{ "graphics",   "window_mode",      CONFIG_WINDOW_MODE,     .d._window_mode = &g_gameConfig.windowMode },
+	{ "graphics",   "screen_width",     CONFIG_INT,             .d._int = &saved_screen_width },
+	{ "graphics",   "screen_height",    CONFIG_INT,             .d._int = &saved_screen_height },
+	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scale },
+	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scale },
+	{ "graphics",   "viewport_scale",   CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scale },
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
 	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },
