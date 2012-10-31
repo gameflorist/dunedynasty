@@ -660,11 +660,8 @@ Viewport_Click(Widget *w)
 					action = ACTION_MOVE;
 				}
 
-				/* Harvesters return to work if ordered to crush a
-				 * soldier on sand.  Use move command instead if
-				 * ordered back to rock, e.g. to evade a worm attack.
-				 */
-				else if ((oi->actionsPlayer[i] == ACTION_HARVEST) && g_table_landscapeInfo[lst].isSand && unveiled) {
+				/* Harvesters should only harvest if ordered to a spice field. */
+				else if (oi->actionsPlayer[i] == ACTION_HARVEST && (lst == LST_SPICE || lst == LST_THICK_SPICE) && unveiled) {
 					action = (u->amount < 100) ? ACTION_HARVEST : ACTION_MOVE;
 				}
 			}
