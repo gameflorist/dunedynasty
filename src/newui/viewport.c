@@ -207,6 +207,7 @@ Viewport_SelectRegion(void)
 			return;
 		}
 
+#if 0
 		find.index = 0xFFFF;
 
 		/* Try to find own structure. */
@@ -228,6 +229,7 @@ Viewport_SelectRegion(void)
 
 			s = Structure_Find(&find);
 		}
+#endif
 	}
 }
 
