@@ -105,6 +105,12 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 		case ALLEGRO_EVENT_DISPLAY_EXPOSE:
 			return true;
 
+#ifdef ALLEGRO_WINDOWS
+		case ALLEGRO_EVENT_DISPLAY_FOUND:
+			VideoA5_DisplayFound();
+			return true;
+#endif
+
 		case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
 			mouse_event |= SCANCODE_RELEASE;
 			/* Fall through. */

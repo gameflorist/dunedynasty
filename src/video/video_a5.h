@@ -19,6 +19,7 @@ extern void VideoA5_CaptureScreenshot(void);
 extern void VideoA5_Tick(void);
 
 extern void VideoA5_InitSprites(void);
+extern void VideoA5_DisplayFound(void);
 extern void VideoA5_DrawCPS(enum SearchDirectory dir, const char *filename);
 extern void VideoA5_DrawCPSRegion(enum SearchDirectory dir, const char *filename, int sx, int sy, int dx, int dy, int w, int h);
 extern void VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y);

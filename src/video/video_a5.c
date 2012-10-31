@@ -7,6 +7,9 @@
  * WSA loaded in screen 4/5.
  *
  * This avoids clashes with each other and mentat.
+ *
+ * The various textures are preserved by Allegro.
+ * Other bitmaps (e.g. stored CPS files) are reloaded if necessary.
  */
 
 #include <assert.h>
@@ -169,7 +172,7 @@ VideoA5_SetBitmapFlags(int flags)
 
 	if (flags == ALLEGRO_MEMORY_BITMAP) {
 		old_flags = al_get_new_bitmap_flags();
-		al_set_new_bitmap_flags(ALLEGRO_MEMORY_BITMAP);
+		al_set_new_bitmap_flags(old_flags | ALLEGRO_MEMORY_BITMAP);
 	}
 	else {
 		al_set_new_bitmap_flags(old_flags);
@@ -189,7 +192,10 @@ VideoA5_ConvertToVideoBitmap(ALLEGRO_BITMAP *membmp)
 static void
 VideoA5_ResizeScratchBitmap(int w, int h)
 {
-	if ((al_get_bitmap_width(scratch) != w) || (al_get_bitmap_height(scratch) != h)) {
+	if (scratch == NULL) {
+		scratch = al_create_bitmap(w, h);
+	}
+	else if ((al_get_bitmap_width(scratch) != w) || (al_get_bitmap_height(scratch) != h)) {
 		al_destroy_bitmap(scratch);
 		scratch = al_create_bitmap(w, h);
 	}
@@ -311,13 +317,14 @@ VideoA5_Init(void)
 	interface_texture = al_create_bitmap(w, h);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
-	scratch = al_create_bitmap(16, 16);
-	s_minimap = al_create_bitmap(64, 64);
 	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
 
-	if (scratch == NULL || interface_texture == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL)
+	al_set_new_bitmap_flags(ALLEGRO_NO_PRESERVE_TEXTURE);
+	s_minimap = al_create_bitmap(64, 64);
+
+	if (interface_texture == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || s_minimap == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -329,6 +336,19 @@ VideoA5_Init(void)
 	al_flip_display();
 
 	return true;
+}
+
+static void
+VideoA5_UninitCPSStore(void)
+{
+	while (s_cps != NULL) {
+		CPSStore *next = s_cps->next;
+
+		al_destroy_bitmap(s_cps->bmp);
+		free(s_cps);
+
+		s_cps = next;
+	}
 }
 
 void
@@ -367,14 +387,7 @@ VideoA5_Uninit(void)
 		s_cursor[i] = NULL;
 	}
 
-	while (s_cps != NULL) {
-		CPSStore *next = s_cps->next;
-
-		al_destroy_bitmap(s_cps->bmp);
-		free(s_cps);
-
-		s_cps = next;
-	}
+	VideoA5_UninitCPSStore();
 
 	al_destroy_bitmap(scratch);
 	scratch = NULL;
@@ -2298,7 +2311,10 @@ VideoA5_InitSprites(void)
 	al_save_bitmap("interface.png", interface_texture);
 #endif
 
+	const int bitmap_flags = al_get_new_bitmap_flags();
+	al_set_new_bitmap_flags(bitmap_flags & ~ALLEGRO_NO_PRESERVE_TEXTURE);
 	interface_texture = VideoA5_ConvertToVideoBitmap(interface_texture);
+	al_set_new_bitmap_flags(bitmap_flags);
 	VideoA5_InitFonts(NULL);
 
 	al_set_target_backbuffer(display);
@@ -2306,4 +2322,15 @@ VideoA5_InitSprites(void)
 
 	GFX_Screen_SetActive(old_screen);
 	Widget_SetCurrentWidget(old_widget);
+}
+
+void
+VideoA5_DisplayFound(void)
+{
+	VideoA5_UninitCPSStore();
+
+	al_destroy_bitmap(scratch);
+	scratch = NULL;
+
+	memset(s_minimap_colour, 0, sizeof(s_minimap_colour));
 }
