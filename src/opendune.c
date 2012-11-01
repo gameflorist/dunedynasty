@@ -1255,11 +1255,12 @@ void GameLoop_Main(bool new_game)
 
 	Widget_SetCurrentWidget(0);
 
+#if 0
+	/* XXX: This fading effect doesn't work. */
 	GFX_Screen_SetActive(2);
-
 	GFX_ClearScreen();
-
 	GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, 2, 0);
+#endif
 }
 
 static bool Unknown_25C4_000E(void)
