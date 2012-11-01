@@ -21,23 +21,27 @@ GUI_EditBox_ScancodeToChar(enum Scancode key)
 	const unsigned char char_qp[] = "qwertyuiop";
 	const unsigned char char_al[] = "asdfghjkl";
 	const unsigned char char_zm[] = "zxcvbnm,./";
+	unsigned char c = '\0';
 
 	if (SCANCODE_1 <= key && key <= SCANCODE_MINUS)
 		return char_10[key - SCANCODE_1];
 
-	if (SCANCODE_Q <= key && key <= SCANCODE_P)
-		return char_qp[key - SCANCODE_Q];
-
-	if (SCANCODE_A <= key && key <= SCANCODE_L)
-		return char_al[key - SCANCODE_A];
-
-	if (SCANCODE_Z <= key && key <= SCANCODE_SLASH)
-		return char_zm[key - SCANCODE_Z];
-
 	if (key == SCANCODE_SPACE)
 		return ' ';
 
-	return '\0';
+	if (SCANCODE_Q <= key && key <= SCANCODE_P)
+		c = char_qp[key - SCANCODE_Q];
+
+	if (SCANCODE_A <= key && key <= SCANCODE_L)
+		c = char_al[key - SCANCODE_A];
+
+	if (SCANCODE_Z <= key && key <= SCANCODE_SLASH)
+		c = char_zm[key - SCANCODE_Z];
+
+	if (('a' <= c && c <= 'z') && (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT)))
+		c += 'A' - 'a';
+
+	return c;
 }
 
 /**
