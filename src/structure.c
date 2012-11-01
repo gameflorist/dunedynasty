@@ -689,6 +689,16 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 		h->windtrapCount += 1;
 	}
 
+	/* ENHANCEMENT -- Calculate structures built before calculating power and credits.
+	 * This prevents MCV starts from draining credits when deployed as
+	 * otherwise the game sees no structures built.
+	 */
+	{
+		House *h;
+		h = House_Get_ByIndex(s->o.houseID);
+		h->structuresBuilt = Structure_GetStructuresBuilt(h);
+	}
+
 	if (g_var_38BC == 0) {
 		House *h;
 
@@ -698,11 +708,13 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 
 	Structure_UpdateMap(s);
 
+#if 0
 	{
 		House *h;
 		h = House_Get_ByIndex(s->o.houseID);
 		h->structuresBuilt = Structure_GetStructuresBuilt(h);
 	}
+#endif
 
 	return true;
 }
