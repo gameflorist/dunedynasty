@@ -79,7 +79,6 @@ uint16 g_campaignID = 0;
 uint16 g_scenarioID = 1;
 uint16 g_activeAction = 0xFFFF;      /*!< Action the controlled unit will do. */
 int64_t g_tickScenarioStart = 0;     /*!< The tick the scenario started in. */
-static uint32 s_tickGameTimeout = 0; /*!< The tick the game will timeout. */
 
 bool   g_debugGame = false;        /*!< When true, you can control the AI. */
 bool   g_debugScenario = false;    /*!< When true, you can review the scenario. There is no fog. The game is not running (no unit-movement, no structure-building, etc). You can click on individual tiles. */
@@ -164,7 +163,7 @@ static bool GameLoop_IsLevelFinished(void)
 		/* XXX -- This code was with '<' instead of '>=', which makes
 		 *  no sense. As it is unused, who knows what the intentions
 		 *  were. This at least makes it sensible. */
-		if (g_timerGame >= s_tickGameTimeout) {
+		if (g_timerGame - g_tickScenarioStart >= g_scenario.timeOut) {
 			finish = true;
 		}
 	}
@@ -227,7 +226,14 @@ static bool GameLoop_IsLevelWon(void)
 
 	/* Check for reaching timeout */
 	if (!win && (g_scenario.loseFlags & 0x8) != 0) {
-		win = (g_timerGame < s_tickGameTimeout);
+		/* ENHANCEMENT -- Same deal as for winFlags above.
+		 * This way we can make win-after-timeout (survival) and
+		 * lose-after-timeout (countdown) missions.
+		 *
+		 * survival: winFlags = 11, loseFlags = 9.
+		 * lose:     winFlags = 11, loseFlags = 1.
+		 */
+		win = (g_timerGame - g_tickScenarioStart >= g_scenario.timeOut);
 	}
 
 	return win;
