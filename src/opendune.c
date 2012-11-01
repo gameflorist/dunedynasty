@@ -1087,6 +1087,8 @@ void GameLoop_Main(bool new_game)
 
 	/* Note: original game chose only MUSIC_IDLE1 .. MUSIC_IDLE6. */
 	Audio_PlayMusic(MUSIC_IDLE1);
+	l_timerNext = Timer_GetTicks() + 300;
+	g_musicInBattle = 0;
 
 	g_gameMode = GM_NORMAL;
 	g_gameOverlay = GAMEOVERLAY_NONE;
