@@ -426,6 +426,8 @@ PickHouse_Loop(void)
 	const int widgetID = GUI_Widget_HandleEvents(pick_house_widgets);
 	bool redraw = false;
 
+	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
+
 	switch (widgetID) {
 		case SCANCODE_ESCAPE:
 			return MENU_MAIN_MENU;
