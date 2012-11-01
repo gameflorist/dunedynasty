@@ -683,10 +683,10 @@ StartGame_Loop(bool new_game)
 			break;
 
 		case GM_RESTART:
-			return MENU_BRIEFING;
+			return MENU_FADE_IN | MENU_BRIEFING;
 
 		case GM_PICKHOUSE:
-			return MENU_PICK_HOUSE;
+			return MENU_FADE_IN | MENU_PICK_HOUSE;
 
 		case GM_WIN:
 			g_strategicRegionBits = 0;
@@ -696,10 +696,10 @@ StartGame_Loop(bool new_game)
 			return MENU_NO_TRANSITION | MENU_BRIEFING_LOSE;
 
 		case GM_QUITGAME:
-			return MENU_MAIN_MENU;
+			return MENU_FADE_IN | MENU_MAIN_MENU;
 	}
 
-	return MENU_MAIN_MENU;
+	return MENU_FADE_IN | MENU_MAIN_MENU;
 }
 
 /*--------------------------------------------------------------*/
@@ -1306,6 +1306,11 @@ Menu_Run(void)
 
 			if (res & MENU_NO_TRANSITION) {
 				curr_menu = (res & 0xFF);
+				initialise_menu = true;
+			}
+			else if (res & MENU_FADE_IN) {
+				curr_menu = (res & (MENU_FADE_IN | 0xFF));
+				fade_start = Timer_GetTicks();
 				initialise_menu = true;
 			}
 			else {
