@@ -1968,9 +1968,11 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 	HallOfFameStruct *data;
 
 	if (score == 0xFFFF) {
+#if 0
 		if (!File_Exists_Personal("SAVEFAME.DAT")) {
 			return;
 		}
+#endif
 		s_ticksPlayed = 0;
 	}
 
@@ -2068,6 +2070,11 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 	}
 
 	w = GUI_HallOfFame_CreateButtons(data);
+
+	/* Disable the clear button if no scores. */
+	if (data[0].score == 0) {
+		GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(w, 100));
+	}
 
 	Input_History_Clear();
 
