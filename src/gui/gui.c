@@ -1979,10 +1979,10 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 	data = (HallOfFameStruct *)GFX_Screen_Get_ByIndex(5);
 
 	if (!File_Exists_Personal("SAVEFAME.DAT")) {
-		uint16 written;
-
 		memset(data, 0, 128);
 
+#if 0
+		uint16 written;
 		GUI_HallOfFame_Encode(data);
 
 		fileID = File_Open_Personal("SAVEFAME.DAT", 2);
@@ -1990,11 +1990,12 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 		File_Close(fileID);
 
 		if (written != 128) return;
+#endif
 	}
-
-	File_ReadBlockFile_Personal("SAVEFAME.DAT", data, 128);
-
-	GUI_HallOfFame_Decode(data);
+	else {
+		File_ReadBlockFile_Personal("SAVEFAME.DAT", data, 128);
+		GUI_HallOfFame_Decode(data);
+	}
 
 	if (score == 0xFFFF) {
 		editLine = 0;
