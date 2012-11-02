@@ -650,6 +650,12 @@ void Unit_SetAction(Unit *u, ActionType action)
 	if (u == NULL) return;
 	if (u->actionID == ACTION_DESTRUCT || u->actionID == ACTION_DIE || action == ACTION_INVALID) return;
 
+	/* ENHANCEMENT -- When sandworms are insatiable, change ambush to
+	 * area guard to prevent eating too many units in quick succession.
+	 */
+	if (enhancement_insatiable_sandworms && u->o.type == UNIT_SANDWORM && action == ACTION_AMBUSH)
+		action = ACTION_AREA_GUARD;
+
 	ai = &g_table_actionInfo[action];
 
 	switch (ai->switchType) {
