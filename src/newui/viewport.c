@@ -671,6 +671,10 @@ Viewport_DrawTilesInRange(int x0, int y0,
 	int left, top;
 	int x, y;
 
+	/* Find top and left boundaries. */
+	for (; x0 < mapInfo->minX; x0++, viewportX1 += TILE_SIZE) {}
+	for (; y0 < mapInfo->minY; y0++, viewportY1 += TILE_SIZE) {}
+
 	/* Find bottom and right boundaries. */
 	left = viewportX1;
 	top = viewportY1;
@@ -682,11 +686,11 @@ Viewport_DrawTilesInRange(int x0, int y0,
 	Video_HoldBitmapDrawing(true);
 
 	y = y0;
-	for (top = viewportY1; top <= viewportY2; top += TILE_SIZE, y++) {
+	for (top = viewportY1; top < viewportY2; top += TILE_SIZE, y++) {
 		const int curPos = Tile_PackXY(x0, y);
 		const Tile *t = &g_map[curPos];
 
-		for (left = viewportX1; left <= viewportX2; left += TILE_SIZE, t++) {
+		for (left = viewportX1; left < viewportX2; left += TILE_SIZE, t++) {
 			const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
 
 			if (draw_tile && (t->overlaySpriteID != g_veiledSpriteID)) {
@@ -725,8 +729,8 @@ Viewport_DrawTiles(void)
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 	const int viewportX1 = -g_viewport_scrollOffsetX;
 	const int viewportY1 = -g_viewport_scrollOffsetY;
-	const int viewportX2 = wi->width - 1;
-	const int viewportY2 = wi->height - 1;
+	const int viewportX2 = wi->width;
+	const int viewportY2 = wi->height;
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
 
@@ -745,8 +749,8 @@ Viewport_DrawTileFog(void)
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 	const int viewportX1 = -g_viewport_scrollOffsetX;
 	const int viewportY1 = -g_viewport_scrollOffsetY;
-	const int viewportX2 = wi->width - 1;
-	const int viewportY2 = wi->height - 1;
+	const int viewportX2 = wi->width;
+	const int viewportY2 = wi->height;
 	const int x0 = Tile_GetPackedX(g_viewportPosition);
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
 
