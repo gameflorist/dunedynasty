@@ -789,16 +789,88 @@ VideoA5_TickDissolve_GLStencil(FadeInAux *aux)
 static void
 VideoA5_InitDissolve_D3DStencil(ALLEGRO_BITMAP *src, FadeInAux *aux)
 {
+	LPDIRECT3DDEVICE9 pDevice = al_get_d3d_device(display);
+
+	IDirect3DDevice9_Clear(pDevice, 0, NULL, D3DCLEAR_STENCIL, 0, 0, 0);
+
+	aux->bmp = src;
 }
 
 static void
 VideoA5_DrawDissolve_D3DStencil(const FadeInAux *aux)
 {
+	LPDIRECT3DDEVICE9 pDevice = al_get_d3d_device(display);
+
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, TRUE);
+	/* ?glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE); */
+
+	if (aux->fade_in) {
+		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFUNC, D3DCMP_EQUAL);
+		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILREF, 1);
+		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILMASK, 1);
+	}
+	else {
+		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFUNC, D3DCMP_NOTEQUAL);
+		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILREF, 1);
+		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILMASK, 1);
+	}
+
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+
+	if ((al_get_bitmap_width(aux->bmp) == aux->width) && (al_get_bitmap_height(aux->bmp) == aux->height)) {
+		al_draw_bitmap(aux->bmp, aux->x, aux->y, 0);
+	}
+	else {
+		al_draw_bitmap_region(aux->bmp, aux->x, aux->y, aux->width, aux->height, aux->x, aux->y, 0);
+	}
+
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, FALSE);
 }
 
 static void
 VideoA5_TickDissolve_D3DStencil(FadeInAux *aux)
 {
+	LPDIRECT3DDEVICE9 pDevice = al_get_d3d_device(display);
+
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, TRUE);
+	/* glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE); */
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
+
+	/* 2 triangles per x coordinate. */
+	ALLEGRO_VERTEX v[6 * SCREEN_WIDTH];
+	assert(aux->width < SCREEN_WIDTH);
+	memset(v, 0, sizeof(v));
+
+	int count = 0;
+	int j = aux->frame;
+	for (int i = 0; i < aux->width; i++) {
+		const int x = aux->x + aux->cols[i];
+		const int y = aux->y + aux->rows[j];
+		const float x1 = x;
+		const float x2 = x + 1.00f;
+		const float y1 = y;
+		const float y2 = y + 1.00f;
+
+		v[count].x = x1; v[count].y = y1; count++;
+		v[count].x = x1; v[count].y = y2; count++;
+		v[count].x = x2; v[count].y = y1; count++;
+		v[count].x = x1; v[count].y = y2; count++;
+		v[count].x = x2; v[count].y = y1; count++;
+		v[count].x = x2; v[count].y = y2; count++;
+
+		if (++j >= aux->height)
+			j = 0;
+	}
+
+	al_draw_prim(v, NULL, NULL, 0, 6 * aux->width, ALLEGRO_PRIM_TRIANGLE_LIST);
+
+	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, FALSE);
+	/* glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); */
 }
 #endif
 
