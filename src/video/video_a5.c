@@ -740,27 +740,33 @@ VideoA5_TickDissolve_GLStencil(FadeInAux *aux)
 	glStencilFunc(GL_ALWAYS, 0x1, 0x1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-	glBegin(GL_QUADS);
+	/* 2 triangles per x coordinate. */
+	ALLEGRO_VERTEX v[6 * SCREEN_WIDTH];
+	assert(aux->width < SCREEN_WIDTH);
+	memset(v, 0, sizeof(v));
 
+	int count = 0;
 	int j = aux->frame;
 	for (int i = 0; i < aux->width; i++) {
 		const int x = aux->x + aux->cols[i];
 		const int y = aux->y + aux->rows[j];
-		const GLfloat x1 = x + 0.01f;
-		const GLfloat x2 = x + 0.99f;
-		const GLfloat y1 = y + 0.01f;
-		const GLfloat y2 = y + 0.99f;
+		const float x1 = x;
+		const float x2 = x + 1.00f;
+		const float y1 = y;
+		const float y2 = y + 1.00f;
 
-		glVertex2f(x1, y1);
-		glVertex2f(x1, y2);
-		glVertex2f(x2, y2);
-		glVertex2f(x2, y1);
+		v[count].x = x1; v[count].y = y1; count++;
+		v[count].x = x1; v[count].y = y2; count++;
+		v[count].x = x2; v[count].y = y1; count++;
+		v[count].x = x1; v[count].y = y2; count++;
+		v[count].x = x2; v[count].y = y1; count++;
+		v[count].x = x2; v[count].y = y2; count++;
 
 		if (++j >= aux->height)
 			j = 0;
 	}
 
-	glEnd();
+	al_draw_prim(v, NULL, NULL, 0, 6 * aux->width, ALLEGRO_PRIM_TRIANGLE_LIST);
 
 	glDisable(GL_STENCIL_TEST);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
