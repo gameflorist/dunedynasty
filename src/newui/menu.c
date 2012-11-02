@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <ctype.h>
+#include "buildcfg.h"
 #include "types.h"
 #include "../os/common.h"
 #include "../os/math.h"
@@ -495,7 +496,7 @@ MainMenu_Draw(Widget *widget)
 	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
 	GUI_Widget_DrawAll(widget);
 
-	GUI_DrawText_Wrapper("v1.07", SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x221);
+	GUI_DrawText_Wrapper(DUNE_DYNASTY_VERSION, SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x221);
 }
 
 static void

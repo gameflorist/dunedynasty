@@ -1,6 +1,8 @@
 #ifndef BUILDCFG_H
 #define BUILDCFG_H
 
+#cmakedefine DUNE_DYNASTY_VERSION "dd@DUNE_DYNASTY_VERSION@"
+
 #cmakedefine DUNE_DATA_DIR "@DUNE_DATA_DIR@"
 
 #cmakedefine WITH_FLUIDSYNTH
