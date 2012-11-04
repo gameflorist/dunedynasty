@@ -83,8 +83,8 @@ install(FILES
 	DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
 
 if(IS_ABSOLUTE ${DUNE_DATA_DIR})
-    foreach(subdir data d2tm_adlib d2tm_mt32 d2tm_sc55 dune2000 fed2k_mt32)
-	install(FILES ${CMAKE_SOURCE_DIR}/dist/${subdir}/FILELIST.TXT DESTINATION "${DUNE_DATA_DIR}/${subdir}")
+    foreach(subdir campaign data music)
+	install(DIRECTORY "${CMAKE_SOURCE_DIR}/dist/${subdir}" DESTINATION "${DUNE_DATA_DIR}")
     endforeach(subdir)
 endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
 
