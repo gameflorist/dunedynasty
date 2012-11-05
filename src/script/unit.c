@@ -263,6 +263,17 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 
 			if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
 
+			/* ENHANCEMENT -- Units can be ejected from the repair bay. */
+			if (s->o.type == STRUCTURE_REPAIR) {
+				const UnitInfo *ui = &g_table_unitInfo[u2->o.type];
+				int new_hitpoints = ui->o.hitpoints - (s->countDown * ui->o.hitpoints + (ui->o.buildTime << 6) - 1) / (ui->o.buildTime << 6);
+				new_hitpoints = clamp(u2->o.hitpoints, new_hitpoints, ui->o.hitpoints);
+
+				u2->o.hitpoints = new_hitpoints;
+
+				s->countDown = 0;
+			}
+
 			/* Check if the unit has a return-to position or try to find spice in case of a harvester */
 			if (u2->targetLast.tile != 0) {
 				u->targetMove = Tools_Index_Encode(Tile_PackTile(u2->targetLast), IT_TILE);
