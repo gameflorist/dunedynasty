@@ -1149,7 +1149,7 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 		unsigned char g = 0x54 + (0x44 - 0x54) * rem / max;
 		unsigned char b = 0x54 + (0x00 - 0x54) * rem / max;
 
-		Prim_FillRect(x, y, x + w - delta, y + 1.0f, 83);
+		if (w > delta) Prim_FillRect(x, y, x + w - delta, y + 1.0f, 83);
 		Prim_FillRect(x + w, y, x + width, y + 1.0f, 13);
 		Prim_FillRect_RGBA(x + w, y, x + w + 2.0f, y + 1.0f, r, g, b, 0xFF);
 	}
