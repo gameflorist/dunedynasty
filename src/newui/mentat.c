@@ -375,7 +375,7 @@ MentatSecurity_CorrectLoop(MentatState *mentat, int64_t blink_start)
 	if (curr_ticks >= mentat->speaking_timer)
 		mentat->speaking_mode = 0;
 
-	GUI_Mentat_Animation(mentat->speaking_mode);
+	GUI_Mentat_Animation(g_table_houseInfo[g_playerHouseID].mentat, mentat->speaking_mode);
 
 	if (Input_IsInputAvailable()) {
 		if (!(Input_GetNextKey() & SCANCODE_RELEASE))
@@ -448,7 +448,7 @@ MentatHelp_Tick(MentatState *mentat)
 		mentat->speaking_mode = 0;
 	}
 
-	GUI_Mentat_Animation(mentat->speaking_mode);
+	GUI_Mentat_Animation(g_table_houseInfo[g_playerHouseID].mentat, mentat->speaking_mode);
 
 	if (mentat->state == MENTAT_SHOW_CONTENTS) {
 		const int widgetID = GUI_Widget_HandleEvents(g_widgetMentatTail);

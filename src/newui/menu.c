@@ -829,6 +829,7 @@ static enum MenuAction
 Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *mentat)
 {
 	const int64_t curr_ticks = Timer_GetTicks();
+	const enum MentatID mentatID = (curr_menu == MENU_CONFIRM_HOUSE) ? MENTAT_BENE_GESSERIT : g_table_houseInfo[g_playerHouseID].mentat;
 
 	bool redraw = false;
 	int widgetID = 0;
@@ -844,7 +845,7 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 		mentat->speaking_mode = 0;
 	}
 
-	GUI_Mentat_Animation(mentat->speaking_mode);
+	GUI_Mentat_Animation(mentatID, mentat->speaking_mode);
 
 	if (!Audio_MusicIsPlaying()) {
 		switch (curr_menu) {
@@ -1224,7 +1225,7 @@ PickCutscene_Loop(MentatState *mentat)
 	}
 
 	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
-	GUI_Mentat_Animation(0);
+	GUI_Mentat_Animation(MENTAT_BENE_GESSERIT, 0);
 
 	switch (widgetID) {
 		case 0x8000 | 1: /* exit. */

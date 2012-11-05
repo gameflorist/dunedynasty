@@ -232,7 +232,8 @@ extern void GUI_Mentat_SelectHelpSubject(int16 difference);
  * Draw sprites and handle mouse in a mentat screen.
  * @param speakingMode If \c 1, the mentat is speaking.
  */
-void GUI_Mentat_Animation(uint16 speakingMode)
+void
+GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 {
 	static int64_t movingEyesTimer = 0;      /* Timer when to change the eyes sprite. */
 	static uint16 movingEyesNextSprite = 0; /* If not 0, it decides the movingEyesNextSprite */
@@ -241,8 +242,6 @@ void GUI_Mentat_Animation(uint16 speakingMode)
 
 	int s_eyesLeft, s_eyesTop, s_eyesRight, s_eyesBottom;
 	int s_mouthLeft, s_mouthTop, s_mouthRight, s_mouthBottom;
-
-	const enum MentatID mentatID = g_table_houseInfo[g_playerHouseID].mentat;
 
 	GUI_Mentat_SetSprites(mentatID);
 	Mentat_GetEyePositions(mentatID, &s_eyesLeft, &s_eyesTop, &s_eyesRight, &s_eyesBottom);
