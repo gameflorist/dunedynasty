@@ -1374,6 +1374,11 @@ void Structure_UntargetMe(Structure *s)
  */
 uint16 Structure_FindFreePosition(Structure *s, bool checkForSpice)
 {
+	const int remap[16] = {
+		0, 2, 4, 6, 8, 10, 12, 14,
+		1, 3, 5, 7, 9, 11, 13, 15
+	};
+
 	const StructureInfo *si;
 	uint16 packed;
 	uint16 spicePacked;  /* Position of the spice, or 0 if not used or if no spice. */
@@ -1394,7 +1399,15 @@ uint16 Structure_FindFreePosition(Structure *s, bool checkForSpice)
 	loc12 = 16;
 
 	while (loc12 > 0) {
-		uint16 offset = g_table_structure_layoutTilesAround[si->layout][i];
+		uint16 offset;
+
+		/* ENHANCEMENT -- Old code doesn't visit all the tiles around the structure. */
+		if (g_dune2_enhanced) {
+			offset = g_table_structure_layoutTilesAround[si->layout][remap[i]];
+		}
+		else {
+			offset = g_table_structure_layoutTilesAround[si->layout][i];
+		}
 
 		if (offset != 0) {
 			uint16 curPacked;
@@ -1416,13 +1429,20 @@ uint16 Structure_FindFreePosition(Structure *s, bool checkForSpice)
 			}
 		}
 
-		i++;
-		loc12--;
-		if (i <= 15 && offset != 0) {
+		/* ENHANCEMENT -- Old code doesn't visit all the tiles around the structure. */
+		if (g_dune2_enhanced) {
+			i = (i + 1) & 0xF;
+			loc12--;
+		}
+		else {
 			i++;
-		} else {
-			loc12 -= 16 - i;
-			i = 0;
+			loc12--;
+			if (i <= 15 && offset != 0) {
+				i++;
+			} else {
+				loc12 -= 16 - i;
+				i = 0;
+			}
 		}
 	}
 
