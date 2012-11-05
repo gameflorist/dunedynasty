@@ -1050,7 +1050,7 @@ void Structure_ActivateSpecial(Structure *s)
 		} break;
 
 		case HOUSE_WEAPON_SABOTEUR: {
-			Unit *u;
+			Unit *u = NULL;
 			uint16 position;
 
 			/* Find a spot next to the structure */
@@ -1058,17 +1058,21 @@ void Structure_ActivateSpecial(Structure *s)
 
 			/* If there is no spot, reset countdown */
 			if (position == 0) {
-				s->countDown = 1;
-				return;
+				/* ENHANCEMENT -- Do not reset the countdown to one as that causes an irritating blink. */
+				if (!g_dune2_enhanced) s->countDown = 1;
 			}
-
-			g_var_38BC++;
-			u = Unit_Create(UNIT_INDEX_INVALID, UNIT_SABOTEUR, s->o.houseID, Tile_UnpackTile(position), Tools_Random_256());
-			g_var_38BC--;
+			else {
+				g_var_38BC++;
+				u = Unit_Create(UNIT_INDEX_INVALID, UNIT_SABOTEUR, s->o.houseID, Tile_UnpackTile(position), Tools_Random_256());
+				g_var_38BC--;
+			}
 
 			if (u != NULL) {
 				s->countDown = g_table_houseInfo[s->o.houseID].specialCountDown;
 				Unit_SetAction(u, ACTION_SABOTAGE);
+			}
+			else if (enhancement_play_additional_voices) {
+				Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 			}
 		} break;
 
