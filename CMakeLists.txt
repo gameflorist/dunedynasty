@@ -3,6 +3,7 @@ project(dunedynasty)
 set(DUNE_DYNASTY_VERSION 1.3)
 
 set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
+option(WITH_AUD "AUD" ON)
 option(WITH_FLUIDSYNTH "FluidSynth" ON)
 option(WITH_MAD "MAD" ON)
 

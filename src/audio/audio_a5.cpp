@@ -11,13 +11,18 @@
 #include "audio_a5.h"
 
 #include "adl/sound_adlib.h"
-#include "audlib/audlib_a5.h"
 
 #ifdef WITH_FLUIDSYNTH
 # include "allegro_midi.h"
 #else
 # include "disable_midi.h"
 #endif /* WITH_FLUIDSYNTH */
+
+#ifdef WITH_AUD
+# include "audlib/audlib_a5.h"
+#else
+# include "disable_aud.h"
+#endif /* WITH_AUD */
 
 extern "C" {
 #ifdef WITH_MAD

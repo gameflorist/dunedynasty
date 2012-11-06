@@ -83,9 +83,11 @@ Audio_ScanMusic(void)
 			if (stat(buf, &st) == 0)
 				goto found_song;
 
+#ifdef WITH_AUD
 			snprintf(buf, sizeof(buf), "%s/%s.AUD", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0)
 				goto found_song;
+#endif
 
 			m->enable &=~MUSIC_FOUND;
 			if (verbose) fprintf(stdout, "[missing] %s\n", m->filename);

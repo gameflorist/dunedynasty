@@ -7,7 +7,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/adl/sound_adlib.cpp
 	src/audio/audio.c
 	src/audio/audio_a5.cpp
-	src/audio/audlib/audlib_a5.c
 	src/binheap.c
 	src/buildqueue.c
 	src/codec/format40.c
@@ -111,6 +110,13 @@ if(WITH_MAD)
 	src/audio/allegro_mad.c
 	)
 endif(WITH_MAD)
+
+if(WITH_AUD)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES}
+	src/audio/audlib/audlib_a5.c
+	)
+endif(WITH_AUD)
 
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES
