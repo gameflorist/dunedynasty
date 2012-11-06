@@ -109,7 +109,6 @@ MP3 *load_mp3(const char *filename)
     MP3 *mp3;
     int srate;
     ALLEGRO_CHANNEL_CONF chanconf;
-    int i;
 
     mp3 = calloc(1, sizeof(MP3));
     if (!mp3) {
@@ -241,8 +240,6 @@ static spl_t *push_synth_pcm(MP3 *mp3, spl_t *out, spl_t *out_end)
 
 static spl_t *refill(MP3 *mp3, spl_t *out, spl_t *out_end)
 {
-    int i;
-
     while (out < out_end) {
         if (!maybe_read_more(mp3))
             break;
