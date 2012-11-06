@@ -1430,9 +1430,9 @@ void GameLoop_GameIntroAnimation(void)
 		GameLoop_PlayAnimation();
 
 		Audio_PlayEffect(EFFECT_FADE_OUT);
-
-		GameLoop_FinishAnimation();
 	}
+
+	GameLoop_FinishAnimation();
 
 	GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
 	Video_ShowCursor();
