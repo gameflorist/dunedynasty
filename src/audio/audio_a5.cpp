@@ -20,7 +20,12 @@
 #endif /* WITH_FLUIDSYNTH */
 
 extern "C" {
-#include "allegro_mad.h"
+#ifdef WITH_MAD
+# include "allegro_mad.h"
+#else
+# include "disable_mad.h"
+#endif /* WITH_MAD */
+
 #include "audio.h"
 #include "../common_a5.h"
 #include "../file.h"

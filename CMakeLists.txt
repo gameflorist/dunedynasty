@@ -4,6 +4,7 @@ set(DUNE_DYNASTY_VERSION 1.3)
 
 set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
 option(WITH_FLUIDSYNTH "FluidSynth" ON)
+option(WITH_MAD "MAD" ON)
 
 if(NOT DUNE_DATA_DIR)
 	set(DUNE_DATA_DIR ".")
@@ -33,8 +34,15 @@ if(WITH_FLUIDSYNTH)
     endif(FLUIDSYNTH_FOUND)
 endif(WITH_FLUIDSYNTH)
 
-pkg_check_modules(MAD REQUIRED mad)
-include_directories(SYSTEM ${MAD_INCLUDE_DIRS})
+if(WITH_MAD)
+    pkg_check_modules(MAD REQUIRED mad)
+    if(MAD_FOUND)
+	include_directories(SYSTEM ${MAD_INCLUDE_DIRS})
+    else(MAD_FOUND)
+	message("MAD not found")
+	set(WITH_MAD OFF)
+    endif(MAD_FOUND)
+endif(WITH_MAD)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "dist")
 configure_file("${CMAKE_SOURCE_DIR}/include/buildcfg.h.in" "${PROJECT_BINARY_DIR}/include/buildcfg.h")
@@ -75,9 +83,11 @@ if(WITH_FLUIDSYNTH)
 	)
 endif(WITH_FLUIDSYNTH)
 
-target_link_libraries(dunedynasty
-	${MAD_LDFLAGS}
+if(WITH_MAD)
+    target_link_libraries(dunedynasty
+	${MAD_LIBRARIES}
 	)
+endif(WITH_MAD)
 
 install(TARGETS dunedynasty DESTINATION "bin")
 install(FILES
@@ -123,15 +133,17 @@ endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
 #	)
 #endif(FLUIDSYNTH_FOUND)
 
-#add_executable(allegro_mad
+#if(MAD_FOUND)
+#    add_executable(allegro_mad
 #	src/audio/allegro_mad.c
 #	)
 #
-#set_target_properties(allegro_mad
+#    set_target_properties(allegro_mad
 #	PROPERTIES COMPILE_FLAGS -DTEST
 #	)
 #
-#target_link_libraries(allegro_mad
+#    target_link_libraries(allegro_mad
 #	${ALLEGRO5_AUDIO_LIBRARIES}
 #	${MAD_LIBRARIES}
 #	)
+#endif(MAD_FOUND)

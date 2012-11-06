@@ -6,5 +6,6 @@
 #cmakedefine DUNE_DATA_DIR "@DUNE_DATA_DIR@"
 
 #cmakedefine WITH_FLUIDSYNTH
+#cmakedefine WITH_MAD
 
 #endif

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include "buildcfg.h"
 #include "../os/common.h"
 #include "../os/math.h"
 
@@ -72,9 +73,11 @@ Audio_ScanMusic(void)
 			if (stat(buf, &st) == 0)
 				goto found_song;
 
+#ifdef WITH_MAD
 			snprintf(buf, sizeof(buf), "%s/%s.mp3", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0)
 				goto found_song;
+#endif
 
 			snprintf(buf, sizeof(buf), "%s/%s.ogg", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0)

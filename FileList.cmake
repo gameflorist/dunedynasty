@@ -5,7 +5,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/adl/opl_dosbox.cpp
 	src/audio/adl/opl_mame.cpp
 	src/audio/adl/sound_adlib.cpp
-	src/audio/allegro_mad.c
 	src/audio/audio.c
 	src/audio/audio_a5.cpp
 	src/audio/audlib/audlib_a5.c
@@ -105,6 +104,13 @@ if(WITH_FLUIDSYNTH)
 	src/audio/xmi/xmidi.cpp
 	)
 endif(WITH_FLUIDSYNTH)
+
+if(WITH_MAD)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES}
+	src/audio/allegro_mad.c
+	)
+endif(WITH_MAD)
 
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES
