@@ -75,6 +75,10 @@ if(WITH_FLUIDSYNTH)
 	)
 endif(WITH_FLUIDSYNTH)
 
+target_link_libraries(dunedynasty
+	${MAD_LDFLAGS}
+	)
+
 install(TARGETS dunedynasty DESTINATION "bin")
 install(FILES
 	${CMAKE_SOURCE_DIR}/CHANGES.txt
@@ -119,15 +123,15 @@ endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
 #	)
 #endif(FLUIDSYNTH_FOUND)
 
-add_executable(allegro_mad
-	src/audio/allegro_mad.c
-	)
-
-set_target_properties(allegro_mad
-	PROPERTIES COMPILE_FLAGS -DTEST
-	)
-
-target_link_libraries(allegro_mad
-	${ALLEGRO5_AUDIO_LIBRARIES}
-	${MAD_LIBRARIES}
-	)
+#add_executable(allegro_mad
+#	src/audio/allegro_mad.c
+#	)
+#
+#set_target_properties(allegro_mad
+#	PROPERTIES COMPILE_FLAGS -DTEST
+#	)
+#
+#target_link_libraries(allegro_mad
+#	${ALLEGRO5_AUDIO_LIBRARIES}
+#	${MAD_LIBRARIES}
+#	)

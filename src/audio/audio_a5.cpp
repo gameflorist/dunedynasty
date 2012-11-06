@@ -20,6 +20,7 @@
 #endif /* WITH_FLUIDSYNTH */
 
 extern "C" {
+#include "allegro_mad.h"
 #include "audio.h"
 #include "../common_a5.h"
 #include "../file.h"
@@ -38,6 +39,7 @@ enum MusicStreamType {
 	MUSICSTREAM_ADLIB,
 	MUSICSTREAM_MIDI,
 	MUSICSTREAM_FLAC,
+	MUSICSTREAM_MP3,
 	MUSICSTREAM_OGG,
 	MUSICSTREAM_AUD,
 };
@@ -52,6 +54,7 @@ static ALLEGRO_AUDIO_STREAM *s_music_stream;
 static ALLEGRO_AUDIO_STREAM *s_effect_stream;
 static SoundAdlibPC *s_adlib;
 static MIDI_PLAYER *s_midi;
+static MP3 *s_mp3;
 static AUDSTREAM *s_aud;
 
 static ALLEGRO_SAMPLE *s_sample[SAMPLEID_MAX];
@@ -227,6 +230,16 @@ AudioA5_InitFlac(const char *filename)
 	return al_load_audio_stream(fn, NUMFRAGS, FRAGLEN);
 }
 
+static MP3 *
+AudioA5_InitMp3(const char *filename)
+{
+	char fn[1024];
+
+	snprintf(fn, sizeof(fn), "%s/%s.mp3", g_dune_data_dir, filename);
+
+	return load_mp3(fn);
+}
+
 static ALLEGRO_AUDIO_STREAM *
 AudioA5_InitOgg(const char *filename)
 {
@@ -281,6 +294,15 @@ AudioA5_FreeMusicStream(void)
 
 		case MUSICSTREAM_FLAC:
 		case MUSICSTREAM_OGG:
+			break;
+
+		case MUSICSTREAM_MP3:
+			if (s_mp3 != NULL) {
+				al_unregister_event_source(g_a5_input_queue, al_get_audio_stream_event_source(s_music_stream));
+				unload_mp3(s_mp3);
+				s_mp3 = NULL;
+				s_music_stream = NULL;
+			}
 			break;
 
 		case MUSICSTREAM_AUD:
@@ -356,11 +378,21 @@ AudioA5_InitExternalMusic(const MusicInfo *ext)
 {
 	enum MusicStreamType next_music_stream_type = MUSICSTREAM_NONE;
 	ALLEGRO_AUDIO_STREAM *stream = NULL;
+	MP3 *next_mp3 = NULL;
 	AUDSTREAM *next_aud = NULL;
 
 	{
 		stream = AudioA5_InitFlac(ext->filename);
 		next_music_stream_type = MUSICSTREAM_FLAC;
+	}
+
+	if (stream == NULL) {
+		next_mp3 = AudioA5_InitMp3(ext->filename);
+		if (next_mp3 != NULL) {
+			stream = get_mp3_stream(next_mp3);
+			al_register_event_source(g_a5_input_queue, al_get_audio_stream_event_source(stream));
+			next_music_stream_type = MUSICSTREAM_MP3;
+		}
 	}
 
 	if (stream == NULL) {
@@ -391,6 +423,7 @@ AudioA5_InitExternalMusic(const MusicInfo *ext)
 		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1]);
 
 	s_music_stream = stream;
+	s_mp3 = next_mp3;
 	s_aud = next_aud;
 	al_set_audio_stream_gain(s_music_stream, music_volume * ext->volume);
 	al_attach_audio_stream_to_mixer(s_music_stream, al_mixer);
@@ -428,6 +461,7 @@ AudioA5_StopMusic(void)
 			break;
 
 		case MUSICSTREAM_FLAC:
+		case MUSICSTREAM_MP3:
 		case MUSICSTREAM_OGG:
 		case MUSICSTREAM_AUD:
 			al_set_audio_stream_playing(s_music_stream, false);
@@ -442,6 +476,16 @@ AudioA5_PollMusic(void)
 
 	if (curr_music_stream_type == MUSICSTREAM_MIDI && s_midi != NULL) {
 		poll_midi_player_fragment(s_midi);
+	}
+
+	if (curr_music_stream_type == MUSICSTREAM_MP3 && s_mp3 != NULL) {
+		const int ret = poll_mp3(s_mp3);
+
+		/* Finished. */
+		if (ret == 2) {
+			AudioA5_FreeMusicStream();
+			curr_music_stream_type = MUSICSTREAM_NONE;
+		}
 	}
 
 	if (curr_music_stream_type == MUSICSTREAM_AUD && s_aud != NULL) {
@@ -485,6 +529,7 @@ AudioA5_MusicIsPlaying(void)
 			return get_midi_playing(s_midi);
 
 		case MUSICSTREAM_FLAC:
+		case MUSICSTREAM_MP3:
 		case MUSICSTREAM_OGG:
 		case MUSICSTREAM_AUD:
 			return al_get_audio_stream_playing(s_music_stream);
