@@ -55,7 +55,7 @@ bool enhancement_fix_ix_colour_remapping = true;
 
 /**
  * In the original game, Ordos get siege tanks one level too late
- * (affects both players and AI).
+ * (affects both players and AI), which serves as a difficulty level.
  */
 bool enhancement_fix_ordos_siege_tank_tech = true;
 
