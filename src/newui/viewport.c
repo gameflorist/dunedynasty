@@ -415,15 +415,14 @@ Viewport_StopMousePanning(void)
 }
 
 static bool
-Viewport_GenericCommandCanAttack(uint16 packed)
+Viewport_GenericCommandCanAttack(uint16 packed, enum LandscapeType lst, bool unveiled)
 {
-	const bool unveiled = g_map[packed].isUnveiled;
 	if (!unveiled)
 		return false;
 
-	const enum LandscapeType lst = Map_GetLandscapeType(packed);
 	if (lst == LST_BLOOM_FIELD)
 		return true;
+
 	if ((lst == LST_WALL) && (!House_AreAllied(g_playerHouseID, g_map[packed].houseID)))
 		return true;
 
@@ -434,6 +433,52 @@ Viewport_GenericCommandCanAttack(uint16 packed)
 	const Structure *target_s = Structure_Get_ByPackedTile(packed);
 	if ((target_s != NULL) && (!House_AreAllied(g_playerHouseID, target_s->o.houseID)))
 		return true;
+
+	return false;
+}
+
+static bool
+Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
+{
+	const enum LandscapeType lst = Map_GetLandscapeType(packed);
+	const bool unveiled = g_map[packed].isUnveiled;
+	const bool attack = Viewport_GenericCommandCanAttack(packed, lst, unveiled);
+
+	if (dry_run && !attack && !(lst == LST_SPICE || lst == LST_THICK_SPICE))
+		return false;
+
+	int iter;
+	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
+		const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
+		enum UnitActionType action = ACTION_INVALID;
+
+		if (Unit_GetHouseID(u) != g_playerHouseID)
+			continue;
+
+		for (int i = 0; (i < 4) && (action == ACTION_INVALID); i++) {
+			if ((oi->actionsPlayer[i] == ACTION_ATTACK) && attack) {
+				action = ACTION_ATTACK;
+			}
+			else if (oi->actionsPlayer[i] == ACTION_MOVE) {
+				action = ACTION_MOVE;
+			}
+
+			/* Harvesters should only harvest if ordered to a spice field. */
+			else if (oi->actionsPlayer[i] == ACTION_HARVEST && (lst == LST_SPICE || lst == LST_THICK_SPICE) && unveiled) {
+				action = (u->amount < 100) ? ACTION_HARVEST : ACTION_MOVE;
+			}
+		}
+
+		if (action != ACTION_INVALID) {
+			if (dry_run) {
+				if (action != ACTION_MOVE)
+					return true;
+			}
+			else {
+				Viewport_Target(u, action, packed);
+			}
+		}
+	}
 
 	return false;
 }
@@ -491,29 +536,8 @@ Viewport_Click(Widget *w)
 		if ((viewport_click_action == VIEWPORT_CLICK_NONE) ||
 		    (viewport_click_action == VIEWPORT_LMB && g_gameConfig.leftClickOrders) ||
 		    (viewport_click_action == VIEWPORT_RMB && !g_gameConfig.leftClickOrders)) {
-		}
-		else {
-			break;
-		}
-
-		if (!Unit_AnySelected()) break;
-		if (!Viewport_GenericCommandCanAttack(packed)) break;
-
-		int iter;
-
-		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
-			if (Unit_GetHouseID(u) != g_playerHouseID)
-				continue;
-
-			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
-
-			if ((oi->actionsPlayer[0] == ACTION_ATTACK) ||
-			    (oi->actionsPlayer[1] == ACTION_ATTACK) ||
-			    (oi->actionsPlayer[2] == ACTION_ATTACK) ||
-			    (oi->actionsPlayer[3] == ACTION_ATTACK)) {
+			if (Viewport_PerformContextSensitiveAction(packed, true))
 				cursorID = SHAPE_CURSOR_TARGET;
-				break;
-			}
 		}
 	} while (false);
 
@@ -758,36 +782,7 @@ Viewport_Click(Widget *w)
 	}
 
 	if (perform_context_sensitive_action) {
-		const enum LandscapeType lst = Map_GetLandscapeType(packed);
-		const bool unveiled = g_map[packed].isUnveiled;
-		const bool attack = Viewport_GenericCommandCanAttack(packed);
-
-		int iter;
-		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
-			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
-			enum UnitActionType action = ACTION_INVALID;
-
-			if (Unit_GetHouseID(u) != g_playerHouseID)
-				continue;
-
-			for (int i = 0; (i < 4) && (action == ACTION_INVALID); i++) {
-				if ((oi->actionsPlayer[i] == ACTION_ATTACK) && attack) {
-					action = ACTION_ATTACK;
-				}
-				else if (oi->actionsPlayer[i] == ACTION_MOVE) {
-					action = ACTION_MOVE;
-				}
-
-				/* Harvesters should only harvest if ordered to a spice field. */
-				else if (oi->actionsPlayer[i] == ACTION_HARVEST && (lst == LST_SPICE || lst == LST_THICK_SPICE) && unveiled) {
-					action = (u->amount < 100) ? ACTION_HARVEST : ACTION_MOVE;
-				}
-			}
-
-			if (action != ACTION_INVALID) {
-				Viewport_Target(u, action, packed);
-			}
-		}
+		Viewport_PerformContextSensitiveAction(packed, false);
 
 		Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 		if (s != NULL) {
