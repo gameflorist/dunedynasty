@@ -221,6 +221,8 @@ MenuBar_ClickMentat(Widget *w)
 	mentat->state = MENTAT_SHOW_CONTENTS;
 	mentat->wsa = NULL;
 	Video_SetCursor(SHAPE_CURSOR_NORMAL);
+	Audio_PlayVoice(VOICE_STOP);
+	Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicBriefing);
 	Timer_SetTimer(TIMER_GAME, false);
 
 	g_widgetLinkedListTail = NULL;
@@ -252,10 +254,13 @@ MenuBar_TickMentatOverlay(void)
 
 		g_gameOverlay = GAMEOVERLAY_NONE;
 		Timer_SetTimer(TIMER_GAME, true);
+		Audio_PlayEffect(EFFECT_FADE_OUT);
 
 		/* XXX: fix this rubbish. */
 		Sprites_UnloadTiles();
 		Sprites_LoadTiles();
+
+		Audio_PlayMusic(MUSIC_IDLE1);
 	}
 }
 
