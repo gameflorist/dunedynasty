@@ -1578,7 +1578,8 @@ VideoA5_InitShapes(unsigned char *buf)
 		{  12, 110, false }, /* SHAPES.SHP */
 		{   7,  11,  true }, /* BTTN */
 		{ 355, 372,  true }, /* CHOAM */
-		{ 111, 150,  true }, /* UNITS2.SHP */
+		{ 111, 140,  true }, /* UNITS2.SHP */
+		{ 141, 150, false }, /* UNITS2.SHP: sonic tank turret, launcher turret */
 		{ 151, 161, false }, /* UNITS1.SHP */
 		{ 162, 167,  true }, /* UNITS1.SHP: tanks */
 		{ 168, 237, false }, /* UNITS1.SHP */
