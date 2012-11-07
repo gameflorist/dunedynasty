@@ -377,6 +377,8 @@ static void
 MenuBar_TickGameControls(void)
 {
 	const int widgetID = GUI_Widget_HandleEvents(g_widgetLinkedListTail);
+	Widget *w;
+
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_MUSIC_IS */
 			g_enable_music = !g_enable_music;
@@ -391,8 +393,15 @@ MenuBar_TickGameControls(void)
 			break;
 
 		case 0x8000 | 32: /* STR_GAME_SPEED */
-			if (++g_gameConfig.gameSpeed >= 5)
-				g_gameConfig.gameSpeed = 0;
+			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 32);
+			if (w->state.s.buttonState & 0x04) {
+				if (++g_gameConfig.gameSpeed >= 5)
+					g_gameConfig.gameSpeed = 0;
+			}
+			else {
+				if (--g_gameConfig.gameSpeed < 0)
+					g_gameConfig.gameSpeed = 4;
+			}
 			break;
 
 		case 0x8000 | 33: /* STR_HINTS_ARE */
