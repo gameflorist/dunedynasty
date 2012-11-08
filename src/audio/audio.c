@@ -205,7 +205,7 @@ Audio_PlayMusicIfSilent(enum MusicID musicID)
 }
 
 void
-Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only)
+Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 {
 	if (!(curr_music < MUSICID_MAX))
 		return;
@@ -215,7 +215,7 @@ Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only)
 
 	/* Adjust single track. */
 	if (adjust_current_track_only && (m->music_set > MUSICSET_DUNE2_C55)) {
-		m->volume += increase ? 0.05f : -0.05f;
+		m->volume += delta;
 		m->volume = clamp(0.0f, m->volume, 2.0f);
 
 		volume = music_volume * m->volume;
@@ -223,7 +223,7 @@ Audio_AdjustMusicVolume(bool increase, bool adjust_current_track_only)
 				m->filename, music_volume, m->volume);
 	}
 	else {
-		music_volume += increase ? 0.05f : -0.05f;
+		music_volume += delta;
 		music_volume = clamp(0.0f, music_volume, 1.0f);
 
 		if (m->music_set <= MUSICSET_DUNE2_C55) {

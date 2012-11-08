@@ -4,12 +4,14 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../os/common.h"
 #include "../os/math.h"
 #include "../os/sleep.h"
 
 #include "menubar.h"
 
 #include "mentat.h"
+#include "slider.h"
 #include "viewport.h"
 #include "../audio/audio.h"
 #include "../common_a5.h"
@@ -29,6 +31,7 @@
 #include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
+#include "../tools.h"
 #include "../video/video.h"
 
 enum {
@@ -293,6 +296,94 @@ MenuBar_ClickOptions(Widget *w)
 	return true;
 }
 
+static bool
+MenuBar_ClickMusicVolumeSlider(Widget *w)
+{
+	if (Slider_Click(w)) {
+		const SliderData *data = w->data;
+
+		music_volume = (float)data->curr / (data->max - data->min);
+		Audio_AdjustMusicVolume(0.0f, false);
+	}
+
+	return true;
+}
+
+static bool
+MenuBar_ClickSoundVolumeSlider(Widget *w)
+{
+	if (Slider_Click(w) || w->state.s.buttonState & 0x01) {
+		const enum SampleID sampleID = Tools_RandomRange(SAMPLE_AFFIRMATIVE, SAMPLE_MOVING_OUT);
+		const SliderData *data = w->data;
+
+		sound_volume = (float)data->curr / (data->max - data->min);
+		Audio_PlaySample(sampleID, 255, 0.0f);
+	}
+
+	return true;
+}
+
+static void
+MenuBar_CreateGameControls(void)
+{
+	Widget *w;
+
+	GUI_Window_Create(&g_gameControlWindowDesc);
+
+	/* Sliders. */
+	const struct {
+		uint16 index;
+		uint16 position;
+		int min, max, tics;
+		bool (*clickProc)(Widget *widget);
+	} slider[] = {
+		{ 100, 0, 0, 20, 2, MenuBar_ClickMusicVolumeSlider },
+		{ 101, 1, 0, 20, 2, MenuBar_ClickSoundVolumeSlider },
+	};
+
+	for (unsigned int i = 0; i < lengthof(slider); i++) {
+		const uint16 x = 180;
+		const uint16 y = 24 + 17 * slider[i].position;
+		SliderData *data;
+
+		w = Slider_Allocate(slider[i].index, g_gameControlWindowDesc.index, x, y, 50, 12);
+		w->clickProc = slider[i].clickProc;
+
+		data = w->data;
+		data->min = slider[i].min;
+		data->max = slider[i].max;
+		data->tics = slider[i].tics;
+
+		switch (w->index) {
+			case 100: data->curr = 20 * music_volume; break;
+			case 101: data->curr = 20 * sound_volume; break;
+			default: assert(false); break;
+		}
+
+		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
+	}
+}
+
+static void
+MenuBar_UninitGameControls(void)
+{
+	Widget *w = g_widgetLinkedListTail;
+	while (w != NULL) {
+		Widget *next = GUI_Widget_GetNext(w);
+
+		if (30 <= w->index && w->index <= 38) { /* Widgets stored in g_table_windowWidgets. */
+		}
+		else if (w->index >= 100) { /* Sliders. */
+			Slider_Free(w);
+		}
+		else { /* Regular widgets. */
+			free(w);
+		}
+
+		w = next;
+	}
+}
+
 static void
 MenuBar_TickOptions(void)
 {
@@ -310,7 +401,7 @@ MenuBar_TickOptions(void)
 
 		case 0x8000 | 32: /* STR_GAME_CONTROLS */
 			g_gameOverlay = GAMEOVERLAY_GAME_CONTROLS;
-			GUI_Window_Create(&g_gameControlWindowDesc);
+			MenuBar_CreateGameControls();
 			break;
 
 		case 0x8000 | 33: /* STR_RESTART_SCENARIO */
@@ -425,6 +516,7 @@ MenuBar_TickGameControls(void)
 
 		case 0x8000 | 35: /* STR_PREVIOUS */
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
+			MenuBar_UninitGameControls();
 			GUI_Window_Create(&g_optionsWindowDesc);
 			break;
 

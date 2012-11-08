@@ -801,7 +801,7 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 				const bool increase = (key == SCANCODE_F7);
 				const bool adjust_current_track_only = (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT));
 
-				Audio_AdjustMusicVolume(increase, adjust_current_track_only);
+				Audio_AdjustMusicVolume(increase ? 0.05f : -0.05f, adjust_current_track_only);
 				Audio_DisplayMusicName();
 			}
 			break;
