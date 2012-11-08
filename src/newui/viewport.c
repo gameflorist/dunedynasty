@@ -349,6 +349,19 @@ Viewport_Place(void)
 }
 
 static bool
+Viewport_MouseInScrollWidget(void)
+{
+	for (enum GameWidgetType w = GAME_WIDGET_SCROLL_UP; w <= GAME_WIDGET_SCROLL_DOWN; w++) {
+		const WidgetInfo *wi = &g_table_gameWidgetInfo[w];
+
+		if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1))
+			return true;
+	}
+
+	return false;
+}
+
+static bool
 Viewport_ScrollMap(Widget *w, enum ShapeID *cursorID)
 {
 	const WidgetInfo *wi;
@@ -486,8 +499,10 @@ Viewport_Click(Widget *w)
 	}
 
 	if (w->state.s.buttonState & 0x01) {
+		const bool mouse_in_scroll_widget = Viewport_MouseInScrollWidget();
+
 		/* Clicking LMB performs target. */
-		if (g_selectionType == SELECTIONTYPE_TARGET) {
+		if ((g_selectionType == SELECTIONTYPE_TARGET) && !mouse_in_scroll_widget) {
 			GUI_DisplayText(NULL, -1);
 
 			if (g_unitHouseMissile != NULL) {
@@ -513,7 +528,7 @@ Viewport_Click(Widget *w)
 		}
 
 		/* Clicking LMB places structure. */
-		else if (g_selectionType == SELECTIONTYPE_PLACE) {
+		else if ((g_selectionType == SELECTIONTYPE_PLACE) && !mouse_in_scroll_widget) {
 			Viewport_Place();
 			return true;
 		}
@@ -574,21 +589,12 @@ Viewport_Click(Widget *w)
 
 			/* Holding LMB begins selection box or fast scroll. */
 			else if (Timer_GetTicks() - viewport_click_time >= 10) {
-				const WidgetInfo *wi;
-
-				viewport_click_action = VIEWPORT_SELECTION_BOX;
-
-				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP];
-				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
-
-				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT];
-				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
-
-				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN];
-				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
-
-				wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT];
-				if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) viewport_click_action = VIEWPORT_FAST_SCROLL;
+				if (Viewport_MouseInScrollWidget()) {
+					viewport_click_action = VIEWPORT_FAST_SCROLL;
+				}
+				else {
+					viewport_click_action = VIEWPORT_SELECTION_BOX;
+				}
 			}
 		}
 
@@ -668,6 +674,10 @@ Viewport_Click(Widget *w)
 
 			if (!perform_context_sensitive_action)
 				perform_selection_box = true;
+
+			/* If click released over a scroll widget, don't select. */
+			if (perform_selection_box && Viewport_MouseInScrollWidget())
+				perform_selection_box = false;
 		}
 
 		if (perform_selection_box) {
