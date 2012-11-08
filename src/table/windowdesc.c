@@ -126,7 +126,7 @@ WindowDesc g_gameControlWindowDesc = {
 		/* stringID      */ -14, /* Autoscroll state */
 		/* offsetX       */ 128, /* Was 152, but 128 matches v1.0. */
 		/* offsetY       */ 90,
-		/* width         */ 104, /* Was 80. */
+		/* width         */ 46,  /* Was 80. */
 		/* height        */ 15,
 		/* labelStringID */ STR_AUTO_SCROLL_IS,
 		/* shortcut2     */ 0,

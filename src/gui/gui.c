@@ -1713,11 +1713,7 @@ GUI_String_Get_ByIndex(int16 stringID)
 			break;
 
 		case -14:
-			     if (g_gameConfig.scrollSpeed <= 2) stringID = speedStrings[0];
-			else if (g_gameConfig.scrollSpeed <= 3) stringID = speedStrings[1];
-			else if (g_gameConfig.scrollSpeed <= 4) stringID = speedStrings[2];
-			else if (g_gameConfig.scrollSpeed <= 6) stringID = speedStrings[3];
-			else stringID = speedStrings[4];
+			stringID = (g_gameConfig.autoScroll != 0) ? STR_ON : STR_OFF;
 			break;
 
 		default: break;

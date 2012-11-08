@@ -323,6 +323,18 @@ MenuBar_ClickSoundVolumeSlider(Widget *w)
 	return true;
 }
 
+static bool
+MenuBar_ClickScrollSpeedSlider(Widget *w)
+{
+	if (Slider_Click(w)) {
+		const SliderData *data = w->data;
+
+		g_gameConfig.scrollSpeed = (data->curr == data->min) ? 2 : (4 * data->curr);
+	}
+
+	return true;
+}
+
 static void
 MenuBar_CreateGameControls(void)
 {
@@ -339,6 +351,7 @@ MenuBar_CreateGameControls(void)
 	} slider[] = {
 		{ 100, 0, 0, 20, 2, MenuBar_ClickMusicVolumeSlider },
 		{ 101, 1, 0, 20, 2, MenuBar_ClickSoundVolumeSlider },
+		{ 104, 4, 0,  4, 1, MenuBar_ClickScrollSpeedSlider },
 	};
 
 	for (unsigned int i = 0; i < lengthof(slider); i++) {
@@ -357,6 +370,7 @@ MenuBar_CreateGameControls(void)
 		switch (w->index) {
 			case 100: data->curr = 20 * music_volume; break;
 			case 101: data->curr = 20 * sound_volume; break;
+			case 104: data->curr = clamp(data->min, (g_gameConfig.scrollSpeed / 4), data->max); break;
 			default: assert(false); break;
 		}
 
@@ -510,18 +524,7 @@ MenuBar_TickGameControls(void)
 			break;
 
 		case 0x8000 | 34: /* STR_AUTO_SCROLL_IS */
-			if (g_gameConfig.scrollSpeed <= 2) {
-				g_gameConfig.scrollSpeed = 3;
-			}
-			else if (g_gameConfig.scrollSpeed <= 4) {
-				g_gameConfig.scrollSpeed++;
-			}
-			else {
-				g_gameConfig.scrollSpeed += 2;
-
-				if (g_gameConfig.scrollSpeed > 8)
-					g_gameConfig.scrollSpeed = 2;
-			}
+			g_gameConfig.autoScroll ^= 0x1;
 			break;
 
 		case 0x8000 | 35: /* STR_PREVIOUS */
