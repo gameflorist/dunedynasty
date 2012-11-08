@@ -393,7 +393,7 @@ Viewport_ScrollMap(Widget *w, enum ShapeID *cursorID)
 		const int speed = max(1, 2 * g_gameConfig.scrollSpeed);
 		Map_MoveDirection(speed * dx, speed * dy);
 	}
-	else if (g_gameConfig.autoScroll || ((!g_gameConfig.autoScroll) && (w->state.s.buttonState & 0x22))) {
+	else if (g_gameConfig.autoScroll || ((!g_gameConfig.autoScroll) && (w->state.s.buttonState & 0x02))) {
 		const int speed = max(1, g_gameConfig.scrollSpeed);
 		Map_MoveDirection(speed * dx, speed * dy);
 	}
