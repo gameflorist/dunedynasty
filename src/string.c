@@ -242,6 +242,16 @@ void String_Init(void)
 		}
 	}
 
+	/* French string for "OFF" is too long for our small buttons. */
+	if (g_gameConfig.language == LANGUAGE_FRENCH) {
+		char *str = s_strings[STR_OFF];
+
+		if (strncmp(str, "DESACTIV", 8) == 0) {
+			str[6] = '.';
+			str[7] = '\0';
+		}
+	}
+
 	/* Override the "The Building of a Dynasty" subtitle.  Pick the one that matches the narrator. */
 	if ((enhancement_subtitle_override != SUBTITLE_THE_BATTLE_FOR_ARRAKIS) && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 		const char *subtitle1 = g_gameSubtitle[enhancement_subtitle_override];

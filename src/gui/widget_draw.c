@@ -64,11 +64,13 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 		GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(w->stringID), positionX + 3, positionY + 2, colour, 0, 0x22);
 	}
 
+#if 0
 	if (oldScreenID == 0) {
 		GUI_Mouse_Hide_InRegion(positionX, positionY, positionX + width, positionY + height);
 		GUI_Screen_Copy(positionX >> 3, positionY, positionX >> 3, positionY, width >> 3, height, 2, 0);
 		GUI_Mouse_Show_InRegion();
 	}
+#endif
 
 	GFX_Screen_SetActive(oldScreenID);
 }
@@ -853,7 +855,7 @@ GUI_Widget_DrawWindow(const WindowDesc *desc)
 		const Widget *w = &g_table_windowWidgets[i];
 
 		if (g_gameConfig.language == LANGUAGE_FRENCH) {
-			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), wi->xBase + 40, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
+			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), wi->xBase + 40 - 24, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
 		}
 		else {
 			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), w->offsetX + wi->xBase - 10, w->offsetY + wi->yBase + 3, 232, 0, 0x222);

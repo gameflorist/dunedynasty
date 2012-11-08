@@ -88,45 +88,45 @@ WindowDesc g_gameControlWindowDesc = {
 	{ /* widgets */
 		{ /* 0 */
 		/* stringID      */ -10, /* Music state. */
-		/* offsetX       */ 152,
+		/* offsetX       */ 128, /* Was 152, but 128 matches v1.0. */
 		/* offsetY       */ 22,
-		/* width         */ 80,
+		/* width         */ 46,  /* Was 80. */
 		/* height        */ 15,
 		/* labelStringID */ STR_MUSIC_IS,
 		/* shortcut2     */ 0,
 		},
 		{ /* 1 */
 		/* stringID      */ -11, /* Sound state. */
-		/* offsetX       */ 152,
+		/* offsetX       */ 128, /* Was 152, but 128 matches v1.0. */
 		/* offsetY       */ 39,
-		/* width         */ 80,
+		/* width         */ 46,  /* Was 80. */
 		/* height        */ 15,
 		/* labelStringID */ STR_SOUNDS_ARE,
 		/* shortcut2     */ 0,
 		},
 		{ /* 2 */
 		/* stringID      */ -12, /* Game speed. */
-		/* offsetX       */ 152,
+		/* offsetX       */ 128, /* Was 152, but 128 matches v1.0. */
 		/* offsetY       */ 56,
-		/* width         */ 80,
+		/* width         */ 104, /* Was 80. */
 		/* height        */ 15,
 		/* labelStringID */ STR_GAME_SPEED,
 		/* shortcut2     */ 0,
 		},
 		{ /* 3 */
 		/* stringID      */ -13, /* Hints state */
-		/* offsetX       */ 152,
+		/* offsetX       */ 128, /* Was 152, but 128 matches v1.0. */
 		/* offsetY       */ 73,
-		/* width         */ 80,
+		/* width         */ 46,  /* Was 80. */
 		/* height        */ 15,
 		/* labelStringID */ STR_HINTS_ARE,
 		/* shortcut2     */ 0,
 		},
 		{ /* 4 */
 		/* stringID      */ -14, /* Autoscroll state */
-		/* offsetX       */ 152,
+		/* offsetX       */ 128, /* Was 152, but 128 matches v1.0. */
 		/* offsetY       */ 90,
-		/* width         */ 80,
+		/* width         */ 104, /* Was 80. */
 		/* height        */ 15,
 		/* labelStringID */ STR_AUTO_SCROLL_IS,
 		/* shortcut2     */ 0,
