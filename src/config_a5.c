@@ -30,6 +30,7 @@ typedef struct GameOption {
 		CONFIG_BOOL,
 		CONFIG_CAMPAIGN,
 		CONFIG_FLOAT,
+		CONFIG_FLOAT_05_2,
 		CONFIG_FLOAT_1_3,
 		CONFIG_GRAPHICS_DRIVER,
 		CONFIG_INT,
@@ -68,6 +69,7 @@ GameCfg g_gameConfig = {
 	4,      /* scrollSpeed */
 	false,  /* leftClickOrders */
 	false,  /* holdControlToZoom */
+	1.0f,   /* panSensitivity */
 };
 
 static int saved_screen_width = 640;
@@ -95,6 +97,7 @@ static const GameOption s_game_option[] = {
 	{ "controls",   "scroll_along_screen_edge", CONFIG_BOOL,    .d._bool = &g_gameConfig.scrollAlongScreenEdge },
 	{ "controls",   "left_click_orders",        CONFIG_BOOL,    .d._bool = &g_gameConfig.leftClickOrders },
 	{ "controls",   "hold_control_to_zoom",     CONFIG_BOOL,    .d._bool = &g_gameConfig.holdControlToZoom },
+	{ "controls",   "pan_sensitivity",          CONFIG_FLOAT_05_2,  .d._float = &g_gameConfig.panSensitivity },
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
 	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },
@@ -508,6 +511,10 @@ GameOptions_Load(void)
 				Config_GetFloat(str, 0.0f, 1.0f, opt->d._float);
 				break;
 
+			case CONFIG_FLOAT_05_2:
+				Config_GetFloat(str, 0.5f, 2.0f, opt->d._float);
+				break;
+
 			case CONFIG_FLOAT_1_3:
 				Config_GetFloat(str, 1.0f, 3.0f, opt->d._float);
 				break;
@@ -618,6 +625,7 @@ GameOptions_Save(void)
 				break;
 
 			case CONFIG_FLOAT:
+			case CONFIG_FLOAT_05_2:
 			case CONFIG_FLOAT_1_3:
 				Config_SetFloat(s_configFile, opt->section, opt->key, *(opt->d._float));
 				break;

@@ -700,8 +700,8 @@ Viewport_Click(Widget *w)
 			const int dx = g_mouseDX;
 			const int dy = g_mouseDY;
 
-			g_viewport_desiredDX += dx;
-			g_viewport_desiredDY += dy;
+			g_viewport_desiredDX += dx * g_gameConfig.panSensitivity;
+			g_viewport_desiredDY += dy * g_gameConfig.panSensitivity;
 			g_mouseDX = 0;
 			g_mouseDY = 0;
 		}
