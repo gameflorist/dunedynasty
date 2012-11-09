@@ -1,7 +1,8 @@
 /* common_a5.c */
 
-#include <allegro5/allegro.h>
 #include <assert.h>
+#include <allegro5/allegro.h>
+#include <math.h>
 
 #include "common_a5.h"
 
@@ -31,8 +32,8 @@ A5_InitScreenDiv(ALLEGRO_BITMAP *parent, enum ScreenDivID divID,
 
 	div->x = x1;
 	div->y = y1;
-	div->width = w / div->scale;
-	div->height = h / div->scale;
+	div->width = ceil(w / div->scale);
+	div->height = ceil(h / div->scale);
 
 	al_destroy_bitmap(s_transform[divID]);
 	s_transform[divID] = al_create_sub_bitmap(parent, x1, y1 + GFX_ScreenShake_Offset(), w, h);
