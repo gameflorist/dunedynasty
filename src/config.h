@@ -17,6 +17,7 @@ typedef struct GameCfg {
 	int gameSpeed;
 	bool hints;
 	bool autoScroll;
+	bool scrollAlongScreenEdge;
 	int scrollSpeed;
 
 	/* "Right-click orders" control scheme:

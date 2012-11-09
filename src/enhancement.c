@@ -150,12 +150,6 @@ bool enhancement_read_scenario_structure_health = false;
 bool enhancement_repeat_reinforcements = true;
 
 /**
- * In Dune 2, the scroll widgets are located around the edge of the
- * viewport rather than the screen for complicated reasons.
- */
-bool enhancement_scroll_along_screen_edge = true;
-
-/**
  * Enable the security question, accept any answer (default), or skip
  * it entirely.
  */
