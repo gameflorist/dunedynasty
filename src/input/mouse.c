@@ -12,10 +12,12 @@ float g_mouse_transform_offx;
 float g_mouse_transform_offy;
 int g_mouseX;
 int g_mouseY;
+int g_mouseDX;
+int g_mouseDY;
 int g_mouseDZ;
 int g_mouseClickX;
 int g_mouseClickY;
-bool g_warpMouse;
+bool g_mousePanning;
 
 void
 Mouse_Init(void)

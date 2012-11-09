@@ -1014,8 +1014,6 @@ void GameLoop_Main(bool new_game)
 	static int64_t l_timerUnitStatus = 0;
 	static int16  l_selectionState = -2;
 
-	uint16 key;
-
 	Sprites_UnloadTiles();
 	Sprites_LoadTiles();
 	Viewport_Init();
@@ -1041,13 +1039,25 @@ void GameLoop_Main(bool new_game)
 
 	int frames_skipped = 0;
 	while (g_gameMode == GM_NORMAL) {
-		if (g_warpMouse) {
-			g_warpMouse = false;
-			Video_WarpCursor(g_mouseClickX, g_mouseClickY);
-		}
-
 		Timer_WaitForEvent();
 		const int64_t curr_ticks = Timer_GameTicks();
+
+		if (g_gameOverlay == GAMEOVERLAY_NONE) {
+			Input_Tick(false);
+			uint16 key = GUI_Widget_HandleEvents(g_widgetLinkedListHead);
+			GameLoop_ProcessUnhandledInput(key);
+
+			if (g_mousePanning)
+				Video_WarpCursor(TRUE_DISPLAY_WIDTH / 2, TRUE_DISPLAY_HEIGHT / 2);
+		}
+		else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
+			Input_Tick(true);
+			MenuBar_TickMentatOverlay();
+		}
+		else {
+			Input_Tick(true);
+			MenuBar_TickOptionsOverlay();
+		}
 
 		if (g_gameOverlay == GAMEOVERLAY_NONE && g_timerGame != curr_ticks) {
 			g_timerGame = curr_ticks;
@@ -1091,13 +1101,6 @@ void GameLoop_Main(bool new_game)
 
 		GFX_Screen_SetActive(0);
 
-		if (g_gameOverlay == GAMEOVERLAY_NONE) {
-			key = GUI_Widget_HandleEvents(g_widgetLinkedListHead);
-		}
-		else {
-			key = 0;
-		}
-
 		if ((g_gameOverlay == GAMEOVERLAY_NONE) &&
 			(g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE)) {
 			if (Unit_AnySelected()) {
@@ -1112,9 +1115,6 @@ void GameLoop_Main(bool new_game)
 				}
 			}
 
-			if (g_gameOverlay == GAMEOVERLAY_NONE)
-				GameLoop_ProcessUnhandledInput(key);
-
 			UnitAI_SquadLoop();
 			GameLoop_Team();
 			GameLoop_Unit();
@@ -1124,18 +1124,6 @@ void GameLoop_Main(bool new_game)
 
 		if (g_var_38F8 && !g_debugScenario) {
 			GameLoop_LevelEnd();
-		}
-
-		if (g_gameOverlay == GAMEOVERLAY_NONE) {
-			Input_Tick(false);
-		}
-		else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
-			Input_Tick(true);
-			MenuBar_TickMentatOverlay();
-		}
-		else {
-			Input_Tick(true);
-			MenuBar_TickOptionsOverlay();
 		}
 
 		if (!g_var_38F8) break;

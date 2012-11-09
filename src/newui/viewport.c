@@ -79,6 +79,7 @@ Viewport_Init(void)
 	viewport_click_action = VIEWPORT_CLICK_NONE;
 	g_viewport_desiredDX = 0.0f;
 	g_viewport_desiredDY = 0.0f;
+	g_mousePanning = false;
 }
 
 static bool
@@ -400,6 +401,19 @@ Viewport_ScrollMap(Widget *w, enum ShapeID *cursorID)
 	return false;
 }
 
+static void
+Viewport_StopMousePanning(void)
+{
+	viewport_click_action = VIEWPORT_CLICK_NONE;
+
+	if (g_mousePanning) {
+		g_mousePanning = false;
+		Video_WarpCursor(viewport_click_x, viewport_click_y);
+	}
+
+	Video_ShowCursor();
+}
+
 static bool
 Viewport_GenericCommandCanAttack(uint16 packed)
 {
@@ -555,8 +569,7 @@ Viewport_Click(Widget *w)
 
 		/* Clicking LMB cancels pan. */
 		else {
-			viewport_click_action = VIEWPORT_CLICK_NONE;
-			Video_ShowCursor();
+			Viewport_StopMousePanning();
 		}
 	}
 
@@ -626,20 +639,22 @@ Viewport_Click(Widget *w)
 				viewport_click_action = VIEWPORT_PAN;
 				viewport_click_x = g_mouseX;
 				viewport_click_y = g_mouseY;
-				g_mouseClickX = g_mouseX;
-				g_mouseClickY = g_mouseY;
 				Video_HideCursor();
+				g_mousePanning = true;
+				g_mouseDX = 0;
+				g_mouseDY = 0;
 			}
 		}
 
 		/* Dragging RMB pans viewport. */
 		else if (viewport_click_action == VIEWPORT_PAN) {
-			const int dx = g_mouseX - g_mouseClickX;
-			const int dy = g_mouseY - g_mouseClickY;
+			const int dx = g_mouseDX;
+			const int dy = g_mouseDY;
 
 			g_viewport_desiredDX += dx;
 			g_viewport_desiredDY += dy;
-			g_warpMouse = true;
+			g_mouseDX = 0;
+			g_mouseDY = 0;
 		}
 	}
 
@@ -729,8 +744,7 @@ Viewport_Click(Widget *w)
 		}
 
 		/* Releasing RMB stops panning. */
-		viewport_click_action = VIEWPORT_CLICK_NONE;
-		Video_ShowCursor();
+		Viewport_StopMousePanning();
 	}
 
 	if (perform_context_sensitive_action) {

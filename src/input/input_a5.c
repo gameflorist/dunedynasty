@@ -118,8 +118,20 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			mouse_event |= MOUSE_LMB - (event->mouse.button - 1);
 			/* Fall through. */
 		case ALLEGRO_EVENT_MOUSE_AXES:
+			g_mouseDX += event->mouse.dx;
+			g_mouseDY += event->mouse.dy;
+			/* Fall through. */
 		case ALLEGRO_EVENT_MOUSE_WARPED:
-			Mouse_EventHandler(apply_mouse_transform, event->mouse.x, event->mouse.y, event->mouse.dz, mouse_event);
+			/* In panning mode, we only warp the mouse to the middle
+			 * of the screen to avoid hitting the edge of the screen.
+			 * The mouse cursor is still supposed to be at g_mouseX/Y.
+			 */
+			if (g_mousePanning) {
+				Mouse_EventHandler(false, g_mouseX, g_mouseY, 0, mouse_event);
+			}
+			else {
+				Mouse_EventHandler(apply_mouse_transform, event->mouse.x, event->mouse.y, event->mouse.dz, mouse_event);
+			}
 			break;
 
 		case ALLEGRO_EVENT_KEY_CHAR:
