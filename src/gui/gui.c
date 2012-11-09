@@ -1296,10 +1296,10 @@ void GUI_DrawInterfaceAndRadar(void)
 
 	MenuBar_Draw(g_playerHouseID);
 
-	GUI_DrawScreen(g_screenActiveID);
-
 	A5_UseTransform(SCREENDIV_SIDEBAR);
 	GUI_Widget_ActionPanel_Draw(true);
+
+	GUI_DrawScreen(g_screenActiveID);
 
 	A5_UseTransform(SCREENDIV_MAIN);
 

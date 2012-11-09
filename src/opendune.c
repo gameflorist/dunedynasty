@@ -942,13 +942,11 @@ GameLoop_TweakWidgetDimensions(void)
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height = 5;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = 0;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].flags = 0x0F00;
 
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width = 5;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].height = TRUE_DISPLAY_HEIGHT;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetX = TRUE_DISPLAY_WIDTH - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetY = 0;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].flags = 0x0F00;
 
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].width = 5;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].height = TRUE_DISPLAY_HEIGHT;
@@ -959,14 +957,12 @@ GameLoop_TweakWidgetDimensions(void)
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height = 5;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetX = 0;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetY = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].flags = 0x0F00;
 	}
 	else {
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = viewport->scale * viewport->width;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height = 10; /* 16px is a bit much! */
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height = 16;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = viewport->y;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].flags = 0;
 
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width = 10;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].height = viewport->scale * viewport->height;
@@ -982,7 +978,6 @@ GameLoop_TweakWidgetDimensions(void)
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height = 5; /* 2px is a little hard when in a window. */
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetX = 0;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetY = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].flags = 0;
 	}
 
 	g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;

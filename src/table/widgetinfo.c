@@ -161,7 +161,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* index       */ 39,
 		/* clickProc   */ &Viewport_Click,
 		/* shortcut    */ 0,
-		/* flags       */ 0x0F00, /* Was 0x4F00 == 20224.  Scroll up widget needed for screen edge scrolling. */
+		/* flags       */ 0x0F40, /* Was 0x4F00 == 20224.  Scroll up widget needed for screen edge scrolling. */
 		/* spriteID    */ -1,
 		/* offsetX     */ 0,
 		/* offsetY     */ 24,
@@ -174,7 +174,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* index       */ 40,
 		/* clickProc   */ &Viewport_Click,
 		/* shortcut    */ 0,
-		/* flags       */ 0x0F00, /* Was 0x4F00 == 20224.  Scroll right widget needed for screen edge scrolling. */
+		/* flags       */ 0x0F40, /* Was 0x4F00 == 20224.  Scroll right widget needed for screen edge scrolling. */
 		/* spriteID    */ -1,
 		/* offsetX     */ 240,
 		/* offsetY     */ 40,
@@ -185,9 +185,9 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	},
 	{ /* 13 */
 		/* index       */ 41,
-		/* clickProc   */ NULL,
+		/* clickProc   */ &Viewport_Click,
 		/* shortcut    */ 0,
-		/* flags       */ 0, /* Was 0x4F00 == 20224. */
+		/* flags       */ 0x0F40, /* Was 0x4F00 == 20224. */
 		/* spriteID    */ -1,
 		/* offsetX     */ 0,
 		/* offsetY     */ 40,
@@ -200,7 +200,7 @@ WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 		/* index       */ 42,
 		/* clickProc   */ &Viewport_Click,
 		/* shortcut    */ 0,
-		/* flags       */ 0x0F00, /* Was 0x4F00 == 20224.  Scroll down widget needed for screen edge scrolling due to minimap. */
+		/* flags       */ 0x0F40, /* Was 0x4F00 == 20224.  Scroll down widget needed for screen edge scrolling due to minimap. */
 		/* spriteID    */ -1,
 		/* offsetX     */ 0,
 		/* offsetY     */ 198,
