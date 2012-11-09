@@ -1058,49 +1058,11 @@ void GameLoop_Main(bool new_game)
 			continue;
 		}
 
-#if 0
-		if (g_gameMode == GM_PICKHOUSE) {
-			Music_Play(28);
-
-			g_playerHouseID = HOUSE_MERCENARY;
-			g_playerHouseID = GUI_PickHouse();
-
-			Memory_ClearBlock(1);
-
-			Sprites_LoadTiles();
-
-			GUI_Palette_CreateRemap(g_playerHouseID);
-
-			Voice_LoadVoices(g_playerHouseID);
-
-			g_gameMode = GM_RESTART;
-			g_scenarioID = 1;
-			g_campaignID = 0;
-			g_strategicRegionBits = 0;
-		}
-#endif
-
 		if (g_selectionTypeNew != g_selectionType) {
 			GUI_ChangeSelectionType(g_selectionTypeNew);
 		}
 
 		GUI_PaletteAnimate();
-
-#if 0
-		if (g_gameMode == GM_RESTART) {
-			GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
-
-			Game_LoadScenario(g_playerHouseID, g_scenarioID);
-			if (!g_debugScenario && !g_debugSkipDialogs) GUI_Mentat_ShowBriefing();
-
-			g_gameMode = GM_NORMAL;
-
-			GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
-
-			Music_Play(Tools_RandomRange(0, 8) + 8);
-			l_timerNext = Timer_GetTicks() + 300;
-		}
-#endif
 
 		if (l_selectionState != g_selectionState) {
 			Map_SetSelectionObjectPosition(0xFFFF);
