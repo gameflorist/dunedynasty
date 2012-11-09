@@ -311,6 +311,58 @@ MenuBar_DrawGameControlLabel(Widget *w)
 }
 
 static bool
+MenuBar_ClickRadioButton(Widget *radio)
+{
+	const int visible_widgets[2][3 + 5*3 + 1] = {
+		{ 35, 90, 91,
+		  20, 30, 100, 21, 31, 101, 22, 32, 102, 23, 33, 103, 24, 34, 104,
+		  -1
+		},
+		{ 35, 90, 91,
+		  40, 50, 110, 41, 51, 111, 42, 52, 112, 43, 53, 113, 44, 54, 114,
+		  -1
+		},
+	};
+
+	const int page = radio->index - 90;
+	Widget *w;
+
+	w = g_widgetLinkedListTail;
+	while (w != NULL) {
+		bool visible = false;
+
+		for (unsigned int i = 0; visible_widgets[page][i] >= 0; i++) {
+			if (w->index == visible_widgets[page][i]) {
+				visible = true;
+				break;
+			}
+		}
+
+		if (visible) {
+			GUI_Widget_MakeVisible(w);
+		}
+		else {
+			GUI_Widget_MakeInvisible(w);
+		}
+
+		if (w->clickProc == MenuBar_ClickRadioButton) {
+			w->drawParameterNormal.sprite = SHAPE_RADIO_BUTTON_OFF;
+			w->state.s.selected = 0;
+		}
+
+		w = GUI_Widget_GetNext(w);
+	}
+
+	/* Bit of a hack to make the radio button retain the ON sprite
+	 * after we click something else.
+	 */
+	radio->drawParameterNormal.sprite = SHAPE_RADIO_BUTTON_ON;
+	radio->state.s.selected = 1;
+
+	return true;
+}
+
+static bool
 MenuBar_ClickMusicVolumeSlider(Widget *w)
 {
 	if (Slider_Click(w)) {
@@ -349,13 +401,54 @@ MenuBar_ClickScrollSpeedSlider(Widget *w)
 	return true;
 }
 
+static bool
+MenuBar_ClickPanSensitivitySlider(Widget *w)
+{
+	if (Slider_Click(w)) {
+		const SliderData *data = w->data;
+
+		g_gameConfig.panSensitivity = 0.25f * data->curr;
+	}
+
+	return true;
+}
+
 static void
 MenuBar_CreateGameControls(void)
 {
+	/* 20, 30, 100  -- music label, on/off, slider.
+	 * 21, 31, 101  -- sound label, on/off, slider.
+	 * 22, 32       -- game speed label, button.
+	 * 23, 33       -- hint label, on/off.
+	 * 24, 34       -- subtitles label, on/off.
+	 *
+	 * 40, 50       -- control style label, mode.
+	 * 41, 51       -- mouse wheel label, mode.
+	 * 42, 52       -- scrolling edge label, on/off.
+	 * 43, 53, 113  -- auto scroll label, on/off, slider.
+	 * 44, 54, 114  -- pan sensitivity label, slider.
+	 *
+	 * 25 -- previous.
+	 * 90, 91 -- radio buttons.
+	 */
+
 	const WindowDesc *desc = &g_gameControlWindowDesc;
 	Widget *w;
 
 	GUI_Window_Create(&g_gameControlWindowDesc);
+
+	/* Radio buttons. */
+	w = GUI_Widget_Allocate(90, 0,  8, g_widgetProperties[g_gameControlWindowDesc.index].height - 17, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
+	w->parentID = g_gameControlWindowDesc.index;
+	w->clickProc = MenuBar_ClickRadioButton;
+	w->state.s.selected = 0;
+	g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
+
+	w = GUI_Widget_Allocate(91, 0, 18, g_widgetProperties[g_gameControlWindowDesc.index].height - 17, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
+	w->parentID = g_gameControlWindowDesc.index;
+	w->clickProc = MenuBar_ClickRadioButton;
+	w->state.s.selected = 0;
+	g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 
 	/* Labels. */
 	const struct {
@@ -367,7 +460,12 @@ MenuBar_CreateGameControls(void)
 		{ 21, 1, String_Get_ByIndex(STR_SOUNDS_ARE) },
 		{ 22, 2, String_Get_ByIndex(STR_GAME_SPEED) },
 		{ 23, 3, String_Get_ByIndex(STR_HINTS_ARE) },
-		{ 24, 4, String_Get_ByIndex(STR_AUTO_SCROLL_IS) },
+		{ 24, 4, "Subtitles are" },
+		{ 40, 0, "Control style" },
+		{ 41, 1, "Mouse wheel" },
+		{ 42, 2, "Scrolling edge" },
+		{ 43, 3, String_Get_ByIndex(STR_AUTO_SCROLL_IS) },
+		{ 44, 4, "Pan sensitivity" },
 	};
 
 	for (unsigned int i = 0; i < lengthof(label); i++) {
@@ -384,24 +482,52 @@ MenuBar_CreateGameControls(void)
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 	}
 
+	/* Buttons. */
+	const struct {
+		uint16 index;
+		uint16 position, w;
+	} button[] = {
+		{ 50, 0, 104 }, /* Control style. */
+		{ 51, 1, 104 }, /* Mouse wheel. */
+		{ 52, 2, 104 }, /* Scrolling edge. */
+		{ 53, 3,  46 }, /* Auto scroll. */
+	};
+
+	for (unsigned int i = 0; i < lengthof(button); i++) {
+		const uint16 x = desc->widgets[button[i].position].offsetX;
+		const uint16 y = desc->widgets[button[i].position].offsetY;
+
+		w = GUI_Widget_Allocate(button[i].index, 0, x, y, -2, -button[i].index);
+		w->parentID = g_gameControlWindowDesc.index;
+		w->flags = g_table_windowWidgets[0].flags;
+		w->width = button[i].w;
+		w->height = 15;
+		w->drawParameterNormal.proc = GUI_Widget_TextButton_Draw;
+		w->drawParameterSelected.proc = GUI_Widget_TextButton_Draw;
+		w->drawParameterDown.proc = GUI_Widget_TextButton_Draw;
+
+		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
+	}
+
 	/* Sliders. */
 	const struct {
 		uint16 index;
-		uint16 position;
+		uint16 x, position;
 		int min, max, tics;
 		bool (*clickProc)(Widget *widget);
 	} slider[] = {
-		{ 100, 0, 0, 20, 2, MenuBar_ClickMusicVolumeSlider },
-		{ 101, 1, 0, 20, 2, MenuBar_ClickSoundVolumeSlider },
-		{ 104, 4, 0,  4, 1, MenuBar_ClickScrollSpeedSlider },
+		{ 100, 180, 0, 0, 20, 2, MenuBar_ClickMusicVolumeSlider },
+		{ 101, 180, 1, 0, 20, 2, MenuBar_ClickSoundVolumeSlider },
+		{ 113, 180, 3, 0,  4, 1, MenuBar_ClickScrollSpeedSlider },
+		{ 114, 131, 4, 2,  8, 1, MenuBar_ClickPanSensitivitySlider },
 	};
 
 	for (unsigned int i = 0; i < lengthof(slider); i++) {
-		const uint16 x = 180;
+		const uint16 width = 50 + (180 - slider[i].x);
 		const uint16 y = 24 + 17 * slider[i].position;
 		SliderData *data;
 
-		w = Slider_Allocate(slider[i].index, g_gameControlWindowDesc.index, x, y, 50, 12);
+		w = Slider_Allocate(slider[i].index, g_gameControlWindowDesc.index, slider[i].x, y, width, 12);
 		w->clickProc = slider[i].clickProc;
 
 		data = w->data;
@@ -412,12 +538,15 @@ MenuBar_CreateGameControls(void)
 		switch (w->index) {
 			case 100: data->curr = 20 * music_volume; break;
 			case 101: data->curr = 20 * sound_volume; break;
-			case 104: data->curr = clamp(data->min, (g_gameConfig.scrollSpeed / 4), data->max); break;
+			case 113: data->curr = clamp(data->min, (g_gameConfig.scrollSpeed / 4), data->max); break;
+			case 114: data->curr = clamp(data->min, g_gameConfig.panSensitivity / 0.25f, data->max); break;
 			default: assert(false); break;
 		}
 
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 	}
+
+	GUI_Widget_MakeSelected(GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 90), true);
 }
 
 static void
@@ -565,14 +694,34 @@ MenuBar_TickGameControls(void)
 			g_gameConfig.hints ^= 0x1;
 			break;
 
-		case 0x8000 | 34: /* STR_AUTO_SCROLL_IS */
-			g_gameConfig.autoScroll ^= 0x1;
+		case 0x8000 | 34: /* Subtitles. */
+			g_enable_subtitles ^= 0x1;
 			break;
 
 		case 0x8000 | 35: /* STR_PREVIOUS */
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
 			MenuBar_UninitGameControls();
+
+			/* Reinitialise widget positions in case we change scroll along screen edge. */
+			GameLoop_TweakWidgetDimensions();
+
 			GUI_Window_Create(&g_optionsWindowDesc);
+			break;
+
+		case 0x8000 | 50: /* Control style. */
+			g_gameConfig.leftClickOrders ^= 0x1;
+			break;
+
+		case 0x8000 | 51: /* Mouse wheel. */
+			g_gameConfig.holdControlToZoom ^= 0x1;
+			break;
+
+		case 0x8000 | 52: /* Scrolling edge. */
+			g_gameConfig.scrollAlongScreenEdge ^= 0x1;
+			break;
+
+		case 0x8000 | 53: /* STR_AUTO_SCROLL_IS */
+			g_gameConfig.autoScroll ^= 0x1;
 			break;
 
 		default:

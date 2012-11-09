@@ -123,7 +123,7 @@ WindowDesc g_gameControlWindowDesc = {
 		/* shortcut2     */ 0,
 		},
 		{ /* 4 */
-		/* stringID      */ -14, /* Autoscroll state */
+		/* stringID      */ -14, /* Subtitle state */
 		/* offsetX       */ 128, /* Was 152, but 128 matches v1.0. */
 		/* offsetY       */ 90,
 		/* width         */ 46,  /* Was 80. */

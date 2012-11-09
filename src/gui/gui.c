@@ -1713,6 +1713,19 @@ GUI_String_Get_ByIndex(int16 stringID)
 			break;
 
 		case -14:
+			stringID = (g_enable_subtitles ? STR_ON : STR_OFF);
+			break;
+
+		case -50:
+			return (g_gameConfig.leftClickOrders) ? "Left-click" : "Right-click";
+
+		case -51:
+			return (g_gameConfig.holdControlToZoom) ? "Scroll factory" : "Zoom viewport";
+
+		case -52:
+			return (g_gameConfig.scrollAlongScreenEdge) ? "Screen" : "Viewport";
+
+		case -53:
 			stringID = (g_gameConfig.autoScroll != 0) ? STR_ON : STR_OFF;
 			break;
 
