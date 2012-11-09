@@ -92,7 +92,7 @@ WindowDesc g_gameControlWindowDesc = {
 		/* offsetY       */ 22,
 		/* width         */ 46,  /* Was 80. */
 		/* height        */ 15,
-		/* labelStringID */ STR_MUSIC_IS,
+		/* labelStringID */ STR_NULL,
 		/* shortcut2     */ 0,
 		},
 		{ /* 1 */
@@ -101,7 +101,7 @@ WindowDesc g_gameControlWindowDesc = {
 		/* offsetY       */ 39,
 		/* width         */ 46,  /* Was 80. */
 		/* height        */ 15,
-		/* labelStringID */ STR_SOUNDS_ARE,
+		/* labelStringID */ STR_NULL,
 		/* shortcut2     */ 0,
 		},
 		{ /* 2 */
@@ -110,7 +110,7 @@ WindowDesc g_gameControlWindowDesc = {
 		/* offsetY       */ 56,
 		/* width         */ 104, /* Was 80. */
 		/* height        */ 15,
-		/* labelStringID */ STR_GAME_SPEED,
+		/* labelStringID */ STR_NULL,
 		/* shortcut2     */ 0,
 		},
 		{ /* 3 */
@@ -119,7 +119,7 @@ WindowDesc g_gameControlWindowDesc = {
 		/* offsetY       */ 73,
 		/* width         */ 46,  /* Was 80. */
 		/* height        */ 15,
-		/* labelStringID */ STR_HINTS_ARE,
+		/* labelStringID */ STR_NULL,
 		/* shortcut2     */ 0,
 		},
 		{ /* 4 */
@@ -128,7 +128,7 @@ WindowDesc g_gameControlWindowDesc = {
 		/* offsetY       */ 90,
 		/* width         */ 46,  /* Was 80. */
 		/* height        */ 15,
-		/* labelStringID */ STR_AUTO_SCROLL_IS,
+		/* labelStringID */ STR_NULL,
 		/* shortcut2     */ 0,
 		},
 		{ /* 5 */

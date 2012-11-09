@@ -28,6 +28,7 @@
 #include "../pool/structure.h"
 #include "../pool/unit.h"
 #include "../sprites.h"
+#include "../string.h"
 #include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
@@ -296,6 +297,19 @@ MenuBar_ClickOptions(Widget *w)
 	return true;
 }
 
+static void
+MenuBar_DrawGameControlLabel(Widget *w)
+{
+	const WidgetProperties *wi = &g_widgetProperties[w->parentID];
+
+	if (g_gameConfig.language == LANGUAGE_FRENCH) {
+		GUI_DrawText_Wrapper(w->data, wi->xBase + 40 - 24, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
+	}
+	else {
+		GUI_DrawText_Wrapper(w->data, w->offsetX + wi->xBase - 10, w->offsetY + wi->yBase + 3, 232, 0, 0x222);
+	}
+}
+
 static bool
 MenuBar_ClickMusicVolumeSlider(Widget *w)
 {
@@ -338,9 +352,37 @@ MenuBar_ClickScrollSpeedSlider(Widget *w)
 static void
 MenuBar_CreateGameControls(void)
 {
+	const WindowDesc *desc = &g_gameControlWindowDesc;
 	Widget *w;
 
 	GUI_Window_Create(&g_gameControlWindowDesc);
+
+	/* Labels. */
+	const struct {
+		uint16 index;
+		uint16 position;
+		const char *str;
+	} label[] = {
+		{ 20, 0, String_Get_ByIndex(STR_MUSIC_IS) },
+		{ 21, 1, String_Get_ByIndex(STR_SOUNDS_ARE) },
+		{ 22, 2, String_Get_ByIndex(STR_GAME_SPEED) },
+		{ 23, 3, String_Get_ByIndex(STR_HINTS_ARE) },
+		{ 24, 4, String_Get_ByIndex(STR_AUTO_SCROLL_IS) },
+	};
+
+	for (unsigned int i = 0; i < lengthof(label); i++) {
+		const uint16 x = desc->widgets[label[i].position].offsetX;
+		const uint16 y = desc->widgets[label[i].position].offsetY;
+
+		w = GUI_Widget_Allocate(label[i].index, 0, x, y, -2, STR_NULL);
+		w->parentID = g_gameControlWindowDesc.index;
+		w->data = (void *)label[i].str;
+		w->drawParameterDown.proc = MenuBar_DrawGameControlLabel;
+		w->drawParameterNormal.proc = MenuBar_DrawGameControlLabel;
+		w->drawParameterSelected.proc = MenuBar_DrawGameControlLabel;
+
+		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
+	}
 
 	/* Sliders. */
 	const struct {
