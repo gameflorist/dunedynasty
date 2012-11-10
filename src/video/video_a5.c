@@ -431,6 +431,9 @@ VideoA5_ToggleFullscreen(void)
 	A5_InitTransform(true);
 	GameLoop_TweakWidgetDimensions();
 	Map_CentreViewport(viewport_cx, viewport_cy);
+
+	/* Free CPS store when we toggle fullscreen mode, important for Direct3D. */
+	VideoA5_DisplayFound();
 }
 
 void
