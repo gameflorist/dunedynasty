@@ -443,9 +443,12 @@ Viewport_Click(Widget *w)
 {
 	static int64_t l_tickCursor;
 
+	enum ShapeID cursorID
+		= (viewport_click_action == VIEWPORT_SELECTION_BOX) ? SHAPE_CURSOR_NORMAL
+		: (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
+
 	if (w->index == 45) {
-		if (g_timerGame - l_tickCursor > 10) {
-			const enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
+		if ((cursorID != g_cursorSpriteID) && (g_timerGame - l_tickCursor > 10)) {
 			l_tickCursor = g_timerGame;
 			Video_SetCursor(cursorID);
 		}
@@ -453,7 +456,6 @@ Viewport_Click(Widget *w)
 		return true;
 	}
 
-	enum ShapeID cursorID = (g_selectionType == SELECTIONTYPE_TARGET) ? SHAPE_CURSOR_TARGET : SHAPE_CURSOR_NORMAL;
 	if (Viewport_ScrollMap(w, &cursorID))
 		return true;
 
@@ -485,6 +487,7 @@ Viewport_Click(Widget *w)
 	if ((w->index == 43) &&
 			(viewport_click_action == VIEWPORT_CLICK_NONE) &&
 			(cursorID != SHAPE_CURSOR_TARGET) &&
+			(g_timerGame - l_tickCursor > 10) &&
 			Unit_AnySelected() &&
 			Viewport_GenericCommandCanAttack(packed)) {
 		int iter;
@@ -505,11 +508,9 @@ Viewport_Click(Widget *w)
 		}
 	}
 
-	if (cursorID != g_cursorSpriteID) {
-		if (g_timerGame - l_tickCursor > 10) {
-			l_tickCursor = g_timerGame;
-			Video_SetCursor(cursorID);
-		}
+	if ((cursorID != g_cursorSpriteID) && (g_timerGame - l_tickCursor > 10)) {
+		l_tickCursor = g_timerGame;
+		Video_SetCursor(cursorID);
 	}
 
 	if (w->state.s.buttonState & 0x01) {
