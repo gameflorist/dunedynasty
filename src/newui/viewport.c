@@ -484,12 +484,21 @@ Viewport_Click(Widget *w)
 	}
 
 	/* Context-sensitive mouse cursor. */
-	if ((w->index == 43) &&
-			(viewport_click_action == VIEWPORT_CLICK_NONE) &&
-			(cursorID != SHAPE_CURSOR_TARGET) &&
-			(g_timerGame - l_tickCursor > 10) &&
-			Unit_AnySelected() &&
-			Viewport_GenericCommandCanAttack(packed)) {
+	do {
+		if (w->index != 43) break;
+		if ((cursorID == SHAPE_CURSOR_TARGET) || (g_timerGame - l_tickCursor <= 10)) break;
+
+		if ((viewport_click_action == VIEWPORT_CLICK_NONE) ||
+		    (viewport_click_action == VIEWPORT_LMB && g_gameConfig.leftClickOrders) ||
+		    (viewport_click_action == VIEWPORT_RMB && !g_gameConfig.leftClickOrders)) {
+		}
+		else {
+			break;
+		}
+
+		if (!Unit_AnySelected()) break;
+		if (!Viewport_GenericCommandCanAttack(packed)) break;
+
 		int iter;
 
 		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
@@ -506,7 +515,7 @@ Viewport_Click(Widget *w)
 				break;
 			}
 		}
-	}
+	} while (false);
 
 	if ((cursorID != g_cursorSpriteID) && (g_timerGame - l_tickCursor > 10)) {
 		l_tickCursor = g_timerGame;
