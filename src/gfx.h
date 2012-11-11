@@ -12,6 +12,13 @@ enum {
 	SCREEN_HEIGHT = 200  /*!< Height of Dune 2 screen in pixels. */
 };
 
+enum AspectRatioCorrection {
+	ASPECT_RATIO_CORRECTION_NONE,       /* Square pixels. */
+	ASPECT_RATIO_CORRECTION_PARTIAL,    /* Non-square pixels for menus, square pixels in game. */
+	ASPECT_RATIO_CORRECTION_FULL,       /* Non-square pixels throughout the game. */
+	ASPECT_RATIO_CORRECTION_AUTO
+};
+
 enum ScreenDivID {
 	SCREENDIV_MAIN = 0,
 	SCREENDIV_MENU = 1,
@@ -31,6 +38,8 @@ typedef struct ScreenDiv {
 
 extern int TRUE_DISPLAY_WIDTH;
 extern int TRUE_DISPLAY_HEIGHT;
+extern enum AspectRatioCorrection g_aspect_correction;
+extern float g_pixel_aspect_ratio;      /* pixel height to pixel width. */
 
 extern uint16 g_screenActiveID;
 

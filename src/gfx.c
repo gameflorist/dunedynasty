@@ -17,6 +17,8 @@
 
 int TRUE_DISPLAY_WIDTH = 640;
 int TRUE_DISPLAY_HEIGHT = 480;
+enum AspectRatioCorrection g_aspect_correction = ASPECT_RATIO_CORRECTION_AUTO;
+float g_pixel_aspect_ratio = 1.1f;
 
 static uint16 s_spriteSpacing  = 0;
 static uint16 s_spriteHeight   = 0;

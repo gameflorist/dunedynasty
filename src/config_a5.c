@@ -26,6 +26,7 @@ typedef struct GameOption {
 	const char *key;
 
 	enum OptionType {
+		CONFIG_ASPECT_CORRECTION,
 		CONFIG_BOOL,
 		CONFIG_CAMPAIGN,
 		CONFIG_FLOAT,
@@ -46,6 +47,7 @@ typedef struct GameOption {
 		int *_int;
 		float *_float;
 		char *_string;
+		enum AspectRatioCorrection *_aspect_correction;
 		enum GraphicsDriver *_graphics_driver;
 		enum Language *_language;
 		enum MusicSet *_music_set;
@@ -83,6 +85,7 @@ static const GameOption s_game_option[] = {
 	{ "graphics",   "window_mode",      CONFIG_WINDOW_MODE,     .d._window_mode = &g_gameConfig.windowMode },
 	{ "graphics",   "screen_width",     CONFIG_INT,             .d._int = &saved_screen_width },
 	{ "graphics",   "screen_height",    CONFIG_INT,             .d._int = &saved_screen_height },
+	{ "graphics",   "correct_aspect_ratio", CONFIG_ASPECT_CORRECTION,   .d._aspect_correction = &g_aspect_correction },
 	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scalex },
 	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scalex },
 	{ "graphics",   "viewport_scale",   CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scalex },
@@ -126,6 +129,27 @@ static const GameOption s_game_option[] = {
 };
 
 /*--------------------------------------------------------------*/
+
+static void
+Config_GetAspectCorrection(const char *str, enum AspectRatioCorrection *value)
+{
+	const char *aspect_str = strchr(str, ',');
+	const char c = tolower(str[0]);
+
+	     if (c == 'n') { g_pixel_aspect_ratio = 1.0f; *value = ASPECT_RATIO_CORRECTION_NONE; }
+
+	/* menu or partial. */
+	else if (c == 'm') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
+	else if (c == 'p') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
+
+	else if (c == 'f') { g_pixel_aspect_ratio = 1.2f; *value = ASPECT_RATIO_CORRECTION_FULL; }
+	else if (c == 'a') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_AUTO; }
+
+	if (aspect_str != NULL) {
+		sscanf(aspect_str + 1, "%f", &g_pixel_aspect_ratio);
+		g_pixel_aspect_ratio = clamp(0.5f, g_pixel_aspect_ratio, 2.0f);
+	}
+}
 
 static void
 Config_GetBool(const char *str, bool *value)
@@ -427,6 +451,10 @@ GameOptions_Load(void)
 			continue;
 
 		switch (opt->type) {
+			case CONFIG_ASPECT_CORRECTION:
+				Config_GetAspectCorrection(str, opt->d._aspect_correction);
+				break;
+
 			case CONFIG_BOOL:
 				Config_GetBool(str, opt->d._bool);
 				break;
@@ -575,12 +603,13 @@ GameOptions_Save(void)
 				Config_SetMusicPack(s_configFile, opt->section, opt->key, *(opt->d._music_set));
 				break;
 
-			case CONFIG_SUBTITLE:
-				/* Not saved (hidden). */
-				break;
-
 			case CONFIG_WINDOW_MODE:
 				Config_SetWindowMode(s_configFile, opt->section, opt->key, *(opt->d._window_mode));
+				break;
+
+			case CONFIG_ASPECT_CORRECTION:
+			case CONFIG_SUBTITLE:
+				/* Not saved (hidden). */
 				break;
 		}
 	}
