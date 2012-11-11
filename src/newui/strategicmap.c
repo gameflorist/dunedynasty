@@ -119,13 +119,11 @@ StrategicMap_DrawBackground(enum HouseType houseID)
 static void
 StrategicMap_DrawText(const StrategicMapData *map)
 {
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
 	const int64_t dt = Timer_GetTicks() - map->text_timer;
 	const int offset = min(dt/3.0 + (175 - 185), (175 - 172 - 1));
-	const float scale = g_mouse_transform_scale;
-	const float offx = g_mouse_transform_offx;
-	const float offy = g_mouse_transform_offy;
 
-	Video_SetClippingArea(8*8 * scale + offx, 165 * scale + offy, 24*8 * scale, 14 * scale);
+	Video_SetClippingArea(8*8 * div->scalex + div->x, 165 * div->scaley + div->y, 24*8 * div->scalex, 14 * div->scaley);
 
 	if (map->text1 != NULL)
 		GUI_DrawText_Wrapper(map->text1, 64, 165 + offset, 12, 0, 0x12);

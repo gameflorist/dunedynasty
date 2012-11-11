@@ -70,6 +70,30 @@ GFX_InitDefaultViewportScales(bool adjust_viewport)
 	}
 }
 
+float
+GFX_AspectCorrection_GetRatio(void)
+{
+	/* 'Auto' corrects the menus so that the planets appear rounder.
+	 * The in-game graphics are not corrected; they appear to be drawn
+	 * assuming square pixels (e.g. carryall, starport landing pad).
+	 *
+	 * For small screens, avoid scaling but use the 20% larger buttons
+	 * where possible.
+	 */
+	switch (g_aspect_correction) {
+		default:
+		case ASPECT_RATIO_CORRECTION_NONE:
+			return 1.0f;
+
+		case ASPECT_RATIO_CORRECTION_PARTIAL:
+		case ASPECT_RATIO_CORRECTION_FULL:
+			return g_pixel_aspect_ratio;
+
+		case ASPECT_RATIO_CORRECTION_AUTO:
+			return (TRUE_DISPLAY_HEIGHT < 200 * 4) ? 1.0f : g_pixel_aspect_ratio;
+	}
+}
+
 /**
  * Get the codesegment of the active screen buffer.
  * @return The codesegment of the screen buffer.

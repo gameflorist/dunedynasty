@@ -5,9 +5,6 @@
 #include "scancode.h"
 #include "../gfx.h"
 
-extern float g_mouse_transform_scale;
-extern float g_mouse_transform_offx;
-extern float g_mouse_transform_offy;
 extern int g_mouseX;
 extern int g_mouseY;
 extern int g_mouseDX;

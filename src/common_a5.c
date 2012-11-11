@@ -60,6 +60,8 @@ A5_InitTransform(bool screen_size_changed)
 {
 	ALLEGRO_TRANSFORM trans;
 
+	const float pixel_aspect_ratio = GFX_AspectCorrection_GetRatio();
+
 	/* Identity. */
 	if (screen_size_changed) {
 		s_transform[SCREENDIV_MAIN] = al_get_target_bitmap();
@@ -70,28 +72,22 @@ A5_InitTransform(bool screen_size_changed)
 	}
 
 	const double preferred_aspect = (double)SCREEN_WIDTH / SCREEN_HEIGHT;
-	const double w = TRUE_DISPLAY_WIDTH;
-	const double h = TRUE_DISPLAY_HEIGHT;
-	const double aspect = w/h;
+	const double aspect = pixel_aspect_ratio * TRUE_DISPLAY_WIDTH / TRUE_DISPLAY_HEIGHT;
 
 	float scale = (double)TRUE_DISPLAY_WIDTH / SCREEN_WIDTH;
 	float offx = 0.0f;
 	float offy = 0.0f;
 
+	/* Tall screens. */
 	if (aspect < preferred_aspect - 0.001) {
-		const double newh = w / preferred_aspect;
-		offy = (h - newh) / 2;
-		scale = newh / SCREEN_HEIGHT;
+		const double newh = pixel_aspect_ratio * scale * SCREEN_HEIGHT;
+		offy = (TRUE_DISPLAY_HEIGHT - newh) / 2;
 	}
 	else if (aspect > preferred_aspect + 0.001) {
-		const double neww = h * preferred_aspect;
-		offx = (w - neww) / 2;
-		scale = neww / SCREEN_WIDTH;
+		scale = (double)TRUE_DISPLAY_HEIGHT / (pixel_aspect_ratio * SCREEN_HEIGHT);
+		const double neww = scale * SCREEN_WIDTH;
+		offx = (TRUE_DISPLAY_WIDTH - neww) / 2;
 	}
-
-	g_mouse_transform_scale = scale;
-	g_mouse_transform_offx = offx;
-	g_mouse_transform_offy = offy;
 
 	ALLEGRO_BITMAP *target = s_transform[SCREENDIV_MAIN];
 	assert(target != NULL);
@@ -99,8 +95,10 @@ A5_InitTransform(bool screen_size_changed)
 	/* Menu. */
 	{
 		ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+		div->x = offx;
+		div->y = offy;
 		div->scalex = scale;
-		div->scaley = scale;
+		div->scaley = scale * pixel_aspect_ratio;
 
 		ALLEGRO_BITMAP *sub = al_create_sub_bitmap(target, 0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 		al_set_target_bitmap(sub);
