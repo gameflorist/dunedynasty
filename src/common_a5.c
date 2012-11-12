@@ -27,7 +27,12 @@ A5_InitScreenDiv(ALLEGRO_BITMAP *parent, enum ScreenDivID divID,
 	ScreenDiv *div = &g_screenDiv[divID];
 	ALLEGRO_TRANSFORM trans;
 
-	div->scaley = div->scalex;
+	if (g_aspect_correction == ASPECT_RATIO_CORRECTION_FULL) {
+		div->scaley = div->scalex * GFX_AspectCorrection_GetRatio();
+	}
+	else {
+		div->scaley = div->scalex;
+	}
 
 	if (divID == SCREENDIV_MENUBAR) {
 		y2 = div->scaley * y2;
