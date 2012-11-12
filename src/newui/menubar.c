@@ -57,12 +57,12 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 	snprintf(char_old, sizeof(char_old), "%6d", credits_old);
 	snprintf(char_new, sizeof(char_new), "%6d", credits_new);
 
-	Video_SetClippingArea(0, div->scale * 4, TRUE_DISPLAY_WIDTH, div->scale * 9);
+	Video_SetClippingArea(0, div->scaley * 4, TRUE_DISPLAY_WIDTH, div->scaley * 9);
 
 	for (int i = 0; i < 6; i++) {
 		const enum ShapeID shape_old = SHAPE_CREDITS_NUMBER_0 + char_old[i] - '0';
 		const enum ShapeID shape_new = SHAPE_CREDITS_NUMBER_0 + char_new[i] - '0';
-		const int x = TRUE_DISPLAY_WIDTH / div->scale - digit_w * (6 - i);
+		const int x = TRUE_DISPLAY_WIDTH / div->scalex - digit_w * (6 - i);
 
 		if (char_old[i] != char_new[i]) {
 			if (char_old[i] != ' ')
@@ -88,7 +88,7 @@ MenuBar_DrawStatusBar(const char *line1, const char *line2, bool scrollInProgres
 	const int y = g_widgetProperties[WINDOWID_STATUSBAR].yBase;
 	const int h = g_widgetProperties[WINDOWID_STATUSBAR].height;
 
-	Video_SetClippingArea(0, div->scale * y, TRUE_DISPLAY_WIDTH, div->scale * h);
+	Video_SetClippingArea(0, div->scaley * y, TRUE_DISPLAY_WIDTH, div->scaley * h);
 
 	if (scrollInProgress) {
 		GUI_DrawText_Wrapper(line2, x, y - offset + 2, 12, 0, 0x012);
@@ -569,7 +569,7 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 
 			/* Centre the dialog box to the viewport. */
 			const int old_x = w->xBase;
-			w->xBase = ((viewport->scale * viewport->width) / div->scale - w->width) / 2;
+			w->xBase = ((viewport->scalex * viewport->width) / div->scalex - w->width) / 2;
 
 			GUI_Widget_DrawBorder(WINDOWID_MODAL_MESSAGE, 1, 1);
 			GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);

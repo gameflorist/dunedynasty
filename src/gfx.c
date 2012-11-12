@@ -30,11 +30,11 @@ static void *s_screenBuffer[5] = { NULL, NULL, NULL, NULL, NULL };
 uint16 g_screenActiveID = 0;
 
 ScreenDiv g_screenDiv[SCREENDIV_MAX] = {
-	{ 1.0f,   0,   0, 320, 200 }, /* SCREENDIV_MAIN */
-	{ 1.0f,   0,   0, 320, 200 }, /* SCREENDIV_MENU */
-	{ 1.0f,   0,   0, 320,  40 }, /* SCREENDIV_MENUBAR */
-	{ 1.0f, 240,  40,  80, 160 }, /* SCREENDIV_SIDEBAR */
-	{ 1.0f,   0,  40, 240, 160 }, /* SCREENDIV_VIEWPORT */
+	{ 1.0f, 1.0f,   0,   0, 320, 200 }, /* SCREENDIV_MAIN */
+	{ 1.0f, 1.0f,   0,   0, 320, 200 }, /* SCREENDIV_MENU */
+	{ 1.0f, 1.0f,   0,   0, 320,  40 }, /* SCREENDIV_MENUBAR */
+	{ 1.0f, 1.0f, 240,  40,  80, 160 }, /* SCREENDIV_SIDEBAR */
+	{ 1.0f, 1.0f,   0,  40, 240, 160 }, /* SCREENDIV_VIEWPORT */
 };
 
 void
@@ -46,25 +46,25 @@ GFX_InitDefaultViewportScales(bool adjust_viewport)
 
 	/* Default viewport scales. */
 	if (TRUE_DISPLAY_WIDTH <= 320) {
-		menubar->scale = 1.0f;
-		sidebar->scale = 1.0f;
+		menubar->scalex = 1.0f;
+		sidebar->scalex = 1.0f;
 
 		if (adjust_viewport)
-			viewport->scale = 1.0f;
+			viewport->scalex = 1.0f;
 	}
 	else if (TRUE_DISPLAY_WIDTH <= 640) {
-		menubar->scale = 1.0f;
-		sidebar->scale = 1.0f;
+		menubar->scalex = 1.0f;
+		sidebar->scalex = 1.0f;
 
 		if (adjust_viewport)
-			viewport->scale = 2.0f;
+			viewport->scalex = 2.0f;
 	}
 	else {
-		menubar->scale = 2.0f;
-		sidebar->scale = 2.0f;
+		menubar->scalex = 2.0f;
+		sidebar->scalex = 2.0f;
 
 		if (adjust_viewport)
-			viewport->scale = 2.0f;
+			viewport->scalex = 2.0f;
 	}
 }
 

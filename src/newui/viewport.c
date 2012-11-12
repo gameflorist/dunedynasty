@@ -657,16 +657,15 @@ Viewport_Click(Widget *w)
 			const uint16 mapScale = g_scenario.mapScale;
 			const MapInfo *mapInfo = &g_mapInfos[mapScale];
 
-			float x = ((float)g_mouseX - g_screenDiv[w->div].x) / g_screenDiv[w->div].scale;
-			float y = ((float)g_mouseY - g_screenDiv[w->div].y) / g_screenDiv[w->div].scale;
+			float x, y;
 
 			/* Minimap is (div->scale * 64) * (div->scale * 64).
 			 * Each pixel represents 1 / (mapScale + 1) tiles.
 			 */
-			x = g_mouseX - div->x - div->scale * g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX;
-			y = g_mouseY - div->y - div->scale * g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
-			x = TILE_SIZE * mapInfo->minX + TILE_SIZE * x / (div->scale * (mapScale + 1));
-			y = TILE_SIZE * mapInfo->minY + TILE_SIZE * y / (div->scale * (mapScale + 1));
+			x = g_mouseX - div->x - div->scalex * g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetX;
+			y = g_mouseY - div->y - div->scaley * g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY;
+			x = TILE_SIZE * mapInfo->minX + TILE_SIZE * x / (div->scalex * (mapScale + 1));
+			y = TILE_SIZE * mapInfo->minY + TILE_SIZE * y / (div->scaley * (mapScale + 1));
 
 			Map_CentreViewport(x, y);
 		}
@@ -1142,7 +1141,8 @@ Viewport_DrawRallyPoint(void)
 static void
 Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
 {
-	const float delta = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scale;
+	const float deltax = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scalex;
+	const float deltay = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scaley;
 	const int w = max(1, width * curr / max);
 
 	/* From ActionPanel_DrawHealthBar. */
@@ -1150,7 +1150,7 @@ Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
 	if (curr <= max / 2) colour = 5;
 	if (curr <= max / 4) colour = 8;
 
-	Prim_FillRect(x - delta, y - delta, x + width + 1.0f + delta, y + 1.0f + delta, 12);
+	Prim_FillRect(x - deltax, y - deltay, x + width + 1.0f + deltax, y + 1.0f + deltay, 12);
 
 	if (w < width)
 		Prim_Hline(x + w + 1, y, x + width, 13);
@@ -1170,12 +1170,13 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 	 */
 	curr = min(curr, max);
 
-	const float delta = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scale;
+	const float deltax = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scalex;
+	const float deltay = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scaley;
 	const float width = 2.0f * num_bricks;
 	const int w = 2 * (num_bricks * curr / max);
 
 	/* Black outline. */
-	Prim_FillRect(x - delta, y - delta, x + width + delta, y + 1.0f + delta, 12);
+	Prim_FillRect(x - deltax, y - deltay, x + width + deltax, y + 1.0f + deltay, 12);
 
 	if (curr < max) {
 		/* Interpolate from 0x545454 to 0xFC4400. */
@@ -1184,7 +1185,7 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 		unsigned char g = 0x54 + (0x44 - 0x54) * rem / max;
 		unsigned char b = 0x54 + (0x00 - 0x54) * rem / max;
 
-		if (w > delta) Prim_FillRect(x, y, x + w - delta, y + 1.0f, 83);
+		if (w > deltax) Prim_FillRect(x, y, x + w - deltax, y + 1.0f, 83);
 		Prim_FillRect(x + w, y, x + width, y + 1.0f, 13);
 		Prim_FillRect_RGBA(x + w, y, x + w + 2.0f, y + 1.0f, r, g, b, 0xFF);
 	}
@@ -1195,7 +1196,7 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 	/* Divide into bricks. */
 	x += 2;
 	for (int i = 0; i < num_bricks - 1; i++, x += 2) {
-		Prim_Line(x, y, x, y + 1.0f + delta, 12, 0.0f);
+		Prim_Line(x, y, x, y + 1.0f + deltay, 12, 0.0f);
 	}
 }
 
@@ -1630,7 +1631,7 @@ Viewport_DrawInterface(enum HouseType houseID, int x, int blurx)
 	x = g_screenDiv[SCREENDIV_VIEWPORT].width - blurx;
 
 	/* Scaling factor between sidebar -> viewport->scale. */
-	float scale = sidebar->scale / viewport->scale;
+	float scale = sidebar->scaley / viewport->scaley;
 
 	for (int y = sidebar->height - 85 - 52; y + 52 - 1 >= 17; y -= 52) {
 #if 0

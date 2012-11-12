@@ -55,10 +55,10 @@ void
 Mouse_TransformToDiv(enum ScreenDivID div, int *mouseX, int *mouseY)
 {
 	if (mouseX != NULL)
-		*mouseX = (g_mouseX - g_screenDiv[div].x) / g_screenDiv[div].scale;
+		*mouseX = (g_mouseX - g_screenDiv[div].x) / g_screenDiv[div].scalex;
 
 	if (mouseY != NULL)
-		*mouseY = (g_mouseY - g_screenDiv[div].y) / g_screenDiv[div].scale;
+		*mouseY = (g_mouseY - g_screenDiv[div].y) / g_screenDiv[div].scaley;
 }
 
 bool

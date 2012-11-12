@@ -23,7 +23,8 @@ enum ScreenDivID {
 };
 
 typedef struct ScreenDiv {
-	float scale;
+	float scalex;
+	float scaley;
 	int x, y;
 	int width, height;
 } ScreenDiv;

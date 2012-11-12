@@ -83,9 +83,9 @@ static const GameOption s_game_option[] = {
 	{ "graphics",   "window_mode",      CONFIG_WINDOW_MODE,     .d._window_mode = &g_gameConfig.windowMode },
 	{ "graphics",   "screen_width",     CONFIG_INT,             .d._int = &saved_screen_width },
 	{ "graphics",   "screen_height",    CONFIG_INT,             .d._int = &saved_screen_height },
-	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scale },
-	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scale },
-	{ "graphics",   "viewport_scale",   CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scale },
+	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scalex },
+	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scalex },
+	{ "graphics",   "viewport_scale",   CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scalex },
 
 	{ "controls",   "auto_scroll",              CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
 	{ "controls",   "scroll_speed",             CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },

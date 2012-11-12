@@ -24,16 +24,22 @@ static void
 A5_InitScreenDiv(ALLEGRO_BITMAP *parent, enum ScreenDivID divID,
 		float x1, float y1, float x2, float y2)
 {
-	const float w = x2 - x1;
-	const float h = y2 - y1;
-
 	ScreenDiv *div = &g_screenDiv[divID];
 	ALLEGRO_TRANSFORM trans;
 
+	div->scaley = div->scalex;
+
+	if (divID == SCREENDIV_MENUBAR) {
+		y2 = div->scaley * y2;
+	}
+
+	const float w = x2 - x1;
+	const float h = y2 - y1;
+
 	div->x = x1;
 	div->y = y1;
-	div->width = ceil(w / div->scale);
-	div->height = ceil(h / div->scale);
+	div->width = ceil(w / div->scalex);
+	div->height = ceil(h / div->scaley);
 
 	al_destroy_bitmap(s_transform[divID]);
 	s_transform[divID] = al_create_sub_bitmap(parent, x1, y1 + GFX_ScreenShake_Offset(), w, h);
@@ -44,7 +50,7 @@ A5_InitScreenDiv(ALLEGRO_BITMAP *parent, enum ScreenDivID divID,
 		al_use_transform(&trans);
 	}
 	else {
-		al_build_transform(&trans, 0, 0, div->scale, div->scale, 0.0f);
+		al_build_transform(&trans, 0, 0, div->scalex, div->scaley, 0.0f);
 		al_use_transform(&trans);
 	}
 }
@@ -93,28 +99,29 @@ A5_InitTransform(bool screen_size_changed)
 	/* Menu. */
 	{
 		ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
-		div->scale = scale;
+		div->scalex = scale;
+		div->scaley = scale;
 
 		ALLEGRO_BITMAP *sub = al_create_sub_bitmap(target, 0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 		al_set_target_bitmap(sub);
 
 		al_destroy_bitmap(s_transform[SCREENDIV_MENU]);
 		s_transform[SCREENDIV_MENU] = sub;
-		al_build_transform(&trans, offx, offy, div->scale, div->scale, 0.0f);
+		al_build_transform(&trans, offx, offy, div->scalex, div->scaley, 0.0f);
 		al_use_transform(&trans);
 	}
 
 	ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
 	A5_InitScreenDiv(target, SCREENDIV_MENUBAR,
-			0.0f, 0.0f, TRUE_DISPLAY_WIDTH, menubar->scale * 40.0f);
+			0.0f, 0.0f, TRUE_DISPLAY_WIDTH, 40.0f);
 
 	ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
 	A5_InitScreenDiv(target, SCREENDIV_SIDEBAR,
-			TRUE_DISPLAY_WIDTH - sidebar->scale * 80.0f, menubar->scale * menubar->height,
+			TRUE_DISPLAY_WIDTH - sidebar->scalex * 80.0f, menubar->scaley * menubar->height,
 			TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
 	A5_InitScreenDiv(target, SCREENDIV_VIEWPORT,
-			0.0f, menubar->scale * menubar->height, sidebar->x, TRUE_DISPLAY_HEIGHT);
+			0.0f, menubar->scaley * menubar->height, sidebar->x, TRUE_DISPLAY_HEIGHT);
 
 	A5_UseTransform(curr_transform);
 }

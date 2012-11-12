@@ -814,7 +814,8 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 				ScreenDiv *div = &g_screenDiv[divID];
 				const int oldh = viewport->height;
 
-				div->scale = (div->scale >= 1.5f) ? 1.0f : 2.0f;
+				div->scalex = (div->scalex >= 1.5f) ? 1.0f : 2.0f;
+				div->scaley = div->scalex;
 				A5_InitTransform(false);
 				GameLoop_TweakWidgetDimensions();
 				g_factoryWindowTotal = -1;
@@ -857,7 +858,7 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 
 				int curr;
 				for (curr = 0; curr < (int)lengthof(scaling_factor); curr++) {
-					if (viewport->scale <= scaling_factor[curr])
+					if (viewport->scalex <= scaling_factor[curr])
 						break;
 				}
 
@@ -898,7 +899,8 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 				viewport_cy += TILE_SIZE * tiley;
 
 				if (new_scale != curr) {
-					viewport->scale = scaling_factor[new_scale];
+					viewport->scalex = scaling_factor[new_scale];
+					viewport->scaley = scaling_factor[new_scale];
 					A5_InitTransform(false);
 					GameLoop_TweakWidgetDimensions();
 					Map_CentreViewport(viewport_cx, viewport_cy);
@@ -959,22 +961,22 @@ GameLoop_TweakWidgetDimensions(void)
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetY = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height;
 	}
 	else {
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = viewport->scale * viewport->width;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = viewport->scalex * viewport->width;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height = 16;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = viewport->y;
 
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width = 10;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].height = viewport->scale * viewport->height;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetX = viewport->scale * viewport->width - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].height = viewport->scaley * viewport->height;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetX = viewport->scalex * viewport->width - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetY = viewport->y;
 
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].width = 5; /* 2px is a little hard when in a window. */
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].height = viewport->scale * viewport->height;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].height = viewport->scaley * viewport->height;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].offsetX = 0;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].offsetY = viewport->y;
 
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].width = viewport->scale * viewport->width;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].width = viewport->scalex * viewport->width;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height = 5; /* 2px is a little hard when in a window. */
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetX = 0;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetY = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height;

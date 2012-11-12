@@ -790,7 +790,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 	}
 
 	Prim_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, height - 3, 1, false, true, 0);
-	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * itemlist_height);
+	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scaley * itemlist_height);
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
 		const uint16 object_type = g_factoryWindowItems[item].objectType;
@@ -912,7 +912,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		}
 	}
 
-	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * height);
+	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scaley * height);
 	ActionPanel_DrawScrollButtons(widget, (s->o.type == STRUCTURE_STARPORT));
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
@@ -957,7 +957,7 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 
 	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x, &y, NULL, NULL, &w, &h);
 	Prim_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, widget->height - 3, 1, false, true, 0);
-	Video_SetClippingArea(0, div->scale * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scale * (widget->height - 5));
+	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scaley * (widget->height - 5));
 
 	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);
 	GUI_DrawText_Wrapper(name, x + w / 2, y - 9, 5, 0, 0x121);
