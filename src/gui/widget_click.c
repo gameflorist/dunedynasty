@@ -326,6 +326,9 @@ GUI_Widget_Picture_Click(Widget *w)
 	else if ((s->o.type == STRUCTURE_PALACE) && (s->countDown == 0)) {
 		Structure_ActivateSpecial(s);
 	}
+	else if ((s->o.type == STRUCTURE_STARPORT) && (!BuildQueue_IsEmpty(&s->queue))) {
+		ActionPanel_ClickStarportOrder(s);
+	}
 	else if ((s->o.type == STRUCTURE_REPAIR) && (s->o.linkedID != 0xFF)) {
 		Structure_SetState(s, STRUCTURE_STATE_READY);
 	}

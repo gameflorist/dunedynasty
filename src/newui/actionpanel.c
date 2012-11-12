@@ -483,7 +483,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	return false;
 }
 
-static void
+void
 ActionPanel_ClickStarportOrder(Structure *s)
 {
 	uint16 objectType;
