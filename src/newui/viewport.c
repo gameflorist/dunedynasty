@@ -467,6 +467,12 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 			else if (oi->actionsPlayer[i] == ACTION_HARVEST && (lst == LST_SPICE || lst == LST_THICK_SPICE) && unveiled) {
 				action = (u->amount < 100) ? ACTION_HARVEST : ACTION_MOVE;
 			}
+
+			/* Saboteurs should show target cursor for detonating on structures, walls, and units. */
+			else if (oi->actionsPlayer[i] == ACTION_SABOTAGE && attack && dry_run) {
+				if (lst != LST_BLOOM_FIELD)
+					action = ACTION_SABOTAGE;
+			}
 		}
 
 		if (action != ACTION_INVALID) {
