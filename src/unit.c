@@ -1674,18 +1674,32 @@ bool Unit_Move(Unit *unit, uint16 distance)
 					Unit_Damage(unit, 1, 0);
 				}
 
-				if (unit->o.type == UNIT_SABOTEUR && (Map_GetLandscapeType(Tile_PackTile(newPosition)) == LST_WALL || (unit->targetMove != 0 && Tile_GetDistance(unit->o.position, Tools_Index_GetTile(unit->targetMove)) < 32))) {
-					Map_MakeExplosion(4, newPosition, 500, 0);
+				if (unit->o.type == UNIT_SABOTEUR) {
+					bool detonate = (Map_GetLandscapeType(Tile_PackTile(newPosition)) == LST_WALL);
 
-					/* ENHANCEMENT -- Use Unit_Remove so that the saboteur is cleared from the map. */
-					if (g_dune2_enhanced) {
-						Unit_Remove(unit);
-					}
-					else {
-						Unit_Free(unit);
+					if (!detonate) {
+						/* ENHANCEMENT -- Make detonation consistent with game speed. */
+						if (g_dune2_enhanced) {
+							detonate = (unit->targetMove != 0 && Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
+						}
+						else {
+							detonate = (unit->targetMove != 0 && Tile_GetDistance(unit->o.position, Tools_Index_GetTile(unit->targetMove)) < 32);
+						}
 					}
 
-					return true;
+					if (detonate) {
+						Map_MakeExplosion(4, newPosition, 500, 0);
+
+						/* ENHANCEMENT -- Use Unit_Remove so that the saboteur is cleared from the map. */
+						if (g_dune2_enhanced) {
+							Unit_Remove(unit);
+						}
+						else {
+							Unit_Free(unit);
+						}
+
+						return true;
+					}
 				}
 
 				Unit_SetSpeed(unit, 0);
