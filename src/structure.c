@@ -1993,8 +1993,7 @@ Structure_GetAvailable(const Structure *s, int i)
 		if (unitType > UNIT_MCV)
 			return 0;
 
-		if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS)
-			unitType = UNIT_RAIDER_TRIKE;
+		/* if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) unitType = UNIT_RAIDER_TRIKE; */
 
 		const UnitInfo *ui = &g_table_unitInfo[unitType];
 		uint16 upgradeLevelRequired = ui->o.upgradeLevelRequired;
@@ -2056,7 +2055,7 @@ uint32 Structure_GetBuildable(Structure *s)
 
 				if (unitType == 0xFFFF) continue;
 
-				if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) unitType = UNIT_RAIDER_TRIKE;
+				/* if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) unitType = UNIT_RAIDER_TRIKE; */
 
 				ui = &g_table_unitInfo[unitType];
 				upgradeLevelRequired = ui->o.upgradeLevelRequired;
@@ -2292,8 +2291,7 @@ void Structure_InitFactoryItems(const Structure *s)
 		for (int i = 0; i < end; i++) {
 			uint16 unitType = (s->o.type == STRUCTURE_STARPORT) ? i : si->buildableUnits[i];
 
-			if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS && s->o.type != STRUCTURE_STARPORT)
-				unitType = UNIT_RAIDER_TRIKE;
+			/* if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS && s->o.type != STRUCTURE_STARPORT) unitType = UNIT_RAIDER_TRIKE; */
 
 			if (unitType > UNIT_MCV)
 				continue;

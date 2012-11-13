@@ -256,8 +256,8 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		},
 		{ /* buildableUnits */
 		/* [0]                  */ UNIT_TRIKE,
-		/* [1]                  */ UNIT_QUAD,
-		/* [2]                  */ -1,
+		/* [1]                  */ UNIT_RAIDER_TRIKE,
+		/* [2]                  */ UNIT_QUAD,
 		/* [3]                  */ -1,
 		/* [4]                  */ -1,
 		/* [5]                  */ -1,
