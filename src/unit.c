@@ -1525,7 +1525,10 @@ bool Unit_Move(Unit *unit, uint16 distance)
 		Unit_SetOrientation(unit, unit->orientation[0].current + (Tools_Random_256() & 0xF), false, 0);
 	}
 
-	if (ui->o.flags.blurTile) {
+	if (ui->flags.canWobble && unit->o.flags.s.isWobbling) {
+		unit->wobbleIndex = Tools_Random_256() & 7;
+	}
+	else if (ui->o.flags.blurTile) {
 		/* Use wobbleIndex for blur effect instead of a global
 		 * variable because we only want the unit's wobble amount to
 		 * change when it moves.
@@ -1542,9 +1545,6 @@ bool Unit_Move(Unit *unit, uint16 distance)
 	}
 	else {
 		unit->wobbleIndex = 0;
-		if (ui->flags.canWobble && unit->o.flags.s.isWobbling) {
-			unit->wobbleIndex = Tools_Random_256() & 7;
-		}
 	}
 
 	d = Tile_GetDistance(newPosition, unit->currentDestination);
