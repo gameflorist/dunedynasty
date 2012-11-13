@@ -940,9 +940,7 @@ SaveLoad_BrutalAI_FormationTimeout(void *object, uint32 value, bool loading)
 bool
 BrutalAI_Load(FILE *fp, uint32 length)
 {
-	int i = 0;
-
-	while (length > 0) {
+	for (int i = 0; (i < SQUADID_MAX + 1) && (length > 0); i++) {
 		if (!SaveLoad_Load(s_saveBrutalAISquad, fp, &s_aisquad[i]))
 			return false;
 
