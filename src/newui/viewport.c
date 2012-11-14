@@ -468,7 +468,7 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 			}
 
 			/* Saboteurs should show target cursor for detonating on structures, walls, and units. */
-			else if (oi->actionsPlayer[i] == ACTION_SABOTAGE && attack && dry_run) {
+			else if (oi->actionsPlayer[i] == ACTION_SABOTAGE && attack && (enhancement_targetted_sabotage || dry_run)) {
 				if (lst != LST_BLOOM_FIELD)
 					action = ACTION_SABOTAGE;
 			}

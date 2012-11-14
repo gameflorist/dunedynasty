@@ -1678,8 +1678,12 @@ bool Unit_Move(Unit *unit, uint16 distance)
 					bool detonate = (Map_GetLandscapeType(Tile_PackTile(newPosition)) == LST_WALL);
 
 					if (!detonate) {
+						/* ENHANCEMENT -- Only detonate if the action was a targetted sabotage. */
+						if (enhancement_targetted_sabotage) {
+							detonate = (unit->actionID == ACTION_SABOTAGE && Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
+						}
 						/* ENHANCEMENT -- Make detonation consistent with game speed. */
-						if (g_dune2_enhanced) {
+						else if (g_dune2_enhanced) {
 							detonate = (unit->targetMove != 0 && Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
 						}
 						else {

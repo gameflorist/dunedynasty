@@ -189,3 +189,9 @@ bool enhancement_structures_on_concrete_do_not_degrade = true;
  * subtitle with "The Building of a Dynasty".
  */
 enum SubtitleOverride enhancement_subtitle_override = SUBTITLE_THE_BUILDING_OF_LOWER_A_DYNASTY;
+
+/**
+ * Make saboteurs perform a targetted sabotage on right-click, and
+ * only detonate if we reach the destination on sabotage command.
+ */
+bool enhancement_targetted_sabotage = true;

@@ -54,5 +54,6 @@ extern bool enhancement_soldier_engineers;
 extern bool enhancement_special_trooper_portaits;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 extern enum SubtitleOverride enhancement_subtitle_override;
+extern bool enhancement_targetted_sabotage;
 
 #endif
