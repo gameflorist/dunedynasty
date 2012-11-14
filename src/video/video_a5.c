@@ -1574,6 +1574,17 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 	}
 }
 
+void
+VideoA5_DrawIconAlpha(uint16 iconID, int x, int y, unsigned char alpha)
+{
+	assert(iconID < ICONID_MAX);
+	assert(s_icon[iconID][HOUSE_HARKONNEN] != NULL);
+
+	ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, alpha);
+
+	al_draw_tinted_bitmap(s_icon[iconID][HOUSE_HARKONNEN], tint, x, y, 0);
+}
+
 /*--------------------------------------------------------------*/
 
 static ALLEGRO_BITMAP *

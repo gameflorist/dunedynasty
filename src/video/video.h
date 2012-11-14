@@ -51,6 +51,7 @@ extern void Video_DrawMinimap(int map_scale);
 #define Video_DrawCPSSpecial         VideoA5_DrawCPSSpecial
 #define Video_DrawCPSSpecialScale    VideoA5_DrawCPSSpecialScale
 #define Video_DrawIcon          VideoA5_DrawIcon
+#define Video_DrawIconAlpha     VideoA5_DrawIconAlpha
 #define Video_DrawChar          VideoA5_DrawChar
 #define Video_DrawWSA           VideoA5_DrawWSA
 #define Video_DrawWSAStatic     VideoA5_DrawWSAStatic
