@@ -903,7 +903,12 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 				return MENU_NO_TRANSITION | MENU_BATTLE_SUMMARY;
 			}
 			else if (curr_menu == MENU_BRIEFING_LOSE) {
-				return MENU_STRATEGIC_MAP;
+				if (g_campaignID == 0) {
+					return MENU_NO_TRANSITION | MENU_BRIEFING;
+				}
+				else {
+					return MENU_STRATEGIC_MAP;
+				}
 			}
 
 			return MENU_NO_TRANSITION | MENU_PLAY_A_GAME;
