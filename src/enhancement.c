@@ -84,6 +84,11 @@ bool enhancement_fix_typos = true;
 bool enhancement_fog_covers_units = true;
 
 /**
+ * Add non-permanent scouting.
+ */
+bool enhancement_fog_of_war = false;
+
+/**
  * Dune 2 likes to search the tiles surrounding the one you clicked
  * for an appropriate target, which can be annoying.
  */

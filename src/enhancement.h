@@ -36,6 +36,7 @@ extern bool enhancement_fix_scenario_typos;
 extern bool enhancement_fix_selection_after_entering_structure;
 extern bool enhancement_fix_typos;
 extern bool enhancement_fog_covers_units;
+extern bool enhancement_fog_of_war;
 extern bool enhancement_i_mean_where_i_clicked;
 extern bool enhancement_infantry_squad_death_animations;
 extern bool enhancement_insatiable_sandworms;
