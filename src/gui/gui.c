@@ -2341,6 +2341,8 @@ void GUI_DrawScreen(uint16 screenID)
 	Animation_Tick();
 	Unit_Sort();
 
+	Map_UpdateFogOfWar();
+
 #if 0
 	if (!g_viewport_forceRedraw && g_viewportPosition != g_minimapPosition) {
 		uint16 viewportX = Tile_GetPackedX(g_viewportPosition);

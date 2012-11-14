@@ -5,6 +5,7 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <stdint.h>
 #include <stdio.h>
 #include "enumeration.h"
 
@@ -51,6 +52,15 @@ typedef struct Tile {
 MSVC_PACKED_END
 assert_compile(sizeof(Tile) == 0x04);
 
+typedef struct FogOfWarTile {
+	int64_t timeout;
+	uint16 groundSpriteID;
+	uint8 overlaySpriteID;
+	enum HouseType houseID;
+	bool hasStructure;
+	uint16 fogOverlayBits;  /* 1,2,4,8 for up, right, down, left. */
+} FogOfWarTile;
+
 /** Definition of the map size of a map scale. */
 typedef struct MapInfo {
 	uint16 minX;                                            /*!< Minimal X position of the map. */
@@ -77,7 +87,8 @@ typedef struct LandscapeInfo {
 struct Unit;
 
 extern uint16 g_mapSpriteID[];
-extern Tile g_map[];
+extern Tile g_map[MAP_SIZE_MAX * MAP_SIZE_MAX];
+extern FogOfWarTile g_mapVisible[MAP_SIZE_MAX * MAP_SIZE_MAX];
 extern const uint8 g_functions[3][3];
 
 extern const MapInfo g_mapInfos[3];
@@ -98,6 +109,7 @@ extern bool Map_IsPositionUnveiled(uint16 position);
 extern bool Map_IsPositionInViewport(tile32 position, int *retX, int *retY);
 extern void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 unitOriginEncoded);
 extern uint16 Map_GetLandscapeType(uint16 packed);
+extern enum LandscapeType Map_GetLandscapeTypeVisible(uint16 packed);
 extern void Map_Update(uint16 packed, uint16 type, bool ignoreInvisible);
 extern void Map_DeviateArea(uint16 type, tile32 position, uint16 radius, enum HouseType houseID);
 extern void Map_Bloom_ExplodeSpice(uint16 packed, uint8 houseID);
@@ -108,6 +120,8 @@ extern uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID);
 extern void Map_UpdateAround(uint16 arg06, tile32 position, struct Unit *unit, uint8 function);
 extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
 extern bool Map_UnveilTile(uint16 packed, uint8 houseID);
+extern void Map_ResetFogOfWar(void);
+extern void Map_UpdateFogOfWar(void);
 extern void Map_CreateLandscape(uint32 seed);
 
 #endif /* MAP_H */

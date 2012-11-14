@@ -14,6 +14,7 @@
 
 #include "animation.h"
 #include "audio/audio.h"
+#include "enhancement.h"
 #include "explosion.h"
 #include "gfx.h"
 #include "gui/gui.h"
@@ -38,7 +39,14 @@
 
 
 uint16 g_mapSpriteID[64 * 64];
-Tile g_map[64 * 64];                                        /*!< All map data. */
+
+/* Map data.  In fog of war:
+ * g_map[] corresponds to TRUE information, and the map scouted.
+ * g_mapVisible[] corresponds to KNOWN information, and the map currently visible.
+ */
+Tile g_map[MAP_SIZE_MAX * MAP_SIZE_MAX];
+FogOfWarTile g_mapVisible[MAP_SIZE_MAX * MAP_SIZE_MAX];
+
 const uint8 g_functions[3][3] = {{0, 1, 0}, {2, 3, 0}, {0, 1, 0}};
 
 static bool s_debugNoExplosionDamage = false;               /*!< When non-zero, explosions do no damage to their surrounding. */
@@ -580,27 +588,43 @@ static const uint16 _landscapeSpriteMap[81] = {
  * @param packed The packed tile to examine.
  * @return The type of landscape at the tile.
  */
-uint16 Map_GetLandscapeType(uint16 packed)
+static enum LandscapeType
+Map_GetLandscapeType_BySpriteID(uint16 spriteID, bool hasStructure)
 {
-	Tile *t;
 	int16 spriteOffset;
 
-	t = &g_map[packed];
+	if (spriteID == g_builtSlabSpriteID) return LST_CONCRETE_SLAB;
 
-	if (t->groundSpriteID == g_builtSlabSpriteID) return LST_CONCRETE_SLAB;
+	if (spriteID == g_bloomSpriteID || spriteID == g_bloomSpriteID + 1) return LST_BLOOM_FIELD;
 
-	if (t->groundSpriteID == g_bloomSpriteID || t->groundSpriteID == g_bloomSpriteID + 1) return LST_BLOOM_FIELD;
+	if (g_wallSpriteID < spriteID && spriteID < g_wallSpriteID + 75) return LST_WALL;
 
-	if (t->groundSpriteID > g_wallSpriteID && (uint16)t->groundSpriteID < g_wallSpriteID + 75) return LST_WALL;
+	/* if (t->overlaySpriteID == g_wallSpriteID) return LST_DESTROYED_WALL; */
 
-	if (t->overlaySpriteID == g_wallSpriteID) return LST_DESTROYED_WALL;
+	/* if (Structure_Get_ByPackedTile(packed) != NULL) return LST_STRUCTURE; */
+	if (hasStructure) return LST_STRUCTURE;
 
-	if (Structure_Get_ByPackedTile(packed) != NULL) return LST_STRUCTURE;
-
-	spriteOffset = t->groundSpriteID - g_landscapeSpriteID; /* Offset in the landscape icon group. */
+	spriteOffset = spriteID - g_landscapeSpriteID; /* Offset in the landscape icon group. */
 	if (spriteOffset < 0 || spriteOffset > 80) return LST_ENTIRELY_ROCK;
 
 	return _landscapeSpriteMap[spriteOffset];
+}
+
+uint16 Map_GetLandscapeType(uint16 packed)
+{
+	Tile *t = &g_map[packed];
+
+	if (t->overlaySpriteID == g_wallSpriteID) return LST_DESTROYED_WALL;
+
+	return Map_GetLandscapeType_BySpriteID(t->groundSpriteID, t->hasStructure);
+}
+
+enum LandscapeType
+Map_GetLandscapeTypeVisible(uint16 packed)
+{
+	FogOfWarTile *t = &g_mapVisible[packed];
+
+	return Map_GetLandscapeType_BySpriteID(t->groundSpriteID, t->hasStructure);
 }
 
 #if 0
@@ -1338,6 +1362,7 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	if (Tile_IsOutOfMap(packed)) return false;
 
 	t = &g_map[packed];
+	g_mapVisible[packed].timeout = g_timerGame + 10 * 60;
 
 	if (t->isUnveiled && Sprite_IsUnveiled(t->overlaySpriteID)) return false;
 	t->isUnveiled = true;
@@ -1358,6 +1383,61 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	Map_UnveilTile_Neighbour(packed + 64);
 
 	return true;
+}
+
+void
+Map_ResetFogOfWar(void)
+{
+	memset(g_mapVisible, 0, sizeof(g_mapVisible));
+
+	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
+		g_mapVisible[packed].fogOverlayBits = 0xF;
+	}
+}
+
+void
+Map_UpdateFogOfWar(void)
+{
+	if (enhancement_fog_of_war) {
+		for (uint16 packed = 65; packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65; packed++) {
+			const Tile *t = &g_map[packed];
+			FogOfWarTile *f = &g_mapVisible[packed];
+
+			if (!t->isUnveiled || f->timeout <= g_timerGame) {
+				f->fogOverlayBits = 0xF;
+			}
+			else {
+				f->groundSpriteID = t->groundSpriteID;
+
+				if (!(g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID))
+					f->overlaySpriteID = t->overlaySpriteID;
+
+				f->houseID = t->houseID;
+				f->hasStructure = t->hasStructure;
+				f->fogOverlayBits = 0;
+
+				if (g_mapVisible[packed - 64].timeout <= g_timerGame) f->fogOverlayBits |= 0x1;
+				if (g_mapVisible[packed +  1].timeout <= g_timerGame) f->fogOverlayBits |= 0x2;
+				if (g_mapVisible[packed + 64].timeout <= g_timerGame) f->fogOverlayBits |= 0x4;
+				if (g_mapVisible[packed -  1].timeout <= g_timerGame) f->fogOverlayBits |= 0x8;
+			}
+		}
+	}
+	else {
+		for (uint16 packed = 65; packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65; packed++) {
+			const Tile *t = &g_map[packed];
+			FogOfWarTile *f = &g_mapVisible[packed];
+
+			f->groundSpriteID = t->groundSpriteID;
+
+			if (!(g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID))
+				f->overlaySpriteID = t->overlaySpriteID;
+
+			f->houseID = t->houseID;
+			f->hasStructure = t->hasStructure;
+			f->fogOverlayBits = (t->isUnveiled ? 0x0 : 0xF);
+		}
+	}
 }
 
 /**

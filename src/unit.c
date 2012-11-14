@@ -323,6 +323,9 @@ void GameLoop_Unit(void)
 
 		if (u->o.flags.s.isNotOnMap) continue;
 
+		if (enhancement_fog_of_war)
+			Unit_RemoveFog(u);
+
 		if (tickUnknown4 && u->targetAttack != 0 && ui->o.flags.hasTurret) {
 			tile32 tile;
 

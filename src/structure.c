@@ -109,6 +109,9 @@ void GameLoop_Structure(void)
 		g_scriptCurrentUnit      = NULL;
 		g_scriptCurrentTeam      = NULL;
 
+		if (enhancement_fog_of_war)
+			Structure_RemoveFog(s);
+
 		if (tickPalace && s->o.type == STRUCTURE_PALACE) {
 			if (s->countDown != 0) {
 				s->countDown--;

@@ -1351,6 +1351,9 @@ void Game_Prepare(void)
 		if (t->isUnveiled) Map_UnveilTile(i, g_playerHouseID);
 	}
 
+	Map_ResetFogOfWar();
+	Map_UpdateFogOfWar();
+
 	find.houseID = HOUSE_INVALID;
 	find.index   = 0xFFFF;
 	find.type    = 0xFFFF;

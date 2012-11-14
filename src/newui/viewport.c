@@ -147,7 +147,7 @@ Viewport_SelectRegion(void)
 
 		const uint16 packed = Tile_PackXY(tilex, tiley);
 
-		if (g_map[packed].overlaySpriteID == g_veiledSpriteID)
+		if (g_mapVisible[packed].fogOverlayBits == 0xF)
 			return;
 
 		if (mode == SELECTION_MODE_NONE) {
@@ -415,24 +415,22 @@ Viewport_StopMousePanning(void)
 }
 
 static bool
-Viewport_GenericCommandCanAttack(uint16 packed, enum LandscapeType lst, bool unveiled)
+Viewport_GenericCommandCanAttack(uint16 packed, enum LandscapeType lst, bool visible, bool scouted)
 {
-	if (!unveiled)
+	if (!scouted)
 		return false;
 
 	if (lst == LST_BLOOM_FIELD)
 		return true;
 
-	if ((lst == LST_WALL) && (!House_AreAllied(g_playerHouseID, g_map[packed].houseID)))
+	if ((lst == LST_WALL || lst == LST_STRUCTURE) && (!House_AreAllied(g_playerHouseID, g_mapVisible[packed].houseID)))
 		return true;
 
-	const Unit *target_u = Unit_Get_ByPackedTile(packed);
-	if ((target_u != NULL) && (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(target_u))))
-		return true;
-
-	const Structure *target_s = Structure_Get_ByPackedTile(packed);
-	if ((target_s != NULL) && (!House_AreAllied(g_playerHouseID, target_s->o.houseID)))
-		return true;
+	if (visible) {
+		const Unit *target_u = Unit_Get_ByPackedTile(packed);
+		if ((target_u != NULL) && (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(target_u))))
+			return true;
+	}
 
 	return false;
 }
@@ -440,9 +438,10 @@ Viewport_GenericCommandCanAttack(uint16 packed, enum LandscapeType lst, bool unv
 static bool
 Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 {
-	const enum LandscapeType lst = Map_GetLandscapeType(packed);
-	const bool unveiled = g_map[packed].isUnveiled;
-	const bool attack = Viewport_GenericCommandCanAttack(packed, lst, unveiled);
+	const enum LandscapeType lst = Map_GetLandscapeTypeVisible(packed);
+	const bool visible = (g_mapVisible[packed].fogOverlayBits != 0xF);
+	const bool scouted = g_map[packed].isUnveiled;
+	const bool attack = Viewport_GenericCommandCanAttack(packed, lst, visible, scouted);
 
 	if (dry_run && !attack && !(lst == LST_SPICE || lst == LST_THICK_SPICE))
 		return false;
@@ -464,7 +463,7 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 			}
 
 			/* Harvesters should only harvest if ordered to a spice field. */
-			else if (oi->actionsPlayer[i] == ACTION_HARVEST && (lst == LST_SPICE || lst == LST_THICK_SPICE) && unveiled) {
+			else if (oi->actionsPlayer[i] == ACTION_HARVEST && (lst == LST_SPICE || lst == LST_THICK_SPICE) && scouted) {
 				action = (u->amount < 100) ? ACTION_HARVEST : ACTION_MOVE;
 			}
 
@@ -1034,30 +1033,40 @@ Viewport_DrawTilesInRange(int x0, int y0,
 	for (top = viewportY1; top < viewportY2; top += TILE_SIZE, y++) {
 		int curPos = Tile_PackXY(x0, y);
 		const Tile *t = &g_map[curPos];
+		const FogOfWarTile *f = &g_mapVisible[curPos];
 
-		for (left = viewportX1; left < viewportX2; left += TILE_SIZE, curPos++, t++) {
+		for (left = viewportX1; left < viewportX2; left += TILE_SIZE, curPos++, t++, f++) {
 			const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
 
 			if (draw_tile && (t->overlaySpriteID != g_veiledSpriteID)) {
-				if (Viewport_TileIsDebris(t->groundSpriteID)) {
+				if (Viewport_TileIsDebris(f->groundSpriteID)) {
 					const uint16 iconID = g_mapSpriteID[curPos] & ~0x8000;
 
 					Video_DrawIcon(iconID, HOUSE_HARKONNEN, left, top);
 				}
 
-				Video_DrawIcon(t->groundSpriteID, t->houseID, left, top);
+				if (f->groundSpriteID)
+					Video_DrawIcon(f->groundSpriteID, f->houseID, left, top);
 
-				if ((t->overlaySpriteID != 0) && !overlay_is_fog)
-					Video_DrawIcon(t->overlaySpriteID, t->houseID, left, top);
+				if (f->overlaySpriteID != 0)
+					Video_DrawIcon(f->overlaySpriteID, f->houseID, left, top);
 			}
 
-			if (draw_fog && overlay_is_fog) {
-				uint16 iconID = t->overlaySpriteID;
+			if (draw_fog) {
+				if (enhancement_fog_of_war && f->fogOverlayBits) {
+					uint16 iconID = g_veiledSpriteID - 16 + f->fogOverlayBits;
 
-				if (t->overlaySpriteID == g_veiledSpriteID)
-					iconID = g_veiledSpriteID - 1;
+					Video_DrawIconAlpha(iconID, left, top, 0x80);
+				}
 
-				Video_DrawIcon(iconID, t->houseID, left, top);
+				if (overlay_is_fog) {
+					uint16 iconID = t->overlaySpriteID;
+
+					if (t->overlaySpriteID == g_veiledSpriteID)
+						iconID = g_veiledSpriteID - 1;
+
+					Video_DrawIcon(iconID, t->houseID, left, top);
+				}
 			}
 		}
 	}
@@ -1215,7 +1224,7 @@ Viewport_DrawSelectionHealthBars(void)
 	while (u != NULL) {
 		const uint16 packed = Tile_PackTile(u->o.position);
 
-		if (Map_IsValidPosition(packed) && Map_IsPositionUnveiled(packed)) {
+		if (Map_IsValidPosition(packed) && (g_mapVisible[packed].fogOverlayBits != 0xF)) {
 			const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 			int x, y;
 
@@ -1242,7 +1251,7 @@ Viewport_DrawSelectionHealthBars(void)
 
 	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 	if (s != NULL) {
-		if (Map_IsPositionUnveiled(g_selectionPosition)) {
+		if (g_mapVisible[g_selectionPosition].fogOverlayBits != 0xF) {
 			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 			const int x = TILE_SIZE * (Tile_GetPackedX(g_selectionPosition) - Tile_GetPackedX(g_viewportPosition)) - g_viewport_scrollOffsetX;
 			const int ty = Tile_GetPackedY(g_selectionPosition);
@@ -1286,7 +1295,8 @@ Viewport_DrawSelectedUnit(int x, int y)
 void
 Viewport_DrawSandworm(const Unit *u)
 {
-	if (!g_map[Tile_PackTile(u->o.position)].isUnveiled && !g_debugScenario)
+	/* if (!g_map[Tile_PackTile(u->o.position)].isUnveiled && !g_debugScenario) return; */
+	if (g_mapVisible[Tile_PackTile(u->o.position)].fogOverlayBits == 0xF)
 		return;
 
 	const enum ShapeID shapeID = g_table_unitInfo[UNIT_SANDWORM].groundSpriteID;
@@ -1378,7 +1388,9 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 	const uint16 values_334A[4] = {0, 1, 0, 2};
 
 	uint16 packed = Tile_PackTile(u->o.position);
-	if (!g_map[packed].isUnveiled && !g_debugScenario)
+
+	/* if (!g_map[packed].isUnveiled && !g_debugScenario) return; */
+	if (g_mapVisible[packed].fogOverlayBits == 0xF)
 		return;
 
 	int x, y;
@@ -1490,7 +1502,10 @@ Viewport_DrawAirUnit(const Unit *u)
 
 	uint16 curPos = Tile_PackTile(u->o.position);
 
-	if (!g_map[curPos].isUnveiled && !g_debugScenario)
+	/* Allied air units don't get concealed by fog of war. */
+	/* if (!g_map[curPos].isUnveiled && !g_debugScenario) return; */
+	if ((!g_map[curPos].isUnveiled) ||
+	    ((g_mapVisible[curPos].fogOverlayBits == 0xF) && !House_AreAllied(u->o.houseID, g_playerHouseID)))
 		return;
 
 	int x, y;
