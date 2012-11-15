@@ -6,49 +6,45 @@ Version 1.4, 2012-11-25
 
 Controls and Gameplay:
 
-  - Add fog of war.
+  - Add fog of war option.
   - Fix a bug causing units picked up from the repair bay to not regain any health.
-  - Fix brutal AI state to not being restored properly.
+  - Fix brutal AI not being loaded from saved games.
   - Fix a bug in the script engine causing harvesters to display the
     "waiting for pickup" status text instead of the "stopped" text.
   - Fix bug causing units to walk back and forth at a large obstacle.
   - Make units more reliably approach and attack a target.
   - Click starport icon to send order.
-  - Palace no longer resets the countdown without releasing a saboteur, as in Dune II.
+  - Fix palace countdown being reset without releasing a saboteur.
   - Saboteurs now only detonate when on sabotage command.
     This includes right-clicking on an enemy structure, unit, or wall.
   - Rally points can now be set with left click when using left-click orders.
-  - Revert random number generator to that used in Dune II v1.07.
-  - Revert the repair cost formula to that used in Dune II v1.07,
-    but fixing the free palace repairs bug.
-  - Super Dune II now uses Dune II v1.0's repair cost formula.
-  - "Fixed" Ordos siege tank tech now an enhancement option.
+  - Use same random number generator as Dune II.
+  - Use repair cost formula from Dune II v1.07, except that palaces are not free to repair.
+  - Use repair cost formula from Dune II v1.0 for Super Dune II campaign.
+  - Add option to restore Ordos getting siege tanks one level later
+    than other houses, in level 7 instead of level 6. (default: off)
 
 Graphics:
 
-  - Add pixel aspect correction.
-  - Improve production sidebar for small resolutions.
-  - Add rubble masks to generate transparent rubble graphics.
-  - Show target cursor where appropriate when harvesters or saboteurs are selected.
-  - Fix target cursor not reverting to pointer when starting box selection.
+  - Add pixel aspect correction options.
+  - Use alternative production sidebar for low resolutions.
+  - Improve the look of building rubble when next to sand tiles.
+  - Show target cursor for harvester and saboteur actions.
   - Fix loss of backgrounds in Direct3D when toggling screen modes.
   - Fix sonic tank turret being drawn with a slight tint.
-  - Super Dune II now uses cloaked saboteurs to simulate Dune II v1.0's invisibility.
+  - Use cloaked saboteurs in Super Dune II campaign to mimic Dune II v1.0.
   - Infantry squad death animations now an enhancement option.
 
 Sounds:
 
-  - Add support for MP3 files.  Requires MAD.
-  - Add mode to randomly choose between synth effects and digitised samples.
-  - Play error sound when failing to release saboteurs.
-  - In-game mentat screen now plays briefing music, as in Dune II.
+  - Add support for MP3 files.
+  - Add option to choose between synth and digital sound effects.
+  - Mentat screen now plays briefing music.
 
 Other:
 
-  - Record scenarios won.  In the strategic map, arrows leading to
-    scenarios that you have not won will occasionally blink.
+  - Strategic map indicates which scenarios you have not yet completed.
   - Add new options to the game controls menu.
-  - Remove the special Raider Trike factory logic.
   - Subtitle override is now an enhancement option.
 
 

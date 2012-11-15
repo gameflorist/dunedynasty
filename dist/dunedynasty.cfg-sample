@@ -17,9 +17,21 @@ driver=opengl
 window_mode=windowed
 screen_width=640
 screen_height=480
-menubar_scale=1.000000
-sidebar_scale=1.000000
-viewport_scale=2.000000
+
+# correct_aspect_ratio is one of:
+#
+#     none
+#     menu,(height multiplier)
+#     full,(height multiplier)
+#     auto,(height multiplier)
+#
+# where auto is the same as menu except when the screen height is less
+# than 800 pixels.
+correct_aspect_ratio=auto,1.1
+
+menubar_scale=1.00
+sidebar_scale=1.00
+viewport_scale=2.00
 
 [controls]
 auto_scroll=1
@@ -27,31 +39,42 @@ scroll_speed=4
 scroll_along_screen_edge=1
 left_click_orders=0
 hold_control_to_zoom=0
+pan_sensitivity=1.00
 
 [audio]
 enable_music=1
-enable_effects=1
-enable_sbsounds=1
+# enable_sounds is one of: none, synth, digital, both
+enable_sounds=both
 enable_voices=1
 enable_subtitles=0
-music_volume=0.900000
-sound_volume=0.750000
-voice_volume=1.000000
+music_volume=0.90
+sound_volume=0.75
+voice_volume=1.00
 opl_mame=true
 sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
 
 [enhancement]
 brutal_ai=0
+fix_ordos_siege_tank_tech=1
+fog_of_war=0
+infantry_squad_death_anim=1
 insatiable_sandworms=0
 raise_scenario_unit_cap=0
 repeat_reinforcements=1
+# subtitle_override is one of: eu, us, dynasty
+subtitle_override=dynasty
 
+[completion]
+Atreides=0
+Ordos=0
+Harkonnen=0
+
+[music]
 # MUSIC CONFIGURATION
 # Enable or disable entire music sets.
 #
 # If a track is not present in any of the enabled music sets, it will
 # use the track from the default music pack or dune2_adlib.
-[music]
 dune2_adlib=1
 dune2_c55=1
 fed2k_mt32=1
