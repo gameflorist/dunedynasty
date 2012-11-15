@@ -291,6 +291,14 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 		e->isDirty  = false;
 
 		g_map[packed].hasExplosion = true;
+
+		if (enhancement_fog_of_war && g_map[packed].isUnveiled) {
+			FogOfWarTile *f = &g_mapVisible[packed];
+			int64_t timeout = g_timerGame + Tools_AdjustToGameSpeed(2 * 60, 0x0000, 0xFFFF, true);
+
+			if (f->timeout < timeout)
+				f->timeout = timeout;
+		}
 	}
 }
 
