@@ -349,6 +349,8 @@ VideoA5_UninitCPSStore(void)
 
 		s_cps = next;
 	}
+
+	s_fadeInAux.bmp = NULL;
 }
 
 void
@@ -739,6 +741,9 @@ VideoA5_InitDissolve_GLStencil(ALLEGRO_BITMAP *src, FadeInAux *aux)
 static void
 VideoA5_DrawDissolve_GLStencil(const FadeInAux *aux)
 {
+	if (aux->bmp == NULL)
+		return;
+
 	glEnable(GL_STENCIL_TEST);
 
 	if (aux->fade_in) {
@@ -818,6 +823,9 @@ VideoA5_InitDissolve_D3DStencil(ALLEGRO_BITMAP *src, FadeInAux *aux)
 static void
 VideoA5_DrawDissolve_D3DStencil(const FadeInAux *aux)
 {
+	if (aux->bmp == NULL)
+		return;
+
 	LPDIRECT3DDEVICE9 pDevice = al_get_d3d_device(display);
 
 	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, TRUE);
