@@ -2754,7 +2754,8 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 	packed = Tile_PackTile(position);
 	t = &g_map[packed];
 
-	if (t->isUnveiled || unit->o.houseID == g_playerHouseID) {
+	/* if (t->isUnveiled || unit->o.houseID == g_playerHouseID) {} */
+	if ((g_mapVisible[packed].fogOverlayBits != 0xF) || (unit->o.houseID == g_playerHouseID)) {
 		Unit_HouseUnitCount_Add(unit, g_playerHouseID);
 	} else {
 		Unit_HouseUnitCount_Remove(unit);
