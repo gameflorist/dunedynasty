@@ -1036,8 +1036,6 @@ Viewport_DrawTilesInRange(int x0, int y0,
 		const FogOfWarTile *f = &g_mapVisible[curPos];
 
 		for (left = viewportX1; left < viewportX2; left += TILE_SIZE, curPos++, t++, f++) {
-			const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
-
 			if (draw_tile && (t->overlaySpriteID != g_veiledSpriteID)) {
 				if (Viewport_TileIsDebris(f->groundSpriteID)) {
 					const uint16 iconID = g_mapSpriteID[curPos] & ~0x8000;
@@ -1050,14 +1048,19 @@ Viewport_DrawTilesInRange(int x0, int y0,
 
 				if (f->overlaySpriteID != 0)
 					Video_DrawIcon(f->overlaySpriteID, f->houseID, left, top);
+
+				/* Draw the transparent fog UNDER units, which doesn't
+				 * really conceal units anyway.  This prevents it from
+				 * darkening the blur effect's rendering again.
+				 */
+				if (enhancement_fog_of_war && f->fogOverlayBits) {
+					uint16 iconID = g_veiledSpriteID - 16 + f->fogOverlayBits;
+					Video_DrawIconAlpha(iconID, left, top, 0x80);
+				}
 			}
 
 			if (draw_fog) {
-				if (enhancement_fog_of_war && f->fogOverlayBits) {
-					uint16 iconID = g_veiledSpriteID - 16 + f->fogOverlayBits;
-
-					Video_DrawIconAlpha(iconID, left, top, 0x80);
-				}
+				const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
 
 				if (overlay_is_fog) {
 					uint16 iconID = t->overlaySpriteID;
@@ -1688,10 +1691,11 @@ Viewport_RenderBrush(int x, int y, int blurx)
 	const int viewportY1 = TILE_SIZE * (tile_y0 - tile_top)  - g_viewport_scrollOffsetY;
 	const int viewportX2 = viewportX1 + 3 * TILE_SIZE;
 	const int viewportY2 = viewportY1 + 3 * TILE_SIZE;
+	const bool draw_fog = enhancement_fog_covers_units ? false : true;
 
 	/* Draw tiles. */
 	Viewport_DrawTilesInRange(tile_x0, tile_y0,
-			viewportX1, viewportY1, viewportX2, viewportY2, true, false);
+			viewportX1, viewportY1, viewportX2, viewportY2, true, draw_fog);
 
 	/* Draw ground units (not sandworms, projectiles, etc.). */
 	for (int dy = 0; dy < 3; dy++) {
@@ -1727,8 +1731,10 @@ Viewport_RenderBrush(int x, int y, int blurx)
 	}
 
 	/* Draw fog. */
-	Viewport_DrawTilesInRange(tile_x0, tile_y0,
-			viewportX1, viewportY1, viewportX2, viewportY2, false, true);
+	if (!draw_fog) {
+		Viewport_DrawTilesInRange(tile_x0, tile_y0,
+				viewportX1, viewportY1, viewportX2, viewportY2, false, true);
+	}
 
 	/* Render interface. */
 	Viewport_DrawInterface(g_playerHouseID, x, blurx);
