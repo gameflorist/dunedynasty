@@ -8,6 +8,7 @@
 #include "enumeration.h"
 
 extern const char * const g_languageSuffixes[];
+extern const char * const g_gameSubtitle[];
 
 extern uint16 String_Decompress(char *source, char *dest);
 extern char *String_GenerateFilename(const char *name);

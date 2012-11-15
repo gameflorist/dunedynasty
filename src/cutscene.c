@@ -1205,9 +1205,9 @@ GameLoop_GameCredits(enum HouseType houseID)
 	while (true) {
 		File_ReadBlockFile(String_GenerateFilename("CREDITS"), s_buffer_1832, GFX_Screen_GetSize_ByIndex(6));
 
-		if (enhancement_play_additional_voices && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
-			const char *find_str = "The Battle for Arrakis";
-			const char *replace_str = "The Building of a Dynasty";
+		if ((enhancement_subtitle_override != SUBTITLE_THE_BATTLE_FOR_ARRAKIS) && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
+			const char *find_str = g_gameSubtitle[SUBTITLE_THE_BATTLE_FOR_ARRAKIS];
+			const char *replace_str = g_gameSubtitle[enhancement_subtitle_override];
 			const int find_len = strlen(find_str);
 			const int replace_len = strlen(replace_str);
 

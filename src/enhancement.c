@@ -178,3 +178,9 @@ bool enhancement_special_trooper_portaits = true;
  * degrading, as this seems in contrast with the idea of slabs.
  */
 bool enhancement_structures_on_concrete_do_not_degrade = true;
+
+/**
+ * Choose to override the EU version's "The Battle for Arrakis"
+ * subtitle with "The Building of a Dynasty".
+ */
+enum SubtitleOverride enhancement_subtitle_override = SUBTITLE_THE_BUILDING_OF_LOWER_A_DYNASTY;

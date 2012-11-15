@@ -28,6 +28,12 @@ static uint16 s_stringsCount = 0;
 static char *s_strings_mentat[HOUSE_MAX][40];
 
 const char * const g_languageSuffixes[] = { "ENG", "FRE", "GER", "ITA", "SPA" };
+const char * const g_gameSubtitle[] = {
+	"The Battle for Arrakis",
+	"The Building of A Dynasty",
+	"The Building of a Dynasty"
+};
+
 static char *s_stringDecompress = " etainosrlhcdupmtasio wb rnsdalmh ieorasnrtlc synstcloer dtgesionr ufmsw tep.icae oiadur laeiyodeia otruetoakhlr eiu,.oansrctlaileoiratpeaoip bm";
 
 /**
@@ -236,10 +242,12 @@ void String_Init(void)
 		}
 	}
 
-	/* Restore the "The Building of a Dynasty" subtitle to match the narrator. */
-	if (enhancement_play_additional_voices && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
-		const char *subtitle1 = "The Building of a Dynasty";
-		const char *subtitle2 = "Dune II: The Building of a Dynasty";
+	/* Override the "The Building of a Dynasty" subtitle.  Pick the one that matches the narrator. */
+	if ((enhancement_subtitle_override != SUBTITLE_THE_BATTLE_FOR_ARRAKIS) && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
+		const char *subtitle1 = g_gameSubtitle[enhancement_subtitle_override];
+		char subtitle2[64];
+
+		snprintf(subtitle2, sizeof(subtitle2), "Dune II: %s", subtitle1);
 
 		free(s_strings[STR_THE_BATTLE_FOR_ARRAKIS]);
 		s_strings[STR_THE_BATTLE_FOR_ARRAKIS] = strdup(subtitle1);

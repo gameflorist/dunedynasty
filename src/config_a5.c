@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <allegro5/allegro.h>
+#include <ctype.h>
 #include <stdio.h>
 #include "buildcfg.h"
 #include "os/math.h"
@@ -36,6 +37,7 @@ typedef struct GameOption {
 		CONFIG_STRING,
 		CONFIG_LANGUAGE,
 		CONFIG_MUSIC_PACK,
+		CONFIG_SUBTITLE,
 		CONFIG_WINDOW_MODE
 	} type;
 
@@ -47,6 +49,7 @@ typedef struct GameOption {
 		enum GraphicsDriver *_graphics_driver;
 		enum Language *_language;
 		enum MusicSet *_music_set;
+		enum SubtitleOverride *_subtitle;
 		enum WindowMode *_window_mode;
 	} d;
 } GameOption;
@@ -117,6 +120,7 @@ static const GameOption s_game_option[] = {
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
 	{ "enhancement",    "raise_scenario_unit_cap",  CONFIG_BOOL,.d._bool = &enhancement_raise_scenario_unit_cap },
 	{ "enhancement",    "repeat_reinforcements",    CONFIG_BOOL,.d._bool = &enhancement_repeat_reinforcements },
+	{ "enhancement",    "subtitle_override",        CONFIG_SUBTITLE,.d._subtitle = &enhancement_subtitle_override },
 
 	{ NULL, NULL, CONFIG_BOOL, .d._bool = NULL }
 };
@@ -274,6 +278,15 @@ Config_SetMusicPack(ALLEGRO_CONFIG *config, const char *section, const char *key
 		value = MUSICSET_DUNE2_ADLIB;
 
 	al_set_config_value(config, section, key, g_table_music_set[value].prefix);
+}
+
+static void
+Config_GetSubtitle(const char *str, enum SubtitleOverride *value)
+{
+	const char c = tolower(str[0]);
+
+	if (c == 'e') *value = SUBTITLE_THE_BATTLE_FOR_ARRAKIS;
+	if (c == 'u') *value = SUBTITLE_THE_BUILDING_OF_UPPER_A_DYNASTY;
 }
 
 static void
@@ -458,6 +471,10 @@ GameOptions_Load(void)
 				Config_GetMusicPack(str, opt->d._music_set);
 				break;
 
+			case CONFIG_SUBTITLE:
+				Config_GetSubtitle(str, opt->d._subtitle);
+				break;
+
 			case CONFIG_WINDOW_MODE:
 				Config_GetWindowMode(str, opt->d._window_mode);
 				break;
@@ -556,6 +573,10 @@ GameOptions_Save(void)
 
 			case CONFIG_MUSIC_PACK:
 				Config_SetMusicPack(s_configFile, opt->section, opt->key, *(opt->d._music_set));
+				break;
+
+			case CONFIG_SUBTITLE:
+				/* Not saved (hidden). */
 				break;
 
 			case CONFIG_WINDOW_MODE:
