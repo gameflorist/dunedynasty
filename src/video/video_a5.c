@@ -30,6 +30,7 @@
 
 #include "../common_a5.h"
 #include "../config.h"
+#include "../enhancement.h"
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/font.h"
@@ -43,6 +44,7 @@
 #include "../sprites.h"
 #include "../table/widgetinfo.h"
 #include "../tile.h"
+#include "../timer/timer.h"
 #include "../tools.h"
 #include "../wsa.h"
 
@@ -132,7 +134,7 @@ static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
 static ALLEGRO_MOUSE_CURSOR *s_cursor[CURSOR_MAX];
 
 static ALLEGRO_BITMAP *s_minimap;
-static uint8 s_minimap_colour[MAP_SIZE_MAX * MAP_SIZE_MAX];
+static int s_minimap_colour[MAP_SIZE_MAX * MAP_SIZE_MAX];
 
 static bool take_screenshot = false;
 static bool show_fps = false;
@@ -2213,12 +2215,14 @@ Video_DrawMinimap(int map_scale)
 
 		for (int x = 0; x < mapInfo->sizeX; x++, i++, packed++) {
 			const Tile *t = &g_map[packed];
-			uint8 colour = 12;
+			int colour = 12;
 
 			if (t->isUnveiled && g_playerHouse->flags.radarActivated) {
 				Unit *u;
 
-				if (t->hasUnit && ((u = Unit_Get_ByPackedTile(packed)) != NULL)) {
+				if (enhancement_fog_of_war && g_mapVisible[packed].timeout <= g_timerGame) {
+				}
+				else if (t->hasUnit && ((u = Unit_Get_ByPackedTile(packed)) != NULL)) {
 					if (u->o.type == UNIT_SANDWORM) {
 						/* Really shouldn't have more than 3, but anyway. */
 						if (num_sandworms < 4) {
@@ -2233,10 +2237,13 @@ Video_DrawMinimap(int map_scale)
 				}
 
 				if (colour == 12) {
-					uint16 type = Map_GetLandscapeType(packed);
+					uint16 type = Map_GetLandscapeTypeVisible(packed);
 
 					if (g_table_landscapeInfo[type].radarColour == 0xFFFF) {
 						colour = g_table_houseInfo[t->houseID].minimapColor;
+					}
+					else if (enhancement_fog_of_war && g_mapVisible[packed].timeout <= g_timerGame) {
+						colour = -g_table_landscapeInfo[type].radarColour;
 					}
 					else {
 						colour = g_table_landscapeInfo[type].radarColour;
@@ -2261,12 +2268,23 @@ Video_DrawMinimap(int map_scale)
 			unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
 
 			for (int x = 0; x < mapInfo->sizeX; x++) {
-				const unsigned char c = s_minimap_colour[mapInfo->sizeX * y + x];
+				if (s_minimap_colour[mapInfo->sizeX * y + x] >= 0) {
+					const unsigned char c = s_minimap_colour[mapInfo->sizeX * y + x];
 
-				row[reg->pixel_size*x + 0] = paletteRGB[3*c + 0];
-				row[reg->pixel_size*x + 1] = paletteRGB[3*c + 1];
-				row[reg->pixel_size*x + 2] = paletteRGB[3*c + 2];
-				row[reg->pixel_size*x + 3] = 0xFF;
+					row[reg->pixel_size*x + 0] = paletteRGB[3*c + 0];
+					row[reg->pixel_size*x + 1] = paletteRGB[3*c + 1];
+					row[reg->pixel_size*x + 2] = paletteRGB[3*c + 2];
+					row[reg->pixel_size*x + 3] = 0xFF;
+				}
+				else {
+					const unsigned char c = -s_minimap_colour[mapInfo->sizeX * y + x];
+
+					/* Negative colour denotes darkened for fog of war. */
+					row[reg->pixel_size*x + 0] = paletteRGB[3*c + 0] / 2;
+					row[reg->pixel_size*x + 1] = paletteRGB[3*c + 1] / 2;
+					row[reg->pixel_size*x + 2] = paletteRGB[3*c + 2] / 2;
+					row[reg->pixel_size*x + 3] = 0xFF;
+				}
 			}
 		}
 
