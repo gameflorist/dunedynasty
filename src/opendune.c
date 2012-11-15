@@ -1348,10 +1348,16 @@ void Game_Prepare(void)
 
 		if (u == NULL || !u->o.flags.s.used) t->hasUnit = false;
 		if (s == NULL || !s->o.flags.s.used) t->hasStructure = false;
-		if (t->isUnveiled) Map_UnveilTile(i, g_playerHouseID);
+
+		if (t->isUnveiled) {
+			const int64_t backup = g_mapVisible[i].timeout;
+
+			Map_UnveilTile(i, g_playerHouseID);
+
+			g_mapVisible[i].timeout = backup;
+		}
 	}
 
-	Map_ResetFogOfWar();
 	Map_UpdateFogOfWar();
 
 	find.houseID = HOUSE_INVALID;
@@ -1457,6 +1463,7 @@ void Game_Init(void)
 	Animation_Init();
 	Explosion_Init();
 	memset(g_map, 0, 64 * 64 * sizeof(Tile));
+	Map_ResetFogOfWar();
 
 	memset(g_mapSpriteID, 0, 64 * 64 * sizeof(uint16));
 	memset(g_starportAvailable, 0, sizeof(g_starportAvailable));

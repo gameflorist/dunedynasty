@@ -25,6 +25,7 @@ enum {
 	CC_DDAI = FOURCC('D','D','A','I'), /* Dune Dynasty Brutal AI. */
 	CC_DDB2 = FOURCC('D','D','B','2'), /* Dune Dynasty Building 2. */
 	CC_DDI2 = FOURCC('D','D','I','2'), /* Dune Dynasty Info 2 (multiple selection). */
+	CC_DDM2 = FOURCC('D','D','M','2'), /* Dune Dynasty Map 2 (fog of war). */
 	CC_DDU2 = FOURCC('D','D','U','2'), /* Dune Dynasty Unit 2. */
 };
 

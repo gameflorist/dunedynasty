@@ -102,6 +102,7 @@ static bool Load_Main(FILE *fp)
 	/* Rewind, and read other chunks */
 	bool load_bldg = false;
 	bool load_unit = false;
+	bool load_map  = false;
 	fseek(fp, position, SEEK_SET);
 	while (fread(&header, sizeof(uint32), 1, fp) == 1) {
 		if (fread(&length, sizeof(uint32), 1, fp) != 1) return false;
@@ -110,7 +111,7 @@ static bool Load_Main(FILE *fp)
 		switch (BETOH32(header)) {
 			case CC_NAME: break; /* 'NAME' chunk is of no interest to us */
 			case CC_INFO: break; /* 'INFO' chunk is already read */
-			case CC_MAP : if (!Map_Load      (fp, length)) return false; break;
+			case CC_MAP : if (!Map_Load      (fp, length)) return false; load_map  = true; Map_Load2Fallback(); break;
 			case CC_PLYR: if (!House_Load    (fp, length)) return false; break;
 			case CC_UNIT: if (!Unit_Load     (fp, length)) return false; load_unit = true; break;
 			case CC_BLDG: if (!Structure_Load(fp, length)) return false; load_bldg = true; break;
@@ -136,6 +137,16 @@ static bool Load_Main(FILE *fp)
 				}
 				else {
 					Error("Info_Load2 called before Unit_Load. Skipped.\n");
+				}
+				break;
+
+			case CC_DDM2:
+				if (load_map) {
+					if (!Map_Load2(fp, length))
+						return false;
+				}
+				else {
+					Error("Map_Load2 called before Map_Load. Skipped.\n");
 				}
 				break;
 

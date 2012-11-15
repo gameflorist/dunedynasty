@@ -3,6 +3,7 @@
 #include "saveload.h"
 #include "../map.h"
 #include "../sprites.h"
+#include "../timer/timer.h"
 
 /**
  * Load all Tiles from a file.
@@ -59,6 +60,85 @@ bool Map_Save(FILE *fp)
 		/* Store the index, then the tile itself */
 		if (fwrite(&i, sizeof(uint16), 1, fp) != 1) return false;
 		if (fwrite(tile, sizeof(Tile), 1, fp) != 1) return false;
+	}
+
+	return true;
+}
+
+/*--------------------------------------------------------------*/
+
+/* Default fog of war data if nothing was saved. */
+void
+Map_Load2Fallback(void)
+{
+	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
+		const Tile *t = &g_map[packed];
+		FogOfWarTile *f = &g_mapVisible[packed];
+
+		f->timeout          = 0;
+		f->groundSpriteID   = t->groundSpriteID;
+		f->overlaySpriteID  = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID) ? 0 : t->overlaySpriteID;
+		f->houseID          = t->houseID;
+		f->hasStructure     = t->hasStructure;
+	}
+}
+
+bool
+Map_Load2(FILE *fp, uint32 length)
+{
+	while (length >= 3 * sizeof(uint16) + 2 * sizeof(uint8)) {
+		uint16 packed;
+		uint16 timeout;
+		uint16 spriteID;
+		uint8 houseID;
+		uint8 hasStructure;
+
+		if (fread(&packed,      sizeof(uint16), 1, fp) != 1) return false;
+		if (fread(&timeout,     sizeof(uint16), 1, fp) != 1) return false;
+		if (fread(&spriteID,    sizeof(uint16), 1, fp) != 1) return false;
+		if (fread(&houseID,     sizeof(uint8),  1, fp) != 1) return false;
+		if (fread(&hasStructure,sizeof(uint8),  1, fp) != 1) return false;
+
+		FogOfWarTile *f = &g_mapVisible[packed];
+		f->timeout          = (timeout == 0) ? 0 : (g_timerGame + timeout);
+		f->groundSpriteID   = (spriteID & 0x1FF);
+		f->overlaySpriteID  = (spriteID >> 9);
+		f->houseID          = houseID;
+		f->hasStructure     = hasStructure;
+
+		length -= 3 * sizeof(uint16) + 2 * sizeof(uint8);
+	}
+
+	return true;
+}
+
+bool
+Map_Save2(FILE *fp)
+{
+	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
+		const Tile *t = &g_map[packed];
+		const FogOfWarTile *f = &g_mapVisible[packed];
+		uint16 timeout      = (f->timeout <= g_timerGame) ? 0 : (f->timeout - g_timerGame);
+		uint16 spriteID     = ((f->overlaySpriteID & 0x7F) << 9) | (f->groundSpriteID & 0x1FF);
+		uint8 houseID       = f->houseID;
+		uint8 hasStructure  = f->hasStructure;
+
+		/* Only store interesting tiles. */
+		if (!g_map[packed].isUnveiled || spriteID == 0) continue;
+
+		if ((timeout == 0) &&
+				(f->groundSpriteID == t->groundSpriteID) &&
+				((f->overlaySpriteID == t->overlaySpriteID) ||
+				 (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID)) &&
+				(f->houseID == t->houseID) &&
+				(f->hasStructure == t->hasStructure))
+			continue;
+
+		if (fwrite(&packed,         sizeof(uint16), 1, fp) != 1) return false;
+		if (fwrite(&timeout,        sizeof(uint16), 1, fp) != 1) return false;
+		if (fwrite(&spriteID,       sizeof(uint16), 1, fp) != 1) return false;
+		if (fwrite(&houseID,        sizeof(uint8),  1, fp) != 1) return false;
+		if (fwrite(&hasStructure,   sizeof(uint8),  1, fp) != 1) return false;
 	}
 
 	return true;

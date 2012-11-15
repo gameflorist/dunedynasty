@@ -113,6 +113,7 @@ Save_Main(FILE *fp, const char *description)
 
 	/* Store Dune Dynasty extensions. */
 	if (!Save_Chunk(fp, "DDI2", &Info_Save2)) return false;
+	if (!Save_Chunk(fp, "DDM2", &Map_Save2)) return false;
 	if (!Save_Chunk(fp, "DDB2", &Structure_Save2)) return false;
 	if (!Save_Chunk(fp, "DDU2", &Unit_Save2)) return false;
 	if (!Save_Chunk(fp, "DDAI", &BrutalAI_Save)) return false;
