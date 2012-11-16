@@ -830,7 +830,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		}
 
 		/* Draw abbreviated name. */
-		GUI_DrawText_Wrapper(name, x1 + w / 2, y1 - 9, 5, 0, 0x121);
+		GUI_DrawText_Wrapper(name, x1 + w / 2, y1 - 9, 5, 0, 0x161);
 
 		/* Draw production status. */
 		if ((s->o.type == STRUCTURE_STARPORT) && (g_starportAvailable[object_type] < 0)) {
@@ -960,8 +960,8 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scaley * (widget->height - 5));
 
 	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);
-	GUI_DrawText_Wrapper(name, x + w / 2, y - 9, 5, 0, 0x121);
-	GUI_DrawText_Wrapper(deploy, x + w / 2, y + h + 1, 0xF, 0, 0x121);
+	GUI_DrawText_Wrapper(name, x + w / 2, y - 9, 5, 0, 0x161);
+	GUI_DrawText_Wrapper(deploy, x + w / 2, y + h + 1, 0xF, 0, 0x161);
 
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }

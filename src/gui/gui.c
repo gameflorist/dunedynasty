@@ -454,6 +454,13 @@ void GUI_DrawText_Wrapper(const char *string, int16 left, int16 top, uint8 fgCol
 				colours[3] = 0;
 				g_fontCharOffset = -1;
 				break;
+
+			case 0x0060:
+				/* Shadow, but no gap. */
+				colours[2] = 12;
+				colours[3] = 0;
+				g_fontCharOffset = -2;
+				break;
 		}
 
 		colours[0] = bgColour;
