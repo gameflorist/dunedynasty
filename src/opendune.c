@@ -937,8 +937,40 @@ GameLoop_TweakWidgetDimensions(void)
 	const ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
 	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
 
-	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY = 87 - 40 + 2;
-	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - (14 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height) - 1;
+	/* 20% taller buttons to simulate 20% taller buttons on CRTs. */
+	if ((g_aspect_correction == ASPECT_RATIO_CORRECTION_PARTIAL || g_aspect_correction == ASPECT_RATIO_CORRECTION_AUTO) &&
+			(110 - 40 + 6 + 12 < sidebar->height - 16 - 64)) {
+		g_table_gameWidgetInfo[GAME_WIDGET_PICTURE].height = 23;
+		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY = 87 - 40 + 2 + 3;
+		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - (14 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height) - 1;
+		g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].offsetY = 76 - 40 + 1;
+		g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height = 12;
+		g_table_gameWidgetInfo[GAME_WIDGET_CANCEL].height = 12;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_1].offsetY = 77 - 40;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_1].height = 12;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_2].offsetY = 88 - 40 + 2;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_2].height = 12;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_3].offsetY = 99 - 40 + 4;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_3].height = 12;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_4].offsetY = 110 - 40 + 6;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_4].height = 12;
+	}
+	else {
+		g_table_gameWidgetInfo[GAME_WIDGET_PICTURE].height = 24;
+		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY = 87 - 40 + 2;
+		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - (14 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height) - 1;
+		g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].offsetY = 76 - 40;
+		g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height = 10;
+		g_table_gameWidgetInfo[GAME_WIDGET_CANCEL].height = 10;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_1].offsetY = 77 - 40;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_1].height = 10;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_2].offsetY = 88 - 40;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_2].height = 10;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_3].offsetY = 99 - 40;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_3].height = 10;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_4].offsetY = 110 - 40;
+		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_4].height = 10;
+	}
 
 	if (g_gameConfig.scrollAlongScreenEdge) {
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = TRUE_DISPLAY_WIDTH;

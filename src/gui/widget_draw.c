@@ -358,10 +358,18 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 		colour = 0xEF;
 	}
 
+	/* 20% taller pixels. */
+	if (height >= 12) {
+		positionY += 2;
+	}
+	else {
+		positionY++;
+	}
+
 	GUI_DrawText_Wrapper(
 		String_Get_ByIndex(stringID),
 		positionX + width / 2,
-		positionY + 1,
+		positionY,
 		colour,
 		0,
 		0x121
@@ -371,9 +379,11 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 
 	if (oldScreenID != 0) return;
 
+#if 0
 	GUI_Mouse_Hide_InRegion(positionX - 1, positionY - 1, positionX + width + 1, positionY + height + 1);
 	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, 2, 0, false);
 	GUI_Mouse_Show_InRegion();
+#endif
 
 	GFX_Screen_SetActive(0);
 }

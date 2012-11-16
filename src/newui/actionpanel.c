@@ -1,4 +1,9 @@
-/* actionpanel.c */
+/* actionpanel.c
+ *
+ * Notes about factory layout:
+ *  At 320x200, widget->height is 32 >= 1 + SMALL_PRODUCTION_ICON_HEIGHT.
+ *  At 320x240, widget->height is 69 >= 1 + 2 * SMALL_PRODUCTION_ICON_MIN_STRIDE.
+ */
 
 #include <assert.h>
 #include <math.h>
@@ -167,6 +172,14 @@ ActionPanel_DrawStructureDescription(Structure *s)
 	const ObjectInfo *oi = &si->o;
 	const House *h = House_Get_ByIndex(s->o.houseID);
 
+	/* Position to draw text so that it is not overlapped by the
+	 * repair/upgrade button.  When the button is 10 pixels tall, as
+	 * in the original game, y = 40.
+	 */
+	const int y
+		= g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].offsetY
+		+ g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height + 2 - 8;
+
 	switch (o->type) {
 		case STRUCTURE_SLAB_1x1:
 		case STRUCTURE_SLAB_2x2:
@@ -195,8 +208,8 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				steps = g_table_unitInfo[u->o.type].o.buildTime / 4;
 				percent = (steps - (s->countDown >> 8)) * 100 / steps;
 
-				Shape_Draw(g_table_unitInfo[u->o.type].o.spriteID, 20, 49, 0, 0);
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_D_DONE), 18, 76, 29, 0, 0x11, percent);
+				Shape_Draw(g_table_unitInfo[u->o.type].o.spriteID, 20, y + 9, 0, 0);
+				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_D_DONE), 18, y + 36, 29, 0, 0x11, percent);
 			}
 			break;
 
@@ -206,28 +219,28 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				uint16 powerAverage = (h->windtrapCount == 0) ? 0 : h->powerUsage / h->windtrapCount;
 				uint8 fg = (powerOutput >= powerAverage) ? 29 : 6;
 
-				Prim_Hline(21, 55, 72, 16);
+				Prim_Hline(21, y + 15, 72, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
-					GUI_DrawText_Wrapper("Power Info", 46, 48, 29, 0, 0x111);
-					GUI_DrawText_Wrapper("Needed:", 22, g_fontCurrent->height * 2 + 40, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("Output:", 22, g_fontCurrent->height * 3 + 40, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 2 + 40, 29, 0, 0x211, powerAverage);
-					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 3 + 40, fg, 0, 0x211, powerOutput);
+					GUI_DrawText_Wrapper("Power Info", 46, y + 8, 29, 0, 0x111);
+					GUI_DrawText_Wrapper("Needed:", 22, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Output:", 22, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 71, y + 2 * g_fontCurrent->height, 29, 0, 0x211, powerAverage);
+					GUI_DrawText_Wrapper("%d", 71, y + 3 * g_fontCurrent->height, fg, 0, 0x211, powerOutput);
 				}
 				else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), 18, 48, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", 62, g_fontCurrent->height * 2 + 40, 29, 0, 0x11, powerAverage);
-					GUI_DrawText_Wrapper("%d", 62, g_fontCurrent->height * 3 + 40, fg, 0, 0x11, powerOutput);
+					GUI_DrawText_Wrapper("%d", 62, y + 2 * g_fontCurrent->height, 29, 0, 0x11, powerAverage);
+					GUI_DrawText_Wrapper("%d", 62, y + 3 * g_fontCurrent->height, fg, 0, 0x11, powerOutput);
 				}
 			}
 			break;
 
 		case STRUCTURE_STARPORT:
 			if (h->starportLinkedID != 0xFFFF) {
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATEARRIVAL_INTMINUS_D), 18, 48, 29, 0, 0x11, h->starportTimeLeft);
+				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATEARRIVAL_INTMINUS_D), 18, y + 8, 29, 0, 0x11, h->starportTimeLeft);
 			}
 			else {
-				/* GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATE_INORBIT_ANDAWAITINGORDER), 18, 48, 29, 0, 0x11); */
+				/* GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATE_INORBIT_ANDAWAITINGORDER), 18, y + 8, 29, 0, 0x11); */
 			}
 			break;
 
@@ -239,31 +252,33 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				creditsStored = h->credits * si->creditsStorage / h->creditsStorage;
 				if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
 
-				Prim_Hline(21, 55, 72, 16);
+				Prim_Hline(21, y + 15, 72, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
-					GUI_DrawText_Wrapper("Spice", 46, 48, 29, 0, 0x111);
-					GUI_DrawText_Wrapper("Holds:", 22, g_fontCurrent->height * 2 + 40, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("Max:", 22, g_fontCurrent->height * 3 + 40, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 2 + 40, 29, 0, 0x211, creditsStored);
-					GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 3 + 40, 29, 0, 0x211, (si->creditsStorage / 100) * 100);
+					GUI_DrawText_Wrapper("Spice", 46, y + 8, 29, 0, 0x111);
+					GUI_DrawText_Wrapper("Holds:", 22, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Max:", 22, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 71, y + 2 * g_fontCurrent->height, 29, 0, 0x211, creditsStored);
+					GUI_DrawText_Wrapper("%d", 71, y + 3 * g_fontCurrent->height, 29, 0, 0x211, (si->creditsStorage / 100) * 100);
 				}
 				else {
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), 18, 48, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), 18, y + 8, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
 				}
 			}
 			break;
 
 		case STRUCTURE_OUTPOST:
-			Prim_Hline(21, 55, 72, 16);
-			if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
-				GUI_DrawText_Wrapper("Radar Scan", 46, 48, 29, 0, 0x111);
-				GUI_DrawText_Wrapper("Friend:", 22, g_fontCurrent->height * 2 + 40, 29, 0, 0x11);
-				GUI_DrawText_Wrapper("Enemy:", 22, g_fontCurrent->height * 3 + 40, 29, 0, 0x11);
-				GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 2 + 40, 29, 0, 0x211, h->unitCountAllied);
-				GUI_DrawText_Wrapper("%d", 71, g_fontCurrent->height * 3 + 40, 29, 0, 0x211, h->unitCountEnemy);
-			}
-			else {
-				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), 18, 48, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
+			{
+				Prim_Hline(21, y + 15, 72, 16);
+				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
+					GUI_DrawText_Wrapper("Radar Scan", 46, y + 8, 29, 0, 0x111);
+					GUI_DrawText_Wrapper("Friend:", 22, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Enemy:", 22, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 71, y + 2 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountAllied);
+					GUI_DrawText_Wrapper("%d", 71, y + 3 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountEnemy);
+				}
+				else {
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), 18, y + 8, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
+				}
 			}
 			break;
 	}
@@ -879,8 +894,8 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 	const int itemlist_height = ActionPanel_ProductionListHeight(widget);
 
-	Prim_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, height - 3, 1, false, true, 0);
-	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scaley * itemlist_height);
+	Prim_DrawBorder(widget->offsetX, widget->offsetY, widget->width, height, 1, false, true, 0);
+	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 1), TRUE_DISPLAY_WIDTH, div->scaley * itemlist_height);
 
 	const int xcentre = widget->offsetX + widget->width / 2;
 
