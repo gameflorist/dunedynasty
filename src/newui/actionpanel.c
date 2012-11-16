@@ -21,9 +21,21 @@
 #include "../pool/unit.h"
 #include "../string.h"
 #include "../table/strings.h"
+#include "../table/widgetinfo.h"
 #include "../timer/timer.h"
 #include "../unit.h"
 #include "../video/video.h"
+
+enum {
+	LARGE_PRODUCTION_ICON_WIDTH         = 52,
+	LARGE_PRODUCTION_ICON_HEIGHT        = 39,
+	LARGE_PRODUCTION_ICON_MIN_STRIDE    = 52,
+	LARGE_PRODUCTION_ICON_MAX_STRIDE    = 58,
+	SCROLL_BUTTON_WIDTH     = 24,
+	SCROLL_BUTTON_HEIGHT    = 15,
+	SCROLL_BUTTON_MARGIN    = 4,
+	SEND_ORDER_BUTTON_MARGIN= 2,
+};
 
 FactoryWindowItem g_factoryWindowItems[MAX_FACTORY_WINDOW_ITEMS];
 int g_factoryWindowTotal;
@@ -215,14 +227,17 @@ ActionPanel_ProductionButtonStride(const Widget *widget, bool is_starport, int *
 	const int h = widget->height
 		- 3  /* top margin */
 		- (widget->height >= 58 ? 21 : 5) /* arrows */
-		- (is_starport ? 12 : 0);
+		- (is_starport ? SEND_ORDER_BUTTON_MARGIN : 0)
+		- (is_starport ? g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height : 0); /* send order button. */
 
-	const int items_per_screen = h / 58;
+	const int min_item_height = LARGE_PRODUCTION_ICON_MIN_STRIDE;
+	const int max_item_height = LARGE_PRODUCTION_ICON_MAX_STRIDE;
+	const int items_per_screen = h / max_item_height;
 
 	/* Try to squeeze in 1 more item. */
 	int reth = h / (items_per_screen + 1);
-	if (reth < 52)
-		reth = 58;
+	if (reth < min_item_height)
+		reth = max_item_height;
 
 	if (ret_items_per_screen != NULL)
 		*ret_items_per_screen = h / reth;
@@ -237,16 +252,19 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 	int items_per_screen;
 	const bool is_starport = (s->o.type == STRUCTURE_STARPORT);
 	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
-	const int width = 52;
-	const int height = 39;
+	const int width  = LARGE_PRODUCTION_ICON_WIDTH;
+	const int height = LARGE_PRODUCTION_ICON_HEIGHT;
 	const int x = widget->offsetX + 4;
-	int y = widget->offsetY + 16 + stride * item + s->factoryOffsetY;
+	int y;
 
 	if (items_per_screen <= 1) {
 		y = widget->offsetY + widget->height - height
 			- (widget->height >= 58 ? 21 : 3)
 			- (is_starport ? 12 : 0)
 			+ stride * item + s->factoryOffsetY;
+	}
+	else {
+		y = widget->offsetY + 16 + stride * item + s->factoryOffsetY;
 	}
 
 	if (x1 != NULL) *x1 = x;
@@ -264,8 +282,8 @@ ActionPanel_ScrollButtonDimensions(const Widget *widget, int height, bool up,
 	int x, y;
 
 	if (widget->height < 58) {
-		x = widget->offsetX + widget->width - 24 - 1;
-		y = widget->offsetY + height / 2 + 1 - (up ? 15 : 0);
+		x = widget->offsetX + widget->width - SCROLL_BUTTON_WIDTH - 1;
+		y = widget->offsetY + height / 2 + 1 - (up ? SCROLL_BUTTON_HEIGHT : 0);
 	}
 	else {
 		x = widget->offsetX + (up ? 5 : 31);
@@ -274,20 +292,20 @@ ActionPanel_ScrollButtonDimensions(const Widget *widget, int height, bool up,
 
 	if (x1 != NULL) *x1 = x;
 	if (y1 != NULL) *y1 = y;
-	if (x2 != NULL) *x2 = x + 24 - 1;
-	if (y2 != NULL) *y2 = y + 15 - 1;
+	if (x2 != NULL) *x2 = x + SCROLL_BUTTON_WIDTH  - 1;
+	if (y2 != NULL) *y2 = y + SCROLL_BUTTON_HEIGHT - 1;
 }
 
 static void
 ActionPanel_SendOrderButtonDimensions(const Widget *widget,
 		int *x1, int *y1, int *x2, int *y2, int *w, int *h)
 {
-	if (x1 != NULL)	*x1 = widget->offsetX;
-	if (y1 != NULL)	*y1 = widget->offsetY + widget->height - 10;
-	if (x2 != NULL)	*x2 = widget->offsetX + widget->width - 1;
-	if (y2 != NULL)	*y2 = widget->offsetY + widget->height - 1;
-	if (w != NULL) *w = widget->width;
-	if (h != NULL) *h = 10;
+	if (x1 != NULL) *x1 = widget->offsetX;
+	if (y1 != NULL) *y1 = widget->offsetY + widget->height - g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height;
+	if (x2 != NULL) *x2 = widget->offsetX + widget->width  - 1;
+	if (y2 != NULL) *y2 = widget->offsetY + widget->height - 1;
+	if (w  != NULL) *w = widget->width;
+	if (h  != NULL) *h = g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height;
 }
 
 static void
@@ -354,9 +372,6 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 {
 	const int height = widget->height;
 
-	int x1, y1, x2, y2;
-	int item;
-
 	if (s->o.flags.s.upgrading)
 		return false;
 
@@ -382,8 +397,11 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 
 	const bool lmb = (widget->state.s.buttonState & 0x04);
 	const bool rmb = (widget->state.s.buttonState & 0x40);
+	int item;
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
+		int x1, y1, x2, y2;
+
 		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
 		if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 			break;
