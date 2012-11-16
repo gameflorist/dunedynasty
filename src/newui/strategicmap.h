@@ -58,6 +58,7 @@ typedef struct StrategicMapData {
 extern StrategicMapData g_strategic_map_state;
 extern uint32 g_strategicRegionBits;
 
+extern uint16 StrategicMap_CampaignChoiceToScenarioID(int campaignID, int nth);
 extern void StrategicMap_Init(void);
 extern void StrategicMap_AdvanceText(StrategicMapData *map, bool force);
 extern void StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData *map);

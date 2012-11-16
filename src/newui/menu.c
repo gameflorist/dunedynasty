@@ -962,6 +962,17 @@ StartGame_Loop(bool new_game)
 
 		case GM_WIN:
 			g_strategicRegionBits = 0;
+
+			/* Mark completion. */
+			Campaign *camp = &g_campaign_list[g_campaign_selected];
+			for (unsigned int h = 0; h < 3; h++) {
+				if (camp->house[h] == g_playerHouseID) {
+					camp->completion[h] |= (1 << (g_scenarioID - 1));
+					Config_SaveCampaignCompletion();
+					break;
+				}
+			}
+
 			return MENU_NO_TRANSITION | MENU_BRIEFING_WIN;
 
 		case GM_LOSE:
@@ -1293,12 +1304,7 @@ StrategicMap_InputLoop(int campaignID, StrategicMapData *map)
 
 		if (scenario >= 0) {
 			map->blink_scenario = scenario;
-			scenario = scenario + 3 * (campaignID - 1) + 2;
-
-			if (campaignID > 7) scenario--;
-			if (campaignID > 8) scenario--;
-
-			g_scenarioID = scenario;
+			g_scenarioID = StrategicMap_CampaignChoiceToScenarioID(campaignID, scenario);
 			map->state = STRATEGIC_MAP_BLINK_REGION;
 			StrategicMap_AdvanceText(map, true);
 

@@ -178,17 +178,57 @@ Config_GetCampaign(void)
 	if (s_configFile == NULL)
 		return;
 
-	/* This needs to be read after all the campaigns are scanned. */
+	/* This needs to be read after all the campaigns have been scanned. */
 	const char *str = al_get_config_value(s_configFile, "game", "campaign");
-	if (str == NULL)
-		return;
-
 	for (int i = 0; i < g_campaign_total; i++) {
-		if (strcmp(str, g_campaign_list[i].dir_name) == 0) {
+		Campaign *camp = &g_campaign_list[i];
+
+		/* Load the previously selected campaign. */
+		if ((str != NULL) && strcmp(str, camp->dir_name) == 0) {
 			g_campaign_selected = i;
-			return;
+		}
+
+		/* Load the campaign completion. */
+		for (unsigned int h = 0; h < 3; h++) {
+			const enum HouseType houseID = camp->house[h];
+			char key[256];
+
+			if (houseID == HOUSE_INVALID)
+				continue;
+
+			snprintf(key, sizeof(key), "%s%s", camp->dir_name, g_table_houseInfo[houseID].name);
+			const char *value = al_get_config_value(s_configFile, "completion", key);
+
+			if (value != NULL)
+				sscanf(value, "%u", &camp->completion[h]);
 		}
 	}
+}
+
+/* We save the current campaign completion progress at the end of
+ * every campaign in case the game is killed.
+ */
+void
+Config_SaveCampaignCompletion(void)
+{
+	const Campaign *camp = &g_campaign_list[g_campaign_selected];
+	char filename[1024];
+
+	for (unsigned int h = 0; h < 3; h++) {
+		const enum HouseType houseID = camp->house[h];
+		char key[256];
+		char value[32];
+
+		if (houseID == HOUSE_INVALID)
+			continue;
+
+		snprintf(key, sizeof(key), "%s%s", camp->dir_name, g_table_houseInfo[houseID].name);
+		snprintf(value, sizeof(value), "%u", camp->completion[h]);
+		al_set_config_value(s_configFile, "completion", key, value);
+	}
+
+	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
+	al_save_config_file(filename, s_configFile);
 }
 
 static void

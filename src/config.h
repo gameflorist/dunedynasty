@@ -35,6 +35,7 @@ typedef struct GameCfg {
 extern GameCfg g_gameConfig;
 
 extern void Config_GetCampaign(void);
+extern void Config_SaveCampaignCompletion(void);
 extern void GameOptions_Load(void);
 extern void GameOptions_Save(void);
 

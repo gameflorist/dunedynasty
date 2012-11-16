@@ -31,6 +31,21 @@ static struct {
 StrategicMapData g_strategic_map_state;
 uint32 g_strategicRegionBits;   /* bits designating regions attempted. */
 
+uint16
+StrategicMap_CampaignChoiceToScenarioID(int campaignID, int nth)
+{
+	if (campaignID == 0)
+		return 1;
+
+	assert(0 <= nth && nth <= 2);
+
+	uint16 scenarioID = 3 * (campaignID - 1) + 2 + nth;
+	if (campaignID > 7) scenarioID--;
+	if (campaignID > 8) scenarioID--;
+
+	return scenarioID;
+}
+
 static void
 StrategicMap_SetRegionAttempted(int region)
 {
@@ -165,6 +180,22 @@ StrategicMap_DrawArrow(enum HouseType houseID, int scenario, const StrategicMapD
 {
 	const int64_t curr_ticks = Timer_GetTicks();
 	const int frame = map->arrow_frame + (curr_ticks - map->arrow_timer) / STRATEGIC_MAP_ARROW_ANIMATION_DELAY;
+
+	/* Blink the arrows leading to scenarios we haven't completed in the past. */
+	if ((map->state == STRATEGIC_MAP_SELECT_REGION) && (frame & 0x31) == 0x21) {
+		const Campaign *camp = &g_campaign_list[g_campaign_selected];
+
+		for (unsigned int h = 0; h < 3; h++) {
+			if (camp->house[h] == houseID) {
+				const uint16 scenarioID = StrategicMap_CampaignChoiceToScenarioID(g_campaignID, scenario);
+
+				if (!(camp->completion[h] & (1 << (scenarioID - 1))))
+					return;
+
+				break;
+			}
+		}
+	}
 
 	const enum ShapeID shapeID = map->arrow[scenario].shapeID;
 	const enum ShapeID tintID = SHAPE_ARROW_TINT + 4 * (shapeID - SHAPE_ARROW);

@@ -17,6 +17,9 @@ typedef struct Campaign {
 	unsigned int fame_cps[HOUSE_MAX];
 	unsigned int mapmach_cps[HOUSE_MAX];
 	unsigned int misc_cps[HOUSE_MAX];
+
+	/* Campaign completion. */
+	uint32 completion[3];
 } Campaign;
 
 /**

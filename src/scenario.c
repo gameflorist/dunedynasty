@@ -62,6 +62,9 @@ Campaign_Alloc(const char *dir_name)
 		snprintf(camp->dir_name, sizeof(camp->dir_name), "%s/", dir_name);
 	}
 
+	camp->completion[0] = 0;
+	camp->completion[1] = 0;
+	camp->completion[2] = 0;
 	return camp;
 }
 
