@@ -999,6 +999,7 @@ GameLoop_TweakWidgetDimensions(void)
 	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].xBase = 16;
 	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].yBase = 2;
 	g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME].height = sidebar->height - (2 + 12 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height);
+	g_factoryWindowTotal = -1;
 
 	Window_WidgetClick_Create();
 }

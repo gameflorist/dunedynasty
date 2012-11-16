@@ -27,18 +27,81 @@
 #include "../video/video.h"
 
 enum {
+	SMALL_PRODUCTION_ICON_WIDTH         = 32,
+	SMALL_PRODUCTION_ICON_HEIGHT        = 24,
+	SMALL_PRODUCTION_ICON_MIN_STRIDE    = 34,
+	SMALL_PRODUCTION_ICON_MAX_STRIDE    = 43,
 	LARGE_PRODUCTION_ICON_WIDTH         = 52,
 	LARGE_PRODUCTION_ICON_HEIGHT        = 39,
 	LARGE_PRODUCTION_ICON_MIN_STRIDE    = 52,
 	LARGE_PRODUCTION_ICON_MAX_STRIDE    = 58,
 	SCROLL_BUTTON_WIDTH     = 24,
 	SCROLL_BUTTON_HEIGHT    = 15,
-	SCROLL_BUTTON_MARGIN    = 4,
+	SCROLL_BUTTON_MARGIN    = 5,
 	SEND_ORDER_BUTTON_MARGIN= 2,
+};
+
+enum FactoryPanelLayout {
+	FACTORYPANEL_LARGE_ICON_FLAG    = 0x01,
+	FACTORYPANEL_SCROLL_FLAG        = 0x02,
+	FACTORYPANEL_STARPORT_FLAG      = 0x04,
+
+	FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL = 0x00,
 };
 
 FactoryWindowItem g_factoryWindowItems[MAX_FACTORY_WINDOW_ITEMS];
 int g_factoryWindowTotal;
+
+static enum FactoryPanelLayout s_factory_panel_layout;
+
+/*--------------------------------------------------------------*/
+
+static void
+ActionPanel_CalculateOptimalLayout(const Widget *widget, bool is_starport)
+{
+	const int h = widget->height
+		- 1 /* top margin. */
+		- 1 /* bottom margin. */
+		- (SCROLL_BUTTON_MARGIN + SCROLL_BUTTON_HEIGHT)
+		- (is_starport ? SEND_ORDER_BUTTON_MARGIN : 0)
+		- (is_starport ? g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height : 0) /* send order button. */
+		;
+
+	/* Use large icons if possible. */
+	if (h >= 4 * LARGE_PRODUCTION_ICON_MIN_STRIDE) {
+		s_factory_panel_layout
+			= (is_starport ? FACTORYPANEL_STARPORT_FLAG : 0)
+			| (FACTORYPANEL_SCROLL_FLAG | FACTORYPANEL_LARGE_ICON_FLAG);
+	}
+
+	/* Use small icons with the scroll and send order buttons if they fit. */
+	else if (h >= 3 * SMALL_PRODUCTION_ICON_MIN_STRIDE) {
+		s_factory_panel_layout
+			= (is_starport ? FACTORYPANEL_STARPORT_FLAG : 0)
+			| FACTORYPANEL_SCROLL_FLAG;
+	}
+
+	/* Otherwise, use small icons, without the scroll and send order buttons. */
+	else {
+		s_factory_panel_layout = FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL;
+	}
+}
+
+static int
+ActionPanel_ProductionListHeight(const Widget *widget)
+{
+	int h = widget->height - 1;
+
+	if (s_factory_panel_layout & FACTORYPANEL_SCROLL_FLAG)
+		h -= SCROLL_BUTTON_MARGIN + SCROLL_BUTTON_HEIGHT;
+
+	if (s_factory_panel_layout & FACTORYPANEL_STARPORT_FLAG)
+		h -= SEND_ORDER_BUTTON_MARGIN + g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height;
+
+	return h;
+}
+
+/*--------------------------------------------------------------*/
 
 void
 ActionPanel_DrawPortrait(uint16 action_type, enum ShapeID shapeID)
@@ -221,17 +284,14 @@ ActionPanel_DrawMissileCountdown(uint8 fg, int count)
 	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_PICK_TARGETTMINUS_D), 19, 44, fg, 0, 0x11, count);
 }
 
-static int
-ActionPanel_ProductionButtonStride(const Widget *widget, bool is_starport, int *ret_items_per_screen)
-{
-	const int h = widget->height
-		- 1  /* top margin */
-		- (widget->height >= 58 ? 21 : 5) /* arrows */
-		- (is_starport ? SEND_ORDER_BUTTON_MARGIN : 0)
-		- (is_starport ? g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height : 0); /* send order button. */
+/*--------------------------------------------------------------*/
 
-	const int min_item_height = LARGE_PRODUCTION_ICON_MIN_STRIDE;
-	const int max_item_height = LARGE_PRODUCTION_ICON_MAX_STRIDE;
+static int
+ActionPanel_ProductionButtonStride(const Widget *widget, int *ret_items_per_screen)
+{
+	const int h = ActionPanel_ProductionListHeight(widget);
+	const int min_item_height = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? LARGE_PRODUCTION_ICON_MIN_STRIDE : SMALL_PRODUCTION_ICON_MIN_STRIDE;
+	const int max_item_height = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? LARGE_PRODUCTION_ICON_MAX_STRIDE : SMALL_PRODUCTION_ICON_MAX_STRIDE;
 	const int items_per_screen = h / max_item_height;
 
 	/* Try to squeeze in 1 more item. */
@@ -250,21 +310,19 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 		int item, int *x1, int *y1, int *x2, int *y2, int *w, int *h)
 {
 	int items_per_screen;
-	const bool is_starport = (s->o.type == STRUCTURE_STARPORT);
-	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
-	const int width  = LARGE_PRODUCTION_ICON_WIDTH;
-	const int height = LARGE_PRODUCTION_ICON_HEIGHT;
-	const int x = widget->offsetX + 4;
-	int y;
+	const int stride = ActionPanel_ProductionButtonStride(widget, &items_per_screen);
+	const int width  = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? LARGE_PRODUCTION_ICON_WIDTH  : SMALL_PRODUCTION_ICON_WIDTH;
+	const int height = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? LARGE_PRODUCTION_ICON_HEIGHT : SMALL_PRODUCTION_ICON_HEIGHT;
+	const int x = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? (widget->offsetX + 4) : (widget->offsetX + 2);
+	const int widget_padding = ActionPanel_ProductionListHeight(widget) - items_per_screen * stride;
+	int y = widget->offsetY + 1 + s->factoryOffsetY + stride * item;
 
-	if (items_per_screen <= 1) {
-		y = widget->offsetY + widget->height - height
-			- (widget->height >= 58 ? 21 : 3)
-			- (is_starport ? 12 : 0)
-			+ stride * item + s->factoryOffsetY;
+	if (items_per_screen <= 0) {
+		y += (widget_padding - height) / 2;
 	}
 	else {
-		y = widget->offsetY + 14 + stride * item + s->factoryOffsetY;
+		const int item_padding = stride - 6 - 2 - height;
+		y += (widget_padding + item_padding) / 2 + 6 + 2;
 	}
 
 	if (x1 != NULL) *x1 = x;
@@ -276,18 +334,18 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 }
 
 static void
-ActionPanel_ScrollButtonDimensions(const Widget *widget, int height, bool up,
+ActionPanel_ScrollButtonDimensions(const Widget *widget, bool up,
 		int *x1, int *y1, int *x2, int *y2)
 {
 	int x, y;
 
-	if (widget->height < 58) {
+	if (s_factory_panel_layout == FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) {
 		x = widget->offsetX + widget->width - SCROLL_BUTTON_WIDTH - 1;
-		y = widget->offsetY + height / 2 - (up ? SCROLL_BUTTON_HEIGHT : 0);
+		y = widget->offsetY + widget->height / 2 - (up ? SCROLL_BUTTON_HEIGHT : 0);
 	}
 	else {
 		x = widget->offsetX + (up ? 5 : 31);
-		y = widget->offsetY + height - 18;
+		y = widget->offsetY + ActionPanel_ProductionListHeight(widget) + SCROLL_BUTTON_MARGIN / 2;
 	}
 
 	if (x1 != NULL) *x1 = x;
@@ -312,8 +370,7 @@ static void
 ActionPanel_ClampFactoryScrollOffset(const Widget *widget, Structure *s)
 {
 	int items_per_screen;
-	const bool is_starport = (s->o.type == STRUCTURE_STARPORT);
-	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
+	const int stride = ActionPanel_ProductionButtonStride(widget, &items_per_screen);
 	const int first_item = g_factoryWindowTotal - (items_per_screen <= 1 ? 1 : items_per_screen);
 	int y1;
 
@@ -329,25 +386,23 @@ ActionPanel_ClampFactoryScrollOffset(const Widget *widget, Structure *s)
 static bool
 ActionPanel_ScrollFactory(const Widget *widget, Structure *s)
 {
-	const bool is_starport = (s->o.type == STRUCTURE_STARPORT);
-	const int height = (is_starport ? widget->height - 12 : widget->height);
-	const int stride = ActionPanel_ProductionButtonStride(widget, is_starport, NULL);
-
 	int delta = g_mouseDZ;
 	int x1, y1, x2, y2;
 
-	ActionPanel_ScrollButtonDimensions(widget, height, true, &x1, &y1, &x2, &y2);
+	ActionPanel_ScrollButtonDimensions(widget, true, &x1, &y1, &x2, &y2);
 	if ((widget->state.s.buttonState & 0x44) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 		delta = 1;
 
-	ActionPanel_ScrollButtonDimensions(widget, height, false, &x1, &y1, &x2, &y2);
+	ActionPanel_ScrollButtonDimensions(widget, false, &x1, &y1, &x2, &y2);
 	if ((widget->state.s.buttonState & 0x44) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 		delta = -1;
 
 	if (delta == 0)
 		return false;
 
-	s->factoryOffsetY += delta * stride;
+	const int stride = ActionPanel_ProductionButtonStride(widget, NULL);
+
+	s->factoryOffsetY = stride * (s->factoryOffsetY / stride + delta);
 	ActionPanel_ClampFactoryScrollOffset(widget, s);
 
 	return true;
@@ -370,8 +425,6 @@ ActionPanel_BeginPlacementMode(Structure *construction_yard)
 bool
 ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 {
-	const int height = widget->height;
-
 	if (s->o.flags.s.upgrading)
 		return false;
 
@@ -383,6 +436,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 
 	if (g_factoryWindowTotal < 0) {
 		Structure_InitFactoryItems(s);
+		ActionPanel_CalculateOptimalLayout(widget, false);
 		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
@@ -392,7 +446,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	int mouseY;
 	Mouse_TransformToDiv(widget->div, NULL, &mouseY);
 
-	if (mouseY >= widget->offsetY + height - (widget->height >= 58 ? 21 : 5))
+	if (mouseY >= widget->offsetY + ActionPanel_ProductionListHeight(widget))
 		return false;
 
 	const bool lmb = (widget->state.s.buttonState & 0x04);
@@ -588,20 +642,22 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 {
 	const bool lmb = (widget->state.s.buttonState & 0x04);
 	const bool rmb = (widget->state.s.buttonState & 0x40);
-	const int height = widget->height - 12;
 
 	int x1, y1, x2, y2;
 	int item;
 
 	if (g_factoryWindowTotal < 0) {
 		Structure_InitFactoryItems(s);
+		ActionPanel_CalculateOptimalLayout(widget, true);
 		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
-	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
-	if (lmb && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
-		ActionPanel_ClickStarportOrder(s);
-		return true;
+	if (s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) {
+		ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
+		if (lmb && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
+			ActionPanel_ClickStarportOrder(s);
+			return true;
+		}
 	}
 
 	if (ActionPanel_ScrollFactory(widget, s))
@@ -610,7 +666,7 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	int mouseY;
 	Mouse_TransformToDiv(widget->div, NULL, &mouseY);
 
-	if (mouseY >= widget->offsetY + height - (widget->height >= 58 ? 21 : 5))
+	if (mouseY >= widget->offsetY + ActionPanel_ProductionListHeight(widget))
 		return false;
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
@@ -672,31 +728,32 @@ ActionPanel_DrawStructureLayout(enum StructureType s, int x1, int y1)
 }
 
 static void
-ActionPanel_DrawScrollButtons(const Widget *widget, bool is_starport)
+ActionPanel_DrawScrollButtons(const Widget *widget)
 {
-	const int height = (is_starport ? widget->height - 12 : widget->height);
 	int items_per_screen;
 
-	ActionPanel_ProductionButtonStride(widget, is_starport, &items_per_screen);
+	ActionPanel_ProductionButtonStride(widget, &items_per_screen);
 	if (g_factoryWindowTotal <= items_per_screen)
 		return;
 
 	const bool pressed = (widget->state.s.hover1);
 	int x1, y1, x2, y2;
 
-	ActionPanel_ScrollButtonDimensions(widget, height, true, &x1, &y1, &x2, &y2);
+	ActionPanel_ScrollButtonDimensions(widget, true, &x1, &y1, &x2, &y2);
 	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP_PRESSED, x1, y1, 0, 0);
 	}
-	else if (widget->height >= 58 || Mouse_InRegion_Div(widget->div, x1, y1, x2, y2 + 15)) {
+	else if ((s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) ||
+			Mouse_InRegion_Div(widget->div, x1, y1, x2, y2 + 15)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP, x1, y1, 0, 0);
 	}
 
-	ActionPanel_ScrollButtonDimensions(widget, height, false, &x1, &y1, &x2, &y2);
+	ActionPanel_ScrollButtonDimensions(widget, false, &x1, &y1, &x2, &y2);
 	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN_PRESSED, x1, y1, 0, 0);
 	}
-	else if (widget->height >= 58 || Mouse_InRegion_Div(widget->div, x1, y1 - 15, x2, y2)) {
+	else if ((s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) ||
+			Mouse_InRegion_Div(widget->div, x1, y1 - 15, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN, x1, y1, 0, 0);
 	}
 }
@@ -704,6 +761,9 @@ ActionPanel_DrawScrollButtons(const Widget *widget, bool is_starport)
 static void
 ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 {
+	if (s_factory_panel_layout == FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL)
+		return;
+
 	int x1, y1, x2, y2, w, h;
 	int fg;
 
@@ -721,7 +781,8 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 		fg = 0xF;
 	}
 
-	GUI_DrawText_Wrapper("Send Order", x1 + w/2, y1 + 1, fg, 0, 0x121);
+	y1 += (h == 10) ? 1 : 2;
+	GUI_DrawText_Wrapper("Send Order", x1 + w/2, y1, fg, 0, 0x121);
 }
 
 static void
@@ -784,16 +845,17 @@ ActionPanel_HighlightIcon(int x1, int y1)
 			return;
 	}
 
-	Prim_Rect_RGBA(x1 + 1.0f, y1, x1 + 52.0f, y1 + 38.0f, r, g, b, 0xFF, 3.0f);
+	if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+		Prim_Rect_RGBA(x1 + 1.0f, y1 + 0.5f, x1 + 52.0f, y1 + 38.0f, r, g, b, 0xFF, 3.0f);
+	}
+	else {
+		Prim_Rect_RGBA(x1 + 1.0f, y1 + 1.0f, x1 + 31.0f, y1 + 23.0f, r, g, b, 0xFF, 2.0f);
+	}
 }
 
 void
 ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 {
-	const ScreenDiv *div = &g_screenDiv[SCREENDIV_SIDEBAR];
-	const int height = (s->o.type == STRUCTURE_STARPORT) ? widget->height - 12 : widget->height;
-	const int itemlist_height = height - (widget->height >= 58 ? 21 : 5);
-
 	if (g_productionStringID == STR_UPGRADINGD_DONE) {
 		const int percentDone = 100 - s->upgradeTimeLeft;
 
@@ -804,11 +866,22 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 	if (g_factoryWindowTotal < 0) {
 		Structure_InitFactoryItems(s);
+		ActionPanel_CalculateOptimalLayout(widget, (s->o.type == STRUCTURE_STARPORT));
 		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_SIDEBAR];
+	int height = widget->height;
+
+	if (s_factory_panel_layout & FACTORYPANEL_STARPORT_FLAG)
+		height -= SEND_ORDER_BUTTON_MARGIN + g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height;
+
+	const int itemlist_height = ActionPanel_ProductionListHeight(widget);
+
 	Prim_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, height - 3, 1, false, true, 0);
 	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scaley * itemlist_height);
+
+	const int xcentre = widget->offsetX + widget->width / 2;
 
 	for (int item = 0; item < g_factoryWindowTotal; item++) {
 		const uint16 object_type = g_factoryWindowItems[item].objectType;
@@ -821,6 +894,9 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, NULL, NULL, &w, &h);
 		if (y1 > widget->offsetY + itemlist_height)
 			break;
+
+		if (y1 < widget->offsetY)
+			continue;
 
 		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 			name = String_Get_ByIndex(g_table_structureInfo[object_type].o.stringID_abbrev);
@@ -843,30 +919,57 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			Shape_DrawScale(shapeID, x1, y1, w, h, 0, 0);
 
 			/* Draw layout. */
-			if (s->o.type == STRUCTURE_CONSTRUCTION_YARD)
+			if ((s->o.type == STRUCTURE_CONSTRUCTION_YARD) && (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG))
 				ActionPanel_DrawStructureLayout(object_type, x1, y1);
 		}
 
-		/* Draw abbreviated name. */
-		GUI_DrawText_Wrapper(name, x1 + w / 2, y1 - 9, 5, 0, 0x161);
-
 		/* Draw production status. */
 		if ((s->o.type == STRUCTURE_STARPORT) && (g_starportAvailable[object_type] < 0)) {
-			GUI_DrawText_Wrapper("OUT OF", x1 + w / 2, y1 +  7, 6, 0, 0x132);
-			GUI_DrawText_Wrapper("STOCK",  x1 + w / 2, y1 + 18, 6, 0, 0x132);
+			if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+				GUI_DrawText_Wrapper("OUT OF", xcentre, y1 +  7, 6, 0, 0x132);
+				GUI_DrawText_Wrapper("STOCK",  xcentre, y1 + 18, 6, 0, 0x132);
+			}
 		}
 		else if (s->objectType == object_type) {
-			/* Production icon is 32x24, stretched up to 52x39. */
+			/* Production icon is 32x24, or stretched up to 52x39. */
 			if (g_productionStringID != STR_BUILD_IT) {
-				const float x1f = x1 + 52.0f/32.0f;
-				const float x2f = x1 + w - 52.0f/32.0f;
+				float x1f = x1 + (float)w/32.0f;
+				float x2f = x1 + w - (float)w/32.0f;
+				float y1f, y2f;
 
-				if (g_productionStringID == STR_ON_HOLD) {
-					Prim_FillRect_RGBA(x1f, y1 + 2.0f, x2f, y1 + 37.0f, 0x00, 0x00, 0x00, 0x80);
+				if (g_productionStringID == STR_PLACE_IT)
+					ActionPanel_HighlightIcon(x1, y1);
+
+				if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+					/* On hold greys out the entire icon, which has 2px borders. */
+					if (g_productionStringID == STR_ON_HOLD) {
+						y1f = y1 + 2.0f;
+						y2f = y1 + 37.0f;
+					}
+					else {
+						y1f = y1 + 12.0f;
+						y2f = y1f + g_fontCurrent->height + 4.0f;
+					}
 				}
 				else {
-					Prim_FillRect_RGBA(x1f, y1 + 12.0f, x2f, y1 + 12.0f + g_fontCurrent->height + 4.0f, 0x00, 0x00, 0x00, 0x80);
+					/* On hold greys out the entire icon, which has 1px borders. */
+					if (g_productionStringID == STR_ON_HOLD) {
+						y1f = y1 + 1.0f;
+						y2f = y1 + 23.0f;
+					}
+					else {
+						/* For long strings, grey strip spans the widget width. */
+						if ((g_productionStringID == STR_COMPLETED) || (g_productionStringID == STR_PLACE_IT)) {
+							x1f = widget->offsetX + 1.0f;
+							x2f = widget->offsetX + widget->width - 1.0f;
+						}
+
+						y1f = y1 + 5.0f;
+						y2f = y1f + g_fontCurrent->height + 4.0f;
+					}
 				}
+
+				Prim_FillRect_RGBA(x1f, y1f, x2f, y2f, 0x00, 0x00, 0x00, 0x80);
 			}
 
 			if (g_productionStringID == STR_D_DONE || g_productionStringID == STR_ON_HOLD) {
@@ -886,39 +989,50 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 				const int timeLeft = buildTime - (s->countDown + 255) / 256;
 				const int percentDone = 100 * timeLeft / buildTime;
 
-				if (g_productionStringID == STR_D_DONE) {
-					GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 14, fg, 0, 0x121, percentDone);
+				if ((g_productionStringID == STR_D_DONE) || !(s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG)) {
+					GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + (h - 10) / 2, fg, 0, 0x121, percentDone);
 				}
 				else {
-					GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 10, fg, 0, 0x121, percentDone);
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_ON_HOLD), x1 + w / 2, y1 + 18, fg, 0, 0x121);
+					GUI_DrawText_Wrapper("%d%%", xcentre, y1 + 10, fg, 0, 0x121, percentDone);
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_ON_HOLD), xcentre, y1 + 18, fg, 0, 0x121);
 				}
 
-				Prim_Rect(x1 + 1.0f, y1 + 1.0f, x1 + 51.0f, y1 + 38.0f, 0xFF, 2.0f);
+				Prim_Rect(x1 + 1.0f, y1 + 1.0f, x1 + w - 1.0f, y1 + h - 1.0f, 0xFF, 2.0f);
 			}
 			else if (g_productionStringID != STR_BUILD_IT) {
-				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), x1 + w / 2, y1 + 14, fg, 0, 0x121);
-
-				if (g_productionStringID == STR_PLACE_IT)
-					ActionPanel_HighlightIcon(x1, y1);
+				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), widget->offsetX + widget->width / 2, y1 + (h - 10) / 2, fg, 0, 0x121);
 			}
 		}
 		else if (g_factoryWindowItems[item].available < 0) {
-			GUI_DrawText_Wrapper("UPGRADE", x1 + w / 2, y1 +  7, 6, 0, 0x132);
+			if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+				const int yupper = y1 + 7;
+				const int ylower = y1 + 18;
 
-			if (s->upgradeTimeLeft >= 100) {
-				GUI_DrawText_Wrapper("NEEDED", x1 + w / 2, y1 + 18, 6, 0, 0x132);
-			}
-			else {
-				GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + 18, 6, 0, 0x132, 100 - s->upgradeTimeLeft);
+				GUI_DrawText_Wrapper("UPGRADE", xcentre, yupper, 6, 0, 0x132);
+
+				if (s->upgradeTimeLeft >= 100) {
+					GUI_DrawText_Wrapper("NEEDED", xcentre, ylower, 6, 0, 0x132);
+				}
+				else {
+					GUI_DrawText_Wrapper("%d%%", xcentre, ylower, 6, 0, 0x132, 100 - s->upgradeTimeLeft);
+				}
 			}
 
 			/* Make upgrade cost yellow to distinguish it from unit cost. */
 			fg = 5;
 		}
 
+		/* Draw abbreviated name. */
+		if (y1 - 8 >= widget->offsetY + 2)
+			GUI_DrawText_Wrapper(name, xcentre, y1 - 9, 5, 0, 0x161);
+
 		/* Draw credits. */
-		GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);
+		if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+			GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);
+		}
+		else if ((s->objectType != object_type) || (g_productionStringID != STR_PLACE_IT)) {
+			GUI_DrawText_Wrapper("%d", widget->offsetX + widget->width - 3, y1 + 2, fg, 0, 0x231, g_factoryWindowItems[item].credits);
+		}
 
 		/* Draw build queue count. */
 		int count = BuildQueue_Count(&s->queue, object_type);
@@ -926,12 +1040,17 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			if (s->objectType == object_type)
 				count++;
 
-			GUI_DrawText_Wrapper("x%d", x1 + w - 1, y1 + h - 10, 15, 0, 0x232, count);
+			if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+				GUI_DrawText_Wrapper("x%d", widget->offsetX + widget->width - 5, y1 + h - 10, 15, 0, 0x232, count);
+			}
+			else {
+				GUI_DrawText_Wrapper("x%d", widget->offsetX + widget->width - 3, y1 + h - 10, 15, 0, 0x232, count);
+			}
 		}
 	}
 
 	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 1), TRUE_DISPLAY_WIDTH, div->scaley * (widget->height - 2));
-	ActionPanel_DrawScrollButtons(widget, (s->o.type == STRUCTURE_STARPORT));
+	ActionPanel_DrawScrollButtons(widget);
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
 	if (s->o.type == STRUCTURE_STARPORT)
@@ -971,15 +1090,25 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 			return;
 	}
 
-	g_factoryWindowTotal = 0;
+	if (g_factoryWindowTotal != 0) {
+		g_factoryWindowTotal = 0;
+		ActionPanel_CalculateOptimalLayout(widget, false);
+	}
 
 	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x, &y, NULL, NULL, &w, &h);
 	Prim_DrawBorder(widget->offsetX, widget->offsetY, widget->width, widget->height, 1, false, true, 0);
 	Video_SetClippingArea(0, div->scaley * widget->offsetY, TRUE_DISPLAY_WIDTH, div->scaley * (widget->height - 2));
 
+	const int xcentre = widget->offsetX + widget->width / 2;
+
 	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);
-	GUI_DrawText_Wrapper(name, x + w / 2, y - 9, 5, 0, 0x161);
-	GUI_DrawText_Wrapper(deploy, x + w / 2, y + h + 1, 0xF, 0, 0x161);
+
+	/* Draw abbreviated name. */
+	if (y - 8 >= widget->offsetY + 2)
+		GUI_DrawText_Wrapper(name, xcentre, y - 9, 5, 0, 0x161);
+
+	if (y + h + 1 + 6 < widget->offsetY + widget->height)
+		GUI_DrawText_Wrapper(deploy, xcentre, y + h + 1, 0xF, 0, 0x161);
 
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
