@@ -692,12 +692,13 @@ bool
 ActionPanel_ClickPalace(const Widget *widget, Structure *s)
 {
 	const bool lmb = (widget->state.s.buttonState & 0x04);
-	int x1, y1, x2, y2;
+	const int xcentre = widget->offsetX + widget->width / 2;
+	int y1, y2, w;
 
 	g_factoryWindowTotal = 0;
 
-	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x1, &y1, &x2, &y2, NULL, NULL);
-	if (lmb && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
+	ActionPanel_ProductionButtonDimensions(widget, s, 0, NULL, &y1, NULL, &y2, &w, NULL);
+	if (lmb && Mouse_InRegion_Div(widget->div, xcentre - w/2, y1, xcentre + w/2, y2)) {
 		Structure_ActivateSpecial(s);
 		return true;
 	}
@@ -1064,7 +1065,7 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 	enum ShapeID shapeID;
 	const char *name;
 	const char *deploy;
-	int x, y, w, h;
+	int y, w, h;
 	VARIABLE_NOT_USED(s);
 
 	switch (g_productionStringID) {
@@ -1095,13 +1096,13 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 		ActionPanel_CalculateOptimalLayout(widget, false);
 	}
 
-	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x, &y, NULL, NULL, &w, &h);
+	ActionPanel_ProductionButtonDimensions(widget, s, 0, NULL, &y, NULL, NULL, &w, &h);
 	Prim_DrawBorder(widget->offsetX, widget->offsetY, widget->width, widget->height, 1, false, true, 0);
 	Video_SetClippingArea(0, div->scaley * widget->offsetY, TRUE_DISPLAY_WIDTH, div->scaley * (widget->height - 2));
 
 	const int xcentre = widget->offsetX + widget->width / 2;
 
-	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);
+	Shape_DrawScale(shapeID, xcentre - w/2, y, w, h, 0, 0);
 
 	/* Draw abbreviated name. */
 	if (y - 8 >= widget->offsetY + 2)
