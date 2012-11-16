@@ -225,7 +225,7 @@ static int
 ActionPanel_ProductionButtonStride(const Widget *widget, bool is_starport, int *ret_items_per_screen)
 {
 	const int h = widget->height
-		- 3  /* top margin */
+		- 1  /* top margin */
 		- (widget->height >= 58 ? 21 : 5) /* arrows */
 		- (is_starport ? SEND_ORDER_BUTTON_MARGIN : 0)
 		- (is_starport ? g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height : 0); /* send order button. */
@@ -264,7 +264,7 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 			+ stride * item + s->factoryOffsetY;
 	}
 	else {
-		y = widget->offsetY + 16 + stride * item + s->factoryOffsetY;
+		y = widget->offsetY + 14 + stride * item + s->factoryOffsetY;
 	}
 
 	if (x1 != NULL) *x1 = x;
@@ -283,7 +283,7 @@ ActionPanel_ScrollButtonDimensions(const Widget *widget, int height, bool up,
 
 	if (widget->height < 58) {
 		x = widget->offsetX + widget->width - SCROLL_BUTTON_WIDTH - 1;
-		y = widget->offsetY + height / 2 + 1 - (up ? SCROLL_BUTTON_HEIGHT : 0);
+		y = widget->offsetY + height / 2 - (up ? SCROLL_BUTTON_HEIGHT : 0);
 	}
 	else {
 		x = widget->offsetX + (up ? 5 : 31);
@@ -930,7 +930,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		}
 	}
 
-	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scaley * height);
+	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 1), TRUE_DISPLAY_WIDTH, div->scaley * (widget->height - 2));
 	ActionPanel_DrawScrollButtons(widget, (s->o.type == STRUCTURE_STARPORT));
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
@@ -974,8 +974,8 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 	g_factoryWindowTotal = 0;
 
 	ActionPanel_ProductionButtonDimensions(widget, s, 0, &x, &y, NULL, NULL, &w, &h);
-	Prim_DrawBorder(widget->offsetX, widget->offsetY + 2, widget->width, widget->height - 3, 1, false, true, 0);
-	Video_SetClippingArea(0, div->scaley * (widget->offsetY + 3), TRUE_DISPLAY_WIDTH, div->scaley * (widget->height - 5));
+	Prim_DrawBorder(widget->offsetX, widget->offsetY, widget->width, widget->height, 1, false, true, 0);
+	Video_SetClippingArea(0, div->scaley * widget->offsetY, TRUE_DISPLAY_WIDTH, div->scaley * (widget->height - 2));
 
 	Shape_DrawScale(shapeID, x, y, w, h, 0, 0);
 	GUI_DrawText_Wrapper(name, x + w / 2, y - 9, 5, 0, 0x161);

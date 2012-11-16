@@ -937,7 +937,8 @@ GameLoop_TweakWidgetDimensions(void)
 	const ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
 	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
 
-	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - (14 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height);
+	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY = 87 - 40 + 2;
+	g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - (14 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height) - 1;
 
 	if (g_gameConfig.scrollAlongScreenEdge) {
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = TRUE_DISPLAY_WIDTH;
