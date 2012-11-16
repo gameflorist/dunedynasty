@@ -12,6 +12,7 @@
 #include "widget.h"
 #include "../audio/driver.h"
 #include "../audio/sound.h"
+#include "../common_a5.h"
 #include "../config.h"
 #include "../enhancement.h"
 #include "../explosion.h"
@@ -418,13 +419,18 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 #endif
 
 	if ((g_viewportMessageCounter & 1) != 0 && g_viewportMessageText != NULL && (minX[6] <= 14 || maxX[6] >= 0 || arg08 || forceRedraw)) {
+		const enum ScreenDivID old_div = A5_SaveTransform();
+		A5_UseTransform(SCREENDIV_MENU);
+
 		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-		const int x = wi->width / 2;
-		const int y = wi->height - 61;
+		const int x = (wi->width * g_screenDiv[SCREENDIV_VIEWPORT].scalex) / (2 * g_screenDiv[SCREENDIV_MENU].scalex);
+		const int y = SCREEN_HEIGHT - 61;
 
 		GUI_DrawText_Wrapper(g_viewportMessageText, x, y, 15, 0, 0x132);
 		minX[6] = -1;
 		maxX[6] = 14;
+
+		A5_UseTransform(old_div);
 	}
 
 	if (updateDisplay && !drawToMainScreen) {
