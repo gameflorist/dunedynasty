@@ -177,7 +177,7 @@ Config_SetFloat(ALLEGRO_CONFIG *config, const char *section, const char *key, fl
 {
 	char str[16];
 
-	snprintf(str, sizeof(str), "%f", value);
+	snprintf(str, sizeof(str), "%.2f", value);
 	al_set_config_value(config, section, key, str);
 }
 
