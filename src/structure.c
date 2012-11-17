@@ -1092,7 +1092,18 @@ void Structure_RemoveFog(Structure *s)
 {
 	if (s == NULL || s->o.houseID != g_playerHouseID) return;
 
-	Tile_RemoveFogInRadius(s->o.position, g_table_structureInfo[s->o.type].o.fogUncoverRadius);
+	const StructureInfo *si = &g_table_structureInfo[s->o.type];
+
+	tile32 position;
+	position.tile = s->o.position.tile;
+
+	/* ENHANCEMENT -- Reveal fog from centre of structure instead of top-left corner for sides of length 3. */
+	if (g_dune2_enhanced) {
+		position.s.x += 256 * (g_table_structure_layoutSize[si->layout].width  - 1) / 2;
+		position.s.y += 256 * (g_table_structure_layoutSize[si->layout].height - 1) / 2;
+	}
+
+	Tile_RemoveFogInRadius(position, si->o.fogUncoverRadius);
 }
 
 /**

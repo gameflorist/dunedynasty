@@ -91,7 +91,6 @@ uint16 Script_Structure_SetState(ScriptEngine *script)
  */
 uint16 Script_Structure_RemoveFogAroundTile(ScriptEngine *script)
 {
-	const StructureInfo *si;
 	Structure *s;
 
 	VARIABLE_NOT_USED(script);
@@ -99,18 +98,7 @@ uint16 Script_Structure_RemoveFogAroundTile(ScriptEngine *script)
 	s = g_scriptCurrentStructure;
 	if (s->o.houseID != g_playerHouseID) return 0;
 
-	si = &g_table_structureInfo[s->o.type];
-
-	tile32 position;
-	position.tile = s->o.position.tile;
-
-	/* ENHANCEMENT -- Reveal fog from centre of structure instead of top-left corner. */
-	if (g_dune2_enhanced) {
-		position.s.x += 256 * g_table_structure_layoutSize[si->layout].width / 2;
-		position.s.y += 256 * g_table_structure_layoutSize[si->layout].height / 2;
-	}
-
-	Tile_RemoveFogInRadius(position, si->o.fogUncoverRadius);
+	Structure_RemoveFog(s);
 
 	return 0;
 }
