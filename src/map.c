@@ -61,7 +61,7 @@ const MapInfo g_mapInfos[3] = {
 	{21, 21, 21, 21}
 };
 
-static bool
+bool
 Map_InRangeX(int x)
 {
 	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
@@ -69,7 +69,7 @@ Map_InRangeX(int x)
 	return (mapInfo->minX <= x && x < mapInfo->minX + mapInfo->sizeX);
 }
 
-static bool
+bool
 Map_InRangeY(int y)
 {
 	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];

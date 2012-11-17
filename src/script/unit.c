@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "types.h"
+#include "../os/common.h"
 #include "../os/math.h"
 
 #include "script.h"
@@ -1306,6 +1307,75 @@ static Pathfinder_Data Script_Unit_Pathfinder(uint16 packedSrc, uint16 packedDst
 	return res;
 }
 
+static uint16
+Script_Unit_Pathfinder_FindNearbyDestination(Unit *u, uint16 packedSrc, uint16 packedDst)
+{
+	const struct {
+		int dx, dy;
+	} offset[] = {
+		/* Distance 1: U, R, D, L. */
+		{  0, -1 }, {  1,  0 }, {  0,  1 }, { -1,  0 },
+
+		/* Distance 1.5: UR, DR, DL, UL. */
+		{  1, -1 }, {  1,  1 }, { -1,  1 }, { -1, -1 },
+
+		/* Distance 2: UU, RR, DD, LL. */
+		{  0, -2 }, {  2,  0 }, {  0,  2 }, { -2,  0 },
+
+		/* Distance 2.5: UUR, URR, DRR, DDR, DDL, DLL, ULL, UUL. */
+		{  1, -2 }, {  2, -1 }, {  2,  1 }, {  1,  2 },
+		{ -1,  2 }, { -2, -1 }, { -2, -1 }, { -1, -2 },
+
+		/* Distance 3: UUU, RRR, DDD, LLL. */
+		{  0, -3 }, {  3,  0 }, {  0,  3 }, { -3,  0 },
+	};
+
+	/* Note: do not use Tile_GetDirectionPacked, which rounds down. */
+	const tile32 tile32_src = Tile_UnpackTile(packedSrc);
+	const uint16 dist_src_dest = Tile_GetDistance(tile32_src, Tile_UnpackTile(packedDst));
+	unsigned int end;
+
+	if (dist_src_dest <= (256 * 1)) return 0;
+	else if (dist_src_dest <= (256 * 1.5)) end = 4;
+	else if (dist_src_dest <= (256 * 2  )) end = 8;
+	else if (dist_src_dest <= (256 * 2.5)) end = 12;
+	else if (dist_src_dest <= (256 * 3  )) end = 20;
+	else end = lengthof(offset);
+
+	const int x0 = Tile_GetPackedX(packedDst);
+	const int y0 = Tile_GetPackedY(packedDst);
+
+	/* Find possible alternative destinations. */
+	int best_dist = dist_src_dest;
+	uint16 best_dest = 0;
+
+	for (unsigned int i = 0; i < end; i++) {
+		if (!(Map_InRangeX(x0 + offset[i].dx) && Map_InRangeY(y0 + offset[i].dy)))
+			continue;
+
+		uint16 this_dest = packedDst + (MAP_SIZE_MAX * offset[i].dy) + offset[i].dx;
+		if (Unit_GetTileEnterScore(u, this_dest, 0) == 256)
+			continue;
+
+		const int dx = 256 * abs(offset[i].dx);
+		const int dy = 256 * abs(offset[i].dy);
+
+		int dist_this_dest = max(dx, dy) + min(dx, dy) / 2;
+		uint16 dist_this_src = Tile_GetDistance(tile32_src, Tile_UnpackTile(this_dest));
+
+		/* Favour this destination very slightly if it is in the direction of the source. */
+		if (dist_this_src < dist_src_dest)
+			dist_this_dest--;
+
+		if (dist_this_dest < best_dist) {
+			best_dist = dist_this_dest;
+			best_dest = this_dest;
+		}
+	}
+
+	return best_dest;
+}
+
 /**
  * Calculate the route to a tile.
  *
@@ -1340,6 +1410,18 @@ uint16 Script_Unit_CalculateRoute(ScriptEngine *script)
 		uint8 buffer[42];
 
 		res = Script_Unit_Pathfinder(packedSrc, packedDst, buffer, 40);
+
+		/* Fallback case: the path finder fails if there are no empty
+		 * spaces on the direct path between packedSrc and packedDst.
+		 * This causes units to sit around, even if there are spots
+		 * closer to the target than its current position.
+		 */
+		if (g_dune2_enhanced && res.buffer[0] == 0xFF) {
+			uint16 altDst = Script_Unit_Pathfinder_FindNearbyDestination(u, packedSrc, packedDst);
+
+			if (altDst != 0)
+				res = Script_Unit_Pathfinder(packedSrc, altDst, buffer, 40);
+		}
 
 		memcpy(u->route, res.buffer, min(res.routeSize, 14));
 

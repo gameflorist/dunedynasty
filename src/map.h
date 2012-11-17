@@ -96,6 +96,8 @@ extern const tile32 g_table_tilediff[][8];
 
 extern const LandscapeInfo g_table_landscapeInfo[LST_MAX];
 
+extern bool Map_InRangeX(int x);
+extern bool Map_InRangeY(int y);
 extern int Map_Clamp(int x);
 
 extern void Map_MoveDirection(int dx, int dy);
