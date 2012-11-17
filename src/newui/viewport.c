@@ -1492,6 +1492,21 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 #if 0
 	/* Debugging. */
 	GUI_DrawText_Wrapper("id:%x", x - TILE_SIZE / 2, y, 15, 0, 0x11, u->o.index);
+
+	/* Path finding. */
+	Map_IsPositionInViewport(u->currentDestination, &x, &y);
+	for (int i = 0; (i < 14) && (u->route[i] != 0xFF); i++) {
+		if (u->route[i] == 0 || u->route[i] == 1 || u->route[i] == 7) y -= TILE_SIZE;
+		if (u->route[i] == 1 || u->route[i] == 2 || u->route[i] == 3) x += TILE_SIZE;
+		if (u->route[i] == 3 || u->route[i] == 4 || u->route[i] == 5) y += TILE_SIZE;
+		if (u->route[i] == 5 || u->route[i] == 6 || u->route[i] == 7) x -= TILE_SIZE;
+
+		GUI_DrawText_Wrapper("%x", x, y - 4, 15, 0, 0x111, u->route[i]);
+	}
+
+	if (Map_IsPositionInViewport(Tools_Index_GetTile(u->targetMove), &x, &y)) {
+		Shape_Draw(SHAPE_CURSOR_TARGET, x, y, 0, 0x8000);
+	}
 #endif
 }
 
