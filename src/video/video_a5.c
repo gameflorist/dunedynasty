@@ -88,6 +88,10 @@ typedef struct FadeInAux {
 	int rows[SCREEN_HEIGHT];
 } FadeInAux;
 
+typedef struct IconCoord {
+	int sx, sy;
+} IconCoord;
+
 static const struct CPSSpecialCoord {
 	int cx, cy; /* coordinates in cps. */
 	int tx, ty; /* coordinates in texture. */
@@ -128,7 +132,7 @@ static ALLEGRO_BITMAP *interface_texture; /* cps, wsa, and fonts. */
 static ALLEGRO_BITMAP *icon_texture;
 static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *region_texture;
-static ALLEGRO_BITMAP *s_icon[ICONID_MAX][HOUSE_MAX];
+static IconCoord s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
 static ALLEGRO_MOUSE_CURSOR *s_cursor[CURSOR_MAX];
@@ -359,16 +363,6 @@ void
 VideoA5_Uninit(void)
 {
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		for (uint16 iconID = 0; iconID < ICONID_MAX; iconID++) {
-			if (s_icon[iconID][houseID] != NULL) {
-				/* Don't destroy in the case of shared sub-bitmaps. */
-				if ((houseID + 1 == HOUSE_MAX) || (s_icon[iconID][houseID] != s_icon[iconID][houseID + 1]))
-					al_destroy_bitmap(s_icon[iconID][houseID]);
-
-				s_icon[iconID][houseID] = NULL;
-			}
-		}
-
 		for (enum ShapeID shapeID = 0; shapeID < SHAPEID_MAX; shapeID++) {
 			if (s_shape[shapeID][houseID] != NULL) {
 				if ((houseID + 1 == HOUSE_MAX) || (s_shape[shapeID][houseID] != s_shape[shapeID][houseID + 1]))
@@ -1334,7 +1328,7 @@ VideoA5_ExportStructureIcons(enum StructureType s, enum StructureLayout l, int i
 			for (int j = 0; j < w; j++) {
 				const uint16 iconID = g_iconMap[g_iconMap[si->iconGroup] + idx];
 				assert(iconID < ICONID_MAX);
-				assert(s_icon[iconID][houseID] == NULL);
+				assert(s_icon[iconID][houseID].sx == 0 && s_icon[iconID][houseID].sy == 0);
 
 				if (is_common && (houseID != HOUSE_HARKONNEN)) {
 					s_icon[iconID][houseID] = s_icon[iconID][HOUSE_HARKONNEN];
@@ -1356,9 +1350,8 @@ VideoA5_ExportStructureIcons(enum StructureType s, enum StructureLayout l, int i
 
 				GFX_DrawSprite_(iconID, x, y, houseID);
 
-				s_icon[iconID][houseID] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
-				assert(s_icon[iconID][houseID] != NULL);
-
+				s_icon[iconID][houseID].sx = x;
+				s_icon[iconID][houseID].sy = y;
 				idx++;
 			}
 
@@ -1394,7 +1387,7 @@ VideoA5_ExportIconGroup(unsigned char *buf, enum IconMapEntries group, int num_c
 			const uint16 iconID = g_iconMap[g_iconMap[group] + idx];
 			assert(iconID < ICONID_MAX);
 
-			if (s_icon[iconID][houseID] != NULL)
+			if (s_icon[iconID][houseID].sx != 0 || s_icon[iconID][houseID].sy != 0)
 				continue;
 
 			if ((idx >= num_common) || (houseID == HOUSE_HARKONNEN)) {
@@ -1412,9 +1405,8 @@ VideoA5_ExportIconGroup(unsigned char *buf, enum IconMapEntries group, int num_c
 
 				GFX_DrawSprite_(iconID, x, y, houseID);
 
-				s_icon[iconID][houseID] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
-				assert(s_icon[iconID][houseID] != NULL);
-
+				s_icon[iconID][houseID].sx = x;
+				s_icon[iconID][houseID].sy = y;
 				x += TILE_SIZE + 2;
 			}
 			else {
@@ -1435,14 +1427,16 @@ VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	const int idx = ICONID_MAX - (iconID - g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8]) - 1;
 
-	if (s_icon[idx][HOUSE_HARKONNEN] != NULL)
+	if (s_icon[idx][HOUSE_HARKONNEN].sx != 0 || s_icon[idx][HOUSE_HARKONNEN].sy != 0)
 		return;
 
 	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, TILE_SIZE, TILE_SIZE, TILE_SIZE, &x, &y);
 	GFX_DrawSprite_(iconID, x, y, HOUSE_HARKONNEN);
 
-	s_icon[idx][HOUSE_HARKONNEN] = al_create_sub_bitmap(icon_texture, x, y, TILE_SIZE, TILE_SIZE);
-	assert(s_icon[idx][HOUSE_HARKONNEN] != NULL);
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		s_icon[idx][houseID].sx = x;
+		s_icon[idx][houseID].sy = y;
+	}
 
 	VideoA5_CreateWhiteMaskIndexed(buf, WINDOW_W, x, y, x, y, TILE_SIZE, TILE_SIZE, WINDTRAP_COLOUR);
 
@@ -1563,16 +1557,20 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 {
 	assert(iconID < ICONID_MAX);
 	assert(houseID < HOUSE_MAX);
-	assert(s_icon[iconID][houseID] != NULL);
 
-	al_draw_bitmap(s_icon[iconID][houseID], x, y, 0);
+	const IconCoord *coord = &s_icon[iconID][houseID];
+	assert(coord->sx != 0 && coord->sy != 0);
+
+	al_draw_bitmap_region(icon_texture, coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
 
 	/* Windtraps. */
 	if (g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8] <= iconID && iconID <= g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 15]) {
-		const int idx = ICONID_MAX - (iconID - g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8]) - 1;
-		assert(s_icon[idx][HOUSE_HARKONNEN] != NULL);
+		const uint16 overlayID = ICONID_MAX - (iconID - g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8]) - 1;
+		coord = &s_icon[overlayID][HOUSE_HARKONNEN];
+		assert(coord->sx != 0 && coord->sy != 0);
 
-		al_draw_tinted_bitmap(s_icon[idx][HOUSE_HARKONNEN], paltoRGB[WINDTRAP_COLOUR], x, y, 0);
+		al_draw_tinted_bitmap_region(icon_texture, paltoRGB[WINDTRAP_COLOUR],
+				coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
 	}
 }
 
@@ -1580,11 +1578,14 @@ void
 VideoA5_DrawIconAlpha(uint16 iconID, int x, int y, unsigned char alpha)
 {
 	assert(iconID < ICONID_MAX);
-	assert(s_icon[iconID][HOUSE_HARKONNEN] != NULL);
+
+	const IconCoord *coord = &s_icon[iconID][HOUSE_HARKONNEN];
+	assert(coord->sx != 0 && coord->sy != 0);
 
 	ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, alpha);
 
-	al_draw_tinted_bitmap(s_icon[iconID][HOUSE_HARKONNEN], tint, x, y, 0);
+	al_draw_tinted_bitmap_region(icon_texture, tint,
+			coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
 }
 
 /*--------------------------------------------------------------*/
