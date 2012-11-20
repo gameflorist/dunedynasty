@@ -323,8 +323,11 @@ void GameLoop_Unit(void)
 
 		if (u->o.flags.s.isNotOnMap) continue;
 
+		/* Do not unveil new tiles for air units (ornithopters), but
+		 * allow them to refresh previously scouted tiles for vision.
+		 */
 		if (enhancement_fog_of_war)
-			Unit_RemoveFog(u);
+			Unit_RefreshFog(u, ui->flags.isGroundUnit);
 
 		if (tickUnknown4 && u->targetAttack != 0 && ui->o.flags.hasTurret) {
 			tile32 tile;
@@ -1396,7 +1399,8 @@ bool Unit_Deviation_Decrease(Unit *unit, uint16 amount)
  *
  * @param unit The Unit to remove fog around.
  */
-void Unit_RemoveFog(Unit *unit)
+void
+Unit_RefreshFog(Unit *unit, bool unveil)
 {
 	uint16 fogUncoverRadius;
 
@@ -1409,7 +1413,13 @@ void Unit_RemoveFog(Unit *unit)
 
 	if (fogUncoverRadius == 0) return;
 
-	Tile_RemoveFogInRadius(unit->o.position, fogUncoverRadius);
+	Tile_RefreshFogInRadius(unit->o.position, fogUncoverRadius, unveil);
+}
+
+void
+Unit_RemoveFog(Unit *unit)
+{
+	Unit_RefreshFog(unit, true);
 }
 
 /**

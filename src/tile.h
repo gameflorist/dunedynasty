@@ -22,6 +22,7 @@ extern uint16 Tile_GetDistancePacked(uint16 packed_from, uint16 packed_to);
 extern uint16 Tile_GetDistanceRoundedUp(tile32 from, tile32 to);
 extern tile32 Tile_AddTileDiff(tile32 from, tile32 diff);
 extern tile32 Tile_Center(tile32 tile);
+extern void Tile_RefreshFogInRadius(tile32 tile, uint16 radius, bool unveil);
 extern void Tile_RemoveFogInRadius(tile32 tile, uint16 radius);
 extern uint16 Tile_GetTileInDirectionOf(uint16 packed_from, uint16 packed_to);
 extern uint8 Tile_GetDirectionPacked(uint16 packed_from, uint16 packed_to);

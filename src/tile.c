@@ -248,7 +248,8 @@ uint16 Tile_GetDistanceRoundedUp(tile32 from, tile32 to)
  * @param tile The tile to remove fog around.
  * @param radius The radius to remove fog around.
  */
-void Tile_RemoveFogInRadius(tile32 tile, uint16 radius)
+void
+Tile_RefreshFogInRadius(tile32 tile, uint16 radius, bool unveil)
 {
 	uint16 packed;
 	uint16 x, y;
@@ -274,9 +275,20 @@ void Tile_RemoveFogInRadius(tile32 tile, uint16 radius)
 
 			if (Tile_GetDistanceRoundedUp(tile, t) > radius) continue;
 
-			Map_UnveilTile(packed, g_playerHouseID);
+			if (unveil) {
+				Map_UnveilTile(packed, g_playerHouseID);
+			}
+			else {
+				Map_RefreshTile(packed);
+			}
 		}
 	}
+}
+
+void
+Tile_RemoveFogInRadius(tile32 tile, uint16 radius)
+{
+	Tile_RefreshFogInRadius(tile, radius, true);
 }
 
 /**

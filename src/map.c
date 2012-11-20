@@ -1386,6 +1386,17 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 }
 
 void
+Map_RefreshTile(uint16 packed)
+{
+	if (Tile_IsOutOfMap(packed)) return;
+
+	Tile *t = &g_map[packed];
+
+	if (t->isUnveiled)
+		g_mapVisible[packed].timeout = g_timerGame + 10 * 60;
+}
+
+void
 Map_ResetFogOfWar(void)
 {
 	memset(g_mapVisible, 0, sizeof(g_mapVisible));

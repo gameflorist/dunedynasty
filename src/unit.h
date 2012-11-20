@@ -160,6 +160,7 @@ extern Unit *Unit_Sandworm_FindBestTarget(Unit *unit);
 extern bool Unit_StartMovement(Unit *unit);
 extern void Unit_SetTarget(Unit* unit, uint16 encoded);
 extern bool Unit_Deviation_Decrease(Unit* unit, uint16 amount);
+extern void Unit_RefreshFog(Unit *unit, bool unveil);
 extern void Unit_RemoveFog(Unit *unit);
 extern bool Unit_Deviate(Unit *unit, uint16 probability, enum HouseType houseID);
 extern bool Unit_Move(Unit *unit, uint16 distance);
