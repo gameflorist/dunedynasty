@@ -1491,6 +1491,65 @@ VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 }
 
 static void
+VideoA5_MaskDebrisTiles(ALLEGRO_BITMAP *membmp)
+{
+	const struct {
+		int maskx, masky;
+		enum IconMapEntries group;
+		int idx;
+	} rubble[1 + 4 + 4 + 9] = {
+		{  0,  0, ICM_ICONGROUP_BASE_DEFENSE_TURRET, 1},
+		{  0, 16, ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY, 4 },
+		{ 16, 16, ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY, 5 },
+		{  0, 32, ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY, 6 },
+		{ 16, 32, ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY, 7 },
+		{  0, 16, ICM_ICONGROUP_RADAR_OUTPOST, 4 },
+		{ 16, 16, ICM_ICONGROUP_RADAR_OUTPOST, 5 },
+		{  0, 32, ICM_ICONGROUP_RADAR_OUTPOST, 6 },
+		{ 16, 32, ICM_ICONGROUP_RADAR_OUTPOST, 7 },
+		{ 32,  0, ICM_ICONGROUP_HOUSE_PALACE,  9 },
+		{ 48,  0, ICM_ICONGROUP_HOUSE_PALACE, 10 },
+		{ 64,  0, ICM_ICONGROUP_HOUSE_PALACE, 11 },
+		{ 32, 16, ICM_ICONGROUP_HOUSE_PALACE, 12 },
+		{ 48, 16, ICM_ICONGROUP_HOUSE_PALACE, 13 },
+		{ 64, 16, ICM_ICONGROUP_HOUSE_PALACE, 14 },
+		{ 32, 32, ICM_ICONGROUP_HOUSE_PALACE, 15 },
+		{ 48, 32, ICM_ICONGROUP_HOUSE_PALACE, 16 },
+		{ 64, 32, ICM_ICONGROUP_HOUSE_PALACE, 17 },
+	};
+
+	char filename[1024];
+	snprintf(filename, sizeof(filename), "%s/gfx/rubblemask.png", g_dune_data_dir);
+
+	ALLEGRO_BITMAP *mask = al_load_bitmap(filename);
+	if (mask == NULL)
+		return;
+
+	for (int i = 0; i < 1 + 4 + 4 + 9; i++) {
+		const uint16 iconID = g_iconMap[g_iconMap[rubble[i].group] + rubble[i].idx];
+		const IconCoord *coord = &s_icon[iconID][HOUSE_HARKONNEN];
+
+		ALLEGRO_LOCKED_REGION *read = al_lock_bitmap_region(mask, rubble[i].maskx, rubble[i].masky, TILE_SIZE, TILE_SIZE, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READONLY);
+		ALLEGRO_LOCKED_REGION *write = al_lock_bitmap_region(membmp, coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+
+		for (int y = 0; y < TILE_SIZE; y++) {
+			unsigned char *read_row = &((unsigned char *)read->data)[read->pitch*y];
+			unsigned char *write_row = &((unsigned char *)write->data)[write->pitch*y];
+
+			for (int x = 0; x < TILE_SIZE; x++) {
+				/* Use read's red channel as the write's alpha. */
+				write_row[write->pixel_size*x + 3] = read_row[read->pixel_size*x];
+			}
+		}
+
+		al_unlock_bitmap(membmp);
+		al_unlock_bitmap(mask);
+	}
+
+	al_destroy_bitmap(mask);
+}
+
+static void
 VideoA5_InitIcons(unsigned char *buf)
 {
 	const struct {
@@ -1554,6 +1613,9 @@ VideoA5_InitIcons(unsigned char *buf)
 	al_set_target_bitmap(icon_texture);
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 	VideoA5_CopyBitmap(buf, icon_texture, TRANSPARENT_COLOUR_0);
+
+	/* Apply rubble mask for transparent rubble. */
+	VideoA5_MaskDebrisTiles(icon_texture);
 
 	/* Connect neighbours for interpolation. */
 	VideoA5_DrawIconPadding(icon_texture, connect);
