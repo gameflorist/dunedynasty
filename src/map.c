@@ -1362,7 +1362,7 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	if (Tile_IsOutOfMap(packed)) return false;
 
 	t = &g_map[packed];
-	g_mapVisible[packed].timeout = g_timerGame + 10 * 60;
+	g_mapVisible[packed].timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
 
 	if (t->isUnveiled && Sprite_IsUnveiled(t->overlaySpriteID)) return false;
 	t->isUnveiled = true;
@@ -1393,7 +1393,7 @@ Map_RefreshTile(uint16 packed)
 	Tile *t = &g_map[packed];
 
 	if (t->isUnveiled)
-		g_mapVisible[packed].timeout = g_timerGame + 10 * 60;
+		g_mapVisible[packed].timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
 }
 
 void
