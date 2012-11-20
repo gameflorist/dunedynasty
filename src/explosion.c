@@ -292,7 +292,9 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 
 		g_map[packed].hasExplosion = true;
 
-		if (enhancement_fog_of_war && g_map[packed].isUnveiled) {
+		/* Do not unveil for explosion types 13 (sandworm eat) and 19 (spice bloom). */
+		if (enhancement_fog_of_war && g_map[packed].isUnveiled &&
+				!(explosionType == 13 || explosionType == 19)) {
 			FogOfWarTile *f = &g_mapVisible[packed];
 			int64_t timeout = g_timerGame + Tools_AdjustToGameSpeed(2 * 60, 0x0000, 0xFFFF, true);
 
