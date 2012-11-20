@@ -92,6 +92,13 @@ typedef struct IconCoord {
 	int sx, sy;
 } IconCoord;
 
+typedef struct IconConnectivity {
+	uint16 iconU;
+	uint16 iconD;
+	uint16 iconL;
+	uint16 iconR;
+} IconConnectivity;
+
 static const struct CPSSpecialCoord {
 	int cx, cy; /* coordinates in cps. */
 	int tx, ty; /* coordinates in texture. */
@@ -178,7 +185,7 @@ VideoA5_SetBitmapFlags(int flags)
 
 	if (flags == ALLEGRO_MEMORY_BITMAP) {
 		old_flags = al_get_new_bitmap_flags();
-		al_set_new_bitmap_flags(old_flags | ALLEGRO_MEMORY_BITMAP);
+		al_set_new_bitmap_flags((old_flags & ~ALLEGRO_VIDEO_BITMAP) | ALLEGRO_MEMORY_BITMAP);
 	}
 	else {
 		al_set_new_bitmap_flags(old_flags);
@@ -323,14 +330,13 @@ VideoA5_Init(void)
 	interface_texture = al_create_bitmap(w, h);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
-	icon_texture = al_create_bitmap(w, h);
 	shape_texture = al_create_bitmap(w, h);
 	region_texture = al_create_bitmap(w, h);
 
 	al_set_new_bitmap_flags(ALLEGRO_NO_PRESERVE_TEXTURE);
 	s_minimap = al_create_bitmap(64, 64);
 
-	if (interface_texture == NULL || icon_texture == NULL || shape_texture == NULL || region_texture == NULL || s_minimap == NULL)
+	if (interface_texture == NULL || shape_texture == NULL || region_texture == NULL || s_minimap == NULL)
 		return false;
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
@@ -1310,67 +1316,39 @@ VideoA5_NumIconsInGroup(enum IconMapEntries group)
 	}
 }
 
-static void
-VideoA5_ExportStructureIcons(enum StructureType s, enum StructureLayout l, int index,
-		bool is_common, int x0, int y0, int *retx, int *rety)
+static IconConnectivity *
+VideoA5_CreateIconConnectivities(void)
 {
-	const StructureInfo *si = &g_table_structureInfo[s];
-	const enum StructureLayout layout = si->layout;
-	const int w = g_table_structure_layoutSize[l].width;
-	const int h = g_table_structure_layoutSize[l].height;
+	IconConnectivity *connect = calloc(ICONID_MAX, sizeof(connect[0]));
+	assert(connect != NULL);
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		int idx = index;
+	for (enum StructureType s = STRUCTURE_PALACE; s < STRUCTURE_MAX; s++) {
+		const enum StructureLayout layout = g_table_structureInfo[s].layout;
+		const enum IconMapEntries group = g_table_structureInfo[s].iconGroup;
+		const int w = g_table_structure_layoutSize[layout].width;
+		const int h = g_table_structure_layoutSize[layout].height;
+		const int count = VideoA5_NumIconsInGroup(group);
 
-		GUI_Palette_CreateRemap(houseID);
+		for (int idx0 = 0; idx0 < count; idx0 += w * h) {
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < w; j++) {
+					const uint16 iconID = g_iconMap[g_iconMap[group] + idx0 + (w * i + j)];
 
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				const uint16 iconID = g_iconMap[g_iconMap[si->iconGroup] + idx];
-				assert(iconID < ICONID_MAX);
-				assert(s_icon[iconID][houseID].sx == 0 && s_icon[iconID][houseID].sy == 0);
-
-				if (is_common && (houseID != HOUSE_HARKONNEN)) {
-					s_icon[iconID][houseID] = s_icon[iconID][HOUSE_HARKONNEN];
-					idx++;
-					continue;
+					/* Find icon to pad this icon with. */
+					if (i > 0)   connect[iconID].iconU = g_iconMap[g_iconMap[group] + idx0 + (w * (i-1) + j)];
+					if (i+1 < h) connect[iconID].iconD = g_iconMap[g_iconMap[group] + idx0 + (w * (i+1) + j)];
+					if (j > 0)   connect[iconID].iconL = g_iconMap[g_iconMap[group] + idx0 + (w * i + (j-1))];
+					if (j+1 < w) connect[iconID].iconR = g_iconMap[g_iconMap[group] + idx0 + (w * i + (j+1))];
 				}
-
-				const int x = x0 + TILE_SIZE * j + (l == STRUCTURE_LAYOUT_3x3 ? 50 * houseID : 0);
-				const int y = y0 + TILE_SIZE * i + (l == STRUCTURE_LAYOUT_3x3 ? 0 : 34 * houseID);
-
-				if (i == 0)
-					GFX_DrawSprite_(iconID, x, y - 1, houseID);
-				if (i == h - 1)
-					GFX_DrawSprite_(iconID, x, y + 1, houseID);
-				if (j == 0)
-					GFX_DrawSprite_(iconID, x - 1, y, houseID);
-				if (j == w - 1)
-					GFX_DrawSprite_(iconID, x + 1, y, houseID);
-
-				GFX_DrawSprite_(iconID, x, y, houseID);
-
-				s_icon[iconID][houseID].sx = x;
-				s_icon[iconID][houseID].sy = y;
-				idx++;
 			}
-
-			idx += g_table_structure_layoutSize[layout].width - g_table_structure_layoutSize[l].width;
 		}
 	}
 
-	if (l == STRUCTURE_LAYOUT_3x3) {
-		*retx = x0;
-		*rety = y0 + TILE_SIZE * h + 2;
-	}
-	else {
-		*retx = x0 + TILE_SIZE * w + 2;
-		*rety = y0;
-	}
+	return connect;
 }
 
 static void
-VideoA5_ExportIconGroup(unsigned char *buf, enum IconMapEntries group, int num_common,
+VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 		int x, int y, int *retx, int *rety)
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
@@ -1393,16 +1371,6 @@ VideoA5_ExportIconGroup(unsigned char *buf, enum IconMapEntries group, int num_c
 			if ((idx >= num_common) || (houseID == HOUSE_HARKONNEN)) {
 				VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, TILE_SIZE + 1, TILE_SIZE + 1, TILE_SIZE + 1, &x, &y);
 
-				GFX_DrawSprite_(iconID, x, y - 1, houseID);
-				GFX_DrawSprite_(iconID, x, y + 1, houseID);
-				GFX_DrawSprite_(iconID, x - 1, y, houseID);
-				GFX_DrawSprite_(iconID, x + 1, y, houseID);
-
-				/* Clear in case of transparent icons (e.g. fog sprite overlays). */
-				for (int i = 0; i < TILE_SIZE; i++) {
-					memset(buf + WINDOW_W * (y + i) + x, 0, TILE_SIZE);
-				}
-
 				GFX_DrawSprite_(iconID, x, y, houseID);
 
 				s_icon[iconID][houseID].sx = x;
@@ -1415,8 +1383,80 @@ VideoA5_ExportIconGroup(unsigned char *buf, enum IconMapEntries group, int num_c
 		}
 	}
 
-	*retx = x;
-	*rety = y;
+	*retx = 1;
+	*rety = y + TILE_SIZE + 2;
+}
+
+static void
+VideoA5_DrawIconPadding(ALLEGRO_BITMAP *membmp, IconConnectivity *connect)
+{
+	ALLEGRO_BITMAP *dup = al_clone_bitmap(membmp);
+
+	if (dup == NULL)
+		return;
+
+	for (uint16 iconID = 0; iconID < ICONID_MAX; iconID++) {
+		const IconCoord *targ = &s_icon[iconID][HOUSE_HARKONNEN];
+
+		if (targ->sx == 0 && targ->sy == 0)
+			continue;
+
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+			const IconCoord *src;
+			targ = &s_icon[iconID][houseID];
+
+			if ((houseID != HOUSE_HARKONNEN) &&
+					(targ->sx == s_icon[iconID][HOUSE_HARKONNEN].sx) &&
+					(targ->sy == s_icon[iconID][HOUSE_HARKONNEN].sy))
+				break;
+
+			/* Pad the top of the icon with the top row of itself or the bottom row of the connected icon. */
+			src = &s_icon[connect[iconID].iconU][houseID];
+			if (connect[iconID].iconU == 0) {
+				al_draw_bitmap_region(dup, targ->sx, targ->sy, TILE_SIZE, 1.0f,
+						targ->sx, targ->sy - 1.0f, 0);
+			}
+			else if (src->sx != 0 && src->sy != 0) {
+				al_draw_bitmap_region(dup, src->sx, src->sy + TILE_SIZE - 1.0f, TILE_SIZE, 1.0f,
+						targ->sx, targ->sy - 1.0f, 0);
+			}
+
+			/* Pad the bottom. */
+			src = &s_icon[connect[iconID].iconD][houseID];
+			if (connect[iconID].iconD == 0) {
+				al_draw_bitmap_region(dup, targ->sx, targ->sy + TILE_SIZE - 1.0f, TILE_SIZE, 1.0f,
+						targ->sx, targ->sy + TILE_SIZE, 0);
+			}
+			else if (src->sx != 0 && src->sy != 0) {
+				al_draw_bitmap_region(dup, src->sx, src->sy, TILE_SIZE, 1.0f,
+						targ->sx, targ->sy + TILE_SIZE, 0);
+			}
+
+			/* Pad the left. */
+			src = &s_icon[connect[iconID].iconL][houseID];
+			if (connect[iconID].iconL == 0) {
+				al_draw_bitmap_region(dup, targ->sx, targ->sy, 1.0f, TILE_SIZE,
+						targ->sx - 1.0f, targ->sy, 0);
+			}
+			else if (src->sx != 0 && src->sy != 0) {
+				al_draw_bitmap_region(dup, src->sx + TILE_SIZE - 1.0f, src->sy, 1.0f, TILE_SIZE,
+						targ->sx - 1.0f, targ->sy, 0);
+			}
+
+			/* Pad the right. */
+			src = &s_icon[connect[iconID].iconR][houseID];
+			if (connect[iconID].iconR == 0) {
+				al_draw_bitmap_region(dup, targ->sx + TILE_SIZE - 1.0f, targ->sy, 1.0f, TILE_SIZE,
+						targ->sx + TILE_SIZE, targ->sy, 0);
+			}
+			else if (src->sx != 0 && src->sy != 0) {
+				al_draw_bitmap_region(dup, src->sx, src->sy, 1.0f, TILE_SIZE,
+						targ->sx + TILE_SIZE, targ->sy, 0);
+			}
+		}
+	}
+
+	al_destroy_bitmap(dup);
 }
 
 static void
@@ -1447,38 +1487,6 @@ VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 static void
 VideoA5_InitIcons(unsigned char *buf)
 {
-	const struct {
-		enum StructureLayout layout;
-		int index;
-		enum StructureType structure;
-	} structure_icon_set[] = {
-		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_LIGHT_VEHICLE },
-		{ STRUCTURE_LAYOUT_1x2, 17, STRUCTURE_LIGHT_VEHICLE },
-		{ STRUCTURE_LAYOUT_3x2, 12, STRUCTURE_HEAVY_VEHICLE },
-		{ STRUCTURE_LAYOUT_3x2, 12, STRUCTURE_HIGH_TECH },
-		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_HOUSE_OF_IX },
-		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_WOR_TROOPER },
-		{ STRUCTURE_LAYOUT_2x2,  8, STRUCTURE_CONSTRUCTION_YARD },
-		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_WINDTRAP },
-		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_BARRACKS },
-		{ STRUCTURE_LAYOUT_3x2, 12, STRUCTURE_REPAIR },
-		{ STRUCTURE_LAYOUT_2x2,  8, STRUCTURE_SILO },
-		{ STRUCTURE_LAYOUT_2x2,  8, STRUCTURE_OUTPOST },
-		{ STRUCTURE_LAYOUT_2x2, 12, STRUCTURE_REFINERY },
-		{ STRUCTURE_LAYOUT_1x2, 14, STRUCTURE_REFINERY },
-		{ STRUCTURE_LAYOUT_1x2, 26, STRUCTURE_REFINERY },
-		{ STRUCTURE_LAYOUT_1x2, 38, STRUCTURE_REFINERY },
-		{ STRUCTURE_LAYOUT_1x2, 50, STRUCTURE_REFINERY },
-		{ STRUCTURE_LAYOUT_2x2, 39, STRUCTURE_STARPORT },
-		{ STRUCTURE_LAYOUT_2x2, 57, STRUCTURE_STARPORT },
-		{ STRUCTURE_LAYOUT_2x2, 75, STRUCTURE_STARPORT },
-
-		{ STRUCTURE_LAYOUT_3x3, 18, STRUCTURE_PALACE },
-		{ STRUCTURE_LAYOUT_3x3, 18, STRUCTURE_STARPORT },
-
-		{ STRUCTURE_LAYOUT_1x1,  0, STRUCTURE_INVALID }
-	};
-
 	const struct {
 		int num_common;
 		enum IconMapEntries group;
@@ -1514,28 +1522,12 @@ VideoA5_InitIcons(unsigned char *buf)
 		{  0, ICM_ICONGROUP_EOF }
 	};
 
-	al_set_target_bitmap(icon_texture);
-	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
-
+	IconConnectivity *connect = VideoA5_CreateIconConnectivities();
 	int x, y;
 
 	x = 1, y = 1;
-	for (int i = 0; structure_icon_set[i].structure < STRUCTURE_MAX; i++) {
-		VideoA5_ExportStructureIcons(structure_icon_set[i].structure, structure_icon_set[i].layout,
-				structure_icon_set[i].index, false, x, y, &x, &y);
-	}
-
-	/* Structure construction and debris. */
-	VideoA5_ExportStructureIcons(STRUCTURE_LIGHT_VEHICLE, STRUCTURE_LAYOUT_2x2, 0, true, x, y, &x, &y);
-	VideoA5_ExportStructureIcons(STRUCTURE_LIGHT_VEHICLE, STRUCTURE_LAYOUT_2x2, 4, true, x, y, &x, &y);
-	VideoA5_ExportStructureIcons(STRUCTURE_OUTPOST,       STRUCTURE_LAYOUT_2x2, 4, true, x, y, &x, &y);
-	VideoA5_ExportStructureIcons(STRUCTURE_HEAVY_VEHICLE, STRUCTURE_LAYOUT_3x2, 0, true, x, y, &x, &y);
-	VideoA5_ExportStructureIcons(STRUCTURE_PALACE, STRUCTURE_LAYOUT_3x3, 0, true, x, y, &x, &y);
-	VideoA5_ExportStructureIcons(STRUCTURE_PALACE, STRUCTURE_LAYOUT_3x3, 9, true, x + TILE_SIZE * 3 + 2, y - TILE_SIZE * 3 - 2, &x, &y);
-
-	x = 1, y = 34 * HOUSE_MAX + 1;
 	for (int i = 0; icon_data[i].group < ICM_ICONGROUP_EOF; i++) {
-		VideoA5_ExportIconGroup(buf, icon_data[i].group, icon_data[i].num_common, x, y, &x, &y);
+		VideoA5_ExportIconGroup(icon_data[i].group, icon_data[i].num_common, x, y, &x, &y);
 	}
 
 	/* Windtraps.  304..308 in EU v1.07, 310..314 in US v1.0. */
@@ -1545,11 +1537,35 @@ VideoA5_InitIcons(unsigned char *buf)
 		VideoA5_ExportWindtrapOverlay(buf, iconID, x, y, &x, &y);
 	}
 
+	/* Copy buf to memory bitmap. */
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+
+	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
+	icon_texture = al_create_bitmap(WINDOW_W, WINDOW_H);
+	assert(icon_texture != NULL);
+
+	al_set_target_bitmap(icon_texture);
+	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 	VideoA5_CopyBitmap(buf, icon_texture, TRANSPARENT_COLOUR_0);
+
+	/* Connect neighbours for interpolation. */
+	VideoA5_DrawIconPadding(icon_texture, connect);
 
 #if OUTPUT_TEXTURES
 	al_save_bitmap("icons.png", icon_texture);
 #endif
+
+	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
+
+	const int bitmap_flags = al_get_new_bitmap_flags();
+	al_set_new_bitmap_flags(bitmap_flags & ~ALLEGRO_NO_PRESERVE_TEXTURE);
+
+	icon_texture = VideoA5_ConvertToVideoBitmap(icon_texture);
+	assert(icon_texture != NULL);
+
+	al_set_new_bitmap_flags(bitmap_flags);
+	free(connect);
 }
 
 void
