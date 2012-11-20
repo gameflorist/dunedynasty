@@ -225,6 +225,12 @@ VideoA5_ReadPalette(const char *filename)
 	paletteRGB[3*0xFF + 0] = 0xFF;
 	paletteRGB[3*0xFF + 1] = 0xFF;
 	paletteRGB[3*0xFF + 2] = 0xFF;
+
+	/* A bit of a hack: make windtrap magic pink black. */
+	paltoRGB[WINDTRAP_COLOUR] = al_map_rgb(0x00, 0x00, 0x00);
+	paletteRGB[3*WINDTRAP_COLOUR + 0] = 0x00;
+	paletteRGB[3*WINDTRAP_COLOUR + 1] = 0x00;
+	paletteRGB[3*WINDTRAP_COLOUR + 2] = 0x00;
 }
 
 static void
