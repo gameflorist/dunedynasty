@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(dunedynasty)
-set(DUNE_DYNASTY_VERSION 1.3)
+set(DUNE_DYNASTY_VERSION 1.4)
 
 set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
 option(WITH_AUD "AUD" ON)
@@ -36,7 +36,14 @@ if(WITH_FLUIDSYNTH)
 endif(WITH_FLUIDSYNTH)
 
 if(WITH_MAD)
-    pkg_check_modules(MAD REQUIRED mad)
+    if(MINGW)
+	# MINGW MAD missing a package config file.
+	set(MAD_LIBRARIES "mad")
+	set(MAD_FOUND ON)
+    else(MINGW)
+	pkg_check_modules(MAD REQUIRED mad)
+    endif(MINGW)
+
     if(MAD_FOUND)
 	include_directories(SYSTEM ${MAD_INCLUDE_DIRS})
     else(MAD_FOUND)
@@ -101,7 +108,7 @@ install(FILES
 	DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
 
 if(IS_ABSOLUTE ${DUNE_DATA_DIR})
-    foreach(subdir campaign data music)
+    foreach(subdir campaign data gfx music)
 	install(DIRECTORY "${CMAKE_SOURCE_DIR}/dist/${subdir}" DESTINATION "${DUNE_DATA_DIR}")
     endforeach(subdir)
 endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
