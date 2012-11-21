@@ -24,6 +24,7 @@ Plus:
   - Emulated Ad-Lib sound and music playback
   - General MIDI playback using FluidSynth
   - Custom campaigns
+  - Fog of war option
   - Bug fixes
   - Smoother unit animation
   - Brutal AI mode
@@ -48,7 +49,8 @@ Compiling from source
 ---------------------
 (Skip this if you are using precompiled Windows binaries.)
 
-You will need [CMake] and [Allegro 5].  [FluidSynth] is an optional dependency.
+You will need [CMake] and [Allegro 5].  [FluidSynth] and [MAD] are
+optional dependencies.
 
     cmake .
     make
@@ -175,9 +177,6 @@ Dune Dynasty can play various external music sets, e.g. music from Dune 2000.
 Each of these have their own subdirectory in the music/ directory.
 Instructions are provided in the respective FILELIST.TXT files.
 
-Note that many of the external music sets are provided in .mp3 format.
-Currently you must convert them to Ogg Vorbis (.ogg) or FLAC formats.
-
 If you want to disable any music set, edit the [music] section of the
 config file.  If a particular track is missing, it will look for a
 suitable replacement in the default music pack, or use the Adlib music
@@ -262,7 +261,7 @@ Peter, for help on various bits of the code, the music code, and AUDlib.
 Nyerguds, for his Dune II editor.
 
 Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
-purplescrin, EagleEye.
+purplescrin, EagleEye, gerwin.
 
 Westwood Studios, for an amazing game!
 
@@ -278,6 +277,7 @@ David Wang <dswang@users.sourceforge.net>
 [Allegro 5]: http://alleg.sourceforge.net/
 [CMake]: http://www.cmake.org/
 [FluidSynth]: http://sourceforge.net/apps/trac/fluidsynth/
+[MAD]: http://www.underbit.com/products/mad/
 [Download]: http://sourceforge.net/projects/dunedynasty/files/
 [Screenshot]: http://sourceforge.net/projects/dunedynasty/screenshots/screenshot_hark2.png "Screenshot"
 [SourceForge]: http://sourceforge.net/projects/dunedynasty/
