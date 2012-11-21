@@ -64,7 +64,10 @@ static void GUI_EditBox_BlinkCursor(uint16 positionX, bool resetBlink)
 		editBoxShowCursor = !editBoxShowCursor;
 	}
 
-	Prim_FillRect_i(positionX, g_curWidgetYBase, positionX + Font_GetCharWidth('W'), g_curWidgetYBase + g_curWidgetHeight - 1, (editBoxShowCursor) ? g_curWidgetFGColourBlink : g_curWidgetFGColourNormal);
+	/* resetBlink is always true when editting, and false when drawing. */
+	if (!resetBlink) {
+		Prim_FillRect_i(positionX, g_curWidgetYBase, positionX + Font_GetCharWidth('W'), g_curWidgetYBase + g_curWidgetHeight - 1, (editBoxShowCursor) ? g_curWidgetFGColourBlink : g_curWidgetFGColourNormal);
+	}
 }
 
 /**
@@ -112,10 +115,12 @@ int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16
 		unknown4 |= 0x4;
 	}
 
+#if 0
 	if ((unknown4 & 0x4) != 0) Widget_PaintCurrentWidget();
 
 	GUI_DrawText_Wrapper(text, positionX, g_curWidgetYBase, g_curWidgetFGColourBlink, g_curWidgetFGColourNormal, 0);
 	GUI_EditBox_BlinkCursor(positionX + textWidth, false);
+#endif
 
 	while (Input_IsInputAvailable()) {
 		uint16 keyWidth;
@@ -177,4 +182,15 @@ int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16
 	}
 
 	return 0;
+}
+
+void
+GUI_EditBox_Draw(const char *text)
+{
+	uint16 positionX = g_curWidgetXBase;
+	uint16 textWidth = Font_GetStringWidth(text);
+
+	Widget_PaintCurrentWidget();
+	GUI_DrawText_Wrapper(text, positionX, g_curWidgetYBase, g_curWidgetFGColourBlink, g_curWidgetFGColourNormal, 0);
+	GUI_EditBox_BlinkCursor(positionX + textWidth, false);
 }

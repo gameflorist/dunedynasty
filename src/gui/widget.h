@@ -241,5 +241,6 @@ extern void GUI_Widget_ActionPanel_Draw(bool forceDraw);
 extern void GUI_Widget_DrawBorder(uint16 widgetIndex, uint16 borderType, bool pressed);
 extern void GUI_Widget_DrawWindow(const WindowDesc *desc);
 extern void GUI_Widget_DrawAll(Widget *w);
+extern void GUI_Widget_Savegame_Draw(uint16 key);
 
 #endif /* GUI_WIDGET_H */

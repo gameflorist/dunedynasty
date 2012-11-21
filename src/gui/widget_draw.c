@@ -874,3 +874,13 @@ void GUI_Widget_DrawAll(Widget *w)
 		w = GUI_Widget_GetNext(w);
 	}
 }
+
+void
+GUI_Widget_Savegame_Draw(uint16 key)
+{
+	char *saveDesc = g_savegameDesc[key];
+
+	Widget_SetCurrentWidget(15);
+	GUI_DrawText_Wrapper(NULL, 0, 0, 232, 235, 0x22);
+	GUI_EditBox_Draw(saveDesc);
+}

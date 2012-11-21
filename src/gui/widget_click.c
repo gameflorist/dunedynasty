@@ -503,22 +503,22 @@ static void FillSavegameDesc(bool save)
 int GUI_Widget_Savegame_Click(uint16 key)
 {
 	char *saveDesc = g_savegameDesc[key];
-	uint16 loc08;
+	uint16 loc08 = 1;
 
+#if 0
 	if (*saveDesc == '[') *saveDesc = 0;
-
-	loc08 = 1;
-
 	if (*saveDesc == '[') key = s_savegameCountOnDisk;
 
 	GFX_Screen_SetActive(0);
-
 	Widget_SetCurrentWidget(15);
+#endif
 
 	{
 		Widget *w = g_widgetLinkedListTail;
 
+#if 0
 		GUI_DrawText_Wrapper(NULL, 0, 0, 232, 235, 0x22);
+#endif
 
 		int loc0A = GUI_EditBox(saveDesc, 50, 15, g_widgetLinkedListTail, NULL, loc08);
 		loc08 = 2;

@@ -73,6 +73,8 @@ extern uint16 g_cursorSpriteID;
 
 extern bool g_variable_37B2;
 
+extern char g_savegameDesc[5][51];
+
 extern void GUI_DisplayText(const char *str, int16 importance, ...);
 extern void GUI_DrawChar_(unsigned char c, int x, int y);
 extern void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour);
@@ -104,5 +106,6 @@ extern void GUI_DrawScreen(uint16 screenID);
 
 /* editbox.c */
 extern int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, struct Widget *w, uint16 (*tickProc)(void), uint16 unknown4);
+extern void GUI_EditBox_Draw(const char *text);
 
 #endif /* GUI_GUI_H */

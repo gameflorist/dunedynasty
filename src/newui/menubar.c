@@ -645,6 +645,9 @@ MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 			g_gameOverlay = GAMEOVERLAY_SAVE_ENTRY;
 			GUI_Window_Create(&g_savegameNameWindowDesc);
 			s_save_entry = ret - 0x1E;
+
+			char *saveDesc = g_savegameDesc[s_save_entry];
+			if (*saveDesc == '[') *saveDesc = '\0';
 		}
 	}
 }
@@ -810,7 +813,7 @@ MenuBar_DrawOptionsOverlay(void)
 
 		case GAMEOVERLAY_SAVE_ENTRY:
 			GUI_Widget_DrawWindow(&g_savegameNameWindowDesc);
-			GUI_Widget_Savegame_Click(s_save_entry);
+			GUI_Widget_Savegame_Draw(s_save_entry);
 			break;
 
 		case GAMEOVERLAY_GAME_CONTROLS:

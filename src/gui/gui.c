@@ -1678,8 +1678,6 @@ GUI_String_Get_ByIndex(int16 stringID)
 		STR_SLOWEST, STR_SLOW, STR_NORMAL, STR_FAST, STR_FASTEST
 	};
 
-	extern char g_savegameDesc[5][51];
-
 	switch (stringID) {
 		case -5: case -4: case -3: case -2: case -1: {
 			char *s = g_savegameDesc[abs((int16)stringID + 1)];
@@ -2067,6 +2065,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 			Input_Tick(true);
 			int ret = GUI_EditBox(name, 8, 19, NULL, NULL, 0);
+			GUI_EditBox_Draw(name);
 			if (ret == SCANCODE_ENTER) {
 				if (*name == '\0')
 					continue;
