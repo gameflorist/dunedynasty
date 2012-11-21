@@ -3,10 +3,16 @@
 
 #include "../table/sound.h"
 
+enum SoundEffectSources {
+	SOUNDEFFECTS_NONE,
+	SOUNDEFFECTS_SYNTH_ONLY,
+	SOUNDEFFECTS_SAMPLES_PREFERRED,
+	SOUNDEFFECTS_SYNTH_AND_SAMPLES
+};
+
 extern bool g_enable_audio;
 extern bool g_enable_music;
-extern bool g_enable_effects;
-extern bool g_enable_sounds;
+extern enum SoundEffectSources g_enable_sound_effects;
 extern bool g_enable_voices;
 extern bool g_enable_subtitles;
 

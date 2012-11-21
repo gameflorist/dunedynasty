@@ -473,14 +473,24 @@ MenuBar_TickGameControls(void)
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_MUSIC_IS */
 			g_enable_music = !g_enable_music;
-			g_enable_effects = g_enable_music;
 			if (!g_enable_music)
 				Audio_PlayMusic(MUSIC_STOP);
 			break;
 
 		case 0x8000 | 31: /* STR_SOUNDS_ARE */
-			g_enable_sounds = !g_enable_sounds;
-			g_enable_voices = !g_enable_voices;
+			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 31);
+			if (w->state.s.buttonState & 0x04) {
+				g_enable_sound_effects++;
+				if (g_enable_sound_effects > SOUNDEFFECTS_SYNTH_AND_SAMPLES)
+					g_enable_sound_effects = SOUNDEFFECTS_NONE;
+			}
+			else {
+				if (g_enable_sound_effects == SOUNDEFFECTS_NONE)
+					g_enable_sound_effects = SOUNDEFFECTS_SYNTH_AND_SAMPLES;
+				else
+					g_enable_sound_effects--;
+			}
+			g_enable_voices = !(g_enable_sound_effects == SOUNDEFFECTS_NONE || g_enable_sound_effects == SOUNDEFFECTS_SYNTH_ONLY);
 			break;
 
 		case 0x8000 | 32: /* STR_GAME_SPEED */

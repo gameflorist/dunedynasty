@@ -36,6 +36,7 @@ typedef struct GameOption {
 		CONFIG_INT,
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_16,
+		CONFIG_SOUND_EFFECTS,
 		CONFIG_STRING,
 		CONFIG_LANGUAGE,
 		CONFIG_MUSIC_PACK,
@@ -52,6 +53,7 @@ typedef struct GameOption {
 		enum GraphicsDriver *_graphics_driver;
 		enum Language *_language;
 		enum MusicSet *_music_set;
+		enum SoundEffectSources *_sound_effects;
 		enum SubtitleOverride *_subtitle;
 		enum WindowMode *_window_mode;
 	} d;
@@ -100,8 +102,7 @@ static const GameOption s_game_option[] = {
 	{ "controls",   "pan_sensitivity",          CONFIG_FLOAT_05_2,  .d._float = &g_gameConfig.panSensitivity },
 
 	{ "audio",  "enable_music",     CONFIG_BOOL,    .d._bool = &g_enable_music },
-	{ "audio",  "enable_effects",   CONFIG_BOOL,    .d._bool = &g_enable_effects },
-	{ "audio",  "enable_sbsounds",  CONFIG_BOOL,    .d._bool = &g_enable_sounds },
+	{ "audio",  "enable_sounds",    CONFIG_SOUND_EFFECTS,   .d._sound_effects = &g_enable_sound_effects },
 	{ "audio",  "enable_voices",    CONFIG_BOOL,    .d._bool = &g_enable_voices },
 	{ "audio",  "enable_subtitles", CONFIG_BOOL,    .d._bool = &g_enable_subtitles },
 	{ "audio",  "music_volume",     CONFIG_FLOAT,   .d._float = &music_volume },
@@ -349,6 +350,28 @@ Config_SetMusicPack(ALLEGRO_CONFIG *config, const char *section, const char *key
 }
 
 static void
+Config_GetSoundEffects(const char *str, enum SoundEffectSources *value)
+{
+	const char c = tolower(str[0]);
+
+	     if (c == 'n') *value = SOUNDEFFECTS_NONE;
+	else if (c == 's') *value = SOUNDEFFECTS_SYNTH_ONLY;
+	else if (c == 'd') *value = SOUNDEFFECTS_SAMPLES_PREFERRED;
+	else if (c == 'b') *value = SOUNDEFFECTS_SYNTH_AND_SAMPLES;
+}
+
+static void
+Config_SetSoundEffects(ALLEGRO_CONFIG *config, const char *section, const char *key, enum SoundEffectSources value)
+{
+	const char *str[] = { "none", "synth", "digital", "both" };
+
+	if (value > SOUNDEFFECTS_SYNTH_AND_SAMPLES)
+		value = SOUNDEFFECTS_SYNTH_AND_SAMPLES;
+
+	al_set_config_value(config, section, key, str[value]);
+}
+
+static void
 Config_GetSubtitle(const char *str, enum SubtitleOverride *value)
 {
 	const char c = tolower(str[0]);
@@ -547,6 +570,10 @@ GameOptions_Load(void)
 				Config_GetMusicPack(str, opt->d._music_set);
 				break;
 
+			case CONFIG_SOUND_EFFECTS:
+				Config_GetSoundEffects(str, opt->d._sound_effects);
+				break;
+
 			case CONFIG_SUBTITLE:
 				Config_GetSubtitle(str, opt->d._subtitle);
 				break;
@@ -650,6 +677,10 @@ GameOptions_Save(void)
 
 			case CONFIG_MUSIC_PACK:
 				Config_SetMusicPack(s_configFile, opt->section, opt->key, *(opt->d._music_set));
+				break;
+
+			case CONFIG_SOUND_EFFECTS:
+				Config_SetSoundEffects(s_configFile, opt->section, opt->key, *(opt->d._sound_effects));
 				break;
 
 			case CONFIG_WINDOW_MODE:

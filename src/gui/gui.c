@@ -1692,8 +1692,17 @@ GUI_String_Get_ByIndex(int16 stringID)
 			break;
 
 		case -11:
-			stringID = (g_enable_sounds ? STR_ON : STR_OFF);
-			break;
+			if (SOUNDEFFECTS_SYNTH_ONLY <= g_enable_sound_effects && g_enable_sound_effects <= SOUNDEFFECTS_SYNTH_AND_SAMPLES) {
+				const char *str[] = {
+					NULL, "Synth", "Digital", "Both"
+				};
+
+				return str[g_enable_sound_effects];
+			}
+			else {
+				stringID = STR_OFF;
+				break;
+			}
 
 		case -12:
 			stringID = speedStrings[g_gameConfig.gameSpeed];

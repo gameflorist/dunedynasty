@@ -24,8 +24,7 @@
 bool g_enable_audio;
 
 bool g_enable_music = true;
-bool g_enable_effects = true;
-bool g_enable_sounds = true;
+enum SoundEffectSources g_enable_sound_effects = SOUNDEFFECTS_SYNTH_AND_SAMPLES;
 bool g_enable_voices = true;
 bool g_enable_subtitles = false;
 
@@ -244,7 +243,7 @@ Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 void
 Audio_PlayEffect(enum SoundID effectID)
 {
-	if ((!g_enable_audio) || (!g_enable_effects))
+	if ((!g_enable_audio) || (g_enable_sound_effects == SOUNDEFFECTS_NONE))
 		return;
 
 	AudioA5_PlaySoundEffect(effectID);
@@ -376,7 +375,9 @@ Audio_LoadSampleSet(enum SampleSet setID)
 void
 Audio_PlaySample(enum SampleID sampleID, int volume, float pan)
 {
-	if ((!g_enable_audio) || (!g_enable_sounds) || (sampleID == SAMPLE_INVALID))
+	if ((!g_enable_audio) || (sampleID == SAMPLE_INVALID) ||
+			(g_enable_sound_effects == SOUNDEFFECTS_NONE ||
+			 g_enable_sound_effects == SOUNDEFFECTS_SYNTH_ONLY))
 		return;
 
 	const int64_t curr_ticks = Timer_GetTicks();
@@ -397,15 +398,31 @@ Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position)
 	assert(soundID < SOUNDID_MAX);
 
 	const enum SampleID sampleID = g_table_voiceMapping[soundID];
+	bool play_synth = (sampleID == SAMPLE_INVALID);
 
-	/* Don't play both Adlib and sound blaster effects.
-	 *
-	 * XXX: extra additional explosion sounds would be nice.
-	 */
-	if (!g_enable_sounds || (sampleID == SAMPLE_INVALID))
+	switch (g_enable_sound_effects) {
+		case SOUNDEFFECTS_NONE:
+			return;
+
+		case SOUNDEFFECTS_SYNTH_ONLY:
+			play_synth = true;
+			break;
+
+		case SOUNDEFFECTS_SAMPLES_PREFERRED:
+			break;
+
+		case SOUNDEFFECTS_SYNTH_AND_SAMPLES:
+			if (!play_synth) {
+				if (Tools_Random_256() & 0x1)
+					play_synth = true;
+			}
+			break;
+	}
+
+	if (play_synth) {
 		Audio_PlayEffect(soundID);
-
-	if (g_enable_sounds && (sampleID != SAMPLE_INVALID)) {
+	}
+	else {
 		int volume = 255;
 		float pan = 0.0f;
 
@@ -441,7 +458,9 @@ Audio_PlaySound(enum SoundID soundID)
 void
 Audio_PlaySoundCutscene(enum SoundID soundID)
 {
-	if ((!g_enable_sounds) || (soundID == SOUND_INVALID))
+	if ((soundID == SOUND_INVALID) ||
+			(g_enable_sound_effects == SOUNDEFFECTS_NONE ||
+			 g_enable_sound_effects == SOUNDEFFECTS_SYNTH_ONLY))
 		return;
 
 	const enum SampleID sampleID = g_table_voiceMapping[soundID];
