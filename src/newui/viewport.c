@@ -242,6 +242,17 @@ Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 	if (Unit_GetHouseID(u) != g_playerHouseID)
 		return;
 
+	/* Action might not be available to the unit due to multiple selection
+	 * (e.g. no attack for saboteurs).
+	 */
+	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+	if ((action != ui->o.actionsPlayer[0]) &&
+	    (action != ui->o.actionsPlayer[1]) &&
+	    (action != ui->o.actionsPlayer[2]) &&
+	    (action != ui->o.actionsPlayer[3])) {
+		return;
+	}
+
 	Object_Script_Variable4_Clear(&u->o);
 	u->targetAttack = 0;
 	u->targetMove = 0;
