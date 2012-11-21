@@ -1490,6 +1490,106 @@ VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 	*rety = y;
 }
 
+static ALLEGRO_BITMAP *
+VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
+{
+	ALLEGRO_BITMAP *dst = NULL;
+	char filename[1024];
+	assert(size == 16);
+
+	snprintf(filename, sizeof(filename), "%s/gfx/%s", g_dune_data_dir, mapfile);
+	FILE *fp = fopen(filename, "r");
+	if (fp == NULL)
+		return NULL;
+
+	snprintf(filename, sizeof(filename), "%s/gfx/%s", g_dune_data_dir, bmpfile);
+	ALLEGRO_BITMAP *src = al_load_bitmap(filename);
+	if (src == NULL)
+		goto end;
+
+	int w, h, c;
+	if (fscanf(fp, "%d %d\n", &w, &h) != 2)
+		goto end;
+
+	do {
+		c = fgetc(fp);
+	} while (c != EOF && c != '\n');
+
+	dst = icon_texture;
+	al_set_target_bitmap(dst);
+
+	int sx = 0, sy = 0;
+	int dx = 1, dy = 1;
+	while (!feof(fp)) {
+		int iconID;
+
+		if (fscanf(fp, "%d", &iconID) != 1) {
+			/* Skip until next line. */
+			do {
+				c = fgetc(fp);
+			} while (c != EOF && c != '\n');
+
+			sx = 0;
+			sy += size;
+			continue;
+		}
+
+		if (iconID <= 0 || iconID >= ICONID_MAX) {
+			sx += size;
+			continue;
+		}
+
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+			IconCoord *coord = &s_icon[iconID][houseID];
+
+			if (houseID != HOUSE_HARKONNEN &&
+					coord->sx == s_icon[iconID][HOUSE_HARKONNEN].sx &&
+					coord->sy == s_icon[iconID][HOUSE_HARKONNEN].sy) {
+			}
+			else {
+				dx = coord->sx;
+				dy = coord->sy;
+
+				al_draw_bitmap_region(src, sx, sy, size, size, dx, dy, 0);
+
+				/* Remap. */
+				if (houseID != HOUSE_HARKONNEN) {
+					ALLEGRO_LOCKED_REGION *reg;
+
+					reg = al_lock_bitmap_region(dst, dx, dy, size, size, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
+					assert(reg != NULL);
+
+					for (int y = 0; y < size; y++) {
+						unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
+
+						for (int x = 0; x < size; x++) {
+							for (int c = 144; c <= 150; c++) {
+								if (memcmp(&row[reg->pixel_size * x], &paletteRGB[3*c], 3) == 0) {
+									row[reg->pixel_size * x + 0] = paletteRGB[3 * (c + 16 * houseID) + 0];
+									row[reg->pixel_size * x + 1] = paletteRGB[3 * (c + 16 * houseID) + 1];
+									row[reg->pixel_size * x + 2] = paletteRGB[3 * (c + 16 * houseID) + 2];
+									break;
+								}
+							}
+						}
+					}
+
+					al_unlock_bitmap(dst);
+				}
+			}
+		}
+
+		sx += size;
+	}
+
+end:
+
+	fclose(fp);
+	al_destroy_bitmap(src);
+
+	return dst;
+}
+
 static void
 VideoA5_MaskDebrisTiles(ALLEGRO_BITMAP *membmp)
 {
@@ -1616,6 +1716,9 @@ VideoA5_InitIcons(unsigned char *buf)
 
 	/* Apply rubble mask for transparent rubble. */
 	VideoA5_MaskDebrisTiles(icon_texture);
+
+	/* Load external tile sheets. */
+	VideoA5_InitExternalTiles("icons16.map", "icons16.png", 16);
 
 	/* Connect neighbours for interpolation. */
 	VideoA5_DrawIconPadding(icon_texture, connect);
