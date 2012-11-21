@@ -90,6 +90,8 @@ typedef struct FadeInAux {
 
 typedef struct IconCoord {
 	int sx, sy;
+	int sx32, sy32;
+	int sx48, sy48;
 } IconCoord;
 
 typedef struct IconConnectivity {
@@ -136,7 +138,9 @@ static unsigned char paletteRGB[3 * 256];
 static CPSStore *s_cps;
 static ALLEGRO_BITMAP *scratch; /* temporary bitmap for non-speed-critical images. */
 static ALLEGRO_BITMAP *interface_texture; /* cps, wsa, and fonts. */
-static ALLEGRO_BITMAP *icon_texture;
+static ALLEGRO_BITMAP *icon_texture;      /* 16x16 tiles. */
+static ALLEGRO_BITMAP *icon_texture32;    /* 32x32 tiles. */
+static ALLEGRO_BITMAP *icon_texture48;    /* 48x48 tiles. */
 static ALLEGRO_BITMAP *shape_texture;
 static ALLEGRO_BITMAP *region_texture;
 static IconCoord s_icon[ICONID_MAX][HOUSE_MAX];
@@ -409,7 +413,11 @@ VideoA5_Uninit(void)
 	interface_texture = NULL;
 
 	al_destroy_bitmap(icon_texture);
+	al_destroy_bitmap(icon_texture32);
+	al_destroy_bitmap(icon_texture48);
 	icon_texture = NULL;
+	icon_texture32 = NULL;
+	icon_texture48 = NULL;
 
 	al_destroy_bitmap(shape_texture);
 	shape_texture = NULL;
@@ -1401,6 +1409,8 @@ VideoA5_DrawIconPadding(ALLEGRO_BITMAP *membmp, IconConnectivity *connect)
 	if (dup == NULL)
 		return;
 
+	al_set_target_bitmap(membmp);
+
 	for (uint16 iconID = 0; iconID < ICONID_MAX; iconID++) {
 		const IconCoord *targ = &s_icon[iconID][HOUSE_HARKONNEN];
 
@@ -1495,7 +1505,7 @@ VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 {
 	ALLEGRO_BITMAP *dst = NULL;
 	char filename[1024];
-	assert(size == 16);
+	assert(size == 16 || size == 32 || size == 48);
 
 	snprintf(filename, sizeof(filename), "%s/gfx/%s", g_dune_data_dir, mapfile);
 	FILE *fp = fopen(filename, "r");
@@ -1515,7 +1525,15 @@ VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 		c = fgetc(fp);
 	} while (c != EOF && c != '\n');
 
-	dst = icon_texture;
+	if (size != 16) {
+		dst = al_create_bitmap(w, h);
+		if (dst == NULL)
+			goto end;
+	}
+	else {
+		dst = icon_texture;
+	}
+
 	al_set_target_bitmap(dst);
 
 	int sx = 0, sy = 0;
@@ -1545,10 +1563,23 @@ VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 			if (houseID != HOUSE_HARKONNEN &&
 					coord->sx == s_icon[iconID][HOUSE_HARKONNEN].sx &&
 					coord->sy == s_icon[iconID][HOUSE_HARKONNEN].sy) {
+				if (size == 32) {
+					coord->sx32 = s_icon[iconID][HOUSE_HARKONNEN].sx32;
+					coord->sy32 = s_icon[iconID][HOUSE_HARKONNEN].sy32;
+				}
+				else if (size == 48) {
+					coord->sx48 = s_icon[iconID][HOUSE_HARKONNEN].sx48;
+					coord->sy48 = s_icon[iconID][HOUSE_HARKONNEN].sy48;
+				}
 			}
 			else {
-				dx = coord->sx;
-				dy = coord->sy;
+				if (size == 16) {
+					dx = coord->sx;
+					dy = coord->sy;
+				}
+				else {
+					VideoA5_GetNextXY(w, h, dx, dy, size + 1, size + 1, size + 1, &dx, &dy);
+				}
 
 				al_draw_bitmap_region(src, sx, sy, size, size, dx, dy, 0);
 
@@ -1576,6 +1607,17 @@ VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 
 					al_unlock_bitmap(dst);
 				}
+
+				if (size == 32) {
+					coord->sx32 = dx;
+					coord->sy32 = dy;
+				}
+				else if (size == 48) {
+					coord->sx48 = dx;
+					coord->sy48 = dy;
+				}
+
+				dx += size + 2;
 			}
 		}
 
@@ -1719,12 +1761,16 @@ VideoA5_InitIcons(unsigned char *buf)
 
 	/* Load external tile sheets. */
 	VideoA5_InitExternalTiles("icons16.map", "icons16.png", 16);
+	icon_texture32 = VideoA5_InitExternalTiles("icons32.map", "icons32.png", 32);
+	icon_texture48 = VideoA5_InitExternalTiles("icons48.map", "icons48.png", 48);
 
 	/* Connect neighbours for interpolation. */
 	VideoA5_DrawIconPadding(icon_texture, connect);
 
 #if OUTPUT_TEXTURES
-	al_save_bitmap("icons.png", icon_texture);
+	al_save_bitmap("icons16.png", icon_texture);
+	al_save_bitmap("icons32.png", icon_texture32);
+	al_save_bitmap("icons48.png", icon_texture48);
 #endif
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
@@ -1734,6 +1780,12 @@ VideoA5_InitIcons(unsigned char *buf)
 
 	icon_texture = VideoA5_ConvertToVideoBitmap(icon_texture);
 	assert(icon_texture != NULL);
+
+	if (icon_texture32 != NULL)
+		icon_texture32 = VideoA5_ConvertToVideoBitmap(icon_texture32);
+
+	if (icon_texture48 != NULL)
+		icon_texture48 = VideoA5_ConvertToVideoBitmap(icon_texture48);
 
 	al_set_new_bitmap_flags(bitmap_flags);
 	free(connect);
@@ -1748,16 +1800,40 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 	const IconCoord *coord = &s_icon[iconID][houseID];
 	assert(coord->sx != 0 && coord->sy != 0);
 
-	al_draw_bitmap_region(icon_texture, coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
+	/* Windtraps need special overlay. */
+	const bool is_windtrap = (g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8] <= iconID && iconID <= g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 15]);
+	const IconCoord *overlay = NULL;
 
-	/* Windtraps. */
-	if (g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8] <= iconID && iconID <= g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 15]) {
-		const uint16 overlayID = ICONID_MAX - (iconID - g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8]) - 1;
-		coord = &s_icon[overlayID][HOUSE_HARKONNEN];
-		assert(coord->sx != 0 && coord->sy != 0);
+	if (is_windtrap) {
+		uint16 overlayID = ICONID_MAX - (iconID - g_iconMap[g_iconMap[ICM_ICONGROUP_WINDTRAP_POWER] + 8]) - 1;
+		overlay = &s_icon[overlayID][HOUSE_HARKONNEN];
+	}
 
-		al_draw_tinted_bitmap_region(icon_texture, paltoRGB[WINDTRAP_COLOUR],
-				coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
+	if (2.99f <= g_screenDiv[SCREENDIV_VIEWPORT].scalex && g_screenDiv[SCREENDIV_VIEWPORT].scalex <= 3.01f &&
+			icon_texture48 != NULL && coord->sx48 != 0 && coord->sy48 != 0) {
+		al_draw_scaled_bitmap(icon_texture48, coord->sx48, coord->sy48, 48, 48, x, y, TILE_SIZE, TILE_SIZE, 0);
+
+		if (overlay) {
+			al_draw_tinted_scaled_bitmap(icon_texture48, paltoRGB[WINDTRAP_COLOUR],
+					overlay->sx48, overlay->sy48, 48, 48, x, y, TILE_SIZE, TILE_SIZE, 0);
+		}
+	}
+	else if (1.99f <= g_screenDiv[SCREENDIV_VIEWPORT].scalex && g_screenDiv[SCREENDIV_VIEWPORT].scalex <= 2.01f &&
+			icon_texture32 != NULL && coord->sx32 != 0 && coord->sy32 != 0) {
+		al_draw_scaled_bitmap(icon_texture32, coord->sx32, coord->sy32, 32, 32, x, y, TILE_SIZE, TILE_SIZE, 0);
+
+		if (overlay) {
+			al_draw_tinted_scaled_bitmap(icon_texture32, paltoRGB[WINDTRAP_COLOUR],
+					overlay->sx32, overlay->sy32, 32, 32, x, y, TILE_SIZE, TILE_SIZE, 0);
+		}
+	}
+	else {
+		al_draw_bitmap_region(icon_texture, coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
+
+		if (overlay) {
+			al_draw_tinted_bitmap_region(icon_texture, paltoRGB[WINDTRAP_COLOUR],
+					overlay->sx, overlay->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
+		}
 	}
 }
 
