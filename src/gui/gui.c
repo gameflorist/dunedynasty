@@ -1671,7 +1671,8 @@ static void GUI_FactoryWindow_Init(Structure *s);
 extern FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost);
 #endif
 
-char *GUI_String_Get_ByIndex(int16 stringID)
+const char *
+GUI_String_Get_ByIndex(int16 stringID)
 {
 	const uint16 speedStrings[5] = {
 		STR_SLOWEST, STR_SLOW, STR_NORMAL, STR_FAST, STR_FASTEST
