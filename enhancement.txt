@@ -27,7 +27,7 @@ Gameplay changes
 - Building repair cost has been reduced.
 
 - Palace repairs now cost nothing. This is actually a bug, read more here.
-    *** This seems to have been fixed by OpenDUNE.
+    *** Fixed: palace repairs now cost 2 per tick.
 
 - The maximum overall number of buildings that can be present on the
     map reduced from 81 to 80.
@@ -107,11 +107,14 @@ Structure
 - Windtraps that have less than 50% hp still produce 50% of the power, even so
     the GUI tells you differently. Of course the GUI makes more sense in this
     case.
+
 - Repair cost calculation is unfair. Dune2 uses a 256 float-resolution,
     meaning that you get rounding errors very fast. In result, Palace costs
     nothing to repair, and a windtrap costs 2 credits instead of 3 credits per
     repair tick. In detail: (2 * 256 / hitpoints) * credits / 256. The first
     part causes rounding errors.
+    *** Reverted this change, with fix for palaces.  Also, formula shown is wrong.
+
 - If one structure gives a script error, all structures after it in the linked
     list are not handled. This doesn't really seem correct.
 - In Script function which finds the closest unit to target, it doesn't pick
@@ -141,8 +144,10 @@ Scenario
 --------
 - A mistake in reading the '+' causes repeat for reinforcements to be always
     false. In result reinforcement is only send once.
+
 - The structure '% hitpoints' is ignored. In result all structures always
     have 100% hitpoints.
+    *** Reverted this change.
 
 
 House
@@ -243,9 +248,7 @@ Glitches and improvement suggestions
     *** Shadows are drawn into the original sprites.
 
 - Restore unused speech clips and sound effects.
-
 - Restore the "special bloom" map feature.
-    *** Not yet.
 
 - If you start building up your base, build a Windtrap and start
    building a Refinery, then save your game and load it, you're very
