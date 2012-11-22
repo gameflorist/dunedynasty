@@ -55,6 +55,7 @@ extern bool enhancement_play_additional_voices;
 extern bool enhancement_raise_scenario_unit_cap;
 extern bool enhancement_read_scenario_structure_health;
 extern enum RepairCostFormula enhancement_repair_cost_formula;
+extern enum RepairCostFormula enhancement_repair_cost_formula_default;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
 extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;

@@ -152,7 +152,8 @@ bool enhancement_read_scenario_structure_health = false;
  * The repair cost formula is different in v1.0 and v1.07, and caused
  * palace repairs to become free in v1.07 due to a flooring bug.
  */
-enum RepairCostFormula enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
+enum RepairCostFormula enhancement_repair_cost_formula;
+enum RepairCostFormula enhancement_repair_cost_formula_default = REPAIR_COST_v107_HIGH_HP_FIX;
 
 /**
  * A mistake in reading the scenario script causes reinforcements to
