@@ -158,11 +158,27 @@ void GameLoop_Structure(void)
 			} else if (s->o.flags.s.repairing) {
 				uint16 repairCost;
 
-				/* ENHANCEMENT -- The calculation of the repaircost is a bit unfair in Dune2, because of rounding errors (they use a 256 float-resolution, which is not sufficient) */
-				if (g_dune2_enhanced) {
-					repairCost = si->o.buildCredits * 2 / si->o.hitpoints;
-				} else {
-					repairCost = ((2 * 256 / si->o.hitpoints) * si->o.buildCredits + 128) / 256;
+				switch (enhancement_repair_cost_formula) {
+					default:
+					case REPAIR_COST_v107:
+					case REPAIR_COST_v107_HIGH_HP_FIX:
+						repairCost = ((2 * 256 / si->o.hitpoints) * si->o.buildCredits + 128) / 256;
+
+						/* ENHANCEMENT -- account for high hitpoints structures. */
+						if (enhancement_repair_cost_formula == REPAIR_COST_v107_HIGH_HP_FIX && si->o.hitpoints > 512) {
+							repairCost = (2 * 2 * si->o.buildCredits + si->o.hitpoints) / (2 * si->o.buildCredits);
+						}
+						break;
+
+					case REPAIR_COST_v100:
+						/* This seems to be the repair formula for v1.0, but only verified through testing. */
+						repairCost = ((10 * 256 / si->o.hitpoints) * si->o.buildCredits + 128) / 256;
+						break;
+
+					case REPAIR_COST_OPENDUNE:
+						/* OpenDUNE's repair cost calculation. */
+						repairCost = 2 * si->o.buildCredits / si->o.hitpoints;
+						break;
 				}
 
 				if (repairCost <= h->credits) {

@@ -5,6 +5,13 @@
 
 #include <stdbool.h>
 
+enum RepairCostFormula {
+	REPAIR_COST_v107,
+	REPAIR_COST_v100,
+	REPAIR_COST_OPENDUNE,
+	REPAIR_COST_v107_HIGH_HP_FIX
+};
+
 enum SecurityQuestionMode {
 	SECURITY_QUESTION_ENABLE,
 	SECURITY_QUESTION_ACCEPT_ALL,
@@ -47,6 +54,7 @@ extern bool enhancement_nonordos_deviation;
 extern bool enhancement_play_additional_voices;
 extern bool enhancement_raise_scenario_unit_cap;
 extern bool enhancement_read_scenario_structure_health;
+extern enum RepairCostFormula enhancement_repair_cost_formula;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
 extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;
