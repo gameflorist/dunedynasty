@@ -1098,7 +1098,8 @@ void GameLoop_Main(bool new_game)
 			key = 0;
 		}
 
-		if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE) {
+		if ((g_gameOverlay == GAMEOVERLAY_NONE) &&
+			(g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE)) {
 			if (Unit_AnySelected()) {
 				if (l_timerUnitStatus < g_timerGame) {
 					Unit_DisplayGroupStatusText();
