@@ -283,7 +283,7 @@ uint16 Tools_RandomRange(uint16 min, uint16 max)
 	}
 
 	do {
-		value = rand();
+		value = rand() & 0x7FFF;
 		value *= max - min + 1;
 		value /= 0x8000;
 		value += min;
