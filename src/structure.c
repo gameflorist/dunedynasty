@@ -2297,7 +2297,7 @@ void Structure_InitFactoryItems(const Structure *s)
 		uint16 seed = (seconds / 60) + g_scenarioID + g_playerHouseID;
 		seed *= seed;
 
-		srand(seed);
+		Tools_Random_SeedLCG(seed);
 	}
 
 	const StructureInfo *si = &g_table_structureInfo[s->o.type];

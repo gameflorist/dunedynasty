@@ -1232,6 +1232,7 @@ static bool Unknown_25C4_000E(void)
 	GFX_SetPalette(g_palette_998A);
 
 	srand((unsigned)time(NULL));
+	Tools_Random_SeedLCG(time(NULL));
 
 	Widget_SetCurrentWidget(0);
 

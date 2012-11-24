@@ -17,6 +17,7 @@
 
 
 static uint8 s_randomSeed[4];
+static uint32 s_lcg;
 
 uint16 Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum, bool inverseSpeed)
 {
@@ -264,6 +265,20 @@ void Tools_Random_Seed(uint32 seed)
 	s_randomSeed[3] = (seed >> 24) & 0xFF;
 }
 
+void
+Tools_Random_SeedLCG(uint16 seed)
+{
+	s_lcg = seed;
+}
+
+static uint16
+Tools_Random_LCG(void)
+{
+	/* Borland C/C++ rand. */
+	s_lcg = 0x015A4E35 * s_lcg + 1;
+	return (s_lcg >> 16) & 0x7FFF;
+}
+
 /**
  * Get a random value between the given values.
  *
@@ -283,7 +298,7 @@ uint16 Tools_RandomRange(uint16 min, uint16 max)
 	}
 
 	do {
-		value = rand() & 0x7FFF;
+		value = Tools_Random_LCG();
 		value *= max - min + 1;
 		value /= 0x8000;
 		value += min;
