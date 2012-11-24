@@ -815,9 +815,13 @@ VideoA5_InitDissolve_D3DStencil(ALLEGRO_BITMAP *src, FadeInAux *aux)
 {
 	LPDIRECT3DDEVICE9 pDevice = al_get_d3d_device(display);
 
-	IDirect3DDevice9_Clear(pDevice, 0, NULL, D3DCLEAR_STENCIL, 0, 0, 0);
-
-	aux->bmp = src;
+	if (pDevice == NULL) {
+		aux->bmp = NULL;
+	}
+	else {
+		IDirect3DDevice9_Clear(pDevice, 0, NULL, D3DCLEAR_STENCIL, 0, 0, 0);
+		aux->bmp = src;
+	}
 }
 
 static void
@@ -827,6 +831,8 @@ VideoA5_DrawDissolve_D3DStencil(const FadeInAux *aux)
 		return;
 
 	LPDIRECT3DDEVICE9 pDevice = al_get_d3d_device(display);
+	if (pDevice == NULL)
+		return;
 
 	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, TRUE);
 	/* ?glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE); */
@@ -860,6 +866,8 @@ static void
 VideoA5_TickDissolve_D3DStencil(FadeInAux *aux)
 {
 	LPDIRECT3DDEVICE9 pDevice = al_get_d3d_device(display);
+	if (pDevice == NULL)
+		return;
 
 	IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILENABLE, TRUE);
 	/* glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE); */
@@ -981,8 +989,10 @@ Video_DrawFadeIn(const FadeInAux *aux)
 bool
 Video_TickFadeIn(FadeInAux *aux)
 {
-	assert(0 <= aux->frame && aux->frame <= aux->height);
+	if (aux == NULL)
+		return true;
 
+	assert(0 <= aux->frame && aux->frame <= aux->height);
 	if (aux->frame >= aux->height)
 		return true;
 
@@ -1012,7 +1022,8 @@ static CPSStore *
 VideoA5_ExportCPS(enum SearchDirectory dir, const char *filename, unsigned char *buf)
 {
 	CPSStore *cps = malloc(sizeof(*cps));
-	assert(cps != NULL);
+	if (cps == NULL)
+		return NULL;
 
 	cps->next = NULL;
 	if (dir == SEARCHDIR_CAMPAIGN_DIR) {
@@ -1023,7 +1034,10 @@ VideoA5_ExportCPS(enum SearchDirectory dir, const char *filename, unsigned char 
 	}
 
 	cps->bmp = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
-	assert(cps->bmp != NULL);
+	if (cps->bmp == NULL) {
+		free(cps);
+		return NULL;
+	}
 
 	bool use_benepal = false;
 	if ((strncmp(filename, "MENTATM.CPS", 11) == 0) ||
@@ -1062,6 +1076,9 @@ VideoA5_LoadCPS(enum SearchDirectory dir, const char *filename)
 	}
 
 	cps = VideoA5_ExportCPS(dir, filename, GFX_Screen_Get_ByIndex(2));
+	if (cps == NULL)
+		return NULL;
+
 	cps->next = s_cps;
 	s_cps = cps;
 
@@ -1130,6 +1147,7 @@ VideoA5_InitCPS(void)
 	CPSStore *cps_screen = VideoA5_ExportCPS(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", buf);
 	CPSStore *cps_fame = VideoA5_LoadCPS(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS");
 	CPSStore *cps_mapmach = VideoA5_LoadCPS(SEARCHDIR_GLOBAL_DATA_DIR, "MAPMACH.CPS");
+	assert(cps_screen != NULL && cps_fame != NULL && cps_mapmach != NULL);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
 
@@ -1198,7 +1216,8 @@ VideoA5_DrawCPS(enum SearchDirectory dir, const char *filename)
 {
 	CPSStore *cps = VideoA5_LoadCPS(dir, filename);
 
-	al_draw_bitmap(cps->bmp, 0, 0, 0);
+	if (cps != NULL)
+		al_draw_bitmap(cps->bmp, 0, 0, 0);
 }
 
 void
@@ -1206,7 +1225,8 @@ VideoA5_DrawCPSRegion(enum SearchDirectory dir, const char *filename, int sx, in
 {
 	CPSStore *cps = VideoA5_LoadCPS(dir, filename);
 
-	al_draw_bitmap_region(cps->bmp, sx, sy, w, h, dx, dy, 0);
+	if (cps != NULL)
+		al_draw_bitmap_region(cps->bmp, sx, sy, w, h, dx, dy, 0);
 }
 
 void
@@ -1271,6 +1291,8 @@ FadeInAux *
 Video_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fade_in)
 {
 	CPSStore *cps = VideoA5_LoadCPS(SEARCHDIR_GLOBAL_DATA_DIR, filename);
+	if (cps == NULL)
+		return NULL;
 
 	return VideoA5_InitFadeInSprite(cps->bmp, x, y, w, h, fade_in);
 }
