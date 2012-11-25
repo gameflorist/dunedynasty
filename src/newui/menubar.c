@@ -10,6 +10,7 @@
 #include "menubar.h"
 
 #include "mentat.h"
+#include "viewport.h"
 #include "../audio/audio.h"
 #include "../common_a5.h"
 #include "../config.h"
@@ -544,6 +545,8 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 	const int lines = GUI_SplitText(textBuffer, (w->width - ((shapeID == SHAPE_INVALID) ? 2*8 : 7*8)) - 6, '\r');
 	w->height = g_fontCurrent->height * max(lines, 3) + 18;
 
+	/* Stop panning mode and show the cursor for this blocking dialog. */
+	Viewport_Init();
 	Video_ShowCursor();
 	Input_History_Clear();
 
