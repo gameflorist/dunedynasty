@@ -95,6 +95,7 @@ extern Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, ui
 extern bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID);
 extern void Structure_CalculateHitpointsMax(struct House *h);
 extern void Structure_SetState(Structure *s, int16 animation);
+extern bool Structure_SupportsRallyPoints(enum StructureType s);
 extern void Structure_SetRallyPoint(Structure *s, uint16 packed);
 extern Structure *Structure_Get_ByPackedTile(uint16 packed);
 extern uint32 Structure_GetStructuresBuilt(struct House *h);

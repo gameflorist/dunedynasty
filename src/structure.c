@@ -793,6 +793,18 @@ void Structure_SetState(Structure *s, int16 state)
 	Structure_UpdateMap(s);
 }
 
+bool
+Structure_SupportsRallyPoints(enum StructureType s)
+{
+	return ((s == STRUCTURE_LIGHT_VEHICLE) ||
+	        (s == STRUCTURE_HEAVY_VEHICLE) ||
+	        (s == STRUCTURE_WOR_TROOPER) ||
+	        (s == STRUCTURE_BARRACKS) ||
+	        (s == STRUCTURE_STARPORT) ||
+	        (s == STRUCTURE_REFINERY) ||
+	        (s == STRUCTURE_REPAIR));
+}
+
 void Structure_SetRallyPoint(Structure *s, uint16 packed)
 {
 	if (s->o.houseID != g_playerHouseID)

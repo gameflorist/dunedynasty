@@ -734,6 +734,15 @@ Viewport_Click(Widget *w)
 					if (!House_AreAllied(houseID, g_playerHouseID))
 						perform_context_sensitive_action = true;
 				}
+				else {
+					const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+
+					/* Set rally point if we left click on an empty tile. */
+					if ((s != NULL) && !g_map[packed].hasUnit && !g_map[packed].hasStructure &&
+							Structure_SupportsRallyPoints(s->o.type)) {
+						perform_context_sensitive_action = true;
+					}
+				}
 			}
 
 			if (!perform_context_sensitive_action)
@@ -1142,13 +1151,7 @@ Viewport_DrawRallyPoint(void)
 	if ((s == NULL) || (s->rallyPoint == 0xFFFF))
 		return;
 
-	if ((s->o.type == STRUCTURE_LIGHT_VEHICLE) ||
-	    (s->o.type == STRUCTURE_HEAVY_VEHICLE) ||
-	    (s->o.type == STRUCTURE_WOR_TROOPER) ||
-	    (s->o.type == STRUCTURE_BARRACKS) ||
-	    (s->o.type == STRUCTURE_STARPORT) ||
-	    (s->o.type == STRUCTURE_REFINERY) ||
-	    (s->o.type == STRUCTURE_REPAIR)) {
+	if (Structure_SupportsRallyPoints(s->o.type)) {
 		const int tx = Tile_GetPackedX(g_viewportPosition);
 		const int ty = Tile_GetPackedY(g_viewportPosition);
 		const int x1 = -g_viewport_scrollOffsetX + (TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - tx)) + (TILE_SIZE * g_selectionWidth)/2;
