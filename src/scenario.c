@@ -1048,6 +1048,11 @@ static void Scenario_Load_Reinforcement(const char *key, char *settings)
 	Unit *u;
 	char *split;
 
+	/* There is a bug here: keys beginning with ';' are not ignored
+	 * but read as index 0.  This means that up to 10 units are
+	 * created, and the final unit is delivered.  The other indices
+	 * are unusable.  This only occurs in SCENA002,SCENA003,SCENA004.
+	 */
 	index = atoi(key);
 
 	/* The value should have 4 values separated by a ',' */
