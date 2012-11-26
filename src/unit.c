@@ -2565,6 +2565,41 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 	Unit_Remove(unit);
 }
 
+static bool
+Unit_StructureInRange(const Unit *unit, const Structure *s, uint16 distance)
+{
+	const enum StructureLayout layout = g_table_structureInfo[s->o.type].layout;
+	tile32 curPosition;
+
+	/* ENHANCEMENT -- units on guard normally only check the distance to
+	 *
+	 * curPosition.tile = s->o.position.tile + g_table_structure_layoutTileDiff[layout].tile;
+	 *
+	 * against their weapon range.  This means that they may not fire
+	 * at a structure from a given position when on guard command,
+	 * whereas they would fire at it when on attack command.
+	 */
+	if (!enhancement_fix_firing_rates_and_ranges) {
+		curPosition.tile = s->o.position.tile + g_table_structure_layoutTileDiff[layout].tile;
+		return (Tile_GetDistance(unit->o.position, curPosition) <= distance);
+	}
+
+	for (int i = 0; i < g_table_structure_layoutSize[layout].height; i++) {
+		for (int j = 0; j < g_table_structure_layoutSize[layout].width; j++) {
+			curPosition.tile = s->o.position.tile;
+			curPosition.d.ox = 0x80;
+			curPosition.d.oy = 0x80;
+			curPosition.d.px += j;
+			curPosition.d.py += i;
+
+			if (Tile_GetDistance(unit->o.position, curPosition) <= distance)
+				return true;
+		}
+	}
+
+	return false;
+}
+
 /**
  * Gets the best target structure for the given unit.
  *
@@ -2598,13 +2633,13 @@ static Structure *Unit_FindBestTargetStructure(Unit *unit, uint16 mode)
 		if (s == NULL) break;
 		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
-		curPosition.tile = s->o.position.tile + g_table_structure_layoutTileDiff[g_table_structureInfo[s->o.type].layout].tile;
-
 		if (mode != 0 && mode != 4) {
 			if (mode == 1) {
-				if (Tile_GetDistance(unit->o.position, curPosition) > distance) continue;
+				if (!Unit_StructureInRange(unit, s, distance)) continue;
 			} else {
 				if (mode != 2) continue;
+
+				curPosition.tile = s->o.position.tile + g_table_structure_layoutTileDiff[g_table_structureInfo[s->o.type].layout].tile;
 				if (Tile_GetDistance(position, curPosition) > distance * 2) continue;
 			}
 		}
