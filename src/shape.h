@@ -99,13 +99,15 @@ enum ShapeID {
 	SHAPE_MENTAT_SHOULDER = 397,
 	SHAPE_MENTAT_ACCESSORY = 398,
 	SHAPE_MAP_PIECE = 477,
+
+	/* Actually only 8 visible arrows; shape 505 is a invisible 1x1 shape. */
 	SHAPE_ARROW = 505,
 	SHAPE_ARROW_FINAL = 513,
 
 	/* Final normal shape is 524: CREDIT11.SHP. */
 
-	/* 567 .. 599: SHAPE_ARROW .. SHAPE_ARROW_FINAL, 4 white masks each. */
-	SHAPE_ARROW_TINT = 564,
+	/* 559 .. 599: SHAPE_ARROW .. SHAPE_ARROW_FINAL, 5 white masks each. */
+	SHAPE_ARROW_TINT = 599 - 5 * 8,
 	SHAPE_ARROW_TINT_FINAL = 599,
 
 	/* 600 .. 639: SHAPE_CONCRETE_SLAB .. SHAPE_FREMEN greyed out. */

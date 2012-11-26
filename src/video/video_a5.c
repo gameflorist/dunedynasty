@@ -1979,21 +1979,23 @@ VideoA5_InitShapes(unsigned char *buf)
 	}
 
 	for (int shapeID = SHAPE_ARROW; shapeID <= SHAPE_ARROW_FINAL; shapeID++) {
-		const int tintID = SHAPE_ARROW_TINT + 4 * (shapeID - SHAPE_ARROW);
+		const int tintID = SHAPE_ARROW_TINT + 5 * (shapeID - SHAPE_ARROW);
 		const int w = Shape_Width(shapeID);
 		const int h = Shape_Height(shapeID);
 
-		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 4 * w, h, row_h, &x, &y);
+		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 5 * w, h, row_h, &x, &y);
 		GUI_DrawSprite_(SCREEN_0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0);
 
-		for (int i = 3; i >= 0; i--) {
+		for (int i = 4; i >= 0; i--) {
+			const int c = (i == 0) ? STRATEGIC_MAP_ARROW_EDGE_COLOUR : (STRATEGIC_MAP_ARROW_COLOUR + i - 1);
+
 			s_shape[tintID + i][0] = al_create_sub_bitmap(region_texture, x + i * w, y, w, h);
 			assert(s_shape[tintID + i][0] != NULL);
 
-			VideoA5_CreateWhiteMaskIndexed(buf, WINDOW_W, x, y, x + i * w, y, w, h, STRATEGIC_MAP_ARROW_COLOUR + i);
+			VideoA5_CreateWhiteMaskIndexed(buf, WINDOW_W, x, y, x + i * w, y, w, h, c);
 		}
 
-		x += 4 * w + 1;
+		x += 5 * w + 1;
 		row_h = max(row_h, h);
 	}
 

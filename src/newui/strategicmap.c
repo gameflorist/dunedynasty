@@ -198,16 +198,17 @@ StrategicMap_DrawArrow(enum HouseType houseID, int scenario, const StrategicMapD
 	}
 
 	const enum ShapeID shapeID = map->arrow[scenario].shapeID;
-	const enum ShapeID tintID = SHAPE_ARROW_TINT + 4 * (shapeID - SHAPE_ARROW);
+	const enum ShapeID tintID = SHAPE_ARROW_TINT + 5 * (shapeID - SHAPE_ARROW);
 	const int x = map->arrow[scenario].x;
 	const int y = map->arrow[scenario].y;
 	const uint8 c = 144 + houseID * 16;
 
 	Shape_Draw(shapeID, x, y, 0, 0);
-	Shape_DrawTint(tintID + 0, x, y, c + ((frame + 0) & 0x3), 0, 0);
-	Shape_DrawTint(tintID + 1, x, y, c + ((frame + 1) & 0x3), 0, 0);
-	Shape_DrawTint(tintID + 2, x, y, c + ((frame + 2) & 0x3), 0, 0);
-	Shape_DrawTint(tintID + 3, x, y, c + ((frame + 3) & 0x3), 0, 0);
+	Shape_DrawTint(tintID + 0, x, y, STRATEGIC_MAP_ARROW_EDGE_COLOUR + houseID * 16, 0, 0);
+	Shape_DrawTint(tintID + 1, x, y, c + ((frame + 0) & 0x3), 0, 0);
+	Shape_DrawTint(tintID + 2, x, y, c + ((frame + 1) & 0x3), 0, 0);
+	Shape_DrawTint(tintID + 3, x, y, c + ((frame + 2) & 0x3), 0, 0);
+	Shape_DrawTint(tintID + 4, x, y, c + ((frame + 3) & 0x3), 0, 0);
 }
 
 static void
