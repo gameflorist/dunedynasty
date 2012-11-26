@@ -418,9 +418,9 @@ Menu_LoadPalette(void)
 	 * palette cycling runs in the menu (but you can if you're really
 	 * quick about it).
 	 */
-	g_palette1[3*223 + 0] = 0x00;
-	g_palette1[3*223 + 1] = 0x00;
-	g_palette1[3*223 + 2] = 0x00;
+	g_palette1[3*WINDTRAP_COLOUR + 0] = 0x00;
+	g_palette1[3*WINDTRAP_COLOUR + 1] = 0x00;
+	g_palette1[3*WINDTRAP_COLOUR + 2] = 0x00;
 
 	Video_SetPalette(g_palette1, 0, 256);
 }

@@ -63,9 +63,6 @@
 #define SHAPEID_MAX         640
 #define FONTID_MAX          8
 #define CURSOR_MAX          6
-#define CONQUEST_COLOUR     146
-#define WINDTRAP_COLOUR     223
-#define ARROW_COLOUR        251
 
 enum BitmapCopyMode {
 	TRANSPARENT_COLOUR_0,
@@ -1993,7 +1990,7 @@ VideoA5_InitShapes(unsigned char *buf)
 			s_shape[tintID + i][0] = al_create_sub_bitmap(region_texture, x + i * w, y, w, h);
 			assert(s_shape[tintID + i][0] != NULL);
 
-			VideoA5_CreateWhiteMaskIndexed(buf, WINDOW_W, x, y, x + i * w, y, w, h, ARROW_COLOUR + i);
+			VideoA5_CreateWhiteMaskIndexed(buf, WINDOW_W, x, y, x + i * w, y, w, h, STRATEGIC_MAP_ARROW_COLOUR + i);
 		}
 
 		x += 4 * w + 1;

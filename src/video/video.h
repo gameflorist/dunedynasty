@@ -3,6 +3,12 @@
 
 #include "../shape.h"
 
+enum {
+	CONQUEST_COLOUR = 146,
+	WINDTRAP_COLOUR = 223,
+	STRATEGIC_MAP_ARROW_COLOUR = 251,
+};
+
 enum CPSID {
 	CPS_MENUBAR_LEFT,
 	CPS_MENUBAR_MIDDLE,

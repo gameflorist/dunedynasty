@@ -577,9 +577,9 @@ void GUI_PaletteAnimate(void)
 	if (timerToggle < Timer_GetTicks()) {
 		static uint16 toggleColour = 12;
 
-		GUI_Palette_2BA5_00A2(g_palette1, 223, toggleColour);
+		GUI_Palette_2BA5_00A2(g_palette1, WINDTRAP_COLOUR, toggleColour);
 
-		if (!GUI_Palette_2BA5_00A2(g_palette1, 223, toggleColour)) {
+		if (!GUI_Palette_2BA5_00A2(g_palette1, WINDTRAP_COLOUR, toggleColour)) {
 			toggleColour = (toggleColour == 12) ? 10 : 12;
 		}
 
