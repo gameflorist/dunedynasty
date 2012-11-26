@@ -791,8 +791,16 @@ Viewport_Click(Widget *w)
 		/* Releasing RMB performs context sensitive action (alt: deselect). */
 		else if (viewport_click_action == VIEWPORT_RMB) {
 			if (g_gameConfig.leftClickOrders) {
-				Map_SetSelection(0xFFFF);
-				Unit_UnselectAll();
+				const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+
+				/* Right-click on the selected structure clears the rally point, like RA3 airfields. */
+				if ((s != NULL) && (s == Structure_Get_ByPackedTile(packed))) {
+					perform_context_sensitive_action = true;
+				}
+				else {
+					Map_SetSelection(0xFFFF);
+					Unit_UnselectAll();
+				}
 			}
 			else {
 				perform_context_sensitive_action = true;
