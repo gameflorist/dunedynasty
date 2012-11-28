@@ -122,6 +122,7 @@ void GameLoop_House(void)
 		 */
 		const enum UnitType type = Tools_RandomLCG_Range(0, UNIT_MAX - 1);
 		Structure_Starport_Restock(type);
+		g_factoryWindowTotal = -1;
 	}
 
 	if (tickReinforcement) {
