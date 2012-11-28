@@ -36,7 +36,7 @@ GUI_EditBox_ScancodeToChar(enum Scancode key)
 	if (SCANCODE_Z <= key && key <= SCANCODE_SLASH)
 		c = char_zm[key - SCANCODE_Z];
 
-	if (('a' <= c && c <= 'z') && (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT)))
+	if (('a' <= c && c <= 'z') && Input_Test(SCANCODE_LSHIFT))
 		c += 'A' - 'a';
 
 	return c;

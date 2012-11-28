@@ -474,7 +474,7 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 		case SCANCODE_F7:
 			{
 				const bool increase = (key == SCANCODE_F7);
-				const bool adjust_current_track_only = (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT));
+				const bool adjust_current_track_only = Input_Test(SCANCODE_LSHIFT);
 
 				Audio_AdjustMusicVolume(increase ? 0.05f : -0.05f, adjust_current_track_only);
 				Audio_DisplayMusicName();

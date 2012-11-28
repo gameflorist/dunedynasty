@@ -676,7 +676,7 @@ Viewport_Click(Widget *w)
 			viewport_click_x = mouseX;
 			viewport_click_y = mouseY;
 
-			if (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT)) {
+			if (Input_Test(SCANCODE_LSHIFT)) {
 				selection_box_add_to_selection = true;
 			}
 			else {
@@ -949,7 +949,7 @@ Viewport_Hotkey(enum SquadID squad)
 		Audio_PlaySample(SAMPLE_BUTTON, 128, 0.0f);
 	}
 	else {
-		const bool key_shift = (Input_Test(SCANCODE_LSHIFT) || Input_Test(SCANCODE_RSHIFT));
+		const bool key_shift = Input_Test(SCANCODE_LSHIFT);
 
 		bool modified_selection = false;
 
