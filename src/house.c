@@ -13,6 +13,7 @@
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "map.h"
+#include "newui/actionpanel.h"
 #include "newui/menubar.h"
 #include "opendune.h"
 #include "pool/pool.h"
@@ -43,6 +44,7 @@ static int64_t s_tickHouseStarport = 0;
 static int64_t s_tickHouseReinforcement = 0;
 static int64_t s_tickHouseMissileCountdown = 0;
 static int64_t s_tickHouseStarportAvailability = 0;
+static int64_t s_tickHouseStarportRecalculatePrices = 0;
 
 /**
  * Loop over all houses, preforming various of tasks.
@@ -88,6 +90,13 @@ void GameLoop_House(void)
 	if (s_tickHouseStarportAvailability <= g_timerGame) {
 		tickStarportAvailability = true;
 		s_tickHouseStarportAvailability = g_timerGame + 1800;
+	}
+
+	if (s_tickHouseStarportRecalculatePrices <= g_timerGame) {
+		const int64_t curr_minute = Structure_Starport_SeedTime();
+		const int64_t next_minute = (curr_minute + 1);
+		s_tickHouseStarportRecalculatePrices = g_tickScenarioStart + next_minute * 60 * 60;
+		g_factoryWindowTotal = -1;
 	}
 
 	if (tickMissileCountdown && g_houseMissileCountdown != 0) {

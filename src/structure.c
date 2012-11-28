@@ -2282,8 +2282,8 @@ void Structure_InitFactoryItems(const Structure *s)
 	memset(g_factoryWindowItems, 0, MAX_FACTORY_WINDOW_ITEMS * sizeof(FactoryWindowItem));
 
 	if (s->o.type == STRUCTURE_STARPORT) {
-		uint16 seconds = (g_timerGame - g_tickScenarioStart) / 60;
-		uint16 seed = (seconds / 60) + g_scenarioID + g_playerHouseID;
+		uint16 minutes = Structure_Starport_SeedTime();
+		uint16 seed = minutes + g_scenarioID + g_playerHouseID;
 		seed *= seed;
 
 		Tools_RandomLCG_Seed(seed);
@@ -2436,6 +2436,12 @@ uint16 Structure_AI_PickNextToBuild(Structure *s)
 	}
 
 	return type;
+}
+
+int64_t
+Structure_Starport_SeedTime(void)
+{
+	return (g_timerGame - g_tickScenarioStart) / 60 / 60;
 }
 
 void

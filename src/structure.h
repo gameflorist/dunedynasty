@@ -3,6 +3,7 @@
 #ifndef STRUCTURE_H
 #define STRUCTURE_H
 
+#include <stdint.h>
 #include "enumeration.h"
 #include "buildqueue.h"
 #include "object.h"
@@ -115,6 +116,7 @@ extern void Structure_UpdateMap(Structure *s);
 extern uint32 Structure_GetBuildable(Structure *s);
 extern bool Structure_PopulateBuildable(Structure *s, uint16 objectType);
 extern void Structure_InitFactoryItems(const Structure *s);
+extern int64_t Structure_Starport_SeedTime(void);
 extern void Structure_Starport_Restock(enum UnitType type);
 extern void Structure_HouseUnderAttack(uint8 houseID);
 extern uint16 Structure_AI_PickNextToBuild(Structure *s);
