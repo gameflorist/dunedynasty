@@ -42,7 +42,6 @@
 #include "sound_adlib.h"
 
 #include <algorithm>
-#include <inttypes.h>
 #include <stdarg.h>
 #include <assert.h>
 #include <stdio.h>

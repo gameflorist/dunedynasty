@@ -34,7 +34,6 @@
 
 #ifndef DISABLE_DOSBOX_OPL
 
-#include <inttypes.h>
 #include "fmopl.h"
 
 typedef uint8_t	uint8;

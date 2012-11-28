@@ -47,7 +47,7 @@
 #else
 #include <allegro5/allegro.h>
 #endif
-#include <inttypes.h>
+#include <stdint.h>
 #include <vector>
 #ifdef __USE_SDL__
 #include <SDL.h>

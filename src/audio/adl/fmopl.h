@@ -25,8 +25,8 @@
 #ifndef SOUND_FMOPL_H
 #define SOUND_FMOPL_H
 
-#include <inttypes.h>
 #include <assert.h>
+#include <stdint.h>
 
 typedef uint8_t	uint8;
 typedef int8_t	int8;

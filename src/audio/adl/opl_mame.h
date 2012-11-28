@@ -29,7 +29,6 @@
 #ifndef SOUND_SOFTSYNTH_OPL_MAME_H
 #define SOUND_SOFTSYNTH_OPL_MAME_H
 
-#include <inttypes.h>
 #include "fmopl.h"
 
 typedef uint8_t	uint8;
