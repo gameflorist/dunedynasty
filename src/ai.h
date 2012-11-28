@@ -8,9 +8,7 @@
 
 extern bool AI_IsBrutalAI(enum HouseType houseID);
 
-extern uint32 StructureAI_FilterBuildOptions(enum StructureType s, enum HouseType houseID, uint32 buildable);
-extern uint32 StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType houseID, uint32 buildable);
-extern int StructureAI_RemapBuildItem(int index, uint16 *priority);
+extern uint16 StructureAI_PickNextToBuild(const Structure *s);
 
 extern bool UnitAI_CallCarryallToEvadeSandworm(const Unit *harvester);
 extern uint16 UnitAI_GetAnyEnemyInRange(const Unit *unit);

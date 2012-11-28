@@ -158,7 +158,7 @@ StructureAI_ShouldBuildInfantry(enum HouseType houseID)
 	return true;
 }
 
-uint32
+static uint32
 StructureAI_FilterBuildOptions(enum StructureType s, enum HouseType houseID, uint32 buildable)
 {
 	switch (s) {
@@ -186,7 +186,7 @@ StructureAI_FilterBuildOptions(enum StructureType s, enum HouseType houseID, uin
 	return buildable;
 }
 
-uint32
+static uint32
 StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType houseID, uint32 buildable)
 {
 	PoolFindStruct find;
@@ -213,7 +213,7 @@ StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType hou
 	return buildable;
 }
 
-int
+static int
 StructureAI_RemapBuildItem(int index, uint16 *priority)
 {
 	/* AI builds items like this:
@@ -304,6 +304,72 @@ StructureAI_RemapBuildItem(int index, uint16 *priority)
 
 	*priority = remap[index].priority;
 	return remap[index].unit_type;
+}
+
+/**
+ * Find the next object to build.
+ * @param s The structure in which we can build something.
+ * @return The type (either UnitType or StructureType) of what we should build next.
+ */
+uint16
+StructureAI_PickNextToBuild(const Structure *s)
+{
+	if (s == NULL) return 0xFFFF;
+
+	House *h = House_Get_ByIndex(s->o.houseID);
+	uint32 buildable = Structure_GetBuildable(s);
+
+	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		for (int i = 0; i < 5; i++) {
+			uint16 type = h->ai_structureRebuild[i][0];
+
+			if (type == 0) continue;
+			if ((buildable & (1 << type)) == 0) continue;
+
+			return type;
+		}
+
+		return 0xFFFF;
+	}
+
+	if (AI_IsBrutalAI(s->o.houseID)) {
+		buildable = StructureAI_FilterBuildOptions(s->o.type, s->o.houseID, buildable);
+	}
+	else {
+		buildable = StructureAI_FilterBuildOptions_Original(s->o.type, s->o.houseID, buildable);
+	}
+
+	uint16 type = 0xFFFF;
+	uint16 priority_type = 0;
+	for (int j = 0; j < UNIT_MAX; j++) {
+		uint16 priority_i;
+		uint16 i;
+
+		/* Adjustments to build order for brutal AI. */
+		if (AI_IsBrutalAI(s->o.houseID)) {
+			i = StructureAI_RemapBuildItem(j, &priority_i);
+		}
+		else {
+			i = j;
+			priority_i = g_table_unitInfo[i].o.priorityBuild;
+		}
+
+		if ((buildable & (1 << i)) == 0) continue;
+
+		if ((Tools_Random_256() % 4) == 0) {
+			type = i;
+			priority_type = priority_i;
+		}
+
+		if (type != 0xFFFF) {
+			if (priority_i <= priority_type) continue;
+		}
+
+		type = i;
+		priority_type = priority_i;
+	}
+
+	return type;
 }
 
 /*--------------------------------------------------------------*/

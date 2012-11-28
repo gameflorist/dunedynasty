@@ -119,6 +119,5 @@ extern void Structure_InitFactoryItems(const Structure *s);
 extern int64_t Structure_Starport_SeedTime(void);
 extern void Structure_Starport_Restock(enum UnitType type);
 extern void Structure_HouseUnderAttack(uint8 houseID);
-extern uint16 Structure_AI_PickNextToBuild(Structure *s);
 
 #endif /* STRUCTURE_H */
