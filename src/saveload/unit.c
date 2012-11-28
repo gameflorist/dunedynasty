@@ -56,9 +56,11 @@ static const SaveLoadDesc s_saveUnitNew[] = {
 	SLD_END
 };
 
+static uint32 SaveLoad_Unit_ExtraFlags(void *object, uint32 value, bool loading);
+
 static const SaveLoadDesc s_saveUnit2[] = {
 	SLD_ENTRY (Unit, SLDT_UINT16, o.index),
-	SLD_EMPTY (      SLDT_UINT8), /* Was deviatedHouse before OpenDUNE implemented it. */
+	SLD_CALLB (Unit, SLDT_UINT8,  permanentFollow,SaveLoad_Unit_ExtraFlags),
 	SLD_ENTRY2(Unit, SLDT_UINT8,  squadID,        SLDT_UINT32),
 	SLD_ENTRY2(Unit, SLDT_UINT8,  aiSquad,        SLDT_UINT32),
 	SLD_END
@@ -208,6 +210,25 @@ bool UnitNew_Save(FILE *fp)
 
 /*--------------------------------------------------------------*/
 
+static uint32
+SaveLoad_Unit_ExtraFlags(void *object, uint32 value, bool loading)
+{
+	Unit *u = object;
+
+	if (loading) {
+		/* Note: lowest 3 bits used to store deviatedHouse.  That is now stored in the ODUN block. */
+		u->permanentFollow  = (value & 0x80) ? true : false;
+		u->detonateAtTarget = (value & 0x40) ? true : false;
+		return 0;
+	}
+	else {
+		value = 0;
+		if (u->permanentFollow)  value |= 0x80;
+		if (u->detonateAtTarget) value |= 0x40;
+		return value;
+	}
+}
+
 bool
 Unit_Load2(FILE *fp, uint32 length)
 {
@@ -223,6 +244,8 @@ Unit_Load2(FILE *fp, uint32 length)
 			return false;
 
 		/* Extra data. */
+		u->permanentFollow = ul.permanentFollow;
+		u->detonateAtTarget = ul.detonateAtTarget;
 		u->squadID = ul.squadID;
 		u->aiSquad = ul.aiSquad;
 	}
