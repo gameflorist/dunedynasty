@@ -1661,10 +1661,10 @@ Viewport_DrawAirUnit(const Unit *u)
 	if (ui->o.flags.hasShadow) {
 		if (smooth_rotation) {
 			Shape_DrawRemapRotate(index, Unit_GetHouseID(u),
-					x + 1, y + 3, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x5FFF) | 0x300);
+					x + 1, y + 3, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x5FFF) | 0x360);
 		}
 		else {
-			Shape_Draw(index, x + 1, y + 3, WINDOWID_VIEWPORT, (s_spriteFlags & 0xDFFF) | 0x300);
+			Shape_Draw(index, x + 1, y + 3, WINDOWID_VIEWPORT, (s_spriteFlags & 0xDFFF) | 0x360);
 		}
 	}
 

@@ -2172,7 +2172,7 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 	}
 	else if ((flags & 0x300) == 0x300) {
 		/* Shadow. */
-		ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, 0x40);
+		ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, flags & 0xF0);
 		al_draw_tinted_bitmap(s_shape[shapeID][houseID], tint, x, y, al_flags);
 	}
 	else {
@@ -2197,8 +2197,7 @@ VideoA5_DrawShapeRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int
 	const int al_flags = (flags & 0x3);
 
 	if ((flags & 0x300) == 0x300) {
-		ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, 0x40);
-
+		ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, flags & 0xF0);
 		al_draw_tinted_rotated_bitmap(bmp, tint, cx, cy, x, y, angle, al_flags);
 	}
 	else {

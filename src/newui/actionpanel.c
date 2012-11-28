@@ -735,7 +735,7 @@ ActionPanel_DrawStructureLayout(enum StructureType s, int x1, int y1)
 	y1 += 4;
 
 	/* Use shadow effect for transluscent outline. */
-	Shape_Draw(SHAPE_STRUCTURE_LAYOUT_OUTLINE, x1 - 1, y1 - 1, 0, 0x300);
+	Shape_Draw(SHAPE_STRUCTURE_LAYOUT_OUTLINE, x1 - 1, y1 - 1, 0, 0x340);
 
 	/* Shift layout to the right. */
 	for (int ly = 0; ly < lh; ly++) {

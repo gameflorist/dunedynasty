@@ -4,6 +4,7 @@
  *  0x__01 = flip horizontally.
  *  0x__02 = flip vertically.
  *  0x__70 = blur effect frame.  New, originally just a static variable.
+ *  0x__F0 = shadow effect darkness.
  *  0x01__ = remap for house.  Use Shape_DrawRemap instead.
  *  0x02__ = blur effect.
  *  0x03__ = shadow.
@@ -88,7 +89,7 @@ void
 Shape_DrawRemap(enum ShapeID shapeID, enum HouseType houseID, int x, int y, enum WindowID windowID, int flags)
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
-	Video_DrawShape(shapeID, houseID, x, y, flags & 0x373);
+	Video_DrawShape(shapeID, houseID, x, y, flags & 0x3F3);
 }
 
 void
@@ -114,7 +115,7 @@ Shape_DrawRemapRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y
 		orient256 = orient->current + speed * frame / duration;
 	}
 
-	Video_DrawShapeRotate(shapeID, houseID, x, y, orient256, flags & 0x300);
+	Video_DrawShapeRotate(shapeID, houseID, x, y, orient256, flags & 0x3F0);
 }
 
 void
