@@ -1946,6 +1946,28 @@ void Unit_SetOrientation(Unit *unit, int8 orientation, bool rotateInstantly, uin
 
 	if (unit->orientation[level].current == orientation) return;
 
+	/* ENHANCEMENT -- Carryalls sometimes circle around a tile when
+	 * delivering reinforcements due to the turning radius.  Make them
+	 * go straight ahead a little further before turning around.
+	 */
+	if (g_dune2_enhanced && (unit->o.type == UNIT_CARRYALL) && (level == 0)) {
+		/* 10281 = integral of _stepX[0] .. _stepX[127]
+		 *
+		 * is the translation for turning pi radians, or twice turning radius,
+		 * when moving a distance of 128 per angle.  Add a small fudge factor.
+		 */
+		const int turning_radius = 32 + 10281 * (unit->speed * 16) / (2 * 128 * (g_table_unitInfo[unit->o.type].turningSpeed * 4));
+		tile32 circle;
+
+		circle = Tile_MoveByDirectionUnlimited(unit->o.position, unit->orientation[0].current + 64, turning_radius);
+		if (Tile_GetDistance(circle, unit->currentDestination) < turning_radius)
+			return;
+
+		circle = Tile_MoveByDirectionUnlimited(unit->o.position, unit->orientation[0].current - 64, turning_radius);
+		if (Tile_GetDistance(circle, unit->currentDestination) < turning_radius)
+			return;
+	}
+
 	unit->orientation[level].speed = g_table_unitInfo[unit->o.type].turningSpeed * 4;
 
 	diff = orientation - unit->orientation[level].current;
