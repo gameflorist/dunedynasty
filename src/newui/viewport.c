@@ -1659,12 +1659,15 @@ Viewport_DrawAirUnit(const Unit *u)
 		index += 3;
 
 	if (ui->o.flags.hasShadow) {
+		/* ENHANCEMENT -- Mimic the bug that caused carryall shadows to flicker. */
+		const int alpha = ((u->distanceToDestination & 0x1F) <= 0x1) ? 0x390 : 0x360;
+
 		if (smooth_rotation) {
 			Shape_DrawRemapRotate(index, Unit_GetHouseID(u),
-					x + 1, y + 3, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x5FFF) | 0x360);
+					x + 1, y + 3, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x5FFF) | alpha);
 		}
 		else {
-			Shape_Draw(index, x + 1, y + 3, WINDOWID_VIEWPORT, (s_spriteFlags & 0xDFFF) | 0x360);
+			Shape_Draw(index, x + 1, y + 3, WINDOWID_VIEWPORT, (s_spriteFlags & 0xDFFF) | alpha);
 		}
 	}
 
