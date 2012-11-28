@@ -2437,3 +2437,16 @@ uint16 Structure_AI_PickNextToBuild(Structure *s)
 
 	return type;
 }
+
+void
+Structure_Starport_Restock(enum UnitType type)
+{
+	if (g_starportAvailable[type] != 0 && g_starportAvailable[type] < 10) {
+		if (g_starportAvailable[type] == -1) {
+			g_starportAvailable[type] = 1;
+		}
+		else {
+			g_starportAvailable[type]++;
+		}
+	}
+}

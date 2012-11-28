@@ -114,19 +114,14 @@ void GameLoop_House(void)
 	}
 
 	if (tickStarportAvailability) {
-		uint16 type;
-
-		/* Pick a random unit to increase starport availability */
-		type = Tools_RandomLCG_Range(0, UNIT_MAX - 1);
-
-		/* Increase how many of this unit is available via starport by one */
-		if (g_starportAvailable[type] != 0 && g_starportAvailable[type] < 10) {
-			if (g_starportAvailable[type] == -1) {
-				g_starportAvailable[type] = 1;
-			} else {
-				g_starportAvailable[type]++;
-			}
-		}
+		/* Pick a random unit to increase starport availability.
+		 *
+		 * If we are unlucky, we might restock something like a
+		 * bullet, or unit that is already at maximum stock.  Not a
+		 * bug; that's just how the game is.
+		 */
+		const enum UnitType type = Tools_RandomLCG_Range(0, UNIT_MAX - 1);
+		Structure_Starport_Restock(type);
 	}
 
 	if (tickReinforcement) {

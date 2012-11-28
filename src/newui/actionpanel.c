@@ -641,13 +641,7 @@ ActionPanel_ClickStarportMinus(Structure *s, int entry)
 	int credits;
 
 	if (BuildQueue_RemoveTail(&s->queue, type, &credits)) {
-		if (g_starportAvailable[type] == -1) {
-			g_starportAvailable[type] = 1;
-		}
-		else {
-			g_starportAvailable[type]++;
-		}
-
+		Structure_Starport_Restock(type);
 		h->credits += credits;
 	}
 }
