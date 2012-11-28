@@ -393,60 +393,13 @@ bool House_UpdateRadarState(House *h)
 {
 	if (h == NULL || h->index != g_playerHouseID) return false;
 
-#if 0
-	void *wsa = NULL;
-	bool activate = h->flags.radarActivated;
-	uint16 frame;
-	uint16 frameCount;
-
-	if (h->flags.radarActivated) {
-		/* Deactivate radar */
-		if ((h->structuresBuilt & (1 << STRUCTURE_OUTPOST)) == 0 || h->powerProduction < h->powerUsage) activate = false;
-	} else {
-		/* Activate radar */
-		if ((h->structuresBuilt & (1 << STRUCTURE_OUTPOST)) != 0 && h->powerProduction >= h->powerUsage) activate = true;
-	}
-#else
 	const bool activate = ((h->structuresBuilt & FLAG_STRUCTURE_OUTPOST) && (h->powerProduction >= h->powerUsage));
-#endif
-
 	if (h->flags.radarActivated == activate) return false;
-
-#if 0
-	wsa = WSA_LoadFile("STATIC.WSA", GFX_Screen_Get_ByIndex(SCREEN_1), GFX_Screen_GetSize_ByIndex(SCREEN_1), true);
-	frameCount = WSA_GetFrameCount(wsa);
-
-	GUI_Mouse_Hide_Safe();
-
-	while (Driver_Voice_IsPlaying()) sleepIdle();
-#endif
 
 	Audio_PlaySound(SOUND_RADAR_STATIC);
 	Audio_PlayVoice(activate ? VOICE_RADAR_ACTIVATED : VOICE_RADAR_DEACTIVATED);
-
-#if 0
-	frameCount = WSA_GetFrameCount(wsa);
-
-	for (frame = 0; frame < frameCount; frame++) {
-		WSA_DisplayFrame(wsa, activate ? frameCount - frame : frame, 256, 136, SCREEN_0);
-		GUI_PaletteAnimate();
-
-		Timer_Sleep(3);
-	}
-
-	h->flags.radarActivated = activate;
-
-	WSA_Unload(wsa);
-
-	g_viewport_forceRedraw = true;
-
-	GUI_Mouse_Show_Safe();
-
-	GUI_Widget_Viewport_RedrawMap(0);
-#else
 	MenuBar_StartRadarAnimation(activate);
 	h->flags.radarActivated = activate;
-#endif
 
 	return activate;
 }
