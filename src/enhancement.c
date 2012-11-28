@@ -198,7 +198,7 @@ bool enhancement_structures_on_concrete_do_not_degrade = true;
 enum SubtitleOverride enhancement_subtitle_override = SUBTITLE_THE_BUILDING_OF_LOWER_A_DYNASTY;
 
 /**
- * Make saboteurs perform a targetted sabotage on right-click, and
- * only detonate if we reach the destination on sabotage command.
+ * Make saboteurs only detonate at the target if on sabotage command
+ * or right-clicked on a structure, unit, or wall.
  */
 bool enhancement_targetted_sabotage = true;

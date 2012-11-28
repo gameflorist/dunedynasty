@@ -236,6 +236,7 @@ static void
 Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 {
 	uint16 encoded;
+	Unit *target = NULL;
 
 	if (Unit_GetHouseID(u) != g_playerHouseID)
 		return;
@@ -249,6 +250,14 @@ Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 	    (action != ui->o.actionsPlayer[2]) &&
 	    (action != ui->o.actionsPlayer[3])) {
 		return;
+	}
+
+	if (action == ACTION_SABOTAGE) {
+		u->detonateAtTarget = true;
+		action = ACTION_MOVE;
+	}
+	else {
+		u->detonateAtTarget = false;
 	}
 
 	Object_Script_Variable4_Clear(&u->o);
@@ -267,18 +276,21 @@ Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 
 	if (action == ACTION_MOVE) {
 		Unit_SetDestination(u, encoded);
+
+		if (u->detonateAtTarget) {
+			target = Tools_Index_GetUnit(u->targetMove);
+		}
 	}
 	else if (action == ACTION_HARVEST) {
 		u->targetMove = encoded;
 	}
 	else {
-		Unit *target;
-
 		Unit_SetTarget(u, encoded);
 		target = Tools_Index_GetUnit(u->targetAttack);
-		if (target != NULL)
-			target->blinkCounter = 8;
 	}
+
+	if (target != NULL)
+		target->blinkCounter = 8;
 
 	if (g_enable_sound_effects == SOUNDEFFECTS_SYNTH_ONLY) {
 		Audio_PlayEffect(EFFECT_SET_TARGET);
@@ -445,14 +457,29 @@ Viewport_GenericCommandCanAttack(uint16 packed, enum LandscapeType lst, bool vis
 }
 
 static bool
+Viewport_GenericCommandCanSabotageAlly(uint16 packed)
+{
+	int iter;
+
+	/* Allow sabotaging allied and deviated units if only a single saboteur is selected. */
+	const Unit *u = Unit_FirstSelected(&iter);
+	if ((u != NULL) && (u->o.type == UNIT_SABOTEUR) && (Unit_NextSelected(&iter) == NULL)) {
+		return (g_map[packed].hasUnit && Unit_Get_ByPackedTile(packed) != u);
+	}
+
+	return false;
+}
+
+static bool
 Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 {
 	const enum LandscapeType lst = Map_GetLandscapeTypeVisible(packed);
 	const bool visible = (g_mapVisible[packed].fogOverlayBits != 0xF);
 	const bool scouted = g_map[packed].isUnveiled;
 	const bool attack = Viewport_GenericCommandCanAttack(packed, lst, visible, scouted);
+	const bool sabotage = Viewport_GenericCommandCanSabotageAlly(packed);
 
-	if (dry_run && !attack && !(lst == LST_SPICE || lst == LST_THICK_SPICE))
+	if (dry_run && !(attack || sabotage) && !(lst == LST_SPICE || lst == LST_THICK_SPICE))
 		return false;
 
 	int iter;
@@ -477,8 +504,8 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 			}
 
 			/* Saboteurs should show target cursor for detonating on structures, walls, and units. */
-			else if (oi->actionsPlayer[i] == ACTION_SABOTAGE && attack && (enhancement_targetted_sabotage || dry_run)) {
-				if (lst != LST_BLOOM_FIELD)
+			else if ((oi->actionsPlayer[i] == ACTION_SABOTAGE) && (lst != LST_BLOOM_FIELD) && (dry_run || enhancement_targetted_sabotage)) {
+				if (attack || sabotage)
 					action = ACTION_SABOTAGE;
 			}
 		}
@@ -717,6 +744,7 @@ Viewport_Click(Widget *w)
 		else if (viewport_click_action == VIEWPORT_LMB) {
 			if (g_gameConfig.leftClickOrders) {
 				if (Unit_AnySelected()) {
+					const bool sabotage = Viewport_GenericCommandCanSabotageAlly(packed);
 					enum HouseType houseID = HOUSE_INVALID;
 
 					Structure *s = Structure_Get_ByPackedTile(packed);
@@ -729,7 +757,7 @@ Viewport_Click(Widget *w)
 							houseID = Unit_GetHouseID(u);
 					}
 
-					if (!House_AreAllied(houseID, g_playerHouseID))
+					if ((!House_AreAllied(houseID, g_playerHouseID) || (sabotage && !Input_Test(SCANCODE_LSHIFT))))
 						perform_context_sensitive_action = true;
 				}
 				else {

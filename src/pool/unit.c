@@ -145,6 +145,7 @@ Unit *Unit_Allocate(uint16 index, uint8 type, uint8 houseID)
 	u->o.flags.s.isUnit = true;
 	u->o.script.delay      = 0;
 	u->route[0]            = 0xFF;
+	u->detonateAtTarget = false;
 	u->squadID = SQUADID_INVALID;
 	u->aiSquad = SQUADID_INVALID;
 	if (type == UNIT_SANDWORM) u->amount = 3;

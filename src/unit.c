@@ -1696,9 +1696,10 @@ bool Unit_Move(Unit *unit, uint16 distance)
 					bool detonate = (Map_GetLandscapeType(Tile_PackTile(newPosition)) == LST_WALL);
 
 					if (!detonate) {
-						/* ENHANCEMENT -- Only detonate if the action was a targetted sabotage. */
+						/* ENHANCEMENT -- Only detonate if the action was a sabotage or a targetted sabotage. */
 						if (enhancement_targetted_sabotage) {
-							detonate = (unit->actionID == ACTION_SABOTAGE && Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
+							detonate = ((unit->actionID == ACTION_SABOTAGE) || (unit->actionID == ACTION_MOVE && unit->detonateAtTarget)) &&
+								(Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
 						}
 						/* ENHANCEMENT -- Saboteurs tend to forget their goal, depending on terrain and game speed: to blow up on reaching their destination. */
 						else if (g_dune2_enhanced) {

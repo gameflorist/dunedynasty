@@ -697,6 +697,13 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 
 					actionCurrent = (u->nextActionID != ACTION_INVALID) ? u->nextActionID : u->actionID;
 
+					/* ENHANCEMENT -- Targetted sabotage is actually
+					 * move command with a special flag.  Highlight
+					 * the sabotage button instead of the move button.
+					 */
+					if (actionCurrent == ACTION_MOVE && u->detonateAtTarget)
+						actionCurrent = ACTION_SABOTAGE;
+
 					actions = oi->actionsPlayer;
 					if (isNotPlayerOwned && o->type != UNIT_HARVESTER) actions = g_table_actionsAI;
 
