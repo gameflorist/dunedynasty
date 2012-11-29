@@ -233,7 +233,7 @@ Viewport_SelectRegion(void)
 }
 
 static void
-Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
+Viewport_Target(Unit *u, enum UnitActionType action, bool command_button, uint16 packed)
 {
 	uint16 encoded;
 	Unit *target = NULL;
@@ -279,6 +279,9 @@ Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 
 		if (u->detonateAtTarget) {
 			target = Tools_Index_GetUnit(u->targetMove);
+		}
+		else if (enhancement_permanent_follow_mode) {
+			u->permanentFollow = command_button;
 		}
 	}
 	else if (action == ACTION_HARVEST) {
@@ -555,7 +558,7 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 					return true;
 			}
 			else {
-				Viewport_Target(u, action, packed);
+				Viewport_Target(u, action, false, packed);
 			}
 		}
 	}
@@ -647,7 +650,7 @@ Viewport_Click(Widget *w)
 
 			int iter;
 			for (Unit *u = Unit_FirstSelected(&iter); u; u = Unit_NextSelected(&iter)) {
-				Viewport_Target(u, g_activeAction, packed);
+				Viewport_Target(u, g_activeAction, true, packed);
 			}
 
 			g_activeAction = 0xFFFF;

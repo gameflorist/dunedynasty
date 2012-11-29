@@ -131,6 +131,14 @@ bool enhancement_nonblocking_radar_animation = true;
 bool enhancement_nonordos_deviation = true;
 
 /**
+ * In the Sega Mega Drive version of Dune II, units will not return to
+ * guard after catching up to the leader.  They will therefore
+ * continue to follow once the leader moves again.  However, they will
+ * not attack any enemies that come into range.
+ */
+bool enhancement_permanent_follow_mode = false;
+
+/**
  * Enable some extra sounds and voices.  This restores the original
  * "The Building of a Dynasty" voice!
  */

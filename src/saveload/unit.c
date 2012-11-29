@@ -107,6 +107,7 @@ bool Unit_Load(FILE *fp, uint32 length)
 		*u = ul;
 
 		/* Extra data. */
+		u->permanentFollow = false;
 		u->detonateAtTarget = false;
 		u->squadID = SQUADID_INVALID;
 		u->aiSquad = SQUADID_INVALID;

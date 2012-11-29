@@ -927,7 +927,9 @@ uint16 Script_Unit_SetActionDefault(ScriptEngine *script)
 
 	u = g_scriptCurrentUnit;
 
-	Unit_SetAction(u, g_table_unitInfo[u->o.type].o.actionsPlayer[3]);
+	/* ENHANCEMENT -- Follow mode similar to Sega Mega Drive version of Dune II. */
+	if (!(u->actionID == ACTION_MOVE && u->permanentFollow) || (Tools_Index_GetUnit(u->targetMove) == NULL))
+		Unit_SetAction(u, g_table_unitInfo[u->o.type].o.actionsPlayer[3]);
 
 	return 0;
 }
@@ -1426,7 +1428,10 @@ uint16 Script_Unit_CalculateRoute(ScriptEngine *script)
 		memcpy(u->route, res.buffer, min(res.routeSize, 14));
 
 		if (u->route[0] == 0xFF) {
-			u->targetMove = 0;
+			/* ENHANCEMENT -- Follow mode similar to Sega Mega Drive version of Dune II. */
+			if (!(u->actionID == ACTION_MOVE && u->permanentFollow) || (Tools_Index_GetUnit(u->targetMove) == NULL))
+				u->targetMove = 0;
+
 			if (u->o.type == UNIT_SANDWORM) {
 				script->delay = 720;
 			}
