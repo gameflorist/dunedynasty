@@ -3,6 +3,7 @@ project(dunedynasty)
 set(DUNE_DYNASTY_VERSION 1.4)
 
 set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
+option(WITH_ACODEC "FLAC and Ogg Vorbis music" ON)
 option(WITH_AUD "AUD music (Dune 2000)" ON)
 option(WITH_FLUIDSYNTH "FluidSynth" ON)
 option(WITH_MAD "MP3 music" ON)
@@ -15,7 +16,6 @@ include(FindPkgConfig)
 
 set(ALLEGRO_VERSION 5.0)
 pkg_check_modules(ALLEGRO5 REQUIRED allegro-${ALLEGRO_VERSION})
-pkg_check_modules(ALLEGRO5_ACODEC REQUIRED allegro_acodec-${ALLEGRO_VERSION})
 pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-${ALLEGRO_VERSION})
 pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-${ALLEGRO_VERSION})
 pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-${ALLEGRO_VERSION})
@@ -27,6 +27,14 @@ include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
 
 find_package(OpenGL)
 include_directories(SYSTEM ${OPENGL_INCLUDE_DIRS})
+
+if(WITH_ACODEC)
+    pkg_check_modules(ALLEGRO5_ACODEC allegro_acodec-${ALLEGRO_VERSION})
+    if(NOT ALLEGRO5_ACODEC_FOUND)
+	message("Allegro 5 audio codecs addon not found")
+	set(WITH_ACODEC OFF)
+    endif(NOT ALLEGRO5_ACODEC_FOUND)
+endif(WITH_ACODEC)
 
 if(WITH_FLUIDSYNTH)
     pkg_check_modules(FLUIDSYNTH fluidsynth)
@@ -79,7 +87,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wno-unused-parameter")
 
 target_link_libraries(dunedynasty
-	${ALLEGRO5_ACODEC_LDFLAGS}
 	${ALLEGRO5_AUDIO_LDFLAGS}
 	${ALLEGRO5_IMAGE_LDFLAGS}
 	${ALLEGRO5_MEMFILE_LDFLAGS}
@@ -88,6 +95,10 @@ target_link_libraries(dunedynasty
 	${ALLEGRO5_LDFLAGS}
 	${OPENGL_LIBRARIES}
 	)
+
+if(WITH_ACODEC)
+	target_link_libraries(dunedynasty ${ALLEGRO5_ACODEC_LIBRARIES})
+endif(WITH_ACODEC)
 
 if(WITH_FLUIDSYNTH)
 	target_link_libraries(dunedynasty ${FLUIDSYNTH_LIBRARIES})

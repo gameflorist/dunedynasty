@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_acodec.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_memfile.h>
 #include <stdio.h>
@@ -11,6 +10,10 @@
 #include "audio_a5.h"
 
 #include "adl/sound_adlib.h"
+
+#ifdef WITH_ACODEC
+# include <allegro5/allegro_acodec.h>
+#endif /* WITH_ACODEC */
 
 #ifdef WITH_FLUIDSYNTH
 # include "allegro_midi.h"
@@ -107,7 +110,9 @@ AudioA5_Init(void)
 		al_attach_sample_instance_to_mixer(s_instance[i], al_mixer);
 	}
 
+#ifdef WITH_ACODEC
 	al_init_acodec_addon();
+#endif
 
 	if (g_table_music_set[MUSICSET_DUNE2_C55].enable && (sound_font_path[0] != '\0')) {
 		s_midi = create_midi_player(sound_font_path);

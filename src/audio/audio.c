@@ -68,9 +68,11 @@ Audio_ScanMusic(void)
 		if (m->music_set > MUSICSET_DUNE2_C55) {
 			char buf[1024];
 
+#ifdef WITH_ACODEC
 			snprintf(buf, sizeof(buf), "%s/%s.flac", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0)
 				goto found_song;
+#endif
 
 #ifdef WITH_MAD
 			snprintf(buf, sizeof(buf), "%s/%s.mp3", g_dune_data_dir, m->filename);
@@ -78,9 +80,11 @@ Audio_ScanMusic(void)
 				goto found_song;
 #endif
 
+#ifdef WITH_ACODEC
 			snprintf(buf, sizeof(buf), "%s/%s.ogg", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0)
 				goto found_song;
+#endif
 
 #ifdef WITH_AUD
 			snprintf(buf, sizeof(buf), "%s/%s.AUD", g_dune_data_dir, m->filename);
