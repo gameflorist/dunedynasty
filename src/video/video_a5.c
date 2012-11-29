@@ -1963,7 +1963,17 @@ VideoA5_InitShapes(unsigned char *buf)
 				assert(shapeID < SHAPEID_MAX);
 
 				if ((shape_data[group].remap) || (houseID == HOUSE_HARKONNEN)) {
-					s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
+					if (shapeID == SHAPE_RADIO_BUTTON_OFF || shapeID == SHAPE_RADIO_BUTTON_ON) {
+						const uint8 backup = g_remap[RADIO_BUTTON_BACKGROUND_COLOUR];
+						g_remap[RADIO_BUTTON_BACKGROUND_COLOUR] = 0;
+
+						s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
+
+						g_remap[RADIO_BUTTON_BACKGROUND_COLOUR] = backup;
+					}
+					else {
+						s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
+					}
 
 					if (SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_FREMEN) {
 						const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
