@@ -26,6 +26,7 @@
 #include "pool/pool.h"
 #include "pool/structure.h"
 #include "pool/unit.h"
+#include "shape.h"
 #include "sprites.h"
 #include "string.h"
 #include "structure.h"
@@ -419,7 +420,8 @@ Campaign_ReadProfileIni(void)
 		{ 'S', "Factory" },
 		{ 'S', "StructureInfo" },
 		{ 'U', "UnitObjectInfo" },
-		{ 'U', "UnitInfo" }
+		{ 'U', "UnitInfo" },
+		{ 'U', "UnitGFX" },
 	};
 
 	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
@@ -445,10 +447,10 @@ Campaign_ReadProfileIni(void)
 			ObjectInfo *oi = NULL;
 			StructureInfo *si = NULL;
 			UnitInfo *ui = NULL;
+			uint8 type = 0;
 
 			if (scandata[x].type == 'U' || scandata[x].type == 'O') {
-				const uint8 type = Unit_StringToType(key);
-
+				type = Unit_StringToType(key);
 				if (type != UNIT_INVALID) {
 					ui = &g_table_unitInfo[type];
 					oi = &g_table_unitInfo[type].o;
@@ -456,8 +458,7 @@ Campaign_ReadProfileIni(void)
 			}
 
 			if (scandata[x].type == 'S' || (scandata[x].type == 'O' && oi == NULL)) {
-				const uint8 type = Structure_StringToType(key);
-
+				type = Structure_StringToType(key);
 				if (type != STRUCTURE_INVALID) {
 					si = &g_table_structureInfo[type];
 					oi = &g_table_structureInfo[type].o;
@@ -676,6 +677,30 @@ Campaign_ReadProfileIni(void)
 						ui->explosionType = (0 <= explosionType && explosionType < 20) ? explosionType : -1;
 						ui->bulletType = (UNIT_MISSILE_HOUSE <= bulletType && bulletType <= UNIT_SANDWORM) ? bulletType : -1;
 						ui->bulletSound = (0 <= bulletSound && bulletSound < SOUNDID_MAX) ? bulletSound : -1;
+					}
+					break;
+
+				case 7: /* UnitGFX: spriteID, groundSprites (base unit), turretSpriteID (base unit), animationSpeed. */
+					{
+						uint16 spriteID;        /* SHAPE_CONCRETE_SLAB .. SHAPE_FREMEN. */
+						uint16 baseUnit;        /* enum UnitType. */
+						int16 baseTurret;       /* -1 or enum UnitType. */
+						uint16 animationSpeed;
+
+						const int count = sscanf(buffer, "%hu,%hu,%hd,%hu",
+								&spriteID, &baseUnit, &baseTurret, &animationSpeed);
+						if ((count < 4) || (baseUnit >= UNIT_MAX)) {
+							fprintf(stderr, "[%s] %s=%hu,%hu,%hd,%hu\n", category, key,
+									ui->o.spriteID, type, ((int16)ui->turretSpriteID == -1) ? -1 : type, ui->animationSpeed);
+							break;
+						}
+
+						ui->o.spriteID          = clamp(SHAPE_CONCRETE_SLAB, spriteID, SHAPE_FREMEN);
+						ui->groundSpriteID      = g_table_unitInfo_original[baseUnit].groundSpriteID;
+						ui->displayMode         = g_table_unitInfo_original[baseUnit].displayMode;
+						ui->destroyedSpriteID   = g_table_unitInfo_original[baseUnit].destroyedSpriteID;
+						ui->turretSpriteID      = (0 <= baseTurret && baseTurret <= UNIT_MAX) ? g_table_unitInfo_original[baseTurret].turretSpriteID : -1;
+						ui->animationSpeed      = animationSpeed;
 					}
 					break;
 
