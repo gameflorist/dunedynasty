@@ -232,7 +232,7 @@ Viewport_SelectRegion(void)
 	}
 }
 
-void
+static void
 Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 {
 	uint16 encoded;
@@ -293,7 +293,7 @@ Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 	}
 }
 
-void
+static void
 Viewport_Place(void)
 {
 	const StructureInfo *si = &g_table_structureInfo[g_structureActiveType];

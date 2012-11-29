@@ -5,8 +5,6 @@
 #include "../unit.h"
 
 extern void Viewport_Init(void);
-extern void Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed);
-extern void Viewport_Place(void);
 extern void Viewport_Hotkey(enum SquadID squad);
 extern void Viewport_Homekey(void);
 extern void Viewport_DrawTiles(void);
