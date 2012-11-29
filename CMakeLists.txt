@@ -3,9 +3,9 @@ project(dunedynasty)
 set(DUNE_DYNASTY_VERSION 1.4)
 
 set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
-option(WITH_AUD "AUD" ON)
+option(WITH_AUD "AUD music (Dune 2000)" ON)
 option(WITH_FLUIDSYNTH "FluidSynth" ON)
-option(WITH_MAD "MAD" ON)
+option(WITH_MAD "MP3 music" ON)
 
 if(NOT DUNE_DATA_DIR)
 	set(DUNE_DATA_DIR ".")
@@ -90,15 +90,11 @@ target_link_libraries(dunedynasty
 	)
 
 if(WITH_FLUIDSYNTH)
-    target_link_libraries(dunedynasty
-	${FLUIDSYNTH_LDFLAGS}
-	)
+	target_link_libraries(dunedynasty ${FLUIDSYNTH_LIBRARIES})
 endif(WITH_FLUIDSYNTH)
 
 if(WITH_MAD)
-    target_link_libraries(dunedynasty
-	${MAD_LIBRARIES}
-	)
+	target_link_libraries(dunedynasty ${MAD_LIBRARIES})
 endif(WITH_MAD)
 
 install(TARGETS dunedynasty DESTINATION "bin")
