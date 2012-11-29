@@ -571,6 +571,7 @@ Campaign_ReadProfileIni(void)
 						/* oi->flags.targetAir          = (flags & 0x1000) ? 1 : 0; */
 						/* oi->flags.priority           = (flags & 0x2000) ? 1 : 0; */
 
+						si->o.spawnChance = st.o.spawnChance;
 						si->enterFilter = st.enterFilter;
 						si->creditsStorage = st.creditsStorage;
 						si->powerUsage = st.powerUsage;
