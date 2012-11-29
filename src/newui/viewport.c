@@ -1430,20 +1430,20 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 		index = ui->groundSpriteID;
 
 		switch (ui->displayMode) {
-			case 1:
-			case 2:
+			case DISPLAYMODE_UNIT:
+			case DISPLAYMODE_ROCKET:
 				if (ui->movementType == MOVEMENT_SLITHER) break;
 				index += values_32A4[orientation][0];
 				s_spriteFlags = values_32A4[orientation][1];
 				break;
 
-			case 3:
+			case DISPLAYMODE_INFANTRY_3_FRAMES:
 				index += values_32C4[orientation][0] * 3;
 				index += values_334A[u->spriteOffset & 3];
 				s_spriteFlags = values_32C4[orientation][1];
 				break;
 
-			case 4:
+			case DISPLAYMODE_INFANTRY_4_FRAMES:
 				index += values_32C4[orientation][0] * 4;
 				index += u->spriteOffset & 3;
 				s_spriteFlags = values_32C4[orientation][1];
@@ -1551,11 +1551,11 @@ Viewport_DrawAirUnit(const Unit *u)
 	uint8 orientation = u->orientation[0].current;
 
 	switch (ui->displayMode) {
-		case 0:
+		case DISPLAYMODE_SINGLE_FRAME:
 			if (u->o.flags.s.bulletIsBig) index++;
 			break;
 
-		case 1: /* carryall, frigate */
+		case DISPLAYMODE_UNIT: /* carryall, frigate */
 			if (!smooth_rotation) {
 				orientation = Orientation_Orientation256ToOrientation8(orientation);
 
@@ -1564,14 +1564,14 @@ Viewport_DrawAirUnit(const Unit *u)
 			}
 			break;
 
-		case 2: /* rockets */
+		case DISPLAYMODE_ROCKET: /* rockets */
 			orientation = Orientation_Orientation256ToOrientation16(orientation);
 
 			index += values_3304[orientation][0];
 			s_spriteFlags |= values_3304[orientation][1];
 			break;
 
-		case 5: /* ornithopter */
+		case DISPLAYMODE_ORNITHOPTER: /* ornithopter */
 			if (!smooth_rotation) {
 				orientation = Orientation_Orientation256ToOrientation8(orientation);
 
