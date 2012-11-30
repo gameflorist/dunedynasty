@@ -163,12 +163,6 @@ enum SmoothUnitAnimationMode enhancement_smooth_unit_animation = SMOOTH_UNIT_ANI
 bool enhancement_soldier_engineers = false;
 
 /**
- * [SMD] Use the Fremen and Sardaukar portaits for troopers and
- * trooper squads.
- */
-bool enhancement_special_trooper_portaits = true;
-
-/**
  * Prevent structures built completely on concrete slabs from
  * degrading, as this seems in contrast with the idea of slabs.
  */
@@ -212,3 +206,9 @@ bool enhancement_read_scenario_structure_health;
  * flooring bug in the v1.07 formula lead to free repairs for palaces.
  */
 enum RepairCostFormula enhancement_repair_cost_formula;
+
+/**
+ * [SMD] Use the Fremen and Sardaukar portaits for troopers and
+ * trooper squads.
+ */
+bool enhancement_special_trooper_portaits;

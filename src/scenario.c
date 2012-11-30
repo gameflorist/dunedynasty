@@ -132,16 +132,26 @@ Campaign_ResetEnhancements(void)
 	}
 
 	enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
+	enhancement_special_trooper_portaits = true;
 }
 
 static void
-Campaign_ReadEnhancements(char *source)
+Campaign_ReadEnhancements(char *source, char *keys)
 {
-	char dest[1024];
+	char value[1024];
 
-	Ini_GetString("ENHANCEMENT", "repair_cost", NULL, dest, sizeof(dest), source);
-	     if (strcmp(dest, "1.0")  == 0) enhancement_repair_cost_formula = REPAIR_COST_v100;
-	else if (strcmp(dest, "1.07") == 0) enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
+	Ini_GetString("ENHANCEMENT", NULL, NULL, keys, 2000, source);
+	for (char *key = keys; *key != '\0'; key += strlen(key) + 1) {
+		Ini_GetString("ENHANCEMENT", key, NULL, value, sizeof(value), source);
+
+		if (strcasecmp(key, "repair_cost") == 0) {
+			     if (strcmp(value, "1.0")  == 0) enhancement_repair_cost_formula = REPAIR_COST_v100;
+			else if (strcmp(value, "1.07") == 0) enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
+		}
+		else if (strcasecmp(key, "special_trooper_portraits") == 0) {
+			String_GetBool(value, &enhancement_special_trooper_portaits);
+		}
+	}
 }
 
 static void
@@ -175,15 +185,17 @@ Campaign_ReadMetaData(Campaign *camp)
 		hi->mentat = Campaign_ReadMentat(value + 8, hi->mentat);
 	}
 
+	char *keys = source + strlen(source) + 5000;
+	*keys = '\0';
+
 	/* Read tweaks. */
 	Campaign_ReadCPSTweaks(source, "FAME.CPS",    value, sizeof(value), g_campaign_list[0].fame_cps, camp->fame_cps);
 	Campaign_ReadCPSTweaks(source, "MAPMACH.CPS", value, sizeof(value), g_campaign_list[0].mapmach_cps, camp->mapmach_cps);
 	Campaign_ReadCPSTweaks(source, "MISC.CPS",    value, sizeof(value), g_campaign_list[0].misc_cps, camp->misc_cps);
-	Campaign_ReadEnhancements(source);
+	Campaign_ReadEnhancements(source, keys);
 
 	/* Add PAK file entries. */
 	int i = snprintf(value, sizeof(value), "%s", camp->dir_name);
-	char *keys = source + strlen(source) + 5000;
 	*keys = '\0';
 	Ini_GetString("PAK", NULL, NULL, keys, 2000, source);
 
