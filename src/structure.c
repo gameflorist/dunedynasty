@@ -51,6 +51,7 @@ static int64_t s_tickStructurePalace    = 0; /*!< Indicates next time Palace fun
 uint16 g_structureIndex;
 
 static int16 Structure_IsValidBuildLandscape(uint16 position, enum StructureType type);
+static bool Structure_SkipUpgradeLevel(const Structure *s, int level);
 
 /**
  * Loop over all structures, preforming various of tasks.
@@ -136,14 +137,14 @@ void GameLoop_Structure(void)
 					if (s->upgradeTimeLeft > 5) {
 						s->upgradeTimeLeft -= 5;
 					} else {
+						while (Structure_SkipUpgradeLevel(s, s->upgradeLevel + 1))
+							s->upgradeLevel++;
+
 						s->upgradeLevel++;
 						s->o.flags.s.upgrading = false;
 
 						/* ENHANCEMENT -- Resume production once upgrades are finished. */
 						if (g_dune2_enhanced) s->o.flags.s.onHold = false;
-
-						/* Ordos Heavy Vehicle gets the last upgrade for free */
-						if (s->o.houseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 2) s->upgradeLevel = 3;
 
 						s->upgradeTimeLeft = Structure_IsUpgradable(s) ? 100 : 0;
 						g_factoryWindowTotal = -1;
@@ -477,10 +478,6 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 	s->o.hitpoints  = si->o.hitpoints;
 	s->hitpointsMax = si->o.hitpoints;
 
-	if (houseID == HOUSE_HARKONNEN && typeID == STRUCTURE_LIGHT_VEHICLE) {
-		s->upgradeLevel = 1;
-	}
-
 	/* Check if there is an upgrade available */
 	if (si->o.flags.factory) {
 		s->upgradeTimeLeft = Structure_IsUpgradable(s) ? 100 : 0;
@@ -539,6 +536,12 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 			s->upgradeLevel++;
 		}
 		s->upgradeTimeLeft = 0;
+	}
+	else {
+		while (Structure_IsUpgradable(s) && Structure_SkipUpgradeLevel(s, s->upgradeLevel))
+			s->upgradeLevel++;
+
+		s->upgradeTimeLeft = Structure_IsUpgradable(s) ? 100 : 0;
 	}
 
 	switch (s->o.type) {
@@ -1311,6 +1314,51 @@ bool Structure_IsUpgradable(Structure *s)
 	return false;
 }
 
+static bool
+Structure_SkipUpgradeLevel(const Structure *s, int level)
+{
+	const StructureInfo *si = &g_table_structureInfo[s->o.type];
+
+	if ((!si->o.flags.factory) || (level >= 3))
+		return false;
+
+	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		/* XXX: Too lazy to do this case. */
+		return false;
+	}
+	else {
+#if 0
+		/* Original behaviour: Harkonnen cannot produce trikes,
+		 * so light factories begin upgraded.
+		 */
+		if (s->creatorHouseID == HOUSE_HARKONNEN && typeID == STRUCTURE_LIGHT_VEHICLE) {}
+
+		/* Original behaviour: Ordos cannot produce launchers,
+		 * so heavy factories skip an upgrade.
+		 * upgradeLevel 0 -> 1 -> 3; not 0 -> 2 -> 3.
+		 *
+		 * ENHANCEMENT -- was s->o.houseID, but should be s->creatorHouseID.
+		 * The original behaviour meant that if you captured an Ordos
+		 * heavy factory on level 6, you could upgrade the factory twice.
+		 * The second factory upgrade doesn't unlock any new units.
+		 *
+		 * Also, originally Ordos would unlock both launchers and
+		 * siege tanks when upgrading enemy factories from level 1 due
+		 * to the freebie upgrade.  This doesn't occur in the game
+		 * since the AI always has full upgrades, but you can restore
+		 * this behaviour by setting Ordos launcher's
+		 * upgradeLevelRequired to 0.
+		 */
+		if (s->creatorHouseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 2) {}
+#endif
+
+		/* Generalised behaviour: the upgrade is free if it does not
+		 * unlock any new tech.
+		 */
+		return !Structure_UpgradeUnlocksNewUnit(s, level);
+	}
+}
+
 /**
  * Connect walls around the given position.
  *
@@ -1970,9 +2018,18 @@ Structure_GetAvailable(const Structure *s, int i)
 
 		const UnitInfo *ui = &g_table_unitInfo[unitType];
 		uint16 upgradeLevelRequired = ui->o.upgradeLevelRequired;
+		uint16 next_upgrade_level = s->upgradeLevel + 1;
 
-		if (unitType == UNIT_SIEGE_TANK && s->creatorHouseID == HOUSE_ORDOS)
-			upgradeLevelRequired--;
+		/* Desired behaviour: Ordos siege tank upgrade shown one upgrade level earlier. */
+		/* if (unitType == UNIT_SIEGE_TANK && s->creatorHouseID == HOUSE_ORDOS) {} */
+
+		/* Generalised behaviour: skip upgrade levels that do not unlock units. */
+		while (next_upgrade_level < 3) {
+			if (Structure_UpgradeUnlocksNewUnit(s, next_upgrade_level))
+				break;
+
+			next_upgrade_level++;
+		}
 
 		if ((structuresBuilt & ui->o.structuresRequired) != ui->o.structuresRequired) {
 			/* If the prerequisites were destroyed, allow the current
@@ -1990,7 +2047,7 @@ Structure_GetAvailable(const Structure *s, int i)
 		if (s->upgradeLevel >= upgradeLevelRequired) {
 			return 1;
 		}
-		else if (s->upgradeTimeLeft != 0 && s->upgradeLevel + 1 >= upgradeLevelRequired) {
+		else if (s->upgradeTimeLeft != 0 && next_upgrade_level >= upgradeLevelRequired) {
 			return -1;
 		}
 
