@@ -122,7 +122,7 @@ Campaign_ReadCPSTweaks(char *source, const char *key, char *value, size_t size,
 static void
 Campaign_ResetEnhancements(void)
 {
-	enhancement_repair_cost_formula = enhancement_repair_cost_formula_default;
+	enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
 }
 
 static void

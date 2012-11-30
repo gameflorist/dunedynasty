@@ -55,8 +55,6 @@ extern bool enhancement_permanent_follow_mode;
 extern bool enhancement_play_additional_voices;
 extern bool enhancement_raise_scenario_unit_cap;
 extern bool enhancement_read_scenario_structure_health;
-extern enum RepairCostFormula enhancement_repair_cost_formula;
-extern enum RepairCostFormula enhancement_repair_cost_formula_default;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
 extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;
@@ -65,5 +63,7 @@ extern bool enhancement_special_trooper_portaits;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 extern enum SubtitleOverride enhancement_subtitle_override;
 extern bool enhancement_targetted_sabotage;
+
+extern enum RepairCostFormula enhancement_repair_cost_formula;
 
 #endif

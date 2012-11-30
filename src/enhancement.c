@@ -89,14 +89,14 @@ bool enhancement_fog_covers_units = true;
 bool enhancement_fog_of_war = false;
 
 /**
- * Dune 2 likes to search the tiles surrounding the one you clicked
+ * Dune II likes to search the tiles surrounding the one you clicked
  * for an appropriate target, which can be annoying.
  */
 bool enhancement_i_mean_where_i_clicked = true;
 
 /**
- * Use the infantry squad death animations like in the Sega Mega Drive
- * version of Dune II.
+ * [SMD] Show infantry squad and trooper squad death animations when
+ * they reduce down from a squad to a single unit.
  */
 bool enhancement_infantry_squad_death_animations = true;
 
@@ -107,8 +107,8 @@ bool enhancement_infantry_squad_death_animations = true;
 bool enhancement_insatiable_sandworms = false;
 
 /**
- * Saboteurs are masters of stealth; make them visible only in the
- * minimap like in v1.0 (due to a bug).
+ * [v1.0] Saboteurs are masters of stealth; make them visible only in
+ * the minimap.
  */
 bool enhancement_invisible_saboteurs = false;
 
@@ -145,7 +145,7 @@ bool enhancement_permanent_follow_mode = false;
 bool enhancement_play_additional_voices = true;
 
 /**
- * Dune 2 usually limits the player to 25 units, and the CPU to 20
+ * Dune II usually limits the player to 25 units, and the CPU to 20
  * units per house.  Allow larger armies if possible.
  */
 bool enhancement_raise_scenario_unit_cap = false;
@@ -155,13 +155,6 @@ bool enhancement_raise_scenario_unit_cap = false;
  * in the scenario, giving them all full health instead.
  */
 bool enhancement_read_scenario_structure_health = false;
-
-/**
- * The repair cost formula is different in v1.0 and v1.07, and caused
- * palace repairs to become free in v1.07 due to a flooring bug.
- */
-enum RepairCostFormula enhancement_repair_cost_formula;
-enum RepairCostFormula enhancement_repair_cost_formula_default = REPAIR_COST_v107_HIGH_HP_FIX;
 
 /**
  * A mistake in reading the scenario script causes reinforcements to
@@ -182,14 +175,14 @@ enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ACCE
 enum SmoothUnitAnimationMode enhancement_smooth_unit_animation = SMOOTH_UNIT_ANIMATION_ENABLE;
 
 /**
- * Make soldiers entering structures do more damage, thus turning them
- * into half-decent engineers.
+ * [OpenDUNE bug] Make soldiers entering structures do more damage,
+ * thus turning them into half-decent engineers.
  */
 bool enhancement_soldier_engineers = false;
 
 /**
- * Use the Fremen and Sardaukar portaits for troopers and trooper
- * squads.
+ * [SMD] Use the Fremen and Sardaukar portaits for troopers and
+ * trooper squads.
  */
 bool enhancement_special_trooper_portaits = true;
 
@@ -200,8 +193,8 @@ bool enhancement_special_trooper_portaits = true;
 bool enhancement_structures_on_concrete_do_not_degrade = true;
 
 /**
- * Choose to override the EU version's "The Battle for Arrakis"
- * subtitle with "The Building of a Dynasty".
+ * [v1.0] Override the EU "The Battle for Arrakis" subtitle with the
+ * original subtitle or "The Building of a Dynasty".
  */
 enum SubtitleOverride enhancement_subtitle_override = SUBTITLE_THE_BUILDING_OF_LOWER_A_DYNASTY;
 
@@ -210,3 +203,12 @@ enum SubtitleOverride enhancement_subtitle_override = SUBTITLE_THE_BUILDING_OF_L
  * or right-clicked on a structure, unit, or wall.
  */
 bool enhancement_targetted_sabotage = true;
+
+/*--------------------------------------------------------------*/
+/* Tweaks for campaigns. */
+
+/**
+ * [v1.0] Repairs are far more expensive in v1.0.  In addition, a
+ * flooring bug in the v1.07 formula lead to free repairs for palaces.
+ */
+enum RepairCostFormula enhancement_repair_cost_formula;
