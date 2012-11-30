@@ -1869,6 +1869,28 @@ void Structure_UpdateMap(Structure *s)
 	}
 }
 
+static uint32
+Structure_GetPrerequisites(const StructureInfo *si, enum HouseType houseID)
+{
+	const uint8 houseFlag = (1 << houseID);
+	uint32 structuresRequired = si->o.structuresRequired;
+
+	/* Desired behaviour: Harkonnen can build WOR without Barracks. */
+	/* if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {} */
+
+	/* Generalised behaviour: the prerequisite structures are only
+	 * required if the owner can build it.
+	 */
+	for (enum StructureType prereq = STRUCTURE_PALACE; prereq < STRUCTURE_MAX; prereq++) {
+		const uint32 prereq_flag = (1 << prereq);
+
+		if ((structuresRequired & prereq_flag) && !(g_table_structureInfo[prereq].o.availableHouse & houseFlag))
+			structuresRequired &= ~prereq_flag;
+	}
+
+	return structuresRequired;
+}
+
 int
 Structure_GetAvailable(const Structure *s, int i)
 {
@@ -1884,10 +1906,9 @@ Structure_GetAvailable(const Structure *s, int i)
 
 		const StructureInfo *si = &g_table_structureInfo[i];
 		uint16 availableCampaign = si->o.availableCampaign;
-		uint32 structuresRequired = si->o.structuresRequired;
+		uint32 structuresRequired = Structure_GetPrerequisites(si, s->o.houseID);
 
 		if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {
-			structuresRequired &= ~FLAG_STRUCTURE_BARRACKS;
 			availableCampaign = 2;
 		}
 
