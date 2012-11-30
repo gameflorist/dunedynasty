@@ -1246,6 +1246,29 @@ bool Structure_Damage(Structure *s, uint16 damage, uint16 range)
 	return false;
 }
 
+static bool
+Structure_UpgradeUnlocksNewUnit(const Structure *s, int level)
+{
+	const StructureInfo *si = &g_table_structureInfo[s->o.type];
+	const uint8 creatorFlag = (1 << s->creatorHouseID);
+
+	for (int i = 0; i < 8; i++) {
+		if (si->buildableUnits[i] == UNIT_INVALID)
+			continue;
+
+		const enum UnitType u = si->buildableUnits[i];
+		const UnitInfo *ui = &g_table_unitInfo[u];
+
+		/* An upgrade is only possible if the original factory design
+		 * supports it (creator) and the current owner has the technology.
+		 */
+		if ((ui->o.availableHouse & creatorFlag) && (level == ui->o.upgradeLevelRequired))
+			return true;
+	}
+
+	return false;
+}
+
 /**
  * Check wether the given structure is upgradable.
  *
