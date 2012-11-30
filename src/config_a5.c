@@ -156,25 +156,6 @@ Config_GetAspectCorrection(const char *str, enum AspectRatioCorrection *value)
 	}
 }
 
-static void
-Config_GetBool(const char *str, bool *value)
-{
-	if (str[0] == '1' || str[0] == 't' || str[0] == 'T' || str[0] == 'y' || str[0] == 'Y') {
-		*value = true;
-	}
-	else {
-		*value = false;
-	}
-}
-
-static void
-Config_SetBool(ALLEGRO_CONFIG *config, const char *section, const char *key, bool value)
-{
-	const char *str = (value == true) ? "1" : "0";
-
-	al_set_config_value(config, section, key, str);
-}
-
 void
 Config_GetCampaign(void)
 {
@@ -523,7 +504,7 @@ GameOptions_Load(void)
 				break;
 
 			case CONFIG_BOOL:
-				Config_GetBool(str, opt->d._bool);
+				String_GetBool(str, opt->d._bool);
 				break;
 
 			case CONFIG_CAMPAIGN:
@@ -601,17 +582,14 @@ GameOptions_Load(void)
 			snprintf(key, sizeof(key), "%s_%d", m->filename, m->track);
 
 			const char *str = al_get_config_value(s_configFile, category, key);
-			if (str != NULL) {
-				bool want;
+			bool want = (m->enable & MUSIC_WANT);
+			String_GetBool(str, &want);
 
-				Config_GetBool(str, &want);
-
-				if (want) {
-					m->enable |= MUSIC_WANT;
-				}
-				else {
-					m->enable &=~MUSIC_WANT;
-				}
+			if (want) {
+				m->enable |= MUSIC_WANT;
+			}
+			else {
+				m->enable &=~MUSIC_WANT;
 			}
 		}
 		else {
@@ -644,7 +622,7 @@ GameOptions_Save(void)
 
 		switch (opt->type) {
 			case CONFIG_BOOL:
-				Config_SetBool(s_configFile, opt->section, opt->key, *(opt->d._bool));
+				al_set_config_value(s_configFile, opt->section, opt->key, *(opt->d._bool) ? "1" : "0");
 				break;
 
 			case CONFIG_CAMPAIGN:

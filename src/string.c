@@ -336,3 +336,15 @@ void String_Trim(char *string)
 		s--;
 	}
 }
+
+void
+String_GetBool(const char *str, bool *value)
+{
+	if (str == NULL)
+		return;
+
+	const char c = str[0];
+
+	     if (c == '1' || c == 't' || c == 'T' || c == 'y' || c == 'Y') *value = true;
+	else if (c == '0' || c == 'f' || c == 'F' || c == 'n' || c == 'N') *value = false;
+}
