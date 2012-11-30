@@ -202,6 +202,12 @@ bool enhancement_fix_scenario_typos;
 bool enhancement_read_scenario_structure_health;
 
 /**
+ * [Dune 2 eXtended] Make infantry fire mini-rockets when attacking
+ * from long range (2+ tiles), like troopers.
+ */
+bool enhancement_infantry_mini_rockets;
+
+/**
  * [v1.0] Repairs are far more expensive in v1.0.  In addition, a
  * flooring bug in the v1.07 formula lead to free repairs for palaces.
  */

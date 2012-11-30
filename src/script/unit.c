@@ -641,6 +641,9 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 	if ((u->o.type == UNIT_TROOPERS || u->o.type == UNIT_TROOPER) && (int16)distance > 512) typeID = UNIT_MISSILE_TROOPER;
 
+	if (enhancement_infantry_mini_rockets &&
+			(u->o.type == UNIT_INFANTRY || u->o.type == UNIT_SOLDIER) && (int16)distance > 512) typeID = UNIT_MISSILE_TROOPER;
+
 	switch (typeID) {
 		case UNIT_SANDWORM: {
 			Unit *u2;

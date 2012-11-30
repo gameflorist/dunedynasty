@@ -131,6 +131,7 @@ Campaign_ResetEnhancements(void)
 		enhancement_read_scenario_structure_health = true;
 	}
 
+	enhancement_infantry_mini_rockets = false;
 	enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
 	enhancement_special_trooper_portaits = true;
 }
@@ -147,6 +148,9 @@ Campaign_ReadEnhancements(char *source, char *keys)
 		if (strcasecmp(key, "repair_cost") == 0) {
 			     if (strcmp(value, "1.0")  == 0) enhancement_repair_cost_formula = REPAIR_COST_v100;
 			else if (strcmp(value, "1.07") == 0) enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
+		}
+		else if (strcasecmp(key, "infantry_mini_rockets") == 0) {
+			String_GetBool(value, &enhancement_infantry_mini_rockets);
 		}
 		else if (strcasecmp(key, "special_trooper_portraits") == 0) {
 			String_GetBool(value, &enhancement_special_trooper_portaits);
