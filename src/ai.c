@@ -306,6 +306,31 @@ StructureAI_RemapBuildItem(int index, uint16 *priority)
 	return remap[index].unit_type;
 }
 
+static uint32
+StructureAI_GetBuildable(const Structure *s)
+{
+	uint32 ret = 0;
+
+	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		for (int i = STRUCTURE_PALACE; i < STRUCTURE_MAX; i++) {
+			if (Structure_GetAvailable(s, i) > 0)
+				ret |= (1 << i);
+		}
+	}
+	else {
+		const StructureInfo *si = &g_table_structureInfo[s->o.type];
+
+		for (int i = 0; i < 8; i++) {
+			const int u = si->buildableUnits[i];
+
+			if (Structure_GetAvailable(s, u))
+				ret |= (1 << u);
+		}
+	}
+
+	return ret;
+}
+
 /**
  * Find the next object to build.
  * @param s The structure in which we can build something.
@@ -317,7 +342,7 @@ StructureAI_PickNextToBuild(const Structure *s)
 	if (s == NULL) return 0xFFFF;
 
 	House *h = House_Get_ByIndex(s->o.houseID);
-	uint32 buildable = Structure_GetBuildable(s);
+	uint32 buildable = StructureAI_GetBuildable(s);
 
 	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 		for (int i = 0; i < 5; i++) {

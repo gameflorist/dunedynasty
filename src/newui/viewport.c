@@ -341,7 +341,7 @@ Viewport_Place(void)
 
 		s = Structure_Get_ByPackedTile(g_structureActivePosition);
 		if (s != NULL) {
-			if ((Structure_GetBuildable(s) & (1 << s->objectType)) == 0)
+			if (Structure_GetAvailable(s, s->objectType) <= 0)
 				Structure_BuildObject(s, 0xFFFE);
 		}
 

@@ -51,7 +51,6 @@ static int64_t s_tickStructurePalace    = 0; /*!< Indicates next time Palace fun
 uint16 g_structureIndex;
 
 static int16 Structure_IsValidBuildLandscape(uint16 position, enum StructureType type);
-static int Structure_GetAvailable(const Structure *s, int i);
 
 /**
  * Loop over all structures, preforming various of tasks.
@@ -1605,6 +1604,9 @@ void Structure_CancelBuild(Structure *s)
  *
  * @param s The Structure.
  * @param objectType The type of the object to build or a special value (0xFFFD, 0xFFFE, 0xFFFF).
+ *        0xFFFD: set upgrading state.
+ *        0xFFFE: pick default object type.
+ *        0xFFFF: open factory window.
  * @return ??.
  */
 bool Structure_BuildObject(Structure *s, uint16 objectType)
@@ -1629,112 +1631,34 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 	}
 
 	if (objectType == 0xFFFF || objectType == 0xFFFE) {
-		uint16 upgradeCost = 0;
-
-		if (Structure_IsUpgradable(s) && si->o.hitpoints == s->o.hitpoints) {
-			upgradeCost = (si->o.buildCredits + (si->o.buildCredits >> 15)) / 2;
-		}
-
-		if (upgradeCost != 0 && s->o.type == STRUCTURE_HIGH_TECH && s->o.houseID == HOUSE_HARKONNEN) upgradeCost = 0;
-		if (s->o.type == STRUCTURE_STARPORT) upgradeCost = 0;
-
-		if (!Structure_PopulateBuildable(s, objectType))
-			return false;
-
-#if 0
-		House *h;
-		h = House_Get_ByIndex(s->o.houseID);
-
-		if (objectType == 0xFFFF) {
-			FactoryResult res;
-
-			Sprites_UnloadTiles();
-
-			memmove(g_palette1, g_paletteActive, 256 * 3);
-
-			GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
-
-			Timer_SetTimer(TIMER_GAME, false);
-
-			res = GUI_DisplayFactoryWindow(s, upgradeCost);
-
-			Timer_SetTimer(TIMER_GAME, true);
-
-			Sprites_LoadTiles();
-
-			GFX_SetPalette(g_palette1);
-
-			GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
-
-			if (res == FACTORY_RESUME) return false;
-
-			if (res == FACTORY_UPGRADE) {
-				Structure_SetUpgradingState(s, 1, NULL);
-				return false;
-			}
-
-			if (res == FACTORY_BUY) {
-				House *h;
-				uint8 i;
-
-				h = House_Get_ByIndex(s->o.houseID);
-
-				for (i = 0; i < 25; i++) {
-					Unit *u;
-
-					if (g_factoryWindowItems[i].amount == 0) continue;
-					objectType = g_factoryWindowItems[i].objectType;
-
-					if (s->o.type != STRUCTURE_STARPORT) {
-						Structure_CancelBuild(s);
-
-						s->objectType = objectType;
-
-						if (!g_factoryWindowConstructionYard) continue;
-
-						if (Structure_CheckAvailableConcrete(objectType, s->o.houseID)) continue;
-
-						if (GUI_DisplayHint(STR_THERE_ISNT_ENOUGH_OPEN_CONCRETE_TO_PLACE_THIS_STRUCTURE_YOU_MAY_PROCEED_BUT_WITHOUT_ENOUGH_CONCRETE_THE_BUILDING_WILL_NEED_REPAIRS, g_table_structureInfo[objectType].o.spriteID) == 0) continue;
-
-						s->objectType = objectType;
-
-						return false;
-					}
-
-					g_validateStrictIfZero++;
-					{
-						tile32 tile;
-						tile.tile = 0xFFFFFFFF;
-						u = Unit_Create(UNIT_INDEX_INVALID, (uint8)objectType, s->o.houseID, tile, 0);
-					}
-					g_validateStrictIfZero--;
-
-					if (u == NULL) {
-						h->credits += g_table_unitInfo[UNIT_CARRYALL].o.buildCredits;
-						if (s->o.houseID != g_playerHouseID) continue;
-						GUI_DisplayText(String_Get_ByIndex(STR_UNABLE_TO_CREATE_MORE), 2);
-						continue;
-					}
-
-					g_structureIndex = s->o.index;
-
-					if (h->starportTimeLeft == 0) h->starportTimeLeft = g_table_houseInfo[h->index].starportDeliveryTime;
-
-					u->o.linkedID = h->starportLinkedID & 0xFF;
-					h->starportLinkedID = u->o.index;
-
-					g_starportAvailable[objectType]--;
-					if (g_starportAvailable[objectType] <= 0) g_starportAvailable[objectType] = -1;
-
-					g_factoryWindowItems[i].amount--;
-					if (g_factoryWindowItems[i].amount != 0) i--;
+		/* Significantly different from OpenDUNE since we don't
+		 * clobber the availability table, and we don't have the
+		 * factory window (objectType == 0xFFFF).
+		 */
+		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+			for (int i = STRUCTURE_SLAB_1x1; i < STRUCTURE_MAX; i++) {
+				if (Structure_GetAvailable(s, i) > 0) {
+					s->objectType = i;
+					break;
 				}
 			}
+
+			return false;
+		}
+		else if (s->o.type != STRUCTURE_STARPORT) {
+			for (int i = 0; i < 8; i++) {
+				const int u = si->buildableUnits[i];
+
+				if (Structure_GetAvailable(s, u)) {
+					s->objectType = u;
+					break;
+				}
+			}
+
+			return false;
 		} else {
 			s->objectType = objectType;
 		}
-#endif
-		s->objectType = objectType;
 	}
 
 	if (s->o.type == STRUCTURE_STARPORT) return true;
@@ -1945,7 +1869,7 @@ void Structure_UpdateMap(Structure *s)
 	}
 }
 
-static int
+int
 Structure_GetAvailable(const Structure *s, int i)
 {
 	if (s->o.type == STRUCTURE_STARPORT) {
@@ -2028,190 +1952,6 @@ Structure_GetAvailable(const Structure *s, int i)
 
 		return 0;
 	}
-}
-
-uint32 Structure_GetBuildable(Structure *s)
-{
-	const StructureInfo *si;
-	uint32 structuresBuilt;
-	uint32 ret = 0;
-	int i;
-
-	if (s == NULL) return 0;
-
-	si = &g_table_structureInfo[s->o.type];
-
-	structuresBuilt = House_Get_ByIndex(s->o.houseID)->structuresBuilt;
-
-	switch (s->o.type) {
-		case STRUCTURE_LIGHT_VEHICLE:
-		case STRUCTURE_HEAVY_VEHICLE:
-		case STRUCTURE_HIGH_TECH:
-		case STRUCTURE_WOR_TROOPER:
-		case STRUCTURE_BARRACKS:
-			for (i = 0; i < UNIT_MAX; i++) {
-				g_table_unitInfo[i].o.available = 0;
-			}
-
-			for (i = 0; i < 8; i++) {
-				UnitInfo *ui;
-				uint16 upgradeLevelRequired;
-				uint8 unitType = si->buildableUnits[i];
-
-				if (unitType == UNIT_INVALID) continue;
-
-				/* if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) unitType = UNIT_RAIDER_TRIKE; */
-
-				ui = &g_table_unitInfo[unitType];
-				upgradeLevelRequired = ui->o.upgradeLevelRequired;
-
-				if (unitType == UNIT_SIEGE_TANK && s->creatorHouseID == HOUSE_ORDOS) upgradeLevelRequired--;
-
-				if ((structuresBuilt & ui->o.structuresRequired) != ui->o.structuresRequired) continue;
-				if ((ui->o.availableHouse & (1 << s->creatorHouseID)) == 0) continue;
-
-				if (s->upgradeLevel >= upgradeLevelRequired) {
-					ui->o.available = 1;
-
-					ret |= (1 << unitType);
-					continue;
-				}
-
-				if (s->upgradeTimeLeft != 0 && s->upgradeLevel + 1 >= upgradeLevelRequired) {
-					ui->o.available = -1;
-				}
-			}
-			return ret;
-
-		case STRUCTURE_CONSTRUCTION_YARD:
-			for (i = 0; i < STRUCTURE_MAX; i++) {
-				StructureInfo *localsi = &g_table_structureInfo[i];
-				uint16 availableCampaign;
-				uint32 structuresRequired;
-
-				localsi->o.available = 0;
-
-				availableCampaign = localsi->o.availableCampaign;
-				structuresRequired = localsi->o.structuresRequired;
-
-				if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {
-					structuresRequired &= ~FLAG_STRUCTURE_BARRACKS;
-					availableCampaign = 2;
-				}
-
-				if ((structuresBuilt & structuresRequired) == structuresRequired || s->o.houseID != g_playerHouseID) {
-					if (s->o.houseID != HOUSE_HARKONNEN && i == STRUCTURE_LIGHT_VEHICLE) {
-						availableCampaign = 2;
-					}
-
-					if (g_campaignID >= availableCampaign - 1 && (localsi->o.availableHouse & (1 << s->o.houseID)) != 0) {
-						if (s->upgradeLevel >= localsi->o.upgradeLevelRequired || s->o.houseID != g_playerHouseID) {
-							localsi->o.available = 1;
-
-							ret |= (1 << i);
-						} else if (s->upgradeTimeLeft != 0 && s->upgradeLevel + 1 >= localsi->o.upgradeLevelRequired) {
-							localsi->o.available = -1;
-						}
-					}
-				}
-			}
-			return ret;
-
-		case STRUCTURE_STARPORT:
-			return -1;
-
-		default:
-			return 0;
-	}
-}
-
-/**
- * Fill in the available units array for the given structure.
- */
-bool Structure_PopulateBuildable(Structure *s, uint16 objectType)
-{
-	uint32 buildable = Structure_GetBuildable(s);
-
-	if (buildable == 0) {
-		s->objectType = 0;
-		return false;
-	}
-
-	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-		uint8 i;
-
-		for (i = 0; i < STRUCTURE_MAX; i++) {
-			if ((buildable & (1 << i)) == 0) continue;
-			g_table_structureInfo[i].o.available = 1;
-			if (objectType != 0xFFFE) continue;
-			s->objectType = i;
-			return false;
-		}
-	} else {
-		if (s->o.type == STRUCTURE_STARPORT) {
-			uint8 linkedID = 0xFF;
-			int16 loc60[UNIT_MAX];
-			Unit *u;
-			bool loop = true;
-
-			memset(loc60, 0, UNIT_MAX * 2);
-
-			while (loop) {
-				uint8 i;
-
-				loop = false;
-
-				for (i = 0; i < UNIT_MAX; i++) {
-					int16 unitsAtStarport = g_starportAvailable[i];
-
-					if (unitsAtStarport == 0) {
-						g_table_unitInfo[i].o.available = 0;
-						continue;
-					}
-
-					if (unitsAtStarport < 0) {
-						g_table_unitInfo[i].o.available = -1;
-						continue;
-					}
-
-					if (loc60[i] >= unitsAtStarport) continue;
-
-					g_validateStrictIfZero++;
-					u = Unit_Allocate(UNIT_INDEX_INVALID, i, s->o.houseID);
-					g_validateStrictIfZero--;
-
-					if (u != NULL) {
-						loop = true;
-						u->o.linkedID = linkedID;
-						linkedID = u->o.index & 0xFF;
-						loc60[i]++;
-						g_table_unitInfo[i].o.available = (int8)loc60[i];
-						continue;
-					}
-
-					if (loc60[i] == 0) g_table_unitInfo[i].o.available = -1;
-				}
-			}
-
-			while (linkedID != 0xFF) {
-				u = Unit_Get_ByIndex(linkedID);
-				linkedID = u->o.linkedID;
-				Unit_Free(u);
-			}
-		} else {
-			uint8 i;
-
-			for (i = 0; i < UNIT_MAX; i++) {
-				if ((buildable & (1 << i)) == 0) continue;
-				g_table_unitInfo[i].o.available = 1;
-				if (objectType != 0xFFFE) continue;
-				s->objectType = i;
-				return false;
-			}
-		}
-	}
-
-	return true;
 }
 
 /**
