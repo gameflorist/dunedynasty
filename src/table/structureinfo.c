@@ -68,9 +68,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -133,9 +133,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -198,9 +198,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -263,9 +263,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 3,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 3, 3, 3, 3, 3, 3 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -328,9 +328,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_SONIC_TANK,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 4,
-		/* [1]                  */ 5,
-		/* [2]                  */ 6,
+		/* [0]                  */ { 4, 4, 4, 4, 4, 4 },
+		/* [1]                  */ { 5, 5, 5, 5, 5, 5 },
+		/* [2]                  */ { 6, 6, 6, 6, 6, 6 },
 		},
 	},
 
@@ -393,9 +393,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 7,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 7, 7, 7, 7, 7, 7 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -458,9 +458,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -523,9 +523,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 6,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 6, 6, 6, 6, 6, 6 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -588,9 +588,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 4,
-		/* [1]                  */ 6,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 4, 4, 4, 4, 4, 4 },
+		/* [1]                  */ { 6, 6, 6, 6, 6, 6 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -653,9 +653,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -718,9 +718,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 2,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 2, 2, 2, 2, 2, 2 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -783,9 +783,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -848,9 +848,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -913,9 +913,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -978,9 +978,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -1043,9 +1043,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -1108,9 +1108,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -1173,9 +1173,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	},
 
@@ -1238,9 +1238,9 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ 0,
-		/* [1]                  */ 0,
-		/* [2]                  */ 0,
+		/* [0]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
+		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
 	}
 };

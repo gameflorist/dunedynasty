@@ -547,6 +547,10 @@ Campaign_ReadProfileIni(void)
 						int16 buildableUnits[8];    /* -1 or enum UnitType. */
 						uint16 upgradeCampaign[3];  /* 0 .. 9. */
 
+						/* Use Dune II Mercenary upgrade levels as reference point for levels,
+						 * since those are never modified.
+						 */
+
 						const int count = sscanf(buffer, "%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hu,%hu,%hu",
 								&buildableUnits[0], &buildableUnits[1], &buildableUnits[2], &buildableUnits[3],
 								&buildableUnits[4], &buildableUnits[5], &buildableUnits[6], &buildableUnits[7],
@@ -555,7 +559,7 @@ Campaign_ReadProfileIni(void)
 							fprintf(stderr, "[%s] %s=%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hu,%hu,%hu\n", category, key,
 									si->buildableUnits[0], si->buildableUnits[1], si->buildableUnits[2], si->buildableUnits[3],
 									si->buildableUnits[4], si->buildableUnits[5], si->buildableUnits[6], si->buildableUnits[7],
-									si->upgradeCampaign[0], si->upgradeCampaign[1], si->upgradeCampaign[2]);
+									si->upgradeCampaign[0][HOUSE_MERCENARY], si->upgradeCampaign[1][HOUSE_MERCENARY], si->upgradeCampaign[2][HOUSE_MERCENARY]);
 							break;
 						}
 
@@ -564,7 +568,9 @@ Campaign_ReadProfileIni(void)
 						}
 
 						for (int i = 0; i < 3; i++) {
-							si->upgradeCampaign[i] = upgradeCampaign[i];
+							for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+								si->upgradeCampaign[i][h] = min(upgradeCampaign[i], 99);
+							}
 						}
 					}
 					break;

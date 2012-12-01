@@ -1295,7 +1295,7 @@ bool Structure_IsUpgradable(Structure *s)
 		if (enhancement_undelay_ordos_siege_tank_tech)
 			ref = g_campaignID + 1;
 
-		if (si->upgradeCampaign[2] > ref) return false;
+		if (si->upgradeCampaign[2][s->o.houseID] > ref) return false;
 	}
 
 	int next_upgrade_level = s->upgradeLevel;
@@ -1312,8 +1312,8 @@ bool Structure_IsUpgradable(Structure *s)
 		}
 	}
 
-	if (si->upgradeCampaign[next_upgrade_level] != 0 &&
-	    si->upgradeCampaign[next_upgrade_level] <= g_campaignID + 1) {
+	if (si->upgradeCampaign[next_upgrade_level][s->o.houseID] != 0 &&
+	    si->upgradeCampaign[next_upgrade_level][s->o.houseID] <= g_campaignID + 1) {
 		House *h;
 
 		if (s->o.type != STRUCTURE_CONSTRUCTION_YARD) return true;
