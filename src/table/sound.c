@@ -22,7 +22,7 @@
 #define ADD_MUSIC_FROM_D2TM_MT32(FILENAME)          { MUSIC_WANT,   MUSICSET_D2TM_MT32,     "music/" D2TM_MT32_PREFIX   "/" FILENAME, 0, 0.65f }
 #define ADD_MUSIC_FROM_D2TM_SC55(FILENAME,VOLUME)   { MUSIC_WANT,   MUSICSET_D2TM_SC55,     "music/" D2TM_SC55_PREFIX   "/" FILENAME, 0, VOLUME }
 #define ADD_MUSIC_FROM_DUNE2_SMD(FILENAME)          { MUSIC_WANT,   MUSICSET_DUNE2_SMD,     "music/" DUNE2_SMD_PREFIX   "/" FILENAME, 0, 0.50f }
-#define ADD_MUSIC_FROM_DUNE2000(FILENAME,VOLUME)    { MUSIC_WANT,   MUSICSET_DUNE2000,      "music/" DUNE2000_PREFIX    "/" FILENAME, 0, VOLUME }
+#define ADD_MUSIC_FROM_DUNE2000(FILENAME)           { MUSIC_WANT,   MUSICSET_DUNE2000,      "music/" DUNE2000_PREFIX    "/" FILENAME, 0, 1.00f }
 
 MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, "dune2_adlib" },
@@ -95,7 +95,7 @@ static MusicInfo g_table_music_main_menu[] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("menu"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("menu", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("12_chosendestiny"),
-	ADD_MUSIC_FROM_DUNE2000     ("OPTIONS", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("OPTIONS"),
 
 	/* Dune 2000 battle summary as alternative menu music. */
 	{ 0, MUSICSET_DUNE2000,     "music/" DUNE2000_PREFIX "/SCORE", 0, 1.0f },
@@ -250,7 +250,7 @@ static MusicInfo g_table_music_idle2[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace5", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace2"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace5", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("SPICESCT", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("SPICESCT"),
 };
 
 static MusicInfo g_table_music_idle3[] = {
@@ -262,7 +262,7 @@ static MusicInfo g_table_music_idle3[] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace3"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace4", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("07_spicetrip"),
-	ADD_MUSIC_FROM_DUNE2000     ("RISEHARK", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("RISEHARK"),
 };
 
 static MusicInfo g_table_music_idle4[] = {
@@ -284,7 +284,7 @@ static MusicInfo g_table_music_idle5[] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace5"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace9", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("06_turbulence"),
-	ADD_MUSIC_FROM_DUNE2000     ("UNDERCON", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("UNDERCON"),
 };
 
 static MusicInfo g_table_music_idle6[] = {
@@ -295,7 +295,7 @@ static MusicInfo g_table_music_idle6[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace8", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace6"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace8", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("ATREGAIN", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("ATREGAIN"),
 };
 
 static MusicInfo g_table_music_idle7[] = {
@@ -332,14 +332,14 @@ static MusicInfo g_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2_SMD    ("05_thelegotune"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("08_commandpost"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("09_trenching"),
-	ADD_MUSIC_FROM_DUNE2000     ("AMBUSH", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("ENTORDOS", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("FREMEN", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("LANDSAND", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("PLOTTING", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("ROBOTIX", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("SOLDAPPR", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("WAITGAME", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("AMBUSH"),
+	ADD_MUSIC_FROM_DUNE2000     ("ENTORDOS"),
+	ADD_MUSIC_FROM_DUNE2000     ("FREMEN"),
+	ADD_MUSIC_FROM_DUNE2000     ("LANDSAND"),
+	ADD_MUSIC_FROM_DUNE2000     ("PLOTTING"),
+	ADD_MUSIC_FROM_DUNE2000     ("ROBOTIX"),
+	ADD_MUSIC_FROM_DUNE2000     ("SOLDAPPR"),
+	ADD_MUSIC_FROM_DUNE2000     ("WAITGAME"),
 };
 
 static MusicInfo g_table_music_bonus[] = { /* Songs are disabled by default. */
@@ -358,7 +358,7 @@ static MusicInfo g_table_music_attack1[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack5", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack1"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack4", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("ARAKATAK", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("ARAKATAK"),
 };
 
 static MusicInfo g_table_music_attack2[] = {
@@ -379,7 +379,7 @@ static MusicInfo g_table_music_attack3[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack6", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack3"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack2", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("HARK_BAT", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("HARK_BAT"),
 };
 
 static MusicInfo g_table_music_attack4[] = {
@@ -400,7 +400,7 @@ static MusicInfo g_table_music_attack5[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack4", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack5"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack1", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("FIGHTPWR", 1.0f),
+	ADD_MUSIC_FROM_DUNE2000     ("FIGHTPWR"),
 };
 
 static MusicInfo g_table_music_attack6[] = {
