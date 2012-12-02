@@ -569,11 +569,26 @@ GameOptions_Load(void)
 
 	/* Music configuration. */
 	for (enum MusicSet music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
+		ALLEGRO_CONFIG *config = NULL;
+		char category[1024];
+
+		if (music_set <= MUSICSET_FLUIDSYNTH) {
+			char filename[1024];
+
+			snprintf(filename, sizeof(filename), "%smusic/music.cfg", g_dune_data_dir);
+			config = al_load_config_file(filename);
+
+			snprintf(category, sizeof(category), "%s", g_table_music_set[music_set].prefix);
+		}
+		else if (g_table_music_set[music_set].enable || music_set == default_music_pack) {
+			char filename[1024];
+
+			snprintf(filename, sizeof(filename), "%smusic/%s/volume.cfg", g_dune_data_dir, g_table_music_set[music_set].prefix);
+			config = al_load_config_file(filename);
+		}
+
 		for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
 			MusicList *l = &g_table_music[musicID];
-
-			char category[1024];
-			snprintf(category, sizeof(category), "music/%s", g_table_music_set[music_set].prefix);
 
 			for (int s = 0; s < l->length; s++) {
 				MusicInfo *m = &l->song[s];
@@ -584,11 +599,14 @@ GameOptions_Load(void)
 				if (!g_table_music_set[music_set].enable)
 					m->enable &=~MUSIC_WANT;
 
+				if (config == NULL)
+					continue;
+
 				if (music_set <= MUSICSET_FLUIDSYNTH) {
 					char key[1024];
-					snprintf(key, sizeof(key), "%s_%d", m->filename, m->track);
+					snprintf(key, sizeof(key), "%s/%d", m->filename, m->track);
 
-					const char *str = al_get_config_value(s_configFile, category, key);
+					const char *str = al_get_config_value(config, category, key);
 					bool want = (m->enable & MUSIC_WANT);
 					String_GetBool(str, &want);
 
@@ -603,10 +621,13 @@ GameOptions_Load(void)
 					const char *key = strrchr(m->filename, '/') + 1;
 					assert(key != NULL);
 
-					Config_GetMusicVolume(s_configFile, category, key, m);
+					Config_GetMusicVolume(config, "volume", key, m);
 				}
 			}
 		}
+
+		if (config != NULL && config != s_configFile)
+			al_destroy_config(config);
 	}
 
 	TRUE_DISPLAY_WIDTH = saved_screen_width;
