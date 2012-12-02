@@ -309,8 +309,8 @@ static MusicInfo g_table_music_idle_other[] = {
 static MusicInfo g_table_music_bonus[] = { /* Songs are disabled by default. */
 	{ MUSIC_FOUND, MUSICSET_DUNE2_ADLIB, "dune1.ADL", 2, 0.0f },
 	{ MUSIC_FOUND, MUSICSET_DUNE2_C55,   "dune1.C55", 2, 0.0f },
-	{ 0, MUSICSET_FED2K_MT32,   FED2K_MT32_PREFIX "/dune2_mt32_01_3", 0, 0.65f },
-	{ 0, MUSICSET_DUNE2_SMD,    DUNE2_SMD_PREFIX  "/10_starport", 0, 1.0f },
+	{ 0, MUSICSET_FED2K_MT32,   "music/" FED2K_MT32_PREFIX "/dune2_mt32_01_3", 0, 0.65f },
+	{ 0, MUSICSET_DUNE2_SMD,    "music/" DUNE2_SMD_PREFIX  "/10_starport", 0, 1.0f },
 };
 
 static MusicInfo g_table_music_attack1[] = {
