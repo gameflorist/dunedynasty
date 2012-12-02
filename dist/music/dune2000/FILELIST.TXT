@@ -1,4 +1,5 @@
-Put Dune 2000 music here (Dune 2000/Data/Music/).
+Put Dune 2000 music here.
+Copy from: Dune 2000/Data/Music/
 
 AMBUSH.AUD
 ARAKATAK.AUD
