@@ -1,5 +1,14 @@
 /** @file src/opendune.c Gameloop and other main routines. */
 
+#ifdef __APPLE__
+/* We need Allegro to mangle main, and Allegro can't define the
+ * _al_mangled_main prototype for us.
+ */
+#include <allegro5/allegro.h>
+
+extern int _al_mangled_main(int argc, char **argv);
+#endif
+
 #if defined(_WIN32)
 	#if defined(_MSC_VER)
 		#define _CRTDBG_MAP_ALLOC
@@ -971,11 +980,7 @@ static bool Unknown_25C4_000E(void)
 	return true;
 }
 
-#if defined(__APPLE__)
-int SDL_main(int argc, char **argv)
-#else
 int main(int argc, char **argv)
-#endif /* __APPLE__ */
 {
 	VARIABLE_NOT_USED(argc);
 	VARIABLE_NOT_USED(argv);

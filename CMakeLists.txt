@@ -20,6 +20,9 @@ pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-${ALLEGRO_VERSION})
 pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-${ALLEGRO_VERSION})
 pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-${ALLEGRO_VERSION})
 pkg_check_modules(ALLEGRO5_PRIMITIVES REQUIRED allegro_primitives-${ALLEGRO_VERSION})
+if(APPLE)
+	pkg_check_modules(ALLEGRO5_MAIN REQUIRED allegro_main-${ALLEGRO_VERSION})
+endif(APPLE)
 include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
 
 find_package(OpenGL)
@@ -81,6 +84,7 @@ target_link_libraries(dunedynasty
 	${ALLEGRO5_IMAGE_LDFLAGS}
 	${ALLEGRO5_MEMFILE_LDFLAGS}
 	${ALLEGRO5_PRIMITIVES_LDFLAGS}
+	${ALLEGRO5_MAIN_LDFLAGS}
 	${ALLEGRO5_LDFLAGS}
 	${OPENGL_LIBRARIES}
 	)
