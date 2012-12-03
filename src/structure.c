@@ -1326,7 +1326,8 @@ bool Structure_IsUpgradable(Structure *s)
 		return false;
 	}
 
-	if (s->o.houseID == HOUSE_HARKONNEN && s->o.type == STRUCTURE_WOR_TROOPER && s->upgradeLevel == 0 && g_campaignID > 3) return true;
+	/* Use per-house upgrade levels: Harkonnen WOR one level earlier. */
+	/* if (s->o.houseID == HOUSE_HARKONNEN && s->o.type == STRUCTURE_WOR_TROOPER && s->upgradeLevel == 0 && g_campaignID > 3) {} */
 	return false;
 }
 
