@@ -3,6 +3,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "enumeration.h"
 #include "types.h"
 #include "script/script.h"
 
@@ -82,7 +83,7 @@ typedef struct ObjectInfo {
 	uint16 spriteID;                                        /*!< SpriteID of Structure / Unit. */
 	uint16 buildCredits;                                    /*!< How much credits it cost to build this Structure / Unit. Upgrading is 50% of this value. */
 	uint16 buildTime;                                       /*!< Time required to build this Structure / Unit. */
-	uint16 availableCampaign;                               /*!< In which campaign (starting at 1) this Structure / Unit is available. */
+	uint16 availableCampaign[HOUSE_MAX];                    /*!< In which campaign this Structure is available. */
 	uint32 structuresRequired;                              /*!< Which structures are required before this Structure / Unit is available. */
 	uint8  sortPriority;                                    /*!< ?? */
 	uint8  upgradeLevelRequired;                            /*!< Which level of upgrade the Structure / Unit has to have before this is avialable. */

@@ -1993,7 +1993,7 @@ Structure_GetAvailable(const Structure *s, int i)
 		assert(STRUCTURE_SLAB_1x1 <= i && i < STRUCTURE_MAX);
 
 		const StructureInfo *si = &g_table_structureInfo[i];
-		uint16 availableCampaign = si->o.availableCampaign;
+		uint16 availableCampaign = si->o.availableCampaign[s->o.houseID];
 		uint32 structuresRequired = Structure_GetPrerequisites(si, s->o.houseID);
 
 		if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {

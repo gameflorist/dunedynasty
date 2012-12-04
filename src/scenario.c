@@ -474,15 +474,16 @@ Campaign_ReadProfileIni(void)
 				case 0: /* Construct: buildCredits, buildTime, hitpoints, fogUncoverRadius, availableCampaign, priorityBuild, priorityTarget, sortPriority. */
 					{
 						ObjectInfo ot;
+						uint16 availableCampaign;
 						uint16 sortPriority;    /* (uint8) concrete/concrete4 are 100/101 respectively. */
 
 						const int count = sscanf(buffer, "%hu,%hu,%hu,%hu,%hu,%hu,%hu,%hu",
 								&ot.buildCredits, &ot.buildTime, &ot.hitpoints, &ot.fogUncoverRadius,
-								&ot.availableCampaign, &ot.priorityBuild, &ot.priorityTarget, &sortPriority);
+								&availableCampaign, &ot.priorityBuild, &ot.priorityTarget, &sortPriority);
 						if (count < 7) {
 							fprintf(stderr, "[%s] %s=%hu,%hu,%hu,%hu,%hu,%hu,%hu,%hu\n", category, key,
 									oi->buildCredits, oi->buildTime, oi->hitpoints, oi->fogUncoverRadius,
-									oi->availableCampaign, oi->priorityBuild, oi->priorityTarget, oi->sortPriority);
+									oi->availableCampaign[HOUSE_MERCENARY], oi->priorityBuild, oi->priorityTarget, oi->sortPriority);
 							break;
 						}
 
@@ -490,9 +491,12 @@ Campaign_ReadProfileIni(void)
 						oi->buildTime         = ot.buildTime;
 						oi->hitpoints         = ot.hitpoints;
 						oi->fogUncoverRadius  = ot.fogUncoverRadius;
-						oi->availableCampaign = ot.availableCampaign;
 						oi->priorityBuild     = ot.priorityBuild;
 						oi->priorityTarget    = ot.priorityTarget;
+
+						for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+							oi->availableCampaign[h] = min(availableCampaign, 99);
+						}
 
 						if (count >= 8) {
 							if ((si != &g_table_structureInfo[STRUCTURE_SLAB_1x1]) &&
