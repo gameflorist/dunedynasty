@@ -491,7 +491,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* spriteID             */ SHAPE_WOR_TROOPER,
 		/* buildCredits         */ 400,
 		/* buildTime            */ 104,
-		/* availableCampaign    */ { 5, 5, 5, 5, 5, 5 },
+		/* availableCampaign    */ { 2, 5, 5, 5, 5, 5 }, /* H trait: WOR three levels earlier. */
 		/* structuresRequired   */ FLAG_STRUCTURE_OUTPOST | FLAG_STRUCTURE_BARRACKS | FLAG_STRUCTURE_WINDTRAP,
 		/* sortPriority         */ 20,
 		/* upgradeLevelRequired */ 0,

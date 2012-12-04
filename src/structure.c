@@ -1996,9 +1996,8 @@ Structure_GetAvailable(const Structure *s, int i)
 		uint16 availableCampaign = si->o.availableCampaign[s->o.houseID];
 		uint32 structuresRequired = Structure_GetPrerequisites(si, s->o.houseID);
 
-		if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {
-			availableCampaign = 2;
-		}
+		/* Use per-house tech levels: Harkonnen WOR three levels earlier. */
+		/* if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {} */
 
 		if (((structuresBuilt & structuresRequired) == structuresRequired) || (s->o.houseID != g_playerHouseID)) {
 			if ((s->o.houseID != HOUSE_HARKONNEN) && (i == STRUCTURE_LIGHT_VEHICLE)) {
