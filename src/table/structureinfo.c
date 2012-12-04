@@ -231,7 +231,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* spriteID             */ SHAPE_LIGHT_VEHICLE,
 		/* buildCredits         */ 400,
 		/* buildTime            */ 96,
-		/* availableCampaign    */ { 3, 3, 3, 3, 3, 3 },
+		/* availableCampaign    */ { 3, 2, 2, 2, 2, 2 }, /* Non-H trait: light factory one level earlier. */
 		/* structuresRequired   */ FLAG_STRUCTURE_REFINERY | FLAG_STRUCTURE_WINDTRAP,
 		/* sortPriority         */ 14,
 		/* upgradeLevelRequired */ 0,

@@ -1999,10 +1999,10 @@ Structure_GetAvailable(const Structure *s, int i)
 		/* Use per-house tech levels: Harkonnen WOR three levels earlier. */
 		/* if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {} */
 
+		/* Use per-house tech levels: non-Harkonnen light factory one level earlier. */
+		/* if ((s->o.houseID != HOUSE_HARKONNEN) && (i == STRUCTURE_LIGHT_VEHICLE)) {} */
+
 		if (((structuresBuilt & structuresRequired) == structuresRequired) || (s->o.houseID != g_playerHouseID)) {
-			if ((s->o.houseID != HOUSE_HARKONNEN) && (i == STRUCTURE_LIGHT_VEHICLE)) {
-				availableCampaign = 2;
-			}
 
 			if ((g_campaignID >= availableCampaign - 1) && (si->o.availableHouse & (1 << s->o.houseID))) {
 				if ((s->upgradeLevel >= si->o.upgradeLevelRequired) || (s->o.houseID != g_playerHouseID)) {
