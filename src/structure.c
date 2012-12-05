@@ -1298,7 +1298,22 @@ bool Structure_IsUpgradable(Structure *s)
 		if (si->upgradeCampaign[2] > ref) return false;
 	}
 
-	if (si->upgradeCampaign[s->upgradeLevel] != 0 && si->upgradeCampaign[s->upgradeLevel] <= g_campaignID + 1) {
+	int next_upgrade_level = s->upgradeLevel;
+
+	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		/* XXX: Too lazy to do this case. */
+	}
+	else {
+		while (next_upgrade_level < 3) {
+			if (Structure_UpgradeUnlocksNewUnit(s, next_upgrade_level + 1))
+				break;
+
+			next_upgrade_level++;
+		}
+	}
+
+	if (si->upgradeCampaign[next_upgrade_level] != 0 &&
+	    si->upgradeCampaign[next_upgrade_level] <= g_campaignID + 1) {
 		House *h;
 
 		if (s->o.type != STRUCTURE_CONSTRUCTION_YARD) return true;
