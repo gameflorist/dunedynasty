@@ -1265,7 +1265,7 @@ Structure_UpgradeUnlocksNewUnit(const Structure *s, int level)
 		/* An upgrade is only possible if the original factory design
 		 * supports it (creator) and the current owner has the technology.
 		 */
-		if ((ui->o.availableHouse & creatorFlag) && (level == ui->o.upgradeLevelRequired))
+		if ((ui->o.availableHouse & creatorFlag) && (level == ui->o.upgradeLevelRequired[s->o.houseID]))
 			return true;
 	}
 
@@ -2005,10 +2005,10 @@ Structure_GetAvailable(const Structure *s, int i)
 		if (((structuresBuilt & structuresRequired) == structuresRequired) || (s->o.houseID != g_playerHouseID)) {
 
 			if ((g_campaignID >= availableCampaign - 1) && (si->o.availableHouse & (1 << s->o.houseID))) {
-				if ((s->upgradeLevel >= si->o.upgradeLevelRequired) || (s->o.houseID != g_playerHouseID)) {
+				if ((s->upgradeLevel >= si->o.upgradeLevelRequired[s->o.houseID]) || (s->o.houseID != g_playerHouseID)) {
 					return 1;
 				}
-				else if ((s->upgradeTimeLeft != 0) && (s->upgradeLevel + 1 >= si->o.upgradeLevelRequired)) {
+				else if ((s->upgradeTimeLeft != 0) && (s->upgradeLevel + 1 >= si->o.upgradeLevelRequired[s->o.houseID])) {
 					return -1;
 				}
 			}
@@ -2033,7 +2033,7 @@ Structure_GetAvailable(const Structure *s, int i)
 		/* if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) unitType = UNIT_RAIDER_TRIKE; */
 
 		const UnitInfo *ui = &g_table_unitInfo[unitType];
-		uint16 upgradeLevelRequired = ui->o.upgradeLevelRequired;
+		uint16 upgradeLevelRequired = ui->o.upgradeLevelRequired[s->creatorHouseID];
 		uint16 next_upgrade_level = s->upgradeLevel + 1;
 
 		/* Desired behaviour: Ordos siege tank upgrade shown one upgrade level earlier. */

@@ -86,7 +86,7 @@ typedef struct ObjectInfo {
 	uint16 availableCampaign[HOUSE_MAX];                    /*!< In which campaign this Structure is available. */
 	uint32 structuresRequired;                              /*!< Which structures are required before this Structure / Unit is available. */
 	uint8  sortPriority;                                    /*!< ?? */
-	uint8  upgradeLevelRequired;                            /*!< Which level of upgrade the Structure / Unit has to have before this is avialable. */
+	uint8  upgradeLevelRequired[HOUSE_MAX];                 /*!< Which level of upgrade the Structure / Unit has to have before this is avialable. */
 	uint16 actionsPlayer[4];                                /*!< Actions for player Structure / Unit. */
 	 int8  available;                                       /*!< If this Structure / Unit is ordered (Starport) / available (Rest). 1+=yes (volume), 0=no, -1=upgrade-first. */
 	uint16 hintStringID;                                    /*!< StringID of the hint shown for this Structure / Unit. */

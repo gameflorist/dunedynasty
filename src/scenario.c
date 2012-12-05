@@ -536,13 +536,16 @@ Campaign_ReadProfileIni(void)
 								&availableHouse, &structuresRequired, &upgradeLevelRequired);
 						if (count < 3) {
 							fprintf(stderr, "[%s] %s=0x%02hX,0x%06X,%hu\n", category, key,
-									oi->availableHouse, oi->structuresRequired, oi->upgradeLevelRequired);
+									oi->availableHouse, oi->structuresRequired, oi->upgradeLevelRequired[HOUSE_MERCENARY]);
 							break;
 						}
 
 						oi->availableHouse = availableHouse;
 						oi->structuresRequired = structuresRequired;
-						oi->upgradeLevelRequired = upgradeLevelRequired;
+
+						for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+							oi->upgradeLevelRequired[h] = upgradeLevelRequired;
+						}
 					}
 					break;
 
