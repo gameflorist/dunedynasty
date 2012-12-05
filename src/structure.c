@@ -1286,7 +1286,8 @@ bool Structure_IsUpgradable(Structure *s)
 
 	si = &g_table_structureInfo[s->o.type];
 
-	if (s->o.houseID == HOUSE_HARKONNEN && s->o.type == STRUCTURE_HIGH_TECH) return false;
+	/* Use per-house upgrade levels: Harkonnen can never upgrade hi-tech. */
+	/* if (s->o.houseID == HOUSE_HARKONNEN && s->o.type == STRUCTURE_HIGH_TECH) {} */
 
 	if (s->o.houseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 1) {
 		int ref = g_campaignID;

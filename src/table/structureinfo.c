@@ -393,7 +393,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ { 7, 7, 7, 7, 7, 7 },
+		/* [0]                  */ { 0, 7, 7, 7, 7, 7 }, /* H trait: no ornithopters. */
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
