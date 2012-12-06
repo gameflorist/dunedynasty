@@ -144,8 +144,9 @@ static ALLEGRO_BITMAP *interface_texture; /* cps, wsa, and fonts. */
 static ALLEGRO_BITMAP *icon_texture;      /* 16x16 tiles. */
 static ALLEGRO_BITMAP *icon_texture32;    /* 32x32 tiles. */
 static ALLEGRO_BITMAP *icon_texture48;    /* 48x48 tiles. */
-static ALLEGRO_BITMAP *shape_texture;
-static ALLEGRO_BITMAP *region_texture;
+static ALLEGRO_BITMAP *shape_texture;     /* in game shapes. */
+static ALLEGRO_BITMAP *mentat_texture;    /* XXX - temporary bitmap for mentats. */
+static ALLEGRO_BITMAP *region_texture;    /* strategic map shapes. */
 static IconCoord s_icon[ICONID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
@@ -423,9 +424,10 @@ VideoA5_Uninit(void)
 	icon_texture48 = NULL;
 
 	al_destroy_bitmap(shape_texture);
-	shape_texture = NULL;
-
+	al_destroy_bitmap(mentat_texture);
 	al_destroy_bitmap(region_texture);
+	shape_texture = NULL;
+	mentat_texture = NULL;
 	region_texture = NULL;
 }
 
@@ -470,7 +472,7 @@ VideoA5_CaptureScreenshot(void)
 }
 
 static void
-VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCopyMode mode)
+VideoA5_CopyBitmap(int src_stride, const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCopyMode mode)
 {
 	ALLEGRO_LOCKED_REGION *reg;
 
@@ -486,7 +488,6 @@ VideoA5_CopyBitmap(const unsigned char *raw, ALLEGRO_BITMAP *dest, enum BitmapCo
 
 	const int w = al_get_bitmap_width(dest);
 	const int h = al_get_bitmap_height(dest);
-	const int src_stride = max(SCREEN_WIDTH, w);
 
 	for (int y = 0; y < h; y++) {
 		unsigned char *row = &((unsigned char *)reg->data)[reg->pitch*y];
@@ -1067,7 +1068,7 @@ VideoA5_ExportCPS(enum SearchDirectory dir, const char *filename, unsigned char 
 	VideoA5_ReadPalette(use_benepal ? "BENE.PAL" : "IBM.PAL");
 	memset(buf, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
 	Sprites_LoadImage(dir, filename, SCREEN_1, NULL);
-	VideoA5_CopyBitmap(buf, cps->bmp, BLACK_COLOUR_0);
+	VideoA5_CopyBitmap(SCREEN_WIDTH, buf, cps->bmp, BLACK_COLOUR_0);
 	VideoA5_ReadPalette("IBM.PAL");
 
 	return cps;
@@ -1193,7 +1194,7 @@ VideoA5_InitCPS(void)
 		Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", SCREEN_1, NULL);
 		GUI_Palette_CreateRemap(houseID);
 		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_1, g_remap);
-		VideoA5_CopyBitmap(buf, cps_screen->bmp, TRANSPARENT_COLOUR_0);
+		VideoA5_CopyBitmap(SCREEN_WIDTH, buf, cps_screen->bmp, TRANSPARENT_COLOUR_0);
 
 		coord = &cps_special_coord[CPS_SIDEBAR_TOP];
 		VideoA5_DrawBitmapRegion_Padded(cps_screen->bmp, coord, coord->tx + 17 * houseID, coord->ty + 4 * houseID, true, false);
@@ -1757,7 +1758,7 @@ VideoA5_InitIcons(unsigned char *buf)
 
 	al_set_target_bitmap(icon_texture);
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
-	VideoA5_CopyBitmap(buf, icon_texture, TRANSPARENT_COLOUR_0);
+	VideoA5_CopyBitmap(WINDOW_W, buf, icon_texture, TRANSPARENT_COLOUR_0);
 
 	/* Apply rubble mask for transparent rubble. */
 	VideoA5_MaskDebrisTiles(icon_texture);
@@ -1860,17 +1861,18 @@ static ALLEGRO_BITMAP *
 VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 		int *retx, int *rety, int *ret_row_h, unsigned char *remap)
 {
-	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
-	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	ALLEGRO_BITMAP *dest = al_get_target_bitmap();
+	const int TEXTURE_W = al_get_bitmap_width(dest);
+	const int TEXTURE_H = al_get_bitmap_height(dest);
 	const int w = Shape_Width(shapeID);
 	const int h = Shape_Height(shapeID);
 
 	ALLEGRO_BITMAP *bmp;
 
-	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, h, row_h, &x, &y);
+	VideoA5_GetNextXY(TEXTURE_W, TEXTURE_H, x, y, w, h, row_h, &x, &y);
 	GUI_DrawSprite_(SCREEN_0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0x100, remap, 1);
 
-	bmp = al_create_sub_bitmap(al_get_target_bitmap(), x, y, w, h);
+	bmp = al_create_sub_bitmap(dest, x, y, w, h);
 	assert(bmp != NULL);
 
 	*retx = x + w + 1;
@@ -1901,15 +1903,6 @@ VideoA5_InitShapes(unsigned char *buf)
 		{ 283, 300,  true }, /* UNITS.SHP: carryall .. frigate */
 		{ 301, 354,  true }, /* UNITS.SHP: saboteur .. landed ornithoper */
 		{ 373, 386, false }, /* MENTAT */
-		{ 387, 401, false }, /* MENSHPH.SHP */
-		{ 402, 416, false }, /* MENSHPA.SHP */
-		{ 417, 431, false }, /* MENSHPO.SHP */
-		/*514, 524, false */ /* CREDIT1.SHP .. CREDIT11.SHP */
-
-		/* BENE.PAL shapes. */
-		{  -3,   0, false },
-		/*432, 461, false */ /* MENSHPM.SHP: Fremen, Sardaukar */
-		{ 462, 476, false }, /* MENSHPM.SHP */
 
 		{  -2,   0, false },
 		{ 477, 504,  true }, /* PIECES.SHP */
@@ -1940,15 +1933,8 @@ VideoA5_InitShapes(unsigned char *buf)
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 
 	for (int group = 0; shape_data[group].start != -1; group++) {
-		if (shape_data[group].start == -3) {
-			VideoA5_CopyBitmap(buf, shape_texture, TRANSPARENT_COLOUR_0);
-			VideoA5_ReadPalette("BENE.PAL");
-			memset(buf, 0, WINDOW_W * WINDOW_H);
-			continue;
-		}
-		else if (shape_data[group].start == -2) {
-			VideoA5_CopyBitmap(buf, shape_texture, SKIP_COLOUR_0);
-			VideoA5_ReadPalette("IBM.PAL");
+		if (shape_data[group].start == -2) {
+			VideoA5_CopyBitmap(WINDOW_W, buf, shape_texture, SKIP_COLOUR_0);
 			memset(buf, 0, WINDOW_W * WINDOW_H);
 
 			al_set_target_bitmap(region_texture);
@@ -2009,7 +1995,7 @@ VideoA5_InitShapes(unsigned char *buf)
 		row_h = max(row_h, h);
 	}
 
-	VideoA5_CopyBitmap(buf, region_texture, TRANSPARENT_COLOUR_0);
+	VideoA5_CopyBitmap(WINDOW_W, buf, region_texture, TRANSPARENT_COLOUR_0);
 
 #if OUTPUT_TEXTURES
 	al_save_bitmap("shapes.png", shape_texture);
@@ -2366,6 +2352,8 @@ VideoA5_InitFonts(unsigned char *buf)
 	int y = 512;
 
 	if (buf != NULL) {
+		const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
+
 		/* Phase 1: draw the characters into interface_texture, which
 		 * is a memory bitmap.
 		 */
@@ -2378,7 +2366,7 @@ VideoA5_InitFonts(unsigned char *buf)
 		VideoA5_ExportFont(g_fontIntro, font_palette[0], y, &y);
 		VideoA5_ExportFont(g_fontIntro, font_palette[3], y, &y);
 
-		VideoA5_CopyBitmap(buf, interface_texture, SKIP_COLOUR_0);
+		VideoA5_CopyBitmap(WINDOW_W, buf, interface_texture, SKIP_COLOUR_0);
 	}
 	else {
 		/* Phase 2: create subbitmaps for each character, after
@@ -2432,7 +2420,7 @@ VideoA5_InitWSA(unsigned char *buf)
 		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 64, 64, 64, &x, &y);
 		WSA_DisplayFrame(wsa, frame, 0, 0, SCREEN_0);
 
-		VideoA5_CopyBitmap(buf, wsacpy, BLACK_COLOUR_0);
+		VideoA5_CopyBitmap(SCREEN_WIDTH, buf, wsacpy, BLACK_COLOUR_0);
 		al_draw_bitmap(wsacpy, 512 + x, y, 0);
 
 		x += 64 + 1;
@@ -2456,7 +2444,7 @@ VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int
 
 	const unsigned char *buf = GFX_Screen_Get_ByIndex(SCREEN_0);
 
-	VideoA5_CopyBitmap(&buf[SCREEN_WIDTH * sy + sx], scratch, BLACK_COLOUR_0);
+	VideoA5_CopyBitmap(SCREEN_WIDTH, &buf[SCREEN_WIDTH * sy + sx], scratch, BLACK_COLOUR_0);
 	al_draw_bitmap(scratch, dx, dy, 0);
 
 	return true;
@@ -2618,7 +2606,7 @@ VideoA5_InitCursor(unsigned char *buf)
 		al_clear_to_color(al_map_rgba(0x00, 0x00, 0x00, 0x00));
 
 		GUI_DrawSprite_(SCREEN_0, g_sprites[i], 0, 0, 0, 0);
-		VideoA5_CopyBitmap(buf, src, TRANSPARENT_COLOUR_0);
+		VideoA5_CopyBitmap(SCREEN_WIDTH, buf, src, TRANSPARENT_COLOUR_0);
 		al_draw_scaled_bitmap(src, 0.0f, 0.0f, sw, sh, 0.0f, 0.0f, dw, dh, 0);
 
 		s_cursor[i] = al_create_mouse_cursor(bmp, scale * focus[i].x, scale * focus[i].y);
@@ -2626,6 +2614,48 @@ VideoA5_InitCursor(unsigned char *buf)
 
 	al_set_mouse_cursor(display, s_cursor[0]);
 	al_destroy_bitmap(bmp);
+}
+
+static void
+VideoA5_InitMentatSprites(void)
+{
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
+	const int TEXTURE_W = 512;
+	const int TEXTURE_H = 512;
+	unsigned char *buf = GFX_Screen_GetActive();
+
+	mentat_texture = al_create_bitmap(TEXTURE_W, TEXTURE_H);
+	assert(mentat_texture != NULL);
+
+	al_set_target_bitmap(mentat_texture);
+	memset(buf, 0, WINDOW_W * TEXTURE_H);
+
+	int x = 1;
+	int y = 1;
+	int row_h = 0;
+
+	for (int i = 0; i < 4; i++) {
+		const enum HouseType houseID = (i == 3) ? HOUSE_MERCENARY : i;
+
+		if (houseID == HOUSE_MERCENARY) {
+			VideoA5_CopyBitmap(WINDOW_W, buf, mentat_texture, TRANSPARENT_COLOUR_0);
+			VideoA5_ReadPalette("BENE.PAL");
+			memset(buf, 0, WINDOW_W * TEXTURE_H);
+		}
+
+		for (int s = 0; s < 15; s++) {
+			const enum ShapeID shapeID = SHAPE_MENTAT_EYES + 15 * houseID + s;
+			free(s_shape[shapeID][HOUSE_HARKONNEN]);
+
+			s_shape[shapeID][HOUSE_HARKONNEN] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
+		}
+	}
+
+	VideoA5_CopyBitmap(WINDOW_W, buf, mentat_texture, SKIP_COLOUR_0);
+
+#if OUTPUT_TEXTURES
+	al_save_bitmap("mentat.png", mentat_texture);
+#endif
 }
 
 void
@@ -2663,6 +2693,8 @@ VideoA5_InitSprites(void)
 	interface_texture = VideoA5_ConvertToVideoBitmap(interface_texture);
 	al_set_new_bitmap_flags(bitmap_flags);
 	VideoA5_InitFonts(NULL);
+
+	VideoA5_InitMentatSprites();
 
 	al_set_target_backbuffer(display);
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
