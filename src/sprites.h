@@ -72,8 +72,8 @@ extern uint16 g_wallSpriteID;                               /*!< First wall spri
 
 extern void Sprites_Init(void);
 extern void Sprites_Uninit(void);
-extern uint8 Sprite_GetWidth(uint8 *sprite);
-extern uint8 Sprite_GetHeight(uint8 *sprite);
+extern uint8 Sprite_GetWidth(const uint8 *sprite);
+extern uint8 Sprite_GetHeight(const uint8 *sprite);
 extern void Sprites_LoadTiles(void);
 extern void Sprites_UnloadTiles(void);
 extern uint16 Sprites_LoadImage(enum SearchDirectory dir, const char *filename, Screen screenID, uint8 *palette);

@@ -49,7 +49,7 @@ static bool s_iconLoaded = false;
  * @param index The index of the sprite to get.
  * @return The sprite.
  */
-static uint8 *Sprites_GetSprite(uint8 *buffer, uint16 index)
+static const uint8 *Sprites_GetSprite(const uint8 *buffer, uint16 index)
 {
 	uint32 offset;
 
@@ -85,7 +85,7 @@ static void Sprites_Load(const char *filename)
 	g_sprites = (uint8 **)realloc(g_sprites, s_spritesCount * sizeof(uint8 *));
 
 	for (i = 0; i < count; i++) {
-		uint8 *src = Sprites_GetSprite(buffer, i);
+		const uint8 *src = Sprites_GetSprite(buffer, i);
 		uint8 *dst = NULL;
 
 		if (src != NULL) {
@@ -106,7 +106,7 @@ static void Sprites_Load(const char *filename)
  * @param sprite The sprite.
  * @return The width.
  */
-uint8 Sprite_GetWidth(uint8 *sprite)
+uint8 Sprite_GetWidth(const uint8 *sprite)
 {
 	if (sprite == NULL) return 0;
 
@@ -119,7 +119,7 @@ uint8 Sprite_GetWidth(uint8 *sprite)
  * @param sprite The sprite.
  * @return The height.
  */
-uint8 Sprite_GetHeight(uint8 *sprite)
+uint8 Sprite_GetHeight(const uint8 *sprite)
 {
 	if (sprite == NULL) return 0;
 
@@ -137,7 +137,7 @@ extern uint16 Sprites_GetType(uint8 *sprite);
  * @param dest The place the decoded image will be.
  * @return The size of the decoded image.
  */
-static uint32 Sprites_Decode(uint8 *source, uint8 *dest)
+static uint32 Sprites_Decode(const uint8 *source, uint8 *dest)
 {
 	uint32 size = 0;
 
