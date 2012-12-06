@@ -7,7 +7,6 @@
 #include "types.h"
 #include "os/common.h"
 #include "os/endian.h"
-#include "os/sleep.h"
 #include "os/strings.h"
 
 #include "sprites.h"
@@ -17,7 +16,6 @@
 #include "gfx.h"
 #include "house.h"
 #include "ini.h"
-#include "input/mouse.h"
 #include "gui/gui.h"
 #include "script/script.h"
 #include "string.h"
@@ -41,9 +39,6 @@ uint16 g_bloomSpriteID;
 uint16 g_landscapeSpriteID;
 uint16 g_builtSlabSpriteID;
 uint16 g_wallSpriteID;
-
-void *g_mouseSprite = NULL;
-void *g_mouseSpriteBuffer = NULL;
 
 static bool s_iconLoaded = false;
 
@@ -131,18 +126,9 @@ uint8 Sprite_GetHeight(uint8 *sprite)
 	return sprite[2];
 }
 
-/**
- * Gets the type of the given sprite.
- *
- * @param sprite The sprite.
- * @return The type.
- */
-uint16 Sprites_GetType(uint8 *sprite)
-{
-	if (sprite == NULL) return 0;
-
-	return *(uint16 *)sprite;
-}
+#if 0
+extern uint16 Sprites_GetType(uint8 *sprite);
+#endif
 
 /**
  * Decodes an image.
@@ -419,9 +405,6 @@ void Sprites_Uninit(void)
 	free(g_sprites); g_sprites = NULL;
 
 	free(g_spriteBuffer); g_spriteBuffer = NULL;
-
-	free(g_mouseSpriteBuffer); g_mouseSpriteBuffer = NULL;
-	free(g_mouseSprite); g_mouseSprite = NULL;
 
 	free(g_spriteInfo); g_spriteInfo = NULL;
 	free(g_iconRTBL); g_iconRTBL = NULL;
