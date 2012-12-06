@@ -387,6 +387,16 @@ void Sprites_Init(void)
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPM.SHP",  462, 476);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "PIECES.SHP", 477, 504);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "ARROWS.SHP", 505, 513);
+}
+
+void
+Sprites_InitCredits(void)
+{
+	static bool l_loaded = false;
+
+	if (l_loaded)
+		return;
+
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT1.SHP",  514, 514);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT2.SHP",  515, 515);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT3.SHP",  516, 516);
@@ -398,6 +408,8 @@ void Sprites_Init(void)
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT9.SHP",  522, 522);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT10.SHP", 523, 523);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT11.SHP", 524, 524);
+
+	l_loaded = true;
 }
 
 void Sprites_Uninit(void)

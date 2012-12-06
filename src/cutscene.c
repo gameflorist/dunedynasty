@@ -1151,6 +1151,7 @@ GameLoop_GameCredits(enum HouseType houseID)
 
 	Video_HideCursor();
 
+	Sprites_InitCredits();
 	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "BIGPLAN.CPS", SCREEN_1, g_palette_998A);
 
 	GUI_ClearScreen(SCREEN_0);

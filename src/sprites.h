@@ -72,6 +72,7 @@ extern uint16 g_builtSlabSpriteID;                          /*!< SpriteID of the
 extern uint16 g_wallSpriteID;                               /*!< First wall spriteID. */
 
 extern void Sprites_Init(void);
+extern void Sprites_InitCredits(void);
 extern void Sprites_Uninit(void);
 extern uint8 Sprite_GetWidth(const uint8 *sprite);
 extern uint8 Sprite_GetHeight(const uint8 *sprite);
