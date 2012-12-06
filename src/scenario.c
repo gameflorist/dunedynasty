@@ -332,14 +332,50 @@ UnitInfo_FlagsToUint16(const UnitInfo *ui)
 }
 
 static void
+Campaign_ApplyDefaultHouseTraits(void)
+{
+	for (enum StructureType s = STRUCTURE_PALACE; s < STRUCTURE_MAX; s++) {
+		const StructureInfo *original = &g_table_structureInfo_original[s];
+		StructureInfo *si = &g_table_structureInfo[s];
+
+		const enum HouseType ref =
+			(s == STRUCTURE_LIGHT_VEHICLE) ? HOUSE_HARKONNEN : HOUSE_MERCENARY;
+
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+			if (si->o.availableCampaign[h] & 0x8000) {
+				const int delta = original->o.availableCampaign[h] - original->o.availableCampaign[ref];
+
+				si->o.availableCampaign[h] = clamp(0, (si->o.availableCampaign[h] & 0xFF) + delta, 99);
+			}
+
+			for (int i = 0; i < 3; i++) {
+				if ((si->upgradeCampaign[i][h] & 0x8000) == 0)
+					continue;
+
+				/* ENHANCEMENT -- Ordos siege tanks used to arrive one level late. */
+				if (enhancement_undelay_ordos_siege_tank_tech && (s == STRUCTURE_HEAVY_VEHICLE) && (h == HOUSE_ORDOS) && (i == 2)) {
+					si->upgradeCampaign[i][h] = (si->upgradeCampaign[i][h] & 0xFF);
+				}
+				else if (original->upgradeCampaign[i][h] == 0) {
+					si->upgradeCampaign[i][h] = 0;
+				}
+				else {
+					const int delta = original->upgradeCampaign[i][h] - original->upgradeCampaign[i][HOUSE_MERCENARY];
+
+					si->upgradeCampaign[i][h] = clamp(0, (si->upgradeCampaign[i][h] & 0xFF) + delta, 99);
+				}
+			}
+		}
+	}
+}
+
+static void
 Campaign_ReadHouseIni(void)
 {
 	char *source;
 	char *key;
 	char *keys;
 	char buffer[120];
-
-	memcpy(g_table_houseInfo, g_table_houseInfo_original, sizeof(g_table_houseInfo_original));
 
 	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "HOUSE.INI"))
 		return;
@@ -402,6 +438,78 @@ Campaign_ReadHouseIni(void)
 			}
 		}
 	}
+
+	/* Dune Dynasty extensions. */
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		char category[32];
+
+		snprintf(category, sizeof(category), "%s Traits", g_table_houseInfo_original[houseID].name);
+
+		*keys = '\0';
+		Ini_GetString(category, NULL, NULL, keys, 2000, source);
+
+		for (key = keys; *key != '\0'; key += strlen(key) + 1) {
+			ObjectInfo *oi = NULL;
+			StructureInfo *si = NULL;
+			uint8 type;
+
+			type = Unit_StringToType(key);
+			if (type != UNIT_INVALID) {
+				oi = &g_table_unitInfo[type].o;
+			}
+
+			type = Structure_StringToType(key);
+			if (type != STRUCTURE_INVALID) {
+				si = &g_table_structureInfo[type];
+				oi = &g_table_structureInfo[type].o;
+			}
+
+			if (oi == NULL)
+				continue;
+
+			const enum HouseType ref = (type == STRUCTURE_LIGHT_VEHICLE) ? HOUSE_HARKONNEN : HOUSE_MERCENARY;
+
+			Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
+
+			int16 availableCampaign;
+			int16 upgradeLevelRequired;
+			int16 upgradeCampaign[3];
+
+			const int count = sscanf(buffer, "%hd,%hd,%hd,%hd,%hd",
+					&availableCampaign, &upgradeLevelRequired,
+					&upgradeCampaign[0], &upgradeCampaign[1], &upgradeCampaign[2]);
+
+			if (count >= 2) {
+				oi->availableCampaign[houseID] = clamp(0, (oi->availableCampaign[houseID] & 0xFF) + availableCampaign, 99);
+				oi->upgradeLevelRequired[houseID] = clamp(0, (oi->upgradeLevelRequired[houseID] & 0xFF) + availableCampaign, 99);
+			}
+
+			if ((count == 5) && (si != NULL) && oi->flags.factory) {
+				si->upgradeCampaign[0][houseID] = clamp(0, (si->upgradeCampaign[0][houseID] & 0xFF) + upgradeCampaign[0], 99);
+				si->upgradeCampaign[1][houseID] = clamp(0, (si->upgradeCampaign[1][houseID] & 0xFF) + upgradeCampaign[1], 99);
+				si->upgradeCampaign[2][houseID] = clamp(0, (si->upgradeCampaign[2][houseID] & 0xFF) + upgradeCampaign[2], 99);
+			}
+			else if (count >= 2) {
+			}
+			else if ((si != NULL) && oi->flags.factory) {
+				const StructureInfo *original = &g_table_structureInfo_original[type];
+
+				fprintf(stderr, "[%s] %s=%hd,%hd,%hd,%hd,%hd\n", category, key,
+						original->o.availableCampaign[houseID] - original->o.availableCampaign[ref],
+						original->o.upgradeLevelRequired[houseID] - original->o.upgradeLevelRequired[HOUSE_MERCENARY],
+						original->upgradeCampaign[0][houseID] - original->upgradeCampaign[0][HOUSE_MERCENARY],
+						original->upgradeCampaign[1][houseID] - original->upgradeCampaign[1][HOUSE_MERCENARY],
+						original->upgradeCampaign[2][houseID] - original->upgradeCampaign[2][HOUSE_MERCENARY]);
+			}
+			else {
+				const ObjectInfo *original = (si == NULL) ? &g_table_unitInfo_original[type].o : &g_table_structureInfo_original[type].o;
+
+				fprintf(stderr, "[%s] %s=%hd,%hd\n", category, key,
+						original->availableCampaign[houseID] - original->availableCampaign[ref],
+						original->upgradeLevelRequired[houseID] - original->upgradeLevelRequired[HOUSE_MERCENARY]);
+			}
+		}
+	}
 }
 
 static void
@@ -423,9 +531,6 @@ Campaign_ReadProfileIni(void)
 		{ 'U', "UnitInfo" },
 		{ 'U', "UnitGFX" },
 	};
-
-	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
-	memcpy(g_table_unitInfo, g_table_unitInfo_original, sizeof(g_table_unitInfo_original));
 
 	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI"))
 		return;
@@ -477,13 +582,19 @@ Campaign_ReadProfileIni(void)
 						uint16 availableCampaign;
 						uint16 sortPriority;    /* (uint8) concrete/concrete4 are 100/101 respectively. */
 
+						/* Gak, Dune II uses Harkonnen light factory as the reference point,
+						 * even though they clearly have the deficiency.
+						 */
+						const enum HouseType ref =
+							(si == &g_table_structureInfo[STRUCTURE_LIGHT_VEHICLE]) ? HOUSE_HARKONNEN : HOUSE_MERCENARY;
+
 						const int count = sscanf(buffer, "%hu,%hu,%hu,%hu,%hu,%hu,%hu,%hu",
 								&ot.buildCredits, &ot.buildTime, &ot.hitpoints, &ot.fogUncoverRadius,
 								&availableCampaign, &ot.priorityBuild, &ot.priorityTarget, &sortPriority);
 						if (count < 7) {
 							fprintf(stderr, "[%s] %s=%hu,%hu,%hu,%hu,%hu,%hu,%hu,%hu\n", category, key,
 									oi->buildCredits, oi->buildTime, oi->hitpoints, oi->fogUncoverRadius,
-									oi->availableCampaign[HOUSE_MERCENARY], oi->priorityBuild, oi->priorityTarget, oi->sortPriority);
+									oi->availableCampaign[ref], oi->priorityBuild, oi->priorityTarget, oi->sortPriority);
 							break;
 						}
 
@@ -494,8 +605,13 @@ Campaign_ReadProfileIni(void)
 						oi->priorityBuild     = ot.priorityBuild;
 						oi->priorityTarget    = ot.priorityTarget;
 
+						const ObjectInfo *original = (ui != NULL) ? &g_table_unitInfo_original[type].o : &g_table_structureInfo_original[type].o;
+
 						for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 							oi->availableCampaign[h] = min(availableCampaign, 99);
+
+							if (original->availableCampaign[h] - original->availableCampaign[ref] != 0)
+								oi->availableCampaign[h] |= 0x8000;
 						}
 
 						if (count >= 8) {
@@ -574,9 +690,14 @@ Campaign_ReadProfileIni(void)
 							si->buildableUnits[i] = (0 <= buildableUnits[i] && buildableUnits[i] < UNIT_MAX) ? buildableUnits[i] : -1;
 						}
 
+						const StructureInfo *original = &g_table_structureInfo_original[type];
+
 						for (int i = 0; i < 3; i++) {
 							for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 								si->upgradeCampaign[i][h] = min(upgradeCampaign[i], 99);
+
+								if (original->upgradeCampaign[i][h] - original->upgradeCampaign[i][HOUSE_MERCENARY] != 0)
+									si->upgradeCampaign[i][h] |= 0x8000;
 							}
 						}
 					}
@@ -729,9 +850,14 @@ Campaign_Load(void)
 {
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
 
-	Campaign_ReadHouseIni();
+	memcpy(g_table_houseInfo, g_table_houseInfo_original, sizeof(g_table_houseInfo_original));
+	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
+	memcpy(g_table_unitInfo, g_table_unitInfo_original, sizeof(g_table_unitInfo_original));
+
 	Campaign_ReadMetaData(camp);
 	Campaign_ReadProfileIni();
+	Campaign_ReadHouseIni();
+	Campaign_ApplyDefaultHouseTraits();
 	String_ReloadMentatText();
 }
 
