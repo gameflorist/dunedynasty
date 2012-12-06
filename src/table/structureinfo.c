@@ -330,7 +330,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		{ /* upgradeCampaign */
 		/* [0]                  */ { 4, 4, 4, 4, 4, 4 },
 		/* [1]                  */ { 5, 5, 5, 5, 5, 5 },
-		/* [2]                  */ { 6, 6, 6, 6, 6, 6 },
+		/* [2]                  */ { 6, 6, 7, 6, 6, 6 }, /* O trait: siege tanks one level later. */
 		},
 	},
 

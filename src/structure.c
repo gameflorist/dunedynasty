@@ -1289,15 +1289,8 @@ bool Structure_IsUpgradable(Structure *s)
 	/* Use per-house upgrade levels: Harkonnen can never upgrade hi-tech. */
 	/* if (s->o.houseID == HOUSE_HARKONNEN && s->o.type == STRUCTURE_HIGH_TECH) {} */
 
-	if (s->o.houseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 1) {
-		int ref = g_campaignID;
-
-		/* ENHANCEMENT -- Siege tanks should be available when g_campaignID = 5, (si->upgradeCampaign[2] = 6). */
-		if (enhancement_undelay_ordos_siege_tank_tech)
-			ref = g_campaignID + 1;
-
-		if (si->upgradeCampaign[2][s->o.houseID] > ref) return false;
-	}
+	/* Use per-house upgrade levels: Ordos siege tanks may come one level late. */
+	/* if (s->o.houseID == HOUSE_ORDOS && s->o.type == STRUCTURE_HEAVY_VEHICLE && s->upgradeLevel == 1) {} */
 
 	int next_upgrade_level = s->upgradeLevel;
 

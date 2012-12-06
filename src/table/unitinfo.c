@@ -554,7 +554,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* availableCampaign    */ { 0, 0, 0, 0, 0, 0 },
 		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 26,
-		/* upgradeLevelRequired */ { 2, 2, 2, 2, 2, 2 },
+		/* upgradeLevelRequired */ { 2, 2, 2, 2, 2, 2 }, /* O trait: use either 2 or 0. */
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
 		/* available            */ 0,
 		/* hintStringID         */ STR_NULL,
@@ -773,7 +773,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* availableCampaign    */ { 0, 0, 0, 0, 0, 0 },
 		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 24,
-		/* upgradeLevelRequired */ { 3, 3, 3, 3, 3, 3 },
+		/* upgradeLevelRequired */ { 3, 3, 3, 3, 3, 3 }, /* We need O siege tanks on upgrade level 3 for compatability with Dune II. */
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
 		/* available            */ 0,
 		/* hintStringID         */ STR_NULL,
