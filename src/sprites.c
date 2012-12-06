@@ -16,12 +16,14 @@
 #include "codec/format80.h"
 #include "file.h"
 #include "gfx.h"
+#include "gui/gui.h"
 #include "house.h"
 #include "ini.h"
-#include "gui/gui.h"
+#include "scenario.h"
 #include "script/script.h"
 #include "string.h"
 #include "tile.h"
+#include "video/video.h"
 
 
 uint8 *g_sprites[SHAPE_MAX];
@@ -379,14 +381,41 @@ void Sprites_Init(void)
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "UNITS.SHP",  238, 354);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("CHOAM"), 355, 372);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("MENTAT"), 373, 386);
-	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPH.SHP",  387, 401);
-	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPA.SHP",  402, 416);
-	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPO.SHP",  417, 431);
-	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPM.SHP",  432, 446); /* Placeholder - Fremen */
-	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPM.SHP",  447, 461); /* Placeholder - Sardaukar */
-	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPM.SHP",  462, 476);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "PIECES.SHP", 477, 504);
 	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "ARROWS.SHP", 505, 513);
+}
+
+void
+Sprites_InitMentat(enum MentatID mentatID)
+{
+	static enum MentatID l_mentatID = MENTAT_MAX;
+	static enum HouseType l_houseID = HOUSE_INVALID;
+	static int l_campaign_selected = -1;
+
+	const char *shapes[HOUSE_MAX] = {
+		"MENSHPH.SHP", "MENSHPA.SHP", "MENSHPO.SHP",
+		"MENSHPF.SHP", "MENSHPS.SHP", "MENSHPM.SHP"
+	};
+
+	if (mentatID == l_mentatID) {
+		if ((mentatID != MENTAT_CUSTOM) || (g_playerHouseID == l_houseID && g_campaign_selected == l_campaign_selected))
+			return;
+	}
+
+	if (mentatID == MENTAT_CUSTOM) {
+		Sprites_Load(SEARCHDIR_CAMPAIGN_DIR, shapes[g_playerHouseID], SHAPE_MENTAT_EYES, SHAPE_MENTAT_EYES + 15 - 1);
+	}
+	else {
+		const enum HouseType houseID = (mentatID == MENTAT_BENE_GESSERIT) ? HOUSE_MERCENARY : mentatID;
+		Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, shapes[houseID], SHAPE_MENTAT_EYES, SHAPE_MENTAT_EYES + 15 - 1);
+	}
+
+	const bool use_benepal = (mentatID == MENTAT_BENE_GESSERIT);
+
+	Video_InitMentatSprites(use_benepal);
+	l_mentatID = mentatID;
+	l_houseID = g_playerHouseID;
+	l_campaign_selected = g_campaign_selected;
 }
 
 void

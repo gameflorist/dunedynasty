@@ -2616,46 +2616,51 @@ VideoA5_InitCursor(unsigned char *buf)
 	al_destroy_bitmap(bmp);
 }
 
-static void
-VideoA5_InitMentatSprites(void)
+void
+Video_InitMentatSprites(bool use_benepal)
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
-	const int TEXTURE_W = 512;
-	const int TEXTURE_H = 512;
-	unsigned char *buf = GFX_Screen_GetActive();
+	const int TEXTURE_W = 256;
+	const int TEXTURE_H = 256;
+	const enum WindowID old_widget = Widget_SetCurrentWidget(WINDOWID_RENDER_TEXTURE);
+	const uint16 old_screen = GFX_Screen_SetActive(0);
+	ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
 
+	unsigned char *buf = GFX_Screen_GetActive();
+	memset(buf, 0, WINDOW_W * TEXTURE_H);
+
+	al_destroy_bitmap(mentat_texture);
 	mentat_texture = al_create_bitmap(TEXTURE_W, TEXTURE_H);
 	assert(mentat_texture != NULL);
 
 	al_set_target_bitmap(mentat_texture);
-	memset(buf, 0, WINDOW_W * TEXTURE_H);
+
+	if (use_benepal)
+		VideoA5_ReadPalette("BENE.PAL");
+
+	GUI_Palette_CreateRemap(HOUSE_HARKONNEN);
 
 	int x = 1;
 	int y = 1;
 	int row_h = 0;
 
-	for (int i = 0; i < 4; i++) {
-		const enum HouseType houseID = (i == 3) ? HOUSE_MERCENARY : i;
+	for (int i = 0; i < 15; i++) {
+		const enum ShapeID shapeID = SHAPE_MENTAT_EYES + i;
+		al_destroy_bitmap(s_shape[shapeID][HOUSE_HARKONNEN]);
 
-		if (houseID == HOUSE_MERCENARY) {
-			VideoA5_CopyBitmap(WINDOW_W, buf, mentat_texture, TRANSPARENT_COLOUR_0);
-			VideoA5_ReadPalette("BENE.PAL");
-			memset(buf, 0, WINDOW_W * TEXTURE_H);
-		}
-
-		for (int s = 0; s < 15; s++) {
-			const enum ShapeID shapeID = SHAPE_MENTAT_EYES + 15 * houseID + s;
-			free(s_shape[shapeID][HOUSE_HARKONNEN]);
-
-			s_shape[shapeID][HOUSE_HARKONNEN] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
-		}
+		s_shape[shapeID][HOUSE_HARKONNEN] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
 	}
 
-	VideoA5_CopyBitmap(WINDOW_W, buf, mentat_texture, SKIP_COLOUR_0);
+	VideoA5_CopyBitmap(WINDOW_W, buf, mentat_texture, TRANSPARENT_COLOUR_0);
+	VideoA5_ReadPalette("IBM.PAL");
 
 #if OUTPUT_TEXTURES
 	al_save_bitmap("mentat.png", mentat_texture);
 #endif
+
+	GFX_Screen_SetActive(old_screen);
+	al_set_target_bitmap(old_target);
+	Widget_SetCurrentWidget(old_widget);
 }
 
 void
@@ -2693,8 +2698,6 @@ VideoA5_InitSprites(void)
 	interface_texture = VideoA5_ConvertToVideoBitmap(interface_texture);
 	al_set_new_bitmap_flags(bitmap_flags);
 	VideoA5_InitFonts(NULL);
-
-	VideoA5_InitMentatSprites();
 
 	al_set_target_backbuffer(display);
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);

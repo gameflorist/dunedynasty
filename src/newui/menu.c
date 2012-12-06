@@ -31,6 +31,7 @@
 #include "../input/mouse.h"
 #include "../opendune.h"
 #include "../scenario.h"
+#include "../sprites.h"
 #include "../string.h"
 #include "../table/sound.h"
 #include "../table/strings.h"
@@ -772,6 +773,10 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 static void
 Briefing_Initialise(enum MenuAction menu, MentatState *mentat)
 {
+	const enum MentatID mentatID = (menu == MENU_CONFIRM_HOUSE) ? MENTAT_BENE_GESSERIT : g_table_houseInfo[g_playerHouseID].mentat;
+
+	Sprites_InitMentat(mentatID);
+
 	if (menu == MENU_CONFIRM_HOUSE) {
 		MentatBriefing_InitText(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
 		MentatBriefing_InitWSA(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
@@ -1189,6 +1194,7 @@ PickCutscene_Initialise(void)
 		{ NULL, 0 }
 	};
 
+	Sprites_InitMentat(MENTAT_BENE_GESSERIT);
 	Menu_LoadPalette();
 
 	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);

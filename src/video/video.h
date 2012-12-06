@@ -32,6 +32,8 @@ struct FadeInAux;
 
 #include "prim.h"
 
+extern void Video_InitMentatSprites(bool use_benepal);
+
 extern void Video_SetPalette(const uint8 *palette, int from, int length);
 extern void Video_SetClippingArea(int x, int y, int w, int h);
 extern void Video_SetCursor(int cursor);

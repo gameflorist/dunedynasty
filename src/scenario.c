@@ -21,6 +21,7 @@
 #include "house.h"
 #include "ini.h"
 #include "map.h"
+#include "newui/mentat.h"
 #include "opendune.h"
 #include "pool/house.h"
 #include "pool/pool.h"
@@ -79,25 +80,6 @@ Campaign_AddFileInPAK(const char *filename, int parent)
 	fi->filename = strdup(filename);
 	fi->parentIndex = parent;
 	fi->flags.inPAKFile = true;
-}
-
-static enum MentatID
-Campaign_ReadMentat(const char *str, enum MentatID def)
-{
-	while (*str != '\0' && isspace(*str)) str++;
-
-	if (strcasecmp(str, "Radnor") == 0)
-		return MENTAT_RADNOR;
-	if (strcasecmp(str, "Cyril") == 0)
-		return MENTAT_CYRIL;
-	if (strcasecmp(str, "Ammon") == 0)
-		return MENTAT_AMMON;
-	if (strcasecmp(str, "BeneGesserit") == 0)
-		return MENTAT_BENE_GESSERIT;
-	if (strcasecmp(str, "Custom") == 0)
-		return MENTAT_CUSTOM;
-
-	return def;
 }
 
 static void
@@ -177,18 +159,6 @@ Campaign_ReadMetaData(Campaign *camp)
 	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI", source, GFX_Screen_GetSize_ByIndex(SCREEN_1));
 
 	camp->intermission = Ini_GetInteger("CAMPAIGN", "Intermission", 0, source);
-
-	/* Read houses. */
-	for (int h = 0; h < 3; h++) {
-		if (camp->house[h] == HOUSE_INVALID)
-			continue;
-
-		HouseInfo *hi = &g_table_houseInfo[camp->house[h]];
-
-		snprintf(value, sizeof(value), "Mentat%c", hi->name[0]);
-		Ini_GetString("CAMPAIGN", value, NULL, value + 8, sizeof(value) - 8, source);
-		hi->mentat = Campaign_ReadMentat(value + 8, hi->mentat);
-	}
 
 	char *keys = source + strlen(source) + 5000;
 	*keys = '\0';
@@ -488,7 +458,10 @@ Campaign_ReadHouseIni(void)
 		for (key = keys; *key != '\0'; key += strlen(key) + 1) {
 			Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
 
-			if (strcasecmp(key, "Win music") == 0) {
+			if (strcasecmp(key, "Mentat") == 0) {
+				hi->mentat = Mentat_InitFromString(buffer, houseID);
+			}
+			else if (strcasecmp(key, "Win music") == 0) {
 				hi->musicWin = Campaign_MusicFromString(buffer, g_table_houseInfo_original[houseID].musicWin);
 			}
 			else if (strcasecmp(key, "Lose music") == 0) {

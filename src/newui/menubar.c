@@ -223,6 +223,7 @@ MenuBar_ClickMentat(Widget *w)
 		return false;
 
 	g_gameOverlay = GAMEOVERLAY_MENTAT;
+	Sprites_InitMentat(g_table_houseInfo[g_playerHouseID].mentat);
 	mentat->state = MENTAT_SHOW_CONTENTS;
 	mentat->wsa = NULL;
 	Video_SetCursor(SHAPE_CURSOR_NORMAL);

@@ -51,6 +51,8 @@ extern int movingMouthSprite;
 extern int otherSprite;
 extern MentatState g_mentat_state;
 
+extern enum MentatID Mentat_InitFromString(const char *str, enum HouseType houseID);
+
 extern void Mentat_GetEyePositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom);
 extern void Mentat_GetMouthPositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom);
 extern void Mentat_DrawBackground(enum MentatID mentatID);

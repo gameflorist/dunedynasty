@@ -1,11 +1,13 @@
 /* mentat.c */
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "fourcc.h"
 #include "../os/endian.h"
+#include "../os/strings.h"
 
 #include "mentat.h"
 
@@ -27,43 +29,27 @@
 #include "../video/video.h"
 #include "../wsa.h"
 
-static const struct {
-	const char *background;
-	enum ShapeID eyes; int eyesX, eyesY;
-	enum ShapeID mouth; int mouthX, mouthY;
-	enum ShapeID shoulder; int shoulderX, shoulderY;
-	enum ShapeID accessory; int accessoryX, accessoryY;
-} mentat_data[MENTAT_MAX] = {
-	{	"MENTATH.CPS",
-		SHAPE_MENTAT_EYES + 15 * 0, 0x20,0x58,
-		SHAPE_MENTAT_MOUTH + 15 * 0, 0x20,0x68,
-		SHAPE_MENTAT_SHOULDER + 15 * 0, 0x80,0x68,
-		SHAPE_INVALID, 0,0
-	},
-	{	"MENTATA.CPS",
-		SHAPE_MENTAT_EYES + 15 * 1, 0x28,0x50,
-		SHAPE_MENTAT_MOUTH + 15 * 1, 0x28,0x60,
-		SHAPE_MENTAT_SHOULDER + 15 * 1, 0x80,0x80,
-		SHAPE_MENTAT_ACCESSORY + 15 * 1, 0x48,0x98
-	},
-	{	"MENTATO.CPS",
-		SHAPE_MENTAT_EYES + 15 * 2, 0x10,0x50,
-		SHAPE_MENTAT_MOUTH + 15 * 2, 0x10,0x60,
-		SHAPE_MENTAT_SHOULDER + 15 * 2, 0x80,0x80,
-		SHAPE_MENTAT_ACCESSORY + 15 * 2, 0x58,0x90
-	},
-	{	"MENTATM.CPS",
-		SHAPE_MENTAT_EYES + 15 * 5, 0x40,0x50,
-		SHAPE_MENTAT_MOUTH + 15 * 5, 0x38,0x60,
-		SHAPE_INVALID, 0,0,
-		SHAPE_INVALID, 0,0
-	},
-	{	NULL,
-		SHAPE_INVALID, 0,0,
-		SHAPE_INVALID, 0,0,
-		SHAPE_INVALID, 0,0,
-		SHAPE_INVALID, 0,0
-	},
+typedef struct MentatData {
+	int eyesX, eyesY;
+	int mouthX, mouthY;
+	int shoulderX, shoulderY;
+	int accessoryX, accessoryY;
+} MentatData;
+
+static const MentatData mentat_data[MENTAT_MAX - 1] = {
+	{ 0x20,0x58, 0x20,0x68, 0x80,0x68, 0x00,0x00 }, /* Radnor. */
+	{ 0x28,0x50, 0x28,0x60, 0x80,0x80, 0x48,0x98 }, /* Cyril. */
+	{ 0x10,0x50, 0x10,0x60, 0x80,0x80, 0x58,0x90 }, /* Ammon. */
+	{ 0x40,0x50, 0x38,0x60, 0x00,0x00, 0x00,0x00 }  /* Bene Gesserit. */
+};
+
+static MentatData custom_mentat_data[HOUSE_MAX] = {
+	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 },
+	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 },
+	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 },
+	{ 0x2A,0x60, 0x28,0x76, 0x00,0x00, 0x00,0x00 }, /* Stilgar (only for reference). */
+	{ 0x25,0x51, 0x16,0x62, 0x00,0x00, 0x00,0x00 }, /* Duncan (only for reference). */
+	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 }
 };
 
 int movingEyesSprite;
@@ -176,77 +162,111 @@ GUI_Mentat_Draw(bool force)
 
 /*--------------------------------------------------------------*/
 
-void
-Mentat_GetEyePositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom)
+static const MentatData *
+Mentat_GetCoordinateData(enum MentatID mentatID)
 {
 	assert(mentatID < MENTAT_MAX);
 
-	*left = mentat_data[mentatID].eyesX;
-	*top = mentat_data[mentatID].eyesY;
-	*right = *left + Shape_Width(mentat_data[mentatID].eyes);
-	*bottom = *top + Shape_Height(mentat_data[mentatID].eyes);
+	return (mentatID == MENTAT_CUSTOM) ? &custom_mentat_data[g_playerHouseID] : &mentat_data[mentatID];
+}
+
+enum MentatID
+Mentat_InitFromString(const char *str, enum HouseType houseID)
+{
+	while (*str != '\0' && isspace(*str)) str++;
+
+	if (strncasecmp(str, "Custom", 6) == 0) {
+		sscanf(str+6, ",%i,%i,%i,%i,%i,%i,%i,%i",
+				&custom_mentat_data[houseID].eyesX, &custom_mentat_data[houseID].eyesY,
+				&custom_mentat_data[houseID].mouthX, &custom_mentat_data[houseID].mouthY,
+				&custom_mentat_data[houseID].shoulderX, &custom_mentat_data[houseID].shoulderY,
+				&custom_mentat_data[houseID].accessoryX, &custom_mentat_data[houseID].accessoryY);
+
+		return MENTAT_CUSTOM;
+	}
+
+	if (strcasecmp(str, "BeneGesserit") == 0) return MENTAT_BENE_GESSERIT;
+	else if (strcasecmp(str, "Radnor") == 0)  return MENTAT_RADNOR;
+	else if (strcasecmp(str, "Cyril") == 0)   return MENTAT_CYRIL;
+	else if (strcasecmp(str, "Ammon") == 0)   return MENTAT_AMMON;
+
+	return g_table_houseInfo_original[houseID].mentat;
+}
+
+void
+Mentat_GetEyePositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom)
+{
+	const MentatData *mentat = Mentat_GetCoordinateData(mentatID);
+
+	*left = mentat->eyesX;
+	*top = mentat->eyesY;
+	*right = *left + Shape_Width(SHAPE_MENTAT_EYES);
+	*bottom = *top + Shape_Height(SHAPE_MENTAT_EYES);
 }
 
 void
 Mentat_GetMouthPositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom)
 {
-	assert(mentatID < MENTAT_MAX);
+	const MentatData *mentat = Mentat_GetCoordinateData(mentatID);
 
-	*left = mentat_data[mentatID].mouthX;
-	*top = mentat_data[mentatID].mouthY;
-	*right = *left + Shape_Width(mentat_data[mentatID].mouth);
-	*bottom = *top + Shape_Height(mentat_data[mentatID].mouth);
+	*left = mentat->mouthX;
+	*top = mentat->mouthY;
+	*right = *left + Shape_Width(SHAPE_MENTAT_MOUTH);
+	*bottom = *top + Shape_Height(SHAPE_MENTAT_MOUTH);
 }
 
 void
 Mentat_DrawBackground(enum MentatID mentatID)
 {
+	const char *background[HOUSE_MAX] = {
+		"MENTATH.CPS", "MENTATA.CPS", "MENTATO.CPS",
+		"MENTATF.CPS", "MENTATS.CPS", "MENTATM.CPS"
+	};
 	assert(mentatID < MENTAT_MAX);
 
 	if (mentatID == MENTAT_CUSTOM) {
-		char background[16];
-		snprintf(background, sizeof(background), "MENTAT%c.CPS", g_table_houseInfo[g_playerHouseID].name[0]);
-		Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, background);
+		Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, background[g_playerHouseID]);
 	}
 	else {
-		Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, mentat_data[mentatID].background);
+		const enum HouseType houseID = (mentatID == MENTAT_BENE_GESSERIT) ? HOUSE_MERCENARY : mentatID;
+		Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, background[houseID]);
 	}
 }
 
 static void
 Mentat_DrawEyes(enum MentatID mentatID)
 {
-	const enum ShapeID shapeID = mentat_data[mentatID].eyes;
+	const MentatData *mentat = Mentat_GetCoordinateData(mentatID);
 
-	if (shapeID != SHAPE_INVALID)
-		Shape_Draw(shapeID + movingEyesSprite, mentat_data[mentatID].eyesX, mentat_data[mentatID].eyesY, 0, 0);
+	if ((mentat->eyesX != 0) || (mentat->eyesY != 0))
+		Shape_Draw(SHAPE_MENTAT_EYES + movingEyesSprite, mentat->eyesX, mentat->eyesY, 0, 0);
 }
 
 static void
 Mentat_DrawMouth(enum MentatID mentatID)
 {
-	const enum ShapeID shapeID = mentat_data[mentatID].mouth;
+	const MentatData *mentat = Mentat_GetCoordinateData(mentatID);
 
-	if (shapeID != SHAPE_INVALID)
-		Shape_Draw(shapeID + movingMouthSprite, mentat_data[mentatID].mouthX, mentat_data[mentatID].mouthY, 0, 0);
+	if ((mentat->mouthX != 0) || (mentat->mouthY != 0))
+		Shape_Draw(SHAPE_MENTAT_MOUTH + movingMouthSprite, mentat->mouthX, mentat->mouthY, 0, 0);
 }
 
 static void
 Mentat_DrawShoulder(enum MentatID mentatID)
 {
-	const enum ShapeID shapeID = mentat_data[mentatID].shoulder;
+	const MentatData *mentat = Mentat_GetCoordinateData(mentatID);
 
-	if (shapeID != SHAPE_INVALID)
-		Shape_Draw(shapeID, mentat_data[mentatID].shoulderX, mentat_data[mentatID].shoulderY, 0, 0);
+	if ((mentat->shoulderX != 0) || (mentat->shoulderY != 0))
+		Shape_Draw(SHAPE_MENTAT_SHOULDER, mentat->shoulderX, mentat->shoulderY, 0, 0);
 }
 
 static void
 Mentat_DrawAccessory(enum MentatID mentatID)
 {
-	const enum ShapeID shapeID = mentat_data[mentatID].accessory;
+	const MentatData *mentat = Mentat_GetCoordinateData(mentatID);
 
-	if (shapeID != SHAPE_INVALID)
-		Shape_Draw(shapeID + abs(otherSprite), mentat_data[mentatID].accessoryX, mentat_data[mentatID].accessoryY, 0, 0);
+	if ((mentat->accessoryX != 0) || (mentat->accessoryY != 0))
+		Shape_Draw(SHAPE_MENTAT_ACCESSORY + abs(otherSprite), mentat->accessoryX, mentat->accessoryY, 0, 0);
 }
 
 void
