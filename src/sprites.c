@@ -1,5 +1,6 @@
 /** @file src/sprites.c Sprite routines. */
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +8,7 @@
 #include "types.h"
 #include "os/common.h"
 #include "os/endian.h"
+#include "os/math.h"
 #include "os/strings.h"
 
 #include "sprites.h"
@@ -22,8 +24,7 @@
 #include "tile.h"
 
 
-uint8 **g_sprites = NULL;
-static uint16 s_spritesCount = 0;
+uint8 *g_sprites[SHAPE_MAX];
 uint8 *g_spriteBuffer;
 uint8 *g_iconRTBL = NULL;
 uint8 *g_iconRPAL = NULL;
@@ -71,18 +72,18 @@ static const uint8 *Sprites_GetSprite(const uint8 *buffer, uint16 index)
  * @param index The index of the list of sprite files to load.
  * @param sprites The array where to store CSIP for each loaded sprite.
  */
-static void Sprites_Load(const char *filename)
+static void
+Sprites_Load(enum SearchDirectory dir, const char *filename, int start, int end)
 {
 	uint8 *buffer;
 	uint16 count;
 	uint16 i;
 
-	buffer = File_ReadWholeFile(filename);
-
+	buffer = File_ReadWholeFile_Ex(dir, filename);
 	count = *(uint16 *)buffer;
 
-	s_spritesCount += count;
-	g_sprites = (uint8 **)realloc(g_sprites, s_spritesCount * sizeof(uint8 *));
+	assert(count == end - start + 1);
+	count = min(count, end - start + 1);
 
 	for (i = 0; i < count; i++) {
 		const uint8 *src = Sprites_GetSprite(buffer, i);
@@ -94,7 +95,8 @@ static void Sprites_Load(const char *filename)
 			memcpy(dst, src, size);
 		}
 
-		g_sprites[s_spritesCount - count + i] = dst;
+		free(g_sprites[start + i]);
+		g_sprites[start + i] = dst;
 	}
 
 	free(buffer);
@@ -368,41 +370,40 @@ bool Sprite_IsUnveiled(uint16 spriteID)
 void Sprites_Init(void)
 {
 	g_spriteBuffer = calloc(1, 20000);
-	Sprites_Load("MOUSE.SHP");                       /*   0 -   6 */
-	Sprites_Load(String_GenerateFilename("BTTN"));   /*   7 -  11 */
-	Sprites_Load("SHAPES.SHP");                      /*  12 - 110 */
-	Sprites_Load("UNITS2.SHP");                      /* 111 - 150 */
-	Sprites_Load("UNITS1.SHP");                      /* 151 - 237 */
-	Sprites_Load("UNITS.SHP");                       /* 238 - 354 */
-	Sprites_Load(String_GenerateFilename("CHOAM"));  /* 355 - 372 */
-	Sprites_Load(String_GenerateFilename("MENTAT")); /* 373 - 386 */
-	Sprites_Load("MENSHPH.SHP");                     /* 387 - 401 */
-	Sprites_Load("MENSHPA.SHP");                     /* 402 - 416 */
-	Sprites_Load("MENSHPO.SHP");                     /* 417 - 431 */
-	Sprites_Load("MENSHPM.SHP");                     /* 432 - 446 (Placeholder - Fremen) */
-	Sprites_Load("MENSHPM.SHP");                     /* 447 - 461 (Placeholder - Sardaukar) */
-	Sprites_Load("MENSHPM.SHP");                     /* 462 - 476 */
-	Sprites_Load("PIECES.SHP");                      /* 477 - 504 */
-	Sprites_Load("ARROWS.SHP");                      /* 505 - 513 */
-	Sprites_Load("CREDIT1.SHP");                     /* 514 */
-	Sprites_Load("CREDIT2.SHP");                     /* 515 */
-	Sprites_Load("CREDIT3.SHP");                     /* 516 */
-	Sprites_Load("CREDIT4.SHP");                     /* 517 */
-	Sprites_Load("CREDIT5.SHP");                     /* 518 */
-	Sprites_Load("CREDIT6.SHP");                     /* 519 */
-	Sprites_Load("CREDIT7.SHP");                     /* 520 */
-	Sprites_Load("CREDIT8.SHP");                     /* 521 */
-	Sprites_Load("CREDIT9.SHP");                     /* 522 */
-	Sprites_Load("CREDIT10.SHP");                    /* 523 */
-	Sprites_Load("CREDIT11.SHP");                    /* 524 */
+
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MOUSE.SHP", 0, 6);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("BTTN"), 7, 11);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "SHAPES.SHP",  12, 110);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "UNITS2.SHP", 111, 150);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "UNITS1.SHP", 151, 237);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "UNITS.SHP",  238, 354);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("CHOAM"), 355, 372);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("MENTAT"), 373, 386);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPH.SHP",  387, 401);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPA.SHP",  402, 416);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPO.SHP",  417, 431);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPM.SHP",  432, 446); /* Placeholder - Fremen */
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPM.SHP",  447, 461); /* Placeholder - Sardaukar */
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MENSHPM.SHP",  462, 476);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "PIECES.SHP", 477, 504);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "ARROWS.SHP", 505, 513);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT1.SHP",  514, 514);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT2.SHP",  515, 515);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT3.SHP",  516, 516);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT4.SHP",  517, 517);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT5.SHP",  518, 518);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT6.SHP",  519, 519);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT7.SHP",  520, 520);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT8.SHP",  521, 521);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT9.SHP",  522, 522);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT10.SHP", 523, 523);
+	Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, "CREDIT11.SHP", 524, 524);
 }
 
 void Sprites_Uninit(void)
 {
-	uint16 i;
-
-	for (i = 0; i < s_spritesCount; i++) free(g_sprites[i]);
-	free(g_sprites); g_sprites = NULL;
+	for (int i = 0; i < SHAPE_MAX; i++)
+		free(g_sprites[i]);
 
 	free(g_spriteBuffer); g_spriteBuffer = NULL;
 

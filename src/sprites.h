@@ -5,6 +5,7 @@
 
 #include "file.h"
 #include "gfx.h"
+#include "shape.h"
 
 enum {
 	TILE_SIZE   = 16
@@ -53,7 +54,7 @@ typedef enum IconMapEntries {
 	ICM_ICONGROUP_EOF                    = 27  /*!< End of file spriteIDs. */
 } IconMapEntries;
 
-extern uint8 **g_sprites;
+extern uint8 *g_sprites[SHAPE_MAX];
 extern uint8 *g_spriteBuffer;
 extern uint8 *g_iconRTBL;
 extern uint8 *g_iconRPAL;

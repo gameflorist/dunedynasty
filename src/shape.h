@@ -104,8 +104,6 @@ enum ShapeID {
 	SHAPE_ARROW = 505,
 	SHAPE_ARROW_FINAL = 513,
 
-	/* Final normal shape is 524: CREDIT11.SHP. */
-
 	/* 558 .. 598: SHAPE_ARROW .. SHAPE_ARROW_FINAL, 5 white masks each. */
 	SHAPE_ARROW_TINT = 598 - 5 * 8,
 	SHAPE_ARROW_TINT_FINAL = 598,
@@ -114,6 +112,8 @@ enum ShapeID {
 	SHAPE_CONCRETE_SLAB_GREY = 599,
 	SHAPE_SANDWORM_GREY = 639,
 
+	/* Final normal shape is 524 (CREDIT11.SHP). */
+	SHAPE_MAX = 525,
 	SHAPE_INVALID = 0xFFFF
 };
 
