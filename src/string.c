@@ -118,22 +118,39 @@ void String_TranslateSpecial(char *source, char *dest)
 	*dest = '\0';
 }
 
-static void String_Load(const char *filename, bool compressed)
+static void
+String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int start, int end)
 {
 	void *buf;
 	uint16 count;
-	uint16 i;
+	uint16 i, j;
 
-	buf = File_ReadWholeFile(String_GenerateFilename(filename));
+	buf = File_ReadWholeFile_Ex(dir, String_GenerateFilename(filename));
 	count = *(uint16 *)buf / 2;
 
-	s_stringsCount += count;
-	s_strings = (char **)realloc(s_strings, s_stringsCount * sizeof(char *));
-	s_strings[s_stringsCount - count] = NULL;
+	if (end >= 0)
+		count = min(count, end - start + 1);
 
-	for (i = 0; i < count; i++) {
+	if (start + count > s_stringsCount) {
+		s_strings = (char **)realloc(s_strings, (start + count) * sizeof(s_strings[0]));
+
+		for (i = s_stringsCount; i < start + count; i++)
+			s_strings[i] = NULL;
+
+		if (s_strings[0] == NULL)
+			s_strings[0] = strdup("");
+
+		s_stringsCount = start + count;
+	}
+
+	for (i = 0, j = 0; i < count; i++, j++) {
 		char *src = (char *)buf + ((uint16 *)buf)[i];
 		char *dst;
+
+		if (strlen(src) == 0) {
+			j--;
+			continue;
+		}
 
 		if (compressed) {
 			dst = (char *)calloc(strlen(src) * 2 + 1, sizeof(char));
@@ -143,19 +160,8 @@ static void String_Load(const char *filename, bool compressed)
 			dst = strdup(src);
 		}
 
-		String_Trim(dst);
-
-		if (strlen(dst) == 0 && s_strings[0] != NULL) {
-			s_stringsCount--;
-			free(dst);
-			continue;
-		}
-
-		s_strings[s_stringsCount - count + i] = dst;
+		s_strings[start + j] = dst;
 	}
-
-	/* EU version has one more string in DUNE langfile. */
-	if (s_stringsCount == STR_LOAD_GAME) s_strings[s_stringsCount++] = strdup(s_strings[STR_LOAD_A_GAME]);
 
 	free(buf);
 }
@@ -224,18 +230,22 @@ String_ReloadMentatText(void)
  */
 void String_Init(void)
 {
-	String_Load("DUNE", false);
-	String_Load("MESSAGE", false);
-	String_Load("INTRO", false);
-	String_Load("TEXTH",true);
-	String_Load("TEXTA", true);
-	String_Load("TEXTO",true);
-	String_Load("PROTECT", true);
+	String_Load(SEARCHDIR_GLOBAL_DATA_DIR, "DUNE",    false,   1, 339);
+	String_Load(SEARCHDIR_GLOBAL_DATA_DIR, "MESSAGE", false, 340, 367);
+	String_Load(SEARCHDIR_GLOBAL_DATA_DIR, "INTRO",   false, 368, 404);
+	String_Load(SEARCHDIR_GLOBAL_DATA_DIR, "TEXTH",   true,  405, 444);
+	String_Load(SEARCHDIR_GLOBAL_DATA_DIR, "TEXTA",   true,  445, 484);
+	String_Load(SEARCHDIR_GLOBAL_DATA_DIR, "TEXTO",   true,  485, 524);
+	String_Load(SEARCHDIR_GLOBAL_DATA_DIR, "PROTECT", true,  525,  -1);
 
-	/* US and HitSquad versions use "Load a game" instead of "Load Game." */
-	if (s_strings[STR_LOAD_GAME] != NULL) {
+	/* EU version has one more string in DUNE langfile. */
+	if (s_strings[STR_LOAD_GAME] == NULL) {
+		s_strings[STR_LOAD_GAME] = strdup(s_strings[STR_LOAD_A_GAME]);
+	}
+	else {
 		char *str = s_strings[STR_LOAD_GAME];
 		while (*str == ' ') str++;
+
 		if (*str == '\0') {
 			free(s_strings[STR_LOAD_GAME]);
 			s_strings[STR_LOAD_GAME] = strdup(s_strings[STR_LOAD_A_GAME]);
