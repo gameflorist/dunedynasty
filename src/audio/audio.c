@@ -36,7 +36,7 @@ bool g_opl_mame = true;
 char sound_font_path[1024];
 
 enum MusicSet default_music_pack;
-static enum MusicID curr_music;
+static MusicInfo *curr_music;
 static char music_message[128];
 
 static enum SampleSet s_curr_sample_set = SAMPLESET_INVALID;
@@ -55,17 +55,24 @@ Audio_DisplayMusicName(void)
 void
 Audio_ScanMusic(void)
 {
-	bool verbose = false;
+	const bool verbose = false;
 	struct stat st;
 
 	for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
-		MusicInfo *m = &g_table_music[musicID];
+		MusicList *l = &g_table_music[musicID];
 
-		if (!g_table_music_set[m->music_set].enable)
-			m->enable &=~MUSIC_WANT;
+		l->count = 0;
+		l->count_default = 0;
+		for (int s = 0; s < l->length; s++) {
+			MusicInfo *m = &l->song[s];
 
-		/* External music. */
-		if (m->music_set > MUSICSET_DUNE2_C55) {
+			if (!g_table_music_set[m->music_set].enable)
+				m->enable &=~MUSIC_WANT;
+
+			if (m->music_set <= MUSICSET_DUNE2_C55)
+				goto count_song;
+
+			/* External music. */
 			char buf[1024];
 
 #ifdef WITH_ACODEC
@@ -99,43 +106,20 @@ Audio_ScanMusic(void)
 found_song:
 
 			m->enable |= MUSIC_FOUND;
-			if (verbose) fprintf(stdout, "[found]   %s\n", buf);
-		}
-	}
 
-	/* Use default music pack or Adlib if song is otherwise missing. */
-	for (int i = 0; g_table_music_cutoffs[i] < MUSICID_MAX; i++) {
-		enum MusicID start = g_table_music_cutoffs[i];
-		enum MusicID end = g_table_music_cutoffs[i + 1];
-		enum MusicSet def = MUSICSET_DUNE2_ADLIB;
-		enum MusicID musicID;
-		assert(g_table_music[start].music_set == MUSICSET_DUNE2_ADLIB);
+count_song:
 
-		for (musicID = start; musicID < end; musicID++) {
-			const enum MusicSet music_set = g_table_music[musicID].music_set;
+			if (m->enable & MUSIC_FOUND) {
+				l->count_found++;
 
-			if (g_table_music[musicID].enable == MUSIC_ENABLE) {
-				break;
+				if ((m->enable & MUSIC_ENABLE) == MUSIC_ENABLE)
+					l->count++;
+
+				if (m->music_set == default_music_pack)
+					l->count_default++;
 			}
-			else if ((music_set == default_music_pack) && (g_table_music[musicID].enable & MUSIC_FOUND)) {
-				def = music_set;
-			}
-		}
 
-		if (musicID < end)
-			continue;
-
-		for (musicID = start; musicID < end; musicID++) {
-			if (g_table_music[musicID].music_set != def)
-				continue;
-
-			if (MUSIC_BONUS <= musicID && musicID < MUSIC_ATTACK1)
-				continue;
-
-			g_table_music[musicID].enable = MUSIC_ENABLE;
-			g_table_music[musicID].volume = max(0.25f, fabsf(g_table_music[musicID].volume));
-
-			if (verbose) fprintf(stdout, "[default] %s\n", g_table_music[musicID].filename);
+			if (verbose) fprintf(stdout, "[found]   %s\n", m->filename);
 		}
 	}
 }
@@ -145,43 +129,74 @@ Audio_PlayMusic(enum MusicID musicID)
 {
 	AudioA5_StopMusic();
 
-	if (musicID == MUSIC_STOP)
+	if (musicID == MUSIC_STOP) {
+		curr_music = NULL;
 		return;
+	}
 
 	if ((!g_enable_audio) || (!g_enable_music) || (musicID == MUSIC_INVALID))
 		return;
 
-	enum MusicID song, end;
+	enum MusicID start = musicID;
+	enum MusicID end = musicID;
 	int num_songs = 0;
-	int i;
+	int num_songs_default = 0;
+	int r;
+
+	if (musicID == MUSIC_RANDOM_IDLE) {
+		start = MUSIC_IDLE1;
+		end = MUSIC_BONUS;
+	}
+	else if (musicID == MUSIC_RANDOM_ATTACK) {
+		start = MUSIC_ATTACK1;
+		end = MUSIC_ATTACK6;
+	}
+
+	for (enum MusicID m = start; m <= end; m++) {
+		num_songs += g_table_music[m].count;
+		num_songs_default += g_table_music[m].count_default;
+	}
 
 	/* Pick random song between musicID and end. */
-	for (i = 0;; i++) {
-		if (g_table_music_cutoffs[i] <= musicID && musicID < g_table_music_cutoffs[i + 1]) {
-			end = g_table_music_cutoffs[i + 1];
-			break;
+	enum MusicFlags check_flags = MUSIC_FOUND;
+	enum MusicSet check_music_pack = MUSICSET_INVALID;
+
+	if (num_songs > 0) {
+		check_flags = MUSIC_ENABLE;
+		r = Tools_RandomLCG_Range(0, num_songs - 1);
+	}
+	else if (num_songs_default > 0) {
+		check_music_pack = default_music_pack;
+		r = Tools_RandomLCG_Range(0, num_songs_default - 1);
+	}
+	else {
+		check_music_pack = MUSICSET_DUNE2_ADLIB;
+
+		if (musicID == MUSIC_RANDOM_IDLE) r = Tools_RandomLCG_Range(0, 9 - 1);
+		else if (musicID == MUSIC_RANDOM_ATTACK) r = Tools_RandomLCG_Range(0, 6 - 1);
+		else r = 0;
+	}
+
+	MusicInfo *m = NULL;
+	for (musicID = start; musicID <= end && (m == NULL); musicID++) {
+		const MusicList *l = &g_table_music[musicID];
+
+		for (int s = 0; s < l->length; s++) {
+			const bool enable =
+				((l->song[s].enable & check_flags) == check_flags) &&
+				((l->song[s].music_set == check_music_pack) || (check_music_pack == MUSICSET_INVALID));
+
+			if (enable) {
+				if (r <= 0) {
+					m = &l->song[s];
+					break;
+				}
+
+				r--;
+			}
 		}
 	}
 
-	for (song = musicID; song < end; song++) {
-		if (g_table_music[song].enable == MUSIC_ENABLE)
-			num_songs++;
-	}
-
-	if (num_songs <= 0)
-		return;
-
-	i = Tools_RandomLCG_Range(0, num_songs - 1);
-	for (song = musicID;; song++) {
-		if (g_table_music[song].enable == MUSIC_ENABLE) {
-			if (i <= 0)
-				break;
-
-			i--;
-		}
-	}
-
-	MusicInfo *m = &g_table_music[song];
 	if (m->music_set <= MUSICSET_DUNE2_C55) {
 		if (m->music_set == MUSICSET_DUNE2_ADLIB) {
 			AudioA5_InitAdlibMusic(m);
@@ -197,7 +212,7 @@ Audio_PlayMusic(enum MusicID musicID)
 		snprintf(music_message, sizeof(music_message), "Playing %s", m->filename);
 	}
 
-	curr_music = song;
+	curr_music = m;
 }
 
 void
@@ -210,10 +225,10 @@ Audio_PlayMusicIfSilent(enum MusicID musicID)
 void
 Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 {
-	if (!(curr_music < MUSICID_MAX))
+	if (curr_music == NULL)
 		return;
 
-	MusicInfo *m = &g_table_music[curr_music];
+	MusicInfo *m = curr_music;
 	float volume;
 
 	/* Adjust single track. */

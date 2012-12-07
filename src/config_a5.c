@@ -566,37 +566,44 @@ GameOptions_Load(void)
 	}
 
 	/* Music configuration. */
-	for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
-		MusicInfo *m = &g_table_music[musicID];
+	for (enum MusicSet music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
+		for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
+			MusicList *l = &g_table_music[musicID];
 
-		if (!g_table_music_set[m->music_set].enable) {
-			m->enable &=~MUSIC_WANT;
-			continue;
-		}
+			char category[1024];
+			snprintf(category, sizeof(category), "music/%s", g_table_music_set[music_set].prefix);
 
-		char category[1024];
-		snprintf(category, sizeof(category), "music/%s", g_table_music_set[m->music_set].prefix);
+			for (int s = 0; s < l->length; s++) {
+				MusicInfo *m = &l->song[s];
 
-		if (m->music_set <= MUSICSET_DUNE2_C55) {
-			char key[1024];
-			snprintf(key, sizeof(key), "%s_%d", m->filename, m->track);
+				if (m->music_set != music_set)
+					continue;
 
-			const char *str = al_get_config_value(s_configFile, category, key);
-			bool want = (m->enable & MUSIC_WANT);
-			String_GetBool(str, &want);
+				if (!g_table_music_set[music_set].enable)
+					m->enable &=~MUSIC_WANT;
 
-			if (want) {
-				m->enable |= MUSIC_WANT;
+				if (music_set <= MUSICSET_DUNE2_C55) {
+					char key[1024];
+					snprintf(key, sizeof(key), "%s_%d", m->filename, m->track);
+
+					const char *str = al_get_config_value(s_configFile, category, key);
+					bool want = (m->enable & MUSIC_WANT);
+					String_GetBool(str, &want);
+
+					if (want) {
+						m->enable |= MUSIC_WANT;
+					}
+					else {
+						m->enable &=~MUSIC_WANT;
+					}
+				}
+				else {
+					const char *key = strrchr(m->filename, '/') + 1;
+					assert(key != NULL);
+
+					Config_GetMusicVolume(s_configFile, category, key, m);
+				}
 			}
-			else {
-				m->enable &=~MUSIC_WANT;
-			}
-		}
-		else {
-			const char *key = strrchr(m->filename, '/') + 1;
-			assert(key != NULL);
-
-			Config_GetMusicVolume(s_configFile, category, key, m);
 		}
 	}
 

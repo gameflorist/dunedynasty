@@ -1,6 +1,7 @@
 /** @file src/table/sound.c Sound file tables. */
 
 #include <stdio.h>
+#include "../os/common.h"
 
 #include "sound.h"
 
@@ -11,6 +12,7 @@
 #define DUNE2_SMD_PREFIX    "dune2_smd"
 #define FED2K_MT32_PREFIX   "fed2k_mt32"
 
+#define ADD_MUSIC_LIST(TABLE)   { 0, 0, 0, lengthof(TABLE), TABLE }
 #define ADD_MUSIC_FROM_DUNE2_ADLIB(FILENAME,TRACK)  { MUSIC_ENABLE, MUSICSET_DUNE2_ADLIB, FILENAME, TRACK, 1.0f }
 #define ADD_MUSIC_FROM_DUNE2_C55(FILENAME,TRACK)    { MUSIC_ENABLE, MUSICSET_DUNE2_C55,   FILENAME, TRACK, 1.0f }
 #define ADD_MUSIC_FROM_FED2K_MT32(FILENAME)         { MUSIC_WANT,   MUSICSET_FED2K_MT32,  "music/" FED2K_MT32_PREFIX "/" FILENAME, 0, 0.65f }
@@ -19,31 +21,6 @@
 #define ADD_MUSIC_FROM_D2TM_SC55(FILENAME,VOLUME)   { MUSIC_WANT,   MUSICSET_D2TM_SC55,   "music/" D2TM_SC55_PREFIX  "/" FILENAME, 0, VOLUME }
 #define ADD_MUSIC_FROM_DUNE2_SMD(FILENAME,VOLUME)   { MUSIC_WANT,   MUSICSET_DUNE2_SMD,   "music/" DUNE2_SMD_PREFIX  "/" FILENAME, 0, VOLUME }
 #define ADD_MUSIC_FROM_DUNE2000(FILENAME,VOLUME)    { MUSIC_WANT,   MUSICSET_DUNE2000,    "music/" DUNE2000_PREFIX   "/" FILENAME, 0, VOLUME }
-
-const enum MusicID g_table_music_cutoffs[21] = {
-	MUSIC_LOGOS,
-	MUSIC_INTRO,
-	MUSIC_CUTSCENE,
-	MUSIC_CREDITS,
-	MUSIC_MAIN_MENU,
-	MUSIC_STRATEGIC_MAP,
-	MUSIC_BRIEFING_HARKONNEN,
-	MUSIC_BRIEFING_ATREIDES,
-	MUSIC_BRIEFING_ORDOS,
-	MUSIC_WIN_HARKONNEN,
-	MUSIC_WIN_ATREIDES,
-	MUSIC_WIN_ORDOS,
-	MUSIC_LOSE_HARKONNEN,
-	MUSIC_LOSE_ATREIDES,
-	MUSIC_LOSE_ORDOS,
-	MUSIC_END_GAME_HARKONNEN,
-	MUSIC_END_GAME_ATREIDES,
-	MUSIC_END_GAME_ORDOS,
-	MUSIC_IDLE1,
-	/* Note: MUSIC_BONUS not a cut-off, so you use is as idle music. */
-	MUSIC_ATTACK1,
-	MUSICID_MAX
-};
 
 MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, "dune2_adlib" },
@@ -56,7 +33,7 @@ MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, DUNE2000_PREFIX },
 };
 
-MusicInfo g_table_music[MUSICID_MAX] = {
+static MusicInfo g_table_music_stop[] = {
 	/* 0: MUSIC_STOP */
 	{ 0, MUSICSET_DUNE2_ADLIB, NULL, 0, 0.0f },
 
@@ -73,31 +50,36 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	/* 5: MUSIC_37 */
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 5),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune0.C55", 5),
+};
 
-	/* MUSIC_LOGOS */
+static MusicInfo g_table_music_logos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune0.C55", 4),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_00_4"),
+};
 
-	/* MUSIC_INTRO */
+static MusicInfo g_table_music_intro[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune0.C55", 2),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_00_2"),
 	ADD_MUSIC_FROM_D2TM_MT32    ("intro"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("intro", 1.0f),
+};
 
-	/* MUSIC_CUTSCENE */
+static MusicInfo g_table_music_cutscene[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune16.ADL", 8),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune16.C55", 8),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_16_24"),
+};
 
-	/* MUSIC_CREDITS */
+static MusicInfo g_table_music_credits[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune20.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune20.C55", 2),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_20_22"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("20_credits", 1.0f),
+};
 
-	/* MUSIC_MAIN_MENU */
+static MusicInfo g_table_music_main_menu[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune7.C55", 6),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_07_13"),
@@ -106,8 +88,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_SC55    ("menu", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("12_chosendestiny", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("OPTIONS", 1.0f),
+};
 
-	/* MUSIC_STRATEGIC_MAP */
+static MusicInfo g_table_music_strategic_map[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune16.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune16.C55", 7),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_16_23"),
@@ -115,8 +98,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("nextconq"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("nextconq", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("11_evasiveaction", 1.0f),
+};
 
-	/* MUSIC_BRIEFING_HARKONNEN */
+static MusicInfo g_table_music_briefing_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune7.C55", 2),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_07_09"),
@@ -124,8 +108,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("mentath"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("mentath", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("04_radnorsscheme", 1.0f),
+};
 
-	/* MUSIC_BRIEFING_ATREIDES */
+static MusicInfo g_table_music_briefing_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 3),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune7.C55", 3),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_07_10"),
@@ -133,8 +118,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("mentata"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("mentata", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("02_cyrilscouncil", 1.0f),
+};
 
-	/* MUSIC_BRIEFING_ORDOS */
+static MusicInfo g_table_music_briefing_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune7.C55", 4),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_07_11"),
@@ -142,8 +128,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("mentato"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("mentato", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("03_ammonsadvice", 1.0f),
+};
 
-	/* MUSIC_WIN_HARKONNEN */
+static MusicInfo g_table_music_win_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune8.ADL", 3),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune8.C55", 3),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_08_11"),
@@ -151,8 +138,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("win2"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("win2", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("15_harkonnenrules", 1.0f),
+};
 
-	/* MUSIC_WIN_ATREIDES */
+static MusicInfo g_table_music_win_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune8.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune8.C55", 2),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_08_10"),
@@ -160,8 +148,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("win1"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("win1", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("13_conquest", 1.0f),
+};
 
-	/* MUSIC_WIN_ORDOS */
+static MusicInfo g_table_music_win_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune17.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune17.C55", 4),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_17_21"),
@@ -169,8 +158,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("win3"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("win3", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("14_slitherin", 1.0f),
+};
 
-	/* MUSIC_LOSE_HARKONNEN */
+static MusicInfo g_table_music_lose_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune1.C55", 4),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_01_4"),
@@ -178,8 +168,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("lose1"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("lose1", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("18_harkonnendirge", 1.0f),
+};
 
-	/* MUSIC_LOSE_ATREIDES */
+static MusicInfo g_table_music_lose_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 5),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune1.C55", 5),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_01_5"),
@@ -187,8 +178,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("lose2"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("lose2", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("16_atreidesdirge", 1.0f),
+};
 
-	/* MUSIC_LOSE_ORDOS */
+static MusicInfo g_table_music_lose_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 3),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune1.C55", 3),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_01_6"),
@@ -196,31 +188,36 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("lose3"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("lose3", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("17_ordosdirge", 1.0f),
+};
 
-	/* MUSIC_END_GAME_HARKONNEN */
+static MusicInfo g_table_music_end_game_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune19.C55", 4),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_19_23"),
+};
 
-	/* MUSIC_END_GAME_ATREIDES */
+static MusicInfo g_table_music_end_game_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune19.C55", 2),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_19_21"),
+};
 
-	/* MUSIC_END_GAME_ORDOS */
+static MusicInfo g_table_music_end_game_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 3),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune19.C55", 3),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_19_22"),
+};
 
-	/* MUSIC_IDLE1 */
+static MusicInfo g_table_music_idle1[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune1.C55", 6),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_01_7"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace2", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace1"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace2", 1.0f),
+};
 
-	/* MUSIC_IDLE2 */
+static MusicInfo g_table_music_idle2[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune2.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune2.C55", 6),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_02_8"),
@@ -228,8 +225,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace2"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace5", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("SPICESCT", 1.0f),
+};
 
-	/* MUSIC_IDLE3 */
+static MusicInfo g_table_music_idle3[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune3.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune3.C55", 6),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_03_9"),
@@ -238,16 +236,18 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace4", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("07_spicetrip", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("RISEHARK", 1.0f),
+};
 
-	/* MUSIC_IDLE4 */
+static MusicInfo g_table_music_idle4[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune4.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune4.C55", 6),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_04_10"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace1", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace4"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace1", 1.0f),
+};
 
-	/* MUSIC_IDLE5 */
+static MusicInfo g_table_music_idle5[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune5.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune5.C55", 6),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_05_11"),
@@ -256,8 +256,9 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace9", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("06_turbulence", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("UNDERCON", 1.0f),
+};
 
-	/* MUSIC_IDLE6 */
+static MusicInfo g_table_music_idle6[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune6.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune6.C55", 6),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_06_12"),
@@ -265,32 +266,36 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace6"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace8", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("ATREGAIN", 1.0f),
+};
 
-	/* MUSIC_IDLE7 */
+static MusicInfo g_table_music_idle7[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune9.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune9.C55", 4),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_09_13"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace7", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace7"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace7", 1.0f),
+};
 
-	/* MUSIC_IDLE8 */
+static MusicInfo g_table_music_idle8[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune9.ADL", 5),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune9.C55", 5),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_09_14"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace6", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace8"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace6", 1.0f),
+};
 
-	/* MUSIC_IDLE9 */
+static MusicInfo g_table_music_idle9[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune18.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune18.C55", 6),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_18_24"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace3", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace9"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace3", 1.0f),
+};
 
-	/* MUSIC_IDLE_OTHER */
+static MusicInfo g_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2_SMD    ("05_thelegotune", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("08_commandpost", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("09_trenching", 1.0f),
@@ -302,14 +307,16 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_DUNE2000     ("ROBOTIX", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("SOLDAPPR", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("WAITGAME", 1.0f),
+};
 
-	/* MUSIC_BONUS (disabled by default). */
+static MusicInfo g_table_music_bonus[] = { /* Songs are disabled by default. */
 	{ MUSIC_FOUND, MUSICSET_DUNE2_ADLIB, "dune1.ADL", 2, 0.0f },
 	{ MUSIC_FOUND, MUSICSET_DUNE2_C55,   "dune1.C55", 2, 0.0f },
 	{ 0, MUSICSET_FED2K_MT32,   FED2K_MT32_PREFIX "/dune2_mt32_01_3", 0, 0.65f },
 	{ 0, MUSICSET_DUNE2_SMD,    DUNE2_SMD_PREFIX  "/10_starport", 0, 1.0f },
+};
 
-	/* MUSIC_ATTACK1 */
+static MusicInfo g_table_music_attack1[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune10.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune10.C55", 7),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_10_17"),
@@ -317,16 +324,18 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack1"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack4", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("ARAKATAK", 1.0f),
+};
 
-	/* MUSIC_ATTACK2 */
+static MusicInfo g_table_music_attack2[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune11.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune11.C55", 7),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_11_18"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack3", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack2"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack5", 1.0f),
+};
 
-	/* MUSIC_ATTACK3 */
+static MusicInfo g_table_music_attack3[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune12.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune12.C55", 7),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_12_19"),
@@ -334,16 +343,18 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack3"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack2", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("HARK_BAT", 1.0f),
+};
 
-	/* MUSIC_ATTACK4 */
+static MusicInfo g_table_music_attack4[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune13.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune13.C55", 7),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_13_20"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack2", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack4"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack3", 1.0f),
+};
 
-	/* MUSIC_ATTACK5 */
+static MusicInfo g_table_music_attack5[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune14.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune14.C55", 7),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_14_21"),
@@ -351,14 +362,54 @@ MusicInfo g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack5"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack1", 1.0f),
 	ADD_MUSIC_FROM_DUNE2000     ("FIGHTPWR", 1.0f),
+};
 
-	/* MUSIC_ATTACK6 */
+static MusicInfo g_table_music_attack6[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune15.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_C55    ("dune15.C55", 7),
 	ADD_MUSIC_FROM_FED2K_MT32   ("dune2_mt32_15_22"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack1", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("attack6"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack6", 1.0f),
+};
+
+MusicList g_table_music[MUSICID_MAX] = {
+	ADD_MUSIC_LIST(g_table_music_stop),
+	ADD_MUSIC_LIST(g_table_music_logos),
+	ADD_MUSIC_LIST(g_table_music_intro),
+	ADD_MUSIC_LIST(g_table_music_cutscene),
+	ADD_MUSIC_LIST(g_table_music_credits),
+	ADD_MUSIC_LIST(g_table_music_main_menu),
+	ADD_MUSIC_LIST(g_table_music_strategic_map),
+	ADD_MUSIC_LIST(g_table_music_briefing_harkonnen),
+	ADD_MUSIC_LIST(g_table_music_briefing_atreides),
+	ADD_MUSIC_LIST(g_table_music_briefing_ordos),
+	ADD_MUSIC_LIST(g_table_music_win_harkonnen),
+	ADD_MUSIC_LIST(g_table_music_win_atreides),
+	ADD_MUSIC_LIST(g_table_music_win_ordos),
+	ADD_MUSIC_LIST(g_table_music_lose_harkonnen),
+	ADD_MUSIC_LIST(g_table_music_lose_atreides),
+	ADD_MUSIC_LIST(g_table_music_lose_ordos),
+	ADD_MUSIC_LIST(g_table_music_end_game_harkonnen),
+	ADD_MUSIC_LIST(g_table_music_end_game_atreides),
+	ADD_MUSIC_LIST(g_table_music_end_game_ordos),
+	ADD_MUSIC_LIST(g_table_music_idle1),
+	ADD_MUSIC_LIST(g_table_music_idle2),
+	ADD_MUSIC_LIST(g_table_music_idle3),
+	ADD_MUSIC_LIST(g_table_music_idle4),
+	ADD_MUSIC_LIST(g_table_music_idle5),
+	ADD_MUSIC_LIST(g_table_music_idle6),
+	ADD_MUSIC_LIST(g_table_music_idle7),
+	ADD_MUSIC_LIST(g_table_music_idle8),
+	ADD_MUSIC_LIST(g_table_music_idle9),
+	ADD_MUSIC_LIST(g_table_music_idle_other),
+	ADD_MUSIC_LIST(g_table_music_bonus),
+	ADD_MUSIC_LIST(g_table_music_attack1),
+	ADD_MUSIC_LIST(g_table_music_attack2),
+	ADD_MUSIC_LIST(g_table_music_attack3),
+	ADD_MUSIC_LIST(g_table_music_attack4),
+	ADD_MUSIC_LIST(g_table_music_attack5),
+	ADD_MUSIC_LIST(g_table_music_attack6),
 };
 
 /** Available voices. */

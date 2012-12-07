@@ -19,43 +19,31 @@ enum MusicSet {
 	MUSICSET_DUNE2_SMD,
 	MUSICSET_DUNE2000,
 
-	NUM_MUSIC_SETS
+	NUM_MUSIC_SETS,
+	MUSICSET_INVALID = 0xFFFF
 };
 
 enum MusicID {
-	MUSIC_STOP = 0,
-	MUSIC_23 = 1,
-	MUSIC_35 = 3,
-	MUSIC_37 = 5,
+	MUSIC_STOP,
+	MUSIC_LOGOS,
+	MUSIC_INTRO,
+	MUSIC_CUTSCENE,
+	MUSIC_CREDITS,
+	MUSIC_MAIN_MENU,
+	MUSIC_STRATEGIC_MAP,
+	MUSIC_BRIEFING_HARKONNEN,   MUSIC_BRIEFING_ATREIDES,    MUSIC_BRIEFING_ORDOS,
+	MUSIC_WIN_HARKONNEN,        MUSIC_WIN_ATREIDES ,        MUSIC_WIN_ORDOS,
+	MUSIC_LOSE_HARKONNEN,       MUSIC_LOSE_ATREIDES,        MUSIC_LOSE_ORDOS,
+	MUSIC_END_GAME_HARKONNEN,   MUSIC_END_GAME_ATREIDES,    MUSIC_END_GAME_ORDOS,
+	MUSIC_IDLE1,    MUSIC_IDLE2,    MUSIC_IDLE3,    MUSIC_IDLE4,    MUSIC_IDLE5,
+	MUSIC_IDLE6,    MUSIC_IDLE7,    MUSIC_IDLE8,    MUSIC_IDLE9,    MUSIC_IDLE_OTHER,
+	MUSIC_BONUS,
+	MUSIC_ATTACK1,  MUSIC_ATTACK2,  MUSIC_ATTACK3,  MUSIC_ATTACK4,  MUSIC_ATTACK5,
+	MUSIC_ATTACK6,
 
-	MUSIC_LOGOS = 7,
-	MUSIC_INTRO = 10,
-	MUSIC_CUTSCENE = 15,
-	MUSIC_CREDITS = 18,
-	MUSIC_MAIN_MENU = 22,
-	MUSIC_STRATEGIC_MAP = 30,
-
-	MUSIC_BRIEFING_HARKONNEN = 37,
-	MUSIC_BRIEFING_ATREIDES = 44,
-	MUSIC_BRIEFING_ORDOS = 51,
-
-	MUSIC_WIN_HARKONNEN = 58,
-	MUSIC_WIN_ATREIDES = 65,
-	MUSIC_WIN_ORDOS = 72,
-
-	MUSIC_LOSE_HARKONNEN = 79,
-	MUSIC_LOSE_ATREIDES = 86,
-	MUSIC_LOSE_ORDOS = 93,
-
-	MUSIC_END_GAME_HARKONNEN = 100,
-	MUSIC_END_GAME_ATREIDES = 103,
-	MUSIC_END_GAME_ORDOS = 106,
-
-	MUSIC_IDLE1 = 109,
-	MUSIC_BONUS = 180,
-	MUSIC_ATTACK1 = 184,
-
-	MUSICID_MAX = 223,
+	MUSICID_MAX,
+	MUSIC_RANDOM_IDLE = 0xFFFD,
+	MUSIC_RANDOM_ATTACK = 0xFFFE,
 	MUSIC_INVALID = 0xFFFF
 };
 
@@ -390,6 +378,14 @@ typedef struct MusicInfo {
 	float volume;
 } MusicInfo;
 
+typedef struct {
+	int count;
+	int count_default;
+	int count_found;
+	int length;
+	MusicInfo *song;
+} MusicList;
+
 /** Information about sound files. */
 typedef struct SoundData {
 	const char *string; /*!< Pointer to a string. */
@@ -403,9 +399,8 @@ typedef struct Feedback {
 	enum SoundID soundId;
 } Feedback;
 
-extern const enum MusicID g_table_music_cutoffs[21];
 extern MusicSetInfo g_table_music_set[NUM_MUSIC_SETS];
-extern MusicInfo g_table_music[MUSICID_MAX];
+extern MusicList g_table_music[MUSICID_MAX];
 extern const SoundData g_table_voices[SAMPLEID_MAX];
 extern const enum SampleID g_table_voiceMapping[SOUNDID_MAX];
 extern const Feedback g_feedback[VOICEID_MAX];

@@ -128,12 +128,16 @@ AudioA5_Init(void)
 
 	if (s_midi == NULL) {
 		for (int musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
-			if (g_table_music[musicID].music_set == MUSICSET_DUNE2_C55)
-				g_table_music[musicID].enable &=~MUSIC_FOUND;
+			MusicList *l = &g_table_music[musicID];
+
+			for (int s = 0; s < l->length; s++) {
+				if (l->song[s].music_set == MUSICSET_DUNE2_C55)
+					l->song[s].enable &=~MUSIC_FOUND;
+			}
 		}
 	}
 
-	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1]);
+	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1].song[0]);
 	return;
 
 audio_init_failed:
@@ -380,7 +384,7 @@ AudioA5_InitMidiMusic(const MusicInfo *mid)
 		return;
 
 	if (s_effect_stream == NULL)
-		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1]);
+		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1].song[0]);
 
 	s_music_stream = get_midi_player_audio_stream(s_midi);
 	al_set_audio_stream_gain(s_music_stream, music_volume);
@@ -435,7 +439,7 @@ AudioA5_InitExternalMusic(const MusicInfo *ext)
 	AudioA5_FreeMusicStream();
 
 	if (s_effect_stream == NULL)
-		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1]);
+		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1].song[0]);
 
 	s_music_stream = stream;
 	s_mp3 = next_mp3;

@@ -801,7 +801,7 @@ void GameLoop_Main(bool new_game)
 	Timer_SetTimer(TIMER_GAME, true);
 
 	/* Note: original game chose only MUSIC_IDLE1 .. MUSIC_IDLE6. */
-	Audio_PlayMusic(MUSIC_IDLE1);
+	Audio_PlayMusic(MUSIC_RANDOM_IDLE);
 	l_timerNext = Timer_GetTicks() + 300;
 	g_musicInBattle = 0;
 
@@ -857,13 +857,13 @@ void GameLoop_Main(bool new_game)
 			if (!g_enable_audio || !g_enable_music) {
 				g_musicInBattle = 0;
 			} else if (g_musicInBattle > 0) {
-				Audio_PlayMusic(MUSIC_ATTACK1);
+				Audio_PlayMusic(MUSIC_RANDOM_ATTACK);
 				l_timerNext = Timer_GetTicks() + 300;
 				g_musicInBattle = -1;
 			} else {
 				if (Timer_GetTicks() > l_timerNext) {
 					if (!Audio_MusicIsPlaying()) {
-						Audio_PlayMusic(MUSIC_IDLE1);
+						Audio_PlayMusic(MUSIC_RANDOM_IDLE);
 						l_timerNext = Timer_GetTicks() + 300;
 						g_musicInBattle = 0;
 					}

@@ -265,7 +265,7 @@ MenuBar_TickMentatOverlay(void)
 		Sprites_UnloadTiles();
 		Sprites_LoadTiles();
 
-		Audio_PlayMusic(MUSIC_IDLE1);
+		Audio_PlayMusic(MUSIC_RANDOM_IDLE);
 	}
 }
 
