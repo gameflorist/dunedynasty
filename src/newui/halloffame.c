@@ -23,18 +23,18 @@ static const struct {
 	int stringID;
 	int score;
 } rank_scores[MAX_RANKS] = {
-	{271,   25}, /* "Sand Flea" */
-	{272,   50}, /* "Sand Snake" */
-	{273,  100}, /* "Desert Mongoose" */
-	{274,  150}, /* "Sand Warrior" */
-	{275,  200}, /* "Dune Trooper" */
-	{276,  300}, /* "Squad Leader" */
-	{277,  400}, /* "Outpost Commander" */
-	{278,  500}, /* "Base Commander" */
-	{279,  700}, /* "Warlord" */
-	{280, 1000}, /* "Chief Warlord" */
-	{281, 1400}, /* "Ruler of Arrakis" */
-	{282, 1800}  /* "Emperor" */
+	{ STR_SAND_FLEA,          25 },
+	{ STR_SAND_SNAKE,         50 },
+	{ STR_DESERT_MONGOOSE,   100 },
+	{ STR_SAND_WARRIOR,      150 },
+	{ STR_DUNE_TROOPER,      200 },
+	{ STR_SQUAD_LEADER,      300 },
+	{ STR_OUTPOST_COMMANDER, 400 },
+	{ STR_BASE_COMMANDER,    500 },
+	{ STR_WARLORD,           700 },
+	{ STR_CHIEF_WARLORD,    1000 },
+	{ STR_RULER_OF_ARRAKIS, 1400 },
+	{ STR_EMPEROR,          1800 }
 };
 
 HallOfFameData g_hall_of_fame_state;
