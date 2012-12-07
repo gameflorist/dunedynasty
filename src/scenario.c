@@ -989,7 +989,7 @@ Campaign_Load(void)
 	Campaign_ReadProfileIni();
 	Campaign_ReadHouseIni();
 	Campaign_ApplyDefaultHouseTraits();
-	String_ReloadMentatText();
+	String_ReloadCampaignStrings();
 
 	l_campaign_selected = g_campaign_selected;
 }

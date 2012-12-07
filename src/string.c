@@ -118,6 +118,19 @@ void String_TranslateSpecial(char *source, char *dest)
 	*dest = '\0';
 }
 
+static bool
+String_IsOverridable(int stringID)
+{
+	if (STR_CARRYALL <= stringID && stringID <= STR_SELECT_YOUR_NEXT_REGION)
+		return true;
+
+	if ((stringID == STR_PICK_ANOTHER_HOUSE) ||
+	    (stringID == STR_ARE_YOU_SURE_YOU_WISH_TO_PICK_A_NEW_HOUSE))
+		return true;
+
+	return false;
+}
+
 static void
 String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int start, int end)
 {
@@ -145,7 +158,7 @@ String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int
 
 	for (i = 0, j = 0; i < count; i++, j++) {
 		char *src = (char *)buf + ((uint16 *)buf)[i];
-		char *dst;
+		char *dst = NULL;
 
 		if (strlen(src) == 0) {
 			j--;
@@ -156,9 +169,19 @@ String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int
 			dst = (char *)calloc(strlen(src) * 2 + 1, sizeof(char));
 			String_Decompress(src, dst);
 			String_TranslateSpecial(dst, dst);
-		} else {
-			dst = strdup(src);
 		}
+
+		if (s_strings[start + j] != NULL) {
+			if (String_IsOverridable(start + j)) {
+				free(s_strings[start + j]);
+			}
+			else {
+				continue;
+			}
+		}
+
+		if (dst == NULL)
+			dst = strdup(src);
 
 		s_strings[start + j] = dst;
 	}
@@ -167,8 +190,10 @@ String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int
 }
 
 void
-String_ReloadMentatText(void)
+String_ReloadCampaignStrings(void)
 {
+	String_Load(SEARCHDIR_CAMPAIGN_DIR, "DUNE", false, 1, 339);
+
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
 		for (unsigned int i = 0; i < 40; i++) {
 			/* Default string. */
