@@ -168,7 +168,7 @@ Campaign_ReadMetaData(Campaign *camp)
 	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI"))
 		return;
 
-	char value[120];
+	char value[1024];
 
 	char *source = GFX_Screen_Get_ByIndex(SCREEN_1);
 	memset(source, 0, 32000);
