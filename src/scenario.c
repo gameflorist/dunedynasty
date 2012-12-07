@@ -848,6 +848,11 @@ Campaign_ReadProfileIni(void)
 void
 Campaign_Load(void)
 {
+	static int l_campaign_selected = -1;
+
+	if (g_campaign_selected == l_campaign_selected)
+		return;
+
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
 
 	memcpy(g_table_houseInfo, g_table_houseInfo_original, sizeof(g_table_houseInfo_original));
@@ -859,6 +864,8 @@ Campaign_Load(void)
 	Campaign_ReadHouseIni();
 	Campaign_ApplyDefaultHouseTraits();
 	String_ReloadMentatText();
+
+	l_campaign_selected = g_campaign_selected;
 }
 
 /*--------------------------------------------------------------*/
