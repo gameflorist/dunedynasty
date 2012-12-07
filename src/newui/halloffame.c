@@ -17,8 +17,6 @@
 #include "../timer/timer.h"
 #include "../video/video.h"
 
-#define MAX_RANKS   12
-
 static const struct {
 	int stringID;
 	int score;
@@ -38,6 +36,23 @@ static const struct {
 };
 
 HallOfFameData g_hall_of_fame_state;
+
+int
+HallOfFame_GetRank(int score)
+{
+	for (int i = 0; i < MAX_RANKS; i++) {
+		if (rank_scores[i].score > score)
+			return i;
+	}
+
+	return MAX_RANKS - 1;
+}
+
+const char *
+HallOfFame_GetRankString(int rank)
+{
+	return String_Get_ByIndex(rank_scores[rank].stringID);
+}
 
 static void
 HallOfFame_DrawEmblem(unsigned char emblemL, unsigned char emblemR)
@@ -75,18 +90,11 @@ HallOfFame_DrawBackground(enum HouseType houseID, bool hallOfFame)
 void
 HallOfFame_InitRank(int score, HallOfFameData *fame)
 {
-	int stringID = rank_scores[MAX_RANKS - 1].stringID;
-
-	for (unsigned int i = 0; i < MAX_RANKS; i++) {
-		if (rank_scores[i].score > score) {
-			stringID = rank_scores[i].stringID;
-			break;
-		}
-	}
-
-	fame->rank = String_Get_ByIndex(stringID);
+	const int rank = HallOfFame_GetRank(score);
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x122);
+	fame->rank = HallOfFame_GetRankString(rank);
+
 	const int w = Font_GetStringWidth(fame->rank);
 
 	/* Note: we want to fade out FAME.CPS to keep the black shadows. */

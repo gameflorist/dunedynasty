@@ -51,28 +51,6 @@
 #include "../video/video.h"
 #include "../wsa.h"
 
-/** Coupling between score and rank name. */
-typedef struct RankScore {
-	uint16 rankString; /*!< StringID of the name of the rank. */
-	uint16 score;      /*!< Score needed to obtain the rank. */
-} RankScore;
-
-/** Mapping of scores to rank names. */
-static const RankScore _rankScores[] = {
-	{271,   25}, /* "Sand Flea" */
-	{272,   50}, /* "Sand Snake" */
-	{273,  100}, /* "Desert Mongoose" */
-	{274,  150}, /* "Sand Warrior" */
-	{275,  200}, /* "Dune Trooper" */
-	{276,  300}, /* "Squad Leader" */
-	{277,  400}, /* "Outpost Commander" */
-	{278,  500}, /* "Base Commander" */
-	{279,  700}, /* "Warlord" */
-	{280, 1000}, /* "Chief Warlord" */
-	{281, 1400}, /* "Ruler of Arrakis" */
-	{282, 1800}  /* "Emperor" */
-};
-
 static uint8 g_colours[16];
 uint8 g_palette_998A[3 * 256];
 uint8 g_remap[256];
@@ -1179,18 +1157,8 @@ void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top)
 	GUI_DrawText_Wrapper(string, SCREEN_WIDTH / 2, top, 0xF, 0, 0x121);
 }
 
-static uint16 GUI_HallOfFame_GetRank(uint16 score)
-{
-	uint8 i;
-
-	for (i = 0; i < lengthof(_rankScores); i++) {
-		if (_rankScores[i].score > score) break;
-	}
-
-	return min(i, lengthof(_rankScores) - 1);
-}
-
 #if 0
+static uint16 GUI_HallOfFame_GetRank(uint16 score);
 static void GUI_HallOfFame_DrawRank(uint16 score, bool fadeIn);
 static void GUI_HallOfFame_DrawBackground(uint16 score, bool hallOfFame);
 static void GUI_EndStats_Sleep(uint16 delay);
@@ -1952,7 +1920,7 @@ static uint16 GUI_HallOfFame_InsertScore(HallOfFameStruct *data, uint16 score)
 		memset(data->name, 0, 6);
 		data->score = score;
 		data->houseID = g_playerHouseID;
-		data->rank = GUI_HallOfFame_GetRank(score);
+		data->rank = HallOfFame_GetRank(score);
 		data->campaignID = g_campaignID;
 
 		return i + 1;
@@ -2218,15 +2186,15 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 		const char *p1, *p2;
 
 		if (data[i].score == 0) break;
-		if (data[i].rank >= lengthof(_rankScores)) break;
+		if (data[i].rank >= MAX_RANKS) break;
 		if (data[i].houseID >= HOUSE_MAX) break;
 
 		if (g_gameConfig.language == LANGUAGE_FRENCH) {
-			p1 = String_Get_ByIndex(_rankScores[data[i].rank].rankString);
+			p1 = HallOfFame_GetRankString(data[i].rank);
 			p2 = g_table_houseInfo[data[i].houseID].name;
 		} else {
 			p1 = g_table_houseInfo[data[i].houseID].name;
-			p2 = String_Get_ByIndex(_rankScores[data[i].rank].rankString);
+			p2 = HallOfFame_GetRankString(data[i].rank);
 		}
 
 		snprintf(buffer, sizeof(buffer), "%.5s%.3s, %s %s", data[i].name, data[i].name_extended, p1, p2);

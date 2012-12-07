@@ -4,6 +4,10 @@
 #include <inttypes.h>
 #include "../house.h"
 
+enum {
+	MAX_RANKS = 12
+};
+
 enum HallOfFameState {
 	HALLOFFAME_PAUSE_START,
 	HALLOFFAME_SHOW_RANK,
@@ -49,9 +53,10 @@ typedef struct HallOfFameData {
 
 extern HallOfFameData g_hall_of_fame_state;
 
-extern void HallOfFame_DrawBackground(enum HouseType houseID, bool halloffame);
-
+extern int HallOfFame_GetRank(int score);
+extern const char *HallOfFame_GetRankString(int rank);
 extern void HallOfFame_InitRank(int score, HallOfFameData *fame);
+extern void HallOfFame_DrawBackground(enum HouseType houseID, bool halloffame);
 extern void HallOfFame_DrawScoreTime(int score, int64_t ticks_played);
 extern void HallOfFame_DrawRank(const HallOfFameData *fame);
 extern void HallOfFame_DrawSpiceHarvested(enum HouseType houseID, const HallOfFameData *fame);
