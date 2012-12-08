@@ -1975,7 +1975,7 @@ VideoA5_InitShapes(unsigned char *buf)
 						s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
 					}
 
-					if (SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_FREMEN) {
+					if (SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_SANDWORM) {
 						const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
 
 						s_shape[greyID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, greymap);
@@ -2220,7 +2220,7 @@ void
 VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags)
 {
 	const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
-	assert(SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_FREMEN);
+	assert(SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_SANDWORM);
 	assert(s_shape[greyID][HOUSE_HARKONNEN] != NULL);
 
 	al_draw_bitmap(s_shape[greyID][HOUSE_HARKONNEN], x, y, flags);
@@ -2230,7 +2230,7 @@ void
 VideoA5_DrawShapeGreyScale(enum ShapeID shapeID, int x, int y, int w, int h, int flags)
 {
 	const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
-	assert(SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_FREMEN);
+	assert(SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_SANDWORM);
 
 	ALLEGRO_BITMAP *bmp = s_shape[greyID][HOUSE_HARKONNEN];
 	assert(bmp != NULL);
