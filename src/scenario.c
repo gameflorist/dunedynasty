@@ -281,6 +281,42 @@ Campaign_ReadMetaData(Campaign *camp)
 	}
 }
 
+static enum MusicID
+Campaign_MusicFromString(const char *str, enum MusicID def)
+{
+	const char *names[MUSICID_MAX] = {
+		"None",
+		"Logos",
+		"Intro",
+		"Menu",
+		"Conquest",
+		"Cutscene",
+		"Credits",
+		"Brief Harkonnen",  "Brief Atreides",   "Brief Ordos",
+		"Win Harkonnen",    "Win Atreides",     "Win Ordos",
+		"Lose Harkonnen",   "Lose Atreides",    "Lose Ordos",
+		"Finale Harkonnen", "Finale Atreides",  "Finale Ordos",
+		"Idle 1",   "Idle 2",   "Idle 3",   "Idle 4",   "Idle 5",
+		"Idle 6",   "Idle 7",   "Idle 8",   "Idle 9",   NULL,
+		"Bonus",
+		"Attack 1", "Attack 2", "Attack 3", "Attack 4", "Attack 5",
+		"Attack 6"
+	};
+
+	if (strcasecmp(str, "Idle") == 0)
+		return MUSIC_RANDOM_IDLE;
+
+	if (strcasecmp(str, "Attack") == 0)
+		return MUSIC_RANDOM_ATTACK;
+
+	for (enum MusicID m = MUSIC_STOP; m < MUSICID_MAX; m++) {
+		if ((names[m] != NULL) && (strcasecmp(str, names[m]) == 0))
+			return m;
+	}
+
+	return def;
+}
+
 static uint16
 ObjectInfo_FlagsToUint16(const ObjectInfo *oi)
 {
@@ -441,7 +477,27 @@ Campaign_ReadHouseIni(void)
 
 	/* Dune Dynasty extensions. */
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		HouseInfo *hi = &g_table_houseInfo[houseID];
 		char category[32];
+
+		snprintf(category, sizeof(category), "%s Briefing", g_table_houseInfo_original[houseID].name);
+
+		*keys = '\0';
+		Ini_GetString(category, NULL, NULL, keys, 2000, source);
+
+		for (key = keys; *key != '\0'; key += strlen(key) + 1) {
+			Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
+
+			if (strcasecmp(key, "Win music") == 0) {
+				hi->musicWin = Campaign_MusicFromString(buffer, g_table_houseInfo_original[houseID].musicWin);
+			}
+			else if (strcasecmp(key, "Lose music") == 0) {
+				hi->musicLose = Campaign_MusicFromString(buffer, g_table_houseInfo_original[houseID].musicLose);
+			}
+			else if (strcasecmp(key, "Mentat music") == 0) {
+				hi->musicBriefing = Campaign_MusicFromString(buffer, g_table_houseInfo_original[houseID].musicBriefing);
+			}
+		}
 
 		snprintf(category, sizeof(category), "%s Traits", g_table_houseInfo_original[houseID].name);
 
