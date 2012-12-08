@@ -127,21 +127,10 @@ count_song:
 void
 Audio_PlayMusic(enum MusicID musicID)
 {
-	AudioA5_StopMusic();
-
-	if (musicID == MUSIC_STOP) {
-		curr_music = NULL;
-		return;
-	}
-
-	if ((!g_enable_audio) || (!g_enable_music) || (musicID == MUSIC_INVALID))
-		return;
-
 	enum MusicID start = musicID;
 	enum MusicID end = musicID;
 	int num_songs = 0;
 	int num_songs_default = 0;
-	int r;
 
 	if (musicID == MUSIC_RANDOM_IDLE) {
 		start = MUSIC_IDLE1;
@@ -156,6 +145,24 @@ Audio_PlayMusic(enum MusicID musicID)
 		num_songs += g_table_music[m].count;
 		num_songs_default += g_table_music[m].count_default;
 	}
+
+	/* If there are no attack songs, as in the Sega Mega Drive and Amiga
+	 * versions of Dune II, do not switch songs for uninterrupted music.
+	 */
+	if ((musicID == MUSIC_RANDOM_ATTACK) && (num_songs <= 0))
+		return;
+
+	AudioA5_StopMusic();
+
+	if (musicID == MUSIC_STOP) {
+		curr_music = NULL;
+		return;
+	}
+
+	if ((!g_enable_audio) || (!g_enable_music) || (musicID == MUSIC_INVALID))
+		return;
+
+	int r;
 
 	/* Pick random song between musicID and end. */
 	enum MusicFlags check_flags = MUSIC_FOUND;
