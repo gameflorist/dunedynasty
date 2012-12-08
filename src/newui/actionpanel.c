@@ -573,10 +573,11 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 void
 ActionPanel_ClickStarportOrder(Structure *s)
 {
-	uint16 objectType;
 	House *h = g_playerHouse;
 
-	while ((objectType = BuildQueue_RemoveHead(&s->queue)) != 0xFFFF) {
+	while (!BuildQueue_IsEmpty(&s->queue)) {
+		int credits = s->queue.first->credits;
+		uint16 objectType = BuildQueue_RemoveHead(&s->queue);
 		Unit *u;
 
 		g_validateStrictIfZero++;
@@ -588,12 +589,16 @@ ActionPanel_ClickStarportOrder(Structure *s)
 		g_validateStrictIfZero--;
 
 		if (u == NULL) {
-			/* XXX: What is going on here? */
-			h->credits += g_table_unitInfo[UNIT_CARRYALL].o.buildCredits;
-			if (s->o.houseID != g_playerHouseID)
-				continue;
+			/* Originally the starport only allowed you to purchase a
+			 * unit if there was an empty index.  However, that only
+			 * really worked with the factory window interface.
+			 */
+			h->credits += credits;
+			Structure_Starport_Restock(objectType);
 
-			GUI_DisplayText(String_Get_ByIndex(STR_UNABLE_TO_CREATE_MORE), 2);
+			if (s->o.houseID == g_playerHouseID)
+				GUI_DisplayText(String_Get_ByIndex(STR_UNABLE_TO_CREATE_MORE), 2);
+
 			continue;
 		}
 
