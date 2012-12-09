@@ -28,6 +28,7 @@ typedef struct FactoryWindowItem {
 extern FactoryWindowItem g_factoryWindowItems[MAX_FACTORY_WINDOW_ITEMS];
 extern int g_factoryWindowTotal;
 
+extern void ActionPanel_HighlightIcon(enum HouseType houseID, int x1, int y1, bool large_icon);
 extern void ActionPanel_DrawPortrait(uint16 action_type, enum ShapeID shapeID);
 extern void ActionPanel_DrawHealthBar(int curr, int max);
 extern void ActionPanel_DrawStructureDescription(Structure *s);

@@ -803,8 +803,8 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 	GUI_DrawText_Wrapper("Send Order", x1 + w/2, y1, fg, 0, 0x121);
 }
 
-static void
-ActionPanel_HighlightIcon(int x1, int y1)
+void
+ActionPanel_HighlightIcon(enum HouseType houseID, int x1, int y1, bool large_icon)
 {
 	static int64_t paletteChangeTimer;
 	static int paletteColour;
@@ -822,7 +822,7 @@ ActionPanel_HighlightIcon(int x1, int y1)
 		paletteColour += paletteChange;
 	}
 
-	switch (g_playerHouseID) {
+	switch (houseID) {
 		case HOUSE_HARKONNEN:
 			r = 4 * 63;
 			g = 4 * paletteColour;
@@ -863,7 +863,7 @@ ActionPanel_HighlightIcon(int x1, int y1)
 			return;
 	}
 
-	if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+	if (large_icon) {
 		Prim_Rect_RGBA(x1 + 1.0f, y1 + 0.5f, x1 + 52.0f, y1 + 38.0f, r, g, b, 0xFF, 3.0f);
 	}
 	else {
@@ -951,12 +951,13 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		else if (s->objectType == object_type) {
 			/* Production icon is 32x24, or stretched up to 52x39. */
 			if (g_productionStringID != STR_BUILD_IT) {
+				const bool large_icon = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG);
 				float x1f = x1 + (float)w/32.0f;
 				float x2f = x1 + w - (float)w/32.0f;
 				float y1f, y2f;
 
 				if (g_productionStringID == STR_PLACE_IT)
-					ActionPanel_HighlightIcon(x1, y1);
+					ActionPanel_HighlightIcon(g_playerHouseID, x1, y1, large_icon);
 
 				if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
 					/* On hold greys out the entire icon, which has 2px borders. */
