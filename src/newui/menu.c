@@ -1264,6 +1264,23 @@ PickCutscene_Loop(MentatState *mentat)
 	int widgetID = GUI_Widget_HandleEvents(pick_cutscene_widgets);
 	bool redraw = false;
 
+	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
+	if ((widgetID & 0x8000) == 0)
+		Scrollbar_HandleEvent(w, widgetID);
+
+	switch (widgetID) {
+		case 0x8000 | 1: /* exit. */
+			return MENU_MAIN_MENU;
+
+		case 0x8000 | 3: /* list entry. */
+		case SCANCODE_ENTER:
+		case SCANCODE_KEYPAD_5:
+		case SCANCODE_SPACE:
+			/* Fade in/out between playing cutscenes. */
+			Audio_PlayMusic(MUSIC_STOP);
+			return MENU_PLAY_CUTSCENE;
+	}
+
 	if (curr_ticks - mentat->wsa_timer >= 7) {
 		mentat->wsa_timer = curr_ticks;
 		redraw = true;
@@ -1271,17 +1288,6 @@ PickCutscene_Loop(MentatState *mentat)
 
 	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
 
-	switch (widgetID) {
-		case 0x8000 | 1: /* exit. */
-			return MENU_MAIN_MENU;
-
-		case 0x8000 | 3: /* list entry. */
-			/* Fade in/out between playing cutscenes. */
-			Audio_PlayMusic(MUSIC_STOP);
-			return MENU_PLAY_CUTSCENE;
-	}
-
-	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
 	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
 	if (last_si != si) {
 		last_si = si;
