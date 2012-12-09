@@ -119,8 +119,8 @@ void Font_Select(Font *f)
 bool Font_Init(void)
 {
 	g_fontIntro = Font_LoadFile("INTRO.FNT");
-	g_fontNew6p = Font_LoadFile((g_gameConfig.language == LANGUAGE_GERMAN) ? "new6pg.fnt" : "new6p.fnt");
-	g_fontNew8p = Font_LoadFile("new8p.fnt");
+	g_fontNew6p = Font_LoadFile((g_gameConfig.language == LANGUAGE_GERMAN) ? "NEW6PG.FNT" : "NEW6P.FNT");
+	g_fontNew8p = Font_LoadFile("NEW8P.FNT");
 
 	return g_fontNew8p != NULL;
 }
