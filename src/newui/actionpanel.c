@@ -228,7 +228,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 					GUI_DrawText_Wrapper("%d", 71, y + 3 * g_fontCurrent->height, fg, 0, 0x211, powerOutput);
 				}
 				else {
-					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), 18, 48, 29, 0, 0x11);
+					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), 18, y + 8, 29, 0, 0x11);
 					GUI_DrawText_Wrapper("%d", 62, y + 2 * g_fontCurrent->height, 29, 0, 0x11, powerAverage);
 					GUI_DrawText_Wrapper("%d", 62, y + 3 * g_fontCurrent->height, fg, 0, 0x11, powerOutput);
 				}
