@@ -368,12 +368,14 @@ enum VoiceID {
 typedef struct MusicSetInfo {
 	bool enable;
 	const char *prefix;
+	const char *name;
 } MusicSetInfo;
 
 typedef struct MusicInfo {
 	unsigned int enable;
 	enum MusicSet music_set;
 
+	const char *songname;
 	const char *filename;
 	int track;
 	float volume;
@@ -383,6 +385,7 @@ typedef struct {
 	int count;
 	int count_default;
 	int count_found;
+	const char *songname;
 	int length;
 	MusicInfo *song;
 } MusicList;

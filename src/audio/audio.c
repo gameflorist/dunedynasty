@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
 #include "buildcfg.h"
 #include "../os/common.h"
@@ -185,8 +186,9 @@ Audio_PlayMusic(enum MusicID musicID)
 	}
 
 	MusicInfo *m = NULL;
+	const MusicList *l = NULL;
 	for (musicID = start; musicID <= end && (m == NULL); musicID++) {
-		const MusicList *l = &g_table_music[musicID];
+		l = &g_table_music[musicID];
 
 		for (int s = 0; s < l->length; s++) {
 			const bool enable =
@@ -211,15 +213,24 @@ Audio_PlayMusic(enum MusicID musicID)
 		else {
 			AudioA5_InitMidiMusic(m);
 		}
-
-		snprintf(music_message, sizeof(music_message), "Playing %s, track %d", m->filename, m->track);
 	}
 	else {
 		AudioA5_InitExternalMusic(m);
-		snprintf(music_message, sizeof(music_message), "Playing %s", m->filename);
 	}
 
 	curr_music = m;
+
+	if (m->songname != NULL) {
+		snprintf(music_message, sizeof(music_message), "Playing %s, %s",
+				g_table_music_set[m->music_set].name, m->songname);
+	}
+	else if (l->songname != NULL) {
+		snprintf(music_message, sizeof(music_message), "Playing %s, %s",
+				g_table_music_set[m->music_set].name, l->songname);
+	}
+	else {
+		snprintf(music_message, sizeof(music_message), "Playing %s", m->filename);
+	}
 }
 
 void
@@ -244,8 +255,6 @@ Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 		m->volume = clamp(0.0f, m->volume, 2.0f);
 
 		volume = music_volume * m->volume;
-		snprintf(music_message, sizeof(music_message), "Playing %s, volume %.2f x %.2f",
-				m->filename, music_volume, m->volume);
 	}
 	else {
 		music_volume += delta;
@@ -253,16 +262,17 @@ Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 
 		if (m->music_set <= MUSICSET_FLUIDSYNTH) {
 			volume = music_volume;
-			snprintf(music_message, sizeof(music_message), "Playing %s, track %d, volume %.2f",
-					m->filename, m->track, volume);
 		}
 		else {
 			volume = music_volume * m->volume;
-			snprintf(music_message, sizeof(music_message), "Playing %s, volume %.2f x %.2f",
-					m->filename, music_volume, m->volume);
 		}
 	}
 
+	char *str = strstr(music_message, ", vol");
+	if (str == NULL)
+		str = music_message + strlen(music_message);
+
+	snprintf(str, sizeof(music_message) - (str - music_message), ", vol %.2f", music_volume);
 	AudioA5_SetMusicVolume(volume);
 }
 
