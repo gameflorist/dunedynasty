@@ -240,10 +240,12 @@ PickCutscene_InitWidgets(void)
 {
 	Widget *w;
 
-	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 200, 168, SHAPE_EXIT, STR_EXIT);
+	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 160, 168 + 8, SHAPE_RESUME_GAME, STR_RESUME_GAME);
+	GUI_Widget_SetShortcuts(w);
+	w->shortcut2 = SCANCODE_ESCAPE;
 	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, w);
 
-	pick_cutscene_widgets = Scrollbar_Allocate(pick_cutscene_widgets, WINDOWID_MENTAT_PICTURE, false);
+	pick_cutscene_widgets = Scrollbar_Allocate(pick_cutscene_widgets, WINDOWID_STARPORT_INVOICE, false);
 }
 
 static void
@@ -434,6 +436,7 @@ static void
 MainMenu_Initialise(Widget *w)
 {
 	Menu_LoadPalette();
+	Widget_SetCurrentWidget(0);
 
 	WidgetProperties *prop13 = &g_widgetProperties[WINDOWID_MAINMENU_FRAME];
 
@@ -1209,7 +1212,7 @@ PickCutscene_Initialise(void)
 		{ NULL, 0 }
 	};
 
-	Sprites_InitMentat(MENTAT_BENE_GESSERIT);
+	g_playerHouseID = HOUSE_HARKONNEN;
 	Menu_LoadPalette();
 
 	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
@@ -1235,12 +1238,18 @@ PickCutscene_Initialise(void)
 static void
 PickCutscene_Draw(void)
 {
-	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_MENTAT_PICTURE];
+	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_STARPORT_INVOICE];
 
-	Mentat_DrawBackground(MENTAT_BENE_GESSERIT);
-	Mentat_Draw(MENTAT_BENE_GESSERIT);
+	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS");
+	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS", 90, 32, 150, 168, 140, 32);
 
-	Widget_SetAndPaintCurrentWidget(WINDOWID_MENTAT_PICTURE);
+	/* Credits label may need to be replaced for other languages. */
+	Shape_Draw(SHAPE_CREDITS_LABEL, SCREEN_WIDTH - 128, 0, 0, 0);
+
+	Shape_DrawRemap(SHAPE_CHOAM_UP, HOUSE_HARKONNEN, 64, 168, 0, 0);
+	Shape_DrawRemap(SHAPE_CHOAM_DOWN, HOUSE_HARKONNEN, 64, 184, 0, 0);
+
+	Widget_SetAndPaintCurrentWidget(WINDOWID_STARPORT_INVOICE);
 	GUI_DrawText_Wrapper("Select Cutscene:", wi->xBase + 16, wi->yBase + 2, 12, 0, 0x12);
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
@@ -1262,7 +1271,6 @@ PickCutscene_Loop(MentatState *mentat)
 	}
 
 	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
-	GUI_Mentat_Animation(MENTAT_BENE_GESSERIT, 0);
 
 	switch (widgetID) {
 		case 0x8000 | 1: /* exit. */
