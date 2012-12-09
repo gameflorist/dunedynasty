@@ -56,7 +56,17 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 
 	GUI_Widget_DrawBorder(19, state, 1);
 
+	bool centred = false;
+
 	if (w->stringID == STR_CANCEL || w->stringID == STR_PREVIOUS || w->stringID == STR_YES || w->stringID == STR_NO) {
+		centred = true;
+	}
+	else if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH) && ((int16)w->stringID >= -5)) {
+		/* Centred text for in-game menu items and saved games. */
+		centred = true;
+	}
+
+	if (centred) {
 		GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(w->stringID), positionX + (width / 2), positionY + 2, colour, 0, 0x122);
 	} else {
 		GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(w->stringID), positionX + 3, positionY + 2, colour, 0, 0x22);
