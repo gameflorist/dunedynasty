@@ -783,23 +783,7 @@ void GUI_Mentat_Create_HelpScreen_Widgets(void)
 	free(g_widgetMentatScrollUp); g_widgetMentatScrollUp = NULL;
 	free(g_widgetMentatScrollDown); g_widgetMentatScrollDown = NULL;
 
-	g_widgetMentatScrollbar = GUI_Widget_Allocate_WithScrollbar(15, 8, 168, 24, 8, 72, NULL);
-
-	g_widgetMentatTail = ScrollListArea_Allocate(g_widgetMentatScrollbar);
-	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatScrollbar);
-
-	g_widgetMentatScrollDown = GUI_Widget_Allocate3(16, 0, 168, 96, SHAPE_SCROLLBAR_DOWN, SHAPE_SCROLLBAR_DOWN_PRESSED, GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15), 1);
-	g_widgetMentatScrollDown->shortcut  = 0;
-	g_widgetMentatScrollDown->shortcut2 = 0;
-	g_widgetMentatScrollDown->parentID  = 8;
-	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatScrollDown);
-
-	g_widgetMentatScrollUp = GUI_Widget_Allocate3(17, 0, 168, 16, SHAPE_SCROLLBAR_UP, SHAPE_SCROLLBAR_UP_PRESSED, GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15), 0);
-	g_widgetMentatScrollUp->shortcut  = 0;
-	g_widgetMentatScrollUp->shortcut2 = 0;
-	g_widgetMentatScrollUp->parentID  = 8;
-	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatScrollUp);
-
+	g_widgetMentatTail = Scrollbar_Allocate(g_widgetMentatTail, WINDOWID_MENTAT_PICTURE, true);
 	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatFirst);
 }
 

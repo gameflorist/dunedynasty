@@ -18,6 +18,8 @@ static ScrollbarItem *s_scrollbar_item;
 static int s_scrollbar_max_items;
 static int s_selectedHelpSubject;
 
+static Widget *ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID);
+
 /*--------------------------------------------------------------*/
 
 static void
@@ -77,7 +79,7 @@ GUI_Widget_Scrollbar_CalculateScrollPosition(WidgetScrollbar *scrollbar)
 	}
 }
 
-Widget *
+static Widget *
 GUI_Widget_Allocate_WithScrollbar(uint16 index, enum WindowID parentID,
 		uint16 offsetX, uint16 offsetY, int16 width, int16 height, ScrollbarDrawProc *drawProc)
 {
@@ -134,7 +136,7 @@ GUI_Widget_Allocate_WithScrollbar(uint16 index, enum WindowID parentID,
 	return w;
 }
 
-Widget *
+static Widget *
 GUI_Widget_Allocate3(uint16 index, enum WindowID parentID, uint16 offsetX, uint16 offsetY,
 		uint16 sprite1, uint16 sprite2, Widget *widget2, uint16 unknown1A)
 {
@@ -202,6 +204,32 @@ GUI_Widget_Free_WithScrollbar(Widget *w)
 }
 
 /*--------------------------------------------------------------*/
+
+Widget *
+Scrollbar_Allocate(Widget *list, enum WindowID parentID, bool set_mentat_widgets)
+{
+	Widget *scrollbar = GUI_Widget_Allocate_WithScrollbar(15, parentID, 168, 24, 8, 72, NULL);
+
+	Widget *listarea = ScrollListArea_Allocate(scrollbar, parentID);
+	list = GUI_Widget_Link(list, listarea);
+	list = GUI_Widget_Link(list, scrollbar);
+
+	Widget *scrolldown = GUI_Widget_Allocate3(16, parentID, 168, 96,
+			SHAPE_SCROLLBAR_DOWN, SHAPE_SCROLLBAR_DOWN_PRESSED, scrollbar, 1);
+	list = GUI_Widget_Link(list, scrolldown);
+
+	Widget *scrollup = GUI_Widget_Allocate3(17, parentID, 168, 16,
+			SHAPE_SCROLLBAR_UP, SHAPE_SCROLLBAR_UP_PRESSED, scrollbar, 0);
+	list = GUI_Widget_Link(list, scrollup);
+
+	if (set_mentat_widgets) {
+		g_widgetMentatScrollbar = scrollbar;
+		g_widgetMentatScrollDown = scrolldown;
+		g_widgetMentatScrollUp = scrollup;
+	}
+
+	return list;
+}
 
 ScrollbarItem *
 Scrollbar_AllocItem(Widget *w, enum ScrollbarItemType type)
@@ -473,8 +501,8 @@ ScrollListArea_Click(Widget *w)
 	return false;
 }
 
-Widget *
-ScrollListArea_Allocate(Widget *scrollbar)
+static Widget *
+ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID)
 {
 	Widget *w = calloc(1, sizeof(Widget));
 
@@ -499,7 +527,7 @@ ScrollListArea_Allocate(Widget *scrollbar)
 	w->offsetY = 16;
 	w->width = 0x88;
 	w->height = 8 * 11;
-	w->parentID = WINDOWID_MENTAT_PICTURE;
+	w->parentID = parentID;
 
 	w->data = scrollbar->data;
 

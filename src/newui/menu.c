@@ -239,16 +239,11 @@ static void
 PickCutscene_InitWidgets(void)
 {
 	Widget *w;
-	Widget *scrollbar;
 
 	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 200, 168, SHAPE_EXIT, STR_EXIT);
 	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, w);
 
-	scrollbar = GUI_Widget_Allocate_WithScrollbar(15, WINDOWID_MENTAT_PICTURE, 168, 24, 8, 72, NULL);
-	w = ScrollListArea_Allocate(scrollbar);
-
-	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, w);
-	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, scrollbar);
+	pick_cutscene_widgets = Scrollbar_Allocate(pick_cutscene_widgets, WINDOWID_MENTAT_PICTURE, false);
 }
 
 static void
