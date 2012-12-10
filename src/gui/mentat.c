@@ -803,7 +803,9 @@ void GUI_Mentat_Create_HelpScreen_Widgets(void)
 	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatFirst);
 }
 
-void GUI_Mentat_ShowHelp(void)
+void
+GUI_Mentat_ShowHelp(Widget *scrollbar, enum SearchDirectory dir,
+		enum HouseType houseID, int campaignID)
 {
 	MentatState *mentat = &g_mentat_state;
 
@@ -820,7 +822,7 @@ void GUI_Mentat_ShowHelp(void)
 	char *picture;
 	char *text;
 
-	ScrollbarItem *si = Scrollbar_GetSelectedItem(GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15));
+	ScrollbarItem *si = Scrollbar_GetSelectedItem(scrollbar);
 	if (si->is_category)
 		return;
 
@@ -828,7 +830,7 @@ void GUI_Mentat_ShowHelp(void)
 	offset = si->offset;
 
 	memset(&info, 0, sizeof(info));
-	fileID = ChunkFile_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename);
+	fileID = ChunkFile_Open_Ex(dir, s_mentatFilename);
 	uint32 bufread = ChunkFile_Read(fileID, HTOBE32(CC_INFO), &info, 12);
 
 	if (bufread >= 12) {
@@ -844,7 +846,7 @@ void GUI_Mentat_ShowHelp(void)
 	text = g_readBuffer;
 	compressedText = malloc(info.length);
 
-	fileID = File_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename, 1);
+	fileID = File_Open_Ex(dir, s_mentatFilename, 1);
 	File_Seek(fileID, offset, 0);
 	File_Read(fileID, compressedText, info.length);
 	String_Decompress(compressedText, text);
@@ -860,9 +862,9 @@ void GUI_Mentat_ShowHelp(void)
 		desc    = NULL;
 		text    = (char *)g_readBuffer;
 
-		const uint16 index = (g_campaignID * 4) + (*text - 44);
+		const uint16 index = (campaignID * 4) + (*text - 44);
 
-		strncpy(g_readBuffer, String_GetMentatString(g_playerHouseID, index), g_readBufferSize);
+		strncpy(g_readBuffer, String_GetMentatString(houseID, index), g_readBufferSize);
 	} else {
 		picture = (char *)g_readBuffer;
 		desc    = text;
@@ -899,21 +901,21 @@ void GUI_Mentat_ShowHelp(void)
 		}
 
 		/* Devastator: "It's armor and weapons are unequaled." */
-		else if (strcasecmp("HARKTANK.WSA", picture) == 0 && g_playerHouseID == HOUSE_HARKONNEN) {
+		else if (strcasecmp("HARKTANK.WSA", picture) == 0 && houseID == HOUSE_HARKONNEN) {
 			char *str = strstr(text, "It's armor");
 			if (str != NULL)
 				memmove(str + 2, str + 3, strlen(str + 3) + 1);
 		}
 
 		/* Siege tank: "It's armor and weaponry has the power you will need to complete your conquest of this planet." */
-		else if (strcasecmp("HTANK.WSA", picture) == 0 && g_playerHouseID == HOUSE_HARKONNEN) {
+		else if (strcasecmp("HTANK.WSA", picture) == 0 && houseID == HOUSE_HARKONNEN) {
 			char *str = strstr(text, "It's armor");
 			if (str != NULL)
 				memmove(str + 2, str + 3, strlen(str + 3) + 1);
 		}
 
 		/* Ornithoper: "The ornithopter is a fast and maneuverable, aircraft." */
-		else if (strcasecmp("ORNI.WSA", picture) == 0 && g_playerHouseID == HOUSE_ORDOS) {
+		else if (strcasecmp("ORNI.WSA", picture) == 0 && houseID == HOUSE_ORDOS) {
 			char *str = strstr(text, "maneuverable, aircraft");
 			if (str != NULL)
 				memmove(str + 12, str + 13, strlen(str + 13) + 1);

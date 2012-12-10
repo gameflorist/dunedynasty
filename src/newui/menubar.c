@@ -232,7 +232,9 @@ MenuBar_ClickMentat(Widget *w)
 	g_widgetLinkedListTail = NULL;
 	g_widgetMentatFirst = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 200, 168, SHAPE_EXIT, 5);
 	GUI_Mentat_Create_HelpScreen_Widgets();
-	GUI_Mentat_LoadHelpSubjects(true);
+
+	Widget *scrollbar = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
+	Mentat_LoadHelpSubjects(scrollbar, true, SEARCHDIR_CAMPAIGN_DIR, g_playerHouseID, g_campaignID, false);
 	return true;
 
 }

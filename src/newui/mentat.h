@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include "enumeration.h"
+#include "../file.h"
 #include "../house.h"
 
 enum BriefingState {
@@ -46,10 +47,14 @@ typedef struct MentatState {
 	int security_lives;
 } MentatState;
 
+struct Widget;
+
 extern int movingEyesSprite;
 extern int movingMouthSprite;
 extern int otherSprite;
 extern MentatState g_mentat_state;
+
+extern void Mentat_LoadHelpSubjects(struct Widget *scrollbar, bool init, enum SearchDirectory dir, enum HouseType houseID, int campaignID, bool skip_advice);
 
 extern enum MentatID Mentat_InitFromString(const char *str, enum HouseType houseID);
 

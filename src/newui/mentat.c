@@ -82,7 +82,7 @@ GUI_Mentat_HelpListLoop(int key)
 			case SCANCODE_ENTER:
 			case SCANCODE_KEYPAD_5:
 			case SCANCODE_SPACE:
-				GUI_Mentat_ShowHelp();
+				GUI_Mentat_ShowHelp(w, SEARCHDIR_CAMPAIGN_DIR, g_playerHouseID, g_campaignID);
 				break;
 
 			default: break;
@@ -91,7 +91,8 @@ GUI_Mentat_HelpListLoop(int key)
 }
 
 void
-GUI_Mentat_LoadHelpSubjects(bool init)
+Mentat_LoadHelpSubjects(Widget *scrollbar, bool init, enum SearchDirectory dir,
+		enum HouseType houseID, int campaignID, bool skip_advice)
 {
 	if (!init)
 		return;
@@ -101,34 +102,42 @@ GUI_Mentat_LoadHelpSubjects(bool init)
 	uint32 length;
 	uint32 counter;
 
-	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "MENTAT%c", g_table_houseInfo[g_playerHouseID].name[0]);
+	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "MENTAT%c", g_table_houseInfo[houseID].name[0]);
 	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "%s", String_GenerateFilename(s_mentatFilename));
 
 	/* Be careful here as Fremen, Sardaukar, and Mercenaries don't have mentat advice. */
-	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename)) {
-		s_mentatFilename[6] = g_table_houseInfo[g_playerHouseID].prefixChar;
+	if (!File_Exists_Ex(dir, s_mentatFilename)) {
+		s_mentatFilename[6] = g_table_houseInfo[houseID].prefixChar;
 	}
 
-	fileID = ChunkFile_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename);
+	fileID = ChunkFile_Open_Ex(dir, s_mentatFilename);
 	length = ChunkFile_Read(fileID, HTOBE32(CC_NAME), helpSubjects, GFX_Screen_GetSize_ByIndex(5));
 	ChunkFile_Close(fileID);
 
-	Widget *w = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
-	WidgetScrollbar *ws = w->data;
+	/* Widget *scrollbar = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15); */
+	WidgetScrollbar *ws = scrollbar->data;
 	ws->scrollMax = 0;
 
 	counter = 0;
 	while (counter < length) {
 		const uint8 size = *helpSubjects;
+		bool skip = false;
 
 		counter += size;
 
-		if (helpSubjects[size - 1] > g_campaignID + 1) {
+		if (helpSubjects[size - 1] > campaignID + 1) {
+			skip = true;
+		}
+		else if (skip_advice && (helpSubjects[5] == '0')) {
+			skip = true;
+		}
+
+		if (skip) {
 			helpSubjects += size;
 			continue;
 		}
 
-		ScrollbarItem *si = Scrollbar_AllocItem(w);
+		ScrollbarItem *si = Scrollbar_AllocItem(scrollbar);
 		si->offset = HTOBE32(*(uint32 *)(helpSubjects + 1));
 		si->no_desc = (helpSubjects[5] == '0');
 		si->is_category = (helpSubjects[6] == '0');
@@ -142,7 +151,7 @@ GUI_Mentat_LoadHelpSubjects(bool init)
 		helpSubjects += size;
 	}
 
-	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 11, 0);
+	GUI_Widget_Scrollbar_Init(scrollbar, ws->scrollMax, 11, 0);
 }
 
 void
@@ -612,7 +621,6 @@ MentatHelp_Tick(MentatState *mentat)
 		if (widgetID == 0x8001) {
 			mentat->state = MENTAT_SHOW_CONTENTS;
 			mentat->wsa = NULL;
-			GUI_Mentat_LoadHelpSubjects(false);
 		}
 	}
 

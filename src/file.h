@@ -4,6 +4,7 @@
 #define FILE_H
 
 #include <stdio.h>
+#include "types.h"
 
 enum {
 	FILEINFO_MAX     = 686,
