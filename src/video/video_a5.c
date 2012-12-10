@@ -29,6 +29,7 @@
 #endif
 
 #include <stdio.h>
+#include "../os/common.h"
 #include "../os/error.h"
 #include "../os/math.h"
 
@@ -1882,6 +1883,89 @@ VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 }
 
 static void
+VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
+{
+	const struct {
+		int sx, dx;
+		size_t w;
+	} cmd[] = {
+		{ 544 +  4,   4 +  2,  8 }, /* S  from SEND ORDER. */
+		{   4 + 26,   4 + 10,  6 }, /* S  from RESUME GAME. */
+		{ 256 + 41,   4 + 16, 16 }, /* TA from MENTAT. */
+		{   4 + 87,   4 + 32,  8 }, /* A  from RESUME GAME. */
+		{ 544 +101,   4 + 40,  9 }, /* R  from SEND ORDER. */
+		{ 128 + 33,   4 + 49,  2 }, /*    from BUILD THIS */
+		{ 256 + 64,   4 + 51, 12 }, /* T  from MENTAT. */
+		{   4 + 68,   4 + 63, 49 }, /* GAME */
+
+		{ 128 + 96, 128 + 90, 15 }, /* S  from BUILD THIS */
+		{ 128 + 23, 128 + 80, 10 }, /* U  from BUILD THIS */
+		{ 352 + 16, 128 + 21, 10 }, /* P  from OPTIONS. */
+		{ 544 + 66, 128 + 31, 16 }, /* R  from SEND ORDER. */
+		{ 448 + 67, 128 + 47,  6 }, /* E  from INVOICE */
+		{ 448 + 28, 128 + 53,  9 }, /* V  from INVOICE */
+		{ 448 +  7, 128 + 62,  8 }, /* I  from INVOICE */
+		{ 352 + 42, 128 + 70,  4 }, /* IO from OPTIONS */
+		{ 448 + 41, 128 + 74,  6 }, /* O  from INVOICE */
+
+		{ 128 +  2,   4 +112,  5 }, /* Fill right of START GAME */
+		{ 128 +100, 128 + 12,  9 }, /* Fill left of PREVIOUS */
+	};
+
+	const int y2 = y1 + 17;
+	const int h = 11;
+
+	/* Create a "previous" button from other CHOAM buttons.
+	 * The invoice button has 6 pixels of blank to the left.
+	 * Avoid using French buttons.
+	 */
+	Sprites_InitCHOAM("BTTN.ENG", "CHOAM.ENG");
+	GUI_DrawSprite_(0, g_sprites[SHAPE_RESUME_GAME + 0], 4, y1, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_RESUME_GAME + 1], 4, y2, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_BUILD_THIS + 0], 128, y1, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_BUILD_THIS + 1], 128, y2, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_MENTAT + 0], 256, y1, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_MENTAT + 1], 256, y2, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_OPTIONS + 0], 352, y1, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_OPTIONS + 1], 352, y2, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_INVOICE + 0], 448 - 6, y1, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_INVOICE + 1], 448 - 6, y2, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_SEND_ORDER + 0], 544, y1, WINDOWID_RENDER_TEXTURE, 0);
+	GUI_DrawSprite_(0, g_sprites[SHAPE_SEND_ORDER + 1], 544, y2, WINDOWID_RENDER_TEXTURE, 0);
+
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
+	unsigned char *row1 = &buf[WINDOW_W * (y1 + 2)];
+	unsigned char *row2 = &buf[WINDOW_W * (y2 + 2)];
+
+	for (int i = 0; i < h; i++) {
+		for (unsigned int c = 0; c < lengthof(cmd); c++) {
+			memmove(row1 + cmd[c].dx, row1 + cmd[c].sx, cmd[c].w);
+			memmove(row2 + cmd[c].dx, row2 + cmd[c].sx, cmd[c].w);
+		}
+
+		row1 += WINDOW_W;
+		row2 += WINDOW_W;
+	}
+
+	s_shape[SHAPE_SEND_ORDER + 0][HOUSE_HARKONNEN] = al_create_sub_bitmap(shape_texture, 4, y1, 120, 16);
+	s_shape[SHAPE_SEND_ORDER + 1][HOUSE_HARKONNEN] = al_create_sub_bitmap(shape_texture, 4, y2, 120, 16);
+	assert(s_shape[SHAPE_SEND_ORDER + 0][HOUSE_HARKONNEN] != NULL);
+	assert(s_shape[SHAPE_SEND_ORDER + 1][HOUSE_HARKONNEN] != NULL);
+
+	s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN] = al_create_sub_bitmap(shape_texture, 128, y1, 120, 16);
+	s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN] = al_create_sub_bitmap(shape_texture, 128, y2, 120, 16);
+	assert(s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN] != NULL);
+	assert(s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN] != NULL);
+
+	for (enum HouseType h = HOUSE_HARKONNEN + 1; h < HOUSE_MAX; h++) {
+		s_shape[SHAPE_SEND_ORDER  + 0][h] = s_shape[SHAPE_SEND_ORDER  + 0][HOUSE_HARKONNEN];
+		s_shape[SHAPE_SEND_ORDER  + 1][h] = s_shape[SHAPE_SEND_ORDER  + 1][HOUSE_HARKONNEN];
+		s_shape[SHAPE_RESUME_GAME + 0][h] = s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN];
+		s_shape[SHAPE_RESUME_GAME + 1][h] = s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN];
+	}
+}
+
+static void
 VideoA5_InitShapes(unsigned char *buf)
 {
 	/* Check Sprites_Init. */
@@ -1892,7 +1976,7 @@ VideoA5_InitShapes(unsigned char *buf)
 		{   0,   6, false }, /* MOUSE.SHP */
 		{  12, 110, false }, /* SHAPES.SHP */
 		{   7,  11,  true }, /* BTTN */
-		{ 355, 372,  true }, /* CHOAM */
+		{ 355, 358,  true }, /* CHOAM */
 		{ 111, 140,  true }, /* UNITS2.SHP */
 		{ 141, 150, false }, /* UNITS2.SHP: sonic tank turret, launcher turret */
 		{ 151, 161, false }, /* UNITS1.SHP */
@@ -1934,6 +2018,7 @@ VideoA5_InitShapes(unsigned char *buf)
 
 	for (int group = 0; shape_data[group].start != -1; group++) {
 		if (shape_data[group].start == -2) {
+			VideoA5_InitShapeCHOAMButtons(buf, y + row_h + 1);
 			VideoA5_CopyBitmap(WINDOW_W, buf, shape_texture, SKIP_COLOUR_0);
 			memset(buf, 0, WINDOW_W * WINDOW_H);
 

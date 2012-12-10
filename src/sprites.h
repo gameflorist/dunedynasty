@@ -72,6 +72,7 @@ extern uint16 g_builtSlabSpriteID;                          /*!< SpriteID of the
 extern uint16 g_wallSpriteID;                               /*!< First wall spriteID. */
 
 extern void Sprites_Init(void);
+extern void Sprites_InitCHOAM(const char *bttn, const char *choam);
 extern void Sprites_InitMentat(enum MentatID mentatID);
 extern void Sprites_InitCredits(void);
 extern void Sprites_Uninit(void);

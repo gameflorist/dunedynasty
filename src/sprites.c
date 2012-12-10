@@ -386,6 +386,16 @@ void Sprites_Init(void)
 }
 
 void
+Sprites_InitCHOAM(const char *bttn, const char *choam)
+{
+	if (bttn != NULL)
+		Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, bttn, 7, 11);
+
+	if (choam != NULL)
+		Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, choam, 355, 372);
+}
+
+void
 Sprites_InitMentat(enum MentatID mentatID)
 {
 	static enum MentatID l_mentatID = MENTAT_MAX;

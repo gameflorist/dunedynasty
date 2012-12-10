@@ -240,9 +240,8 @@ PickCutscene_InitWidgets(void)
 {
 	Widget *w;
 
-	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 160, 168 + 8, SHAPE_RESUME_GAME, STR_RESUME_GAME);
-	GUI_Widget_SetShortcuts(w);
-	w->shortcut2 = SCANCODE_ESCAPE;
+	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 160, 168 + 8, SHAPE_RESUME_GAME, STR_NULL);
+	w->shortcut = SCANCODE_P;
 	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, w);
 
 	pick_cutscene_widgets = Scrollbar_Allocate(pick_cutscene_widgets, WINDOWID_STARPORT_INVOICE, false);
