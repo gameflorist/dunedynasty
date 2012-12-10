@@ -65,7 +65,7 @@ enum MenuAction {
 	MENU_LOAD_GAME,
 	MENU_BATTLE_SUMMARY,
 	MENU_HALL_OF_FAME,
-	MENU_PICK_CUTSCENE,
+	MENU_EXTRAS,
 	MENU_PLAY_CUTSCENE,
 	MENU_CAMPAIGN_CUTSCENE,
 	MENU_STRATEGIC_MAP,
@@ -81,7 +81,7 @@ enum MenuAction {
 static int64_t subtitle_timer;
 static Widget *main_menu_widgets;
 static Widget *pick_house_widgets;
-static Widget *pick_cutscene_widgets;
+static Widget *extras_widgets;
 static Widget *briefing_yes_no_widgets;
 static Widget *briefing_proceed_repeat_widgets;
 
@@ -124,10 +124,9 @@ MainMenu_InitWidgets(void)
 	} menuitem[] = {
 		{ MENU_PLAY_A_GAME,  NULL, STR_PLAY_A_GAME, -1 },
 		{ MENU_LOAD_GAME,    NULL, STR_LOAD_GAME, -1, },
-		{ MENU_PICK_CUTSCENE, "Replay Cutscene", STR_REPLAY_INTRODUCTION, -1 },
+		{ MENU_EXTRAS,       "Options and Extras", STR_NULL, SCANCODE_O },
 		{ MENU_HALL_OF_FAME, NULL, STR_HALL_OF_FAME, -1 },
 		{ MENU_EXIT_GAME,    NULL, STR_EXIT_GAME, -1 },
-		{ 0, NULL, STR_NULL, 0 }
 	};
 
 	int maxWidth = 0;
@@ -236,15 +235,15 @@ Briefing_InitWidgets(void)
 }
 
 static void
-PickCutscene_InitWidgets(void)
+Extras_InitWidgets(void)
 {
 	Widget *w;
 
 	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 160, 168 + 8, SHAPE_RESUME_GAME, STR_NULL);
 	w->shortcut = SCANCODE_P;
-	pick_cutscene_widgets = GUI_Widget_Link(pick_cutscene_widgets, w);
+	extras_widgets = GUI_Widget_Link(extras_widgets, w);
 
-	pick_cutscene_widgets = Scrollbar_Allocate(pick_cutscene_widgets, WINDOWID_STARPORT_INVOICE, false);
+	extras_widgets = Scrollbar_Allocate(extras_widgets, WINDOWID_STARPORT_INVOICE, false);
 }
 
 static void
@@ -374,7 +373,7 @@ Menu_Init(void)
 	MainMenu_InitWidgets();
 	PickHouse_InitWidgets();
 	Briefing_InitWidgets();
-	PickCutscene_InitWidgets();
+	Extras_InitWidgets();
 	StrategicMap_Init();
 
 	Widget *w = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
@@ -408,7 +407,7 @@ Menu_Uninit(void)
 {
 	Menu_FreeWidgets(main_menu_widgets);
 	Menu_FreeWidgets(pick_house_widgets);
-	Menu_FreeWidgets(pick_cutscene_widgets);
+	Menu_FreeWidgets(extras_widgets);
 	Menu_FreeWidgets(briefing_yes_no_widgets);
 	Menu_FreeWidgets(briefing_proceed_repeat_widgets);
 }
@@ -550,9 +549,9 @@ MainMenu_Loop(void)
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
-		case 0x8000 | MENU_PICK_CUTSCENE:
+		case 0x8000 | MENU_EXTRAS:
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
-			return MENU_BLINK_CONFIRM | MENU_PICK_CUTSCENE;
+			return MENU_BLINK_CONFIRM | MENU_EXTRAS;
 
 		case 0x8000 | MENU_LOAD_GAME:
 			GUI_Widget_InitSaveLoad(false);
@@ -1214,7 +1213,7 @@ PickCutscene_Initialise(void)
 	g_playerHouseID = HOUSE_HARKONNEN;
 	Menu_LoadPalette();
 
-	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
 	WidgetScrollbar *ws = w->data;
 	ScrollbarItem *si;
 
@@ -1252,7 +1251,7 @@ PickCutscene_Draw(void)
 	GUI_DrawText_Wrapper("Select Cutscene:", wi->xBase + 16, wi->yBase + 2, 12, 0, 0x12);
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
-	GUI_Widget_DrawAll(pick_cutscene_widgets);
+	GUI_Widget_DrawAll(extras_widgets);
 }
 
 static enum MenuAction
@@ -1261,10 +1260,10 @@ PickCutscene_Loop(MentatState *mentat)
 	const int64_t curr_ticks = Timer_GetTicks();
 	static ScrollbarItem *last_si;
 
-	int widgetID = GUI_Widget_HandleEvents(pick_cutscene_widgets);
+	int widgetID = GUI_Widget_HandleEvents(extras_widgets);
 	bool redraw = false;
 
-	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
 	if ((widgetID & 0x8000) == 0)
 		Scrollbar_HandleEvent(w, widgetID);
 
@@ -1294,13 +1293,13 @@ PickCutscene_Loop(MentatState *mentat)
 		redraw = true;
 	}
 
-	return (redraw ? MENU_REDRAW : 0) | MENU_PICK_CUTSCENE;
+	return (redraw ? MENU_REDRAW : 0) | MENU_EXTRAS;
 }
 
 static enum MenuAction
 PlayCutscene_Loop(void)
 {
-	Widget *w = GUI_Widget_Get_ByIndex(pick_cutscene_widgets, 15);
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
 	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
 
 	switch (si->offset) {
@@ -1325,7 +1324,7 @@ PlayCutscene_Loop(void)
 			break;
 	}
 
-	return MENU_PICK_CUTSCENE;
+	return MENU_EXTRAS;
 }
 
 /*--------------------------------------------------------------*/
@@ -1427,7 +1426,7 @@ Menu_Run(void)
 					BattleSummary_Initialise(g_playerHouseID, &g_hall_of_fame_state);
 					break;
 
-				case MENU_PICK_CUTSCENE:
+				case MENU_EXTRAS:
 					PickCutscene_Initialise();
 					break;
 
@@ -1470,7 +1469,7 @@ Menu_Run(void)
 					BattleSummary_Draw(g_playerHouseID, g_scenarioID, &g_hall_of_fame_state);
 					break;
 
-				case MENU_PICK_CUTSCENE:
+				case MENU_EXTRAS:
 					PickCutscene_Draw();
 					break;
 
@@ -1558,7 +1557,7 @@ Menu_Run(void)
 				res = MENU_MAIN_MENU;
 				break;
 
-			case MENU_PICK_CUTSCENE:
+			case MENU_EXTRAS:
 				res = PickCutscene_Loop(&g_mentat_state);
 				break;
 
