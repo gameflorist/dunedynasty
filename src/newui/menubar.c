@@ -50,9 +50,8 @@ static int64_t radar_animation_timer;
 static int s_save_entry;
 
 void
-MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
+MenuBar_DrawCredits(int credits_new, int credits_old, int offset, int x0)
 {
-	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENUBAR];
 	const int digit_w = 10;
 	const int y = g_widgetProperties[WINDOWID_CREDITS].yBase;
 
@@ -62,12 +61,10 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 	snprintf(char_old, sizeof(char_old), "%6d", credits_old);
 	snprintf(char_new, sizeof(char_new), "%6d", credits_new);
 
-	Video_SetClippingArea(0, div->scaley * 4, TRUE_DISPLAY_WIDTH, div->scaley * 9);
-
 	for (int i = 0; i < 6; i++) {
 		const enum ShapeID shape_old = SHAPE_CREDITS_NUMBER_0 + char_old[i] - '0';
 		const enum ShapeID shape_new = SHAPE_CREDITS_NUMBER_0 + char_new[i] - '0';
-		const int x = TRUE_DISPLAY_WIDTH / div->scalex - digit_w * (6 - i);
+		const int x = x0 - digit_w * (6 - i);
 
 		if (char_old[i] != char_new[i]) {
 			if (char_old[i] != ' ')
@@ -81,8 +78,6 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 				Shape_Draw(shape_new, x, y + 1, 0, 0);
 		}
 	}
-
-	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
 
 void
@@ -166,8 +161,10 @@ MenuBar_Draw(enum HouseType houseID)
 	w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 2);
 	GUI_Widget_Draw(w);
 
-	GUI_DrawCredits(g_playerHouseID, (g_playerCredits == 0xFFFF) ? 2 : 1);
+	Video_SetClippingArea(0, menubar->scaley * 4, TRUE_DISPLAY_WIDTH, menubar->scaley * 9);
+	GUI_DrawCredits(g_playerHouse->credits, (g_playerCredits == 0xFFFF) ? 2 : 1, TRUE_DISPLAY_WIDTH / menubar->scalex);
 	GUI_DisplayText(NULL, 0);
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
 	/* SideBar. */
 	A5_UseTransform(SCREENDIV_SIDEBAR);

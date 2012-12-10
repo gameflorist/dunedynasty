@@ -1309,13 +1309,13 @@ void GUI_DrawInterfaceAndRadar(void)
  * @param houseID The house to display the credits from.
  * @param mode The mode of displaying. 0 = animate, 1 = force draw, 2 = reset.
  */
-void GUI_DrawCredits(uint8 houseID, uint16 mode)
+void
+GUI_DrawCredits(int credits, uint16 mode, int x)
 {
 	static int64_t l_tickCreditsAnimation = 0;    /*!< Next tick when credits animation needs an update. */
 	static uint16 creditsAnimation = 0;           /* How many credits are shown in current animation of credits. */
 	static int16  creditsAnimationOffset = 0;     /* Offset of the credits for the animation of credits. */
 
-	House *h;
 	int16 creditsDiff;
 	int32 creditsNew;
 	int32 creditsOld;
@@ -1324,16 +1324,16 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 	if (l_tickCreditsAnimation > Timer_GetTicks() && mode == 0) return;
 	l_tickCreditsAnimation = Timer_GetTicks() + 1;
 
-	h = House_Get_ByIndex(houseID);
+	/* House *h = House_Get_ByIndex(houseID); */
 
 	if (mode == 2) {
-		g_playerCredits = h->credits;
-		creditsAnimation = h->credits;
+		g_playerCredits = credits;
+		creditsAnimation = credits;
 	}
 
-	if (mode == 0 && h->credits == creditsAnimation && creditsAnimationOffset == 0) return;
+	if (mode == 0 && credits == creditsAnimation && creditsAnimationOffset == 0) return;
 
-	creditsDiff = h->credits - creditsAnimation;
+	creditsDiff = credits - creditsAnimation;
 	if (creditsDiff != 0) {
 		int16 diff = creditsDiff / 4;
 		if (diff == 0)   diff = (creditsDiff < 0) ? -1 : 1;
@@ -1410,7 +1410,7 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 
 	Widget_SetCurrentWidget(oldValue_07AE_0000);
 #else
-	MenuBar_DrawCredits(creditsNew, creditsOld, offset - creditsAnimationOffset);
+	MenuBar_DrawCredits(creditsNew, creditsOld, offset - creditsAnimationOffset, x);
 #endif
 }
 

@@ -87,7 +87,7 @@ extern void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint1
 extern void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, Screen screenSrc, Screen screenDst);
 extern void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint16 width, uint16 height, Screen screenSrc, Screen screenDst);
 
-extern void GUI_DrawCredits(uint8 houseID, uint16 mode);
+extern void GUI_DrawCredits(int credits, uint16 mode, int x);
 
 extern void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colors, uint8 reference, uint8 intensity);
 extern void GUI_Palette_CreateRemap(uint8 houseID);
