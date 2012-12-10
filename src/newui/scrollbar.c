@@ -18,6 +18,7 @@ static ScrollbarItem *s_scrollbar_item;
 static int s_scrollbar_max_items;
 static int s_selectedHelpSubject;
 
+static void Scrollbar_Clamp(const WidgetScrollbar *ws);
 static Widget *ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID);
 
 /*--------------------------------------------------------------*/
@@ -192,6 +193,7 @@ GUI_Widget_Scrollbar_Init(Widget *w, int16 scrollMax, int16 scrollPageSize, int1
 
 	GUI_Widget_Scrollbar_CalculateSize(scrollbar);
 	GUI_Widget_Scrollbar_CalculatePosition(scrollbar);
+	Scrollbar_Clamp(scrollbar);
 }
 
 void

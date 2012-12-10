@@ -15,6 +15,7 @@
 #include "actionpanel.h"
 #include "halloffame.h"
 #include "mentat.h"
+#include "menubar.h"
 #include "scrollbar.h"
 #include "strategicmap.h"
 #include "../audio/audio.h"
@@ -38,6 +39,7 @@
 #include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
+#include "../wsa.h"
 
 enum {
 	SUBTITLE_FADE_TICKS = 6,
@@ -96,7 +98,10 @@ static Widget *briefing_yes_no_widgets;
 static Widget *briefing_proceed_repeat_widgets;
 
 static enum ExtrasMenu extras_page;
+static int extras_credits;
 
+static void Extras_ShowScrollbar(void);
+static void Extras_HideScrollbar(void);
 static void Extras_DrawRadioButton(Widget *w);
 static bool Extras_ClickCHOAMArrow(Widget *w);
 static bool Extras_ClickRadioButton(Widget *w);
@@ -1260,9 +1265,6 @@ PickCutscene_Initialise(void)
 		{ NULL, 0 }
 	};
 
-	g_playerHouseID = HOUSE_HARKONNEN;
-	Menu_LoadPalette();
-
 	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
 	WidgetScrollbar *ws = w->data;
 	ScrollbarItem *si;
@@ -1278,42 +1280,11 @@ PickCutscene_Initialise(void)
 	}
 
 	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 11, 0);
-
-	/* XXX: dodgy hack to clear the last selected widgets. */
-	GUI_Widget_HandleEvents(main_menu_widgets);
-}
-
-static void
-PickCutscene_Draw(void)
-{
-	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_STARPORT_INVOICE];
-
-	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS");
-	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS", 90, 32, 150, 168, 140, 32);
-
-	/* Credits label may need to be replaced for other languages. */
-	Shape_Draw(SHAPE_CREDITS_LABEL, SCREEN_WIDTH - 128, 0, 0, 0);
-
-	Widget_SetAndPaintCurrentWidget(WINDOWID_STARPORT_INVOICE);
-	GUI_DrawText_Wrapper("Select Cutscene:", wi->xBase + 16, wi->yBase + 2, 12, 0, 0x12);
-
-	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
-	GUI_Widget_DrawAll(extras_widgets);
 }
 
 static enum MenuAction
-PickCutscene_Loop(MentatState *mentat)
+PickCutscene_Loop(int widgetID)
 {
-	const int64_t curr_ticks = Timer_GetTicks();
-	static ScrollbarItem *last_si;
-
-	int widgetID = GUI_Widget_HandleEvents(extras_widgets);
-	bool redraw = false;
-
-	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
-	if ((widgetID & 0x8000) == 0)
-		Scrollbar_HandleEvent(w, widgetID);
-
 	switch (widgetID) {
 		case 0x8000 | 1: /* exit. */
 			return MENU_MAIN_MENU;
@@ -1327,20 +1298,7 @@ PickCutscene_Loop(MentatState *mentat)
 			return MENU_PLAY_CUTSCENE;
 	}
 
-	if (curr_ticks - mentat->wsa_timer >= 3) {
-		mentat->wsa_timer = curr_ticks;
-		redraw = true;
-	}
-
-	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
-
-	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
-	if (last_si != si) {
-		last_si = si;
-		redraw = true;
-	}
-
-	return (redraw ? MENU_REDRAW : 0) | MENU_EXTRAS;
+	return MENU_EXTRAS;
 }
 
 static enum MenuAction
@@ -1374,6 +1332,161 @@ PlayCutscene_Loop(void)
 	return MENU_EXTRAS;
 }
 
+/*--------------------------------------------------------------*/
+
+static void
+PickGallery_Initialise(void)
+{
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+
+	/* Note: Use Harkonnen list which contains the Sardaukar and Frigate entries. */
+	Mentat_LoadHelpSubjects(w, true, SEARCHDIR_GLOBAL_DATA_DIR, HOUSE_HARKONNEN, 9, true);
+
+	g_mentat_state.wsa = NULL;
+}
+
+static void
+PickGallery_Draw(MentatState *mentat)
+{
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+
+	Video_SetClippingArea(div->scalex * 128 + div->x, div->scaley * 23 + div->y, div->scalex * 184, div->scaley * 10);
+	GUI_DrawText_Wrapper(mentat->desc, 128, 23, 12, 0, 0x12);
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+
+	MentatBriefing_DrawWSA(mentat);
+}
+
+static const ObjectInfo *
+PickGallery_WSAtoObject(const char *str)
+{
+	if (str == NULL || str[0] == '\0')
+		return NULL;
+
+	for (enum StructureType s = STRUCTURE_SLAB_1x1; s < STRUCTURE_MAX; s++) {
+		const ObjectInfo *oi = &g_table_structureInfo_original[s].o;
+
+		if ((oi->wsa != NULL) && (strcasecmp(str, oi->wsa) == 0))
+			return oi;
+	}
+
+	for (enum UnitType u = UNIT_CARRYALL; u < UNIT_MAX; u++) {
+		const ObjectInfo *oi = &g_table_unitInfo_original[u].o;
+
+		if ((oi->wsa != NULL) && (strcasecmp(str, oi->wsa) == 0))
+			return oi;
+	}
+
+	return NULL;
+}
+
+static enum MenuAction
+PickGallery_Loop(MentatState *mentat, int widgetID)
+{
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	bool perform_selection = false;
+	bool redraw = false;
+
+	if (mentat->wsa == NULL) {
+		switch (widgetID) {
+			case 0x8000 | 1: /* exit. */
+				return MENU_MAIN_MENU;
+
+			case 0x8000 | 3: /* list entry. */
+			case SCANCODE_ENTER:
+			case SCANCODE_KEYPAD_5:
+			case SCANCODE_SPACE:
+				perform_selection = true;
+				break;
+		}
+	}
+	else {
+		const int64_t curr_ticks = Timer_GetTicks();
+
+		if ((WSA_GetFrameCount(mentat->wsa) > 1) && (curr_ticks - mentat->wsa_timer >= 7)) {
+			const int64_t dt = curr_ticks - mentat->wsa_timer;
+			mentat->wsa_timer = curr_ticks + dt % 7;
+			mentat->wsa_frame += dt / 7;
+			redraw = true;
+		}
+
+		switch (widgetID) {
+			case 0x8000 | 1:
+				mentat->wsa = NULL;
+				Extras_ShowScrollbar();
+				break;
+		}
+	}
+
+	if (perform_selection) {
+		GUI_Mentat_ShowHelp(w, SEARCHDIR_GLOBAL_DATA_DIR, HOUSE_HARKONNEN, 9);
+
+		if (mentat->wsa != NULL) {
+			/* Dodgy: determine the object type from the WSA
+			 * name since it is not stored in the list.
+			 */
+			const ObjectInfo *oi = PickGallery_WSAtoObject(g_readBuffer);
+
+			if (oi != NULL) {
+				extras_credits = oi->buildCredits;
+			}
+			else {
+				extras_credits = 0;
+			}
+
+			Extras_HideScrollbar();
+		}
+	}
+
+	return (redraw ? MENU_REDRAW : 0) | MENU_EXTRAS;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+Extras_ShowScrollbar(void)
+{
+	/* Show scroll list. */
+	Widget *scrollbar = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	WidgetScrollbar *ws = scrollbar->data;
+
+	GUI_Widget_MakeVisible(GUI_Widget_Get_ByIndex(extras_widgets, 3));
+	GUI_Widget_MakeVisible(scrollbar);
+
+	if (ws->scrollMax > ws->scrollPageSize) {
+		GUI_Widget_MakeVisible(GUI_Widget_Get_ByIndex(extras_widgets, 16));
+		GUI_Widget_MakeVisible(GUI_Widget_Get_ByIndex(extras_widgets, 17));
+	}
+	else {
+		GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 16));
+		GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 17));
+	}
+}
+
+static void
+Extras_HideScrollbar(void)
+{
+	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 3));
+	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 15));
+	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 16));
+	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 17));
+}
+
+static void
+Extras_Initialise(void)
+{
+	extras_credits = 0;
+	g_playerHouseID = HOUSE_HARKONNEN;
+	Menu_LoadPalette();
+
+	/* Reset credits. */
+	GUI_DrawCredits(extras_credits, 2, SCREEN_WIDTH);
+	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(extras_widgets, 20), true);
+
+	/* XXX: dodgy hack to clear the last selected widgets. */
+	GUI_Widget_HandleEvents(main_menu_widgets);
+}
+
 static void
 Extras_DrawRadioButton(Widget *w)
 {
@@ -1387,6 +1500,50 @@ Extras_DrawRadioButton(Widget *w)
 
 	if (page == extras_page)
 		ActionPanel_HighlightIcon(HOUSE_HARKONNEN, w->offsetX, w->offsetY, false);
+}
+
+static void
+Extras_Draw(MentatState *mentat)
+{
+	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS");
+	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS", 90, 32, 150, 168, 140, 32);
+
+	/* Credits label may need to be replaced for other languages. */
+	Shape_Draw(SHAPE_CREDITS_LABEL, SCREEN_WIDTH - 128, 0, 0, 0);
+
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+	Video_SetClippingArea(0, div->scaley * 4 + div->y, TRUE_DISPLAY_WIDTH, div->scaley * 9);
+	GUI_DrawCredits(extras_credits, 1, SCREEN_WIDTH);
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+
+	const char *headline = NULL;
+	Widget_SetAndPaintCurrentWidget(WINDOWID_STARPORT_INVOICE);
+
+	switch (extras_page) {
+		case EXTRASMENU_CUTSCENE:
+			headline = "Select Cutscene:";
+			break;
+
+		case EXTRASMENU_GALLERY:
+			if (mentat->wsa == NULL) {
+				headline = String_Get_ByIndex(STR_SELECT_SUBJECT);
+			}
+			else {
+				PickGallery_Draw(mentat);
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	if (headline != NULL) {
+		const WidgetProperties *wi = &g_widgetProperties[WINDOWID_STARPORT_INVOICE];
+		GUI_DrawText_Wrapper(headline, wi->xBase + 16, wi->yBase + 2, 12, 0, 0x12);
+	}
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
+	GUI_Widget_DrawAll(extras_widgets);
 }
 
 static bool
@@ -1416,7 +1573,70 @@ static bool
 Extras_ClickRadioButton(Widget *w)
 {
 	extras_page = w->index - 20;
+	assert(extras_page <= EXTRASMENU_MAX);
+
+	switch (extras_page) {
+		case EXTRASMENU_CUTSCENE:
+			PickCutscene_Initialise();
+			break;
+
+		case EXTRASMENU_GALLERY:
+			PickGallery_Initialise();
+			break;
+
+		default:
+			break;
+	}
+
+	Extras_ShowScrollbar();
+
 	return true;
+}
+
+static enum MenuAction
+Extras_Loop(MentatState *mentat)
+{
+	static ScrollbarItem *last_si;
+
+	const int64_t curr_ticks = Timer_GetTicks();
+	enum MenuAction res = MENU_EXTRAS;
+	bool redraw = false;
+
+	int widgetID = GUI_Widget_HandleEvents(extras_widgets);
+
+	/* If we changed the extras menu page. */
+	if (0x8000 + 20 <= widgetID && widgetID < 0x8000 + 20 + EXTRASMENU_MAX)
+		return MENU_REDRAW | MENU_EXTRAS;
+
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	if ((widgetID & 0x8000) == 0)
+		Scrollbar_HandleEvent(w, widgetID);
+
+	switch (extras_page) {
+		case EXTRASMENU_CUTSCENE:
+			res = PickCutscene_Loop(widgetID);
+			break;
+
+		case EXTRASMENU_GALLERY:
+			res = PickGallery_Loop(mentat, widgetID);
+			break;
+
+		default:
+			break;
+	}
+
+	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
+	if (last_si != si) {
+		last_si = si;
+		redraw = true;
+	}
+
+	if (curr_ticks - mentat->speaking_timer >= 3) {
+		mentat->speaking_timer = curr_ticks;
+		redraw = true;
+	}
+
+	return (redraw ? MENU_REDRAW : 0) | res;
 }
 
 /*--------------------------------------------------------------*/
@@ -1519,7 +1739,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_EXTRAS:
-					PickCutscene_Initialise();
+					Extras_Initialise();
 					break;
 
 				case MENU_STRATEGIC_MAP:
@@ -1562,7 +1782,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_EXTRAS:
-					PickCutscene_Draw();
+					Extras_Draw(&g_mentat_state);
 					break;
 
 				case MENU_STRATEGIC_MAP:
@@ -1650,7 +1870,7 @@ Menu_Run(void)
 				break;
 
 			case MENU_EXTRAS:
-				res = PickCutscene_Loop(&g_mentat_state);
+				res = Extras_Loop(&g_mentat_state);
 				break;
 
 			case MENU_PLAY_CUTSCENE:
