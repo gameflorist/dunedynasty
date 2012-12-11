@@ -66,6 +66,9 @@ static MusicInfo g_table_music_intro[] = {
 	ADD_MUSIC_FROM_RCBLANKE_SC55("intro"),
 	ADD_MUSIC_FROM_D2TM_MT32    ("intro"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("intro", 1.0f),
+
+	/* Sega Mega Drive intro music doesn't match. */
+	{ 0, MUSICSET_DUNE2_SMD,    "music/" DUNE2_SMD_PREFIX "/01_intro", 0, 0.50f },
 };
 
 static MusicInfo g_table_music_cutscene[] = {
