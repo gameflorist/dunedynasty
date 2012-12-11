@@ -404,12 +404,13 @@ Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *
 	if (str == NULL)
 		return;
 
-	Config_GetFloat(str, 0.0f, 2.0f, &ext->volume);
+	Config_GetFloat(str, -2.0f, 2.0f, &ext->volume);
 
 	if (ext->volume > 0.0f) {
 		ext->enable |= MUSIC_WANT;
 	}
 	else {
+		ext->volume = -ext->volume;
 		ext->enable &=~MUSIC_WANT;
 	}
 }
