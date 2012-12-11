@@ -164,6 +164,7 @@ GUI_Mentat_Draw(bool force)
 
 	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECT_SUBJECT), g_curWidgetXBase + 16, g_curWidgetYBase + 2, 12, 0, 0x12);
 
+	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 3));
 	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 15));
 	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 16));
 	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 17));

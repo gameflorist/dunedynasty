@@ -12,6 +12,7 @@
 #include "../shape.h"
 #include "../string.h"
 #include "../table/strings.h"
+#include "../video/video.h"
 
 static ScrollbarItem *s_scrollbar_item;
 static int s_scrollbar_max_items;
@@ -419,10 +420,16 @@ Scrollbar_Click(Widget *w)
 	return false;
 }
 
-void
-Scrollbar_DrawItems(Widget *w)
+static void
+ScrollListArea_Draw(Widget *w)
 {
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+	const WidgetProperties *wi = &g_widgetProperties[w->parentID];
+	const Widget *scrollbar = GUI_Widget_Get_ByIndex(w, 15);
 	const WidgetScrollbar *ws = w->data;
+
+	Video_SetClippingArea(div->scalex * wi->xBase + div->x, div->scaley * wi->yBase + div->y,
+			div->scalex * scrollbar->offsetX, div->scaley * wi->height);
 
 	for (int i = 0; i < ws->scrollPageSize; i++) {
 		const int n = ws->scrollPosition + i;
@@ -431,21 +438,22 @@ Scrollbar_DrawItems(Widget *w)
 			break;
 
 		const ScrollbarItem *si = &s_scrollbar_item[n];
-		const int y = g_widgetProperties[w->parentID].yBase + 16 + 8 * i;
-		int x = g_widgetProperties[w->parentID].xBase;
+		const int y = wi->yBase + w->offsetY + 8 * i;
+		int x = wi->xBase + w->offsetX;
 		uint8 colour;
 
 		if (si->type == SCROLLBAR_CATEGORY) {
-			x += 16;
+			x -= 8;
 			colour = 11;
 		}
 		else {
-			x += 24;
 			colour = (n == s_selectedHelpSubject) ? 8 : 15;
 		}
 
 		GUI_DrawText_Wrapper(si->text, x, y, colour, 0, 0x11);
 	}
+
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
 
 static bool
@@ -478,10 +486,12 @@ ScrollListArea_Allocate(Widget *scrollbar)
 
 	w->clickProc = &ScrollListArea_Click;
 
-	w->drawParameterNormal.text = String_Get_ByIndex(STR_NULL);
-	w->drawParameterSelected.text = w->drawParameterNormal.text;
-	w->drawParameterDown.text = w->drawParameterNormal.text;
-	w->drawModeNormal = DRAW_MODE_TEXT;
+	w->drawParameterNormal.proc = ScrollListArea_Draw;
+	w->drawParameterSelected.proc = w->drawParameterNormal.proc;
+	w->drawParameterDown.proc = w->drawParameterNormal.proc;
+	w->drawModeNormal = DRAW_MODE_CUSTOM_PROC;
+	w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;
+	w->drawModeDown = DRAW_MODE_CUSTOM_PROC;
 
 	w->state.all = 0;
 

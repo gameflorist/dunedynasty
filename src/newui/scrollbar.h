@@ -27,7 +27,6 @@ extern bool Scrollbar_ArrowUp_Click(Widget *w);
 extern bool Scrollbar_ArrowDown_Click(Widget *w);
 extern void Scrollbar_HandleEvent(Widget *w, int key);
 extern bool Scrollbar_Click(Widget *w);
-extern void Scrollbar_DrawItems(Widget *w);
 
 extern Widget *ScrollListArea_Allocate(Widget *scrollbar);
 

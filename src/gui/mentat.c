@@ -783,7 +783,7 @@ void GUI_Mentat_Create_HelpScreen_Widgets(void)
 	free(g_widgetMentatScrollUp); g_widgetMentatScrollUp = NULL;
 	free(g_widgetMentatScrollDown); g_widgetMentatScrollDown = NULL;
 
-	g_widgetMentatScrollbar = GUI_Widget_Allocate_WithScrollbar(15, 8, 168, 24, 8, 72, &Scrollbar_DrawItems);
+	g_widgetMentatScrollbar = GUI_Widget_Allocate_WithScrollbar(15, 8, 168, 24, 8, 72, NULL);
 
 	g_widgetMentatTail = ScrollListArea_Allocate(g_widgetMentatScrollbar);
 	g_widgetMentatTail = GUI_Widget_Link(g_widgetMentatTail, g_widgetMentatScrollbar);
