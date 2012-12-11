@@ -38,7 +38,7 @@ char sound_font_path[1024];
 
 enum MusicSet default_music_pack;
 static MusicInfo *curr_music;
-static char music_message[128];
+char music_message[128];
 
 static enum SampleSet s_curr_sample_set = SAMPLESET_INVALID;
 
@@ -157,6 +157,7 @@ Audio_PlayMusic(enum MusicID musicID)
 
 	if (musicID == MUSIC_STOP) {
 		curr_music = NULL;
+		music_message[0] = '\0';
 		return;
 	}
 
@@ -205,6 +206,15 @@ Audio_PlayMusic(enum MusicID musicID)
 			}
 		}
 	}
+
+	Audio_PlayMusicFile(l, m);
+}
+
+void
+Audio_PlayMusicFile(const MusicList *l, MusicInfo *m)
+{
+	if (!g_enable_audio)
+		return;
 
 	if (m->music_set <= MUSICSET_FLUIDSYNTH) {
 		AudioA5_InitInternalMusic(m);

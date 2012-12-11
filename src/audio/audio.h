@@ -23,10 +23,12 @@ extern float voice_volume;
 extern bool g_opl_mame;
 extern char sound_font_path[1024];
 extern enum MusicSet default_music_pack;
+extern char music_message[128];
 
 extern void Audio_DisplayMusicName(void);
 extern void Audio_ScanMusic(void);
 extern void Audio_PlayMusic(enum MusicID musicID);
+extern void Audio_PlayMusicFile(const MusicList *l, MusicInfo *m);
 extern void Audio_PlayMusicIfSilent(enum MusicID musicID);
 extern void Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only);
 extern void Audio_PlayEffect(enum SoundID effectID);

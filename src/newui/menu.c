@@ -1294,7 +1294,6 @@ PickCutscene_Loop(int widgetID)
 		case SCANCODE_KEYPAD_5:
 		case SCANCODE_SPACE:
 			/* Fade in/out between playing cutscenes. */
-			Audio_PlayMusic(MUSIC_STOP);
 			return MENU_PLAY_CUTSCENE;
 	}
 
@@ -1479,6 +1478,123 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 /*--------------------------------------------------------------*/
 
 static void
+PickMusic_Initialise(void)
+{
+	const struct {
+		enum MusicID start, end;
+		const char *name;
+	} category[] = {
+		{ MUSIC_IDLE1, MUSIC_BONUS, "Idle" },
+		{ MUSIC_ATTACK1, MUSIC_ATTACK6, "Attack" },
+		{ MUSIC_BRIEFING_HARKONNEN, MUSIC_END_GAME_ORDOS, "Mentat" },
+		{ MUSIC_LOGOS, MUSIC_CREDITS, "Other" },
+	};
+
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	WidgetScrollbar *ws = w->data;
+	ScrollbarItem *si;
+
+	ws->scrollMax = 0;
+
+	for (unsigned int c = 0; c < lengthof(category); c++) {
+		bool lump_together = true;
+
+		for (enum MusicID musicID = category[c].start; musicID <= category[c].end; musicID++) {
+			if (g_table_music[musicID].count_found > 1) {
+				lump_together = false;
+				break;
+			}
+		}
+
+		if (lump_together) {
+			si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+			snprintf(si->text, sizeof(si->text), "%s", category[c].name);
+		}
+
+		for (enum MusicID musicID = category[c].start; musicID <= category[c].end; musicID++) {
+			const MusicList *l = &g_table_music[musicID];
+
+			if (l->count_found == 0)
+				continue;
+
+			if (!lump_together) {
+				si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+				snprintf(si->text, sizeof(si->text), "%s", l->songname);
+			}
+
+			for (int s = 0; s < l->length; s++) {
+				const MusicInfo *m = &l->song[s];
+
+				if (!(m->enable & MUSIC_FOUND))
+					continue;
+
+				si = Scrollbar_AllocItem(w, SCROLLBAR_ITEM);
+				si->offset = (s << 8) | musicID;
+				si->no_desc = false;
+
+				if (m->songname != NULL) {
+					snprintf(si->text, sizeof(si->text), "%s", m->songname);
+				}
+				else if (lump_together) {
+					const char *str = l->songname;
+
+					if (strncmp(l->songname, category[c].name, strlen(category[c].name)) == 0) {
+						str += strlen(category[c].name) + 5;
+					}
+
+					snprintf(si->text, sizeof(si->text), "%s", str);
+				}
+				else {
+					snprintf(si->text, sizeof(si->text), "%s", g_table_music_set[m->music_set].name);
+				}
+			}
+		}
+	}
+
+	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 11, 0);
+}
+
+static void
+PickMusic_Draw(void)
+{
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+
+	Video_SetClippingArea(div->scalex * 128 + div->x, div->scaley * 23 + div->y, div->scalex * 184, div->scaley * 10);
+	GUI_DrawText_Wrapper(music_message, 128, 23, 12, 0, 0x12);
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+}
+
+static enum MenuAction
+PickMusic_Loop(int widgetID)
+{
+	Widget *scrollbar = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	ScrollbarItem *si;
+
+	switch (widgetID) {
+		case 0x8000 | 1: /* exit. */
+			return MENU_MAIN_MENU;
+
+		case 0x8000 | 3: /* list entry. */
+		case SCANCODE_ENTER:
+		case SCANCODE_KEYPAD_5:
+		case SCANCODE_SPACE:
+			si = Scrollbar_GetSelectedItem(scrollbar);
+			if (si->type == SCROLLBAR_CATEGORY)
+				break;
+
+			const enum MusicID musicID = (si->offset & 0xFF);
+			const int s = (si->offset >> 8);
+
+			Audio_PlayMusicFile(&g_table_music[musicID], &g_table_music[musicID].song[s]);
+			break;
+	}
+
+	return MENU_EXTRAS;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
 Extras_ShowScrollbar(void)
 {
 	/* Show scroll list. */
@@ -1535,7 +1651,12 @@ Extras_DrawRadioButton(Widget *w)
 	};
 	assert(page <= EXTRASMENU_MAX);
 
-	Shape_Draw(shapeID[page], w->offsetX, w->offsetY, 0, 0);
+	if (page == EXTRASMENU_JUKEBOX && !g_enable_audio) {
+		Shape_DrawGrey(shapeID[page], w->offsetX, w->offsetY, 0, 0);
+	}
+	else {
+		Shape_Draw(shapeID[page], w->offsetX, w->offsetY, 0, 0);
+	}
 
 	if (page == extras_page)
 		ActionPanel_HighlightIcon(HOUSE_HARKONNEN, w->offsetX, w->offsetY, false);
@@ -1572,6 +1693,15 @@ Extras_Draw(MentatState *mentat)
 			}
 			break;
 
+		case EXTRASMENU_JUKEBOX:
+			if (g_enable_audio) {
+				headline = "Select a Song:";
+			}
+			else {
+				GUI_DrawText_Wrapper("MUSIC IS OFF", 220, 99, 6, 0, 0x132);
+			}
+			break;
+
 		default:
 			break;
 	}
@@ -1580,6 +1710,9 @@ Extras_Draw(MentatState *mentat)
 		const WidgetProperties *wi = &g_widgetProperties[WINDOWID_STARPORT_INVOICE];
 		GUI_DrawText_Wrapper(headline, wi->xBase + 16, wi->yBase + 2, 12, 0, 0x12);
 	}
+
+	if ((extras_page != EXTRASMENU_GALLERY) || (mentat->wsa == NULL))
+		PickMusic_Draw();
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
 	GUI_Widget_DrawAll(extras_widgets);
@@ -1627,6 +1760,15 @@ Extras_ClickRadioButton(Widget *w)
 			PickGallery_Initialise();
 			break;
 
+		case EXTRASMENU_JUKEBOX:
+			if (!g_enable_audio) {
+				Extras_HideScrollbar();
+				return true;
+			}
+
+			PickMusic_Initialise();
+			break;
+
 		default:
 			break;
 	}
@@ -1664,8 +1806,17 @@ Extras_Loop(MentatState *mentat)
 			res = PickGallery_Loop(mentat, widgetID);
 			break;
 
+		case EXTRASMENU_JUKEBOX:
+			res = PickMusic_Loop(widgetID);
+			break;
+
 		default:
 			break;
+	}
+
+	if ((res & 0xFF) != MENU_EXTRAS) {
+		/* XXX : should only stop if not menu music. */
+		Audio_PlayMusic(MUSIC_STOP);
 	}
 
 	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
