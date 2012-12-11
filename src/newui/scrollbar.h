@@ -22,6 +22,8 @@ extern Widget *Scrollbar_Allocate(Widget *list, enum WindowID parentID, bool set
 extern ScrollbarItem *Scrollbar_AllocItem(Widget *w, enum ScrollbarItemType type);
 extern void Scrollbar_FreeItems(void);
 extern ScrollbarItem *Scrollbar_GetSelectedItem(const Widget *w);
+extern void Scrollbar_CycleUp(Widget *w);
+extern void Scrollbar_CycleDown(Widget *w);
 extern bool Scrollbar_ArrowUp_Click(Widget *w);
 extern bool Scrollbar_ArrowDown_Click(Widget *w);
 extern void Scrollbar_HandleEvent(Widget *w, int key);

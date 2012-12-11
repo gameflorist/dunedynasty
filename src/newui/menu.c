@@ -1415,6 +1415,22 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 				mentat->wsa = NULL;
 				Extras_ShowScrollbar();
 				break;
+
+			case SCANCODE_KEYPAD_4: /* NUMPAD 4 / ARROW LEFT */
+			case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
+			case SCANCODE_KEYPAD_9: /* NUMPAD 9 / PAGE UP */
+			case SCANCODE_BACKSPACE:
+				Scrollbar_CycleUp(w);
+				perform_selection = true;
+				break;
+
+			case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
+			case SCANCODE_KEYPAD_3: /* NUMPAD 3 / PAGE DOWN */
+			case SCANCODE_KEYPAD_6: /* NUMPAD 6 / ARROW RIGHT */
+			case SCANCODE_SPACE:
+				Scrollbar_CycleDown(w);
+				perform_selection = true;
+				break;
 		}
 	}
 
@@ -1617,7 +1633,7 @@ Extras_Loop(MentatState *mentat)
 		return MENU_REDRAW | MENU_EXTRAS;
 
 	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
-	if ((widgetID & 0x8000) == 0)
+	if ((widgetID & 0x8000) == 0 && !(extras_page == EXTRASMENU_GALLERY && mentat->wsa != NULL))
 		Scrollbar_HandleEvent(w, widgetID);
 
 	switch (extras_page) {

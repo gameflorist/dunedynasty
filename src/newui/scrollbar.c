@@ -320,6 +320,40 @@ Scrollbar_SelectDown(Widget *w)
 	Scrollbar_Clamp(ws);
 }
 
+void
+Scrollbar_CycleUp(Widget *w)
+{
+	WidgetScrollbar *ws = w->data;
+
+	do {
+		if (s_selectedHelpSubject == 0) {
+			s_selectedHelpSubject = ws->scrollMax - 1;
+			ws->scrollPosition = ws->scrollMax - ws->scrollPageSize;
+			GUI_Widget_Scrollbar_CalculatePosition(ws);
+		}
+		else {
+			Scrollbar_SelectUp(w);
+		}
+	} while (Scrollbar_GetSelectedItem(w)->type == SCROLLBAR_CATEGORY);
+}
+
+void
+Scrollbar_CycleDown(Widget *w)
+{
+	WidgetScrollbar *ws = w->data;
+
+	do {
+		if (s_selectedHelpSubject == ws->scrollMax - 1) {
+			s_selectedHelpSubject = 0;
+			ws->scrollPosition = 0;
+			GUI_Widget_Scrollbar_CalculatePosition(ws);
+		}
+		else {
+			Scrollbar_SelectDown(w);
+		}
+	} while (Scrollbar_GetSelectedItem(w)->type == SCROLLBAR_CATEGORY);
+}
+
 bool
 Scrollbar_ArrowUp_Click(Widget *w)
 {
