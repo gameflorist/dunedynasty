@@ -96,6 +96,9 @@ static MusicInfo g_table_music_main_menu[] = {
 	ADD_MUSIC_FROM_D2TM_SC55    ("menu", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("12_chosendestiny"),
 	ADD_MUSIC_FROM_DUNE2000     ("OPTIONS", 1.0f),
+
+	/* Dune 2000 battle summary as alternative menu music. */
+	{ 0, MUSICSET_DUNE2000,     "music/" DUNE2000_PREFIX "/SCORE", 0, 1.0f },
 };
 
 static MusicInfo g_table_music_strategic_map[] = {
