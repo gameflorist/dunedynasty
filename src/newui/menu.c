@@ -178,7 +178,7 @@ MainMenu_InitWidgets(void)
 static void
 PickHouse_InitWidgets(void)
 {
-	const struct {
+	struct {
 		uint16 index;
 		int x, y;
 		int w, h;
@@ -194,6 +194,13 @@ PickHouse_InitWidgets(void)
 		{ 16, 196, 180, 5, 10, SCANCODE_KEYPAD_6 },
 		{ 10, 118, 180, 196 + 5 - 118, 10, 0 },
 	};
+
+	const int width = Font_GetStringWidth("Start level: 9");
+
+	menuitem[6].x = (SCREEN_WIDTH - width) / 2 - 6;
+	menuitem[7].x = (SCREEN_WIDTH + width) / 2;
+	menuitem[8].x = menuitem[6].x;
+	menuitem[8].w = menuitem[7].x + 5 - menuitem[6].x;
 
 	for (unsigned int i = 0; i < lengthof(menuitem); i++) {
 		Widget *w;
@@ -663,9 +670,22 @@ PickHouse_Draw(void)
 	const Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, 10);
 	uint8 fg = (w->state.s.hover1) ? 130 : 133;
 
-	GUI_DrawText_Wrapper("Start level: %d", (SCREEN_WIDTH - 72) / 2, SCREEN_HEIGHT - 20, fg, 0, 0x22, g_campaignID + 1);
-	Prim_FillTriangle(119.5f, 184.5f, 122.0f, 182.0f, 122.0f, 187.0f, fg);
-	Prim_FillTriangle(198.5f, 182.0f, 201.5f, 184.5f, 198.5f, 187.0f, fg);
+	/* Width is 70/72 with the EU font, 73-75 with the US font. */
+	const float y1 = 182.0f;
+	const float y2 = 184.5f;
+	const float y3 = 187.0f;
+	const int width = Font_GetStringWidth("Start level: 9");
+	float xl, xr;
+
+	GUI_DrawText_Wrapper("Start level: %d", (SCREEN_WIDTH - width) / 2, SCREEN_HEIGHT - 20, fg, 0, 0x22, g_campaignID + 1);
+
+	xr = (SCREEN_WIDTH - width) / 2 - 2.5f;
+	xl = xr - 2.5f;
+	Prim_FillTriangle(xl, y2, xr, y1, xr, y3, fg);
+
+	xl = (SCREEN_WIDTH + width) / 2 + 2.5f;
+	xr = xl + 3.0f;
+	Prim_FillTriangle(xr, y2, xl, y1, xl, y3, fg);
 }
 
 static int
