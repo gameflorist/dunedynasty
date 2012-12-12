@@ -250,7 +250,6 @@ static MusicInfo g_table_music_idle2[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace5", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace2"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace5", 1.0f),
-	ADD_MUSIC_FROM_DUNE2000     ("SPICESCT", "Spice Scouting"),
 };
 
 static MusicInfo g_table_music_idle3[] = {
@@ -261,7 +260,6 @@ static MusicInfo g_table_music_idle3[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace4", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace3"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace4", 1.0f),
-	ADD_MUSIC_FROM_DUNE2_SMD    ("07_spicetrip", "Spice Trip"),
 	ADD_MUSIC_FROM_DUNE2000     ("RISEHARK", "Rise of Harkonnen"),
 };
 
@@ -283,7 +281,6 @@ static MusicInfo g_table_music_idle5[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace9", 1.0f),
 	ADD_MUSIC_FROM_D2TM_MT32    ("peace5"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("peace9", 1.0f),
-	ADD_MUSIC_FROM_DUNE2_SMD    ("06_turbulence", "Turbulence"),
 	ADD_MUSIC_FROM_DUNE2000     ("UNDERCON", "Under Construction"),
 };
 
@@ -330,6 +327,8 @@ static MusicInfo g_table_music_idle9[] = {
 
 static MusicInfo g_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2_SMD    ("05_thelegotune", "The LEGO Tune"),
+	ADD_MUSIC_FROM_DUNE2_SMD    ("06_turbulence", "Turbulence"),
+	ADD_MUSIC_FROM_DUNE2_SMD    ("07_spicetrip", "Spice Trip"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("08_commandpost", "Command Post"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("09_trenching", "Trenching"),
 	ADD_MUSIC_FROM_DUNE2000     ("AMBUSH",   "The Ambush"),
@@ -339,6 +338,7 @@ static MusicInfo g_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2000     ("PLOTTING", "Plotting"),
 	ADD_MUSIC_FROM_DUNE2000     ("ROBOTIX",  "Robotix"),
 	ADD_MUSIC_FROM_DUNE2000     ("SOLDAPPR", "The Soldiers Approach"),
+	ADD_MUSIC_FROM_DUNE2000     ("SPICESCT", "Spice Scouting"),
 	ADD_MUSIC_FROM_DUNE2000     ("WAITGAME", "The Waiting Game"),
 };
 
@@ -417,10 +417,10 @@ MusicList g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_LIST(g_table_music_stop,  NULL),
 	ADD_MUSIC_LIST(g_table_music_logos, "Title Screen"),
 	ADD_MUSIC_LIST(g_table_music_intro, "Introduction"),
-	ADD_MUSIC_LIST(g_table_music_cutscene,  "The Long Sleep"),
-	ADD_MUSIC_LIST(g_table_music_credits,   "Credits"),
 	ADD_MUSIC_LIST(g_table_music_main_menu, "Hope Fades"),
 	ADD_MUSIC_LIST(g_table_music_strategic_map, "Destructive Minds"),
+	ADD_MUSIC_LIST(g_table_music_cutscene,  "The Long Sleep"),
+	ADD_MUSIC_LIST(g_table_music_credits,   "Credits"),
 	ADD_MUSIC_LIST(g_table_music_briefing_harkonnen,"Arid Sands"),
 	ADD_MUSIC_LIST(g_table_music_briefing_atreides, "The Council"),
 	ADD_MUSIC_LIST(g_table_music_briefing_ordos,    "Ordos Briefing"),
