@@ -126,6 +126,8 @@ typedef struct WidgetScrollbar {
 	uint8  dirty;                                           /*!< If non-zero, the scrollbar is dirty (requires repaint). */
 	uint16 pressedPosition;                                 /*!< Position where we clicked on the scrollbar when pressed. */
 	ScrollbarDrawProc *drawProc;                            /*!< Draw proc (called on every draw). Can be null. */
+
+	int itemHeight;
 } WidgetScrollbar;
 
 /**

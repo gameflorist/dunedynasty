@@ -6,6 +6,7 @@
 enum ScrollbarItemType {
 	SCROLLBAR_CATEGORY,
 	SCROLLBAR_ITEM,
+	SCROLLBAR_CHECKBOX,
 };
 
 typedef struct ScrollbarItem {
@@ -13,6 +14,7 @@ typedef struct ScrollbarItem {
 	enum ScrollbarItemType type;
 	uint32 offset;
 	bool no_desc;
+	bool *checkbox;
 } ScrollbarItem;
 
 extern void GUI_Widget_Scrollbar_Init(Widget *w, int16 scrollMax, int16 scrollPageSize, int16 scrollPosition);

@@ -1269,6 +1269,7 @@ PickCutscene_Initialise(void)
 	WidgetScrollbar *ws = w->data;
 	ScrollbarItem *si;
 
+	ws->itemHeight = 8;
 	ws->scrollMax = 0;
 
 	for (int i = 0; cutscenes[i].text != NULL; i++) {
@@ -1337,6 +1338,9 @@ static void
 PickGallery_Initialise(void)
 {
 	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	WidgetScrollbar *ws = w->data;
+
+	ws->itemHeight = 8;
 
 	/* Note: Use Harkonnen list which contains the Sardaukar and Frigate entries. */
 	Mentat_LoadHelpSubjects(w, true, SEARCHDIR_GLOBAL_DATA_DIR, HOUSE_HARKONNEN, 9, true);
@@ -1494,6 +1498,7 @@ PickMusic_Initialise(void)
 	WidgetScrollbar *ws = w->data;
 	ScrollbarItem *si;
 
+	ws->itemHeight = 8;
 	ws->scrollMax = 0;
 
 	for (unsigned int c = 0; c < lengthof(category); c++) {
@@ -1618,6 +1623,71 @@ PickMusic_Loop(MentatState *mentat, int widgetID)
 /*--------------------------------------------------------------*/
 
 static void
+Options_Initialise(void)
+{
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	WidgetScrollbar *ws = w->data;
+	ScrollbarItem *si;
+
+	ws->itemHeight = 14;
+	ws->scrollMax = 0;
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->checkbox = &enhancement_brutal_ai;
+	snprintf(si->text, sizeof(si->text), "Brutal AI");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->checkbox = &enhancement_fog_of_war;
+	snprintf(si->text, sizeof(si->text), "Fog of war");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->checkbox = &enhancement_insatiable_sandworms;
+	snprintf(si->text, sizeof(si->text), "Insatiable sandworms");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->checkbox = &enhancement_raise_scenario_unit_cap;
+	snprintf(si->text, sizeof(si->text), "Raise scenario unit cap");
+
+	bool dummy = true;
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->checkbox = &dummy;
+	snprintf(si->text, sizeof(si->text), "Hardware mouse cursor");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->checkbox = &enhancement_infantry_squad_death_animations;
+	snprintf(si->text, sizeof(si->text), "Infantry squad corpses");
+
+	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
+}
+
+static enum MenuAction
+Options_Loop(int widgetID)
+{
+	Widget *scrollbar = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	ScrollbarItem *si;
+
+	switch (widgetID) {
+		case 0x8000 | 1: /* exit. */
+			return MENU_MAIN_MENU;
+
+		case 0x8000 | 3: /* list entry. */
+		case SCANCODE_ENTER:
+		case SCANCODE_KEYPAD_5:
+		case SCANCODE_SPACE:
+			si = Scrollbar_GetSelectedItem(scrollbar);
+			if ((si != NULL) && (si->type == SCROLLBAR_CHECKBOX)) {
+				*(si->checkbox) = !(*(si->checkbox));
+			}
+
+			break;
+	}
+
+	return MENU_EXTRAS;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
 Extras_ShowScrollbar(void)
 {
 	/* Show scroll list. */
@@ -1726,6 +1796,10 @@ Extras_Draw(MentatState *mentat)
 			}
 			break;
 
+		case EXTRASMENU_OPTIONS:
+			headline = "Enhancement Options:";
+			break;
+
 		default:
 			break;
 	}
@@ -1793,6 +1867,10 @@ Extras_ClickRadioButton(Widget *w)
 			PickMusic_Initialise();
 			break;
 
+		case EXTRASMENU_OPTIONS:
+			Options_Initialise();
+			break;
+
 		default:
 			break;
 	}
@@ -1833,6 +1911,10 @@ Extras_Loop(MentatState *mentat)
 
 		case EXTRASMENU_JUKEBOX:
 			res = PickMusic_Loop(mentat, widgetID);
+			break;
+
+		case EXTRASMENU_OPTIONS:
+			res = Options_Loop(widgetID);
 			break;
 
 		default:

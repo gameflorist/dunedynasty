@@ -130,6 +130,7 @@ GUI_Widget_Allocate_WithScrollbar(uint16 index, enum WindowID parentID,
 	ws->dirty          = 0;
 
 	ws->drawProc = drawProc;
+	ws->itemHeight = 8;
 
 	GUI_Widget_Scrollbar_CalculateSize(ws);
 	GUI_Widget_Scrollbar_CalculatePosition(ws);
@@ -250,6 +251,7 @@ Scrollbar_AllocItem(Widget *w, enum ScrollbarItemType type)
 
 	ScrollbarItem *si = &s_scrollbar_item[i];
 	si->type = type;
+	si->checkbox = NULL;
 	return si;
 }
 
@@ -266,8 +268,9 @@ ScrollbarItem *
 Scrollbar_GetSelectedItem(const Widget *w)
 {
 	const WidgetScrollbar *ws = w->data;
-	assert(0 <= s_selectedHelpSubject && s_selectedHelpSubject < ws->scrollMax);
-	VARIABLE_NOT_USED(ws);
+
+	if (!(0 <= s_selectedHelpSubject && s_selectedHelpSubject < ws->scrollMax))
+		return NULL;
 
 	return &s_scrollbar_item[s_selectedHelpSubject];
 }
@@ -294,6 +297,9 @@ Scrollbar_Clamp(const WidgetScrollbar *ws)
 
 	if (s_selectedHelpSubject > ws->scrollPosition + ws->scrollPageSize - 1)
 		s_selectedHelpSubject = ws->scrollPosition + ws->scrollPageSize - 1;
+
+	if (s_selectedHelpSubject > ws->scrollMax - 1)
+		s_selectedHelpSubject = ws->scrollMax - 1;
 }
 
 static void
@@ -502,19 +508,31 @@ ScrollListArea_Draw(Widget *w)
 			break;
 
 		const ScrollbarItem *si = &s_scrollbar_item[n];
-		const int y = wi->yBase + w->offsetY + 8 * i;
+		const int y = wi->yBase + w->offsetY + ws->itemHeight * i;
 		int x = wi->xBase + w->offsetX;
 		uint8 colour;
 
-		if (si->type == SCROLLBAR_CATEGORY) {
-			x -= 8;
-			colour = 11;
-		}
-		else {
-			colour = (n == s_selectedHelpSubject) ? 8 : 15;
-		}
+		switch (si->type) {
+			case SCROLLBAR_CATEGORY:
+				colour = 11;
+				GUI_DrawText_Wrapper(si->text, x - 8, y, colour, 0, 0x11);
+				break;
 
-		GUI_DrawText_Wrapper(si->text, x, y, colour, 0, 0x11);
+			case SCROLLBAR_ITEM:
+				colour = (n == s_selectedHelpSubject) ? 8 : 15;
+				GUI_DrawText_Wrapper(si->text, x, y, colour, 0, 0x11);
+				break;
+
+			case SCROLLBAR_CHECKBOX:
+				colour = (n == s_selectedHelpSubject) ? 8 : 31;
+				Prim_Rect_i(x, y, x + 8, y + 8, colour);
+
+				if (*(si->checkbox))
+					GUI_DrawText_Wrapper("x", x + 1, y + 1, colour, 0, 0x11);
+
+				GUI_DrawText_Wrapper(si->text, x + 14, y, colour, 0, 0x12);
+				break;
+		}
 	}
 
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
@@ -527,7 +545,7 @@ ScrollListArea_Click(Widget *w)
 	WidgetScrollbar *ws = w->data;
 
 	if (wi->yBase + w->offsetY <= g_mouseY && g_mouseY < wi->yBase + w->offsetY + w->height) {
-		const int y = (g_mouseY - w->offsetY - wi->yBase) / 8;
+		const int y = (g_mouseY - w->offsetY - wi->yBase) / ws->itemHeight;
 
 		if (ws->scrollPosition + y < ws->scrollMax)
 			s_selectedHelpSubject = ws->scrollPosition + y;
