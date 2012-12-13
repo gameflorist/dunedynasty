@@ -19,15 +19,14 @@ static int s_selectedHelpSubject;
 
 /*--------------------------------------------------------------*/
 
-static uint16
+static void
 GUI_Widget_Scrollbar_CalculateSize(WidgetScrollbar *scrollbar)
 {
 	Widget *w;
 	uint16 size;
 
 	w = scrollbar->parent;
-
-	if (w == NULL) return 0;
+	if (w == NULL) return;
 
 	if (scrollbar->scrollMax <= 0) {
 		size = (max(w->width, w->height) - 2);
@@ -40,18 +39,16 @@ GUI_Widget_Scrollbar_CalculateSize(WidgetScrollbar *scrollbar)
 		scrollbar->size = size;
 		scrollbar->dirty = 1;
 	}
-
-	return size;
 }
 
-static uint16
+static void
 GUI_Widget_Scrollbar_CalculatePosition(WidgetScrollbar *scrollbar)
 {
 	Widget *w;
 	uint16 position;
 
 	w = scrollbar->parent;
-	if (w == NULL) return 0xFFFF;
+	if (w == NULL) return;
 
 	position = scrollbar->scrollMax - scrollbar->scrollPageSize;
 
@@ -61,17 +58,15 @@ GUI_Widget_Scrollbar_CalculatePosition(WidgetScrollbar *scrollbar)
 		scrollbar->position = position;
 		scrollbar->dirty = 1;
 	}
-
-	return position;
 }
 
-static uint16
+static void
 GUI_Widget_Scrollbar_CalculateScrollPosition(WidgetScrollbar *scrollbar)
 {
 	Widget *w;
 
 	w = scrollbar->parent;
-	if (w == NULL) return 0xFFFF;
+	if (w == NULL) return;
 
 	if (scrollbar->scrollMax - scrollbar->scrollPageSize <= 0) {
 		scrollbar->scrollPosition = 0;
@@ -79,8 +74,6 @@ GUI_Widget_Scrollbar_CalculateScrollPosition(WidgetScrollbar *scrollbar)
 	else {
 		scrollbar->scrollPosition = scrollbar->position * (scrollbar->scrollMax - scrollbar->scrollPageSize) / (max(w->width, w->height) - 2 - scrollbar->size);
 	}
-
-	return scrollbar->scrollPosition;
 }
 
 Widget *
@@ -181,26 +174,13 @@ GUI_Widget_Allocate3(uint16 index, enum WindowID parentID, uint16 offsetX, uint1
 	return w;
 }
 
-static uint16
-GUI_Get_Scrollbar_Position(Widget *w)
-{
-	WidgetScrollbar *ws;
-
-	if (w == NULL) return 0xFFFF;
-
-	ws = w->data;
-	return ws->scrollPosition;
-}
-
-uint16
+void
 GUI_Widget_Scrollbar_Init(Widget *w, int16 scrollMax, int16 scrollPageSize, int16 scrollPosition)
 {
 	WidgetScrollbar *scrollbar;
-	uint16 position;
 
-	if (w == NULL) return 0xFFFF;
+	if (w == NULL) return;
 
-	position = GUI_Get_Scrollbar_Position(w);
 	scrollbar = w->data;
 
 	if (scrollMax > 0) scrollbar->scrollMax = scrollMax;
@@ -209,8 +189,6 @@ GUI_Widget_Scrollbar_Init(Widget *w, int16 scrollMax, int16 scrollPageSize, int1
 
 	GUI_Widget_Scrollbar_CalculateSize(scrollbar);
 	GUI_Widget_Scrollbar_CalculatePosition(scrollbar);
-
-	return position;
 }
 
 void

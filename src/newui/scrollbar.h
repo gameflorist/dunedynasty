@@ -12,7 +12,7 @@ typedef struct ScrollbarItem {
 
 extern Widget *GUI_Widget_Allocate_WithScrollbar(uint16 index, enum WindowID parentID, uint16 offsetX, uint16 offsetY, int16 width, int16 height, ScrollbarDrawProc *drawProc);
 extern Widget *GUI_Widget_Allocate3(uint16 index, enum WindowID parentID, uint16 offsetX, uint16 offsetY, uint16 sprite1, uint16 sprite2, Widget *widget2, uint16 unknown1A);
-extern uint16 GUI_Widget_Scrollbar_Init(Widget *w, int16 scrollMax, int16 scrollPageSize, int16 scrollPosition);
+extern void GUI_Widget_Scrollbar_Init(Widget *w, int16 scrollMax, int16 scrollPageSize, int16 scrollPosition);
 extern void GUI_Widget_Free_WithScrollbar(Widget *w);
 
 extern ScrollbarItem *Scrollbar_AllocItem(Widget *w);
