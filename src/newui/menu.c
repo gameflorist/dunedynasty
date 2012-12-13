@@ -1224,12 +1224,11 @@ PickCutscene_Initialise(void)
 	ws->scrollMax = 0;
 
 	for (int i = 0; cutscenes[i].text != NULL; i++) {
-		si = Scrollbar_AllocItem(w);
+		si = Scrollbar_AllocItem(w, SCROLLBAR_ITEM);
 
 		snprintf(si->text, sizeof(si->text), "%s", cutscenes[i].text);
 		si->offset = cutscenes[i].animation;
 		si->no_desc = false;
-		si->is_category = false;
 	}
 
 	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 11, 0);

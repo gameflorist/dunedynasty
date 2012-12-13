@@ -203,7 +203,7 @@ GUI_Widget_Free_WithScrollbar(Widget *w)
 /*--------------------------------------------------------------*/
 
 ScrollbarItem *
-Scrollbar_AllocItem(Widget *w)
+Scrollbar_AllocItem(Widget *w, enum ScrollbarItemType type)
 {
 	WidgetScrollbar *ws = w->data;
 	const int i = ws->scrollMax;
@@ -216,7 +216,10 @@ Scrollbar_AllocItem(Widget *w)
 	}
 
 	ws->scrollMax++;
-	return &s_scrollbar_item[i];
+
+	ScrollbarItem *si = &s_scrollbar_item[i];
+	si->type = type;
+	return si;
 }
 
 void
@@ -432,7 +435,7 @@ Scrollbar_DrawItems(Widget *w)
 		int x = g_widgetProperties[w->parentID].xBase;
 		uint8 colour;
 
-		if (si->is_category) {
+		if (si->type == SCROLLBAR_CATEGORY) {
 			x += 16;
 			colour = 11;
 		}

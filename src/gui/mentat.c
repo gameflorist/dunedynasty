@@ -823,7 +823,7 @@ GUI_Mentat_ShowHelp(Widget *scrollbar, enum SearchDirectory dir,
 	char *text;
 
 	ScrollbarItem *si = Scrollbar_GetSelectedItem(scrollbar);
-	if (si->is_category)
+	if (si->type == SCROLLBAR_CATEGORY)
 		return;
 
 	noDesc = si->no_desc;
