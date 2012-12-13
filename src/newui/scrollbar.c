@@ -2,18 +2,227 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include "../os/math.h"
 
 #include "scrollbar.h"
 
 #include "../gui/gui.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
+#include "../shape.h"
 #include "../string.h"
 #include "../table/strings.h"
 
 static ScrollbarItem *s_scrollbar_item;
 static int s_scrollbar_max_items;
 static int s_selectedHelpSubject;
+
+/*--------------------------------------------------------------*/
+
+static uint16
+GUI_Widget_Scrollbar_CalculateSize(WidgetScrollbar *scrollbar)
+{
+	Widget *w;
+	uint16 size;
+
+	w = scrollbar->parent;
+
+	if (w == NULL) return 0;
+
+	if (scrollbar->scrollMax <= 0) {
+		size = (max(w->width, w->height) - 2);
+	}
+	else {
+		size = scrollbar->scrollPageSize * (max(w->width, w->height) - 2) / scrollbar->scrollMax;
+	}
+
+	if (scrollbar->size != size) {
+		scrollbar->size = size;
+		scrollbar->dirty = 1;
+	}
+
+	return size;
+}
+
+static uint16
+GUI_Widget_Scrollbar_CalculatePosition(WidgetScrollbar *scrollbar)
+{
+	Widget *w;
+	uint16 position;
+
+	w = scrollbar->parent;
+	if (w == NULL) return 0xFFFF;
+
+	position = scrollbar->scrollMax - scrollbar->scrollPageSize;
+
+	if (position != 0) position = scrollbar->scrollPosition * (max(w->width, w->height) - 2 - scrollbar->size) / position;
+
+	if (scrollbar->position != position) {
+		scrollbar->position = position;
+		scrollbar->dirty = 1;
+	}
+
+	return position;
+}
+
+static uint16
+GUI_Widget_Scrollbar_CalculateScrollPosition(WidgetScrollbar *scrollbar)
+{
+	Widget *w;
+
+	w = scrollbar->parent;
+	if (w == NULL) return 0xFFFF;
+
+	if (scrollbar->scrollMax - scrollbar->scrollPageSize <= 0) {
+		scrollbar->scrollPosition = 0;
+	}
+	else {
+		scrollbar->scrollPosition = scrollbar->position * (scrollbar->scrollMax - scrollbar->scrollPageSize) / (max(w->width, w->height) - 2 - scrollbar->size);
+	}
+
+	return scrollbar->scrollPosition;
+}
+
+Widget *
+GUI_Widget_Allocate_WithScrollbar(uint16 index, enum WindowID parentID,
+		uint16 offsetX, uint16 offsetY, int16 width, int16 height, ScrollbarDrawProc *drawProc)
+{
+	Widget *w;
+	WidgetScrollbar *ws;
+
+	w = (Widget *)calloc(1, sizeof(Widget));
+
+	w->index    = index;
+	w->parentID = parentID;
+	w->offsetX  = offsetX;
+	w->offsetY  = offsetY;
+	w->width    = width;
+	w->height   = height;
+
+	w->fgColourSelected = 10;
+	w->bgColourSelected = 12;
+
+	w->fgColourNormal = 15;
+	w->bgColourNormal = 12;
+
+	w->flags.all = 0;
+	w->flags.s.buttonFilterLeft = 7;
+	w->flags.s.loseSelect = true;
+
+	w->state.all = 0;
+	w->state.s.hover2Last = true;
+
+	w->drawModeNormal   = DRAW_MODE_CUSTOM_PROC;
+	w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;
+	w->drawModeDown     = DRAW_MODE_CUSTOM_PROC;
+	w->drawParameterNormal.proc   = &GUI_Widget_Scrollbar_Draw;
+	w->drawParameterSelected.proc = &GUI_Widget_Scrollbar_Draw;
+	w->drawParameterDown.proc     = &GUI_Widget_Scrollbar_Draw;
+	w->clickProc                  = &Scrollbar_Click;
+
+	ws = (WidgetScrollbar *)calloc(1, sizeof(WidgetScrollbar));
+
+	w->data = ws;
+
+	ws->parent = w;
+
+	ws->scrollMax      = 1;
+	ws->scrollPageSize = 1;
+	ws->scrollPosition = 0;
+	ws->pressed        = 0;
+	ws->dirty          = 0;
+
+	ws->drawProc = drawProc;
+
+	GUI_Widget_Scrollbar_CalculateSize(ws);
+	GUI_Widget_Scrollbar_CalculatePosition(ws);
+
+	return w;
+}
+
+Widget *
+GUI_Widget_Allocate3(uint16 index, enum WindowID parentID, uint16 offsetX, uint16 offsetY,
+		uint16 sprite1, uint16 sprite2, Widget *widget2, uint16 unknown1A)
+{
+	Widget *w;
+
+	w = (Widget *)calloc(1, sizeof(Widget));
+
+	w->index    = index;
+	w->parentID = parentID;
+	w->offsetX  = offsetX;
+	w->offsetY  = offsetY;
+
+	w->drawModeNormal   = DRAW_MODE_SPRITE;
+	w->drawModeDown     = DRAW_MODE_SPRITE;
+	w->drawModeSelected = DRAW_MODE_SPRITE;
+
+	w->width  = Shape_Width(sprite1);
+	w->height = Shape_Height(sprite1);
+
+	w->flags.all = 0;
+	w->flags.s.requiresClick     = true;
+	w->flags.s.clickAsHover      = true;
+	w->flags.s.loseSelect        = true;
+	w->flags.s.buttonFilterLeft  = 1;
+	w->flags.s.buttonFilterRight = 1;
+
+	w->drawParameterNormal.sprite   = sprite1;
+	w->drawParameterSelected.sprite = sprite1;
+	w->drawParameterDown.sprite     = sprite2;
+
+	if (unknown1A != 0x0) {
+		w->clickProc = &Scrollbar_ArrowDown_Click;
+	} else {
+		w->clickProc = &Scrollbar_ArrowUp_Click;
+	}
+
+	w->data = widget2->data;
+	return w;
+}
+
+static uint16
+GUI_Get_Scrollbar_Position(Widget *w)
+{
+	WidgetScrollbar *ws;
+
+	if (w == NULL) return 0xFFFF;
+
+	ws = w->data;
+	return ws->scrollPosition;
+}
+
+uint16
+GUI_Widget_Scrollbar_Init(Widget *w, int16 scrollMax, int16 scrollPageSize, int16 scrollPosition)
+{
+	WidgetScrollbar *scrollbar;
+	uint16 position;
+
+	if (w == NULL) return 0xFFFF;
+
+	position = GUI_Get_Scrollbar_Position(w);
+	scrollbar = w->data;
+
+	if (scrollMax > 0) scrollbar->scrollMax = scrollMax;
+	if (scrollPageSize >= 0) scrollbar->scrollPageSize = min(scrollPageSize, scrollbar->scrollMax);
+	if (scrollPosition >= 0) scrollbar->scrollPosition = min(scrollPosition, scrollbar->scrollMax - scrollbar->scrollPageSize);
+
+	GUI_Widget_Scrollbar_CalculateSize(scrollbar);
+	GUI_Widget_Scrollbar_CalculatePosition(scrollbar);
+
+	return position;
+}
+
+void
+GUI_Widget_Free_WithScrollbar(Widget *w)
+{
+	if (w == NULL) return;
+
+	free(w->data);
+	free(w);
+}
+
+/*--------------------------------------------------------------*/
 
 ScrollbarItem *
 Scrollbar_AllocItem(Widget *w)
