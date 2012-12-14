@@ -1555,17 +1555,39 @@ PickMusic_Initialise(void)
 }
 
 static void
-PickMusic_Draw(void)
+PickMusic_Draw(MentatState *mentat)
 {
 	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
 
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x12);
+	const int width = Font_GetStringWidth(music_message);
+
 	Video_SetClippingArea(div->scalex * 128 + div->x, div->scaley * 23 + div->y, div->scalex * 184, div->scaley * 10);
-	GUI_DrawText_Wrapper(music_message, 128, 23, 12, 0, 0x12);
+
+	if (width <= 184) {
+		GUI_DrawText_Wrapper(music_message, 128, 23, 12, 0, 0x12);
+	}
+	else {
+		int dx = -(Timer_GetTicks() - mentat->desc_timer - 60 * 2) / 12;
+
+		/* 2 second delay before scrolling. */
+		if (dx > 0) {
+			dx = 0;
+		}
+		else if (dx + width + 32 <= 0) {
+			mentat->desc_timer = Timer_GetTicks() - 60 * 2;
+			dx = 0;
+		}
+
+		GUI_DrawText_Wrapper(music_message, 128 + dx, 23, 12, 0, 0x12);
+		GUI_DrawText_Wrapper(music_message, 128 + dx + width + 32, 23, 12, 0, 0x12);
+	}
+
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
 
 static enum MenuAction
-PickMusic_Loop(int widgetID)
+PickMusic_Loop(MentatState *mentat, int widgetID)
 {
 	Widget *scrollbar = GUI_Widget_Get_ByIndex(extras_widgets, 15);
 	ScrollbarItem *si;
@@ -1585,6 +1607,7 @@ PickMusic_Loop(int widgetID)
 			const enum MusicID musicID = (si->offset & 0xFF);
 			const int s = (si->offset >> 8);
 
+			mentat->desc_timer = Timer_GetTicks();
 			Audio_PlayMusicFile(&g_table_music[musicID], &g_table_music[musicID].song[s]);
 			break;
 	}
@@ -1624,9 +1647,10 @@ Extras_HideScrollbar(void)
 }
 
 static void
-Extras_Initialise(void)
+Extras_Initialise(MentatState *mentat)
 {
 	extras_credits = 0;
+	mentat->desc_timer = Timer_GetTicks();
 	g_playerHouseID = HOUSE_HARKONNEN;
 	Menu_LoadPalette();
 
@@ -1712,7 +1736,7 @@ Extras_Draw(MentatState *mentat)
 	}
 
 	if ((extras_page != EXTRASMENU_GALLERY) || (mentat->wsa == NULL))
-		PickMusic_Draw();
+		PickMusic_Draw(mentat);
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
 	GUI_Widget_DrawAll(extras_widgets);
@@ -1807,7 +1831,7 @@ Extras_Loop(MentatState *mentat)
 			break;
 
 		case EXTRASMENU_JUKEBOX:
-			res = PickMusic_Loop(widgetID);
+			res = PickMusic_Loop(mentat, widgetID);
 			break;
 
 		default:
@@ -1933,7 +1957,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_EXTRAS:
-					Extras_Initialise();
+					Extras_Initialise(&g_mentat_state);
 					break;
 
 				case MENU_STRATEGIC_MAP:
