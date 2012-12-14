@@ -30,6 +30,7 @@ extern void Audio_ScanMusic(void);
 extern void Audio_PlayMusic(enum MusicID musicID);
 extern void Audio_PlayMusicFile(const MusicList *l, MusicInfo *m);
 extern void Audio_PlayMusicIfSilent(enum MusicID musicID);
+extern void Audio_PlayMusicNextInSequence(void);
 extern void Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only);
 extern void Audio_PlayEffect(enum SoundID effectID);
 extern void Audio_LoadSampleSet(enum SampleSet setID);

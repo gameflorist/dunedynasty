@@ -1806,6 +1806,7 @@ static enum MenuAction
 Extras_Loop(MentatState *mentat)
 {
 	static ScrollbarItem *last_si;
+	static int64_t l_pause;
 
 	const int64_t curr_ticks = Timer_GetTicks();
 	enum MenuAction res = MENU_EXTRAS;
@@ -1841,6 +1842,15 @@ Extras_Loop(MentatState *mentat)
 	if ((res & 0xFF) != MENU_EXTRAS) {
 		/* XXX : should only stop if not menu music. */
 		Audio_PlayMusic(MUSIC_STOP);
+	}
+	else if (!Audio_MusicIsPlaying()) {
+		if (l_pause < curr_ticks) {
+			l_pause = curr_ticks + 60 * 2;
+		}
+		else if (l_pause < curr_ticks + 60) {
+			Audio_PlayMusicNextInSequence();
+			mentat->desc_timer = curr_ticks;
+		}
 	}
 
 	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);

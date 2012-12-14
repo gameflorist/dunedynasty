@@ -125,8 +125,8 @@ count_song:
 	}
 }
 
-void
-Audio_PlayMusic(enum MusicID musicID)
+static void
+Audio_PlayMusicGroup(enum MusicID musicID, bool respect_want_setting)
 {
 	enum MusicID start = musicID;
 	enum MusicID end = musicID;
@@ -143,7 +143,13 @@ Audio_PlayMusic(enum MusicID musicID)
 	}
 
 	for (enum MusicID m = start; m <= end; m++) {
-		num_songs += g_table_music[m].count;
+		if (respect_want_setting) {
+			num_songs += g_table_music[m].count;
+		}
+		else {
+			num_songs += g_table_music[m].count_found;
+		}
+
 		num_songs_default += g_table_music[m].count_default;
 	}
 
@@ -171,7 +177,9 @@ Audio_PlayMusic(enum MusicID musicID)
 	enum MusicSet check_music_pack = MUSICSET_INVALID;
 
 	if (num_songs > 0) {
-		check_flags = MUSIC_ENABLE;
+		if (respect_want_setting)
+			check_flags = MUSIC_ENABLE;
+
 		r = Tools_RandomLCG_Range(0, num_songs - 1);
 	}
 	else if (num_songs_default > 0) {
@@ -239,11 +247,59 @@ Audio_PlayMusicFile(const MusicList *l, MusicInfo *m)
 }
 
 void
+Audio_PlayMusic(enum MusicID musicID)
+{
+	Audio_PlayMusicGroup(musicID, true);
+}
+
+void
 Audio_PlayMusicIfSilent(enum MusicID musicID)
 {
 	if (!Audio_MusicIsPlaying())
 		Audio_PlayMusic(musicID);
 }
+
+void
+Audio_PlayMusicNextInSequence(void)
+{
+	if (curr_music == NULL)
+		return;
+
+	/* Play a song from the next group, otherwise we end up hearing
+	 * the same song when browsing the gallery.  For IDLE_OTHER, since
+	 * the songs are different, we play the next song in the list.
+	 */
+	bool curr_found = false;
+	for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
+		const MusicList *l = &g_table_music[musicID];
+
+		for (int s = 0; s < l->length; s++) {
+			MusicInfo *m = &l->song[s];
+
+			if (!(m->enable & MUSIC_FOUND))
+				continue;
+
+			if (m == curr_music) {
+				curr_found = true;
+
+				if (musicID != MUSIC_IDLE_OTHER) {
+					musicID++;
+
+					if (musicID >= MUSICID_MAX)
+						musicID = MUSIC_LOGOS;
+
+					Audio_PlayMusicGroup(musicID, false);
+					return;
+				}
+			}
+			else if (curr_found) {
+				Audio_PlayMusicFile(l, m);
+				return;
+			}
+		}
+	}
+}
+
 
 void
 Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
