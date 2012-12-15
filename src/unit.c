@@ -3033,8 +3033,11 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 	h = House_Get_ByIndex(houseID);
 	houseIDBit = (1 << houseID);
 
-	if (houseID == HOUSE_ATREIDES && unit->o.type != UNIT_SANDWORM) {
-		houseIDBit |= (1 << HOUSE_FREMEN);
+	if (unit->o.type != UNIT_SANDWORM) {
+		for (enum HouseType ally = HOUSE_HARKONNEN; ally < HOUSE_MAX; ally++) {
+			if (House_AreAllied(houseID, ally))
+				houseIDBit |= (1 << ally);
+		}
 	}
 
 	if ((unit->o.seenByHouses & houseIDBit) != 0 && h->flags.isAIActive) {
@@ -3139,7 +3142,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 
 	if (!House_AreAllied(houseID, unit->o.houseID) && unit->actionID == ACTION_AMBUSH) Unit_SetAction(unit, ACTION_HUNT);
 
-	if (unit->o.houseID == g_playerHouseID || (unit->o.houseID == HOUSE_FREMEN && g_playerHouseID == HOUSE_ATREIDES)) {
+	if (House_AreAllied(unit->o.houseID, g_playerHouseID)) {
 		unit->o.seenByHouses = 0xFF;
 	} else {
 		unit->o.seenByHouses |= houseIDBit;

@@ -380,13 +380,17 @@ bool House_AreAllied(uint8 houseID1, uint8 houseID2)
 {
 	if (houseID1 == HOUSE_INVALID || houseID2 == HOUSE_INVALID) return false;
 
-	if (houseID1 == houseID2) return true;
+	if (g_table_houseAlliance[houseID1][houseID2] == HOUSEALLIANCE_ALLIES)
+		return true;
 
-	if (houseID1 == HOUSE_FREMEN || houseID2 == HOUSE_FREMEN) {
-		return (houseID1 == HOUSE_ATREIDES || houseID2 == HOUSE_ATREIDES);
-	}
+	if (g_table_houseAlliance[houseID1][houseID2] == HOUSEALLIANCE_ENEMIES)
+		return false;
 
-	return (houseID1 != g_playerHouseID && houseID2 != g_playerHouseID);
+	/* Check if Houses are allies of the player. */
+	const bool h1_brain = (g_table_houseAlliance[houseID1][g_playerHouseID] == HOUSEALLIANCE_ALLIES);
+	const bool h2_brain = (g_table_houseAlliance[houseID2][g_playerHouseID] == HOUSEALLIANCE_ALLIES);
+
+	return (h1_brain == h2_brain);
 }
 
 /**

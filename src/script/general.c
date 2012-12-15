@@ -8,6 +8,7 @@
 
 #include "../audio/audio.h"
 #include "../gui/gui.h"
+#include "../house.h"
 #include "../map.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
@@ -371,6 +372,7 @@ uint16 Script_General_IsFriendly(ScriptEngine *script)
 uint16 Script_General_IsEnemy(ScriptEngine *script)
 {
 	uint8 houseID;
+	enum HouseType h2;
 	uint16 index;
 
 	index = STACK_PEEK(1);
@@ -380,10 +382,12 @@ uint16 Script_General_IsEnemy(ScriptEngine *script)
 	houseID = (g_scriptCurrentUnit != NULL) ? Unit_GetHouseID(g_scriptCurrentUnit) : g_scriptCurrentObject->houseID;
 
 	switch (Tools_Index_GetType(index)) {
-		case IT_UNIT:      return (Unit_GetHouseID(Tools_Index_GetUnit(index)) != houseID) ? 1 : 0;
-		case IT_STRUCTURE: return (Tools_Index_GetStructure(index)->o.houseID != houseID) ? 1 : 0;
+		case IT_UNIT:      h2 = Unit_GetHouseID(Tools_Index_GetUnit(index)); break;
+		case IT_STRUCTURE: h2 = Tools_Index_GetStructure(index)->o.houseID; break;
 		default:           return 0;
 	}
+
+	return House_AreAllied(houseID, h2) ? 0 : 1;
 }
 
 /**

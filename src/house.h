@@ -19,6 +19,12 @@ enum HouseWeapon {
 	HOUSE_WEAPON_INVALID = 0xFF
 };
 
+enum HouseAlliance {
+	HOUSEALLIANCE_BRAIN,    /* Alliance depends on scenario's brain setting. */
+	HOUSEALLIANCE_ALLIES,
+	HOUSEALLIANCE_ENEMIES,
+};
+
 /**
  * A %House as stored in the memory.
  */
@@ -76,6 +82,7 @@ typedef struct HouseInfo {
 
 extern const HouseInfo g_table_houseInfo_original[HOUSE_MAX];
 extern HouseInfo g_table_houseInfo[HOUSE_MAX];
+extern enum HouseAlliance g_table_houseAlliance[HOUSE_MAX][HOUSE_MAX];
 extern const enum HouseType g_table_houseRemap6to3[HOUSE_MAX];
 
 extern House *g_playerHouse;

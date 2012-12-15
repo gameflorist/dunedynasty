@@ -1385,8 +1385,10 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 
 	s = Structure_Get_ByPackedTile(packed);
 	if (s != NULL) {
-		s->o.seenByHouses |= 1 << houseID;
-		if (houseID == HOUSE_ATREIDES) s->o.seenByHouses |= 1 << HOUSE_FREMEN;
+		for (enum HouseType ally = HOUSE_HARKONNEN; ally < HOUSE_MAX; ally++) {
+			if (House_AreAllied(houseID, ally))
+				s->o.seenByHouses |= (1 << ally);
+		}
 	}
 
 	Map_UnveilTile_Neighbour(packed);

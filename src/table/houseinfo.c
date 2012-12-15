@@ -114,6 +114,7 @@ const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 };
 
 HouseInfo g_table_houseInfo[HOUSE_MAX];
+enum HouseAlliance g_table_houseAlliance[HOUSE_MAX][HOUSE_MAX];
 
 const enum HouseType g_table_houseRemap6to3[HOUSE_MAX] = {
 	HOUSE_HARKONNEN, HOUSE_ATREIDES, HOUSE_ORDOS,

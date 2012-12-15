@@ -103,6 +103,22 @@ Campaign_ReadCPSTweaks(char *source, const char *key, char *value, size_t size,
 }
 
 static void
+Campaign_ResetAlliances(void)
+{
+	memset(g_table_houseAlliance, 0, sizeof(g_table_houseAlliance));
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		g_table_houseAlliance[h][HOUSE_FREMEN] = HOUSEALLIANCE_ENEMIES;
+		g_table_houseAlliance[HOUSE_FREMEN][h] = HOUSEALLIANCE_ENEMIES;
+
+		g_table_houseAlliance[h][h] = HOUSEALLIANCE_ALLIES;
+	}
+
+	g_table_houseAlliance[HOUSE_ATREIDES][HOUSE_FREMEN] = HOUSEALLIANCE_ALLIES;
+	g_table_houseAlliance[HOUSE_FREMEN][HOUSE_ATREIDES] = HOUSEALLIANCE_ALLIES;
+}
+
+static void
 Campaign_ResetEnhancements(void)
 {
 	if (g_campaign_list[g_campaign_selected].dir_name[0] == '\0') { /* Dune II */
@@ -884,6 +900,7 @@ Campaign_Load(void)
 
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
 
+	Campaign_ResetAlliances();
 	memcpy(g_table_houseInfo, g_table_houseInfo_original, sizeof(g_table_houseInfo_original));
 	memcpy(g_table_structureInfo, g_table_structureInfo_original, sizeof(g_table_structureInfo_original));
 	memcpy(g_table_unitInfo, g_table_unitInfo_original, sizeof(g_table_unitInfo_original));
