@@ -462,6 +462,40 @@ Campaign_ReadHouseIni(void)
 	}
 
 	/* Dune Dynasty extensions. */
+	*keys = '\0';
+	Ini_GetString("Alliance", NULL, NULL, keys, 2000, source);
+
+	for (key = keys; *key != '\0'; key += strlen(key) + 1) {
+		Ini_GetString("Alliance", key, NULL, buffer, sizeof(buffer), source);
+
+		char *snd = strchr(key, '-');
+		if (snd == NULL)
+			continue;
+
+		snd++;
+
+		enum HouseType h1 = HOUSE_INVALID;
+		enum HouseType h2 = HOUSE_INVALID;
+
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+			if (*key == g_table_houseInfo_original[houseID].name[0])
+				h1 = houseID;
+
+			if (*snd == g_table_houseInfo_original[houseID].name[0])
+				h2 = houseID;
+		}
+
+		if ((h1 != HOUSE_INVALID && h2 != HOUSE_INVALID) && (h1 != h2)) {
+			enum HouseAlliance allied = HOUSEALLIANCE_BRAIN;
+
+			     if (buffer[0] == 'a' || buffer[0] == 'A') allied = HOUSEALLIANCE_ALLIES;
+			else if (buffer[0] == 'e' || buffer[0] == 'E') allied = HOUSEALLIANCE_ENEMIES;
+
+			g_table_houseAlliance[h1][h2] = allied;
+			g_table_houseAlliance[h2][h1] = allied;
+		}
+	}
+
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
 		HouseInfo *hi = &g_table_houseInfo[houseID];
 		char category[32];
