@@ -298,7 +298,7 @@ Extras_InitWidgets(void)
 	w->clickProc = Extras_ClickCHOAMArrow;
 	extras_widgets = GUI_Widget_Link(extras_widgets, w);
 
-	extras_widgets = Scrollbar_Allocate(extras_widgets, WINDOWID_STARPORT_INVOICE, false);
+	extras_widgets = Scrollbar_Allocate(extras_widgets, WINDOWID_STARPORT_INVOICE, -8, 4, 3, false);
 }
 
 static void
@@ -1265,10 +1265,11 @@ PickCutscene_Initialise(void)
 		{ NULL, 0 }
 	};
 
-	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
 	WidgetScrollbar *ws = w->data;
 	ScrollbarItem *si;
 
+	w->offsetY = 19;
 	ws->itemHeight = 8;
 	ws->scrollMax = 0;
 
@@ -1337,9 +1338,10 @@ PlayCutscene_Loop(void)
 static void
 PickGallery_Initialise(void)
 {
-	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
 	WidgetScrollbar *ws = w->data;
 
+	w->offsetY = 19;
 	ws->itemHeight = 8;
 
 	/* Note: Use Harkonnen list which contains the Sardaukar and Frigate entries. */
@@ -1494,10 +1496,11 @@ PickMusic_Initialise(void)
 		{ MUSIC_LOGOS, MUSIC_CREDITS, "Other" },
 	};
 
-	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
 	WidgetScrollbar *ws = w->data;
 	ScrollbarItem *si;
 
+	w->offsetY = 19;
 	ws->itemHeight = 8;
 	ws->scrollMax = 0;
 
@@ -1625,10 +1628,11 @@ PickMusic_Loop(MentatState *mentat, int widgetID)
 static void
 Options_Initialise(void)
 {
-	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
 	WidgetScrollbar *ws = w->data;
 	ScrollbarItem *si;
 
+	w->offsetY = 22;
 	ws->itemHeight = 14;
 	ws->scrollMax = 0;
 
@@ -1806,7 +1810,7 @@ Extras_Draw(MentatState *mentat)
 
 	if (headline != NULL) {
 		const WidgetProperties *wi = &g_widgetProperties[WINDOWID_STARPORT_INVOICE];
-		GUI_DrawText_Wrapper(headline, wi->xBase + 16, wi->yBase + 2, 12, 0, 0x12);
+		GUI_DrawText_Wrapper(headline, wi->xBase + 8, wi->yBase + 5, 12, 0, 0x12);
 	}
 
 	if ((extras_page != EXTRASMENU_GALLERY) || (mentat->wsa == NULL))

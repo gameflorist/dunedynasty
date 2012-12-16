@@ -19,7 +19,7 @@ static int s_scrollbar_max_items;
 static int s_selectedHelpSubject;
 
 static void Scrollbar_Clamp(const WidgetScrollbar *ws);
-static Widget *ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID);
+static Widget *ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID, int x, int y);
 
 /*--------------------------------------------------------------*/
 
@@ -209,19 +209,23 @@ GUI_Widget_Free_WithScrollbar(Widget *w)
 /*--------------------------------------------------------------*/
 
 Widget *
-Scrollbar_Allocate(Widget *list, enum WindowID parentID, bool set_mentat_widgets)
+Scrollbar_Allocate(Widget *list, enum WindowID parentID,
+		int listarea_dx, int scrollbar_dx, int dy, bool set_mentat_widgets)
 {
-	Widget *scrollbar = GUI_Widget_Allocate_WithScrollbar(15, parentID, 168, 24, 8, 72, NULL);
+	const int listarea_x = 24 + listarea_dx;
+	const int scrollbar_x = 168 + scrollbar_dx;
 
-	Widget *listarea = ScrollListArea_Allocate(scrollbar, parentID);
+	Widget *scrollbar = GUI_Widget_Allocate_WithScrollbar(15, parentID, scrollbar_x, 24 + dy, 8, 72, NULL);
+
+	Widget *listarea = ScrollListArea_Allocate(scrollbar, parentID, listarea_x, 16 + dy);
 	list = GUI_Widget_Link(list, listarea);
 	list = GUI_Widget_Link(list, scrollbar);
 
-	Widget *scrolldown = GUI_Widget_Allocate3(16, parentID, 168, 96,
+	Widget *scrolldown = GUI_Widget_Allocate3(16, parentID, scrollbar_x, 96 + dy,
 			SHAPE_SCROLLBAR_DOWN, SHAPE_SCROLLBAR_DOWN_PRESSED, scrollbar, 1);
 	list = GUI_Widget_Link(list, scrolldown);
 
-	Widget *scrollup = GUI_Widget_Allocate3(17, parentID, 168, 16,
+	Widget *scrollup = GUI_Widget_Allocate3(17, parentID, scrollbar_x, 16 + dy,
 			SHAPE_SCROLLBAR_UP, SHAPE_SCROLLBAR_UP_PRESSED, scrollbar, 0);
 	list = GUI_Widget_Link(list, scrollup);
 
@@ -499,7 +503,7 @@ ScrollListArea_Draw(Widget *w)
 	const WidgetScrollbar *ws = w->data;
 
 	Video_SetClippingArea(div->scalex * wi->xBase + div->x, div->scaley * wi->yBase + div->y,
-			div->scalex * scrollbar->offsetX, div->scaley * wi->height);
+			div->scalex * (scrollbar->offsetX + scrollbar->width), div->scaley * wi->height);
 
 	for (int i = 0; i < ws->scrollPageSize; i++) {
 		const int n = ws->scrollPosition + i;
@@ -557,7 +561,7 @@ ScrollListArea_Click(Widget *w)
 }
 
 static Widget *
-ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID)
+ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID, int x, int y)
 {
 	Widget *w = calloc(1, sizeof(Widget));
 
@@ -578,8 +582,8 @@ ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID)
 
 	w->state.all = 0;
 
-	w->offsetX = 24;
-	w->offsetY = 16;
+	w->offsetX = x;
+	w->offsetY = y;
 	w->width = 0x88;
 	w->height = 8 * 11;
 	w->parentID = parentID;
