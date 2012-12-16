@@ -724,6 +724,9 @@ ActionPanel_ClickPalace(const Widget *widget, Structure *s)
 static void
 ActionPanel_DrawStructureLayout(enum StructureType s, int x1, int y1)
 {
+	if (!(s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG))
+		return;
+
 	const StructureInfo *si = &g_table_structureInfo[s];
 	const int lw = g_table_structure_layoutSize[si->layout].width;
 	const int lh = g_table_structure_layoutSize[si->layout].height;
@@ -935,7 +938,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			Shape_DrawScale(shapeID, x1, y1, w, h, 0, 0);
 
 			/* Draw layout. */
-			if ((s->o.type == STRUCTURE_CONSTRUCTION_YARD) && (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG))
+			if (s->o.type == STRUCTURE_CONSTRUCTION_YARD)
 				ActionPanel_DrawStructureLayout(object_type, x1, y1);
 		}
 
