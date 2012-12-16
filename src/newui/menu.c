@@ -1413,10 +1413,10 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 
 		if (widgetID == MOUSE_LMB) {
 			/* WSA is positioned at 128, 48, size 184 x 112. */
-			if (Mouse_InRegion(128, 48, 128 + 92, 160)) {
+			if (Mouse_InRegion(128, 48, 128 + 48, 160)) {
 				widgetID = SCANCODE_KEYPAD_4;
 			}
-			else if (Mouse_InRegion(128 + 92, 48, 128 + 184, 160)) {
+			else if (Mouse_InRegion(128 + 64, 48, 128 + 184, 160)) {
 				widgetID = SCANCODE_KEYPAD_6;
 			}
 		}
