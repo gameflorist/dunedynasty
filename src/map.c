@@ -429,6 +429,12 @@ static bool Map_UpdateWall(uint16 packed)
 	Structure_ConnectWall(packed, true);
 	Map_Update(packed, 0, false);
 
+	/* ENHANCEMENT -- stop targetting the wall after it has been destroyed. */
+	if (enhancement_fix_firing_logic) {
+		const uint16 encoded = Tools_Index_Encode(packed, IT_TILE);
+		Unit_UntargetEncodedIndex(encoded);
+	}
+
 	return true;
 }
 
@@ -707,6 +713,12 @@ void Map_Bloom_ExplodeSpice(uint16 packed, uint8 houseID)
 		Audio_PlayVoice(VOICE_SPICE_BLOOM_LOCATED);
 
 	Map_FillCircleWithSpice(packed, 5);
+
+	/* ENHANCEMENT -- stop targetting the bloom after it has exploded. */
+	if (enhancement_fix_firing_logic) {
+		const uint16 encoded = Tools_Index_Encode(packed, IT_TILE);
+		Unit_UntargetEncodedIndex(encoded);
+	}
 }
 
 /**
