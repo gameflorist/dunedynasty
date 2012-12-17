@@ -1878,12 +1878,10 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
  *
  * @param unit The Unit to untarget.
  */
-void Unit_UntargetMe(Unit *unit)
+void
+Unit_UntargetEncodedIndex(uint16 encoded)
 {
 	PoolFindStruct find;
-	uint16 encoded = Tools_Index_Encode(unit->o.index, IT_UNIT);
-
-	Object_Script_Variable4_Clear(&unit->o);
 
 	find.houseID = HOUSE_INVALID;
 	find.type    = 0xFFFF;
@@ -1899,6 +1897,16 @@ void Unit_UntargetMe(Unit *unit)
 		if (u->targetAttack == encoded) u->targetAttack = 0;
 		if (u->o.script.variables[4] == encoded) Object_Script_Variable4_Clear(&u->o);
 	}
+}
+
+void Unit_UntargetMe(Unit *unit)
+{
+	PoolFindStruct find;
+	uint16 encoded = Tools_Index_Encode(unit->o.index, IT_UNIT);
+
+	Object_Script_Variable4_Clear(&unit->o);
+
+	Unit_UntargetEncodedIndex(encoded);
 
 	find.houseID = HOUSE_INVALID;
 	find.type    = 0xFFFF;

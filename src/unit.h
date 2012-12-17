@@ -162,6 +162,7 @@ extern void Unit_RemoveFog(Unit *unit);
 extern bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID);
 extern bool Unit_Move(Unit *unit, uint16 distance);
 extern bool Unit_Damage(Unit *unit, uint16 damage, uint16 range);
+extern void Unit_UntargetEncodedIndex(uint16 encoded);
 extern void Unit_UntargetMe(Unit *unit);
 extern void Unit_SetOrientation(Unit *unit, int8 orientation, bool rotateInstantly, uint16 level);
 extern void Unit_Select(Unit *unit);
