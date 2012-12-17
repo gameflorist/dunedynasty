@@ -45,7 +45,7 @@ bool enhancement_fix_everlasting_unit_wobble = true;
  * Make sonic blasts' distance and units' relative firing rates more
  * consistent across game speeds, and make infantry attack structures.
  */
-bool enhancement_fix_firing_rates_and_ranges = true;
+bool enhancement_fix_firing_logic = true;
 
 /**
  * Too many tile colours are remapped with house colours, causing

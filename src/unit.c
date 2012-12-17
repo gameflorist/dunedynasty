@@ -843,7 +843,7 @@ uint16 Unit_IsValidMovementIntoStructure(Unit *unit, Structure *s)
 		 * Everyone else can only move close to the building. */
 		if (ui->movementType == MOVEMENT_FOOT && si->o.flags.conquerable) {
 			/* ENHANCEMENT -- due to the low weapon range, soldiers tend to capture structures when ordered to attack. */
-			if (enhancement_fix_firing_rates_and_ranges && (unit->actionID == ACTION_ATTACK))
+			if (enhancement_fix_firing_logic && (unit->actionID == ACTION_ATTACK))
 				return 1;
 
 			return unit->targetMove == structEnc ? 2 : 1;
@@ -2613,7 +2613,7 @@ Unit_StructureInRange(const Unit *unit, const Structure *s, uint16 distance)
 	 * at a structure from a given position when on guard command,
 	 * whereas they would fire at it when on attack command.
 	 */
-	if (!enhancement_fix_firing_rates_and_ranges) {
+	if (!enhancement_fix_firing_logic) {
 		curPosition.tile = s->o.position.tile + g_table_structure_layoutTileDiff[layout].tile;
 		return (Tile_GetDistance(unit->o.position, curPosition) <= distance);
 	}

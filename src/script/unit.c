@@ -701,7 +701,7 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 		default: break;
 	}
 
-	if (enhancement_fix_firing_rates_and_ranges) {
+	if (enhancement_fix_firing_logic) {
 		u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 0xFFFF, true);
 	}
 	else {
