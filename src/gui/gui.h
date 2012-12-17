@@ -95,6 +95,7 @@ extern void GUI_PaletteAnimate(void);
 
 extern void GUI_DrawChar_(unsigned char c, int x, int y);
 extern void GUI_DisplayText(const char *str, int16 importance, ...);
+extern void GUI_DrawStatusBarText(int x, int y);
 extern void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour);
 extern void GUI_DrawText_Wrapper(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour, uint16 flags, ...);
 extern void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top);

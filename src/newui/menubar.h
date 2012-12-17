@@ -5,7 +5,7 @@
 #include "../house.h"
 
 extern void MenuBar_DrawCredits(int credits_new, int credits_old, int offset, int x0);
-extern void MenuBar_DrawStatusBar(const char *line1, const char *line2, bool scrollInProgress, int offset);
+extern void MenuBar_DrawStatusBar(const char *line1, const char *line2, bool scrollInProgress, int x, int y, int offset);
 extern void MenuBar_Draw(enum HouseType houseID);
 extern void MenuBar_StartRadarAnimation(bool activate);
 

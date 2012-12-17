@@ -82,14 +82,14 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset, int x0)
 }
 
 void
-MenuBar_DrawStatusBar(const char *line1, const char *line2, bool scrollInProgress, int offset)
+MenuBar_DrawStatusBar(const char *line1, const char *line2,
+		bool scrollInProgress, int x, int y, int offset)
 {
-	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENUBAR];
-	const int x = g_widgetProperties[WINDOWID_STATUSBAR].xBase;
-	const int y = g_widgetProperties[WINDOWID_STATUSBAR].yBase;
+	const enum ScreenDivID divID = A5_SaveTransform();
+	const ScreenDiv *div = &g_screenDiv[divID];
 	const int h = g_widgetProperties[WINDOWID_STATUSBAR].height;
 
-	Video_SetClippingArea(0, div->scaley * y, TRUE_DISPLAY_WIDTH, div->scaley * h);
+	Video_SetClippingArea(0, div->scaley * y + div->y, TRUE_DISPLAY_WIDTH, div->scaley * h);
 
 	if (scrollInProgress) {
 		GUI_DrawText_Wrapper(line2, x, y - offset + 2, 12, 0, 0x012);
@@ -134,6 +134,7 @@ MenuBar_Draw(enum HouseType houseID)
 	const ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
 	const ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
 	const enum ScreenDivID prev_transform = A5_SaveTransform();
+	const WidgetProperties *statusbar = &g_widgetProperties[WINDOWID_STATUSBAR];
 
 	Widget *w;
 
@@ -164,7 +165,8 @@ MenuBar_Draw(enum HouseType houseID)
 
 	Video_SetClippingArea(0, menubar->scaley * 4, TRUE_DISPLAY_WIDTH, menubar->scaley * 9);
 	GUI_DrawCredits(g_playerHouse->credits, (g_playerCredits == 0xFFFF) ? 2 : 1, TRUE_DISPLAY_WIDTH / menubar->scalex);
-	GUI_DisplayText(NULL, 0);
+	GUI_DrawStatusBarText(statusbar->xBase, statusbar->yBase);
+
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
 	/* SideBar. */

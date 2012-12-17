@@ -110,15 +110,16 @@ extern void GUI_DrawFilledRectangle(int16 left, int16 top, int16 right, int16 bo
  *                   Otherwise, it is the importance of the message (if supplied). Higher numbers mean displayed sooner.
  * @param ... The args for the text.
  */
+static bool scrollInProgress;    /* Text is being scrolled (and partly visible to the user). */
+static char displayLine1[80];    /* Current line being displayed. */
+static char displayLine2[80];    /* Next line (if scrollInProgress, it is scrolled up). */
+static uint16 textOffset;        /* Vertical position of text being scrolled. */
+
 void GUI_DisplayText(const char *str, int16 importance, ...)
 {
 	char buffer[80];                 /* Formatting buffer of new message. */
 	static int64_t displayTimer = 0; /* Timeout value for next update of the display. */
-	static uint16 textOffset;        /* Vertical position of text being scrolled. */
-	static bool scrollInProgress;    /* Text is being scrolled (and partly visible to the user). */
 
-	static char displayLine1[80];    /* Current line being displayed. */
-	static char displayLine2[80];    /* Next line (if scrollInProgress, it is scrolled up). */
 	static char displayLine3[80];    /* Next message to display (after scrolling next line has finished). */
 	static int16 line1Importance;    /* Importance of the displayed line of text. */
 	static int16 line2Importance;    /* Importance of the next line of text. */
@@ -156,9 +157,6 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		line3Importance = -1;
 		displayLine3[0] = '\0';
 	}
-
-	if (str == NULL && importance == 0)
-		MenuBar_DrawStatusBar(displayLine1, displayLine2, scrollInProgress, textOffset);
 
 	if (scrollInProgress) {
 		if (buffer[0] != '\0') {
@@ -226,7 +224,11 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		 * insert it at the right place.
 		 */
 		if (strcasecmp(buffer, displayLine1) != 0 && strcasecmp(buffer, displayLine2) != 0 && strcasecmp(buffer, displayLine3) != 0) {
-			if (importance >= line2Importance) {
+			/* This was originally important >= line2Importance.
+			 * However, that means that newer messages of equal
+			 * importance are inserted before older messages.
+			 */
+			if (importance > line2Importance) {
 				/* Move line 2 to line 2 to make room for the new line. */
 				strcpy(displayLine3, displayLine2);
 				line3Importance = line2Importance;
@@ -249,6 +251,13 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 	scrollInProgress = true;
 	textOffset = 10;
 	displayTimer = 0;
+}
+
+void
+GUI_DrawStatusBarText(int x, int y)
+{
+	MenuBar_DrawStatusBar(displayLine1, displayLine2, scrollInProgress, x, y, textOffset);
+	GUI_DisplayText(NULL, 0);
 }
 
 /**
