@@ -1713,7 +1713,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 								(Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
 						}
 						/* ENHANCEMENT -- Saboteurs tend to forget their goal, depending on terrain and game speed: to blow up on reaching their destination. */
-						else if (g_dune2_enhanced) {
+						else if (enhancement_fix_firing_logic) {
 							detonate = (unit->targetMove != 0 && Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
 						} else {
 							detonate = (unit->targetMove != 0 && Tile_GetDistance(unit->o.position, Tools_Index_GetTile(unit->targetMove)) < 32);
