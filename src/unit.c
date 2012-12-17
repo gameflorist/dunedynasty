@@ -2579,7 +2579,7 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 		Structure_UpdateMap(s);
 
 		/* ENHANCEMENT -- When taking over a structure, untarget it. Else you will destroy the structure you just have taken over very easily */
-		if (g_dune2_enhanced) Structure_UntargetMe(s);
+		if (enhancement_fix_firing_logic) Structure_UntargetMe(s);
 	} else {
 		uint16 damage;
 
