@@ -1348,12 +1348,7 @@ PickGallery_Initialise(void)
 static void
 PickGallery_Draw(MentatState *mentat)
 {
-	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
-
-	Video_SetClippingArea(div->scalex * 128 + div->x, div->scaley * 23 + div->y, div->scalex * 184, div->scaley * 10);
-	GUI_DrawText_Wrapper(mentat->desc, 128, 23, 12, 0, 0x12);
-	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
-
+	GUI_DrawStatusBarText(128, 21);
 	MentatBriefing_DrawWSA(mentat);
 }
 
@@ -1396,6 +1391,7 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 			case SCANCODE_ENTER:
 			case SCANCODE_KEYPAD_5:
 			case SCANCODE_SPACE:
+				GUI_DisplayText(NULL, -1);
 				perform_selection = true;
 				break;
 		}
@@ -1448,6 +1444,19 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 		GUI_Mentat_ShowHelp(w, SEARCHDIR_GLOBAL_DATA_DIR, HOUSE_HARKONNEN, 9);
 
 		if (mentat->wsa != NULL) {
+			char *c = mentat->desc;
+			while ((c != NULL) && (*c != '\0')) {
+				if (*c == '\r' || *c == '\n') {
+					*c = '\0';
+					break;
+				}
+				else {
+					c++;
+				}
+			}
+
+			GUI_DisplayText(mentat->desc, 5);
+
 			/* Dodgy: determine the object type from the WSA
 			 * name since it is not stored in the list.
 			 */
