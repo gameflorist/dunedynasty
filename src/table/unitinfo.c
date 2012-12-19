@@ -1070,7 +1070,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* hintStringID         */ STR_NULL,
 		/* priorityBuild        */ 55,
 		/* priorityTarget       */ 60,
-		/* availableHouse       */ FLAG_HOUSE_MERCENARY | FLAG_HOUSE_SARDAUKAR | FLAG_HOUSE_FREMEN | FLAG_HOUSE_ORDOS,
+		/* availableHouse       */ FLAG_HOUSE_ORDOS, /* was | FLAG_HOUSE_MERCENARY | FLAG_HOUSE_SARDAUKAR | FLAG_HOUSE_FREMEN */
 		},
 		/* indexStart           */ 22,
 		/* indexEnd             */ 101,

@@ -1997,6 +1997,7 @@ Structure_GetAvailable(const Structure *s, int i)
 		if (unitType > UNIT_MCV)
 			return 0;
 
+		/* Note: Raider trike's availableHouse should be Ordos only. */
 		/* if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) unitType = UNIT_RAIDER_TRIKE; */
 
 		const UnitInfo *ui = &g_table_unitInfo[unitType];
