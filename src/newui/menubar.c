@@ -226,6 +226,7 @@ MenuBar_ClickMentat(Widget *w)
 	mentat->state = MENTAT_SHOW_CONTENTS;
 	mentat->wsa = NULL;
 	Video_SetCursor(SHAPE_CURSOR_NORMAL);
+	g_musicInBattle = 0;
 	Audio_PlayVoice(VOICE_STOP);
 	Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicBriefing);
 	Timer_SetTimer(TIMER_GAME, false);

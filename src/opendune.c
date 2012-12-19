@@ -863,7 +863,13 @@ void GameLoop_Main(bool new_game)
 			} else {
 				if (Timer_GetTicks() > l_timerNext) {
 					if (!Audio_MusicIsPlaying()) {
-						Audio_PlayMusic(MUSIC_RANDOM_IDLE);
+						if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
+							Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicBriefing);
+						}
+						else {
+							Audio_PlayMusic(MUSIC_RANDOM_IDLE);
+						}
+
 						l_timerNext = Timer_GetTicks() + 300;
 						g_musicInBattle = 0;
 					}
