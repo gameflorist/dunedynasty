@@ -1611,6 +1611,13 @@ bool Unit_Move(Unit *unit, uint16 distance)
 			s = Structure_Get_ByPackedTile(packed);
 
 			if (s != NULL) {
+				/* ENHANCEMENT -- Original game did not announce base
+				 * under attack when hit by sonic blasts, so don't.
+				 * However, sonic blasts should trigger the counter attack.
+				 */
+				if (g_dune2_enhanced && s->o.houseID != g_playerHouseID && !House_AreAllied(unit->o.houseID, s->o.houseID))
+					Structure_HouseUnderAttack(s->o.houseID);
+
 				Structure_Damage(s, damage, 0);
 			} else {
 				if (Map_GetLandscapeType(packed) == LST_WALL && g_table_structureInfo[STRUCTURE_WALL].o.hitpoints > damage) Tools_Random_256();
