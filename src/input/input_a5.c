@@ -58,7 +58,7 @@ InputA5_KeycodeToScancode(int kc)
 
 	const int map_misc[] = {
 		SCANCODE_ESCAPE, SCANCODE_TILDE, SCANCODE_MINUS, SCANCODE_EQUALS, SCANCODE_BACKSPACE,
-		SCANCODE_TAB, SCANCODE_OPENBRACE, SCANCODE_CLOSEBRACE, SCANCODE_ENTER, SCANCODE_SEMICOLON,
+		SCANCODE_TAB, SCANCODE_OPENBRACE, SCANCODE_CLOSEBRACE, -1, SCANCODE_SEMICOLON,
 		SCANCODE_QUOTE, SCANCODE_BACKSLASH, SCANCODE_BACKSLASH, SCANCODE_COMMA, SCANCODE_FULLSTOP,
 		SCANCODE_SLASH, SCANCODE_SPACE,
 
@@ -146,6 +146,10 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			}
 			else if (event->keyboard.keycode == ALLEGRO_KEY_F12) {
 				VideoA5_CaptureScreenshot();
+				return true;
+			}
+			else if (event->keyboard.keycode == ALLEGRO_KEY_ENTER) { /* Enter without alt. */
+				Input_EventHandler(SCANCODE_ENTER);
 				return true;
 			}
 			break;
