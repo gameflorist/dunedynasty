@@ -1267,7 +1267,7 @@ bool Structure_IsUpgradable(Structure *s)
 		int ref = g_campaignID;
 
 		/* ENHANCEMENT -- Siege tanks should be available when g_campaignID = 5, (si->upgradeCampaign[2] = 6). */
-		if (enhancement_fix_ordos_siege_tank_tech)
+		if (enhancement_undelay_ordos_siege_tank_tech)
 			ref = g_campaignID + 1;
 
 		if (si->upgradeCampaign[2] > ref) return false;

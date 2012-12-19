@@ -54,12 +54,6 @@ bool enhancement_fix_firing_logic = true;
 bool enhancement_fix_ix_colour_remapping = true;
 
 /**
- * In the original game, Ordos get siege tanks one level too late
- * (affects both players and AI), which serves as a difficulty level.
- */
-bool enhancement_fix_ordos_siege_tank_tech = true;
-
-/**
  * Fix typos in the scenarios, including AI unit caps, AI teams,
  * reinforcements, and Atreides WOR facilities.
  */
@@ -203,6 +197,12 @@ enum SubtitleOverride enhancement_subtitle_override = SUBTITLE_THE_BUILDING_OF_L
  * or right-clicked on a structure, unit, or wall.
  */
 bool enhancement_targetted_sabotage = true;
+
+/**
+ * In the original game, Ordos get siege tanks one level later
+ * (affects both players and AI), which serves as a difficulty level.
+ */
+bool enhancement_undelay_ordos_siege_tank_tech = true;
 
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */

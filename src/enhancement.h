@@ -38,7 +38,6 @@ extern bool enhancement_fix_enemy_approach_direction_warning;
 extern bool enhancement_fix_everlasting_unit_wobble;
 extern bool enhancement_fix_firing_logic;
 extern bool enhancement_fix_ix_colour_remapping;
-extern bool enhancement_fix_ordos_siege_tank_tech;
 extern bool enhancement_fix_scenario_typos;
 extern bool enhancement_fix_selection_after_entering_structure;
 extern bool enhancement_fix_typos;
@@ -63,6 +62,7 @@ extern bool enhancement_special_trooper_portaits;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 extern enum SubtitleOverride enhancement_subtitle_override;
 extern bool enhancement_targetted_sabotage;
+extern bool enhancement_undelay_ordos_siege_tank_tech;
 
 extern enum RepairCostFormula enhancement_repair_cost_formula;
 
