@@ -122,6 +122,13 @@ Campaign_ReadCPSTweaks(char *source, const char *key, char *value, size_t size,
 static void
 Campaign_ResetEnhancements(void)
 {
+	if (g_campaign_list[g_campaign_selected].dir_name[0] == '\0') { /* Dune II */
+		enhancement_fix_scenario_typos = true;
+	}
+	else {
+		enhancement_fix_scenario_typos = false;
+	}
+
 	enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
 }
 

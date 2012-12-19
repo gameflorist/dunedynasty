@@ -35,7 +35,6 @@ extern bool const enhancement_fix_enemy_approach_direction_warning;
 extern bool const enhancement_fix_everlasting_unit_wobble;
 extern bool const enhancement_fix_firing_logic;
 extern bool const enhancement_fix_ix_colour_remapping;
-extern bool const enhancement_fix_scenario_typos;
 extern bool const enhancement_fix_selection_after_entering_structure;
 extern bool const enhancement_fix_typos;
 
@@ -65,6 +64,7 @@ extern enum SubtitleOverride enhancement_subtitle_override;
 extern bool enhancement_targetted_sabotage;
 extern bool enhancement_undelay_ordos_siege_tank_tech;
 
+extern bool enhancement_fix_scenario_typos;
 extern enum RepairCostFormula enhancement_repair_cost_formula;
 
 #endif

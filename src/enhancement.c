@@ -54,12 +54,6 @@ bool const enhancement_fix_firing_logic = true;
 bool const enhancement_fix_ix_colour_remapping = true;
 
 /**
- * Fix typos in the scenarios, including AI unit caps, AI teams,
- * reinforcements, and Atreides WOR facilities.
- */
-bool const enhancement_fix_scenario_typos = true;
-
-/**
  * When a unit enters a structure, the last tile the unit was on
  * becomes selected rather than the entire structure.
  */
@@ -206,6 +200,12 @@ bool enhancement_undelay_ordos_siege_tank_tech = true;
 
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
+
+/**
+ * [Dune II only] Fix typos in the original scenarios (e.g. unit caps,
+ * reinforcements, Atreides WOR facilities).  Fix your own scenarios!
+ */
+bool enhancement_fix_scenario_typos;
 
 /**
  * [v1.0] Repairs are far more expensive in v1.0.  In addition, a
