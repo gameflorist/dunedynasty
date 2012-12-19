@@ -933,6 +933,7 @@ void GameLoop_Main(bool new_game)
 	if (s_enableLog != 0) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, "DUNE.LOG");
 #endif
 
+	Audio_PlayVoice(VOICE_STOP);
 	Widget_SetCurrentWidget(0);
 
 #if 0
