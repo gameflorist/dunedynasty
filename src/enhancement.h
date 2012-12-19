@@ -30,17 +30,18 @@ enum SubtitleOverride {
 	SUBTITLE_THE_BUILDING_OF_LOWER_A_DYNASTY
 };
 
-extern bool g_dune2_enhanced;
+extern bool const g_dune2_enhanced;
+extern bool const enhancement_fix_enemy_approach_direction_warning;
+extern bool const enhancement_fix_everlasting_unit_wobble;
+extern bool const enhancement_fix_firing_logic;
+extern bool const enhancement_fix_ix_colour_remapping;
+extern bool const enhancement_fix_scenario_typos;
+extern bool const enhancement_fix_selection_after_entering_structure;
+extern bool const enhancement_fix_typos;
+
 extern bool enhancement_ai_respects_structure_placement;
 extern bool enhancement_brutal_ai;
 extern bool enhancement_draw_health_bars;
-extern bool enhancement_fix_enemy_approach_direction_warning;
-extern bool enhancement_fix_everlasting_unit_wobble;
-extern bool enhancement_fix_firing_logic;
-extern bool enhancement_fix_ix_colour_remapping;
-extern bool enhancement_fix_scenario_typos;
-extern bool enhancement_fix_selection_after_entering_structure;
-extern bool enhancement_fix_typos;
 extern bool enhancement_fog_covers_units;
 extern bool enhancement_fog_of_war;
 extern bool enhancement_i_mean_where_i_clicked;

@@ -9,7 +9,7 @@
 /**
  * Enhancements that do not have a separate entry.
  */
-bool g_dune2_enhanced = true;
+bool const g_dune2_enhanced = true;
 
 /**
  * In the original game, the AI is allowed to place structures
@@ -33,43 +33,43 @@ bool enhancement_draw_health_bars = true;
  * Fix the often incorrect warning message regarding the direction of
  * incoming enemies in the early missions.
  */
-bool enhancement_fix_enemy_approach_direction_warning = true;
+bool const enhancement_fix_enemy_approach_direction_warning = true;
 
 /**
  * In the original game, once a unit starts to wobble, it will never
  * stop wobbling.
  */
-bool enhancement_fix_everlasting_unit_wobble = true;
+bool const enhancement_fix_everlasting_unit_wobble = true;
 
 /**
  * Make sonic blasts' distance and units' relative firing rates more
  * consistent across game speeds, and make infantry attack structures.
  */
-bool enhancement_fix_firing_logic = true;
+bool const enhancement_fix_firing_logic = true;
 
 /**
  * Too many tile colours are remapped with house colours, causing
  * graphical issues with the IX building.
  */
-bool enhancement_fix_ix_colour_remapping = true;
+bool const enhancement_fix_ix_colour_remapping = true;
 
 /**
  * Fix typos in the scenarios, including AI unit caps, AI teams,
  * reinforcements, and Atreides WOR facilities.
  */
-bool enhancement_fix_scenario_typos = true;
+bool const enhancement_fix_scenario_typos = true;
 
 /**
  * When a unit enters a structure, the last tile the unit was on
  * becomes selected rather than the entire structure.
  */
-bool enhancement_fix_selection_after_entering_structure = true;
+bool const enhancement_fix_selection_after_entering_structure = true;
 
 /**
  * Fix some of the typos and formatting issues from the original game,
  * including the silo, windtrap, and outpost text.
  */
-bool enhancement_fix_typos = true;
+bool const enhancement_fix_typos = true;
 
 /**
  * In the original game, fog is drawn underneath units, at the same
