@@ -222,10 +222,10 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				Prim_Hline(21, y + 15, 72, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 					GUI_DrawText_Wrapper("Power Info", 46, y + 8, 29, 0, 0x111);
-					GUI_DrawText_Wrapper("Needed:", 22, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("Output:", 22, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", 71, y + 2 * g_fontCurrent->height, 29, 0, 0x211, powerAverage);
-					GUI_DrawText_Wrapper("%d", 71, y + 3 * g_fontCurrent->height, fg, 0, 0x211, powerOutput);
+					GUI_DrawText_Wrapper("Needed:", 21, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Output:", 21, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 72, y + 2 * g_fontCurrent->height, 29, 0, 0x211, powerAverage);
+					GUI_DrawText_Wrapper("%d", 72, y + 3 * g_fontCurrent->height, fg, 0, 0x211, powerOutput);
 				}
 				else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), 18, y + 8, 29, 0, 0x11);
@@ -255,10 +255,10 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				Prim_Hline(21, y + 15, 72, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 					GUI_DrawText_Wrapper("Spice", 46, y + 8, 29, 0, 0x111);
-					GUI_DrawText_Wrapper("Holds:", 22, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("Max:", 22, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", 71, y + 2 * g_fontCurrent->height, 29, 0, 0x211, creditsStored);
-					GUI_DrawText_Wrapper("%d", 71, y + 3 * g_fontCurrent->height, 29, 0, 0x211, (si->creditsStorage / 100) * 100);
+					GUI_DrawText_Wrapper("Holds:", 21, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Max:", 21, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 72, y + 2 * g_fontCurrent->height, 29, 0, 0x211, creditsStored);
+					GUI_DrawText_Wrapper("%d", 72, y + 3 * g_fontCurrent->height, 29, 0, 0x211, (si->creditsStorage / 100) * 100);
 				}
 				else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), 18, y + 8, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
@@ -271,10 +271,10 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				Prim_Hline(21, y + 15, 72, 16);
 				if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
 					GUI_DrawText_Wrapper("Radar Scan", 46, y + 8, 29, 0, 0x111);
-					GUI_DrawText_Wrapper("Friend:", 22, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("Enemy:", 22, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
-					GUI_DrawText_Wrapper("%d", 71, y + 2 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountAllied);
-					GUI_DrawText_Wrapper("%d", 71, y + 3 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountEnemy);
+					GUI_DrawText_Wrapper("Friend:", 21, y + 2 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("Enemy:", 21, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 72, y + 2 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountAllied);
+					GUI_DrawText_Wrapper("%d", 72, y + 3 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountEnemy);
 				}
 				else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), 18, y + 8, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
