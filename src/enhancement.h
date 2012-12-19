@@ -53,7 +53,6 @@ extern bool enhancement_nonordos_deviation;
 extern bool enhancement_permanent_follow_mode;
 extern bool enhancement_play_additional_voices;
 extern bool enhancement_raise_scenario_unit_cap;
-extern bool enhancement_read_scenario_structure_health;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
 extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;
@@ -65,6 +64,7 @@ extern bool enhancement_targetted_sabotage;
 extern bool enhancement_undelay_ordos_siege_tank_tech;
 
 extern bool enhancement_fix_scenario_typos;
+extern bool enhancement_read_scenario_structure_health;
 extern enum RepairCostFormula enhancement_repair_cost_formula;
 
 #endif

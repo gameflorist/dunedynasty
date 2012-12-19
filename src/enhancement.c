@@ -139,12 +139,6 @@ bool enhancement_play_additional_voices = true;
 bool enhancement_raise_scenario_unit_cap = false;
 
 /**
- * The original game ignores all structures' health fields specified
- * in the scenario, giving them all full health instead.
- */
-bool enhancement_read_scenario_structure_health = false;
-
-/**
  * A mistake in reading the scenario script causes reinforcements to
  * only be sent once.
  */
@@ -206,6 +200,12 @@ bool enhancement_undelay_ordos_siege_tank_tech = true;
  * reinforcements, Atreides WOR facilities).  Fix your own scenarios!
  */
 bool enhancement_fix_scenario_typos;
+
+/**
+ * [Dune II only] The original game ignores the structure health
+ * percentage specified in the scenarios.  Fix your scenarios!
+ */
+bool enhancement_read_scenario_structure_health;
 
 /**
  * [v1.0] Repairs are far more expensive in v1.0.  In addition, a
