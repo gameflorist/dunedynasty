@@ -19,7 +19,8 @@ const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 		/* musicBriefing        */ MUSIC_BRIEFING_HARKONNEN,
 		/* voiceFilename        */ "nhark.voc",
 		/* mentat               */ MENTAT_RADNOR,
-		/* sampleSet            */ SAMPLESET_HARKONNEN
+		/* sampleSet            */ SAMPLESET_HARKONNEN,
+		/* superWeapon          */ { .deathhand = 0 },
 	},
 
 	{ /* 1 */
@@ -37,7 +38,8 @@ const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 		/* musicBriefing        */ MUSIC_BRIEFING_ATREIDES,
 		/* voiceFilename        */ "nattr.voc",
 		/* mentat               */ MENTAT_CYRIL,
-		/* sampleSet            */ SAMPLESET_ATREIDES
+		/* sampleSet            */ SAMPLESET_ATREIDES,
+		/* superWeapon          */ { .fremen = { .owner = HOUSE_FREMEN, .unit75 = UNIT_TROOPERS, .unit25 = UNIT_TROOPER } },
 	},
 
 	{ /* 2 */
@@ -55,7 +57,8 @@ const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 		/* musicBriefing        */ MUSIC_BRIEFING_ORDOS,
 		/* voiceFilename        */ "nordo.voc",
 		/* mentat               */ MENTAT_AMMON,
-		/* sampleSet            */ SAMPLESET_ORDOS
+		/* sampleSet            */ SAMPLESET_ORDOS,
+		/* superWeapon          */ { .saboteur = { .owner = HOUSE_ORDOS, .unit = UNIT_SABOTEUR } },
 	},
 
 	{ /* 3 */
@@ -73,7 +76,8 @@ const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 		/* musicBriefing        */ MUSIC_BRIEFING_ATREIDES,
 		/* voiceFilename        */ "afremen.voc",
 		/* mentat               */ MENTAT_CYRIL,
-		/* sampleSet            */ SAMPLESET_ATREIDES
+		/* sampleSet            */ SAMPLESET_ATREIDES,
+		/* superWeapon          */ { .fremen = { .owner = HOUSE_FREMEN, .unit75 = UNIT_TROOPERS, .unit25 = UNIT_TROOPER } },
 	},
 
 	{ /* 4 */
@@ -91,7 +95,8 @@ const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 		/* musicBriefing        */ MUSIC_BRIEFING_HARKONNEN,
 		/* voiceFilename        */ "asard.voc",
 		/* mentat               */ MENTAT_RADNOR,
-		/* sampleSet            */ SAMPLESET_HARKONNEN
+		/* sampleSet            */ SAMPLESET_HARKONNEN,
+		/* superWeapon          */ { .deathhand = 0 },
 	},
 
 	{ /* 5 */
@@ -109,7 +114,8 @@ const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 		/* musicBriefing        */ MUSIC_BRIEFING_ORDOS,
 		/* voiceFilename        */ "amerc.voc",
 		/* mentat               */ MENTAT_AMMON,
-		/* sampleSet            */ SAMPLESET_ORDOS
+		/* sampleSet            */ SAMPLESET_ORDOS,
+		/* superWeapon          */ { .saboteur = { .owner = HOUSE_MERCENARY, .unit = UNIT_SABOTEUR } },
 	}
 };
 

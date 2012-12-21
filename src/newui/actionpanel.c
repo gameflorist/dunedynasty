@@ -1082,6 +1082,7 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 	enum ShapeID shapeID;
 	const char *name;
 	const char *deploy;
+	uint16 type;
 	int y, w, h;
 	VARIABLE_NOT_USED(s);
 
@@ -1099,7 +1100,8 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 			break;
 
 		case STR_SABOTEUR:
-			shapeID = SHAPE_SABOTEUR;
+			type = g_table_houseInfo[g_playerHouseID].superWeapon.saboteur.unit;
+			shapeID = g_table_unitInfo[type].o.spriteID;
 			name = String_Get_ByIndex(g_productionStringID);
 			deploy = String_Get_ByIndex(STR_DEPLOY);
 			break;

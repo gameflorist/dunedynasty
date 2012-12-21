@@ -995,7 +995,8 @@ void Structure_ActivateSpecial(Structure *s)
 	h = House_Get_ByIndex(s->o.houseID);
 	if (!h->flags.used) return;
 
-	switch (g_table_houseInfo[s->o.houseID].specialWeapon) {
+	const HouseInfo *hi = &g_table_houseInfo[s->o.houseID];
+	switch (hi->specialWeapon) {
 		case HOUSE_WEAPON_MISSILE: {
 			Unit *u;
 			tile32 position;
@@ -1066,10 +1067,10 @@ void Structure_ActivateSpecial(Structure *s)
 				position = Tile_MoveByRandom(position, 32, true);
 
 				orientation = Tools_RandomLCG_Range(0, 3);
-				unitType = (orientation == 1) ? UNIT_TROOPER : UNIT_TROOPERS;
+				unitType = (orientation == 1) ? hi->superWeapon.fremen.unit25 : hi->superWeapon.fremen.unit75;
 
 				g_validateStrictIfZero++;
-				u = Unit_Create(UNIT_INDEX_INVALID, (uint8)unitType, HOUSE_FREMEN, position, (int8)orientation);
+				u = Unit_Create(UNIT_INDEX_INVALID, (uint8)unitType, hi->superWeapon.fremen.owner, position, (int8)orientation);
 				g_validateStrictIfZero--;
 
 				if (u == NULL) continue;
@@ -1094,7 +1095,7 @@ void Structure_ActivateSpecial(Structure *s)
 			}
 			else {
 				g_validateStrictIfZero++;
-				u = Unit_Create(UNIT_INDEX_INVALID, UNIT_SABOTEUR, s->o.houseID, Tile_UnpackTile(position), Tools_Random_256());
+				u = Unit_Create(UNIT_INDEX_INVALID, hi->superWeapon.saboteur.unit, hi->superWeapon.saboteur.owner, Tile_UnpackTile(position), Tools_Random_256());
 				g_validateStrictIfZero--;
 			}
 

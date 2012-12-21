@@ -76,8 +76,24 @@ typedef struct HouseInfo {
 	uint16 musicLose;                                       /*!< Music played when you lose a mission. */
 	uint16 musicBriefing;                                   /*!< Music played during initial briefing of mission. */
 	const char *voiceFilename;                              /*!< Pointer to filename with the voices of the house. */
+
 	enum MentatID mentat;
 	enum SampleSet sampleSet;
+
+	union {
+		void *deathhand; /* placeholder. */
+
+		struct {
+			enum HouseType owner;
+			enum UnitType unit75; /* 75% */
+			enum UnitType unit25; /* 25% */
+		} fremen;
+
+		struct {
+			enum HouseType owner; /* e.g. uncontrollable saboteurs. */
+			enum UnitType unit;
+		} saboteur;
+	} superWeapon;
 } HouseInfo;
 
 extern const HouseInfo g_table_houseInfo_original[HOUSE_MAX];
