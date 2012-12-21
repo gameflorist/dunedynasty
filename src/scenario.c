@@ -440,10 +440,24 @@ Campaign_ReadHouseIni(void)
 				char *buf = buffer;
 				while (*buf == ' ' || *buf == '\t') buf++;
 
-				     if (buf[0] == 'M') hi->specialWeapon = HOUSE_WEAPON_MISSILE;
-				else if (buf[0] == 'D') hi->specialWeapon = HOUSE_WEAPON_MISSILE;
-				else if (buf[0] == 'F') hi->specialWeapon = HOUSE_WEAPON_FREMEN;
-				else if (buf[0] == 'S') hi->specialWeapon = HOUSE_WEAPON_SABOTEUR;
+				if ('a' <= buf[0] && buf[0] <= 'z')
+					buf[0] += 'A' - 'a';
+
+				if (buf[0] == 'M' || buf[0] == 'D') {
+					hi->specialWeapon = HOUSE_WEAPON_MISSILE;
+					hi->superWeapon.deathhand = NULL;
+				}
+				else if (buf[0] == 'F') {
+					hi->specialWeapon = HOUSE_WEAPON_FREMEN;
+					hi->superWeapon.fremen.owner = HOUSE_FREMEN;
+					hi->superWeapon.fremen.unit75 = UNIT_TROOPERS;
+					hi->superWeapon.fremen.unit25 = UNIT_TROOPER;
+				}
+				else if (buf[0] == 'S') {
+					hi->specialWeapon = HOUSE_WEAPON_SABOTEUR;
+					hi->superWeapon.saboteur.owner = houseID;
+					hi->superWeapon.saboteur.unit = UNIT_SABOTEUR;
+				}
 			}
 			else if (strncasecmp(key, "Voice", 5) == 0) {
 				Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
@@ -500,7 +514,7 @@ Campaign_ReadHouseIni(void)
 		HouseInfo *hi = &g_table_houseInfo[houseID];
 		char category[32];
 
-		snprintf(category, sizeof(category), "%s Briefing", g_table_houseInfo_original[houseID].name);
+		snprintf(category, sizeof(category), "%s Extra", g_table_houseInfo_original[houseID].name);
 
 		*keys = '\0';
 		Ini_GetString(category, NULL, NULL, keys, 2000, source);
@@ -519,6 +533,38 @@ Campaign_ReadHouseIni(void)
 			}
 			else if (strcasecmp(key, "Mentat music") == 0) {
 				hi->musicBriefing = Campaign_MusicFromString(buffer, g_table_houseInfo_original[houseID].musicBriefing);
+			}
+			else if (strcasecmp(key, "Superweapon") == 0) {
+				if (hi->specialWeapon == HOUSE_WEAPON_MISSILE) {
+					hi->superWeapon.deathhand = NULL;
+				}
+				else if (hi->specialWeapon == HOUSE_WEAPON_FREMEN) {
+					uint16 owner, unit75, unit25;
+
+					const int count = sscanf(buffer, "%hu,%hu,%hu", &owner, &unit75, &unit25);
+					if (count != 3) {
+						fprintf(stderr, "[%s] %s=%hd,%hd,%hd\n", category, key,
+								hi->superWeapon.fremen.owner, hi->superWeapon.fremen.unit75, hi->superWeapon.fremen.unit25);
+						continue;
+					}
+
+					hi->superWeapon.fremen.owner = (owner < HOUSE_MAX) ? owner : houseID;
+					hi->superWeapon.fremen.unit75 = (unit75 <= UNIT_MCV || unit75 == UNIT_SANDWORM) ? unit75 : UNIT_TROOPERS;
+					hi->superWeapon.fremen.unit25 = (unit25 <= UNIT_MAX || unit25 == UNIT_SANDWORM) ? unit25 : UNIT_TROOPER;
+				}
+				else if (hi->specialWeapon == HOUSE_WEAPON_SABOTEUR) {
+					uint16 owner, unit;
+
+					const int count = sscanf(buffer, "%hu,%hu", &owner, &unit);
+					if (count != 2) {
+						fprintf(stderr, "[%s] %s=%hd,%hd\n", category, key,
+								hi->superWeapon.saboteur.owner, hi->superWeapon.saboteur.unit);
+						continue;
+					}
+
+					hi->superWeapon.saboteur.owner = (owner < HOUSE_MAX) ? owner : houseID;
+					hi->superWeapon.saboteur.unit = (unit <= UNIT_MCV || unit == UNIT_SANDWORM) ? unit : UNIT_SABOTEUR;
+				}
 			}
 		}
 
