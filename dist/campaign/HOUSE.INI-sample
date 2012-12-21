@@ -18,3 +18,25 @@ Recharge=300
 
 ; e.g. Mercenaries have the Atreides narrator.
 Voice=A
+
+
+# Dune Dynasty extensions
+
+[Alliance]
+# House1-House2=<Brain|Ally|Enemy>
+# 'Brain' depends on the scenario Brain setting.  e.g. CPU-CPU allied, CPU-Human enemies.
+; e.g. Ordos and Mercenaries are allied.
+Ord-Mer=Ally
+
+[Ordos Extra]
+# Superweapon=House,Unit,Unit for Fremen-type superweapon
+# Superweapon=House,Unit for Saboteur-type superweapon
+; e.g. Ordos palace releases saboteurs controlled by mercenaries.
+Superweapon=5,6
+
+[Mercenary Traits]
+# Name=BuildLevel,UpgradeLevelRequired[,UpgradeLevel1,UpgradeLevel2,UpgradeLevel3]
+# UpgradeLevel fields are only applicable to factories.
+# Parameters are deviations from the base levels.
+; e.g. Mercenaries can build starports one level earlier.
+Starport=-1,0

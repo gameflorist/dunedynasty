@@ -7,10 +7,6 @@
 
 [Construct]
 # object=BuildCredits,BuildTime,Hitpoints,FogUncoverRadius,AvailableCampaign,PriorityBuild,PriorityTarget,SortPriority
-; e.g. Allow Heavy Factory (harvesters, but not tanks) in level 3.
-Heavy Fctry=600,144,200,3,3,0,600,28
-Tank=300,64,200,3,4,80,100,22
-
 ; e.g. Allow Cannon Turret in level 4, and increase range to 3.
 Turret=125,64,200,3,4,75,150,22
 
