@@ -139,7 +139,7 @@ Mentat_LoadHelpSubjects(Widget *scrollbar, bool init, enum SearchDirectory dir,
 
 		const enum ScrollbarItemType type = (helpSubjects[6] == '0') ? SCROLLBAR_CATEGORY : SCROLLBAR_ITEM;
 		ScrollbarItem *si = Scrollbar_AllocItem(scrollbar, type);
-		si->offset = HTOBE32(*(uint32 *)(helpSubjects + 1));
+		si->d.offset = HTOBE32(*(uint32 *)(helpSubjects + 1));
 		si->no_desc = (helpSubjects[5] == '0');
 		snprintf(si->text, sizeof(si->text), "%s", helpSubjects + 7);
 

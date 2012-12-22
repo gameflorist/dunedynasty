@@ -1277,8 +1277,7 @@ PickCutscene_Initialise(void)
 		si = Scrollbar_AllocItem(w, SCROLLBAR_ITEM);
 
 		snprintf(si->text, sizeof(si->text), "%s", cutscenes[i].text);
-		si->offset = cutscenes[i].animation;
-		si->no_desc = false;
+		si->d.offset = cutscenes[i].animation;
 	}
 
 	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 11, 0);
@@ -1308,7 +1307,7 @@ PlayCutscene_Loop(void)
 	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
 	ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
 
-	switch (si->offset) {
+	switch (si->d.offset) {
 		case HOUSEANIMATION_INTRO:
 			GameLoop_GameIntroAnimation();
 			break;
@@ -1322,7 +1321,7 @@ PlayCutscene_Loop(void)
 		case HOUSEANIMATION_LEVEL9_HARKONNEN:
 		case HOUSEANIMATION_LEVEL9_ATREIDES:
 		case HOUSEANIMATION_LEVEL9_ORDOS:
-			Cutscene_PlayAnimation(si->offset);
+			Cutscene_PlayAnimation(si->d.offset);
 			break;
 
 		case 10: /* Credits. */
@@ -1537,8 +1536,7 @@ PickMusic_Initialise(void)
 					continue;
 
 				si = Scrollbar_AllocItem(w, SCROLLBAR_ITEM);
-				si->offset = (s << 8) | musicID;
-				si->no_desc = false;
+				si->d.offset = (s << 8) | musicID;
 
 				if (m->songname != NULL) {
 					snprintf(si->text, sizeof(si->text), "%s", m->songname);
@@ -1612,8 +1610,8 @@ PickMusic_Loop(MentatState *mentat, int widgetID)
 			if (si->type == SCROLLBAR_CATEGORY)
 				break;
 
-			const enum MusicID musicID = (si->offset & 0xFF);
-			const int s = (si->offset >> 8);
+			const enum MusicID musicID = (si->d.offset & 0xFF);
+			const int s = (si->d.offset >> 8);
 
 			mentat->desc_timer = Timer_GetTicks();
 			Audio_PlayMusicFile(&g_table_music[musicID], &g_table_music[musicID].song[s]);
@@ -1637,28 +1635,28 @@ Options_Initialise(void)
 	ws->scrollMax = 0;
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->checkbox = &enhancement_brutal_ai;
+	si->d.checkbox = &enhancement_brutal_ai;
 	snprintf(si->text, sizeof(si->text), "Brutal AI");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->checkbox = &enhancement_fog_of_war;
+	si->d.checkbox = &enhancement_fog_of_war;
 	snprintf(si->text, sizeof(si->text), "Fog of war");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->checkbox = &enhancement_insatiable_sandworms;
+	si->d.checkbox = &enhancement_insatiable_sandworms;
 	snprintf(si->text, sizeof(si->text), "Insatiable sandworms");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->checkbox = &enhancement_raise_scenario_unit_cap;
+	si->d.checkbox = &enhancement_raise_scenario_unit_cap;
 	snprintf(si->text, sizeof(si->text), "Raise scenario unit cap");
 
 	bool dummy = true;
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->checkbox = &dummy;
+	si->d.checkbox = &dummy;
 	snprintf(si->text, sizeof(si->text), "Hardware mouse cursor");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->checkbox = &enhancement_infantry_squad_death_animations;
+	si->d.checkbox = &enhancement_infantry_squad_death_animations;
 	snprintf(si->text, sizeof(si->text), "Infantry squad corpses");
 
 	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
@@ -1680,7 +1678,7 @@ Options_Loop(int widgetID)
 		case SCANCODE_SPACE:
 			si = Scrollbar_GetSelectedItem(scrollbar);
 			if ((si != NULL) && (si->type == SCROLLBAR_CHECKBOX)) {
-				*(si->checkbox) = !(*(si->checkbox));
+				*(si->d.checkbox) = !(*(si->d.checkbox));
 			}
 
 			break;

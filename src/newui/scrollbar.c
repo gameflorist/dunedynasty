@@ -255,7 +255,6 @@ Scrollbar_AllocItem(Widget *w, enum ScrollbarItemType type)
 
 	ScrollbarItem *si = &s_scrollbar_item[i];
 	si->type = type;
-	si->checkbox = NULL;
 	return si;
 }
 
@@ -531,7 +530,7 @@ ScrollListArea_Draw(Widget *w)
 				colour = (n == s_selectedHelpSubject) ? 8 : 31;
 				Prim_Rect_i(x, y, x + 8, y + 8, colour);
 
-				if (*(si->checkbox))
+				if (*(si->d.checkbox))
 					GUI_DrawText_Wrapper("x", x + 1, y + 1, colour, 0, 0x11);
 
 				GUI_DrawText_Wrapper(si->text, x + 14, y, colour, 0, 0x12);

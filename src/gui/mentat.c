@@ -811,7 +811,7 @@ GUI_Mentat_ShowHelp(Widget *scrollbar, enum SearchDirectory dir,
 		return;
 
 	noDesc = si->no_desc;
-	offset = si->offset;
+	offset = si->d.offset;
 
 	memset(&info, 0, sizeof(info));
 	fileID = ChunkFile_Open_Ex(dir, s_mentatFilename);
