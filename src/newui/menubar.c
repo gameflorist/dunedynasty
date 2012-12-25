@@ -54,6 +54,7 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 {
 	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENUBAR];
 	const int digit_w = 10;
+	const int y = g_widgetProperties[WINDOWID_CREDITS].yBase;
 
 	char char_old[7];
 	char char_new[7];
@@ -70,14 +71,14 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset)
 
 		if (char_old[i] != char_new[i]) {
 			if (char_old[i] != ' ')
-				Shape_Draw(shape_old, x, offset, 0, 0);
+				Shape_Draw(shape_old, x, y + offset, 0, 0);
 
 			if (char_new[i] != ' ')
-				Shape_Draw(shape_new, x, 8 + offset, 0, 0);
+				Shape_Draw(shape_new, x, y + 8 + offset, 0, 0);
 		}
 		else {
 			if (char_new[i] != ' ')
-				Shape_Draw(shape_new, x, 5, 0, 0);
+				Shape_Draw(shape_new, x, y + 1, 0, 0);
 		}
 	}
 
