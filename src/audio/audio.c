@@ -357,8 +357,9 @@ Audio_LoadSampleFromSet(enum SampleSet setID, enum SampleID sampleID)
 			break;
 
 		case '/':
-			/* /: bene gesserit only (called mercenary in dune 2). */
-			if (setID != SAMPLESET_BENE_GESSERIT)
+			/* /: Bene Gesserit only (called mercenary in Dune II). */
+			/* if (setID != SAMPLESET_BENE_GESSERIT) return; */
+			if (s_curr_sample_set != SAMPLESET_INVALID)
 				return;
 			break;
 
