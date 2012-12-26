@@ -1481,7 +1481,11 @@ Extras_Initialise(void)
 
 	/* Reset credits. */
 	GUI_DrawCredits(extras_credits, 2, SCREEN_WIDTH);
-	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(extras_widgets, 20), true);
+
+	/* Restore previous selection. */
+	const enum ExtrasMenu new_extras_page = extras_page;
+	extras_page = EXTRASMENU_MAX;
+	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(extras_widgets, 20 + new_extras_page), true);
 
 	/* XXX: dodgy hack to clear the last selected widgets. */
 	GUI_Widget_HandleEvents(main_menu_widgets);
