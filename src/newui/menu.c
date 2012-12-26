@@ -1576,8 +1576,12 @@ Extras_ClickCHOAMArrow(Widget *w)
 static bool
 Extras_ClickRadioButton(Widget *w)
 {
-	extras_page = w->index - 20;
-	assert(extras_page <= EXTRASMENU_MAX);
+	const enum ExtrasMenu new_extras_page = w->index - 20;
+
+	if ((extras_page == new_extras_page) || (new_extras_page >= EXTRASMENU_MAX))
+		return false;
+
+	extras_page = new_extras_page;
 
 	switch (extras_page) {
 		case EXTRASMENU_CUTSCENE:
