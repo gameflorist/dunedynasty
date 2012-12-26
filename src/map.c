@@ -631,6 +631,12 @@ Map_GetLandscapeTypeVisible(uint16 packed)
 	return Map_GetLandscapeType_BySpriteID(t->groundSpriteID, t->hasStructure);
 }
 
+enum LandscapeType
+Map_GetLandscapeTypeOriginal(uint16 packed)
+{
+	return Map_GetLandscapeType_BySpriteID(g_mapSpriteID[packed] & 0x7FFF, false);
+}
+
 #if 0
 /**
  * Checks wether a packed tile is visible in the viewport.

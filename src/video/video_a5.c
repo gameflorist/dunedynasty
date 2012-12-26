@@ -2551,10 +2551,10 @@ VideoA5_DrawWSAStatic(int frame, int x, int y)
 
 /*--------------------------------------------------------------*/
 
+/* Mode: 0 = scouted, 1 = terrain only. */
 void
-Video_DrawMinimap(int map_scale)
+Video_DrawMinimap(int left, int top, int map_scale, int mode)
 {
-	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
 	const MapInfo *mapInfo = &g_mapInfos[map_scale];
 	bool redraw = false;
 	int sandworm_position[4 * 2];
@@ -2568,7 +2568,11 @@ Video_DrawMinimap(int map_scale)
 			const Tile *t = &g_map[packed];
 			int colour = 12;
 
-			if (t->isUnveiled && g_playerHouse->flags.radarActivated) {
+			if (mode == 1) {
+				uint16 type = Map_GetLandscapeTypeOriginal(packed);
+				colour = g_table_landscapeInfo[type].radarColour;
+			}
+			else if (t->isUnveiled && g_playerHouse->flags.radarActivated) {
 				Unit *u;
 
 				if (enhancement_fog_of_war && g_mapVisible[packed].timeout <= g_timerGame) {
@@ -2643,14 +2647,14 @@ Video_DrawMinimap(int map_scale)
 	}
 
 	al_draw_scaled_bitmap(s_minimap, 0.0f, 0.0f, mapInfo->sizeX, mapInfo->sizeY,
-			wi->offsetX, wi->offsetY, (map_scale + 1.0f) * mapInfo->sizeX, (map_scale + 1.0f) * mapInfo->sizeY, 0);
+			left, top, (map_scale + 1.0f) * mapInfo->sizeX, (map_scale + 1.0f) * mapInfo->sizeY, 0);
 
 	/* Always redraw sandworms because they glow. */
 	for (int i = 0; i < num_sandworms; i++) {
-		const float x1 = wi->offsetX + (map_scale + 1.0f) *  sandworm_position[2*i + 0] + 0.01f;
-		const float y1 = wi->offsetY + (map_scale + 1.0f) *  sandworm_position[2*i + 1] + 0.01f;
-		const float x2 = wi->offsetX + (map_scale + 1.0f) * (sandworm_position[2*i + 0] + 1) - 0.01f;
-		const float y2 = wi->offsetY + (map_scale + 1.0f) * (sandworm_position[2*i + 1] + 1) - 0.01f;
+		const float x1 = left + (map_scale + 1.0f) * (sandworm_position[2*i + 0] + 0) + 0.01f;
+		const float y1 = top  + (map_scale + 1.0f) * (sandworm_position[2*i + 1] + 0) + 0.01f;
+		const float x2 = left + (map_scale + 1.0f) * (sandworm_position[2*i + 0] + 1) - 0.01f;
+		const float y2 = top  + (map_scale + 1.0f) * (sandworm_position[2*i + 1] + 1) - 0.01f;
 
 		al_draw_filled_rectangle(x1, y1, x2, y2, paltoRGB[0xFF]);
 	}
