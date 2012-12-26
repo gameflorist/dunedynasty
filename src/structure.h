@@ -98,6 +98,7 @@ extern bool Structure_SupportsRallyPoints(enum StructureType s);
 extern void Structure_SetRallyPoint(Structure *s, uint16 packed);
 extern Structure *Structure_Get_ByPackedTile(uint16 packed);
 extern uint32 Structure_GetStructuresBuilt(struct House *h);
+extern int16 Structure_IsValidBuildLandscape(uint16 position, enum StructureType type);
 extern int16 Structure_IsValidBuildLocation(uint16 position, enum StructureType type);
 extern void Structure_ActivateSpecial(Structure *s);
 extern void Structure_RemoveFog(Structure *s);

@@ -50,7 +50,6 @@ static int64_t s_tickStructurePalace    = 0; /*!< Indicates next time Palace fun
 
 uint16 g_structureIndex;
 
-static int16 Structure_IsValidBuildLandscape(uint16 position, enum StructureType type);
 static bool Structure_SkipUpgradeLevel(const Structure *s, int level);
 
 /**
@@ -879,7 +878,7 @@ uint32 Structure_GetStructuresBuilt(House *h)
  * @param type The structure type to check the position for.
  * @return 0 if the position is not valid, 1 if the position is valid and have enough slabs, <0 if the position is valid but miss some slabs.
  */
-static int16
+int16
 Structure_IsValidBuildLandscape(uint16 position, enum StructureType type)
 {
 	const StructureInfo *si;
