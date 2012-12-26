@@ -85,6 +85,7 @@ enum ExtrasMenu {
 	EXTRASMENU_CUTSCENE,
 	EXTRASMENU_GALLERY,
 	EXTRASMENU_JUKEBOX,
+	EXTRASMENU_SKIRMISH,
 	EXTRASMENU_OPTIONS,
 
 	EXTRASMENU_MAX
@@ -103,7 +104,6 @@ static int extras_credits;
 static void Extras_ShowScrollbar(void);
 static void Extras_HideScrollbar(void);
 static void Extras_DrawRadioButton(Widget *w);
-static bool Extras_ClickCHOAMArrow(Widget *w);
 static bool Extras_ClickRadioButton(Widget *w);
 
 /*--------------------------------------------------------------*/
@@ -281,6 +281,9 @@ Extras_InitWidgets(void)
 {
 	Widget *w;
 
+	w = GUI_Widget_Allocate(2, SCANCODE_S, 160, 168, SHAPE_SEND_ORDER, STR_NULL); /* Start game. */
+	extras_widgets = GUI_Widget_Link(extras_widgets, w);
+
 	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 160, 168 + 8, SHAPE_RESUME_GAME, STR_NULL);
 	w->shortcut = SCANCODE_P;
 	extras_widgets = GUI_Widget_Link(extras_widgets, w);
@@ -289,14 +292,7 @@ Extras_InitWidgets(void)
 	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 21, SCANCODE_F2, 72, 56);
 	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 22, SCANCODE_F3, 72, 88);
 	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 23, SCANCODE_F4, 72, 120);
-
-	w = GUI_Widget_Allocate(18, -1, 64, 168, SHAPE_CHOAM_UP, STR_NULL);
-	w->clickProc = Extras_ClickCHOAMArrow;
-	extras_widgets = GUI_Widget_Link(extras_widgets, w);
-
-	w = GUI_Widget_Allocate(19, -1, 64, 184, SHAPE_CHOAM_DOWN, STR_NULL);
-	w->clickProc = Extras_ClickCHOAMArrow;
-	extras_widgets = GUI_Widget_Link(extras_widgets, w);
+	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 24, SCANCODE_F5, 72, 152);
 
 	extras_widgets = Scrollbar_Allocate(extras_widgets, WINDOWID_STARPORT_INVOICE, -8, 4, 3, false);
 }
@@ -1624,6 +1620,31 @@ PickMusic_Loop(MentatState *mentat, int widgetID)
 /*--------------------------------------------------------------*/
 
 static void
+Skirmish_Initialise(void)
+{
+	Widget *w;
+
+	w = GUI_Widget_Get_ByIndex(extras_widgets, 1);
+	w->offsetY = 184;
+
+	w = GUI_Widget_Get_ByIndex(extras_widgets, 2);
+	GUI_Widget_MakeVisible(w);
+}
+
+static enum MenuAction
+Skirmish_Loop(int widgetID)
+{
+	switch (widgetID) {
+		case 0x8000 | 1: /* exit. */
+			return MENU_MAIN_MENU;
+	}
+
+	return MENU_EXTRAS;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
 Options_Initialise(void)
 {
 	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
@@ -1743,7 +1764,7 @@ Extras_DrawRadioButton(Widget *w)
 {
 	const enum ExtrasMenu page = w->index - 20;
 	const enum ShapeID shapeID[EXTRASMENU_MAX] = {
-		SHAPE_TROOPERS, SHAPE_ORNITHOPTER, SHAPE_SONIC_TANK, SHAPE_MCV
+		SHAPE_TROOPERS, SHAPE_ORNITHOPTER, SHAPE_SONIC_TANK, SHAPE_SARDAUKAR, SHAPE_MCV
 	};
 	assert(page <= EXTRASMENU_MAX);
 
@@ -1762,7 +1783,10 @@ static void
 Extras_Draw(MentatState *mentat)
 {
 	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS");
-	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS", 90, 32, 150, 168, 140, 32);
+	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS", 56, 104, 56, 136, 64, 64);
+
+	if (extras_page != EXTRASMENU_SKIRMISH)
+		Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS", 90, 32, 150, 168, 140, 32);
 
 	/* Credits label may need to be replaced for other languages. */
 	Shape_Draw(SHAPE_CREDITS_LABEL, SCREEN_WIDTH - 128, 0, 0, 0);
@@ -1798,6 +1822,10 @@ Extras_Draw(MentatState *mentat)
 			}
 			break;
 
+		case EXTRASMENU_SKIRMISH:
+			headline = "Skirmish:";
+			break;
+
 		case EXTRASMENU_OPTIONS:
 			headline = "Enhancement Options:";
 			break;
@@ -1819,29 +1847,6 @@ Extras_Draw(MentatState *mentat)
 }
 
 static bool
-Extras_ClickCHOAMArrow(Widget *w)
-{
-	if (w->index == 18) {
-		if (extras_page > 0) {
-			const enum ExtrasMenu new_page = (extras_page - 1);
-
-			w = GUI_Widget_Get_ByIndex(extras_widgets, 20 + new_page);
-			GUI_Widget_MakeSelected(w, true);
-		}
-	}
-	else {
-		if (extras_page + 1 < EXTRASMENU_MAX) {
-			const enum ExtrasMenu new_page = (extras_page + 1);
-
-			w = GUI_Widget_Get_ByIndex(extras_widgets, 20 + new_page);
-			GUI_Widget_MakeSelected(w, true);
-		}
-	}
-
-	return true;
-}
-
-static bool
 Extras_ClickRadioButton(Widget *w)
 {
 	const enum ExtrasMenu new_extras_page = w->index - 20;
@@ -1850,6 +1855,9 @@ Extras_ClickRadioButton(Widget *w)
 		return false;
 
 	extras_page = new_extras_page;
+
+	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 2));
+	GUI_Widget_Get_ByIndex(extras_widgets, 1)->offsetY = 168 + 8;
 
 	switch (extras_page) {
 		case EXTRASMENU_CUTSCENE:
@@ -1867,6 +1875,10 @@ Extras_ClickRadioButton(Widget *w)
 			}
 
 			PickMusic_Initialise();
+			break;
+
+		case EXTRASMENU_SKIRMISH:
+			Skirmish_Initialise();
 			break;
 
 		case EXTRASMENU_OPTIONS:
@@ -1913,6 +1925,10 @@ Extras_Loop(MentatState *mentat)
 
 		case EXTRASMENU_JUKEBOX:
 			res = PickMusic_Loop(mentat, widgetID);
+			break;
+
+		case EXTRASMENU_SKIRMISH:
+			res = Skirmish_Loop(widgetID);
 			break;
 
 		case EXTRASMENU_OPTIONS:
