@@ -3,6 +3,8 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include "types.h"
+
 /**
  * Types of encoded Index.
  */

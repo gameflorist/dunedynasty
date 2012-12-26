@@ -1,12 +1,14 @@
 #ifndef NEWUI_SCROLLBAR_H
 #define NEWUI_SCROLLBAR_H
 
+#include "enumeration.h"
 #include "../gui/widget.h"
 
 enum ScrollbarItemType {
 	SCROLLBAR_CATEGORY,
 	SCROLLBAR_ITEM,
 	SCROLLBAR_CHECKBOX,
+	SCROLLBAR_BRAIN,
 };
 
 typedef struct ScrollbarItem {
@@ -17,6 +19,7 @@ typedef struct ScrollbarItem {
 	union {
 		uint32 offset;
 		bool *checkbox;
+		enum Brain *brain;
 	} d;
 } ScrollbarItem;
 

@@ -31,6 +31,7 @@
 #include "../ini.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
+#include "../mapgenerator/skirmish.h"
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../sprites.h"
@@ -66,6 +67,7 @@ enum MenuAction {
 	MENU_BRIEFING_LOSE,
 	MENU_PLAY_A_GAME,
 	MENU_LOAD_GAME,
+	MENU_PLAY_SKIRMISH,
 	MENU_BATTLE_SUMMARY,
 	MENU_HALL_OF_FAME,
 	MENU_EXTRAS,
@@ -100,6 +102,7 @@ static Widget *briefing_proceed_repeat_widgets;
 
 static enum ExtrasMenu extras_page;
 static int extras_credits;
+static bool skirmish_regenerate_map;
 
 static void Extras_ShowScrollbar(void);
 static void Extras_HideScrollbar(void);
@@ -286,6 +289,11 @@ Extras_InitWidgets(void)
 
 	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 160, 168 + 8, SHAPE_RESUME_GAME, STR_NULL);
 	w->shortcut = SCANCODE_P;
+	extras_widgets = GUI_Widget_Link(extras_widgets, w);
+
+	w = GUI_Widget_Allocate(9, 0, 241, 81, SHAPE_INVALID, STR_NULL); /* Regenerate map. */
+	w->width = 62;
+	w->height = 62;
 	extras_widgets = GUI_Widget_Link(extras_widgets, w);
 
 	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 20, SCANCODE_F1, 72, 24);
@@ -1014,13 +1022,19 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 
 /*--------------------------------------------------------------*/
 
-static enum MenuAction
-StartGame_Loop(bool new_game)
+static void
+PlayAGame_StartGame(bool new_game)
 {
 	A5_UseTransform(SCREENDIV_MAIN);
 	GameLoop_Main(new_game);
 	Audio_PlayMusic(MUSIC_STOP);
 	A5_UseTransform(SCREENDIV_MENU);
+}
+
+static enum MenuAction
+PlayAGame_Loop(bool new_game)
+{
+	PlayAGame_StartGame(new_game);
 
 	switch (g_gameMode) {
 		case GM_MENU:
@@ -1058,8 +1072,6 @@ StartGame_Loop(bool new_game)
 	return MENU_FADE_IN | MENU_MAIN_MENU;
 }
 
-/*--------------------------------------------------------------*/
-
 static void
 LoadGame_Draw(void)
 {
@@ -1077,7 +1089,7 @@ LoadGame_Loop(void)
 		return MENU_MAIN_MENU;
 	}
 	else if (ret == -2) {
-		return StartGame_Loop(false);
+		return PlayAGame_Loop(false);
 	}
 	else if (ret == -3) {
 		redraw = true;
@@ -1095,6 +1107,13 @@ LoadGame_Loop(void)
 	}
 
 	return (redraw ? MENU_REDRAW : 0) | MENU_LOAD_GAME;
+}
+
+static enum MenuAction
+PlaySkirmish_Loop(void)
+{
+	PlayAGame_StartGame(false);
+	return MENU_EXTRAS;
 }
 
 /*--------------------------------------------------------------*/
@@ -1624,11 +1643,55 @@ Skirmish_Initialise(void)
 {
 	Widget *w;
 
+	Skirmish_GenerateMap(false);
+	skirmish_regenerate_map = false;
+
 	w = GUI_Widget_Get_ByIndex(extras_widgets, 1);
 	w->offsetY = 184;
 
 	w = GUI_Widget_Get_ByIndex(extras_widgets, 2);
 	GUI_Widget_MakeVisible(w);
+
+	w = GUI_Widget_Get_ByIndex(extras_widgets, 9);
+	GUI_Widget_MakeVisible(w);
+
+	w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
+	w->width = 92;
+
+	WidgetScrollbar *ws = w->data;
+	ScrollbarItem *si;
+
+	w->offsetY = 22;
+	ws->itemHeight = 14;
+	ws->scrollMax = 0;
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		si = Scrollbar_AllocItem(w, SCROLLBAR_BRAIN);
+		si->d.brain = &g_skirmish.brain[h];
+		snprintf(si->text, sizeof(si->text), g_table_houseInfo[h].name);
+	}
+
+	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
+}
+
+static void
+Skirmish_Draw(void)
+{
+	const int x1 = 240;
+	const int y1 = 80;
+	const int x2 = x1 + 63;
+	const int y2 = y1 + 63;
+
+	Prim_FillRect_i(x1, y1, x2, y2, 12);
+
+	if (skirmish_regenerate_map) {
+		GUI_DrawText_Wrapper("Generating", x1 + 32, y1 - 8, 31, 0, 0x111);
+		VideoA5_DrawWSAStatic(0, x1, y1);
+	}
+	else {
+		GUI_DrawText_Wrapper("Map %u", x1 + 32, y1 - 8, 31, 0, 0x111, g_skirmish.seed);
+		Video_DrawMinimap(x1 + 1, y1 + 1, 0, 1);
+	}
 }
 
 static enum MenuAction
@@ -1637,6 +1700,69 @@ Skirmish_Loop(int widgetID)
 	switch (widgetID) {
 		case 0x8000 | 1: /* exit. */
 			return MENU_MAIN_MENU;
+
+		case 0x8000 | 2: /* start game. */
+			{
+				enum HouseType human = HOUSE_INVALID;
+				int count_enemy = 0;
+
+				for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+					if (g_skirmish.brain[h] == BRAIN_HUMAN)
+						human = h;
+					if (g_skirmish.brain[h] == BRAIN_CPU_ENEMY)
+						count_enemy++;
+				}
+
+				if ((human != HOUSE_INVALID) && (count_enemy > 0)) {
+					g_playerHouseID = human;
+					return MENU_PLAY_SKIRMISH;
+				}
+			}
+			break;
+
+		case 0x8000 | 3: /* list entry. */
+		case SCANCODE_ENTER:
+		case SCANCODE_KEYPAD_4:
+		case SCANCODE_KEYPAD_5:
+		case SCANCODE_KEYPAD_6:
+		case SCANCODE_SPACE:
+			{
+				Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
+				ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
+				enum Brain new_brain = *(si->d.brain);
+
+				if (Input_Test(MOUSE_RMB)) {
+					new_brain = BRAIN_NONE;
+				}
+				else {
+					const int change_player = (widgetID == SCANCODE_KEYPAD_4) ? -1 : 1;
+
+					new_brain = ((new_brain + change_player) % (BRAIN_CPU_ALLY + 1));
+
+					/* Skip over human player if one is already selected. */
+					for (enum HouseType h = HOUSE_HARKONNEN; (new_brain == BRAIN_HUMAN) && (h < HOUSE_MAX); h++) {
+						if (g_skirmish.brain[h] == BRAIN_HUMAN)
+							new_brain = ((new_brain + change_player) % (BRAIN_CPU_ALLY + 1));
+					}
+				}
+
+				if (*(si->d.brain) != new_brain) {
+					*(si->d.brain) = new_brain;
+
+					if (!Skirmish_GenerateMap(false))
+						skirmish_regenerate_map = true;
+				}
+			}
+			break;
+
+		case 0x8000 | 9:
+			skirmish_regenerate_map = true;
+			break;
+	}
+
+	if (skirmish_regenerate_map) {
+		if (Skirmish_GenerateMap(true))
+			skirmish_regenerate_map = false;
 	}
 
 	return MENU_EXTRAS;
@@ -1824,6 +1950,7 @@ Extras_Draw(MentatState *mentat)
 
 		case EXTRASMENU_SKIRMISH:
 			headline = "Skirmish:";
+			Skirmish_Draw();
 			break;
 
 		case EXTRASMENU_OPTIONS:
@@ -1857,7 +1984,10 @@ Extras_ClickRadioButton(Widget *w)
 	extras_page = new_extras_page;
 
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 2));
+	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 4));
+	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 9));
 	GUI_Widget_Get_ByIndex(extras_widgets, 1)->offsetY = 168 + 8;
+	GUI_Widget_Get_ByIndex(extras_widgets, 3)->width = 0x88;
 
 	switch (extras_page) {
 		case EXTRASMENU_CUTSCENE:
@@ -2175,11 +2305,15 @@ Menu_Run(void)
 				break;
 
 			case MENU_PLAY_A_GAME:
-				res = StartGame_Loop(true);
+				res = PlayAGame_Loop(true);
 				break;
 
 			case MENU_LOAD_GAME:
 				res = LoadGame_Loop();
+				break;
+
+			case MENU_PLAY_SKIRMISH:
+				res = PlaySkirmish_Loop();
 				break;
 
 			case MENU_BATTLE_SUMMARY:

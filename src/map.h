@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "enumeration.h"
+#include "types.h"
 
 enum {
 	MAP_SIZE_MAX = 64

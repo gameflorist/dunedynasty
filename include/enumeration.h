@@ -1,6 +1,13 @@
 #ifndef ENUMERATION_H
 #define ENUMERATION_H
 
+enum Brain {
+	BRAIN_NONE,
+	BRAIN_HUMAN,
+	BRAIN_CPU_ENEMY,
+	BRAIN_CPU_ALLY,
+};
+
 enum HouseType {
 	HOUSE_HARKONNEN = 0,
 	HOUSE_ATREIDES  = 1,

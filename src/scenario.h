@@ -4,6 +4,7 @@
 #define SCENARIO_H
 
 #include "enumeration.h"
+#include "types.h"
 
 typedef struct Campaign {
 	char name[32];
@@ -53,11 +54,17 @@ typedef struct Scenario {
 	Reinforcement reinforcement[16];                        /*!< Reinforcement information. */
 } Scenario;
 
+typedef struct Skirmish {
+	uint32 seed;
+	enum Brain brain[HOUSE_MAX];
+} Skirmish;
+
 extern Campaign *g_campaign_list;
 extern int g_campaign_total;
 extern int g_campaign_selected;
 
 extern Scenario g_scenario;
+extern Skirmish g_skirmish;
 
 extern Campaign *Campaign_Alloc(const char *dir_name);
 extern void Campaign_Load(void);
