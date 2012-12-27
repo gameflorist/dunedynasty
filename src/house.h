@@ -117,4 +117,8 @@ extern void House_UpdateCreditsStorage(uint8 houseID);
 extern void House_CalculatePowerAndCredit(struct House *h);
 extern const char *House_GetWSAHouseFilename(uint8 houseID);
 
+extern enum UnitType House_GetInfantrySquad(enum HouseType houseID);
+extern enum UnitType House_GetLightVehicle(enum HouseType houseID);
+extern enum UnitType House_GetIXVehicle(enum HouseType houseID);
+
 #endif /* HOUSE_H */

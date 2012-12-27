@@ -523,3 +523,36 @@ const char *House_GetWSAHouseFilename(uint8 houseID)
 	if (houseID >= HOUSE_MAX) return NULL;
 	return houseWSAFileNames[houseID];
 }
+
+/*--------------------------------------------------------------*/
+
+enum UnitType
+House_GetInfantrySquad(enum HouseType houseID)
+{
+	if (houseID == HOUSE_ATREIDES)
+		return UNIT_INFANTRY;
+
+	return UNIT_TROOPERS;
+}
+
+enum UnitType
+House_GetLightVehicle(enum HouseType houseID)
+{
+	if (houseID == HOUSE_ATREIDES)
+		return UNIT_TRIKE;
+	if (houseID == HOUSE_ORDOS)
+		return UNIT_RAIDER_TRIKE;
+
+	return UNIT_QUAD;
+}
+
+enum UnitType
+House_GetIXVehicle(enum HouseType houseID)
+{
+	if (houseID == HOUSE_ATREIDES)
+		return UNIT_SONIC_TANK;
+	if (houseID == HOUSE_ORDOS)
+		return UNIT_DEVIATOR;
+
+	return UNIT_DEVASTATOR;
+}
