@@ -6,11 +6,13 @@
 
 #include "skirmish.h"
 
+#include "../gui/gui.h"
 #include "../map.h"
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../sprites.h"
 #include "../tile.h"
+#include "../timer/timer.h"
 #include "../tools.h"
 
 typedef struct {
@@ -55,6 +57,26 @@ Skirmish_IsPlayable(void)
 	}
 
 	return found_human && found_enemy;
+}
+
+static int
+Skirmish_PickRandomIsland(const SkirmishData *sd)
+{
+	if (sd->nislands_unused <= 0)
+		return -1;
+
+	int r = Tools_RandomLCG_Range(0, sd->nislands_unused - 1);
+	for (int i = 0; i < sd->nislands; i++) {
+		if (sd->island[i].used)
+			continue;
+
+		if (r <= 0)
+			return i;
+
+		r--;
+	}
+
+	return -1;
 }
 
 static void
@@ -164,6 +186,59 @@ Skirmish_DivideIsland(int island, SkirmishData *sd)
 }
 
 static bool
+Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
+{
+	const int delta[7] = {
+		0, -4, 4,
+		-MAP_SIZE_MAX * 3 - 2, -MAP_SIZE_MAX * 3 + 2,
+		 MAP_SIZE_MAX * 3 - 2,  MAP_SIZE_MAX * 3 + 2,
+	};
+
+	const MapInfo *mi = &g_mapInfos[0];
+
+	int island = Skirmish_PickRandomIsland(sd);
+	if (island < 0)
+		return false;
+
+	/* Pick a tile on the island that is not too close to the edge.
+	 * XXX: This might not terminate.
+	 */
+	int r;
+	while (true) {
+		r = Tools_RandomLCG_Range(sd->island[island].start, sd->island[island].end - 1);
+
+		if (!(mi->minX + 4 <= sd->buildable[r].x && sd->buildable[r].x < mi->minX + mi->sizeX - 4))
+			continue;
+
+		if (!(mi->minY + 3 <= sd->buildable[r].y && sd->buildable[r].y < mi->minY + mi->sizeY - 3))
+			continue;
+
+		break;
+	}
+
+	for (int i = 0; i < 7; i++) {
+		const uint16 packed = sd->buildable[r].packed + delta[i];
+		const tile32 position = Tile_UnpackTile(packed);
+
+		enum UnitType type = (i == 0) ? UNIT_MCV : House_GetLightVehicle(houseID);
+
+		enum LandscapeType lst = Map_GetLandscapeType(packed);
+
+		/* If there's a structure or a bloom here, tough luck. */
+		if (lst == LST_STRUCTURE || lst == LST_BLOOM_FIELD)
+			continue;
+
+		/* If there's a mountain here, build infantry instead. */
+		if (lst == LST_ENTIRELY_MOUNTAIN || lst == LST_PARTIAL_MOUNTAIN)
+			type = House_GetInfantrySquad(houseID);
+
+		Scenario_Create_Unit(houseID, type, 256, position, 127, g_table_unitInfo[type].o.actionsPlayer[3]);
+	}
+
+	return true;
+}
+
+static bool
 Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 {
 	const MapInfo *mi = &g_mapInfos[0];
@@ -175,6 +250,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 	Game_Init();
 
 	Skirmish_GenGeneral();
+	Sprites_UnloadTiles();
 	Sprites_LoadTiles();
 	Tools_RandomLCG_Seed(g_skirmish.seed);
 	Map_CreateLandscape(g_skirmish.seed);
@@ -205,6 +281,19 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 	if (sd->nislands_unused == 0)
 		return false;
 
+	/* Spawn players. */
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		if (g_skirmish.brain[houseID] == BRAIN_NONE)
+			continue;
+
+		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
+			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
+
+			if (!Skirmish_GenUnitsHuman(houseID, sd))
+				return false;
+		}
+	}
+
 #if 0
 	/* Debugging. */
 	for (int island = 0; island < sd.nislands; island++) {
@@ -218,6 +307,8 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 #endif
 
 	Game_Prepare();
+	GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+	g_tickScenarioStart = g_timerGame;
 	return true;
 }
 
