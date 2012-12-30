@@ -1779,7 +1779,7 @@ Viewport_InterpolateMovement(const Unit *u, int *x, int *y)
 	origin.s.y = *y;
 
 	float speed = u->speedRemainder;
-	speed += Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false) * frame / 3.0f;
+	speed += Tools_AdjustToGameSpeed(u->speedSub, 1, 255, false) * frame / 3.0f;
 
 	int destx, desty;
 	Map_IsPositionInViewport(u->currentDestination, &destx, &desty);

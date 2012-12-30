@@ -477,22 +477,22 @@ Campaign_ReadProfileIni(void)
 					}
 					break;
 
-				case 1: /* Combat: fireDistance, damage, fireDelay, movingSpeed. */
+				case 1: /* Combat: fireDistance, damage, fireDelay, movingSpeedFactor. */
 					{
 						UnitInfo ut;
 
 						const int count = sscanf(buffer, "%hu,%hu,%hu,%hu",
-								&ut.fireDistance, &ut.damage, &ut.fireDelay, &ut.movingSpeed);
+								&ut.fireDistance, &ut.damage, &ut.fireDelay, &ut.movingSpeedFactor);
 						if (count < 4) {
 							fprintf(stderr, "[%s] %s=%hu,%hu,%hu,%hu\n", category, key,
-									ui->damage, ui->movingSpeed, ui->fireDelay, ui->fireDistance);
+									ui->fireDistance, ui->damage, ui->fireDelay, ui->movingSpeedFactor);
 							break;
 						}
 
-						ui->damage       = ut.damage;
-						ui->movingSpeed  = ut.movingSpeed;
-						ui->fireDelay    = ut.fireDelay;
-						ui->fireDistance = ut.fireDistance;
+						ui->damage            = ut.damage;
+						ui->movingSpeedFactor = ut.movingSpeedFactor;
+						ui->fireDelay         = ut.fireDelay;
+						ui->fireDistance      = ut.fireDistance;
 					}
 					break;
 

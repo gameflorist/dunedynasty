@@ -114,7 +114,7 @@ static bool Load_Main(FILE *fp)
 			case CC_UNIT: if (!Unit_Load     (fp, length)) return false; load_unit = true; break;
 			case CC_BLDG: if (!Structure_Load(fp, length)) return false; load_bldg = true; break;
 			case CC_TEAM: if (!Team_Load     (fp, length)) return false; break;
-			case 'ODUN': if (!UnitNew_Load  (fp, length)) return false; break;
+			case CC_ODUN: if (!UnitNew_Load  (fp, length)) return false; break;
 
 			/* Dune Dynasty extensions.  Note: must come AFTER CC_BLDG, CC_UNIT, etc. */
 			case CC_DDAI: if (!BrutalAI_Load (fp, length)) return false; break;

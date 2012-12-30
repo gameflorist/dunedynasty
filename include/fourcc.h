@@ -21,6 +21,9 @@ enum {
 	CC_TEXT = FOURCC('T','E','X','T'),
 	CC_UNIT = FOURCC('U','N','I','T'),
 
+	/* OpenDUNE extensions. */
+	CC_ODUN = FOURCC('O','D','U','N'), /* OpenDUNE Unit New. */
+
 	/* Dune Dynasty extensions. */
 	CC_DDAI = FOURCC('D','D','A','I'), /* Dune Dynasty Brutal AI. */
 	CC_DDB2 = FOURCC('D','D','B','2'), /* Dune Dynasty Building 2. */
