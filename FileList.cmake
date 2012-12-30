@@ -29,9 +29,9 @@ set(DUNEDYNASTY_SRC_FILES
 	src/gui/widget_draw.c
 	src/house.c
 	src/ini.c
-	src/input/input.c
 	src/input/input_a5.c
-	src/input/mouse.c
+	src/input/input_dd.c
+	src/input/mouse_dd.c
 	src/load.c
 	src/map.c
 	src/newui/actionpanel.c
