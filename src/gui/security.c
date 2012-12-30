@@ -8,9 +8,6 @@
 #include "types.h"
 #include "../os/strings.h"
 
-#include "security.h"
-
-#include "../enhancement.h"
 #include "../file.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
@@ -23,9 +20,8 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../table/strings.h"
-#include "../timer/timer.h"
+#include "../timer.h"
 #include "../tools.h"
-#include "../video/video.h"
 #include "../wsa.h"
 
 
@@ -119,6 +115,7 @@ bool GUI_Security_Show(void)
 	for (i = 0, valid = false; i < 3 && !valid; i++) {
 		void *wsa;
 		uint16 questionIndex;
+		uint32 tickWaitTill;
 		char buffer[81];
 
 		questionIndex = Tools_RandomRange(0, questionsCount - 1) * 3 + STR_SECURITY_QUESTIONS;
@@ -138,7 +135,7 @@ bool GUI_Security_Show(void)
 		strncpy(g_readBuffer, String_Get_ByIndex(questionIndex), g_readBufferSize);
 		GUI_Security_DrawText(g_readBuffer);
 
-		g_interrogationTimer = Timer_GetTicks() + strlen(g_readBuffer) * 4;
+		g_interrogationTimer = g_timerGUI + strlen(g_readBuffer) * 4;
 
 		Widget_SetCurrentWidget(9);
 
@@ -182,21 +179,19 @@ bool GUI_Security_Show(void)
 
 		GUI_Security_DrawText(g_readBuffer);
 
-		const int64_t tickWaitTill = Timer_GetTicks() + strlen(g_readBuffer) * 4;
+		tickWaitTill = g_timerGUI + strlen(g_readBuffer) * 4;
 
 		Input_History_Clear();
 
 		/* ENHANCEMENT -- In Dune2, the + 120 is on the other side, causing the 'You are wrong! / Well done.' screen to appear very short (close to invisible, so to say) */
-		while (Timer_GetTicks() + (g_dune2_enhanced ? 0 : 120) < tickWaitTill + (g_dune2_enhanced ? 120 : 0)) {
-			if (Input_IsInputAvailable()) break;
+		while (g_timerGUI + (g_dune2_enhanced ? 0 : 120) < tickWaitTill + (g_dune2_enhanced ? 120 : 0)) {
+			if (Input_Keyboard_NextKey() != 0) break;
 
-			if (Timer_GetTicks() < tickWaitTill) {
+			if (g_timerGUI < tickWaitTill) {
 				GUI_Mentat_Animation(1);
 			} else {
 				GUI_Mentat_Animation(0);
 			}
-
-			Video_Tick();
 		}
 
 		GUI_Security_UndrawText();

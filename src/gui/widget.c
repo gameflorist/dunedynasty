@@ -99,8 +99,7 @@ Widget *GUI_Widget_Get_ByIndex(Widget *w, uint16 index)
 }
 
 #if 0
-/* Moved to video/video_opendune.c. */
-static void GUI_Widget_DrawBlocked(Widget *w, uint8 colour)
+static void GUI_Widget_DrawBlocked(Widget *w, uint8 colour);
 #endif
 
 /**
@@ -142,8 +141,9 @@ void GUI_Widget_Draw(Widget *w)
 	if (w->flags.s.invisible) {
 		if (!w->flags.s.greyWhenInvisible) return;
 
-		/* XXX: Pretty sure the game never comes here. */
-		/* GUI_Widget_DrawBlocked(w, 12); */
+#if 0
+		GUI_Widget_DrawBlocked(w, 12);
+#endif
 		return;
 	}
 

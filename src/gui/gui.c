@@ -123,7 +123,6 @@ assert_compile(lengthof(s_colourBorderSchema) == lengthof(s_temporaryColourBorde
 assert_compile(lengthof(s_colourBorderSchema) == lengthof(s_HOF_ColourBorderSchema));
 
 #if 0
-/* Moved to video/video_opendune.c */
 extern void GUI_DrawWiredRectangle(uint16 left, uint16 top, uint16 right, uint16 bottom, uint8 colour);
 extern void GUI_DrawFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, uint8 colour);
 #endif
@@ -642,7 +641,6 @@ void GUI_UpdateProductionStringID(void)
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c. */
 static void GUI_Widget_SetProperties(uint16 index, uint16 xpos, uint16 ypos, uint16 width, uint16 height);
 extern uint16 GUI_DisplayModalMessage(const char *str, uint16 spriteID, ...);
 #endif
@@ -1194,7 +1192,6 @@ static uint16 GUI_HallOfFame_GetRank(uint16 score)
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c */
 static void GUI_HallOfFame_DrawRank(uint16 score, bool fadeIn);
 static void GUI_HallOfFame_DrawBackground(uint16 score, bool hallOfFame);
 static void GUI_EndStats_Sleep(uint16 delay);
@@ -1245,7 +1242,6 @@ void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colours, uint8 reference, 
 }
 
 #if 0
-/* Moved to video/video_opendune.c. */
 extern void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill);
 #endif
 
@@ -1283,7 +1279,6 @@ uint16 GUI_DisplayHint(uint16 stringID, uint16 spriteID)
 }
 
 #if 0
-/* Moved to video/video_opendune.c. */
 extern void GUI_DrawProgressbar(uint16 current, uint16 max);
 #endif
 
@@ -1601,7 +1596,6 @@ void GUI_InitColors(const uint8 *colours, uint8 first, uint8 last)
 }
 
 #if 0
-/* Moved to video/video_opendune.c. */
 static uint16 GetNeededClipping(int16 x, int16 y);
 static void ClipTop(int16 *x1, int16 *y1, int16 x2, int16 y2);
 static void ClipBottom(int16 *x1, int16 *y1, int16 x2, int16 y2);
@@ -1657,7 +1651,6 @@ void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c. */
 static uint32 GUI_FactoryWindow_CreateWidgets(void);
 static uint32 GUI_FactoryWindow_LoadGraymapTbl(void);
 
@@ -1666,7 +1659,6 @@ static uint16 GUI_FactoryWindow_CalculateStarportPrice(uint16 credits);
 static int GUI_FactoryWindow_Sorter(const void *a, const void *b);
 extern void GUI_FactoryWindow_InitItems(enum StructureType s);
 
-/* Moved to gui/menu_opendune.c. */
 static void GUI_FactoryWindow_Init(Structure *s);
 extern FactoryResult GUI_DisplayFactoryWindow(Structure *s, uint16 upgradeCost);
 #endif
@@ -1734,7 +1726,6 @@ GUI_String_Get_ByIndex(int16 stringID)
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c. */
 static void GUI_StrategicMap_AnimateArrows(void);
 static void GUI_StrategicMap_AnimateSelected(uint16 selected, StrategicMapData *data);
 static bool GUI_StrategicMap_GetRegion(uint16 region);
@@ -1764,10 +1755,8 @@ void GUI_ClearScreen(uint16 screenID)
 }
 
 #if 0
-/* Moved to video/video_opendune.c. */
 extern void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth);
 
-/* Moved to gui/menu_opendune.c. */
 extern void GUI_FactoryWindow_B495_0F30(void);
 extern FactoryWindowItem *GUI_FactoryWindow_GetItem(int16 offset);
 extern void GUI_FactoryWindow_DrawDetails(void);
@@ -1853,10 +1842,8 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c. */
 extern void GUI_FactoryWindow_PrepareScrollList(void);
 
-/* Moved to video/video_opendune.c. */
 extern void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, uint16 delay, bool skipNull);
 extern void GUI_Mouse_Show(void);
 extern void GUI_Mouse_Hide(void);
@@ -1895,7 +1882,6 @@ void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 heigh
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c. */
 extern uint16 GUI_HallOfFame_Tick(void);
 #endif
 
@@ -2431,6 +2417,5 @@ void GUI_DrawScreen(uint16 screenID)
 }
 
 #if 0
-/* Moved to video/video_opendune.c. */
 extern void GUI_SetPaletteAnimated(uint8 *palette, int16 ticksOfAnimation);
 #endif

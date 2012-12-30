@@ -274,7 +274,6 @@ void GFX_Init_SpriteInfo(uint16 widthSize, uint16 heightSize)
 }
 
 #if 0
-/* Moved to video/video_opendune.c */
 extern void GFX_PutPixel(uint16 x, uint16 y, uint8 colour);
 #endif
 
@@ -423,7 +422,6 @@ void GFX_SetPalette(uint8 *palette)
 }
 
 #if 0
-/* Moved to video/video_opendune.c. */
 extern uint8 GFX_GetPixel(uint16 x, uint16 y);
 extern uint16 GFX_GetSize(int16 width, int16 height);
 #endif

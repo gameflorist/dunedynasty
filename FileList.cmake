@@ -145,12 +145,10 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/config.c
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
-	src/gui/menu_opendune.c
 	src/gui/security.c
 	src/input/input_opendune.c
 	src/input/mouse_opendune.c
 	src/timer/timer_opendune.c
-	src/video/video_opendune.c
 	src/video/video_sdl.c
 	src/video/video_win32.c
 	)

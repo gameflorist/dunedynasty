@@ -3,6 +3,7 @@
 /** @file src/input/input.c Input routines. */
 
 #include <string.h>
+#include "types.h"
 #include "../os/common.h"
 #include "../os/sleep.h"
 
@@ -13,7 +14,7 @@
 #include "../gui/gui.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
-#include "../video/video.h"
+#include "../timer.h"
 
 static uint16 s_history[128];                /*!< History of input commands. */
 static uint16 s_historyHead = 0;             /*!< The current head inside the #s_history array. */
@@ -281,7 +282,7 @@ static void Input_ReadInputFromFile(void)
 		if ((value & 0x800) == 0) s_activeInputMap[idx] |= bit;
 
 		if ((value & 0xFF) < 0x41 || (value & 0xFF) > 0x44) {
-			/* g_timerInput = 0; */
+			g_timerInput = 0;
 			return;
 		}
 
@@ -298,7 +299,7 @@ static void Input_ReadInputFromFile(void)
 	value = g_mouseY = g_var_7019 = mouseBuffer[1];
 
 	Mouse_HandleMovementIfMoved(value);
-	/* g_timerInput = 0; */
+	g_timerInput = 0;
 }
 
 /**
@@ -312,7 +313,7 @@ static uint16 Input_AddHistory(uint16 value)
 
 	if (g_var_701B) {
 		value = 0;
-	} else if (false /* g_timerInput < g_var_7015 */) {
+	} else if (g_timerInput < g_var_7015) {
 		value = 0;
 	} else if (g_var_7013 == 0x2D) {
 		Input_ReadInputFromFile();
@@ -467,9 +468,9 @@ void Input_HandleInput(uint16 input)
 	if (g_mouseMode != INPUT_MOUSE_MODE_RECORD || value == 0x7D) return;
 
 	tempBuffer[0] = input;
-	/* tempBuffer[1] = g_timerInput; */
+	tempBuffer[1] = g_timerInput;
 	File_Write(g_mouseFileID, tempBuffer, saveSize);
-	/* g_timerInput = 0; */
+	g_timerInput = 0;
 }
 
 /**
@@ -606,7 +607,6 @@ uint16 Input_WaitForValidInput(void)
 			index = s_historyHead;
 			if (index != s_historyTail) break;
 
-			Video_Tick();
 			msleep(0);
 		}
 

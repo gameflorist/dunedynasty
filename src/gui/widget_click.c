@@ -356,7 +356,6 @@ bool GUI_Widget_RepairUpgrade_Click(Widget *w)
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c. */
 static void GUI_Widget_Undraw(Widget *w, uint8 colour);
 #endif
 
@@ -445,7 +444,6 @@ void GUI_Window_Create(WindowDesc *desc)
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c. */
 static void GUI_Window_BackupScreen(WindowDesc *desc);
 static void GUI_Window_RestoreScreen(WindowDesc *desc);
 static void GUI_Widget_GameControls_Click(Widget *w);
@@ -684,7 +682,6 @@ int GUI_Widget_HOF_ClearList_Click(Widget *w)
 }
 
 #if 0
-/* Moved to gui/menu_opendune.c. */
 extern bool GUI_Widget_HOF_Resume_Click(Widget *w);
 extern bool GUI_Production_List_Click(Widget *w);
 extern bool GUI_Production_ResumeGame_Click(Widget *w);

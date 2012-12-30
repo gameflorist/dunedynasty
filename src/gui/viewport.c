@@ -217,7 +217,6 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 #endif
 
 #if 0
-/* Moved to video/video_opendune.c. */
 static uint8 *GUI_Widget_Viewport_Draw_GetSprite(uint16 spriteID, uint8 houseID);
 #endif
 

@@ -112,7 +112,7 @@ static bool Drivers_SoundMusic_Init(bool enable)
 	if (!Drivers_Init(sound, "C55")) return false;
 	memcpy(music, sound, sizeof(Driver));
 
-	/* Timer_Add(MPU_Interrupt, 1000000 / 120); */
+	Timer_Add(MPU_Interrupt, 1000000 / 120);
 
 	size = MPU_GetDataSize();
 
@@ -140,7 +140,7 @@ static bool Drivers_Voice_Init(bool enable)
 
 	if (!enable) return false;
 
-	/* if (!DSP_Init()) return false; */
+	if (!DSP_Init()) return false;
 
 	if (!Drivers_Init(voice, "VOC")) return false;
 
@@ -157,8 +157,8 @@ void Drivers_All_Init(void)
 {
 	Drivers_Reset();
 
-	/* g_enableSoundMusic = Drivers_SoundMusic_Init(g_enableSoundMusic); */
-	/* g_enableVoices = Drivers_Voice_Init(g_enableVoices); */
+	g_enableSoundMusic = Drivers_SoundMusic_Init(g_enableSoundMusic);
+	g_enableVoices = Drivers_Voice_Init(g_enableVoices);
 }
 
 bool Driver_Music_IsPlaying(void)
@@ -173,12 +173,8 @@ bool Driver_Music_IsPlaying(void)
 
 bool Driver_Voice_IsPlaying(void)
 {
-#if 0
 	if (g_driverVoice->index == 0xFFFF) return false;
 	return DSP_GetStatus() == 2;
-#else
-	return false;
-#endif
 }
 
 void Driver_Sound_Play(int16 index, int16 volume)
@@ -249,7 +245,6 @@ void Driver_Voice_LoadFile(const char *filename, void *buffer, uint32 length)
 
 void Driver_Voice_Play(const uint8 *data, int16 arg0A)
 {
-#if 0
 	static int16 l_var_639A = -1;
 
 	Driver *voice = g_driverVoice;
@@ -275,14 +270,13 @@ void Driver_Voice_Play(const uint8 *data, int16 arg0A)
 	if (data == NULL) return;
 
 	DSP_Play(data);
-#endif
 }
 
 void Driver_Voice_Stop(void)
 {
 	Driver *voice = g_driverVoice;
 
-	/* if (Driver_Voice_IsPlaying()) DSP_Stop(); */
+	if (Driver_Voice_IsPlaying()) DSP_Stop();
 
 	if (voice->contentMalloced) {
 		free(voice->content);
@@ -391,7 +385,7 @@ static void Drivers_SoundMusic_Uninit(void)
 	Drivers_Uninit(sound);
 	memcpy(music, sound, sizeof(Driver));
 
-	/* Timer_Remove(MPU_Interrupt); */
+	Timer_Remove(MPU_Interrupt);
 	MPU_Uninit();
 }
 
@@ -399,7 +393,7 @@ static void Drivers_Voice_Uninit(void)
 {
 	Drivers_Uninit(g_driverVoice);
 
-	/* DSP_Uninit(); */
+	DSP_Uninit();
 }
 
 void Drivers_All_Uninit(void)

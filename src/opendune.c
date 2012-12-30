@@ -369,7 +369,6 @@ static void GameLoop_LevelEnd(void)
 static void Gameloop_Logos(void);
 static void GameLoop_GameIntroAnimation(void);
 
-/* Moved to gui/menu_opendune.c. */
 static uint16 GameLoop_B4E6_0000(uint16 arg06, uint32 arg08, uint16 arg0C);
 static void GameLoop_B4E6_0108(uint16 arg06, char **strings, uint32 arg0C, uint16 arg10, uint16 arg12);
 static void GameLoop_DrawText2(char *string, uint16 left, uint16 top, uint8 fgColourNormal, uint8 fgColourSelected, uint8 bgColour);

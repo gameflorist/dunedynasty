@@ -326,7 +326,6 @@ uint16 Sprites_LoadImage(enum SearchDirectory dir, const char *filename, uint16 
 }
 
 #if 0
-/* Moved to video/video_opendune.c */
 extern void Sprites_SetMouseSprite(uint16 hotSpotX, uint16 hotSpotY, uint8 *sprite);
 #endif
 
