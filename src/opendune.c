@@ -92,7 +92,7 @@ static uint8 s_enableLog = 0; /*!< 0 = off, 1 = record game, 2 = playback game (
 #endif
 
 uint16 g_validateStrictIfZero = 0; /*!< 0 = strict validation, basically: no-cheat-mode. */
-bool g_running = true; /*!< true if game needs to keep running; false to stop the game. */
+static const bool g_running = true; /*!< true if game needs to keep running; false to stop the game. */
 uint16 g_selectionType = 0;
 uint16 g_selectionTypeNew = 0;
 bool g_viewport_forceRedraw = false; /*!< Force a full redraw of the screen. */

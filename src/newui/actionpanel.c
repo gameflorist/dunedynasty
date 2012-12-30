@@ -579,13 +579,13 @@ ActionPanel_ClickStarportOrder(Structure *s)
 	while ((objectType = BuildQueue_RemoveHead(&s->queue)) != 0xFFFF) {
 		Unit *u;
 
-		g_var_38BC++;
+		g_validateStrictIfZero++;
 		{
 			tile32 tile;
 			tile.tile = 0xFFFFFFFF;
 			u = Unit_Create(UNIT_INDEX_INVALID, (uint8)objectType, s->o.houseID, tile, 0);
 		}
-		g_var_38BC--;
+		g_validateStrictIfZero--;
 
 		if (u == NULL) {
 			/* XXX: What is going on here? */

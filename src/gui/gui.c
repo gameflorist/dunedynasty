@@ -1121,7 +1121,7 @@ uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvestedEnemy
 		score += g_table_structureInfo[s->o.type].o.buildCredits / 100;
 	}
 
-	g_var_38BC++;
+	g_validateStrictIfZero++;
 
 	find.houseID = HOUSE_INVALID;
 	find.type    = UNIT_HARVESTER;
@@ -1140,7 +1140,7 @@ uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvestedEnemy
 		}
 	}
 
-	g_var_38BC--;
+	g_validateStrictIfZero--;
 
 	tmp = *harvestedEnemy + loc0C;
 	*harvestedEnemy = (tmp > 65000) ? 65000 : (tmp & 0xFFFF);
@@ -1347,8 +1347,8 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 
 	House *h;
 	int16 creditsDiff;
-	int16 creditsNew;
-	int16 creditsOld;
+	int32 creditsNew;
+	int32 creditsOld;
 	int16 offset;
 
 	if (l_tickCreditsAnimation > Timer_GetTicks() && mode == 0) return;
@@ -1505,7 +1505,7 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 
 		if (g_table_selectionType[oldSelectionType].variable_04 && g_table_selectionType[selectionType].variable_06) {
 			g_viewport_forceRedraw = true;
-			g_var_3A14 = true;
+			g_viewport_fadein = true;
 		}
 
 		Widget_SetCurrentWidget(g_table_selectionType[selectionType].defaultWidget);

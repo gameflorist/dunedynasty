@@ -61,7 +61,6 @@ extern bool   g_debugScenario;
 extern bool   g_debugSkipDialogs;
 
 extern uint16 g_validateStrictIfZero;
-extern bool g_running;
 extern uint16 g_selectionType;
 extern uint16 g_selectionTypeNew;
 extern bool g_viewport_forceRedraw;

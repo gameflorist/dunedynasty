@@ -309,12 +309,12 @@ Viewport_Place(void)
 		if (s->o.type == STRUCTURE_PALACE)
 			House_Get_ByIndex(s->o.houseID)->palacePosition = s->o.position;
 
-		if (g_structureActiveType == STRUCTURE_REFINERY && g_var_38BC == 0) {
+		if (g_structureActiveType == STRUCTURE_REFINERY && g_validateStrictIfZero == 0) {
 			Unit *u;
 
-			g_var_38BC++;
+			g_validateStrictIfZero++;
 			u = Unit_CreateWrapper(g_playerHouseID, UNIT_HARVESTER, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
-			g_var_38BC--;
+			g_validateStrictIfZero--;
 
 			if (u == NULL) {
 				h->harvestersIncoming++;

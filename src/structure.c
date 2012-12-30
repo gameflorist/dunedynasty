@@ -280,9 +280,6 @@ void GameLoop_Structure(void)
 								/* The AI places structures which are operational immediately */
 								Structure_SetState(s, STRUCTURE_STATE_IDLE);
 
-								/* ENHANCEMENT -- Make AI not place structures on top of units. */
-								if (!enhancement_ai_respects_structure_placement) g_var_38BC++;
-
 								/* Find the position to place the structure */
 								for (i = 0; i < 5; i++) {
 									if (ns->o.type != h->ai_structureRebuild[i][0]) continue;
@@ -293,9 +290,6 @@ void GameLoop_Structure(void)
 									h->ai_structureRebuild[i][1] = 0;
 									break;
 								}
-
-								/* XXX -- if tile is occupied by structure, forget about this building. */
-								if (!enhancement_ai_respects_structure_placement) g_var_38BC--;
 
 								/* If the AI no longer had in memory where to store the structure, free it and forget about it */
 								if (i == 5) {
@@ -2167,9 +2161,9 @@ bool Structure_PopulateBuildable(Structure *s, uint16 objectType)
 
 					if (loc60[i] >= unitsAtStarport) continue;
 
-					g_var_38BC++;
+					g_validateStrictIfZero++;
 					u = Unit_Allocate(UNIT_INDEX_INVALID, i, s->o.houseID);
-					g_var_38BC--;
+					g_validateStrictIfZero--;
 
 					if (u != NULL) {
 						loop = true;
