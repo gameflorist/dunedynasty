@@ -1728,8 +1728,8 @@ GUI_String_Get_ByIndex(int16 stringID)
 #if 0
 static void GUI_StrategicMap_AnimateArrows(void);
 static void GUI_StrategicMap_AnimateSelected(uint16 selected, StrategicMapData *data);
-static bool GUI_StrategicMap_GetRegion(uint16 region);
-static void GUI_StrategicMap_SetRegion(uint16 region, bool set);
+static bool GUI_StrategicMap_IsRegionDone(uint16 region);
+static void GUI_StrategicMap_SetRegionDone(uint16 region, bool set);
 static int16 GUI_StrategicMap_ClickedRegion(void);
 static bool GUI_StrategicMap_FastForwardToggleWithESC(void);
 static void GUI_StrategicMap_DrawText(const char *string)
@@ -1795,7 +1795,7 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		uint16 index;
 		uint16 temp;
 
-		index = Tools_RandomRange(0, width - 1);
+		index = Tools_RandomLCG_Range(0, width - 1);
 
 		temp = offsetsX[index];
 		offsetsX[index] = offsetsX[x];
@@ -1806,7 +1806,7 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		uint16 index;
 		uint16 temp;
 
-		index = Tools_RandomRange(0, height - 1);
+		index = Tools_RandomLCG_Range(0, height - 1);
 
 		temp = offsetsY[index];
 		offsetsY[index] = offsetsY[y];

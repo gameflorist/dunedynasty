@@ -419,7 +419,7 @@ MentatSecurity_PickQuestion(MentatState *mentat)
 {
 	const int questionsCount = atoi(String_Get_ByIndex(STR_SECURITY_COUNT));
 
-	mentat->security_question = Tools_RandomRange(0, questionsCount - 1) * 3 + STR_SECURITY_QUESTIONS;
+	mentat->security_question = Tools_RandomLCG_Range(0, questionsCount - 1) * 3 + STR_SECURITY_QUESTIONS;
 	mentat->wsa = WSA_LoadFile(String_Get_ByIndex(mentat->security_question + 1), GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
 }
 

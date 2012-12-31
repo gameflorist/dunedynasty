@@ -379,7 +379,7 @@ static bool
 MenuBar_ClickSoundVolumeSlider(Widget *w)
 {
 	if (Slider_Click(w) || w->state.s.buttonState & 0x01) {
-		const enum SampleID sampleID = Tools_RandomRange(SAMPLE_AFFIRMATIVE, SAMPLE_MOVING_OUT);
+		const enum SampleID sampleID = Tools_RandomLCG_Range(SAMPLE_AFFIRMATIVE, SAMPLE_MOVING_OUT);
 		const SliderData *data = w->data;
 
 		sound_volume = (float)data->curr / (data->max - data->min);

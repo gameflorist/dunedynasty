@@ -494,7 +494,7 @@ UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit, uint16 target_encoded)
 	float dy = targety - originy;
 	float theta = atan2f(dy, dx);
 
-	const int planID = Tools_RandomRange(0, NUM_AISQUAD_ATTACK_PLANS - 1);
+	const int planID = Tools_RandomLCG_Range(0, NUM_AISQUAD_ATTACK_PLANS - 1);
 	const AISquadPlan *plan = &aisquad_attack_plan[planID];
 
 	int detourx1 = targetx + plan->distance1 * cos(theta + plan->angle1 * M_PI / 180.0f);
@@ -505,8 +505,8 @@ UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit, uint16 target_encoded)
 	int detoury3 = targety - plan->distance3 * sin(theta + plan->angle3 * M_PI / 180.0f);
 
 	/* Try to disperse to not clog up the factory. */
-	originx += Tools_RandomRange(0, 9) - 5;
-	originy += Tools_RandomRange(0, 9) - 5;
+	originx += Tools_RandomLCG_Range(0, 9) - 5;
+	originy += Tools_RandomLCG_Range(0, 9) - 5;
 
 	UnitAI_ClampWaypoint(&originx, &originy);
 	UnitAI_ClampWaypoint(&detourx1, &detoury1);

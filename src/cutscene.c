@@ -151,7 +151,7 @@ Cutscene_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		uint16 index;
 		uint16 temp;
 
-		index = Tools_RandomRange(0, width - 1);
+		index = Tools_RandomLCG_Range(0, width - 1);
 
 		temp = offsetsX[index];
 		offsetsX[index] = offsetsX[x];
@@ -162,7 +162,7 @@ Cutscene_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		uint16 index;
 		uint16 temp;
 
-		index = Tools_RandomRange(0, height - 1);
+		index = Tools_RandomLCG_Range(0, height - 1);
 
 		temp = offsetsY[index];
 		offsetsY[index] = offsetsY[y];
@@ -210,7 +210,7 @@ Cutscene_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 scre
 	for (i = 0; i < width; i++) {
 		uint16 tmp;
 
-		j = Tools_RandomRange(0, width - 1);
+		j = Tools_RandomLCG_Range(0, width - 1);
 
 		tmp = columns[j];
 		columns[j] = columns[i];
@@ -220,7 +220,7 @@ Cutscene_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 scre
 	for (i = 0; i < height; i++) {
 		uint16 tmp;
 
-		j = Tools_RandomRange(0, height - 1);
+		j = Tools_RandomLCG_Range(0, height - 1);
 
 		tmp = rows[j];
 		rows[j] = rows[i];

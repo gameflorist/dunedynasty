@@ -2285,7 +2285,7 @@ void Structure_HouseUnderAttack(uint8 houseID)
 
 static uint16 GUI_FactoryWindow_CalculateStarportPrice(uint16 credits)
 {
-	credits = (credits / 10) * 4 + (credits / 10) * (Tools_RandomRange(0, 6) + Tools_RandomRange(0, 6));
+	credits = (credits / 10) * 4 + (credits / 10) * (Tools_RandomLCG_Range(0, 6) + Tools_RandomLCG_Range(0, 6));
 
 	return min(credits, 999);
 }
@@ -2309,7 +2309,7 @@ void Structure_InitFactoryItems(const Structure *s)
 		uint16 seed = (seconds / 60) + g_scenarioID + g_playerHouseID;
 		seed *= seed;
 
-		Tools_Random_SeedLCG(seed);
+		Tools_RandomLCG_Seed(seed);
 	}
 
 	const StructureInfo *si = &g_table_structureInfo[s->o.type];

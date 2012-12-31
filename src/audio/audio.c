@@ -167,7 +167,7 @@ Audio_PlayMusic(enum MusicID musicID)
 	if (num_songs <= 0)
 		return;
 
-	i = Tools_RandomRange(0, num_songs - 1);
+	i = Tools_RandomLCG_Range(0, num_songs - 1);
 	for (song = musicID;; song++) {
 		if (g_table_music[song].enable == MUSIC_ENABLE) {
 			if (i <= 0)
