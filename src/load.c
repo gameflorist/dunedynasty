@@ -194,9 +194,9 @@ LoadFile(const char *filename)
 
 	Sprites_LoadTiles();
 
-	g_var_38BC++;
+	g_validateStrictIfZero++;
 	res = Load_Main(fp);
-	g_var_38BC--;
+	g_validateStrictIfZero--;
 
 	fclose(fp);
 

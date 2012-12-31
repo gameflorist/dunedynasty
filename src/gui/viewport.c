@@ -37,6 +37,8 @@
 
 #if 0
 static uint32 s_tickCursor;                                 /*!< Stores last time Viewport changed the cursor spriteID. */
+static uint32 s_tickMapScroll;                              /*!< Stores last time Viewport ran MapScroll function. */
+static uint32 s_tickClick;                                  /*!< Stores last time Viewport handled a click. */
 
 /**
  * Handles the Click events for the Viewport widget.
@@ -89,6 +91,12 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 		drag = true;
 	}
 
+	/* ENHANCEMENT -- Dune2 depends on slow CPUs to limit the rate mouse clicks are handled. */
+	if (g_dune2_enhanced && (click || drag)) {
+		if (s_tickClick + 2 >= g_timerGame) return true;
+		s_tickClick = g_timerGame;
+	}
+
 	int scroll_dx = 0, scroll_dy = 0;
 	switch (w->index) {
 		default: break;
@@ -99,13 +107,12 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 	}
 
 	if (scroll_dx != 0 || scroll_dy != 0) {
-		if (click || drag) {
-			const int speed = max(1, 2 * g_gameConfig.scrollSpeed);
-			Map_MoveDirection(speed * scroll_dx, speed * scroll_dy);
-		}
-		else if (g_gameConfig.autoScroll) {
-			const int speed = max(1, g_gameConfig.scrollSpeed);
-			Map_MoveDirection(speed * scroll_dx, speed * scroll_dy);
+		/* Always scroll if we have a click or a drag */
+		if (!click && !drag) {
+			/* Wait for either one of the timers */
+			if (s_tickMapScroll + 10 >= g_timerGame || s_tickCursor + 20 >= g_timerGame) return true;
+			/* Don't scroll if we have a structure/unit selected and don't want to autoscroll */
+			if (g_gameConfig.autoScroll == 0 && (g_selectionType == SELECTIONTYPE_STRUCTURE || g_selectionType == SELECTIONTYPE_UNIT)) return true;
 		}
 
 		return true;
@@ -431,7 +438,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	}
 
 	if (updateDisplay && !drawToMainScreen) {
-		if (g_var_3A14) {
+		if (g_viewport_fadein) {
 			GUI_Mouse_Hide_InWidget(g_curWidgetIndex);
 
 			/* ENHANCEMENT -- When fading in the game on start, you don't see the fade as it is against the already drawn screen. */
@@ -446,7 +453,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 			GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, g_screenActiveID, 0);
 			GUI_Mouse_Show_InWidget();
 
-			g_var_3A14 = false;
+			g_viewport_fadein = false;
 		} else {
 			bool init = false;
 
