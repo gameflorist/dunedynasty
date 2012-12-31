@@ -1730,7 +1730,7 @@ static bool GUI_StrategicMap_IsRegionDone(uint16 region);
 static void GUI_StrategicMap_SetRegionDone(uint16 region, bool set);
 static int16 GUI_StrategicMap_ClickedRegion(void);
 static bool GUI_StrategicMap_FastForwardToggleWithESC(void);
-static void GUI_StrategicMap_DrawText(const char *string)
+static void GUI_StrategicMap_DrawText(const char *string);
 static uint16 GUI_StrategicMap_ScenarioSelection(uint16 campaignID);
 static void GUI_StrategicMap_ReadHouseRegions(uint8 houseID, uint16 campaignID);
 static void GUI_StrategicMap_DrawRegion(uint8 houseId, uint16 region, bool progressive);
