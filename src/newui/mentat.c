@@ -4,9 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "fourcc.h"
+#include "../os/endian.h"
 
 #include "mentat.h"
 
+#include "scrollbar.h"
+#include "../config.h"
 #include "../enhancement.h"
 #include "../file.h"
 #include "../gfx.h"
@@ -14,6 +18,7 @@
 #include "../gui/mentat.h"
 #include "../ini.h"
 #include "../input/input.h"
+#include "../opendune.h"
 #include "../shape.h"
 #include "../string.h"
 #include "../table/strings.h"
@@ -66,6 +71,110 @@ int movingMouthSprite;
 int otherSprite;
 
 MentatState g_mentat_state;
+
+/*--------------------------------------------------------------*/
+
+static void
+GUI_Mentat_HelpListLoop(int key)
+{
+	if (key != 0x8001) {
+		Widget *w = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
+
+		switch (key) {
+			case 0x80 | MOUSE_ZAXIS:
+			case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
+			case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
+			case SCANCODE_KEYPAD_9: /* NUMPAD 9 / PAGE UP */
+			case SCANCODE_KEYPAD_3: /* NUMPAD 3 / PAGE DOWN */
+				Scrollbar_HandleEvent(w, key);
+				break;
+
+			case MOUSE_LMB:
+				break;
+
+			case 0x8003:
+			case SCANCODE_ENTER:
+			case SCANCODE_KEYPAD_5:
+			case SCANCODE_SPACE:
+				GUI_Mentat_ShowHelp();
+				break;
+
+			default: break;
+		}
+	}
+}
+
+void
+GUI_Mentat_LoadHelpSubjects(bool init)
+{
+	if (!init)
+		return;
+
+	char *helpSubjects = GFX_Screen_Get_ByIndex(5);
+	uint8 fileID;
+	uint32 length;
+	uint32 counter;
+
+	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "MENTAT%c", g_table_houseInfo[g_playerHouseID].name[0]);
+	snprintf(s_mentatFilename, sizeof(s_mentatFilename), "%s", String_GenerateFilename(s_mentatFilename));
+
+	/* Be careful here as Fremen, Sardaukar, and Mercenaries don't have mentat advice. */
+	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename)) {
+		s_mentatFilename[6] = g_table_houseInfo[g_playerHouseID].prefixChar;
+	}
+
+	fileID = ChunkFile_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, s_mentatFilename);
+	length = ChunkFile_Read(fileID, HTOBE32(CC_NAME), helpSubjects, GFX_Screen_GetSize_ByIndex(5));
+	ChunkFile_Close(fileID);
+
+	Widget *w = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
+	WidgetScrollbar *ws = w->data;
+	ws->scrollMax = 0;
+
+	counter = 0;
+	while (counter < length) {
+		const uint8 size = *helpSubjects;
+
+		counter += size;
+
+		if (helpSubjects[size - 1] > g_campaignID + 1) {
+			helpSubjects += size;
+			continue;
+		}
+
+		ScrollbarItem *si = Scrollbar_AllocItem(w);
+		si->offset = HTOBE32(*(uint32 *)(helpSubjects + 1));
+		si->no_desc = (helpSubjects[5] == '0');
+		si->is_category = (helpSubjects[6] == '0');
+		snprintf(si->text, sizeof(si->text), "%s", helpSubjects + 7);
+
+		if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH)) {
+			if (strcmp(si->text, "Frigatte") == 0)
+				strcpy(si->text, "Frigate");
+		}
+
+		helpSubjects += size;
+	}
+
+	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 11, 0);
+}
+
+void
+GUI_Mentat_Draw(bool force)
+{
+	Widget *w = g_widgetMentatTail;
+	VARIABLE_NOT_USED(force);
+
+	Widget_SetAndPaintCurrentWidget(8);
+
+	GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SELECT_SUBJECT), g_curWidgetXBase + 16, g_curWidgetYBase + 2, 12, 0, 0x12);
+
+	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 15));
+	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 16));
+	GUI_Widget_Draw(GUI_Widget_Get_ByIndex(w, 17));
+}
+
+/*--------------------------------------------------------------*/
 
 void
 Mentat_GetEyePositions(enum MentatID mentatID, int *left, int *top, int *right, int *bottom)
