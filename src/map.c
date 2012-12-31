@@ -168,7 +168,7 @@ void Map_SetSelection(uint16 packed)
 			const StructureInfo *si;
 
 			si = &g_table_structureInfo[s->o.type];
-			if (s->o.houseID == g_playerHouseID || g_selectionType != SELECTIONTYPE_MENTAT) {
+			if (s->o.houseID == g_playerHouseID && g_selectionType != SELECTIONTYPE_MENTAT) {
 				GUI_DisplayHint(si->o.hintStringID, si->o.spriteID);
 			}
 
@@ -1373,7 +1373,7 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	s = Structure_Get_ByPackedTile(packed);
 	if (s != NULL) {
 		s->o.seenByHouses |= 1 << houseID;
-		if (s->o.houseID == HOUSE_ATREIDES) s->o.seenByHouses |= 1 << HOUSE_FREMEN;
+		if (houseID == HOUSE_ATREIDES) s->o.seenByHouses |= 1 << HOUSE_FREMEN;
 	}
 
 	Map_UnveilTile_Neighbour(packed);
