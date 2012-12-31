@@ -166,7 +166,7 @@ void GameLoop_Structure(void)
 
 						/* ENHANCEMENT -- account for high hitpoints structures. */
 						if (enhancement_repair_cost_formula == REPAIR_COST_v107_HIGH_HP_FIX && si->o.hitpoints > 512) {
-							repairCost = (2 * 2 * si->o.buildCredits + si->o.hitpoints) / (2 * si->o.buildCredits);
+							repairCost = (2 * 2 * si->o.buildCredits + si->o.hitpoints) / (2 * si->o.hitpoints);
 						}
 						break;
 
@@ -1065,7 +1065,7 @@ void Structure_ActivateSpecial(Structure *s)
 				position = Tile_UnpackTile(location);
 				position = Tile_MoveByRandom(position, 32, true);
 
-				orientation = Tools_RandomRange(0, 3);
+				orientation = Tools_RandomLCG_Range(0, 3);
 				unitType = (orientation == 1) ? UNIT_TROOPER : UNIT_TROOPERS;
 
 				g_var_38BC++;

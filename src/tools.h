@@ -32,7 +32,7 @@ extern struct Object *Tools_Index_GetObject(uint16 encoded);
 
 extern uint8 Tools_Random_256(void);
 extern void Tools_Random_Seed(uint32 seed);
-extern void Tools_Random_SeedLCG(uint16 seed);
-extern uint16 Tools_RandomRange(uint16 min, uint16 max);
+extern void Tools_RandomLCG_Seed(uint32 seed);
+extern uint16 Tools_RandomLCG_Range(uint16 min, uint16 max);
 
 #endif /* TOOLS_H */

@@ -265,7 +265,6 @@ bool GUI_Widget_Cancel_Click(Widget *w)
 		}
 
 		g_structureActive = NULL;
-		g_structureActivePosition = 0xFFFF;
 		g_structureActiveType = 0xFFFF;
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);

@@ -224,7 +224,7 @@ static void Explosion_Func_SetTimeout(Explosion *e, uint16 value)
  */
 static void Explosion_Func_SetRandomTimeout(Explosion *e, uint16 value)
 {
-	e->timeOut = Timer_GetTicks() + Tools_RandomRange(0, value);
+	e->timeOut = Timer_GetTicks() + Tools_RandomLCG_Range(0, value);
 }
 
 /**

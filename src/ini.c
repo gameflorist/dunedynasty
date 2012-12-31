@@ -116,7 +116,7 @@ char *Ini_GetString(const char *category, const char *key, const char *defaultVa
 
 			/* Failed to find the key. Return anyway. */
 			if (dest != NULL) *dest = '\0';
-			return ret;
+			return NULL;
 		}
 
 		ret = current;
@@ -150,7 +150,7 @@ char *Ini_GetString(const char *category, const char *key, const char *defaultVa
 		return ret;
 	}
 
-	return ret;
+	return NULL;
 }
 
 int Ini_GetInteger(const char *category, const char *key, int defaultValue, char *source)
