@@ -215,7 +215,9 @@ void GUI_Widget_Draw(Widget *w)
 		} break;
 
 		case DRAW_MODE_XORFILLED_RECTANGLE: {
+#if 0
 			GUI_DrawXorFilledRectangle(positionLeft, positionTop, positionRight, positionBottom, fgColour);
+#endif
 		} break;
 	}
 

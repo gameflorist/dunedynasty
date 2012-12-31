@@ -100,7 +100,6 @@ extern void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst
 extern void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 height, uint16 screenID, uint8 *remap);
 extern void GUI_HallOfFame_Show(enum HouseType houseID, uint16 score);
 extern uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show);
-extern void GUI_DrawXorFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, uint8 colour);
 extern void GUI_Palette_CreateRemap(uint8 houseID);
 extern void GUI_DrawScreen(uint16 screenID);
 
