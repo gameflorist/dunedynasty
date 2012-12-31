@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /** @file src/string.c String routines. */
 
 #define _XOPEN_SOURCE

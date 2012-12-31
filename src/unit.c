@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /** @file src/unit.c %Unit routines. */
 
 #include <assert.h>
@@ -240,16 +238,23 @@ static void Unit_MovementTick(Unit *unit)
 {
 	uint16 speed;
 
-	if (unit->speed == 0) return;
+	if (unit->speed == 0 && unit->speedSub == 0) return;
 
-	speed = unit->speedRemainder;
-	speed += Tools_AdjustToGameSpeed(unit->speedPerTick, 1, 255, false);
+	/* Calculate the speed per tick */
+	speed = unit->speed * 16;
+	speed += unit->speedSub;
 
-	if ((speed & 0xFF00) != 0) {
-		Unit_Move(unit, min(unit->speed * 16, Tile_GetDistance(unit->o.position, unit->currentDestination) + 16));
+	/* Units in the air don't feel the effect of gameSpeed */
+	if (g_table_unitInfo[unit->o.type].movementType != MOVEMENT_WINGER) speed = Tools_AdjustToGameSpeed(speed, 1, 0xFFFF, false);
+
+	/* Add the remainder of last movement, calculate the new remainder and make steps go per 16 */
+	speed += unit->speedRemainder;
+	unit->speedRemainder = speed & 0xF;
+	speed &= 0xFFF0;
+
+	if (speed != 0) {
+		Unit_Move(unit, min(speed, Tile_GetDistance(unit->o.position, unit->currentDestination) + 16));
 	}
-
-	unit->speedRemainder = speed & 0xFF;
 }
 
 /**
@@ -379,7 +384,7 @@ void GameLoop_Unit(void)
 
 		if (tickUnknown5) {
 			if (u->timer == 0) {
-				if ((ui->movementType == MOVEMENT_FOOT && u->speed != 0) || u->o.flags.s.isSmoking) {
+				if ((ui->movementType == MOVEMENT_FOOT && (u->speed != 0 || u->speedSub != 0)) || u->o.flags.s.isSmoking) {
 					if (u->spriteOffset >= 0) {
 						u->spriteOffset &= 0x3F;
 						u->spriteOffset++;
@@ -1187,7 +1192,7 @@ static uint16 Unit_Sandworm_GetTargetScore(Unit *unit, Unit *target)
 		default:                 res = 0;      break;
 	}
 
-	if (target->speed != 0 || target->fireDelay != 0) res *= 4;
+	if (target->speed != 0 || target->speedSub != 0 || target->fireDelay != 0) res *= 4;
 
 	distance = Tile_GetDistanceRoundedUp(unit->o.position, target->o.position);
 
@@ -2157,42 +2162,33 @@ bool Unit_IsTileOccupied(Unit *unit)
  */
 void Unit_SetSpeed(Unit *unit, uint16 speed)
 {
-	uint16 speedPerTick;
-
 	assert(unit != NULL);
 
-	speedPerTick = 0;
-
 	unit->speed          = 0;
-	unit->speedPerTick   = 0;
 
 	if (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE)
 		unit->speedRemainder = 0;
 
+	unit->speedSub       = 0;
+	unit->movingSpeed    = 0;
+
+	if (speed == 0) return;
+
+	/* The more spice there is in the harvester, the slower it will move. unit->amount is at max 100, so ~60% of its original speed. */
 	if (unit->o.type == UNIT_HARVESTER) {
 		speed = ((255 - unit->amount) * speed) / 256;
 	}
 
-	if (speed == 0 || speed >= 256) {
-		unit->movingSpeed = 0;
-		return;
-	}
-
 	unit->movingSpeed = speed & 0xFF;
-	speed = g_table_unitInfo[unit->o.type].movingSpeed * speed / 256;
-	speed = Tools_AdjustToGameSpeed(speed, 1, 255, false);
 
-	speedPerTick = speed << 4;
-	speed        = speed >> 4;
+	speed = g_table_unitInfo[unit->o.type].movingSpeedFactor * speed / 256;
 
-	if (speed != 0) {
-		speedPerTick = 255;
-	} else {
-		speed = 1;
-	}
+	/* We can only store up to 12bits (which is really fast), so max out if required */
+	if (speed >= (1 << 12)) speed = (1 << 12) - 1;
 
-	unit->speed = speed & 0xFF;
-	unit->speedPerTick = speedPerTick & 0xFF;
+	/* We move in steps of 16 */
+	unit->speedSub = speed & 0xF;
+	unit->speed    = (speed / 16) & 0xFF;
 }
 
 /**

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /** @file src/house.h Definitions for saveload routines. */
 
 #ifndef SAVELOAD_SAVELOAD_H
@@ -171,5 +169,10 @@ extern bool Unit_Load(FILE *fp, uint32 length);
 extern bool Unit_Save(FILE *fp);
 extern bool Unit_Load2(FILE *fp, uint32 length);
 extern bool Unit_Save2(FILE *fp);
+
+extern bool Unit_Load(FILE *fp, uint32 length);
+extern bool Unit_Save(FILE *fp);
+extern bool UnitNew_Load(FILE *fp, uint32 length);
+extern bool UnitNew_Save(FILE *fp);
 
 #endif /* SAVELOAD_SAVELOAD_H */

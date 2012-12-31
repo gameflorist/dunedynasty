@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /** @file src/saveload/structure.c Load/save routines for Structure. */
 
 #include "saveload.h"

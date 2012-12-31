@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /** @file src/save.c Save routines. */
 
 #include <stdio.h>
@@ -110,6 +108,7 @@ Save_Main(FILE *fp, const char *description)
 	if (!Save_Chunk(fp, "BLDG", &Structure_Save)) return false;
 	if (!Save_Chunk(fp, "MAP ", &Map_Save)) return false;
 	if (!Save_Chunk(fp, "TEAM", &Team_Save)) return false;
+	if (!Save_Chunk(fp, "ODUN", &UnitNew_Save)) return false;
 
 	/* Store Dune Dynasty extensions. */
 	if (!Save_Chunk(fp, "DDI2", &Info_Save2)) return false;

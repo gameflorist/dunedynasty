@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /** @file src/script/unit.c %Unit script routines. */
 
 #include <assert.h>
@@ -397,11 +395,10 @@ uint16 Script_Unit_SetSpeed(ScriptEngine *script)
 	uint16 speed;
 
 	u = g_scriptCurrentUnit;
-	speed = clamp(STACK_PEEK(1), 0, 255);
+	speed = STACK_PEEK(1);
 
+	/* Scenario-based units move on a different speed */
 	if (!u->o.flags.s.byScenario) speed = speed * 192 / 256;
-
-	if (g_table_unitInfo[u->o.type].movementType == MOVEMENT_WINGER) speed = Tools_AdjustToGameSpeed(speed, 0, 255, true);
 
 	Unit_SetSpeed(u, speed);
 
@@ -478,7 +475,7 @@ uint16 Script_Unit_MoveToTarget(ScriptEngine *script)
 
 	diff = abs(orientation - u->orientation[0].current);
 
-	Unit_SetSpeed(u, Tools_AdjustToGameSpeed(min(distance / 8, 255), 25, 255, true) * (255 - diff) / 256);
+	Unit_SetSpeed(u, max(min(distance / 8, 255), 25) * (255 - diff) / 256);
 
 	delay = max((int16)distance / 1024, 1);
 
@@ -702,7 +699,7 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 	}
 
 	if (enhancement_fix_firing_rates_and_ranges) {
-		u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 65535, true);
+		u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 0xFFFF, true);
 	}
 	else {
 		u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 255, true) & 0xFF;
@@ -710,7 +707,7 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 	if (fireTwice) {
 		u->o.flags.s.fireTwiceFlip = !u->o.flags.s.fireTwiceFlip;
-		if (u->o.flags.s.fireTwiceFlip) u->fireDelay = Tools_AdjustToGameSpeed(5, 1, 10, true) & 0xFF;
+		if (u->o.flags.s.fireTwiceFlip) u->fireDelay = Tools_AdjustToGameSpeed(5, 1, 10, true);
 	} else {
 		u->o.flags.s.fireTwiceFlip = false;
 	}

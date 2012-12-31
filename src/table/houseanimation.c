@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /** @file src/table/houseanimation.c House animation tables. */
 
 #include "houseanimation.h"

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /** @file src/timer_opendune.c Timer routines. */
 
 #include <stdlib.h>
