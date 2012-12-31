@@ -504,7 +504,7 @@ void VideoSDL_Tick(void)
 			{
 				if (event.key.keysym.sym >= sizeof(s_SDL_keymap)) continue;
 				if (s_SDL_keymap[event.key.keysym.sym] == 0) {
-					Error("ERROR: unhandled key %X\n", event.key.keysym.sym);
+					Warning("Unhandled key %X\n", event.key.keysym.sym);
 					continue;
 				}
 				VideoSDL_Key_Callback(s_SDL_keymap[event.key.keysym.sym] | (keyup ? 0x80 : 0x0));

@@ -1058,9 +1058,10 @@ bool Unit_SetPosition(Unit *u, tile32 position)
 	u->targetMove = 0;
 	u->targetAttack = 0;
 
-	if (g_map[Tile_PackTile(u->o.position)].hasExplosion) {
+	if (g_map[Tile_PackTile(u->o.position)].isUnveiled) {
+		/* A new unit being delivered fresh from the factory; force a seenByHouses
+		 *  update and add it to the statistics etc. */
 		u->o.seenByHouses &= ~(1 << u->o.houseID);
-
 		Unit_HouseUnitCount_Add(u, g_playerHouseID);
 	}
 
@@ -2967,8 +2968,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 	if (ui->movementType != MOVEMENT_WINGER) {
 		if (!House_AreAllied(houseID, Unit_GetHouseID(unit))) {
 			h->flags.isAIActive = true;
-			/* XXX -- This seems like a bug; Shouldn't it be Unit_GetHouseID(unit)? */
-			House_Get_ByIndex(unit->o.houseID)->flags.isAIActive = true;
+			House_Get_ByIndex(Unit_GetHouseID(unit))->flags.isAIActive = true;
 		}
 	}
 

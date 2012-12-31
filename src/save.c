@@ -33,8 +33,7 @@
  * @param saveProc The proc to call to generate the content of the chunk.
  * @return True if and only if all bytes were written successful.
  */
-static bool
-Save_Chunk(FILE *fp, const char *header, bool (*saveProc)(FILE *fp))
+static bool Save_Chunk(FILE *fp, const char *header, bool (*saveProc)(FILE *fp))
 {
 	uint32 position;
 	uint32 length;

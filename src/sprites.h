@@ -83,8 +83,5 @@ extern uint16 Sprites_LoadImage(enum SearchDirectory dir, const char *filename, 
 extern void Sprites_CPS_LoadRegionClick(void);
 extern bool Sprite_IsUnveiled(uint16 spriteID);
 
-extern uint8 Orientation_Orientation256ToOrientation8(uint8 orientation);
-extern uint8 Orientation_Orientation256ToOrientation16(uint8 orientation);
-
 
 #endif /* SPRITES_H */
