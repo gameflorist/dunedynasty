@@ -13,10 +13,10 @@ typedef enum ExplosionCommand {
 	EXPLOSION_SET_SPRITE,                                   /*!< Set the sprite for the Explosion. */
 	EXPLOSION_SET_TIMEOUT,                                  /*!< Set the timeout for the Explosion. */
 	EXPLOSION_SET_RANDOM_TIMEOUT,                           /*!< Set a random timeout for the Explosion. */
-	EXPLOSION_SET_ROW,                                      /*!< Set the row of the position for the Explosion. */
+	EXPLOSION_MOVE_Y_POSITION,                              /*!< Move the Y-position of the Explosion. */
 	EXPLOSION_TILE_DAMAGE,                                  /*!< Handle damage to a tile in a Explosion. */
 	EXPLOSION_PLAY_VOICE,                                   /*!< Play a voice. */
-	EXPLOSION_SCREEN_SHAKE,                                 /*!< Do screen shake.. */
+	EXPLOSION_SCREEN_SHAKE,                                 /*!< Shake the screen around. */
 	EXPLOSION_SET_ANIMATION,                                /*!< Set the animation for the Explosion. */
 	EXPLOSION_BLOOM_EXPLOSION                               /*!< Make a bloom explode. */
 } ExplosionCommand;

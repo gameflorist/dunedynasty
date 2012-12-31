@@ -715,7 +715,7 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 		u->o.flags.s.fireTwiceFlip = false;
 	}
 
-	/* u->fireDelay += Tools_Random_256() & 1; */
+	u->fireDelay += Tools_Random_256() & 1;
 
 	Unit_UpdateMap(2, u);
 
@@ -1956,7 +1956,7 @@ uint16 Script_Unit_MCVDeploy(ScriptEngine *script)
 	for (i = 0; i < 4; i++) {
 		static int8 offsets[4] = { 0, -1, -64, -65 };
 
-		s = Structure_Create(0xFFFF, STRUCTURE_CONSTRUCTION_YARD, Unit_GetHouseID(u), Tile_PackTile(u->o.position) + offsets[i]);
+		s = Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_CONSTRUCTION_YARD, Unit_GetHouseID(u), Tile_PackTile(u->o.position) + offsets[i]);
 
 		if (s != NULL) {
 			const bool unit_was_selected = Unit_IsSelected(u);

@@ -26,15 +26,22 @@ bool Tile_IsValid(tile32 tile)
 	return (tile.d.ux == 0x0 && tile.d.uy == 0x0);
 }
 
-static uint32
-Tile_MakeTile32(uint16 x, uint16 y)
+/**
+ * Make a tile32 from an X- and Y-position.
+ *
+ * @param x The X-position.
+ * @param y The Y-position.
+ * @return A tile32 at the top-left corner of the X- and Y-position.
+ */
+tile32 Tile_MakeXY(uint16 x, uint16 y)
 {
 	tile32 tile;
 
-	tile.s.x = x;
-	tile.s.y = y;
+	tile.tile = 0;
+	tile.d.px = x;
+	tile.d.py = y;
 
-	return (tile.d.px + (tile.d.ox << 8)) + ((tile.d.py + (tile.d.oy << 8)) << 16);
+	return tile;
 }
 
 /**
@@ -261,7 +268,7 @@ Tile_RefreshFogInRadius(tile32 tile, uint16 radius, bool unveil)
 
 	x = Tile_GetPackedX(packed);
 	y = Tile_GetPackedY(packed);
-	tile.tile = Tile_MakeTile32(x, y);
+	tile = Tile_MakeXY(x, y);
 
 	for (i = -radius; i <= radius; i++) {
 		for (j = -radius; j <= radius; j++) {
@@ -271,7 +278,7 @@ Tile_RefreshFogInRadius(tile32 tile, uint16 radius, bool unveil)
 			if ((y + j) < 0 || (y + j) >= 64) continue;
 
 			packed = Tile_PackXY(x + i, y + j);
-			t.tile = Tile_MakeTile32(x + i, y + j);
+			t = Tile_MakeXY(x + i, y + j);
 
 			if (Tile_GetDistanceRoundedUp(tile, t) > radius) continue;
 

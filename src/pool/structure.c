@@ -44,6 +44,7 @@ Structure *Structure_Find(PoolFindStruct *find)
 	if (find->index >= g_structureFindCount && find->index != 0xFFFF) return NULL;
 	find->index++; /* First, we always go to the next index */
 
+	assert(g_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
 	for (; find->index < g_structureFindCount; find->index++) {
 		Structure *s = g_structureFindArray[find->index];
 		if (s == NULL) continue;
@@ -171,8 +172,7 @@ void Structure_Free(Structure *s)
 
 	Script_Reset(&s->o.script, g_scriptStructure);
 
-	if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
-		return;
+	if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) return;
 
 	/* Walk the array to find the Structure we are removing */
 	assert(g_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
