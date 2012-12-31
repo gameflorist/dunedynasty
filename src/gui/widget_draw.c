@@ -8,8 +8,8 @@
 #include "widget.h"
 #include "../config.h"
 #include "../enhancement.h"
-#include "../opendune.h"
 #include "../gfx.h"
+#include "../opendune.h"
 #include "../house.h"
 #include "../map.h"
 #include "../newui/actionpanel.h"
@@ -31,7 +31,7 @@
  */
 void GUI_Widget_TextButton_Draw(Widget *w)
 {
-	uint16 oldScreenID;
+	Screen oldScreenID;
 	uint16 positionX, positionY;
 	uint16 width, height;
 	uint16 state;
@@ -39,7 +39,7 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 
 	if (w == NULL) return;
 
-	oldScreenID = GFX_Screen_SetActive(2);
+	oldScreenID = GFX_Screen_SetActive(SCREEN_1);
 
 	positionX = w->offsetX + g_widgetProperties[w->parentID].xBase;
 	positionY = w->offsetY + g_widgetProperties[w->parentID].yBase;
@@ -63,9 +63,9 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 	}
 
 #if 0
-	if (oldScreenID == 0) {
+	if (oldScreenID == SCREEN_0) {
 		GUI_Mouse_Hide_InRegion(positionX, positionY, positionX + width, positionY + height);
-		GUI_Screen_Copy(positionX >> 3, positionY, positionX >> 3, positionY, width >> 3, height, 2, 0);
+		GUI_Screen_Copy(positionX >> 3, positionY, positionX >> 3, positionY, width >> 3, height, SCREEN_1, SCREEN_0);
 		GUI_Mouse_Show_InRegion();
 	}
 #endif
@@ -87,7 +87,7 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 	if (w == NULL) return;
 
 #if 0
-	uint16 oldScreenID;
+	Screen oldScreenID;
 	uint16 spriteID;
 
 	spriteID = 0;
@@ -108,8 +108,8 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 	}
 
 	oldScreenID = g_screenActiveID;
-	if (oldScreenID == 0) {
-		GFX_Screen_SetActive(2);
+	if (oldScreenID == SCREEN_0) {
+		GFX_Screen_SetActive(SCREEN_1);
 	}
 #endif
 
@@ -127,13 +127,13 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 
 	GUI_DrawBorder(positionX, positionY, width, height, buttonDown ? 0 : 1, false);
 
-	if (oldScreenID != 0) return;
+	if (oldScreenID != SCREEN_0) return;
 
 	GUI_Mouse_Hide_InRegion(positionX - 1, positionY - 1, positionX + width + 1, positionY + height + 1);
-	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, 2, 0, false);
+	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, SCREEN_1, SCREEN_0, false);
 	GUI_Mouse_Show_InRegion();
 
-	GFX_Screen_SetActive(0);
+	GFX_Screen_SetActive(SCREEN_0);
 #else
 	Prim_DrawBorder(positionX, positionY, width, height, 1, true, false, buttonDown ? 0 : 1);
 #endif
@@ -147,7 +147,7 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 {
 #if 0
-	uint16 oldScreenID;
+	Screen oldScreenID;
 	Structure *s;
 	uint16 positionX, positionY;
 	uint16 width, height;
@@ -166,8 +166,8 @@ void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 	GUI_UpdateProductionStringID();
 
 	oldScreenID = g_screenActiveID;
-	if (oldScreenID == 0) {
-		GFX_Screen_SetActive(2);
+	if (oldScreenID == SCREEN_0) {
+		GFX_Screen_SetActive(SCREEN_1);
 	}
 
 	buttonDown = w->state.s.hover2;
@@ -291,13 +291,13 @@ void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 		w->shortcut = GUI_Widget_GetShortcut(*String_Get_ByIndex(g_productionStringID));
 	}
 
-	if (oldScreenID != 0x0) return;
+	if (oldScreenID != SCREEN_0) return;
 
 	GUI_Mouse_Hide_InRegion(positionX - 1, positionY - 1, positionX + width + 1, positionY + height + 1);
-	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, 2, 0, false);
+	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, SCREEN_1, SCREEN_0, false);
 	GUI_Mouse_Show_InRegion();
 
-	GFX_Screen_SetActive(0);
+	GFX_Screen_SetActive(SCREEN_0);
 #else
 	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 
@@ -320,7 +320,7 @@ void GUI_Widget_SpriteTextButton_Draw(Widget *w)
  */
 void GUI_Widget_TextButton2_Draw(Widget *w)
 {
-	uint16 oldScreenID;
+	Screen oldScreenID;
 	uint16 stringID;
 	uint16 positionX, positionY;
 	uint16 width, height;
@@ -331,8 +331,8 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 	if (w == NULL) return;
 
 	oldScreenID = g_screenActiveID;
-	if (oldScreenID == 0) {
-		GFX_Screen_SetActive(2);
+	if (oldScreenID == SCREEN_0) {
+		GFX_Screen_SetActive(SCREEN_1);
 	}
 
 	stringID = w->stringID;
@@ -377,15 +377,15 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 
 	GUI_Widget_SetShortcuts(w);
 
-	if (oldScreenID != 0) return;
+	if (oldScreenID != SCREEN_0) return;
 
 #if 0
 	GUI_Mouse_Hide_InRegion(positionX - 1, positionY - 1, positionX + width + 1, positionY + height + 1);
-	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, 2, 0, false);
+	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, SCREEN_1, SCREEN_0, false);
 	GUI_Mouse_Show_InRegion();
 #endif
 
-	GFX_Screen_SetActive(0);
+	GFX_Screen_SetActive(SCREEN_0);
 }
 
 /**
@@ -497,7 +497,8 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 	const ObjectInfo *oi;
 	const UnitInfo *ui;
 	uint16 actionType;
-	uint16 oldScreenID, loc06;
+	Screen oldScreenID;
+	uint16 loc06;
 	bool isNotPlayerOwned;
 	Object *o;
 	Unit *u;
@@ -584,7 +585,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 	if (actionType != 0) {
 		Widget *w = g_widgetLinkedListHead;
 
-		oldScreenID = GFX_Screen_SetActive(2);
+		oldScreenID = GFX_Screen_SetActive(SCREEN_1);
 
 		loc06 = Widget_SetCurrentWidget(6);
 

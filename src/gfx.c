@@ -27,7 +27,7 @@ static uint8  s_spriteInfoSize = 0;
 static const uint16 s_screenBufferSize[5] = { 0xFA00, 0xFBF4, 0xFA00, 0xFD0D, 0xA044 };
 static void *s_screenBuffer[5] = { NULL, NULL, NULL, NULL, NULL };
 
-uint16 g_screenActiveID = 0;
+Screen g_screenActiveID = SCREEN_0;
 
 ScreenDiv g_screenDiv[SCREENDIV_MAX] = {
 	{ 1.0f, 1.0f,   0,   0, 320, 200 }, /* SCREENDIV_MAIN */
@@ -106,7 +106,7 @@ void *GFX_Screen_GetActive(void)
  * @param screenID The screenID to get the size of.
  * @return Some size value.
  */
-uint16 GFX_Screen_GetSize_ByIndex(uint16 screenID)
+uint16 GFX_Screen_GetSize_ByIndex(Screen screenID)
 {
 	return s_screenBufferSize[screenID >> 1];
 }
@@ -116,9 +116,21 @@ uint16 GFX_Screen_GetSize_ByIndex(uint16 screenID)
  * @param screenID The screenbuffer to get.
  * @return A pointer to the screenbuffer.
  */
-void *GFX_Screen_Get_ByIndex(uint16 screenID)
+void *GFX_Screen_Get_ByIndex(Screen screenID)
 {
 	return s_screenBuffer[screenID >> 1];
+}
+
+/**
+ * Change the current active screen to the new value.
+ * @param screenID The new screen to get active.
+ * @return Old screenID that was currently active.
+ */
+Screen GFX_Screen_SetActive(Screen screenID)
+{
+	Screen oldScreen = g_screenActiveID;
+	g_screenActiveID = screenID;
+	return oldScreen;
 }
 
 /**
@@ -145,7 +157,7 @@ void GFX_Init(void)
 		screenBuffers += GFX_Screen_GetSize_ByIndex(i * 2);
 	}
 
-	g_screenActiveID = 0;
+	g_screenActiveID = SCREEN_0;
 }
 
 /**
@@ -160,18 +172,6 @@ void GFX_Uninit(void)
 	for (i = 0; i < 5; i++) {
 		s_screenBuffer[i] = NULL;
 	}
-}
-
-/**
- * Change the current active screen to the new value.
- * @param screenID The new screen to get active.
- * @return Old screenID that was currently active.
- */
-uint16 GFX_Screen_SetActive(uint16 screenID)
-{
-	uint16 oldScreen = g_screenActiveID;
-	g_screenActiveID = screenID;
-	return oldScreen;
 }
 
 /**
@@ -287,7 +287,7 @@ extern void GFX_PutPixel(uint16 x, uint16 y, uint8 colour);
  * @param screenDst The ID of the destination screen.
  * @param skipNull Wether to skip pixel colour 0.
  */
-void GFX_Screen_Copy2(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, bool skipNull)
+void GFX_Screen_Copy2(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, Screen screenSrc, Screen screenDst, bool skipNull)
 {
 	uint8 *src;
 	uint8 *dst;
@@ -363,7 +363,7 @@ void GFX_Screen_Copy2(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 widt
  * @param screenSrc The ID of the source screen.
  * @param screenDst The ID of the destination screen.
  */
-void GFX_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, uint16 screenSrc, uint16 screenDst)
+void GFX_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, Screen screenSrc, Screen screenDst)
 {
 	uint8 *src;
 	uint8 *dst;

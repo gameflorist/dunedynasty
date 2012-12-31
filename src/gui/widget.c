@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "../os/math.h"
+#include "../gfx.h"
 
 #include "widget.h"
 
@@ -180,7 +181,7 @@ void GUI_Widget_Draw(Widget *w)
 	positionBottom = positionTop + w->height - 1;
 
 	assert(drawMode < DRAW_MODE_MAX);
-	if (drawMode != DRAW_MODE_NONE && drawMode != DRAW_MODE_CUSTOM_PROC && g_screenActiveID == 0) {
+	if (drawMode != DRAW_MODE_NONE && drawMode != DRAW_MODE_CUSTOM_PROC && g_screenActiveID == SCREEN_0) {
 		GUI_Mouse_Hide_InRegion(positionLeft, positionTop, positionRight, positionBottom);
 	}
 
@@ -219,7 +220,7 @@ void GUI_Widget_Draw(Widget *w)
 		} break;
 	}
 
-	if (drawMode != DRAW_MODE_NONE && drawMode != DRAW_MODE_CUSTOM_PROC && g_screenActiveID == 0) {
+	if (drawMode != DRAW_MODE_NONE && drawMode != DRAW_MODE_CUSTOM_PROC && g_screenActiveID == SCREEN_0) {
 		GUI_Mouse_Show_InRegion();
 	}
 }

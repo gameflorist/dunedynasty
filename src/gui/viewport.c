@@ -238,7 +238,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	uint16 y;
 	uint16 i;
 	bool updateDisplay;
-	uint16 oldScreenID;
+	Screen oldScreenID;
 	uint16 oldValue_07AE_0000;
 	int16 minX[10];
 	int16 maxX[10];
@@ -250,7 +250,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	memset(minX, 0xF, sizeof(minX));
 	memset(maxX, 0,   sizeof(minX));
 
-	oldScreenID = GFX_Screen_SetActive(2);
+	oldScreenID = GFX_Screen_SetActive(SCREEN_1);
 
 	oldValue_07AE_0000 = Widget_SetCurrentWidget(2);
 
@@ -379,7 +379,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	if (g_changedTilesCount != 0) {
 		bool init = false;
 		bool update = false;
-		uint16 oldScreenID2 = 2;
+		Screen oldScreenID2 = SCREEN_1;
 
 		for (i = 0; i < g_changedTilesCount; i++) {
 			curPos = g_changedTiles[i];
@@ -388,7 +388,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 			if (!init) {
 				init = true;
 
-				oldScreenID2 = GFX_Screen_SetActive(2);
+				oldScreenID2 = GFX_Screen_SetActive(SCREEN_1);
 
 				GUI_Mouse_Hide_InWidget(3);
 			}
@@ -401,7 +401,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		if (update) Map_UpdateMinimapPosition(g_minimapPosition, true);
 
 		if (init) {
-			GUI_Screen_Copy(32, 136, 32, 136, 8, 64, g_screenActiveID, 0);
+			GUI_Screen_Copy(32, 136, 32, 136, 8, 64, g_screenActiveID, SCREEN_0);
 
 			GFX_Screen_SetActive(oldScreenID2);
 
@@ -443,9 +443,9 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 			/* ENHANCEMENT -- When fading in the game on start, you don't see the fade as it is against the already drawn screen. */
 			if (g_dune2_enhanced) {
-				uint16 oldScreenID = g_screenActiveID;
+				Screen oldScreenID = g_screenActiveID;
 
-				GFX_Screen_SetActive(0);
+				GFX_Screen_SetActive(SCREEN_0);
 				Prim_FillRect_i(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase + g_curWidgetWidth, g_curWidgetYBase + g_curWidgetHeight, 0);
 				GFX_Screen_SetActive(oldScreenID);
 			}
@@ -479,7 +479,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 					init = true;
 				}
 
-				GUI_Screen_Copy(x, y, x, y, width, height, g_screenActiveID, 0);
+				GUI_Screen_Copy(x, y, x, y, width, height, g_screenActiveID, SCREEN_0);
 			}
 
 			if (init) GUI_Mouse_Show_InWidget();
