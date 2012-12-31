@@ -424,75 +424,9 @@ void GFX_SetPalette(uint8 *palette)
 #if 0
 extern uint8 GFX_GetPixel(uint16 x, uint16 y);
 extern uint16 GFX_GetSize(int16 width, int16 height);
+extern void GFX_CopyFromBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 *buffer);
+extern void GFX_CopyToBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 *buffer);
 #endif
-
-/**
- * Copy information from a buffer to the screen.
- * @param x The X-coordinate on the screen.
- * @param y The Y-coordinate on the screen.
- * @param width The width.
- * @param height The height.
- * @param buffer The buffer to copy from.
- */
-void GFX_CopyFromBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 *buffer)
-{
-	uint8 *screen;
-
-	if (width == 0) return;
-	if (height == 0) return;
-
-	if (left < 0) left = 0;
-	if (left >= SCREEN_WIDTH) left = SCREEN_WIDTH - 1;
-
-	if (top < 0) top = 0;
-	if (top >= SCREEN_HEIGHT) top = SCREEN_HEIGHT - 1;
-
-	if (width  > SCREEN_WIDTH - left) width  = SCREEN_WIDTH - left;
-	if (height > SCREEN_HEIGHT - top) height = SCREEN_HEIGHT - top;
-
-	screen = GFX_Screen_Get_ByIndex(0);
-	screen += top * SCREEN_WIDTH + left;
-
-	while (height-- != 0) {
-		memcpy(screen, buffer, width);
-		screen += SCREEN_WIDTH;
-		buffer += width;
-	}
-}
-
-/**
- * Copy information from the screen to a buffer.
- * @param x The X-coordinate on the screen.
- * @param y The Y-coordinate on the screen.
- * @param width The width.
- * @param height The height.
- * @param buffer The buffer to copy to.
- */
-void GFX_CopyToBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 *buffer)
-{
-	uint8 *screen;
-
-	if (width == 0) return;
-	if (height == 0) return;
-
-	if (left < 0) left = 0;
-	if (left >= SCREEN_WIDTH) left = SCREEN_WIDTH - 1;
-
-	if (top < 0) top = 0;
-	if (top >= SCREEN_HEIGHT) top = SCREEN_HEIGHT - 1;
-
-	if (width  > SCREEN_WIDTH - left) width  = SCREEN_WIDTH - left;
-	if (height > SCREEN_HEIGHT - top) height = SCREEN_HEIGHT - top;
-
-	screen = GFX_Screen_Get_ByIndex(0);
-	screen += top * SCREEN_WIDTH + left;
-
-	while (height-- != 0) {
-		memcpy(buffer, screen, width);
-		screen += SCREEN_WIDTH;
-		buffer += width;
-	}
-}
 
 /*--------------------------------------------------------------*/
 

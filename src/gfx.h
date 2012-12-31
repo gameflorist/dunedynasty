@@ -61,8 +61,6 @@ extern void GFX_Screen_Copy2(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int
 extern void GFX_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, uint16 memBlockSrc, uint16 memBlockDst);
 extern void GFX_ClearScreen(void);
 extern void GFX_SetPalette(uint8 *palette);
-extern void GFX_CopyFromBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 *buffer);
-extern void GFX_CopyToBuffer(int16 left, int16 top, uint16 width, uint16 height, uint8 *buffer);
 
 extern void GFX_ScreenShake_Start(int num_ticks);
 extern bool GFX_ScreenShake_Tick(void);
