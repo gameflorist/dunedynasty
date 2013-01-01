@@ -876,7 +876,7 @@ void GUI_Mentat_ShowHelp(void)
 	mentat->desc = desc;
 	mentat->text = text;
 
-	mentat->wsa = WSA_LoadFile(picture, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+	mentat->wsa = WSA_LoadFile(picture, GFX_Screen_Get_ByIndex(SCREEN_2), GFX_Screen_GetSize_ByIndex(SCREEN_2), false);
 	mentat->wsa_timer = Timer_GetTicks();
 	mentat->wsa_frame = 0;
 

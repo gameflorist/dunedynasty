@@ -148,9 +148,9 @@ Campaign_ReadMetaData(Campaign *camp)
 
 	char value[120];
 
-	char *source = GFX_Screen_Get_ByIndex(3);
+	char *source = GFX_Screen_Get_ByIndex(SCREEN_1);
 	memset(source, 0, 32000);
-	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI", source, GFX_Screen_GetSize_ByIndex(3));
+	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "META.INI", source, GFX_Screen_GetSize_ByIndex(SCREEN_1));
 
 	camp->intermission = Ini_GetInteger("CAMPAIGN", "Intermission", 0, source);
 
@@ -318,10 +318,10 @@ Campaign_ReadHouseIni(void)
 	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "HOUSE.INI"))
 		return;
 
-	source = GFX_Screen_Get_ByIndex(3);
+	source = GFX_Screen_Get_ByIndex(SCREEN_1);
 	memset(source, 0, 32000);
 
-	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "HOUSE.INI", source, GFX_Screen_GetSize_ByIndex(3));
+	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "HOUSE.INI", source, GFX_Screen_GetSize_ByIndex(SCREEN_1));
 
 	keys = source + strlen(source) + 5000;
 	*keys = '\0';
@@ -403,9 +403,9 @@ Campaign_ReadProfileIni(void)
 	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI"))
 		return;
 
-	char *source = GFX_Screen_Get_ByIndex(3);
+	char *source = GFX_Screen_Get_ByIndex(SCREEN_1);
 	memset(source, 0, 32000);
-	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI", source, GFX_Screen_GetSize_ByIndex(3));
+	File_ReadBlockFile_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI", source, GFX_Screen_GetSize_ByIndex(SCREEN_1));
 
 	char *keys = source + strlen(source) + 5000;
 	char buffer[120];

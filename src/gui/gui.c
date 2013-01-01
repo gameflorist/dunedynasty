@@ -196,7 +196,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		uint16 height;
 
 		if (g_textDisplayNeedsUpdate) {
-			uint16 oldScreenID = GFX_Screen_SetActive(2);
+			Screen oldScreenID = GFX_Screen_SetActive(SCREEN_1);
 
 			GUI_DrawFilledRectangle(0, 0, SCREEN_WIDTH - 1, 23, g_curWidgetFGColourNormal);
 
@@ -214,7 +214,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 			height = g_curWidgetHeight;
 		}
 
-		GUI_Screen_Copy(g_curWidgetXBase/8, textOffset, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, height, 2, 0);
+		GUI_Screen_Copy(g_curWidgetXBase/8, textOffset, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, height, SCREEN_1, SCREEN_0);
 		GUI_Mouse_Show_InWidget();
 
 		Widget_SetCurrentWidget(oldValue_07AE_0000);
@@ -693,7 +693,7 @@ uint16 GUI_SplitText(char *str, uint16 maxwidth, char delimiter)
  *        0x4000 = position relative to window
  *        0x8000 = centre sprite
  */
-void GUI_DrawSprite_(uint16 screenID, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...)
+void GUI_DrawSprite_(Screen screenID, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...)
 {
 	const uint16 s_variable_60[8]   = {1, 3, 2, 5, 4, 3, 2, 1};
 
@@ -1286,11 +1286,11 @@ extern void GUI_DrawProgressbar(uint16 current, uint16 max);
  */
 void GUI_DrawInterfaceAndRadar(void)
 {
-	const uint16 screenID = 0;
+	const Screen screenID = SCREEN_0;
 	PoolFindStruct find;
-	uint16 oldScreenID;
+	Screen oldScreenID;
 
-	oldScreenID = GFX_Screen_SetActive((screenID == 0) ? 2 : screenID);
+	oldScreenID = GFX_Screen_SetActive((screenID == SCREEN_0) ? SCREEN_1 : screenID);
 
 	g_viewport_forceRedraw = true;
 
@@ -1403,7 +1403,7 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
 	g_playerCredits = creditsOld;
 
 #if 0
-	uint16 oldScreenID = GFX_Screen_SetActive(2);
+	Screen oldScreenID = GFX_Screen_SetActive(SCREEN_1);
 	uint16 oldValue_07AE_0000 = Widget_SetCurrentWidget(4);
 	char charCreditsOld[7];
 	char charCreditsNew[7];
@@ -1450,7 +1450,7 @@ void GUI_DrawCredits(uint8 houseID, uint16 mode)
  */
 void GUI_ChangeSelectionType(uint16 selectionType)
 {
-	uint16 oldScreenID;
+	Screen oldScreenID;
 
 	if (selectionType == SELECTIONTYPE_UNIT && !Unit_AnySelected()) {
 		selectionType = SELECTIONTYPE_STRUCTURE;
@@ -1460,7 +1460,7 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 		Unit_UnselectAll();
 	}
 
-	oldScreenID = GFX_Screen_SetActive(2);
+	oldScreenID = GFX_Screen_SetActive(SCREEN_1);
 
 	if (g_selectionType != selectionType) {
 		uint16 oldSelectionType = g_selectionType;
@@ -1614,7 +1614,7 @@ extern void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bo
  * @param screenSrc The ID of the source screen.
  * @param screenDst The ID of the destination screen.
  */
-void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, int16 screenSrc, int16 screenDst)
+void GUI_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, Screen screenSrc, Screen screenDst)
 {
 	if (width  > SCREEN_WIDTH / 8) width  = SCREEN_WIDTH / 8;
 	if (height > SCREEN_HEIGHT)    height = SCREEN_HEIGHT;
@@ -1743,9 +1743,9 @@ extern uint16 GUI_StrategicMap_Show(uint16 campaignID, bool win);
  * Clear the screen.
  * @param screenID Which screen to clear.
  */
-void GUI_ClearScreen(uint16 screenID)
+void GUI_ClearScreen(Screen screenID)
 {
-	uint16 oldScreenID = GFX_Screen_SetActive(screenID);
+	Screen oldScreenID = GFX_Screen_SetActive(screenID);
 
 	GFX_ClearScreen();
 
@@ -1754,7 +1754,6 @@ void GUI_ClearScreen(uint16 screenID)
 
 #if 0
 extern void GUI_DrawText_Monospace(const char *string, uint16 left, uint16 top, uint8 fgColour, uint8 bgColour, uint16 charWidth);
-
 extern void GUI_FactoryWindow_B495_0F30(void);
 extern FactoryWindowItem *GUI_FactoryWindow_GetItem(int16 offset);
 extern void GUI_FactoryWindow_DrawDetails(void);
@@ -1774,13 +1773,13 @@ extern void GUI_FactoryWindow_UpdateSelection(bool selectionChanged);
  * @param screenSrc The ID of the source screen.
  * @param screenDst The ID of the destination screen.
  */
-void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint16 width, uint16 height, uint16 screenSrc, uint16 screenDst)
+void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint16 width, uint16 height, Screen screenSrc, Screen screenDst)
 {
 	uint16 offsetsY[100];
 	uint16 offsetsX[40];
 	int x, y;
 
-	if (screenDst == 0) {
+	if (screenDst == SCREEN_0) {
 		GUI_Mouse_Hide_InRegion(xDst << 3, yDst, (xDst + width) << 3, yDst + height);
 	}
 
@@ -1828,21 +1827,17 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		/* XXX -- This delays the system so you can in fact see the animation.
 		 * XXX -- This effect isn't reproduced in Dune Dynasty.
 		 */
-		if ((y % 4) == 0) {
-			Video_Tick();
-			/* Timer_Sleep(1); */
-		}
+		/* if ((y % 4) == 0) Timer_Sleep(1); */
 	}
 
-	if (screenDst == 0) {
+	if (screenDst == SCREEN_0) {
 		GUI_Mouse_Show_InRegion();
 	}
 }
 
 #if 0
 extern void GUI_FactoryWindow_PrepareScrollList(void);
-
-extern void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, uint16 screenSrc, uint16 screenDst, uint16 delay, bool skipNull);
+extern void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, Screen screenSrc, Screen screenDst, uint16 delay, bool skipNull);
 extern void GUI_Mouse_Show(void);
 extern void GUI_Mouse_Hide(void);
 extern void GUI_Mouse_Hide_Safe(void);
@@ -1864,7 +1859,7 @@ extern void GUI_Mouse_SetPosition(uint16 x, uint16 y);
  * @param screenID The screen to do the remapping on.
  * @param remap The pointer to the remap palette.
  */
-void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 height, uint16 screenID, uint8 *remap)
+void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 height, Screen screenID, uint8 *remap)
 {
 	uint8 *screen = GFX_Screen_Get_ByIndex(screenID);
 
@@ -1985,7 +1980,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 		s_ticksPlayed = 0;
 	}
 
-	data = (HallOfFameStruct *)GFX_Screen_Get_ByIndex(5);
+	data = (HallOfFameStruct *)GFX_Screen_Get_ByIndex(SCREEN_2);
 
 	if (!File_Exists_Personal("SAVEFAME.DAT")) {
 		memset(data, 0, 128);
@@ -2035,9 +2030,9 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 		while (true) {
 			char *nameEnd;
-			uint16 oldScreenID;
+			Screen oldScreenID;
 
-			oldScreenID = GFX_Screen_SetActive(0);
+			oldScreenID = GFX_Screen_SetActive(SCREEN_0);
 			Widget_SetAndPaintCurrentWidget(19);
 			GFX_Screen_SetActive(oldScreenID);
 
@@ -2089,7 +2084,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 	Input_History_Clear();
 
-	GFX_Screen_SetActive(0);
+	GFX_Screen_SetActive(SCREEN_0);
 
 	g_yesNoWindowDesc.stringID = STR_ARE_YOU_SURE_YOU_WANT_TO_CLEAR_THE_HIGH_SCORES;
 	GUI_Window_Create(&g_yesNoWindowDesc);
@@ -2191,7 +2186,7 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 {
 	VARIABLE_NOT_USED(show);
 
-	uint16 oldScreenID;
+	Screen oldScreenID;
 	char *scoreString;
 	char *battleString;
 	uint16 width = 0;
@@ -2200,7 +2195,7 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 	uint16 battleX;
 	uint8 i;
 
-	oldScreenID = GFX_Screen_SetActive(2);
+	oldScreenID = GFX_Screen_SetActive(SCREEN_1);
 	Prim_FillRect_i(8, 80, 311, 178, 116);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 
@@ -2282,11 +2277,11 @@ void GUI_Palette_CreateRemap(uint8 houseID)
  * This also handles animation tick and other viewport related activity.
  * @param screenID The screen to draw on.
  */
-void GUI_DrawScreen(uint16 screenID)
+void GUI_DrawScreen(Screen screenID)
 {
 	static uint32 s_timerViewportMessage = 0;
 	bool loc10;
-	uint16 oldScreenID;
+	Screen oldScreenID;
 	uint16 xpos;
 
 	if (g_selectionType == SELECTIONTYPE_MENTAT) return;
@@ -2298,7 +2293,7 @@ void GUI_DrawScreen(uint16 screenID)
 
 	oldScreenID = GFX_Screen_SetActive(screenID);
 
-	if (screenID != 0) g_viewport_forceRedraw = true;
+	if (screenID != SCREEN_0) g_viewport_forceRedraw = true;
 
 	Explosion_Tick();
 	Animation_Tick();
@@ -2327,7 +2322,7 @@ void GUI_DrawScreen(uint16 screenID)
 
 			GUI_Mouse_Hide_InWidget(2);
 
-			GUI_Screen_Copy(max(-xOffset << 1, 0), 40 + max(-yOffset << 4, 0), max(0, xOffset << 1), 40 + max(0, yOffset << 4), xOverlap << 1, yOverlap << 4, 0, 2);
+			GUI_Screen_Copy(max(-xOffset << 1, 0), 40 + max(-yOffset << 4, 0), max(0, xOffset << 1), 40 + max(0, yOffset << 4), xOverlap << 1, yOverlap << 4, SCREEN_0, SCREEN_1);
 		} else {
 			g_viewport_forceRedraw = true;
 		}
@@ -2363,7 +2358,7 @@ void GUI_DrawScreen(uint16 screenID)
 	}
 
 	A5_UseTransform(SCREENDIV_VIEWPORT);
-	GUI_Widget_Viewport_Draw(g_viewport_forceRedraw, loc10, screenID != 0);
+	GUI_Widget_Viewport_Draw(g_viewport_forceRedraw, loc10, screenID != SCREEN_0);
 	A5_UseTransform(SCREENDIV_MAIN);
 
 	g_viewport_forceRedraw = false;

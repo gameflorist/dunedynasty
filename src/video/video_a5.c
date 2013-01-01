@@ -1063,7 +1063,7 @@ VideoA5_ExportCPS(enum SearchDirectory dir, const char *filename, unsigned char 
 
 	VideoA5_ReadPalette(use_benepal ? "BENE.PAL" : "IBM.PAL");
 	memset(buf, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
-	Sprites_LoadImage(dir, filename, 2, NULL);
+	Sprites_LoadImage(dir, filename, SCREEN_1, NULL);
 	VideoA5_CopyBitmap(buf, cps->bmp, BLACK_COLOUR_0);
 	VideoA5_ReadPalette("IBM.PAL");
 
@@ -1091,7 +1091,7 @@ VideoA5_LoadCPS(enum SearchDirectory dir, const char *filename)
 		cps = cps->next;
 	}
 
-	cps = VideoA5_ExportCPS(dir, filename, GFX_Screen_Get_ByIndex(2));
+	cps = VideoA5_ExportCPS(dir, filename, GFX_Screen_Get_ByIndex(SCREEN_1));
 	if (cps == NULL)
 		return NULL;
 
@@ -1155,7 +1155,7 @@ static void
 VideoA5_InitCPS(void)
 {
 	const struct CPSSpecialCoord *coord;
-	unsigned char *buf = GFX_Screen_Get_ByIndex(2);
+	unsigned char *buf = GFX_Screen_Get_ByIndex(SCREEN_1);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
@@ -1187,9 +1187,9 @@ VideoA5_InitCPS(void)
 	al_draw_filled_rectangle(coord->tx - 1.0f, coord->ty + coord->h, coord->tx + coord->w + 1.5f, coord->ty + coord->h + 1.0f, al_map_rgb(0, 0, 0));
 
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", 2, NULL);
+		Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", SCREEN_1, NULL);
 		GUI_Palette_CreateRemap(houseID);
-		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 2, g_remap);
+		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_1, g_remap);
 		VideoA5_CopyBitmap(buf, cps_screen->bmp, TRANSPARENT_COLOUR_0);
 
 		coord = &cps_special_coord[CPS_SIDEBAR_TOP];
@@ -1214,7 +1214,7 @@ VideoA5_InitCPS(void)
 	VideoA5_DrawBitmapRegion_Padded(cps_mapmach->bmp, &cps_special_coord[CPS_CONQUEST_FR], coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty, false, false);
 	VideoA5_DrawBitmapRegion_Padded(cps_mapmach->bmp, &cps_special_coord[CPS_CONQUEST_DE], coord->tx, cps_special_coord[CPS_CONQUEST_DE].ty, false, false);
 
-	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "MAPMACH.CPS", 2, NULL);
+	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "MAPMACH.CPS", SCREEN_1, NULL);
 	ALLEGRO_LOCKED_REGION *reg = al_lock_bitmap(interface_texture, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_EN].cy, coord->tx, cps_special_coord[CPS_CONQUEST_EN].ty + 30, coord->w, 20, CONQUEST_COLOUR);
 	VideoA5_CreateWhiteMask(buf, reg, SCREEN_WIDTH, coord->cx, cps_special_coord[CPS_CONQUEST_FR].cy, coord->tx, cps_special_coord[CPS_CONQUEST_FR].ty + 30, coord->w, 20, CONQUEST_COLOUR);
@@ -1865,7 +1865,7 @@ VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 	ALLEGRO_BITMAP *bmp;
 
 	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, w, h, row_h, &x, &y);
-	GUI_DrawSprite_(0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0x100, remap, 1);
+	GUI_DrawSprite_(SCREEN_0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0x100, remap, 1);
 
 	bmp = al_create_sub_bitmap(al_get_target_bitmap(), x, y, w, h);
 	assert(bmp != NULL);
@@ -1981,7 +1981,7 @@ VideoA5_InitShapes(unsigned char *buf)
 		const int h = Shape_Height(shapeID);
 
 		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 4 * w, h, row_h, &x, &y);
-		GUI_DrawSprite_(0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0);
+		GUI_DrawSprite_(SCREEN_0, g_sprites[shapeID], x, y, WINDOWID_RENDER_TEXTURE, 0);
 
 		for (int i = 3; i >= 0; i--) {
 			s_shape[tintID + i][0] = al_create_sub_bitmap(region_texture, x + i * w, y, w, h);
@@ -2399,7 +2399,7 @@ VideoA5_InitWSA(unsigned char *buf)
 	const int WINDOW_W = 512;
 	const int WINDOW_H = 512;
 
-	void *wsa = WSA_LoadFile("STATIC.WSA", GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), true);
+	void *wsa = WSA_LoadFile("STATIC.WSA", GFX_Screen_Get_ByIndex(SCREEN_2), GFX_Screen_GetSize_ByIndex(SCREEN_2), true);
 	assert(wsa != NULL);
 
 	const int num_frames = WSA_GetFrameCount(wsa);
@@ -2416,7 +2416,7 @@ VideoA5_InitWSA(unsigned char *buf)
 
 	for (int frame = 0; frame < num_frames; frame++) {
 		VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, 64, 64, 64, &x, &y);
-		WSA_DisplayFrame(wsa, frame, 0, 0, 0);
+		WSA_DisplayFrame(wsa, frame, 0, 0, SCREEN_0);
 
 		VideoA5_CopyBitmap(buf, wsacpy, BLACK_COLOUR_0);
 		al_draw_bitmap(wsacpy, 512 + x, y, 0);
@@ -2436,11 +2436,11 @@ VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int
 		return false;
 
 	if (wsa != NULL) {
-		if (!WSA_DisplayFrame(wsa, frame, 0, 0, 0))
+		if (!WSA_DisplayFrame(wsa, frame, 0, 0, SCREEN_0))
 			return false;
 	}
 
-	const unsigned char *buf = GFX_Screen_Get_ByIndex(0);
+	const unsigned char *buf = GFX_Screen_Get_ByIndex(SCREEN_0);
 
 	VideoA5_CopyBitmap(&buf[SCREEN_WIDTH * sy + sx], scratch, BLACK_COLOUR_0);
 	al_draw_bitmap(scratch, dx, dy, 0);
@@ -2603,7 +2603,7 @@ VideoA5_InitCursor(unsigned char *buf)
 		memset(buf, 0, SCREEN_WIDTH * sh);
 		al_clear_to_color(al_map_rgba(0x00, 0x00, 0x00, 0x00));
 
-		GUI_DrawSprite_(0, g_sprites[i], 0, 0, 0, 0);
+		GUI_DrawSprite_(SCREEN_0, g_sprites[i], 0, 0, 0, 0);
 		VideoA5_CopyBitmap(buf, src, TRANSPARENT_COLOUR_0);
 		al_draw_scaled_bitmap(src, 0.0f, 0.0f, sw, sh, 0.0f, 0.0f, dw, dh, 0);
 
@@ -2619,7 +2619,7 @@ VideoA5_InitSprites(void)
 {
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
-	const uint16 old_screen = GFX_Screen_SetActive(0);
+	const Screen oldScreenID = GFX_Screen_SetActive(SCREEN_0);
 	const enum WindowID old_widget = Widget_SetCurrentWidget(WINDOWID_RENDER_TEXTURE);
 
 	unsigned char *buf = GFX_Screen_GetActive();
@@ -2653,7 +2653,7 @@ VideoA5_InitSprites(void)
 	al_set_target_backbuffer(display);
 	al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
 
-	GFX_Screen_SetActive(old_screen);
+	GFX_Screen_SetActive(oldScreenID);
 	Widget_SetCurrentWidget(old_widget);
 }
 

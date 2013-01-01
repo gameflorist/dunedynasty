@@ -364,7 +364,7 @@ void GUI_Window_Create(WindowDesc *desc)
 
 	g_widgetLinkedListTail = NULL;
 
-	GFX_Screen_SetActive(2);
+	GFX_Screen_SetActive(SCREEN_1);
 
 	uint16 old_widget = Widget_SetCurrentWidget(desc->index);
 
@@ -437,7 +437,7 @@ void GUI_Window_Create(WindowDesc *desc)
 
 	Widget_SetCurrentWidget(old_widget);
 
-	GFX_Screen_SetActive(0);
+	GFX_Screen_SetActive(SCREEN_0);
 }
 
 #if 0
@@ -504,7 +504,7 @@ int GUI_Widget_Savegame_Click(uint16 key)
 	if (*saveDesc == '[') *saveDesc = 0;
 	if (*saveDesc == '[') key = s_savegameCountOnDisk;
 
-	GFX_Screen_SetActive(0);
+	GFX_Screen_SetActive(SCREEN_0);
 	Widget_SetCurrentWidget(15);
 #endif
 

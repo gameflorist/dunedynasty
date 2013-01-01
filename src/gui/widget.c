@@ -10,7 +10,6 @@
 #include "gui.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
-#include "../gfx.h"
 #include "../house.h"
 #include "../newui/scrollbar.h"
 #include "../string.h"

@@ -110,7 +110,7 @@ GUI_Mentat_LoadHelpSubjects(bool init)
 	if (!init)
 		return;
 
-	char *helpSubjects = GFX_Screen_Get_ByIndex(5);
+	char *helpSubjects = GFX_Screen_Get_ByIndex(SCREEN_2);
 	uint8 fileID;
 	uint32 length;
 	uint32 counter;
@@ -373,7 +373,7 @@ MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntr
 			wsaFilename = House_GetWSAHouseFilename(g_table_houseRemap6to3[houseID]);
 		}
 
-		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(SCREEN_2), GFX_Screen_GetSize_ByIndex(SCREEN_2), false);
 	}
 	else {
 		char filename[16];
@@ -389,7 +389,7 @@ MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntr
 		Ini_GetString("BASIC", key[entry], def[entry], wsaFilename, sizeof(wsaFilename), buf);
 		free(buf);
 
-		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(SCREEN_2), GFX_Screen_GetSize_ByIndex(SCREEN_2), false);
 	}
 
 	mentat->wsa_timer = Timer_GetTicks();
@@ -420,7 +420,7 @@ MentatSecurity_PickQuestion(MentatState *mentat)
 	const int questionsCount = atoi(String_Get_ByIndex(STR_SECURITY_COUNT));
 
 	mentat->security_question = Tools_RandomLCG_Range(0, questionsCount - 1) * 3 + STR_SECURITY_QUESTIONS;
-	mentat->wsa = WSA_LoadFile(String_Get_ByIndex(mentat->security_question + 1), GFX_Screen_Get_ByIndex(5), GFX_Screen_GetSize_ByIndex(5), false);
+	mentat->wsa = WSA_LoadFile(String_Get_ByIndex(mentat->security_question + 1), GFX_Screen_Get_ByIndex(SCREEN_2), GFX_Screen_GetSize_ByIndex(SCREEN_2), false);
 }
 
 void

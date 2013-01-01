@@ -132,8 +132,7 @@ int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16
 
 		key = GUI_Widget_HandleEvents(w);
 
-		if (key == 0x0)
-			continue;
+		if (key == 0x0) continue;
 
 		if ((key & 0x8000) != 0)
 			return key;
@@ -148,8 +147,7 @@ int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16
 
 		/* Handle backspace */
 		if (key == SCANCODE_BACKSPACE) {
-			if (textLength == 0)
-				continue;
+			if (textLength == 0) continue;
 
 			textWidth -= Font_GetCharWidth(*(t - 1));
 			textLength--;
@@ -168,8 +166,7 @@ int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16
 			continue;
 
 		keyWidth = Font_GetCharWidth(key);
-		if (textWidth + keyWidth >= maxWidth || textLength >= maxLength)
-			continue;
+		if (textWidth + keyWidth >= maxWidth || textLength >= maxLength) continue;
 
 		/* Add char to the text */
 		*t = key & 0xFF;

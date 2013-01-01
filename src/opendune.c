@@ -240,7 +240,7 @@ static bool GameLoop_IsLevelWon(void)
 #if 0
 /* Moved to cutscene.c. */
 static void GameLoop_PrepareAnimation(const HouseAnimation_Animation *animation, const HouseAnimation_Subtitle *subtitle, uint16 arg_8062, const HouseAnimation_SoundEffect *soundEffect);
-static void Memory_ClearBlock(uint16 index);
+static void Memory_ClearBlock(Screen index);
 static void GameLoop_FinishAnimation(void);
 static void GameLoop_PlaySoundEffect(uint8 animation);
 static void GameLoop_DrawText(char *string, uint16 top);
@@ -266,8 +266,8 @@ void GameLoop_Uninit(void)
 }
 
 #if 0
-static void GameCredits_SwapScreen(uint16 top, uint16 height, uint16 screenID, void *buffer);
-static void GameCredits_Play(char *data, uint16 windowID, uint16 memory, uint16 screenID, uint16 delay);
+static void GameCredits_SwapScreen(uint16 top, uint16 height, Screen screenID, void *buffer);
+static void GameCredits_Play(char *data, uint16 windowID, Screen memory, Screen screenID, uint16 delay);
 static void GameCredits_LoadPalette(void);
 static void GameLoop_GameCredits(void);
 static void GameLoop_GameEndAnimation(void);
@@ -306,7 +306,7 @@ static void GameLoop_LevelEnd(void)
 				GUI_Mouse_Hide_Safe();
 
 				GUI_SetPaletteAnimated(g_palette2, 15);
-				GUI_ClearScreen(0);
+				GUI_ClearScreen(SCREEN_0);
 				GameLoop_GameEndAnimation();
 				PrepareEnd();
 				exit(0);
@@ -455,7 +455,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 	memmove(g_palette1, g_palette_998A, 256 * 3);
 
-	GUI_ClearScreen(0);
+	GUI_ClearScreen(SCREEN_0);
 
 	GFX_SetPalette(g_palette1);
 	GFX_SetPalette(g_palette2);
@@ -506,7 +506,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 		stringID = STR_REPLAY_INTRODUCTION;
 
-		while (true) {
+		for (;; sleepIdle()) {
 			char *strings[6];
 
 			switch (stringID) {
@@ -558,7 +558,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 				case STR_LOAD_GAME:
 					GUI_Mouse_Hide_Safe();
 					GUI_SetPaletteAnimated(g_palette2, 30);
-					GUI_ClearScreen(0);
+					GUI_ClearScreen(SCREEN_0);
 					GUI_Mouse_Show_Safe();
 
 					GFX_SetPalette(g_palette1);
@@ -612,13 +612,13 @@ static void GameLoop_GameIntroAnimationMenu(void)
 				g_widgetProperties[13].yBase  = 160 - ((g_widgetProperties[21].height * g_fontCurrent->height) >> 1);
 				g_widgetProperties[13].height = (g_widgetProperties[21].height * g_fontCurrent->height) + 11;
 
-				Sprites_LoadImage(String_GenerateFilename("TITLE"), 3, NULL);
+				Sprites_LoadImage(String_GenerateFilename("TITLE"), SCREEN_1, NULL);
 
 				GUI_Mouse_Hide_Safe();
 
-				GUI_ClearScreen(0);
+				GUI_ClearScreen(SCREEN_0);
 
-				GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, 2, 0);
+				GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, SCREEN_1, SCREEN_0);
 
 				GUI_SetPaletteAnimated(g_palette1, 30);
 
@@ -648,9 +648,6 @@ static void GameLoop_GameIntroAnimationMenu(void)
 			GUI_PaletteAnimate();
 
 			if (stringID == STR_PLAY_A_GAME) break;
-
-			Video_Tick();
-			sleepIdle();
 		}
 	} else {
 		Audio_PlayMusic(MUSIC_STOP);
@@ -667,7 +664,7 @@ static void GameLoop_GameIntroAnimationMenu(void)
 
 		GUI_SetPaletteAnimated(g_palette2, 15);
 
-		GUI_ClearScreen(0);
+		GUI_ClearScreen(SCREEN_0);
 	}
 
 	Input_History_Clear();
@@ -1129,7 +1126,7 @@ void GameLoop_Main(bool new_game)
 			}
 		}
 
-		GFX_Screen_SetActive(0);
+		GFX_Screen_SetActive(SCREEN_0);
 
 		if ((g_gameOverlay == GAMEOVERLAY_NONE) &&
 			(g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE)) {
@@ -1189,9 +1186,9 @@ void GameLoop_Main(bool new_game)
 
 #if 0
 	/* XXX: This fading effect doesn't work. */
-	GFX_Screen_SetActive(2);
+	GFX_Screen_SetActive(SCREEN_1);
 	GFX_ClearScreen();
-	GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, 2, 0);
+	GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, SCREEN_1, SCREEN_0);
 #endif
 }
 

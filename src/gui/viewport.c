@@ -450,7 +450,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 				GFX_Screen_SetActive(oldScreenID);
 			}
 
-			GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, g_screenActiveID, 0);
+			GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, g_screenActiveID, SCREEN_0);
 			GUI_Mouse_Show_InWidget();
 
 			g_viewport_fadein = false;
