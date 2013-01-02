@@ -3,12 +3,15 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../os/common.h"
+#include "../os/math.h"
 
 #include "skirmish.h"
 
 #include "../gui/gui.h"
 #include "../map.h"
 #include "../opendune.h"
+#include "../pool/structure.h"
 #include "../scenario.h"
 #include "../sprites.h"
 #include "../tile.h"
@@ -38,6 +41,50 @@ typedef struct {
 	int nislands_unused;
 	Island *island;
 } SkirmishData;
+
+const enum StructureType buildorder[] = {
+	/* tech level 1: refinery. */
+	STRUCTURE_CONSTRUCTION_YARD, STRUCTURE_WINDTRAP, STRUCTURE_REFINERY,
+	STRUCTURE_INVALID,
+
+	/* tech level 2: light factory. */
+	STRUCTURE_REFINERY, STRUCTURE_LIGHT_VEHICLE, STRUCTURE_WINDTRAP,
+	STRUCTURE_INVALID,
+
+	/* tech level 3: quads. */
+	STRUCTURE_SILO, STRUCTURE_OUTPOST,
+	STRUCTURE_INVALID,
+
+	/* tech level 4: tank. */
+	STRUCTURE_WINDTRAP, STRUCTURE_HEAVY_VEHICLE,
+	STRUCTURE_TURRET, STRUCTURE_TURRET,
+	STRUCTURE_INVALID,
+
+	/* tech level 5: launcher. */
+	STRUCTURE_WINDTRAP, STRUCTURE_HIGH_TECH,
+	STRUCTURE_ROCKET_TURRET, STRUCTURE_ROCKET_TURRET,
+	STRUCTURE_INVALID,
+
+	/* tech level 6: siege tank. */
+	STRUCTURE_HEAVY_VEHICLE,
+	STRUCTURE_TURRET, STRUCTURE_ROCKET_TURRET,
+	STRUCTURE_INVALID,
+
+	/* tech level 7: ix tank. */
+	STRUCTURE_WINDTRAP, STRUCTURE_HOUSE_OF_IX,
+	STRUCTURE_TURRET, STRUCTURE_ROCKET_TURRET,
+	STRUCTURE_INVALID,
+
+	/* tech level 8: palace. */
+	STRUCTURE_WINDTRAP, STRUCTURE_PALACE,
+	STRUCTURE_ROCKET_TURRET, STRUCTURE_ROCKET_TURRET,
+	STRUCTURE_INVALID,
+
+	/* tech level 9: harder. */
+	STRUCTURE_CONSTRUCTION_YARD,
+	STRUCTURE_ROCKET_TURRET, STRUCTURE_ROCKET_TURRET,
+	STRUCTURE_INVALID,
+};
 
 /*--------------------------------------------------------------*/
 
@@ -186,6 +233,95 @@ Skirmish_DivideIsland(int island, SkirmishData *sd)
 }
 
 static bool
+Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
+{
+	uint16 tech_level = 0;
+	uint16 structure = 0;
+
+	do {
+		int island = Skirmish_PickRandomIsland(sd);
+		int range = 8;
+		if (island < 0)
+			return false;
+
+		/* Re-flood-fill the island, using a new starting point. */
+		{
+			const int r = Tools_RandomLCG_Range(sd->island[island].start, sd->island[island].end - 1);
+			const int area = Skirmish_FindBuildableArea(island, sd->buildable[r].x, sd->buildable[r].y,
+					sd, sd->buildable + sd->island[island].start);
+			assert(area == sd->island[island].end - sd->island[island].start);
+			(void)area;
+
+			for (int i = sd->island[island].start; i < sd->island[island].end; i++)
+				sd->islandID[sd->buildable[i].packed] = island;
+		}
+
+		/* Use no-cheat-mode to verify land is buildable. */
+		g_validateStrictIfZero--;
+		assert(g_validateStrictIfZero == 0);
+
+		/* Place structures. */
+		while (structure < lengthof(buildorder) && (tech_level <= g_campaignID)) {
+			if (buildorder[structure] == STRUCTURE_INVALID) {
+				structure++;
+				tech_level++;
+				continue;
+			}
+
+			const enum StructureType type = buildorder[structure];
+			const StructureInfo *si = &g_table_structureInfo[type];
+			const int r = Tools_RandomLCG_Range(0, range - 1);
+			const uint16 packed = sd->buildable[sd->island[island].start + r].packed;
+
+			if (Structure_IsValidBuildLandscape(packed, type) != 0) {
+				Structure *s = Structure_Create(STRUCTURE_INDEX_INVALID, type, houseID, packed);
+				assert(s != NULL);
+
+				s->o.hitpoints = si->o.hitpoints;
+				s->o.flags.s.degrades = false;
+				s->state = STRUCTURE_STATE_IDLE;
+
+				range = min(range + 4, sd->island[island].end - sd->island[island].start);
+				structure++;
+			}
+			else {
+				range++;
+
+				if (range > sd->island[island].end - sd->island[island].start)
+					break;
+			}
+		}
+
+		/* Connect structures on this island with concrete slabs. */
+		for (range--; range > 0; range--) {
+			const int self = sd->island[island].start + range;
+			uint16 packed = sd->buildable[self].packed;
+
+			const enum LandscapeType lst = Map_GetLandscapeType(packed);
+			if (lst != LST_STRUCTURE && lst != LST_CONCRETE_SLAB)
+				continue;
+
+			const int parent = sd->island[island].start + sd->buildable[self].parent;
+			packed = sd->buildable[parent].packed;
+			if (Structure_IsValidBuildLandscape(packed, STRUCTURE_SLAB_1x1) == 0)
+				continue;
+
+			g_validateStrictIfZero++;
+			Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_SLAB_1x1, houseID, packed);
+			g_validateStrictIfZero--;
+		}
+
+		/* Finished building on this island.  Create sub-islands from
+		 * remaining buildable tiles.
+		 */
+		g_validateStrictIfZero++;
+		Skirmish_DivideIsland(island, sd);
+	} while (structure < lengthof(buildorder) && (tech_level <= g_campaignID));
+
+	return true;
+}
+
+static bool
 Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
 {
 	const int delta[7] = {
@@ -288,7 +424,20 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 
 		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
 			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
+		}
+		else {
+			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
 
+			if (!Skirmish_GenStructuresAI(houseID, sd))
+				return false;
+		}
+	}
+
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		if (g_skirmish.brain[houseID] == BRAIN_NONE)
+			continue;
+
+		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
 			if (!Skirmish_GenUnitsHuman(houseID, sd))
 				return false;
 		}
@@ -317,6 +466,11 @@ bool
 Skirmish_GenerateMap(bool newseed)
 {
 	const bool generate_houses = Skirmish_IsPlayable();
+	assert(g_validateStrictIfZero == 0);
+
+	g_campaignID = 7;
+	g_scenarioID = 20;
+	g_validateStrictIfZero++;
 
 	if (newseed) {
 		/* DuneMaps only supports 15 bit maps seeds, so there. */
@@ -342,5 +496,8 @@ Skirmish_GenerateMap(bool newseed)
 	const bool ret = Skirmish_GenerateMapInner(generate_houses, &sd);
 
 	free(sd.island);
+	g_validateStrictIfZero--;
+
+	assert(g_validateStrictIfZero == 0);
 	return ret;
 }
