@@ -184,7 +184,10 @@ Cutscene_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		}
 
 		/* XXX -- This delays the system so you can in fact see the animation */
-		if ((y % 4) == 0) Timer_Sleep(1);
+		if ((y % 4) == 0) {
+			Cutscene_CopyScreen();
+			Timer_Sleep(1);
+		}
 	}
 }
 
