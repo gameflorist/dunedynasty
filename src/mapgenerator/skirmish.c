@@ -86,9 +86,11 @@ Skirmish_FindBuildableArea(int island, int x0, int y0,
 	} while (false);
 
 	for (int i = 0; i < n; i++) {
+		const int r = Tools_Random_256() & 0x3;
+
 		for (int j = 0; j < 4; j++) {
-			const int x = buildable[i].x + dx[j];
-			const int y = buildable[i].y + dy[j];
+			const int x = buildable[i].x + dx[(r + j) & 0x3];
+			const int y = buildable[i].y + dy[(r + j) & 0x3];
 			if (!(Map_InRangeX(x) && Map_InRangeY(y)))
 				continue;
 
