@@ -102,6 +102,7 @@ static Widget *briefing_proceed_repeat_widgets;
 
 static enum ExtrasMenu extras_page;
 static int extras_credits;
+static int main_menu_campaign_selected;
 static bool skirmish_regenerate_map;
 
 static void Extras_ShowScrollbar(void);
@@ -612,6 +613,7 @@ MainMenu_Loop(void)
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
 		case 0x8000 | MENU_EXTRAS:
+			main_menu_campaign_selected = g_campaign_selected;
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_EXTRAS;
 
@@ -1654,6 +1656,9 @@ Skirmish_Initialise(void)
 {
 	Widget *w;
 
+	g_campaign_selected = CAMPAIGNID_SKIRMISH;
+	Campaign_Load();
+
 	Skirmish_GenerateMap(false);
 	skirmish_regenerate_map = false;
 
@@ -2082,6 +2087,9 @@ Extras_Loop(MentatState *mentat)
 
 	if ((res & 0xFF) != MENU_EXTRAS) {
 		Audio_StopMusicUnlessMenu();
+
+		if ((res & 0xFF) == MENU_MAIN_MENU)
+			g_campaign_selected = main_menu_campaign_selected;
 	}
 	else if (!Audio_MusicIsPlaying()) {
 		if (l_pause < curr_ticks) {

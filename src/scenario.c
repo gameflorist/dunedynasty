@@ -989,7 +989,7 @@ Campaign_Load(void)
 {
 	static int l_campaign_selected = -1;
 
-	if (g_campaign_selected == l_campaign_selected)
+	if ((g_campaign_selected == l_campaign_selected) && (g_campaign_selected != CAMPAIGNID_SKIRMISH))
 		return;
 
 	Campaign *camp = &g_campaign_list[g_campaign_selected];
