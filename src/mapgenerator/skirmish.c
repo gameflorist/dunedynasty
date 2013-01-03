@@ -11,6 +11,7 @@
 #include "../gui/gui.h"
 #include "../map.h"
 #include "../opendune.h"
+#include "../pool/pool.h"
 #include "../pool/structure.h"
 #include "../scenario.h"
 #include "../sprites.h"
@@ -403,25 +404,50 @@ Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
 
 	const MapInfo *mi = &g_mapInfos[0];
 
-	int island = Skirmish_PickRandomIsland(sd);
-	if (island < 0)
-		return false;
-
-	/* Pick a tile on the island that is not too close to the edge.
-	 * XXX: This might not terminate.
+	/* Pick a tile that is not too close to the edge, and not too
+	 * close to the enemy.
 	 */
 	int r;
-	while (true) {
-		r = Tools_RandomLCG_Range(sd->island[island].start, sd->island[island].end - 1);
+	for (int attempts = 0; attempts < 100; attempts++) {
+		const int island = Skirmish_PickRandomIsland(sd);
+		if (island < 0)
+			return false;
 
+		r = Tools_RandomLCG_Range(sd->island[island].start, sd->island[island].end - 1);
 		if (!(mi->minX + 4 <= sd->buildable[r].x && sd->buildable[r].x < mi->minX + mi->sizeX - 4))
 			continue;
 
 		if (!(mi->minY + 3 <= sd->buildable[r].y && sd->buildable[r].y < mi->minY + mi->sizeY - 3))
 			continue;
 
-		break;
+		PoolFindStruct find;
+		find.houseID = HOUSE_INVALID;
+		find.type = 0xFFFF;
+		find.index = STRUCTURE_INDEX_INVALID;
+
+		Structure *s = Structure_Find(&find);
+		for (; s != NULL; s = Structure_Find(&find)) {
+			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
+				continue;
+
+			if (House_AreAllied(g_playerHouseID, s->o.houseID))
+				continue;
+
+			const uint16 dist = Tile_GetDistancePacked(Tile_PackTile(s->o.position), sd->buildable[r].packed);
+			if (dist < 24)
+				break;
+		}
+
+		if (s == NULL) {
+			break;
+		}
+		else {
+			r = -1;
+		}
 	}
+
+	if (r < 0)
+		return false;
 
 	for (int i = 0; i < 7; i++) {
 		const uint16 packed = sd->buildable[r].packed + delta[i];
