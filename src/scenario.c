@@ -54,6 +54,7 @@ Campaign_Alloc(const char *dir_name)
 
 	g_campaign_list = realloc(g_campaign_list, (g_campaign_total + 1) * sizeof(g_campaign_list[0]));
 	g_campaign_total++;
+	assert(g_campaign_list != NULL);
 
 	camp = &g_campaign_list[g_campaign_total - 1];
 	if (dir_name == NULL) { /* Dune II */
@@ -63,9 +64,24 @@ Campaign_Alloc(const char *dir_name)
 		snprintf(camp->dir_name, sizeof(camp->dir_name), "%s/", dir_name);
 	}
 
+	camp->house[0] = HOUSE_INVALID;
+	camp->house[1] = HOUSE_INVALID;
+	camp->house[2] = HOUSE_INVALID;
+	camp->intermission = false;
+
+	camp->fame_cps[HOUSE_HARKONNEN] = camp->fame_cps[HOUSE_SARDAUKAR] = 0;
+	camp->fame_cps[HOUSE_ATREIDES] = camp->fame_cps[HOUSE_FREMEN] = 1;
+	camp->fame_cps[HOUSE_ORDOS] = camp->fame_cps[HOUSE_MERCENARY] = 2;
+	camp->mapmach_cps[HOUSE_HARKONNEN] = camp->mapmach_cps[HOUSE_SARDAUKAR] = 0;
+	camp->mapmach_cps[HOUSE_ATREIDES] = camp->mapmach_cps[HOUSE_FREMEN] = 1;
+	camp->mapmach_cps[HOUSE_ORDOS] = camp->mapmach_cps[HOUSE_MERCENARY] = 2;
+	camp->misc_cps[HOUSE_HARKONNEN] = camp->misc_cps[HOUSE_SARDAUKAR] = 0;
+	camp->misc_cps[HOUSE_ATREIDES] = camp->misc_cps[HOUSE_FREMEN] = 1;
+	camp->misc_cps[HOUSE_ORDOS] = camp->misc_cps[HOUSE_MERCENARY] = 2;
 	camp->completion[0] = 0;
 	camp->completion[1] = 0;
 	camp->completion[2] = 0;
+
 	return camp;
 }
 
@@ -85,7 +101,7 @@ Campaign_AddFileInPAK(const char *filename, int parent)
 
 static void
 Campaign_ReadCPSTweaks(char *source, const char *key, char *value, size_t size,
-		const unsigned int *def, unsigned int *dest)
+		unsigned int *dest)
 {
 	unsigned int tmp[HOUSE_MAX];
 
@@ -93,10 +109,7 @@ Campaign_ReadCPSTweaks(char *source, const char *key, char *value, size_t size,
 
 	if (sscanf(value, "%u,%u,%u,%u,%u,%u",
 				&tmp[HOUSE_HARKONNEN], &tmp[HOUSE_ATREIDES], &tmp[HOUSE_ORDOS],
-				&tmp[HOUSE_FREMEN], &tmp[HOUSE_SARDAUKAR], &tmp[HOUSE_MERCENARY]) < 6) {
-		memcpy(dest, def, HOUSE_MAX * sizeof(dest[0]));
-	}
-	else {
+				&tmp[HOUSE_FREMEN], &tmp[HOUSE_SARDAUKAR], &tmp[HOUSE_MERCENARY]) == 6) {
 		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
 			dest[houseID] = min(tmp[houseID], HOUSE_MAX);
 		}
@@ -181,9 +194,9 @@ Campaign_ReadMetaData(Campaign *camp)
 	*keys = '\0';
 
 	/* Read tweaks. */
-	Campaign_ReadCPSTweaks(source, "FAME.CPS",    value, sizeof(value), g_campaign_list[0].fame_cps, camp->fame_cps);
-	Campaign_ReadCPSTweaks(source, "MAPMACH.CPS", value, sizeof(value), g_campaign_list[0].mapmach_cps, camp->mapmach_cps);
-	Campaign_ReadCPSTweaks(source, "MISC.CPS",    value, sizeof(value), g_campaign_list[0].misc_cps, camp->misc_cps);
+	Campaign_ReadCPSTweaks(source, "FAME.CPS",    value, sizeof(value), camp->fame_cps);
+	Campaign_ReadCPSTweaks(source, "MAPMACH.CPS", value, sizeof(value), camp->mapmach_cps);
+	Campaign_ReadCPSTweaks(source, "MISC.CPS",    value, sizeof(value), camp->misc_cps);
 	Campaign_ReadEnhancements(source, keys);
 
 	/* Add PAK file entries. */
