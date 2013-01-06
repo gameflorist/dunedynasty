@@ -308,6 +308,9 @@ Extras_InitWidgets(void)
 static void
 Menu_AddCampaign(ALLEGRO_PATH *path)
 {
+	if (strcasecmp("skirmish", al_get_path_tail(path)) == 0)
+		return;
+
 	al_set_path_filename(path, "META.INI");
 	const char *meta = al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP);
 
@@ -437,7 +440,7 @@ Menu_Init(void)
 
 	Widget *w = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
 
-	if (g_campaign_total <= 1) {
+	if (g_campaign_total <= 2) { /* Dune II and skirmish campaigns only. */
 		GUI_Widget_MakeInvisible(w);
 	}
 	else {
@@ -636,11 +639,19 @@ MainMenu_Loop(void)
 
 			if (subtitle->state.s.buttonState & 0x04) {
 				g_campaign_selected++;
+
+				if (g_campaign_selected == CAMPAIGNID_SKIRMISH)
+					g_campaign_selected++;
+
 				if (g_campaign_selected >= g_campaign_total)
 					g_campaign_selected = CAMPAIGNID_DUNE_II;
 			}
 			else {
 				g_campaign_selected--;
+
+				if (g_campaign_selected == CAMPAIGNID_SKIRMISH)
+					g_campaign_selected--;
+
 				if (g_campaign_selected < 0)
 					g_campaign_selected = g_campaign_total - 1;
 			}

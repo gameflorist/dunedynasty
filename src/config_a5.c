@@ -191,6 +191,9 @@ Config_GetCampaign(void)
 				sscanf(value, "%u", &camp->completion[h]);
 		}
 	}
+
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH)
+		g_campaign_selected = CAMPAIGNID_DUNE_II;
 }
 
 /* We save the current campaign completion progress at the end of

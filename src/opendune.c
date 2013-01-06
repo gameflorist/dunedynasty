@@ -1033,13 +1033,19 @@ int main(int argc, char **argv)
 	Audio_ScanMusic();
 	String_Init();
 
+	Campaign *camp;
+
 	/* Create the Dune 2 campaign. */
-	Campaign *camp = Campaign_Alloc(NULL);
+	camp = Campaign_Alloc(NULL);
 	camp->house[0] = HOUSE_ATREIDES;
 	camp->house[1] = HOUSE_ORDOS;
 	camp->house[2] = HOUSE_HARKONNEN;
 	camp->intermission = true;
 	snprintf(camp->name, sizeof(camp->name), "%s", String_Get_ByIndex(STR_THE_BATTLE_FOR_ARRAKIS));
+
+	/* Create the skirmish campaign. */
+	camp = Campaign_Alloc("skirmish");
+	snprintf(camp->name, sizeof(camp->name), "Skirmish");
 
 	Sprites_Init();
 	Sprites_LoadTiles();
