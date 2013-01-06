@@ -209,7 +209,7 @@ String_ReloadCampaignStrings(void)
 			s_strings_mentat[houseID][i] = def;
 		}
 
-		if (g_campaign_selected == 0)
+		if (g_campaign_selected == CAMPAIGNID_DUNE_II)
 			continue;
 
 		if (!((g_campaign_list[g_campaign_selected].house[0] == houseID) ||

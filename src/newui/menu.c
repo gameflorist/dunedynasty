@@ -637,7 +637,7 @@ MainMenu_Loop(void)
 			if (subtitle->state.s.buttonState & 0x04) {
 				g_campaign_selected++;
 				if (g_campaign_selected >= g_campaign_total)
-					g_campaign_selected = 0;
+					g_campaign_selected = CAMPAIGNID_DUNE_II;
 			}
 			else {
 				g_campaign_selected--;

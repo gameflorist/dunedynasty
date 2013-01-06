@@ -2127,7 +2127,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 		if (score == 0xFFFF) {
 			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_HALL_OF_FAME2), SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
 
-			if (g_campaign_selected == 0) {
+			if (g_campaign_selected == CAMPAIGNID_DUNE_II) {
 				GUI_DrawText_Wrapper("Dune II", SCREEN_WIDTH / 2, 43, 15, 0, 0x122);
 			}
 			else {

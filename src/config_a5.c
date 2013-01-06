@@ -161,7 +161,7 @@ Config_GetAspectCorrection(const char *str, enum AspectRatioCorrection *value)
 void
 Config_GetCampaign(void)
 {
-	g_campaign_selected = 0;
+	g_campaign_selected = CAMPAIGNID_DUNE_II;
 
 	if (s_configFile == NULL)
 		return;

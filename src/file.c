@@ -266,7 +266,7 @@ _File_OpenInDir(enum SearchDirectory dir, const char *filename, uint8 mode)
 			if (pakPosition == 0) break;
 
 			/* Add campaign directory (and slash) to filename. */
-			if ((dir == SEARCHDIR_CAMPAIGN_DIR) && (g_campaign_selected != 0)) {
+			if ((dir == SEARCHDIR_CAMPAIGN_DIR) && (g_campaign_selected != CAMPAIGNID_DUNE_II)) {
 				i = snprintf(pakFilename, sizeof(pakFilename), "%s", g_campaign_list[g_campaign_selected].dir_name);
 			}
 			else {
@@ -335,7 +335,7 @@ _File_Open(enum SearchDirectory dir, const char *filename, uint8 mode)
 
 	/* Try campaign file. */
 	if (dir == SEARCHDIR_CAMPAIGN_DIR) {
-		if (g_campaign_list[g_campaign_selected].dir_name[0] != '\0') {
+		if (g_campaign_selected != CAMPAIGNID_DUNE_II) {
 			char buf[1024];
 
 			snprintf(buf, sizeof(buf), "%s%s", g_campaign_list[g_campaign_selected].dir_name, filename);

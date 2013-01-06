@@ -135,7 +135,7 @@ Campaign_ResetAlliances(void)
 static void
 Campaign_ResetEnhancements(void)
 {
-	if (g_campaign_list[g_campaign_selected].dir_name[0] == '\0') { /* Dune II */
+	if (g_campaign_selected == CAMPAIGNID_DUNE_II) {
 		enhancement_fix_scenario_typos = true;
 		enhancement_read_scenario_structure_health = false;
 	}

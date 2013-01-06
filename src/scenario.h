@@ -6,6 +6,10 @@
 #include "enumeration.h"
 #include "types.h"
 
+enum {
+	CAMPAIGNID_DUNE_II = 0,
+};
+
 typedef struct Campaign {
 	char name[32];
 	char dir_name[128];
