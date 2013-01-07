@@ -43,48 +43,70 @@ typedef struct {
 	Island *island;
 } SkirmishData;
 
-const enum StructureType buildorder[] = {
+typedef struct {
+	enum StructureType type;
+	int priority;               /* low priority is better! */
+	bool availableToAlly;
+	uint8 availableHouse;
+} SkirmishBuildOrder;
+
+static const SkirmishBuildOrder buildorder[] = {
 	/* tech level 1: refinery. */
-	STRUCTURE_CONSTRUCTION_YARD, STRUCTURE_WINDTRAP, STRUCTURE_REFINERY,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_CONSTRUCTION_YARD,   1,  true, 0xFF },
+	{ STRUCTURE_WINDTRAP,            2,  true, 0xFF },
+	{ STRUCTURE_REFINERY,            3,  true, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 
 	/* tech level 2: light factory. */
-	STRUCTURE_REFINERY, STRUCTURE_LIGHT_VEHICLE, STRUCTURE_WINDTRAP,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_REFINERY,           13, false, 0xFF },
+	{ STRUCTURE_LIGHT_VEHICLE,       4,  true, 0xFF },
+	{ STRUCTURE_WINDTRAP,           16, false, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 
 	/* tech level 3: quads. */
-	STRUCTURE_SILO, STRUCTURE_OUTPOST,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_SILO,               98, false, 0xFF },
+	{ STRUCTURE_OUTPOST,             5,  true, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 
 	/* tech level 4: tank. */
-	STRUCTURE_WINDTRAP, STRUCTURE_HEAVY_VEHICLE,
-	STRUCTURE_TURRET, STRUCTURE_TURRET,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_WINDTRAP,            9,  true, 0xFF },
+	{ STRUCTURE_HEAVY_VEHICLE,       6,  true, 0xFF },
+	{ STRUCTURE_TURRET,             10,  true, 0xFF },
+	{ STRUCTURE_TURRET,             21, false, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 
 	/* tech level 5: launcher. */
-	STRUCTURE_WINDTRAP, STRUCTURE_HIGH_TECH,
-	STRUCTURE_ROCKET_TURRET, STRUCTURE_ROCKET_TURRET,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_WINDTRAP,           22, false, 0xFF },
+	{ STRUCTURE_HIGH_TECH,           7,  true, 0xFF },
+	{ STRUCTURE_ROCKET_TURRET,      11,  true, 0xFF },
+	{ STRUCTURE_ROCKET_TURRET,      12, false, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 
 	/* tech level 6: siege tank. */
-	STRUCTURE_HEAVY_VEHICLE,
-	STRUCTURE_TURRET, STRUCTURE_ROCKET_TURRET,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_HEAVY_VEHICLE,      14, false, 0xFF },
+	{ STRUCTURE_TURRET,             23, false, 0xFF },
+	{ STRUCTURE_ROCKET_TURRET,      15, false, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 
 	/* tech level 7: ix tank. */
-	STRUCTURE_WINDTRAP, STRUCTURE_HOUSE_OF_IX,
-	STRUCTURE_TURRET, STRUCTURE_ROCKET_TURRET,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_WINDTRAP,           18,  true, 0xFF },
+	{ STRUCTURE_HOUSE_OF_IX,         8,  true, 0xFF },
+	{ STRUCTURE_TURRET,             24, false, 0xFF },
+	{ STRUCTURE_ROCKET_TURRET,      17,  true, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 
 	/* tech level 8: palace. */
-	STRUCTURE_WINDTRAP, STRUCTURE_PALACE,
-	STRUCTURE_ROCKET_TURRET, STRUCTURE_ROCKET_TURRET,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_WINDTRAP,           25, false, 0xFF },
+	{ STRUCTURE_PALACE,             19,  true, 0xFF },
+	{ STRUCTURE_ROCKET_TURRET,      26, false, 0xFF },
+	{ STRUCTURE_ROCKET_TURRET,      27, false, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 
 	/* tech level 9: harder. */
-	STRUCTURE_CONSTRUCTION_YARD,
-	STRUCTURE_ROCKET_TURRET, STRUCTURE_ROCKET_TURRET,
-	STRUCTURE_INVALID,
+	{ STRUCTURE_CONSTRUCTION_YARD,  20, false, 0xFF },
+	{ STRUCTURE_ROCKET_TURRET,      28, false, 0xFF },
+	{ STRUCTURE_ROCKET_TURRET,      29, false, 0xFF },
+	{ STRUCTURE_INVALID,            99, false, 0    },
 };
 
 /*--------------------------------------------------------------*/
@@ -331,12 +353,65 @@ Skirmish_DivideIsland(int island, SkirmishData *sd)
 	free(orig);
 }
 
+static int
+Skirmish_BuildOrder_Sorter(const void *a, const void *b)
+{
+	const SkirmishBuildOrder *pa = a;
+	const SkirmishBuildOrder *pb = b;
+
+	return pa->priority - pb->priority;
+}
+
 static bool
 Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 {
 	uint16 tech_level = 0;
 	uint16 structure = 0;
+	int structure_count = 0;
+	int structure_threshold = 100;
 
+	int cpu_count = 0;
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_skirmish.brain[h] == BRAIN_CPU_ENEMY || g_skirmish.brain[h] == BRAIN_CPU_ALLY)
+			cpu_count++;
+	}
+	assert(cpu_count != 0);
+
+	const int max_structure_count = 60 / cpu_count;
+
+	/* First pass finds out what to build. */
+	tech_level = 0;
+	structure = 0;
+	structure_count = 0;
+	for (structure = 0; (structure < lengthof(buildorder)) && (tech_level <= g_campaignID); structure++) {
+		if (buildorder[structure].type == STRUCTURE_INVALID) {
+			tech_level++;
+		}
+		else if (!buildorder[structure].availableToAlly && (g_skirmish.brain[houseID] == BRAIN_CPU_ALLY)) {
+		}
+		else if ((buildorder[structure].availableHouse & (1 << houseID)) == 0) {
+		}
+		else {
+			structure_count++;
+		}
+	}
+
+	if (structure_count > max_structure_count) {
+		structure_count = max_structure_count;
+
+		SkirmishBuildOrder *bo = malloc(structure * sizeof(SkirmishBuildOrder));
+		assert(bo != NULL);
+
+		memcpy(bo, buildorder, structure * sizeof(SkirmishBuildOrder));
+		qsort(bo, structure, sizeof(SkirmishBuildOrder), Skirmish_BuildOrder_Sorter);
+		structure_threshold = bo[structure_count].priority;
+
+		free(bo);
+	}
+
+	/* Second pass builds structures below the threshold priority. */
+	tech_level = 0;
+	structure = 0;
 	for (int attempts = 0; attempts < 100; attempts++) {
 		int island = Skirmish_PickRandomIsland(sd);
 		int range = 8;
@@ -368,14 +443,25 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 		assert(g_validateStrictIfZero == 0);
 
 		/* Place structures. */
-		while (structure < lengthof(buildorder) && (tech_level <= g_campaignID)) {
-			if (buildorder[structure] == STRUCTURE_INVALID) {
-				structure++;
+		while (structure_count > 0) {
+			assert(structure < lengthof(buildorder));
+
+			if (buildorder[structure].type == STRUCTURE_INVALID) {
 				tech_level++;
+				structure++;
+				continue;
+			}
+			else if (!buildorder[structure].availableToAlly && (g_skirmish.brain[houseID] == BRAIN_CPU_ALLY)) {
+				structure++;
+				structure_count--;
+				continue;
+			}
+			else if (buildorder[structure].priority >= structure_threshold) {
+				structure++;
 				continue;
 			}
 
-			const enum StructureType type = buildorder[structure];
+			const enum StructureType type = buildorder[structure].type;
 			const StructureInfo *si = &g_table_structureInfo[type];
 			const int r = Tools_RandomLCG_Range(0, range - 1);
 			const uint16 packed = sd->buildable[sd->island[island].start + r].packed;
@@ -390,6 +476,7 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 
 				range = min(range + 4, sd->island[island].end - sd->island[island].start);
 				structure++;
+				structure_count--;
 			}
 			else {
 				range++;
@@ -424,7 +511,7 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 		g_validateStrictIfZero++;
 		Skirmish_DivideIsland(island, sd);
 
-		if (structure >= lengthof(buildorder) || (tech_level > g_campaignID))
+		if (structure_count <= 0)
 			return true;
 	}
 
