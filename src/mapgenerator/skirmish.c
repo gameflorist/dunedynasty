@@ -127,6 +127,33 @@ Skirmish_PickRandomIsland(const SkirmishData *sd)
 	return -1;
 }
 
+static void
+Skirmish_FindClosestStructures(enum HouseType houseID, uint16 packed,
+		uint16 *dist_ally, uint16 *dist_enemy)
+{
+	PoolFindStruct find;
+	Structure *s;
+
+	find.houseID = HOUSE_INVALID;
+	find.type = 0xFFFF;
+	find.index = STRUCTURE_INDEX_INVALID;
+
+	*dist_ally = 0xFFFF;
+	*dist_enemy = 0xFFFF;
+	while ((s = Structure_Find(&find)) != NULL) {
+		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
+			continue;
+
+		const uint16 dist = Tile_GetDistancePacked(Tile_PackTile(s->o.position), packed);
+		if (House_AreAllied(houseID, s->o.houseID)) {
+			*dist_ally = min(dist, *dist_ally);
+		}
+		else {
+			*dist_enemy = min(dist, *dist_enemy);
+		}
+	}
+}
+
 static bool
 Skirmish_ResetAlliances(void)
 {
@@ -310,7 +337,7 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 	uint16 tech_level = 0;
 	uint16 structure = 0;
 
-	do {
+	for (int attempts = 0; attempts < 100; attempts++) {
 		int island = Skirmish_PickRandomIsland(sd);
 		int range = 8;
 		if (island < 0)
@@ -319,6 +346,14 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 		/* Re-flood-fill the island, using a new starting point. */
 		{
 			const int r = Tools_RandomLCG_Range(sd->island[island].start, sd->island[island].end - 1);
+
+			uint16 dist_ally, dist_enemy;
+			Skirmish_FindClosestStructures(houseID, sd->buildable[r].packed, &dist_ally, &dist_enemy);
+
+			if ((dist_ally > 16 && dist_ally != 0xFFFF) ||
+			    (dist_enemy < 24))
+				continue;
+
 			const int area = Skirmish_FindBuildableArea(island, sd->buildable[r].x, sd->buildable[r].y,
 					sd, sd->buildable + sd->island[island].start);
 			assert(area == sd->island[island].end - sd->island[island].start);
@@ -388,9 +423,12 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 		 */
 		g_validateStrictIfZero++;
 		Skirmish_DivideIsland(island, sd);
-	} while (structure < lengthof(buildorder) && (tech_level <= g_campaignID));
 
-	return true;
+		if (structure >= lengthof(buildorder) || (tech_level > g_campaignID))
+			return true;
+	}
+
+	return false;
 }
 
 static bool
