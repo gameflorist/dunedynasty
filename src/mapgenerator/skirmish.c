@@ -308,6 +308,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 
 	Game_Prepare();
 	GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+	Scenario_CentreViewport(g_playerHouseID);
 	g_tickScenarioStart = g_timerGame;
 	return true;
 }

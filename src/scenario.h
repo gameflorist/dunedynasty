@@ -76,6 +76,7 @@ extern Skirmish g_skirmish;
 extern Campaign *Campaign_Alloc(const char *dir_name);
 extern void Campaign_Load(void);
 extern bool Scenario_Load(uint16 scenarioID, uint8 houseID);
+extern void Scenario_CentreViewport(uint8 houseID);
 
 extern struct House *Scenario_Create_House(enum HouseType houseID, enum Brain brain, uint16 credits, uint16 creditsQuota, uint16 unitCountMax);
 extern void Scenario_Create_Unit(enum HouseType houseType, enum UnitType unitType, uint16 hitpoints, tile32 position, int8 orientation, enum UnitActionType actionType);

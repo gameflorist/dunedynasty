@@ -1598,7 +1598,7 @@ static void Scenario_Load_Chunk(const char *category, void (*ptr)(const char *ke
 	}
 }
 
-static void Scenario_CentreViewport(uint8 houseID)
+void Scenario_CentreViewport(uint8 houseID)
 {
 	PoolFindStruct find;
 
@@ -1609,6 +1609,17 @@ static void Scenario_CentreViewport(uint8 houseID)
 	Structure *s = Structure_Find(&find);
 	if (s != NULL) {
 		Map_CentreViewport((s->o.position.s.x >> 4) + TILE_SIZE, (s->o.position.s.y >> 4) + TILE_SIZE);
+		return;
+	}
+
+	/* ENHANCEMENT -- centre on MCV. */
+	find.houseID = houseID;
+	find.type = UNIT_MCV;
+	find.index = 0xFFFF;
+
+	Unit *u = Unit_Find(&find);
+	if (u != NULL) {
+		Map_CentreViewport(u->o.position.s.x >> 4, u->o.position.s.y >> 4);
 	}
 }
 
