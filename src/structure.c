@@ -1121,7 +1121,11 @@ void Structure_RemoveFog(Structure *s)
 	const StructureInfo *si;
 	tile32 position;
 
-	if (s == NULL || s->o.houseID != g_playerHouseID) return;
+	if (s == NULL) return;
+
+	/* ENHANCEMENT -- shared vision between allies.  Dune II didn't have allied structures. */
+	if (!House_AreAllied(s->o.houseID, g_playerHouseID))
+		return;
 
 	si = &g_table_structureInfo[s->o.type];
 
