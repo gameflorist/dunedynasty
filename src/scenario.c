@@ -1148,7 +1148,6 @@ static void Scenario_Load_Unit(const char *key, char *settings)
 	int8 orientation;
 	uint16 hitpoints;
 	tile32 position;
-	Unit *u;
 	char *split;
 
 	VARIABLE_NOT_USED(key);
@@ -1204,6 +1203,14 @@ static void Scenario_Load_Unit(const char *key, char *settings)
 	actionType = Unit_ActionStringToType(settings);
 	if (actionType == ACTION_INVALID) return;
 
+	Scenario_Create_Unit(houseType, unitType, hitpoints, position, orientation, actionType);
+}
+
+void
+Scenario_Create_Unit(enum HouseType houseType, enum UnitType unitType,
+		uint16 hitpoints, tile32 position, int8 orientation, enum UnitActionType actionType)
+{
+	Unit *u;
 
 	u = Unit_Allocate(UNIT_INDEX_INVALID, unitType, houseType);
 	if (u == NULL) return;
