@@ -59,6 +59,8 @@ typedef struct Skirmish {
 	enum Brain brain[HOUSE_MAX];
 } Skirmish;
 
+struct House;
+
 extern Campaign *g_campaign_list;
 extern int g_campaign_total;
 extern int g_campaign_selected;
@@ -69,5 +71,7 @@ extern Skirmish g_skirmish;
 extern Campaign *Campaign_Alloc(const char *dir_name);
 extern void Campaign_Load(void);
 extern bool Scenario_Load(uint16 scenarioID, uint8 houseID);
+
+extern struct House *Scenario_Create_House(enum HouseType houseID, enum Brain brain, uint16 credits, uint16 creditsQuota, uint16 unitCountMax);
 
 #endif /* SCENARIO_H */

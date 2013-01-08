@@ -1034,7 +1034,6 @@ static void Scenario_Load_House(uint8 houseID)
 	char *houseType;
 	char buf[128];
 	char *b;
-	House *h;
 
 	/* Get the type of the House (CPU / Human) */
 	Ini_GetString(houseName, "Brain", "NONE", buf, 127, s_scenarioBuffer);
@@ -1042,27 +1041,47 @@ static void Scenario_Load_House(uint8 houseID)
 	houseType = strstr("HUMAN$CPU", buf);
 	if (houseType == NULL) return;
 
-	/* Create the house */
-	h = House_Allocate(houseID);
+	enum Brain brain = (*houseType == 'H') ? BRAIN_HUMAN : BRAIN_CPU_ENEMY;
+	uint16 credits;
+	uint16 creditsQuota;
+	uint16 unitCountMax;
 
-	h->credits      = Ini_GetInteger(houseName, "Credits",  0, s_scenarioBuffer);
-	h->creditsQuota = Ini_GetInteger(houseName, "Quota",    0, s_scenarioBuffer);
-	h->unitCountMax = Ini_GetInteger(houseName, "MaxUnit", 39, s_scenarioBuffer);
+	credits      = Ini_GetInteger(houseName, "Credits",  0, s_scenarioBuffer);
+	creditsQuota = Ini_GetInteger(houseName, "Quota",    0, s_scenarioBuffer);
+	unitCountMax = Ini_GetInteger(houseName, "MaxUnit", 39, s_scenarioBuffer);
 
 	/* ENHANCEMENT -- "MaxUnits" instead of MaxUnit. */
 	if (enhancement_fix_scenario_typos || enhancement_raise_scenario_unit_cap) {
-		if (h->unitCountMax == 0)
-			h->unitCountMax = Ini_GetInteger(houseName, "MaxUnits", 39, s_scenarioBuffer);
+		if (unitCountMax == 0)
+			unitCountMax = Ini_GetInteger(houseName, "MaxUnits", 39, s_scenarioBuffer);
 	}
 
+	Scenario_Create_House(houseID, brain, credits, creditsQuota, unitCountMax);
+}
+
+House *
+Scenario_Create_House(enum HouseType houseID, enum Brain brain,
+		uint16 credits, uint16 creditsQuota, uint16 unitCountMax)
+{
+	House *h;
+
+	/* Create the house */
+	h = House_Allocate(houseID);
+
+	h->credits = credits;
+	h->creditsQuota = creditsQuota;
+	h->unitCountMax = unitCountMax;
+
 	/* For 'Brain = Human' we have to set a few additional things */
-	if (*houseType != 'H') return;
+	if (brain != BRAIN_HUMAN) return h;
 
 	h->flags.human = true;
 
 	g_playerHouseID       = houseID;
 	g_playerHouse         = h;
 	g_playerCreditsNoSilo = h->credits;
+
+	return h;
 }
 
 static void Scenario_Load_Houses(void)
