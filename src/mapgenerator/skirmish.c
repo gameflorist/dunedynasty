@@ -553,6 +553,9 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 				s->o.flags.s.degrades = false;
 				s->state = STRUCTURE_STATE_IDLE;
 
+				if (s->o.type == STRUCTURE_PALACE)
+					s->countDown = g_table_houseInfo[houseID].specialCountDown;
+
 				range = min(range + 4, sd->island[island].end - sd->island[island].start);
 				structure++;
 				structure_count--;
@@ -893,7 +896,9 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
 		}
 		else {
-			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
+			House *h = Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
+
+			h->flags.isAIActive = true;
 
 			if (!Skirmish_GenStructuresAI(houseID, sd))
 				return false;
