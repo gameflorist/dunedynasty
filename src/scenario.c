@@ -1378,7 +1378,7 @@ static void Scenario_Load_Map(const char *key, char *settings)
 	if (!t->isUnveiled) t->overlaySpriteID = g_veiledSpriteID;
 }
 
-static void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)
+void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)
 {
 	if (enhancement_fix_scenario_typos) {
 		/* SCENA005: spice bloom is found in rock. */
@@ -1392,7 +1392,7 @@ static void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)
 	g_mapSpriteID[packed] |= 0x8000;
 }
 
-static void Scenario_Load_Map_Field(uint16 packed, Tile *t)
+void Scenario_Load_Map_Field(uint16 packed, Tile *t)
 {
 	Map_Bloom_ExplodeSpice(packed, HOUSE_INVALID);
 
@@ -1402,7 +1402,7 @@ static void Scenario_Load_Map_Field(uint16 packed, Tile *t)
 	}
 }
 
-static void Scenario_Load_Map_Special(uint16 packed, Tile *t)
+void Scenario_Load_Map_Special(uint16 packed, Tile *t)
 {
 	t->groundSpriteID = g_bloomSpriteID + 1;
 	g_mapSpriteID[packed] |= 0x8000;

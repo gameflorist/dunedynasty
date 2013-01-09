@@ -278,6 +278,25 @@ Skirmish_GenGeneral(void)
 	g_scenario.timeOut = 0;
 }
 
+static void
+Skirmish_GenSpiceBlooms(void)
+{
+	const uint16 acceptableLst = (1 << LST_NORMAL_SAND) | (1 << LST_ENTIRELY_DUNE) | (1 << LST_PARTIAL_DUNE);
+
+	for (int count = Tools_RandomLCG_Range(5, 10); count > 0; count--) {
+		const uint16 packed = Skirmish_PickRandomLocation(acceptableLst, 0);
+		if (packed == 0)
+			continue;
+
+		if ((Tools_Random_256() & 0x3) == 0) {
+			Scenario_Load_Map_Field(packed, &g_map[packed]);
+		}
+		else {
+			Scenario_Load_Map_Bloom(packed, &g_map[packed]);
+		}
+	}
+}
+
 /* Use breadth first flood fill to create a list of buildable tiles
  * around x0, y0.  Only fill tiles that are part of the same source
  * island (similar to bucket fill same colour).
@@ -747,6 +766,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 		}
 	}
 
+	Skirmish_GenSpiceBlooms();
 	Skirmish_GenSandworms();
 
 #if 0
