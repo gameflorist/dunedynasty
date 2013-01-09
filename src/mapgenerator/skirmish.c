@@ -8,6 +8,7 @@
 
 #include "skirmish.h"
 
+#include "../enhancement.h"
 #include "../gui/gui.h"
 #include "../map.h"
 #include "../opendune.h"
@@ -654,6 +655,28 @@ Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
 	return true;
 }
 
+static void
+Skirmish_GenSandworms(void)
+{
+	const enum HouseType houseID = (g_playerHouseID == HOUSE_FREMEN) ? HOUSE_ATREIDES : HOUSE_FREMEN;
+	const enum UnitType type = UNIT_SANDWORM;
+	const enum UnitActionType actionType = enhancement_insatiable_sandworms ? ACTION_AREA_GUARD : ACTION_AMBUSH;
+	const uint16 acceptableLst
+		= (1 << LST_NORMAL_SAND) | (1 << LST_ENTIRELY_DUNE) | (1 << LST_PARTIAL_DUNE)
+		| (1 << LST_SPICE) | (1 << LST_THICK_SPICE) | (1 << LST_BLOOM_FIELD);
+
+	/* Create two sandworms. */
+	for (int count = 2; count > 0;) {
+		const uint16 packed = Skirmish_PickRandomLocation(acceptableLst, 0);
+		if (packed == 0)
+			continue;
+
+		const tile32 position = Tile_UnpackTile(packed);
+		Scenario_Create_Unit(houseID, type, 256, position, 127, actionType);
+		count--;
+	}
+}
+
 static bool
 Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 {
@@ -723,6 +746,8 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 				return false;
 		}
 	}
+
+	Skirmish_GenSandworms();
 
 #if 0
 	/* Debugging. */
