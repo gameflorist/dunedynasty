@@ -323,6 +323,33 @@ Skirmish_FindBuildableArea(int island, int x0, int y0,
 	return n;
 }
 
+static bool
+Skirmish_IsIslandEnclosed(int start, int end, const SkirmishData *sd)
+{
+	const int dx[4] = {  0, 1, 0, -1 };
+	const int dy[4] = { -1, 0, 1,  0 };
+	const uint16 islandID = sd->islandID[sd->buildable[start].packed];
+
+	for (int i = start; i < end; i++) {
+		for (int j = 0; j < 4; j++) {
+			const int x = sd->buildable[i].x + dx[j];
+			const int y = sd->buildable[i].y + dy[j];
+			if (!(Map_InRangeX(x) && Map_InRangeY(y)))
+				continue;
+
+			const uint16 packed = Tile_PackXY(x, y);
+			const enum LandscapeType lst = Map_GetLandscapeType(packed);
+			if (sd->islandID[packed] == islandID)
+				continue;
+
+			if (!(lst == LST_ENTIRELY_MOUNTAIN || lst == LST_PARTIAL_MOUNTAIN || lst == LST_WALL || lst == LST_STRUCTURE))
+				return false;
+		}
+	}
+
+	return true;
+}
+
 static void
 Skirmish_DivideIsland(int island, SkirmishData *sd)
 {
@@ -345,6 +372,18 @@ Skirmish_DivideIsland(int island, SkirmishData *sd)
 			start += area;
 			sd->nislands++;
 			sd->nislands_unused++;
+		}
+		else if (area > 0) {
+			/* Fill enclosed areas with walls to prevent units getting trapped. */
+			if (Skirmish_IsIslandEnclosed(start, start + area, sd)) {
+				g_validateStrictIfZero++;
+
+				for (int j = start; j < start + area; j++) {
+					Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_WALL, HOUSE_ATREIDES, sd->buildable[j].packed);
+				}
+
+				g_validateStrictIfZero--;
+			}
 		}
 	}
 
