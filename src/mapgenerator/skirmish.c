@@ -760,6 +760,71 @@ Skirmish_GenSandworms(void)
 	}
 }
 
+static void
+Skirmish_GenReinforcements(void)
+{
+	const enum UnitType unitType1[9] = {
+		UNIT_TROOPERS,      UNIT_QUAD,          UNIT_QUAD,
+		UNIT_TANK,          UNIT_LAUNCHER,      UNIT_SIEGE_TANK,
+		UNIT_DEVASTATOR,    UNIT_DEVASTATOR,    UNIT_DEVASTATOR,
+	};
+
+	const enum UnitType unitType2[9] = {
+		UNIT_TROOPERS,      UNIT_TROOPERS,      UNIT_QUAD,
+		UNIT_TANK,          UNIT_TANK,          UNIT_SIEGE_TANK,
+		UNIT_SIEGE_TANK,    UNIT_SIEGE_TANK,    UNIT_SIEGE_TANK,
+	};
+	assert(g_campaignID < 9);
+
+	uint8 index = 0;
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX && index < 16; h++) {
+		if (g_skirmish.brain[h] == BRAIN_NONE)
+			continue;
+
+		enum UnitType type[2];
+		type[0] = unitType1[Tools_RandomLCG_Range(0, g_campaignID)];
+		type[1] = unitType2[Tools_RandomLCG_Range(0, g_campaignID)];
+
+		for (int i = 0; i < 2; i++) {
+			if (type[i] == UNIT_TROOPERS)
+				type[i] = House_GetInfantrySquad(h);
+			else if (type[i] == UNIT_QUAD)
+				type[i] = House_GetLightVehicle(h);
+			else if (type[i] == UNIT_DEVASTATOR)
+				type[i] = House_GetIXVehicle(h);
+			else if (type[i] == UNIT_LAUNCHER && h == HOUSE_ORDOS)
+				type[i] = UNIT_DEVIATOR;
+		}
+
+		const bool repeat = (g_skirmish.brain[h] != BRAIN_HUMAN);
+
+		/* Sardaukar always get four sets of troopers in the enemy base.  That's just how it is! */
+		if (h == HOUSE_SARDAUKAR) {
+			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
+			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
+			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
+			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
+		}
+
+		/* Players always get reinforcements at home base. */
+		else if (g_skirmish.brain[h] == BRAIN_HUMAN) {
+			Scenario_Create_Reinforcement(index++, h, UNIT_TANK, 7,  6 * 6, repeat);
+			Scenario_Create_Reinforcement(index++, h, type[0],   7,  6 * 6, repeat);
+			Scenario_Create_Reinforcement(index++, h, UNIT_TANK, 7, 12 * 6, repeat);
+			Scenario_Create_Reinforcement(index++, h, type[1],   7, 12 * 6, repeat);
+		}
+
+		/* Pick random location, but avoid AIR and VISIBLE types. */
+		else {
+			uint8 locationID = Tools_Random_256() & 0x7;
+			if (locationID == 4 || locationID == 5) locationID += 2;
+
+			Scenario_Create_Reinforcement(index++, h, type[0], locationID, 15 * 6, repeat);
+			Scenario_Create_Reinforcement(index++, h, type[1], locationID, 15 * 6, repeat);
+		}
+	}
+}
+
 static bool
 Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 {
@@ -835,6 +900,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 
 	Skirmish_GenSpiceBlooms();
 	Skirmish_GenSandworms();
+	Skirmish_GenReinforcements();
 
 #if 0
 	/* Debugging. */
