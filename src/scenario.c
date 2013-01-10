@@ -1405,9 +1405,7 @@ static void Scenario_Load_Reinforcement(const char *key, char *settings)
 {
 	uint8 index, houseType, unitType, locationID;
 	uint16 timeBetween;
-	tile32 position;
 	bool repeat;
-	Unit *u;
 	char *split;
 
 	/* There is a bug here: keys beginning with ';' are not ignored
@@ -1459,6 +1457,16 @@ static void Scenario_Load_Reinforcement(const char *key, char *settings)
 	repeat = (settings[strlen(settings) - 1] == '+') ? true : false;
 	/* ENHANCEMENT -- Dune2 makes a mistake in reading the '+', causing repeat to be always false */
 	if (!enhancement_repeat_reinforcements) repeat = false;
+
+	Scenario_Create_Reinforcement(index, houseType, unitType, locationID, timeBetween, repeat);
+}
+
+void
+Scenario_Create_Reinforcement(uint8 index, enum HouseType houseType,
+		enum UnitType unitType, uint8 locationID, uint16 timeBetween, bool repeat)
+{
+	tile32 position;
+	Unit *u;
 
 	position.s.x = 0xFFFF;
 	position.s.y = 0xFFFF;
