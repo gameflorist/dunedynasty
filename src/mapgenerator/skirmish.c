@@ -825,6 +825,21 @@ Skirmish_GenReinforcements(void)
 	}
 }
 
+static void
+Skirmish_GenCHOAM(void)
+{
+	g_starportAvailable[UNIT_CARRYALL] = 2;
+	g_starportAvailable[UNIT_TRIKE] = 5;
+	g_starportAvailable[UNIT_QUAD] = 5;
+	g_starportAvailable[UNIT_TANK] = Tools_RandomLCG_Range(4, 6);
+	g_starportAvailable[UNIT_HARVESTER] = 2;
+	g_starportAvailable[UNIT_MCV] = 2;
+
+	if (g_campaignID >= 5) g_starportAvailable[UNIT_LAUNCHER] = Tools_RandomLCG_Range(2, 4);
+	if (g_campaignID >= 6) g_starportAvailable[UNIT_SIEGE_TANK] = Tools_RandomLCG_Range(3, 5);
+	if (g_campaignID >= 7) g_starportAvailable[UNIT_ORNITHOPTER] = 3;
+}
+
 static bool
 Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 {
@@ -901,6 +916,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 	Skirmish_GenSpiceBlooms();
 	Skirmish_GenSandworms();
 	Skirmish_GenReinforcements();
+	Skirmish_GenCHOAM();
 
 #if 0
 	/* Debugging. */
