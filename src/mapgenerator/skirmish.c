@@ -903,7 +903,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 			continue;
 
 		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
-			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
+			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1500, 0, 25);
 		}
 		else {
 			House *h = Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
