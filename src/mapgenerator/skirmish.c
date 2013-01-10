@@ -8,6 +8,7 @@
 
 #include "skirmish.h"
 
+#include "../ai.h"
 #include "../enhancement.h"
 #include "../gui/gui.h"
 #include "../map.h"
@@ -675,6 +676,69 @@ Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
 }
 
 static void
+Skirmish_GenUnitsAI(enum HouseType houseID)
+{
+	const uint16 unacceptableLst = (1 << LST_WALL) | (1 << LST_STRUCTURE) | (1 << LST_BLOOM_FIELD);
+
+	Structure *factory[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	unsigned int nfactories = 0;
+
+	PoolFindStruct find;
+	find.houseID = houseID;
+	find.type = 0xFFFF;
+	find.index = STRUCTURE_INDEX_INVALID;
+
+	Structure *s;
+	while ((nfactories < lengthof(factory)) && ((s = Structure_Find(&find)) != NULL)) {
+		/* Do not produce from hi-tech. */
+		if (s->o.type == STRUCTURE_LIGHT_VEHICLE ||
+		    s->o.type == STRUCTURE_HEAVY_VEHICLE ||
+		    s->o.type == STRUCTURE_WOR_TROOPER ||
+		    s->o.type == STRUCTURE_BARRACKS) {
+			factory[nfactories] = s;
+			nfactories++;
+		}
+	}
+
+	if (nfactories == 0)
+		return;
+
+	for (int count = 8; count > 0;) {
+		const uint16 packed = Skirmish_PickRandomLocation(0xFF, unacceptableLst);
+		if (packed == 0)
+			continue;
+
+		uint16 dist_ally;
+		uint16 dist_enemy;
+		Skirmish_FindClosestStructures(houseID, packed, &dist_ally, &dist_enemy);
+		if (dist_ally > 8)
+			continue;
+
+		/* If there's a mountain here, build infantry. */
+		const enum LandscapeType lst = Map_GetLandscapeType(packed);
+		enum UnitType type;
+
+		if (lst == LST_ENTIRELY_MOUNTAIN || lst == LST_PARTIAL_MOUNTAIN) {
+			type = House_GetInfantrySquad(houseID);
+		}
+
+		/* Otherwise, build a random vehicle. */
+		else {
+			const int r = Tools_RandomLCG_Range(0, nfactories - 1);
+
+			type = StructureAI_PickNextToBuild(factory[r]);
+			if (type == UNIT_INVALID)
+				continue;
+		}
+
+		const enum UnitActionType actionType = ((Tools_Random_256() & 0x3) == 0) ? ACTION_AMBUSH : ACTION_AREA_GUARD;
+		const tile32 position = Tile_UnpackTile(packed);
+		Scenario_Create_Unit(houseID, type, 256, position, 127, actionType);
+		count--;
+	}
+}
+
+static void
 Skirmish_GenSandworms(void)
 {
 	const enum HouseType houseID = (g_playerHouseID == HOUSE_FREMEN) ? HOUSE_ATREIDES : HOUSE_FREMEN;
@@ -763,6 +827,9 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
 			if (!Skirmish_GenUnitsHuman(houseID, sd))
 				return false;
+		}
+		else {
+			Skirmish_GenUnitsAI(houseID);
 		}
 	}
 
