@@ -269,6 +269,15 @@ Skirmish_ResetAlliances(void)
 }
 
 static void
+Skirmish_TweakTechTree(void)
+{
+	/* Disallow CPU ornithopters since they start with a prebuilt
+	 * base.  They need hi-tech for carryalls, and IX tanks are fun.
+	 */
+	g_table_unitInfo[UNIT_ORNITHOPTER].o.availableHouse &= (1 << g_playerHouseID);
+}
+
+static void
 Skirmish_GenGeneral(void)
 {
 	memset(&g_scenario, 0, sizeof(Scenario));
@@ -851,6 +860,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 	if (generate_houses) {
 		Campaign_Load();
 		Skirmish_ResetAlliances();
+		Skirmish_TweakTechTree();
 	}
 
 	Game_Init();
