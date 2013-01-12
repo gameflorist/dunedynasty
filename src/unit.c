@@ -2948,7 +2948,7 @@ uint16 Unit_GetTargetStructurePriority(Unit *unit, Structure *target)
 void Unit_LaunchHouseMissile(uint16 packed)
 {
 	tile32 tile;
-	bool isAI;
+	enum HouseType houseID;
 	House *h;
 
 	if (g_unitHouseMissile == NULL) return;
@@ -2960,19 +2960,24 @@ void Unit_LaunchHouseMissile(uint16 packed)
 
 	packed = Tile_PackTile(tile);
 
-	isAI = g_unitHouseMissile->o.houseID != g_playerHouseID;
+	houseID = g_unitHouseMissile->o.houseID;
 
 	Unit_Free(g_unitHouseMissile);
-
-	/* Audio_PlayVoice(VOICE_STOP); */
 
 	Unit_CreateBullet(h->palacePosition, g_unitHouseMissile->o.type, g_unitHouseMissile->o.houseID, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
 
 	g_houseMissileCountdown = 0;
 	g_unitHouseMissile = NULL;
 
-	if (isAI) {
-		Audio_PlayVoice(VOICE_WARNING_MISSILE_APPROACHING);
+	if (houseID != g_playerHouseID) {
+		/* ENHANCEMENT -- allied AI can launch deathhand missiles. */
+		if (House_AreAllied(g_playerHouseID, houseID)) {
+			Audio_PlayVoice(VOICE_MISSILE_LAUNCHED);
+		}
+		else {
+			Audio_PlayVoice(VOICE_WARNING_MISSILE_APPROACHING);
+		}
+
 		return;
 	}
 

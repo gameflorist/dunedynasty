@@ -1233,8 +1233,8 @@ bool Structure_Damage(Structure *s, uint16 damage, uint16 range)
 
 		Structure_Destroy(s);
 
-		if (g_playerHouseID == s->o.houseID) {
-			Audio_PlayVoice(VOICE_HARKONNEN_STRUCTURE_DESTROYED + g_playerHouseID);
+		if (House_AreAllied(g_playerHouseID, s->o.houseID)) {
+			Audio_PlayVoice(VOICE_HARKONNEN_STRUCTURE_DESTROYED + s->o.houseID);
 		} else {
 			Audio_PlayVoice(VOICE_ENEMY_STRUCTURE_DESTROYED);
 		}
