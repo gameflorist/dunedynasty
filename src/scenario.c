@@ -1375,7 +1375,7 @@ static void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)
 {
 	if (enhancement_fix_scenario_typos) {
 		/* SCENA005: spice bloom is found in rock. */
-		if (packed == 1364 && Map_GetLandscapeType(packed) == 4) {
+		if (packed == 1364 && Map_GetLandscapeType(packed) == LST_ENTIRELY_ROCK) {
 			packed = 1360;
 			t = &g_map[packed];
 		}
