@@ -176,6 +176,25 @@ Skirmish_FindClosestStructures(enum HouseType houseID, uint16 packed,
 	}
 }
 
+static uint16
+Skirmish_PickRandomLocation(uint16 acceptableLstFlags, uint16 unacceptableLstFlags)
+{
+	const MapInfo *mi = &g_mapInfos[0];
+	const int x = mi->minX + Tools_RandomLCG_Range(0, mi->sizeX - 1);
+	const int y = mi->minY + Tools_RandomLCG_Range(0, mi->sizeY - 1);
+
+	const uint16 packed = Tile_PackXY(x, y);
+	if (g_map[packed].hasUnit)
+		return 0;
+
+	const enum LandscapeType lst = Map_GetLandscapeType(packed);
+	const uint16 lstFlag = (1 << lst);
+	if ((acceptableLstFlags & lstFlag) && !(unacceptableLstFlags & lstFlag))
+		return packed;
+
+	return 0;
+}
+
 static bool
 Skirmish_ResetAlliances(void)
 {
