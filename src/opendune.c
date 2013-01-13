@@ -144,7 +144,7 @@ static bool GameLoop_IsLevelFinished(void)
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
 
-			if (s->o.houseID == g_playerHouseID) {
+			if (House_AreAllied(s->o.houseID, g_playerHouseID)) {
 				countStructureFriendly++;
 			} else {
 				countStructureEnemy++;
@@ -211,7 +211,7 @@ static bool GameLoop_IsLevelWon(void)
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
 
-			if (s->o.houseID == g_playerHouseID) {
+			if (House_AreAllied(s->o.houseID, g_playerHouseID)) {
 				countStructureFriendly++;
 			} else {
 				countStructureEnemy++;
