@@ -212,8 +212,8 @@ Viewport_SelectRegion(void)
 		find.index = 0xFFFF;
 
 		/* Try to find own structure. */
-		Structure *s = Structure_Find(&find);
-		while (s != NULL) {
+		Structure *s;
+		while ((s = Structure_Find(&find)) != NULL) {
 			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 			const int sx = Tile_GetPosX(s->o.position);
 			const int sy = Tile_GetPosY(s->o.position);
@@ -227,8 +227,6 @@ Viewport_SelectRegion(void)
 				Map_SetSelection(packed);
 				return;
 			}
-
-			s = Structure_Find(&find);
 		}
 #endif
 	}
@@ -873,16 +871,14 @@ Viewport_Hotkey(enum SquadID squad)
 		if (st && (st->o.houseID != g_playerHouseID))
 			st = NULL;
 
-		Structure *s = Structure_Find(&find);
-		while (s != NULL) {
+		Structure *s;
+		while ((s = Structure_Find(&find)) != NULL) {
 			if (s == st) {
 				s->squadID = squad;
 			}
 			else if (s->squadID == squad) {
 				s->squadID = SQUADID_INVALID;
 			}
-
-			s = Structure_Find(&find);
 		}
 
 		Audio_PlaySample(SAMPLE_BUTTON, 128, 0.0f);
@@ -927,8 +923,8 @@ Viewport_Hotkey(enum SquadID squad)
 			find.type = 0xFFFF;
 			find.index = 0xFFFF;
 
-			Structure *s = Structure_Find(&find);
-			while (s != NULL) {
+			Structure *s;
+			while ((s = Structure_Find(&find)) != NULL) {
 				if (s->squadID == squad) {
 					const StructureInfo *si = &g_table_structureInfo[s->o.type];
 					const XYSize *layout = &g_table_structure_layoutSize[si->layout];
@@ -942,8 +938,6 @@ Viewport_Hotkey(enum SquadID squad)
 					count = 1;
 					break;
 				}
-
-				s = Structure_Find(&find);
 			}
 		}
 

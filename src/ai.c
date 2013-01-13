@@ -128,12 +128,10 @@ StructureAI_ShouldBuildHarvesters(enum HouseType houseID)
 	find.index = 0xFFFF;
 	find.type = STRUCTURE_REFINERY;
 
-	Structure *s = Structure_Find(&find);
 	int refinery_count = 0;
-
-	while (s != NULL) {
+	Structure *s;
+	while ((s = Structure_Find(&find)) != NULL) {
 		refinery_count++;
-		s = Structure_Find(&find);
 	}
 
 	const int harvester_count = UnitAI_CountUnits(houseID, UNIT_HARVESTER);
@@ -342,15 +340,13 @@ UnitAI_GetAnyEnemyInRange(const Unit *unit)
 	find.index = 0xFFFF;
 	find.type = 0xFFFF;
 
-	Structure *s = Structure_Find(&find);
-	while (s != NULL) {
+	Structure *s;
+	while ((s = Structure_Find(&find)) != NULL) {
 		if (House_AreAllied(houseID, s->o.houseID)) {
 		}
 		else if (Tile_GetDistanceRoundedUp(unit->o.position, s->o.position) <= dist) {
 			return Tools_Index_Encode(s->o.index, IT_STRUCTURE);
 		}
-
-		s = Structure_Find(&find);
 	}
 
 	return 0;
