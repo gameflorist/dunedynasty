@@ -628,7 +628,7 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 		validBuildLocation = Structure_IsValidBuildLocation(position, s->o.type);
 	}
 
-	if (validBuildLocation == 0 && s->o.houseID == g_playerHouseID && !g_debugScenario && g_validateStrictIfZero == 0) return false;
+	if (validBuildLocation == 0 && !g_debugScenario && g_validateStrictIfZero == 0) return false;
 
 	/* ENHACEMENT -- In Dune2, it only removes the fog around the top-left tile of a structure, leaving for big structures the right in the fog. */
 	if (!g_dune2_enhanced && s->o.houseID == g_playerHouseID) Tile_RemoveFogInRadius(Tile_UnpackTile(position), 2);
