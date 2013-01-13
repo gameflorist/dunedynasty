@@ -1169,7 +1169,7 @@ Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
 {
 	const float deltax = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scalex;
 	const float deltay = 1.0f / g_screenDiv[SCREENDIV_VIEWPORT].scaley;
-	const int w = max(1, width * curr / max);
+	const int w = max(1, min(width, width * curr / max));
 
 	/* From ActionPanel_DrawHealthBar. */
 	uint8 colour = 4;
