@@ -1126,7 +1126,16 @@ LoadGame_Loop(void)
 static enum MenuAction
 PlaySkirmish_Loop(void)
 {
-	PlayAGame_StartGame(false);
+	do {
+		if (skirmish_regenerate_map) {
+			if (!Skirmish_GenerateMap(false))
+				return MENU_EXTRAS;
+		}
+
+		PlayAGame_StartGame(false);
+		skirmish_regenerate_map = true;
+	} while (g_gameMode == GM_RESTART);
+
 	return MENU_EXTRAS;
 }
 
