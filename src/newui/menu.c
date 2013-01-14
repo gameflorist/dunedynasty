@@ -69,6 +69,7 @@ enum MenuAction {
 	MENU_LOAD_GAME,
 	MENU_PLAY_SKIRMISH,
 	MENU_BATTLE_SUMMARY,
+	MENU_SKIRMISH_SUMMARY,
 	MENU_HALL_OF_FAME,
 	MENU_EXTRAS,
 	MENU_PLAY_CUTSCENE,
@@ -1136,7 +1137,18 @@ PlaySkirmish_Loop(void)
 		skirmish_regenerate_map = true;
 	} while (g_gameMode == GM_RESTART);
 
-	return MENU_EXTRAS;
+	if (g_gameMode == GM_WIN) {
+		Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicWin);
+		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
+	}
+	else if (g_gameMode == GM_LOSE) {
+		Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicLose);
+		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
+	}
+	else {
+		Audio_PlayMusic(MUSIC_MAIN_MENU);
+		return MENU_EXTRAS;
+	}
 }
 
 /*--------------------------------------------------------------*/
@@ -1196,7 +1208,7 @@ BattleSummary_Draw(enum HouseType houseID, int scenarioID, HallOfFameData *fame)
 }
 
 static enum MenuAction
-BattleSummary_TimerLoop(int scenarioID, HallOfFameData *fame)
+BattleSummary_TimerLoop(int curr_menu, int scenarioID, HallOfFameData *fame)
 {
 	const int64_t curr_ticks = Timer_GetTicks();
 
@@ -1257,15 +1269,20 @@ BattleSummary_TimerLoop(int scenarioID, HallOfFameData *fame)
 			break;
 	}
 
-	return MENU_REDRAW | MENU_BATTLE_SUMMARY;
+	return MENU_REDRAW | curr_menu;
 }
 
 static enum MenuAction
-BattleSummary_InputLoop(HallOfFameData *fame)
+BattleSummary_InputLoop(int curr_menu, HallOfFameData *fame)
 {
 	switch (fame->state) {
 		case HALLOFFAME_WAIT_FOR_INPUT:
 			if (Input_IsInputAvailable()) {
+				if (curr_menu == MENU_SKIRMISH_SUMMARY) {
+					Audio_PlayMusic(MUSIC_MAIN_MENU);
+					return MENU_EXTRAS;
+				}
+
 				GUI_HallOfFame_Show(g_playerHouseID, fame->score);
 				g_campaignID++;
 				return MENU_NO_TRANSITION | MENU_CAMPAIGN_CUTSCENE;
@@ -1277,7 +1294,7 @@ BattleSummary_InputLoop(HallOfFameData *fame)
 			break;
 	}
 
-	return MENU_BATTLE_SUMMARY;
+	return curr_menu;
 }
 
 /*--------------------------------------------------------------*/
@@ -2239,6 +2256,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_BATTLE_SUMMARY:
+				case MENU_SKIRMISH_SUMMARY:
 					BattleSummary_Initialise(g_playerHouseID, &g_hall_of_fame_state);
 					break;
 
@@ -2282,6 +2300,7 @@ Menu_Run(void)
 					break;
 
 				case MENU_BATTLE_SUMMARY:
+				case MENU_SKIRMISH_SUMMARY:
 					BattleSummary_Draw(g_playerHouseID, g_scenarioID, &g_hall_of_fame_state);
 					break;
 
@@ -2364,11 +2383,12 @@ Menu_Run(void)
 				break;
 
 			case MENU_BATTLE_SUMMARY:
+			case MENU_SKIRMISH_SUMMARY:
 				if (event.type == ALLEGRO_EVENT_TIMER) {
-					res = BattleSummary_TimerLoop(g_scenarioID, &g_hall_of_fame_state);
+					res = BattleSummary_TimerLoop(curr_menu, g_scenarioID, &g_hall_of_fame_state);
 				}
 				else {
-					res = BattleSummary_InputLoop(&g_hall_of_fame_state);
+					res = BattleSummary_InputLoop(curr_menu, &g_hall_of_fame_state);
 				}
 				break;
 
