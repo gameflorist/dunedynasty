@@ -126,6 +126,77 @@ Skirmish_PickRandomIsland(const SkirmishData *sd)
 	return -1;
 }
 
+static bool
+Skirmish_ResetAlliances(void)
+{
+	enum HouseType playerHouseID = HOUSE_INVALID;
+
+	memset(g_table_houseAlliance, 0, sizeof(g_table_houseAlliance));
+
+	/* Assign alliances. */
+	for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_MAX; h1++) {
+		if (g_skirmish.brain[h1] == BRAIN_NONE)
+			continue;
+
+		if (g_skirmish.brain[h1] == BRAIN_HUMAN)
+			playerHouseID = h1;
+
+		g_table_houseAlliance[h1][h1] = HOUSEALLIANCE_ALLIES;
+
+		for (enum HouseType h2 = h1 + 1; h2 < HOUSE_MAX; h2++) {
+			if (g_skirmish.brain[h2] == BRAIN_NONE)
+				continue;
+
+			if ((g_skirmish.brain[h1] == BRAIN_CPU_ENEMY && g_skirmish.brain[h2] == BRAIN_CPU_ENEMY) ||
+			    (g_skirmish.brain[h1] != BRAIN_CPU_ENEMY && g_skirmish.brain[h2] != BRAIN_CPU_ENEMY)) {
+				g_table_houseAlliance[h1][h2] = HOUSEALLIANCE_ALLIES;
+				g_table_houseAlliance[h2][h1] = HOUSEALLIANCE_ALLIES;
+			}
+			else {
+				g_table_houseAlliance[h1][h2] = HOUSEALLIANCE_ENEMIES;
+				g_table_houseAlliance[h2][h1] = HOUSEALLIANCE_ENEMIES;
+			}
+		}
+	}
+
+	/* Make Fremen and saboteur superweapons usable for houses. */
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		HouseInfo *hi = &g_table_houseInfo[h];
+
+		if ((hi->specialWeapon != HOUSE_WEAPON_FREMEN) &&
+		    (hi->specialWeapon != HOUSE_WEAPON_SABOTEUR))
+			continue;
+
+		enum HouseType h2;
+		enum HouseType *hp;
+
+		if (hi->specialWeapon == HOUSE_WEAPON_FREMEN) {
+			hp = &(hi->superWeapon.fremen.owner);
+		}
+		else {
+			hp = &(hi->superWeapon.saboteur.owner);
+		}
+
+		if (g_table_houseAlliance[h][*hp] == HOUSEALLIANCE_ENEMIES) {
+			*hp = h;
+			continue;
+		}
+		else {
+			h2 = *hp;
+		}
+
+		for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_MAX; h1++) {
+			if (g_table_houseAlliance[h][h1] == HOUSEALLIANCE_ALLIES) {
+				g_table_houseAlliance[h1][h2] = HOUSEALLIANCE_ALLIES;
+				g_table_houseAlliance[h2][h1] = HOUSEALLIANCE_ALLIES;
+			}
+		}
+	}
+
+	g_playerHouseID = playerHouseID;
+	return true;
+}
+
 static void
 Skirmish_GenGeneral(void)
 {
@@ -381,6 +452,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 
 	if (generate_houses) {
 		Campaign_Load();
+		Skirmish_ResetAlliances();
 	}
 
 	Game_Init();
