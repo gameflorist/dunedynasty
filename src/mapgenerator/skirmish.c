@@ -39,6 +39,24 @@ typedef struct {
 
 /*--------------------------------------------------------------*/
 
+bool
+Skirmish_IsPlayable(void)
+{
+	bool found_human = false;
+	bool found_enemy = false;
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_skirmish.brain[h] == BRAIN_HUMAN) {
+			found_human = true;
+		}
+		else if (g_skirmish.brain[h] == BRAIN_CPU_ENEMY) {
+			found_enemy = true;
+		}
+	}
+
+	return found_human && found_enemy;
+}
+
 static void
 Skirmish_GenGeneral(void)
 {
@@ -146,9 +164,13 @@ Skirmish_DivideIsland(int island, SkirmishData *sd)
 }
 
 static bool
-Skirmish_GenerateMapInner(SkirmishData *sd)
+Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 {
 	const MapInfo *mi = &g_mapInfos[0];
+
+	if (generate_houses) {
+		Campaign_Load();
+	}
 
 	Game_Init();
 
@@ -156,6 +178,9 @@ Skirmish_GenerateMapInner(SkirmishData *sd)
 	Sprites_LoadTiles();
 	Tools_RandomLCG_Seed(g_skirmish.seed);
 	Map_CreateLandscape(g_skirmish.seed);
+
+	if (!generate_houses)
+		return true;
 
 	/* Create initial island. */
 	sd->island[0].start = 0;
@@ -199,6 +224,8 @@ Skirmish_GenerateMapInner(SkirmishData *sd)
 bool
 Skirmish_GenerateMap(bool newseed)
 {
+	const bool generate_houses = Skirmish_IsPlayable();
+
 	if (newseed) {
 		/* DuneMaps only supports 15 bit maps seeds, so there. */
 		g_skirmish.seed = rand() & 0x7FFF;
@@ -206,13 +233,21 @@ Skirmish_GenerateMap(bool newseed)
 
 	SkirmishData sd;
 
-	sd.island = malloc(sizeof(sd.island[0]));
-	assert(sd.island != NULL);
+	if (generate_houses) {
+		sd.island = malloc(sizeof(sd.island[0]));
+		assert(sd.island != NULL);
 
-	sd.nislands = 1;
-	sd.nislands_unused = 1;
+		sd.nislands = 1;
+		sd.nislands_unused = 1;
+	}
+	else {
+		sd.island = NULL;
 
-	const bool ret = Skirmish_GenerateMapInner(&sd);
+		sd.nislands = 0;
+		sd.nislands_unused = 0;
+	}
+
+	const bool ret = Skirmish_GenerateMapInner(generate_houses, &sd);
 
 	free(sd.island);
 	return ret;

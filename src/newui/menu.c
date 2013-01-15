@@ -1718,21 +1718,18 @@ Skirmish_Loop(int widgetID)
 			return MENU_MAIN_MENU;
 
 		case 0x8000 | 2: /* start game. */
-			{
-				enum HouseType human = HOUSE_INVALID;
-				int count_enemy = 0;
+			if (Skirmish_IsPlayable()) {
+				g_playerHouseID = HOUSE_INVALID;
 
 				for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-					if (g_skirmish.brain[h] == BRAIN_HUMAN)
-						human = h;
-					if (g_skirmish.brain[h] == BRAIN_CPU_ENEMY)
-						count_enemy++;
+					if (g_skirmish.brain[h] == BRAIN_HUMAN) {
+						g_playerHouseID = h;
+						break;
+					}
 				}
 
-				if ((human != HOUSE_INVALID) && (count_enemy > 0)) {
-					g_playerHouseID = human;
-					return MENU_PLAY_SKIRMISH;
-				}
+				assert(g_playerHouseID != HOUSE_INVALID);
+				return MENU_PLAY_SKIRMISH;
 			}
 			break;
 

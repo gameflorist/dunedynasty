@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+extern bool Skirmish_IsPlayable(void);
 extern bool Skirmish_GenerateMap(bool newseed);
 
 #endif
