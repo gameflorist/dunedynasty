@@ -5,7 +5,9 @@
 
 enum {
 	CC_BLDG = FOURCC('B','L','D','G'),
+	CC_CAT  = FOURCC('C','A','T',' '),
 	CC_DATA = FOURCC('D','A','T','A'),
+	CC_EVNT = FOURCC('E','V','N','T'),
 	CC_FORM = FOURCC('F','O','R','M'),
 	CC_INFO = FOURCC('I','N','F','O'),
 	CC_MAP  = FOURCC('M','A','P',' '),
@@ -20,6 +22,7 @@ enum {
 	CC_TEAM = FOURCC('T','E','A','M'),
 	CC_TEXT = FOURCC('T','E','X','T'),
 	CC_UNIT = FOURCC('U','N','I','T'),
+	CC_XMID = FOURCC('X','M','I','D'),
 
 	/* OpenDUNE extensions. */
 	CC_ODUN = FOURCC('O','D','U','N'), /* OpenDUNE Unit New. */
