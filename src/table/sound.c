@@ -15,6 +15,7 @@
 
 #define ADD_MUSIC_LIST(TABLE,SONGNAME)  { 0, 0, 0, SONGNAME, lengthof(TABLE), TABLE }
 #define ADD_MUSIC_FROM_DUNE2_ADLIB(FILENAME,TRACK)  { MUSIC_ENABLE, MUSICSET_DUNE2_ADLIB,   NULL,   FILENAME, TRACK, 1.0f }
+#define ADD_MUSIC_FROM_DUNE2_MIDI(FILENAME,TRACK)   { MUSIC_ENABLE, MUSICSET_DUNE2_MIDI,    NULL,   FILENAME, TRACK, 1.0f }
 #define ADD_MUSIC_FROM_FLUIDSYNTH(FILENAME,TRACK)   { MUSIC_ENABLE, MUSICSET_FLUIDSYNTH,    NULL,   FILENAME, TRACK, 1.0f }
 #define ADD_MUSIC_FROM_SHAIWA_MT32(FILENAME)        { MUSIC_WANT,   MUSICSET_SHAIWA_MT32,   NULL,   "music/" SHAIWA_MT32_PREFIX "/" FILENAME, 0, 0.65f }
 #define ADD_MUSIC_FROM_RCBLANKE_SC55(FILENAME)      { MUSIC_WANT,   MUSICSET_RCBLANKE_SC55, NULL,   "music/" RCBLANKE_SC55_PREFIX"/"FILENAME, 0, 0.80f }
@@ -26,6 +27,7 @@
 
 MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, "dune2_adlib",  "AdLib" },
+	{ true, "dune2_midi",   "MIDI" },
 	{ true, "fluidsynth",   "FluidSynth" },
 	{ true, SHAIWA_MT32_PREFIX,     "ShaiWa MT-32" },
 	{ true, RCBLANKE_SC55_PREFIX,   "RCBlanke SC-55" },
@@ -54,6 +56,7 @@ static MusicInfo g_table_music_stop[] = {
 
 static MusicInfo g_table_music_logos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 4),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune0.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune0.C55", 4),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_00_4"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("westwood_logo"),
@@ -61,6 +64,7 @@ static MusicInfo g_table_music_logos[] = {
 
 static MusicInfo g_table_music_intro[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 2),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune0.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune0.C55", 2),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_00_2"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("intro"),
@@ -73,6 +77,7 @@ static MusicInfo g_table_music_intro[] = {
 
 static MusicInfo g_table_music_cutscene[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune16.ADL", 8),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune16.C55", 8),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune16.C55", 8),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_16_24"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("emperors_theme"),
@@ -80,6 +85,7 @@ static MusicInfo g_table_music_cutscene[] = {
 
 static MusicInfo g_table_music_credits[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune20.ADL", 2),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune20.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune20.C55", 2),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_20_22"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("credits"),
@@ -88,6 +94,7 @@ static MusicInfo g_table_music_credits[] = {
 
 static MusicInfo g_table_music_main_menu[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune7.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 6),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_07_13"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("title"),
@@ -103,6 +110,7 @@ static MusicInfo g_table_music_main_menu[] = {
 
 static MusicInfo g_table_music_strategic_map[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune16.ADL", 7),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune16.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune16.C55", 7),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_16_23"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("conquest_map"),
@@ -114,6 +122,7 @@ static MusicInfo g_table_music_strategic_map[] = {
 
 static MusicInfo g_table_music_briefing_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 2),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune7.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 2),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_07_09"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("mentat_harkonnen"),
@@ -125,6 +134,7 @@ static MusicInfo g_table_music_briefing_harkonnen[] = {
 
 static MusicInfo g_table_music_briefing_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 3),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune7.C55", 3),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 3),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_07_10"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("mentat_atreides"),
@@ -136,6 +146,7 @@ static MusicInfo g_table_music_briefing_atreides[] = {
 
 static MusicInfo g_table_music_briefing_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 4),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune7.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 4),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_07_11"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("mentat_ordos"),
@@ -147,6 +158,7 @@ static MusicInfo g_table_music_briefing_ordos[] = {
 
 static MusicInfo g_table_music_win_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune8.ADL", 3),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune8.C55", 3),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune8.C55", 3),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_08_11"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("victory_harkonnen"),
@@ -158,6 +170,7 @@ static MusicInfo g_table_music_win_harkonnen[] = {
 
 static MusicInfo g_table_music_win_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune8.ADL", 2),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune8.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune8.C55", 2),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_08_10"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("victory_atreides"),
@@ -169,6 +182,7 @@ static MusicInfo g_table_music_win_atreides[] = {
 
 static MusicInfo g_table_music_win_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune17.ADL", 4),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune17.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune17.C55", 4),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_17_21"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("victory_ordos"),
@@ -180,6 +194,7 @@ static MusicInfo g_table_music_win_ordos[] = {
 
 static MusicInfo g_table_music_lose_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 4),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune1.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 4),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_01_4"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("defeat_harkonnen"),
@@ -191,6 +206,7 @@ static MusicInfo g_table_music_lose_harkonnen[] = {
 
 static MusicInfo g_table_music_lose_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 5),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune1.C55", 5),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 5),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_01_5"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("defeat_atreides"),
@@ -202,6 +218,7 @@ static MusicInfo g_table_music_lose_atreides[] = {
 
 static MusicInfo g_table_music_lose_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 3),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune1.C55", 3),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 3),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_01_6"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("defeat_ordos"),
@@ -213,6 +230,7 @@ static MusicInfo g_table_music_lose_ordos[] = {
 
 static MusicInfo g_table_music_end_game_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 4),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune19.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune19.C55", 4),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_23"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_harkonnen"),
@@ -220,6 +238,7 @@ static MusicInfo g_table_music_end_game_harkonnen[] = {
 
 static MusicInfo g_table_music_end_game_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 2),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune19.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune19.C55", 2),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_21"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_atreides"),
@@ -227,6 +246,7 @@ static MusicInfo g_table_music_end_game_atreides[] = {
 
 static MusicInfo g_table_music_end_game_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 3),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune19.C55", 3),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune19.C55", 3),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_22"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_ordos"),
@@ -234,6 +254,7 @@ static MusicInfo g_table_music_end_game_ordos[] = {
 
 static MusicInfo g_table_music_idle1[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune1.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 6),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_01_7"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient02"),
@@ -244,6 +265,7 @@ static MusicInfo g_table_music_idle1[] = {
 
 static MusicInfo g_table_music_idle2[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune2.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune2.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune2.C55", 6),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_02_8"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient03"),
@@ -254,6 +276,7 @@ static MusicInfo g_table_music_idle2[] = {
 
 static MusicInfo g_table_music_idle3[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune3.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune3.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune3.C55", 6),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_03_9"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient04"),
@@ -265,6 +288,7 @@ static MusicInfo g_table_music_idle3[] = {
 
 static MusicInfo g_table_music_idle4[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune4.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune4.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune4.C55", 6),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_04_10"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient05"),
@@ -275,6 +299,7 @@ static MusicInfo g_table_music_idle4[] = {
 
 static MusicInfo g_table_music_idle5[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune5.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune5.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune5.C55", 6),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_05_11"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient06"),
@@ -286,6 +311,7 @@ static MusicInfo g_table_music_idle5[] = {
 
 static MusicInfo g_table_music_idle6[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune6.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune6.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune6.C55", 6),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_06_12"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient07"),
@@ -297,6 +323,7 @@ static MusicInfo g_table_music_idle6[] = {
 
 static MusicInfo g_table_music_idle7[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune9.ADL", 4),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune9.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune9.C55", 4),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_09_13"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient08"),
@@ -307,6 +334,7 @@ static MusicInfo g_table_music_idle7[] = {
 
 static MusicInfo g_table_music_idle8[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune9.ADL", 5),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune9.C55", 5),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune9.C55", 5),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_09_14"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient09"),
@@ -317,6 +345,7 @@ static MusicInfo g_table_music_idle8[] = {
 
 static MusicInfo g_table_music_idle9[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune18.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune18.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune18.C55", 6),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_18_24"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient10"),
@@ -344,6 +373,7 @@ static MusicInfo g_table_music_idle_other[] = {
 
 static MusicInfo g_table_music_bonus[] = { /* Disabled by default. */
 	{ MUSIC_FOUND, MUSICSET_DUNE2_ADLIB, NULL, "dune1.ADL", 2, 0.0f },
+	{ MUSIC_FOUND, MUSICSET_DUNE2_MIDI,  NULL, "dune1.C55", 2, 0.0f },
 	{ MUSIC_FOUND, MUSICSET_FLUIDSYNTH,  NULL, "dune1.C55", 2, 0.0f },
 	{ 0, MUSICSET_SHAIWA_MT32,  NULL, "music/" SHAIWA_MT32_PREFIX "/dune2_mt32_01_3", 0, 0.65f },
 	{ 0, MUSICSET_RCBLANKE_SC55,NULL, "music/" RCBLANKE_SC55_PREFIX "/ambient01", 0, 0.80f },
@@ -352,6 +382,7 @@ static MusicInfo g_table_music_bonus[] = { /* Disabled by default. */
 
 static MusicInfo g_table_music_attack1[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune10.ADL", 7),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune10.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune10.C55", 7),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_10_17"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack01"),
@@ -363,6 +394,7 @@ static MusicInfo g_table_music_attack1[] = {
 
 static MusicInfo g_table_music_attack2[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune11.ADL", 7),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune11.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune11.C55", 7),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_11_18"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack02"),
@@ -373,6 +405,7 @@ static MusicInfo g_table_music_attack2[] = {
 
 static MusicInfo g_table_music_attack3[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune12.ADL", 7),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune12.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune12.C55", 7),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_12_19"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack03"),
@@ -384,6 +417,7 @@ static MusicInfo g_table_music_attack3[] = {
 
 static MusicInfo g_table_music_attack4[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune13.ADL", 7),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune13.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune13.C55", 7),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_13_20"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack04"),
@@ -394,6 +428,7 @@ static MusicInfo g_table_music_attack4[] = {
 
 static MusicInfo g_table_music_attack5[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune14.ADL", 7),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune14.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune14.C55", 7),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_14_21"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack05"),
@@ -405,6 +440,7 @@ static MusicInfo g_table_music_attack5[] = {
 
 static MusicInfo g_table_music_attack6[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune15.ADL", 7),
+	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune15.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune15.C55", 7),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_15_22"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack06"),
