@@ -50,7 +50,7 @@ extern "C" {
 enum MusicStreamType {
 	MUSICSTREAM_NONE,
 	MUSICSTREAM_ADLIB,
-	MUSICSTREAM_MIDI,
+	MUSICSTREAM_FLUIDSYNTH,
 	MUSICSTREAM_FLAC,
 	MUSICSTREAM_MP3,
 	MUSICSTREAM_OGG,
@@ -66,7 +66,7 @@ static enum MusicStreamType curr_music_stream_type;
 static ALLEGRO_AUDIO_STREAM *s_music_stream;
 static ALLEGRO_AUDIO_STREAM *s_effect_stream;
 static SoundAdlibPC *s_adlib;
-static MIDI_PLAYER *s_midi;
+static MIDI_PLAYER *s_fluid_player;
 static MP3 *s_mp3;
 static AUDSTREAM *s_aud;
 
@@ -114,24 +114,24 @@ AudioA5_Init(void)
 	al_init_acodec_addon();
 #endif
 
-	if (g_table_music_set[MUSICSET_DUNE2_C55].enable && (sound_font_path[0] != '\0')) {
-		s_midi = create_midi_player(sound_font_path);
+	if (g_table_music_set[MUSICSET_FLUIDSYNTH].enable && (sound_font_path[0] != '\0')) {
+		s_fluid_player = create_midi_player(sound_font_path);
 
 #ifdef WITH_FLUIDSYNTH
-		if (s_midi == NULL)
+		if (s_fluid_player == NULL)
 			fprintf(stderr, "create_midi_player() failed.\nGiven sound font: %s\n", sound_font_path);
 #endif
 	}
 	else {
-		s_midi = NULL;
+		s_fluid_player = NULL;
 	}
 
-	if (s_midi == NULL) {
+	if (s_fluid_player == NULL) {
 		for (int musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
 			MusicList *l = &g_table_music[musicID];
 
 			for (int s = 0; s < l->length; s++) {
-				if (l->song[s].music_set == MUSICSET_DUNE2_C55)
+				if (l->song[s].music_set == MUSICSET_FLUIDSYNTH)
 					l->song[s].enable &=~MUSIC_FOUND;
 			}
 		}
@@ -175,9 +175,9 @@ AudioA5_Uninit(void)
 		s_adlib = NULL;
 	}
 
-	if (s_midi != NULL) {
-		destroy_midi_player(s_midi);
-		s_midi = NULL;
+	if (s_fluid_player != NULL) {
+		destroy_midi_player(s_fluid_player);
+		s_fluid_player = NULL;
 	}
 
 	al_destroy_mixer(al_mixer);
@@ -299,8 +299,8 @@ AudioA5_FreeMusicStream(void)
 			}
 			break;
 
-		case MUSICSTREAM_MIDI:
-			stop_midi_player(s_midi);
+		case MUSICSTREAM_FLUIDSYNTH:
+			stop_midi_player(s_fluid_player);
 
 			/* Note: the MIDI player likes to keep its own audio
 			 * stream, so don't destroy it, just detach it.
@@ -374,7 +374,7 @@ AudioA5_InitMidiMusic(const MusicInfo *mid)
 {
 	const int track = mid->track;
 
-	if (s_midi == NULL)
+	if (s_fluid_player == NULL)
 		return;
 
 	uint32 length;
@@ -385,16 +385,16 @@ AudioA5_InitMidiMusic(const MusicInfo *mid)
 	AudioA5_FreeMusicStream();
 	AudioA5_InitAdlibEffects();
 
-	bool play = play_xmidi(s_midi, buf, length, track);
+	bool play = play_xmidi(s_fluid_player, buf, length, track);
 	delete[] buf;
 
 	if (!play)
 		return;
 
-	s_music_stream = get_midi_player_audio_stream(s_midi);
+	s_music_stream = get_midi_player_audio_stream(s_fluid_player);
 	al_set_audio_stream_gain(s_music_stream, music_volume);
 	al_attach_audio_stream_to_mixer(s_music_stream, al_mixer);
-	curr_music_stream_type = MUSICSTREAM_MIDI;
+	curr_music_stream_type = MUSICSTREAM_FLUIDSYNTH;
 }
 
 void
@@ -471,7 +471,7 @@ AudioA5_StopMusic(void)
 				s_adlib->haltTrack();
 			break;
 
-		case MUSICSTREAM_MIDI:
+		case MUSICSTREAM_FLUIDSYNTH:
 		case MUSICSTREAM_FLAC:
 		case MUSICSTREAM_MP3:
 		case MUSICSTREAM_OGG:
@@ -486,8 +486,8 @@ AudioA5_PollMusic(void)
 {
 	ALLEGRO_AUDIO_STREAM *stream = s_effect_stream;
 
-	if (curr_music_stream_type == MUSICSTREAM_MIDI && s_midi != NULL) {
-		poll_midi_player_fragment(s_midi);
+	if (curr_music_stream_type == MUSICSTREAM_FLUIDSYNTH && s_fluid_player != NULL) {
+		poll_midi_player_fragment(s_fluid_player);
 	}
 
 	if (curr_music_stream_type == MUSICSTREAM_MP3 && s_mp3 != NULL) {
@@ -537,8 +537,8 @@ AudioA5_MusicIsPlaying(void)
 		case MUSICSTREAM_ADLIB:
 			return s_adlib->isPlaying();
 
-		case MUSICSTREAM_MIDI:
-			return get_midi_playing(s_midi);
+		case MUSICSTREAM_FLUIDSYNTH:
+			return get_midi_playing(s_fluid_player);
 
 		case MUSICSTREAM_FLAC:
 		case MUSICSTREAM_MP3:

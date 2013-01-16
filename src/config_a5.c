@@ -112,7 +112,7 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
 
 	{ "music",  "dune2_adlib",      CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_ADLIB].enable },
-	{ "music",  "dune2_c55",        CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_C55].enable },
+	{ "music",  "fluidsynth",       CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_FLUIDSYNTH].enable },
 	{ "music",  "fed2k_mt32",       CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_SHAIWA_MT32].enable },
 	{ "music",  "d2tm_adlib",       CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_ADLIB].enable },
 	{ "music",  "d2tm_mt32",        CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_MT32].enable },
@@ -583,7 +583,7 @@ GameOptions_Load(void)
 				if (!g_table_music_set[music_set].enable)
 					m->enable &=~MUSIC_WANT;
 
-				if (music_set <= MUSICSET_DUNE2_C55) {
+				if (music_set <= MUSICSET_FLUIDSYNTH) {
 					char key[1024];
 					snprintf(key, sizeof(key), "%s_%d", m->filename, m->track);
 

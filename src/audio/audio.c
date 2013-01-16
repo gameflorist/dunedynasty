@@ -69,7 +69,7 @@ Audio_ScanMusic(void)
 			if (!g_table_music_set[m->music_set].enable)
 				m->enable &=~MUSIC_WANT;
 
-			if (m->music_set <= MUSICSET_DUNE2_C55)
+			if (m->music_set <= MUSICSET_FLUIDSYNTH)
 				goto count_song;
 
 			/* External music. */
@@ -204,7 +204,7 @@ Audio_PlayMusic(enum MusicID musicID)
 		}
 	}
 
-	if (m->music_set <= MUSICSET_DUNE2_C55) {
+	if (m->music_set <= MUSICSET_FLUIDSYNTH) {
 		if (m->music_set == MUSICSET_DUNE2_ADLIB) {
 			AudioA5_InitAdlibMusic(m);
 		}
@@ -239,7 +239,7 @@ Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 	float volume;
 
 	/* Adjust single track. */
-	if (adjust_current_track_only && (m->music_set > MUSICSET_DUNE2_C55)) {
+	if (adjust_current_track_only && (m->music_set > MUSICSET_FLUIDSYNTH)) {
 		m->volume += delta;
 		m->volume = clamp(0.0f, m->volume, 2.0f);
 
@@ -251,7 +251,7 @@ Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 		music_volume += delta;
 		music_volume = clamp(0.0f, music_volume, 1.0f);
 
-		if (m->music_set <= MUSICSET_DUNE2_C55) {
+		if (m->music_set <= MUSICSET_FLUIDSYNTH) {
 			volume = music_volume;
 			snprintf(music_message, sizeof(music_message), "Playing %s, track %d, volume %.2f",
 					m->filename, m->track, volume);
