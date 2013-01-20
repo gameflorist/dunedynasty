@@ -75,7 +75,10 @@ enum StructureFlag {
 	FLAG_STRUCTURE_TURRET               = 1 << STRUCTURE_TURRET,            /* 0x__80__ */
 	FLAG_STRUCTURE_ROCKET_TURRET        = 1 << STRUCTURE_ROCKET_TURRET,     /* 0x01____ */
 	FLAG_STRUCTURE_SILO                 = 1 << STRUCTURE_SILO,              /* 0x02____ */
-	FLAG_STRUCTURE_OUTPOST              = 1 << STRUCTURE_OUTPOST            /* 0x04____ */
+	FLAG_STRUCTURE_OUTPOST              = 1 << STRUCTURE_OUTPOST,           /* 0x04____ */
+
+	FLAG_STRUCTURE_NONE                 = 0,
+	FLAG_STRUCTURE_NEVER                = 0xFFFF                            /*!< Special flag to mark that certain buildings can never be built on a Construction Yard. */
 };
 
 enum UnitType {
@@ -138,7 +141,9 @@ enum UnitFlag {
 	FLAG_UNIT_BULLET            = 1 << UNIT_BULLET,             /* 0x__80____ */
 	FLAG_UNIT_SONIC_BLAST       = 1 << UNIT_SONIC_BLAST,        /* 0x01______ */
 	FLAG_UNIT_SANDWORM          = 1 << UNIT_SANDWORM,           /* 0x02______ */
-	FLAG_UNIT_FRIGATE           = 1 << UNIT_FRIGATE             /* 0x04______ */
+	FLAG_UNIT_FRIGATE           = 1 << UNIT_FRIGATE,            /* 0x04______ */
+
+	FLAG_UNIT_NONE              = 0
 };
 
 enum UnitActionType {

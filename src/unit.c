@@ -1699,7 +1699,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 					}
 
 					if (detonate) {
-						Map_MakeExplosion(4, newPosition, 500, 0);
+						Map_MakeExplosion(EXPLOSION_SABOTEUR_DEATH, newPosition, 500, 0);
 
 						/* ENHANCEMENT -- Use Unit_Remove so that the saboteur is cleared from the map. */
 						if (g_dune2_enhanced) {
@@ -2457,6 +2457,7 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 	if (Unit_IsSelected(unit)) {
 		Unit_Unselect(unit);
 
+		/* ENHANCEMENT -- When a Unit enters a Structure, the last tile the Unit was on becomes selected rather than the entire Structure. */
 		if (enhancement_fix_selection_after_entering_structure && !Unit_AnySelected())
 			Map_SetSelection(Tile_PackTile(s->o.position));
 	}
