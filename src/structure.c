@@ -14,6 +14,7 @@
 #include "animation.h"
 #include "audio/audio.h"
 #include "enhancement.h"
+#include "explosion.h"
 #include "gfx.h"
 #include "gui/gui.h"
 #include "gui/widget.h"
@@ -1106,14 +1107,16 @@ void Structure_ActivateSpecial(Structure *s)
  */
 void Structure_RemoveFog(Structure *s)
 {
+	const StructureInfo *si;
+	tile32 position;
+
 	if (s == NULL || s->o.houseID != g_playerHouseID) return;
 
-	const StructureInfo *si = &g_table_structureInfo[s->o.type];
+	si = &g_table_structureInfo[s->o.type];
 
-	tile32 position;
 	position.tile = s->o.position.tile;
 
-	/* ENHANCEMENT -- Reveal fog from centre of structure instead of top-left corner for sides of length 3. */
+	/* ENHANCEMENT -- Fog is removed around the top left corner instead of the center of a structure. */
 	if (g_dune2_enhanced) {
 		position.s.x += 256 * (g_table_structure_layoutSize[si->layout].width  - 1) / 2;
 		position.s.y += 256 * (g_table_structure_layoutSize[si->layout].height - 1) / 2;
@@ -1231,7 +1234,7 @@ bool Structure_Damage(Structure *s, uint16 damage, uint16 range)
 
 	if (range == 0) return false;
 
-	Map_MakeExplosion(2, Tile_AddTileDiff(s->o.position, g_table_structure_layoutTileDiff[si->layout]), 0, 0);
+	Map_MakeExplosion(EXPLOSION_IMPACT_LARGE, Tile_AddTileDiff(s->o.position, g_table_structure_layoutTileDiff[si->layout]), 0, 0);
 	return false;
 }
 
@@ -1662,7 +1665,10 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 			}
 
 			if (res == FACTORY_BUY) {
+				House *h;
 				uint8 i;
+
+				h = House_Get_ByIndex(s->o.houseID);
 
 				for (i = 0; i < 25; i++) {
 					Unit *u;
@@ -2040,9 +2046,9 @@ uint32 Structure_GetBuildable(Structure *s)
 			for (i = 0; i < 8; i++) {
 				UnitInfo *ui;
 				uint16 upgradeLevelRequired;
-				uint16 unitType = si->buildableUnits[i];
+				uint8 unitType = si->buildableUnits[i];
 
-				if (unitType == 0xFFFF) continue;
+				if (unitType == UNIT_INVALID) continue;
 
 				/* if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) unitType = UNIT_RAIDER_TRIKE; */
 
@@ -2237,7 +2243,7 @@ void Structure_HouseUnderAttack(uint8 houseID)
 
 		ui = &g_table_unitInfo[u->o.type];
 
-		if (ui->bulletType == 0xFFFF) continue;
+		if (ui->bulletType == UNIT_INVALID) continue;
 
 		/* XXX -- Dune2 does something odd here. What was their intention? */
 		if ((u->actionID == ACTION_GUARD && u->actionID == ACTION_AMBUSH) || u->actionID == ACTION_AREA_GUARD) Unit_SetAction(u, ACTION_HUNT);

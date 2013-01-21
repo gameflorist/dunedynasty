@@ -24,7 +24,7 @@ typedef enum StructureState {
 	STRUCTURE_STATE_JUSTBUILT = -1,                        /*!< This shows you the building animation etc. */
 	STRUCTURE_STATE_IDLE      = 0,                         /*!< Structure is doing nothing. */
 	STRUCTURE_STATE_BUSY      = 1,                         /*!< Structure is busy (harvester in refinery, unit in repair, .. */
-	STRUCTURE_STATE_READY     = 2                         /*!< Structure is ready and unit will be deployed soon. */
+	STRUCTURE_STATE_READY     = 2                          /*!< Structure is ready and unit will be deployed soon. */
 } StructureState;
 
 /**
@@ -59,7 +59,7 @@ typedef struct StructureInfo {
 	uint16 layout;                                          /*!< Layout type of Structure. */
 	uint16 iconGroup;                                       /*!< In which IconGroup the sprites of the Structure belongs. */
 	uint8  animationIndex[3];                               /*!< The index inside g_table_animation_structure for the Animation of the Structure. */
-	uint16 buildableUnits[8];                               /*!< Which units this structure can produce. */
+	uint8  buildableUnits[8];                               /*!< Which units this structure can produce. */
 	uint16 upgradeCampaign[3];                              /*!< Minimum campaign for upgrades. */
 } StructureInfo;
 

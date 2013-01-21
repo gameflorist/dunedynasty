@@ -1,4 +1,4 @@
-/** @file src/saveload/house.c Load/save routines for House. */
+/** @file src/saveload/object.c Load/save routines for Object. */
 
 #include "saveload.h"
 #include "../object.h"

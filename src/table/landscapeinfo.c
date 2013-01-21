@@ -110,8 +110,8 @@ const LandscapeInfo g_table_landscapeInfo[LST_MAX] = {
 		/* isValidForStructure2 */ false,
 		/* canBecomeSpice       */ true,
 		/* craterType           */ 1,
-		/* radarColour          */ 215, /* was 88, but is set by GameLoop_GameIntroAnimationMenu. */
-		/* spriteID             */ 53,  /* was 37, but is set by GameLoop_GameIntroAnimationMenu. */
+		/* radarColour          */ 215, /* was 88, but is changed on startup */
+		/* spriteID             */ 53,  /* was 37, but is changed on startup */
 	},
 
 	{ /* 9 / LST_THICK_SPICE */
@@ -122,8 +122,8 @@ const LandscapeInfo g_table_landscapeInfo[LST_MAX] = {
 		/* isValidForStructure2 */ false,
 		/* canBecomeSpice       */ true,
 		/* craterType           */ 1,
-		/* radarColour          */ 215, /* was 88, but is set by GameLoop_GameIntroAnimationMenu. */
-		/* spriteID             */ 53,  /* was 37, but is set by GameLoop_GameIntroAnimationMenu. */
+		/* radarColour          */ 216, /* was 88, but is changed on startup */
+		/* spriteID             */ 53,  /* was 37, but is changed on startup */
 	},
 
 	{ /* 10 / LST_CONCRETE_SLAB */

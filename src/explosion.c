@@ -277,7 +277,7 @@ Explosion_Uninit(void)
  */
 void Explosion_Start(uint16 explosionType, tile32 position)
 {
-	if (explosionType > 19) return;
+	if (explosionType > EXPLOSION_SPICE_BLOOM_TREMOR) return;
 
 	uint16 packed = Tile_PackTile(position);
 	Explosion_StopAtPosition(packed);

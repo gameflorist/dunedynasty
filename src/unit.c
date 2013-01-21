@@ -16,6 +16,7 @@
 #include "audio/audio.h"
 #include "config.h"
 #include "enhancement.h"
+#include "explosion.h"
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "house.h"
@@ -1659,7 +1660,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 						}
 					} else if (ui->explosionType != 0xFFFF) {
 						if (ui->flags.impactOnSand && g_map[Tile_PackTile(unit->o.position)].index == 0 && Map_GetLandscapeType(Tile_PackTile(unit->o.position)) == LST_NORMAL_SAND) {
-							Map_MakeExplosion(8, newPosition, unit->o.hitpoints, unit->originEncoded);
+							Map_MakeExplosion(EXPLOSION_SAND_BURST, newPosition, unit->o.hitpoints, unit->originEncoded);
 						} else if (unit->o.type == UNIT_MISSILE_DEVIATOR) {
 							Map_DeviateArea(ui->explosionType, newPosition, 32, Unit_GetHouseID(unit));
 						} else {
@@ -1814,7 +1815,7 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 	}
 
 	if (range != 0) {
-		Map_MakeExplosion((damage < 25) ? 0 : 1, unit->o.position, 0, 0);
+		Map_MakeExplosion((damage < 25) ? EXPLOSION_IMPACT_SMALL : EXPLOSION_IMPACT_MEDIUM, unit->o.position, 0, 0);
 	}
 
 	if (houseID != g_playerHouseID && unit->actionID == ACTION_AMBUSH && unit->o.type != UNIT_HARVESTER) {

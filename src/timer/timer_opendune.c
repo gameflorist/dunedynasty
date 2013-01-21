@@ -48,7 +48,7 @@ static int s_timerNodeSize  = 0;
 
 static uint32 s_timerLastTime;
 
-const uint32 s_timerSpeed = 10000; /* Our timer runs at 100Hz */
+static const uint32 s_timerSpeed = 10000; /* Our timer runs at 100Hz */
 
 
 static uint32 TimerOpenDune_GetTime(void)
@@ -67,17 +67,18 @@ static uint32 TimerOpenDune_GetTime(void)
 /**
  * Run the timer interrupt handler.
  */
-static void TimerOpenDune_InterruptRun(int _)
+static void TimerOpenDune_InterruptRun(int arg)
 {
 	TimerNode *node;
 	uint32 new_time, usec_delta, delta;
 	int i;
-	VARIABLE_NOT_USED(_)
 
 	/* Lock the timer, to avoid double-calls */
 	static bool timerLock = false;
 	if (timerLock) return;
 	timerLock = true;
+
+	VARIABLE_NOT_USED(arg);
 
 	/* Calculate the time between calls */
 	new_time   = TimerOpenDune_GetTime();
@@ -112,7 +113,7 @@ void CALLBACK TimerOpenDune_InterruptWindows(LPVOID arg, BOOLEAN TimerOrWaitFire
 	VARIABLE_NOT_USED(TimerOrWaitFired);
 
 	SuspendThread(s_timerMainThread);
-	TimerOpenDune_InterruptRun();
+	TimerOpenDune_InterruptRun(0);
 	ResumeThread(s_timerMainThread);
 }
 #endif /* _WIN32 */
@@ -240,7 +241,7 @@ void TimerOpenDune_Remove(void (*callback)(void))
 /**
  * Handle game timers.
  */
-static void TimerOpenDune_Tick(void)
+void TimerOpenDune_Tick(void)
 {
 	if ((s_timersActive & (1 << TIMER_GUI))  != 0) g_timerGUI++;
 	if ((s_timersActive & (1 << TIMER_GAME)) != 0) g_timerGame++;
@@ -257,7 +258,7 @@ static void TimerOpenDune_Tick(void)
  * @param set True sets the timer on, false sets it off.
  * @return True if timer was set, false if it was not set.
  */
-bool TimerOpenDune_SetTimer(enum TimerType timer, bool set)
+bool TimerOpenDune_SetTimer(TimerType timer, bool set)
 {
 	const uint8 t = (1 << timer);
 	const bool ret = (s_timersActive & t) != 0;

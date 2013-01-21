@@ -3,6 +3,7 @@
 #define _XOPEN_SOURCE
 #define _XOPEN_SOURCE_EXTENDED
 
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -134,17 +135,20 @@ static void String_Load(const char *filename, bool compressed)
 		char *src = (char *)buf + ((uint16 *)buf)[i];
 		char *dst;
 
-		if (strlen(src) == 0 && s_strings[0] != NULL) {
-			s_stringsCount--;
-			continue;
-		}
-
 		if (compressed) {
 			dst = (char *)calloc(strlen(src) * 2 + 1, sizeof(char));
 			String_Decompress(src, dst);
 			String_TranslateSpecial(dst, dst);
 		} else {
 			dst = strdup(src);
+		}
+
+		String_Trim(dst);
+
+		if (strlen(dst) == 0 && s_strings[0] != NULL) {
+			s_stringsCount--;
+			free(dst);
+			continue;
 		}
 
 		s_strings[s_stringsCount - count + i] = dst;
@@ -323,3 +327,12 @@ uint8 *String_PrevString(uint8 *ptr)
 	return ptr;
 }
 #endif
+
+void String_Trim(char *string)
+{
+	char *s = string + strlen(string) - 1;
+	while (s >= string && isspace((uint8)*s)) {
+		*s = '\0';
+		s--;
+	}
+}

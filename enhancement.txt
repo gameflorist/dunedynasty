@@ -134,6 +134,8 @@ Structure
     is in fact placed on the map.
 - If a structure gets damaged during upgrading, pressing the "Upgrading" button
     silently starts the repair of the structure, and doesn't cancel upgrading.
+- Fog is removed around the top left corner instead of the center of a
+    structure.
 
 
 Unit
@@ -142,6 +144,8 @@ Unit
     wobbling, even if it enters a tile where it shouldn't wobble.
 - The warning of an enemy approach tends to be wrong. This due to a math
     failure in the code.
+- When a Unit enters a Structure, the last tile the Unit was on becomes
+    selected rather than the entire Structure.
 
 
 Scenario

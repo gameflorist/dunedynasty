@@ -4,6 +4,7 @@
 #include "enumeration.h"
 #include "types.h"
 
+#include "../explosion.h"
 #include "../table/sound.h"
 #include "../unit.h"
 #include "strings.h"
@@ -39,7 +40,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 800,
 		/* buildTime            */ 64,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 16,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -79,8 +80,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 0,
 		/* damage               */ 0,
-		/* explosionType        */ -1,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_INVALID,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ SOUND_ROCKET
 	},
 
@@ -152,7 +153,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 50,
 		/* fireDistance         */ 50,
 		/* damage               */ 50,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_MISSILE_TROOPER,
 		/* bulletSound          */ SOUND_ROCKET
 	},
@@ -185,7 +186,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 100,
 		/* buildTime            */ 32,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 4,
 		/* upgradeLevelRequired */ 1,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -225,7 +226,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 45,
 		/* fireDistance         */ 2,
 		/* damage               */ 3,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_GUN
 	},
@@ -258,7 +259,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 200,
 		/* buildTime            */ 56,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 8,
 		/* upgradeLevelRequired */ 1,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -298,7 +299,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 50,
 		/* fireDistance         */ 5,
 		/* damage               */ 5,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
@@ -331,7 +332,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 60,
 		/* buildTime            */ 32,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 2,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -371,7 +372,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 45,
 		/* fireDistance         */ 2,
 		/* damage               */ 3,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_GUN
 	},
@@ -404,7 +405,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 100,
 		/* buildTime            */ 56,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 6,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -444,7 +445,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 50,
 		/* fireDistance         */ 5,
 		/* damage               */ 5,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
@@ -477,7 +478,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 120,
 		/* buildTime            */ 48,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_SABOTAGE, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -517,7 +518,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 45,
 		/* fireDistance         */ 2,
 		/* damage               */ 2,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_GUN
 	},
@@ -550,7 +551,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 450,
 		/* buildTime            */ 72,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 26,
 		/* upgradeLevelRequired */ 2,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -590,7 +591,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 120,
 		/* fireDistance         */ 9,
 		/* damage               */ 75,
-		/* explosionType        */ 3,
+		/* explosionType        */ EXPLOSION_IMPACT_EXPLODE,
 		/* bulletType           */ UNIT_MISSILE_ROCKET,
 		/* bulletSound          */ -1
 	},
@@ -663,7 +664,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 180,
 		/* fireDistance         */ 7,
 		/* damage               */ 0,
-		/* explosionType        */ 3,
+		/* explosionType        */ EXPLOSION_IMPACT_EXPLODE,
 		/* bulletType           */ UNIT_MISSILE_DEVIATOR,
 		/* bulletSound          */ -1
 	},
@@ -696,7 +697,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 300,
 		/* buildTime            */ 64,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 22,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -736,7 +737,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 80,
 		/* fireDistance         */ 4,
 		/* damage               */ 25,
-		/* explosionType        */ 1,
+		/* explosionType        */ EXPLOSION_IMPACT_MEDIUM,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_TANK
 	},
@@ -769,7 +770,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 600,
 		/* buildTime            */ 96,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 24,
 		/* upgradeLevelRequired */ 3,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -809,7 +810,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 90,
 		/* fireDistance         */ 5,
 		/* damage               */ 30,
-		/* explosionType        */ 1,
+		/* explosionType        */ EXPLOSION_IMPACT_MEDIUM,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_TANK
 	},
@@ -882,7 +883,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 100,
 		/* fireDistance         */ 5,
 		/* damage               */ 40,
-		/* explosionType        */ 1,
+		/* explosionType        */ EXPLOSION_IMPACT_MEDIUM,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_TANK
 	},
@@ -955,7 +956,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 80,
 		/* fireDistance         */ 8,
 		/* damage               */ 60,
-		/* explosionType        */ -1,
+		/* explosionType        */ EXPLOSION_INVALID,
 		/* bulletType           */ UNIT_SONIC_BLAST,
 		/* bulletSound          */ EFFECT_SONIC_BLAST
 	},
@@ -988,7 +989,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 150,
 		/* buildTime            */ 40,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 10,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -1028,7 +1029,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 50,
 		/* fireDistance         */ 3,
 		/* damage               */ 5,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
@@ -1061,7 +1062,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 150,
 		/* buildTime            */ 40,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 12,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -1101,7 +1102,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 50,
 		/* fireDistance         */ 3,
 		/* damage               */ 5,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
@@ -1134,7 +1135,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 200,
 		/* buildTime            */ 48,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 14,
 		/* upgradeLevelRequired */ 1,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_MOVE, ACTION_RETREAT, ACTION_GUARD },
@@ -1174,7 +1175,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 50,
 		/* fireDistance         */ 3,
 		/* damage               */ 7,
-		/* explosionType        */ 0,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
 		/* bulletSound          */ SOUND_MACHINE_GUN
 	},
@@ -1207,7 +1208,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 300,
 		/* buildTime            */ 64,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 18,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_HARVEST, ACTION_MOVE, ACTION_RETURN, ACTION_STOP },
@@ -1247,8 +1248,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 0,
 		/* damage               */ 0,
-		/* explosionType        */ -1,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_INVALID,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ 0
 	},
 
@@ -1280,7 +1281,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 900,
 		/* buildTime            */ 80,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 20,
 		/* upgradeLevelRequired */ 1,
 		/* actionsPlayer        */ { ACTION_DEPLOY, ACTION_MOVE, ACTION_RETREAT, ACTION_STOP },
@@ -1320,8 +1321,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 0,
 		/* damage               */ 0,
-		/* explosionType        */ -1,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_INVALID,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ 0
 	},
 
@@ -1353,7 +1354,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -1393,8 +1394,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 15,
 		/* damage               */ 100,
-		/* explosionType        */ 11,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_DEATH_HAND,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ SOUND_ROCKET
 	},
 
@@ -1426,7 +1427,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -1466,8 +1467,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 8,
 		/* damage               */ 75,
-		/* explosionType        */ 3,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_IMPACT_EXPLODE,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ SOUND_ROCKET
 	},
 
@@ -1499,7 +1500,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -1539,8 +1540,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 60,
 		/* damage               */ 75,
-		/* explosionType        */ 3,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_IMPACT_EXPLODE,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ SOUND_ROCKET
 	},
 
@@ -1572,7 +1573,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -1612,8 +1613,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 7,
 		/* damage               */ 75,
-		/* explosionType        */ 7,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_DEVIATOR_GAS,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ SOUND_ROCKET
 	},
 
@@ -1645,7 +1646,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -1685,8 +1686,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 3,
 		/* damage               */ 0,
-		/* explosionType        */ 18,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_MINI_ROCKET,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ -1 /* was SOUND_MINI_ROCKET. */
 	},
 
@@ -1718,7 +1719,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -1758,8 +1759,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 0,
 		/* damage               */ 0,
-		/* explosionType        */ 0,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ -1
 	},
 
@@ -1791,7 +1792,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -1831,8 +1832,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 10,
 		/* damage               */ 25,
-		/* explosionType        */ -1,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_INVALID,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ -1
 	},
 
@@ -1864,7 +1865,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_ATTACK, ACTION_ATTACK, ACTION_ATTACK, ACTION_ATTACK },
@@ -1904,7 +1905,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 20,
 		/* fireDistance         */ 0,
 		/* damage               */ 300,
-		/* explosionType        */ 13,
+		/* explosionType        */ EXPLOSION_SANDWORM_SWALLOW,
 		/* bulletType           */ UNIT_SANDWORM,
 		/* bulletSound          */ SOUND_SANDWORM
 	},
@@ -1937,7 +1938,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* buildCredits         */ 0,
 		/* buildTime            */ 0,
 		/* availableCampaign    */ 0,
-		/* structuresRequired   */ 0,
+		/* structuresRequired   */ FLAG_STRUCTURE_NONE,
 		/* sortPriority         */ 0,
 		/* upgradeLevelRequired */ 0,
 		/* actionsPlayer        */ { ACTION_STOP, ACTION_STOP, ACTION_STOP, ACTION_STOP },
@@ -1977,8 +1978,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* fireDelay            */ 0,
 		/* fireDistance         */ 0,
 		/* damage               */ 0,
-		/* explosionType        */ -1,
-		/* bulletType           */ -1,
+		/* explosionType        */ EXPLOSION_INVALID,
+		/* bulletType           */ UNIT_INVALID,
 		/* bulletSound          */ -1
 	}
 };

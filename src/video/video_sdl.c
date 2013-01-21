@@ -437,7 +437,7 @@ static void VideoSDL_DrawScreen(void)
 	}
 }
 #	else /* SCREEN_MAGNIFICATION != 2 != 3 */
-void VideoSDL_DrawScreen(void)
+static void VideoSDL_DrawScreen(void)
 {
 	uint8 *data = GFX_Screen_Get_ByIndex(SCREEN_0);
 	uint8 *gfx  = s_gfx_screen;
