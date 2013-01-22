@@ -638,7 +638,7 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 	if (!g_dune2_enhanced && s->o.houseID == g_playerHouseID) Tile_RemoveFogInRadius(Tile_UnpackTile(position), 2);
 
 	s->o.seenByHouses |= 1 << s->o.houseID;
-	if (s->o.houseID == g_playerHouseID) s->o.seenByHouses |= 0xFF;
+	if (House_AreAllied(s->o.houseID, g_playerHouseID)) s->o.seenByHouses |= 0xFF;
 
 	s->o.flags.s.isNotOnMap = false;
 
