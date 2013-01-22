@@ -41,15 +41,12 @@ static MusicInfo g_table_music_stop[] = {
 
 	/* 1: MUSIC_23 */
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 8),
-	ADD_MUSIC_FROM_DUNE2_C55    ("dune1.C55", 8),
 
-	/* 3: MUSIC_35 */
+	/* 2: MUSIC_35 */
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 3),
-	ADD_MUSIC_FROM_DUNE2_C55    ("dune0.C55", 3),
 
-	/* 5: MUSIC_37 */
+	/* 3: MUSIC_37 */
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 5),
-	ADD_MUSIC_FROM_DUNE2_C55    ("dune0.C55", 5),
 };
 
 static MusicInfo g_table_music_logos[] = {
