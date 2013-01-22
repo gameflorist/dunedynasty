@@ -562,6 +562,9 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 				s->o.flags.s.degrades = false;
 				s->state = STRUCTURE_STATE_IDLE;
 
+				if (House_AreAllied(g_playerHouseID, houseID))
+					s->o.seenByHouses = 0xFF;
+
 				if (s->o.type == STRUCTURE_PALACE)
 					s->countDown = g_table_houseInfo[houseID].specialCountDown;
 
