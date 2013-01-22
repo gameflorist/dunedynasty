@@ -518,7 +518,7 @@ uint16 Script_Unit_Die(ScriptEngine *script)
 
 		credits = max(ui->o.buildCredits / 100, 1);
 
-		if (u->o.houseID == g_playerHouseID) {
+		if (House_AreAllied(u->o.houseID, g_playerHouseID)) {
 			g_scenario.killedAllied++;
 			g_scenario.score -= credits;
 		} else {
