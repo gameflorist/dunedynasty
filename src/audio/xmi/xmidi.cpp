@@ -16,8 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+/* DSW: stripped some unused code. */
+
 // XMIDI/MIDI Converter/Loader
 
+#include <cassert>
 #include <stdio.h>
 #include <iostream>
 //#include "randgen.h"
@@ -34,276 +37,9 @@ using namespace std;
 // the tracks centred, unless the first patch change says otherwise.
 #define PATCH_VOL_PAN_BIAS	5
 
-// This is a default set of patches to convert from MT32 to GM
-// The index is the MT32 Patch nubmer and the value is the GM Patch
-// This is only suitable for music that doesn'tdo timbre changes
-// XMIDIs that contain Timbre changes will not convert properly
-const char XMIDI::mt32asgm[128] = {
-	0,	// 0	Piano 1
-	1,	// 1	Piano 2
-	2,	// 2	Piano 3 (synth)
-	4,	// 3	EPiano 1
-	4,	// 4	EPiano 2
-	5,	// 5	EPiano 3
-	5,	// 6	EPiano 4
-	3,	// 7	Honkytonk
-	16,	// 8	Organ 1
-	17,	// 9	Organ 2
-	18,	// 10	Organ 3
-	16,	// 11	Organ 4
-	19,	// 12	Pipe Organ 1
-	19,	// 13	Pipe Organ 2
-	19,	// 14	Pipe Organ 3
-	21,	// 15	Accordion
-	6,	// 16	Harpsichord 1
-	6,	// 17	Harpsichord 2
-	6,	// 18	Harpsichord 3
-	7,	// 19	Clavinet 1
-	7,	// 20	Clavinet 2
-	7,	// 21	Clavinet 3
-	8,	// 22	Celesta 1
-	8,	// 23	Celesta 2
-	62,	// 24	Synthbrass 1 (62)
-	63,	// 25	Synthbrass 2 (63)
-	62,	// 26	Synthbrass 3 Bank 8
-	63,	// 27	Synthbrass 4 Bank 8
-	38,	// 28	Synthbass 1
-	39,	// 29	Synthbass 2
-	38,	// 30	Synthbass 3 Bank 8
-	39,	// 31	Synthbass 4 Bank 8
-	88,	// 32	Fantasy
-	90,	// 33	Harmonic Pan - No equiv closest is polysynth(90) :(
-	52,	// 34	Choral ?? Currently set to SynthVox(54). Should it be ChoirAhhs(52)???
-	92,	// 35	Glass
-	97,	// 36	Soundtrack
-	99,	// 37	Atmosphere
-	14,	// 38	Warmbell, sounds kind of like crystal(98) perhaps Tubular Bells(14) would be better. It is!
-	54,	// 39	FunnyVox, sounds alot like Bagpipe(109) and Shania(111)
-	98,	// 40	EchoBell, no real equiv, sounds like Crystal(98)
-	96,	// 41	IceRain
-	68,	// 42	Oboe 2001, no equiv, just patching it to normal oboe(68)
-	95,	// 43	EchoPans, no equiv, setting to SweepPad
-	81,	// 44	DoctorSolo Bank 8
-	87,	// 45	SchoolDaze, no real equiv
-	112,	// 46	Bell Singer
-	80,	// 47	SquareWave
-	48,	// 48	Strings 1
-	48,	// 49	Strings 2 - should be 49
-	44,	// 50	Strings 3 (Synth) - Experimental set to Tremollo Strings - should be 50
-	45,	// 51	Pizzicato Strings
-	40,	// 52	Violin 1
-	40,	// 53	Violin 2 ? Viola
-	42,	// 54	Cello 1
-	42,	// 55	Cello 2
-	43,	// 56	Contrabass
-	46,	// 57	Harp 1
-	46,	// 58	Harp 2
-	24,	// 59	Guitar 1 (Nylon)
-	25,	// 60	Guitar 2 (Steel)
-	26,	// 61	Elec Guitar 1
-	27,	// 62	Elec Guitar 2
-	104,	// 63	Sitar
-	32,	// 64	Acou Bass 1
-	32,	// 65	Acou Bass 2
-	33,	// 66	Elec Bass 1
-	34,	// 67	Elec Bass 2
-	36,	// 68	Slap Bass 1
-	37,	// 69	Slap Bass 2
-	35,	// 70	Fretless Bass 1
-	35,	// 71	Fretless Bass 2
-	73,	// 72	Flute 1
-	73,	// 73	Flute 2
-	72,	// 74	Piccolo 1
-	72,	// 75	Piccolo 2
-	74,	// 76	Recorder
-	75,	// 77	Pan Pipes
-	64,	// 78	Sax 1
-	65,	// 79	Sax 2
-	66,	// 80	Sax 3
-	67,	// 81	Sax 4
-	71,	// 82	Clarinet 1
-	71,	// 83	Clarinet 2
-	68,	// 84	Oboe
-	69,	// 85	English Horn (Cor Anglais)
-	70,	// 86	Bassoon
-	22,	// 87	Harmonica
-	56,	// 88	Trumpet 1
-	56,	// 89	Trumpet 2
-	57,	// 90	Trombone 1
-	57,	// 91	Trombone 2
-	60,	// 92	French Horn 1
-	60,	// 93	French Horn 2
-	58,	// 94	Tuba
-	61,	// 95	Brass Section 1
-	61,	// 96	Brass Section 2
-	11,	// 97	Vibes 1
-	11,	// 98	Vibes 2
-	99,	// 99	Syn Mallet Bank 1
-	112,	// 100	WindBell no real equiv Set to TinkleBell(112)
-	9,	// 101	Glockenspiel
-	14,	// 102	Tubular Bells
-	13,	// 103	Xylophone
-	12,	// 104	Marimba
-	107,	// 105	Koto
-	111,	// 106	Sho?? set to Shanai(111)
-	77,	// 107	Shakauhachi
-	78,	// 108	Whistle 1
-	78,	// 109	Whistle 2
-	76,	// 110	Bottle Blow
-	76,	// 111	Breathpipe no real equiv set to bottle blow(76)
-	47,	// 112	Timpani
-	117,	// 113	Melodic Tom
-	116,	// 114	Deap Snare no equiv, set to Taiko(116)
-	118,	// 115	Electric Perc 1
-	118,	// 116	Electric Perc 2
-	116,	// 117	Taiko
-	115,	// 118	Taiko Rim, no real equiv, set to Woodblock(115)
-	119,	// 119	Cymbal, no real equiv, set to reverse cymbal(119)
-	115,	// 120	Castanets, no real equiv, in GM set to Woodblock(115)
-	112,	// 121	Triangle, no real equiv, set to TinkleBell(112)
-	55,	// 122	Orchestral Hit
-	124,	// 123	Telephone
-	123,	// 124	BirdTweet
-	94,	// 125	Big Notes Pad no equiv, set to halo pad (94)
-	98,	// 126	Water Bell set to Crystal Pad(98)
-	121	// 127	Jungle Tune set to Breath Noise
-};
-
-// Same as above, except include patch changes
-// so GS instruments can be used
-const char XMIDI::mt32asgs[256] = {
-	0, 0,	// 0	Piano 1
-	1, 0,	// 1	Piano 2
-	2, 0,	// 2	Piano 3 (synth)
-	4, 0,	// 3	EPiano 1
-	4, 0,	// 4	EPiano 2
-	5, 0,	// 5	EPiano 3
-	5, 0,	// 6	EPiano 4
-	3, 0,	// 7	Honkytonk
-	16, 0,	// 8	Organ 1
-	17, 0,	// 9	Organ 2
-	18, 0,	// 10	Organ 3
-	16, 0,	// 11	Organ 4
-	19, 0,	// 12	Pipe Organ 1
-	19, 0,	// 13	Pipe Organ 2
-	19, 0,	// 14	Pipe Organ 3
-	21, 0,	// 15	Accordion
-	6, 0,	// 16	Harpsichord 1
-	6, 0,	// 17	Harpsichord 2
-	6, 0,	// 18	Harpsichord 3
-	7, 0,	// 19	Clavinet 1
-	7, 0,	// 20	Clavinet 2
-	7, 0,	// 21	Clavinet 3
-	8, 0,	// 22	Celesta 1
-	8, 0,	// 23	Celesta 2
-	62, 0,	// 24	Synthbrass 1 (62)
-	63, 0,	// 25	Synthbrass 2 (63)
-	62, 0,	// 26	Synthbrass 3 Bank 8
-	63, 0,	// 27	Synthbrass 4 Bank 8
-	38, 0,	// 28	Synthbass 1
-	39, 0,	// 29	Synthbass 2
-	38, 0,	// 30	Synthbass 3 Bank 8
-	39, 0,	// 31	Synthbass 4 Bank 8
-	88, 0,	// 32	Fantasy
-	90, 0,	// 33	Harmonic Pan - No equiv closest is polysynth(90) :(
-	52, 0,	// 34	Choral ?? Currently set to SynthVox(54). Should it be ChoirAhhs(52)???
-	92, 0,	// 35	Glass
-	97, 0,	// 36	Soundtrack
-	99, 0,	// 37	Atmosphere
-	14, 0,	// 38	Warmbell, sounds kind of like crystal(98) perhaps Tubular Bells(14) would be better. It is!
-	54, 0,	// 39	FunnyVox, sounds alot like Bagpipe(109) and Shania(111)
-	98, 0,	// 40	EchoBell, no real equiv, sounds like Crystal(98)
-	96, 0,	// 41	IceRain
-	68, 0,	// 42	Oboe 2001, no equiv, just patching it to normal oboe(68)
-	95, 0,	// 43	EchoPans, no equiv, setting to SweepPad
-	81, 0,	// 44	DoctorSolo Bank 8
-	87, 0,	// 45	SchoolDaze, no real equiv
-	112, 0,	// 46	Bell Singer
-	80, 0,	// 47	SquareWave
-	48, 0,	// 48	Strings 1
-	48, 0,	// 49	Strings 2 - should be 49
-	44, 0,	// 50	Strings 3 (Synth) - Experimental set to Tremollo Strings - should be 50
-	45, 0,	// 51	Pizzicato Strings
-	40, 0,	// 52	Violin 1
-	40, 0,	// 53	Violin 2 ? Viola
-	42, 0,	// 54	Cello 1
-	42, 0,	// 55	Cello 2
-	43, 0,	// 56	Contrabass
-	46, 0,	// 57	Harp 1
-	46, 0,	// 58	Harp 2
-	24, 0,	// 59	Guitar 1 (Nylon)
-	25, 0,	// 60	Guitar 2 (Steel)
-	26, 0,	// 61	Elec Guitar 1
-	27, 0,	// 62	Elec Guitar 2
-	104, 0,	// 63	Sitar
-	32, 0,	// 64	Acou Bass 1
-	32, 0,	// 65	Acou Bass 2
-	33, 0,	// 66	Elec Bass 1
-	34, 0,	// 67	Elec Bass 2
-	36, 0,	// 68	Slap Bass 1
-	37, 0,	// 69	Slap Bass 2
-	35, 0,	// 70	Fretless Bass 1
-	35, 0,	// 71	Fretless Bass 2
-	73, 0,	// 72	Flute 1
-	73, 0,	// 73	Flute 2
-	72, 0,	// 74	Piccolo 1
-	72, 0,	// 75	Piccolo 2
-	74, 0,	// 76	Recorder
-	75, 0,	// 77	Pan Pipes
-	64, 0,	// 78	Sax 1
-	65, 0,	// 79	Sax 2
-	66, 0,	// 80	Sax 3
-	67, 0,	// 81	Sax 4
-	71, 0,	// 82	Clarinet 1
-	71, 0,	// 83	Clarinet 2
-	68, 0,	// 84	Oboe
-	69, 0,	// 85	English Horn (Cor Anglais)
-	70, 0,	// 86	Bassoon
-	22, 0,	// 87	Harmonica
-	56, 0,	// 88	Trumpet 1
-	56, 0,	// 89	Trumpet 2
-	57, 0,	// 90	Trombone 1
-	57, 0,	// 91	Trombone 2
-	60, 0,	// 92	French Horn 1
-	60, 0,	// 93	French Horn 2
-	58, 0,	// 94	Tuba
-	61, 0,	// 95	Brass Section 1
-	61, 0,	// 96	Brass Section 2
-	11, 0,	// 97	Vibes 1
-	11, 0,	// 98	Vibes 2
-	99, 0,	// 99	Syn Mallet Bank 1
-	112, 0,	// 100	WindBell no real equiv Set to TinkleBell(112)
-	9, 0,	// 101	Glockenspiel
-	14, 0,	// 102	Tubular Bells
-	13, 0,	// 103	Xylophone
-	12, 0,	// 104	Marimba
-	107, 0,	// 105	Koto
-	111, 0,	// 106	Sho?? set to Shanai(111)
-	77, 0,	// 107	Shakauhachi
-	78, 0,	// 108	Whistle 1
-	78, 0,	// 109	Whistle 2
-	76, 0,	// 110	Bottle Blow
-	76, 0,	// 111	Breathpipe no real equiv set to bottle blow(76)
-	47, 0,	// 112	Timpani
-	117, 0,	// 113	Melodic Tom
-	116, 0,	// 114	Deap Snare no equiv, set to Taiko(116)
-	118, 0,	// 115	Electric Perc 1
-	118, 0,	// 116	Electric Perc 2
-	116, 0,	// 117	Taiko
-	115, 0,	// 118	Taiko Rim, no real equiv, set to Woodblock(115)
-	119, 0,	// 119	Cymbal, no real equiv, set to reverse cymbal(119)
-	115, 0,	// 120	Castanets, no real equiv, in GM set to Woodblock(115)
-	112, 0,	// 121	Triangle, no real equiv, set to TinkleBell(112)
-	55, 0,	// 122	Orchestral Hit
-	124, 0,	// 123	Telephone
-	123, 0,	// 124	BirdTweet
-	94, 0,	// 125	Big Notes Pad no equiv, set to halo pad (94)
-	98, 0,	// 126	Water Bell set to Crystal Pad(98)
-	121, 0	// 127	Jungle Tune set to Breath Noise
-};
 // Constructor
 XMIDI::XMIDI(DataSource *source, int pconvert) : events(NULL),timing(NULL),
-						convert_type(pconvert),fixed(NULL)
+						fixed(NULL)
 {
 	int i = 16;
 	while (i--) bank127[i] = 0;
@@ -334,20 +70,7 @@ int XMIDI::retrieve (unsigned int track, DataSource *dest)
 	}
 
 	// Convert type 1 midi's to type 0
-	if (info.type == 1)
-	{
-		DuplicateAndMerge(-1);
-
-		for (int i=0; i < info.tracks; i++)
-			DeleteEventList (events[i]);
-
-		delete [] events;
-		events = new midi_event *[1];
-		events[0] = list;
-
-		info.tracks = 1;
-		info.type = 0;
-	}
+	assert(info.type == 0);
 
 	if (track >= info.tracks)
 	{
@@ -386,28 +109,6 @@ int XMIDI::retrieve (unsigned int track, DataSource *dest)
 	len = ConvertListToMTrk (dest, events[track]);
 
 	return len + 14;
-}
-
-int XMIDI::retrieve (unsigned int track, midi_event **dest, int &ppqn)
-{
-	if (!events)
-	{
-		cerr << "No midi data in loaded." << endl;
-		return 0;
-	}
-
-	if ((info.type == 1 && track != 0) || (track >= info.tracks))
-	{
-		cerr << "Can't retrieve MIDI data, track out of range" << endl;
-		return 0;
-	}
-	DuplicateAndMerge(track);
-	MovePatchVolAndPan ();
-
-	*dest = list;
-	ppqn = timing[track];
-
-	return 1;
 }
 
 void XMIDI::DeleteEventList (midi_event *mlist)
@@ -660,101 +361,6 @@ void XMIDI::MovePatchVolAndPan (int channel)
 	list = bank;
 }
 
-// DuplicateAndMerge
-void XMIDI::DuplicateAndMerge (int num)
-{
-	int		i;
-	midi_event	**track;
-	int		time = 0;
-	int		start = 0;
-	int		end = 1;
-
-	if (info.type == 1)
-	{
-		start = 0;
-		end = info.tracks;
-	}
-	else if (num >= 0 && num < info.tracks)
-	{
-		start += num;
-		end += num;
-	}
-
-	track = new midi_event *[info.tracks];
-
-	for (i = 0; i < info.tracks; i++) track[i] = events[i];
-
-	current = list = NULL;
-
-
-	while (1)
-	{
-		int	lowest = 1 << 30;
-		int	selected = -1;
-		int	num_na = end-start;
-
-		// Firstly we find the track with the lowest time
-		// for it's current event
-		for (i = start; i < end; i++)
-		{
-			if (!track[i])
-			{
-				num_na--;
-				continue;
-			}
-			if (track[i]->time < lowest)
-			{
-				selected = i;
-				lowest = track[i]->time;
-			}
-		}
-
-		// This is just so I don't have to type [selected] all the time
-		i = selected;
-
-		// None left to convert
-		if (!num_na) break;
-
-		// Only need 1 end of track
-		// So take the last one and ignore the rest;
-		if ((num_na != 1) && (track[i]->status == 0xff) && (track[i]->data[0] == 0x2f))
-		{
-			track[i] = NULL;
-			continue;
-		}
-
-		if (current)
-		{
-			current->next = new midi_event;
-			current = current->next;
-		}
-		else
-			list = current = new midi_event;
-
-		current->next = NULL;
-
-		time = track[i]->time;
-		current->time = time;
-
-		current->status = track[i]->status;
-		current->data[0] = track[i]->data[0];
-		current->data[1] = track[i]->data[1];
-
-		current->len = track[i]->len;
-
-		if (current->len)
-		{
-			current->buffer = new unsigned char[current->len];
-			memcpy (current->buffer, track[i]->buffer, current->len);
-		}
-		else
-			current->buffer = NULL;
-
-		track[i] = track[i]->next;
-	}
-}
-
-
 // Converts Events
 //
 // Source is at the first data byte
@@ -778,55 +384,12 @@ int XMIDI::ConvertEvent (const int time, const unsigned char status, DataSource 
 
 		bank127[status&0xF] = FALSE;
 
-		if (convert_type == XMIDI_CONVERT_MT32_TO_GM || convert_type == XMIDI_CONVERT_MT32_TO_GS
-			|| convert_type == XMIDI_CONVERT_MT32_TO_GS127 ||
-			(convert_type == XMIDI_CONVERT_MT32_TO_GS127DRUM && (status&0xF) == 9))
-			return 2;
-
 		CreateNewEvent (time);
 		current->status = status;
 		current->data[0] = 0;
 		current->data[1] = data;
 
-		if (convert_type == XMIDI_CONVERT_GS127_TO_GS && data == 127)
-			bank127[status&0xF] = TRUE;
-
 		return 2;
-	}
-
-	// Handling for patch change mt32 conversion, probably should go elsewhere
-	if ((status >> 4) == 0xC && (status&0xF) != 9 && convert_type != XMIDI_CONVERT_NOCONVERSION)
-	{
-		if (convert_type == XMIDI_CONVERT_MT32_TO_GM)
-		{
-			data = mt32asgm[data];
-		}
-		else if ((convert_type == XMIDI_CONVERT_GS127_TO_GS && bank127[status&0xF]) ||
-				convert_type == XMIDI_CONVERT_MT32_TO_GS ||
-				convert_type == XMIDI_CONVERT_MT32_TO_GS127DRUM)
-		{
-			CreateNewEvent (time);
-			current->status = 0xB0 | (status&0xF);
-			current->data[0] = 0;
-			current->data[1] = mt32asgs[data*2+1];
-
-			data = mt32asgs[data*2];
-		}
-		else if (convert_type == XMIDI_CONVERT_MT32_TO_GS127)
-		{
-			CreateNewEvent (time);
-			current->status = 0xB0 | (status&0xF);
-			current->data[0] = 0;
-			current->data[1] = 127;
-		}
-	}	// Drum track handling
-	else if ((status >> 4) == 0xC && (status&0xF) == 9 &&
-		(convert_type == XMIDI_CONVERT_MT32_TO_GS127DRUM || convert_type == XMIDI_CONVERT_MT32_TO_GS127))
-	{
-		CreateNewEvent (time);
-		current->status = 0xB9;
-		current->data[0] = 0;
-		current->data[1] = 127;
 	}
 
 	CreateNewEvent (time);
@@ -894,35 +457,11 @@ int XMIDI::ConvertFiletoList (DataSource *source, const BOOL is_xmi)
 	int		play_size = 2;
 	unsigned int	file_size = source->getSize();
 
+	assert(is_xmi);
 	if (is_xmi) play_size = 3;
-
-	// Set Drum track to correct setting if required
-	if (convert_type == XMIDI_CONVERT_MT32_TO_GS127)
-	{
-		CreateNewEvent (0);
-		current->status = 0xB9;
-		current->data[0] = 0;
-		current->data[1] = 127;
-	}
 
 	while (!end && source->getPos() < file_size)
 	{
-
-		if (!is_xmi)
-		{
-			GetVLQ (source, data);
-			time += data;
-
-			data = source->read1();
-
-			if (data >= 0x80)
-			{
-				status = data;
-			}
-			else
-				source->skip (-1);
-		}
-		else
 		{
 			GetVLQ2 (source, data);
 			time += data*3;
@@ -1144,46 +683,6 @@ int XMIDI::ExtractTracksFromXmi (DataSource *source)
 	return num;
 }
 
-int XMIDI::ExtractTracksFromMid (DataSource *source)
-{
-	int	num = 0;
-	unsigned int	len = 0;
-	char	buf[32];
-
-	while (source->getPos() < source->getSize() && num != info.tracks)
-	{
-		// Read first 4 bytes of name
-		source->read (buf, 4);
-		len = source->read4high();
-
-		if (memcmp(buf,"MTrk",4))
-		{
-			source->skip (len);
-			continue;
-		}
-
-		list = NULL;
-		int begin = source->getPos ();
-
-		// Convert it
-		if (!ConvertFiletoList (source, FALSE))
-		{
-			cerr << "Unable to convert data" << endl;
-			break;
-		}
-
-		events[num] = list;
-
-		// Increment Counter
-		num++;
-		source->seek (begin+len);
-	}
-
-
-	// Return how many were converted
-	return num;
-}
-
 int XMIDI::ExtractTracks (DataSource *source)
 {
 	unsigned int		i = 0;
@@ -1318,93 +817,6 @@ int XMIDI::ExtractTracks (DataSource *source)
 		}
 
 		return 1;
-
-	}// Definately a Midi
-	else if (!memcmp (buf, "MThd", 4))
-	{
-		// Simple read length of header
-		len = source->read4high();
-
-		if (len < 6)
-		{
-			cerr << "Not a valid MIDI" << endl;
-			return 0;
-		}
-
-		info.type = source->read2high();
-
-		info.tracks = source->read2high();
-
-		events = new midi_event *[info.tracks];
-		timing = new short[info.tracks];
-		fixed = new BOOL[info.tracks];
-		timing[0] = source->read2high();
-		for (i = 0; i < info.tracks; i++)
-		{
-			timing[i] = timing[0];
-			events[i] = NULL;
-			fixed[i] = FALSE;
-		}
-
-		count = ExtractTracksFromMid (source);
-
-		if (count != info.tracks)
-		{
-			cerr << "Error: unable to extract all (" << info.tracks << ") tracks specified from MIDI. Only ("<< count << ")" << endl;
-
-			for (i = 0; i < info.tracks; i++)
-				DeleteEventList (events[i]);
-
-			delete [] events;
-			delete [] timing;
-
-			return 0;
-
-		}
-
-		return 1;
-
-	}// A RIFF Midi, just pass the source back to this function at the start of the midi file
-	else if (!memcmp (buf, "RIFF", 4))
-	{
-		// Read len
-		len = source->read4();
-
-		// Read 4 bytes of type
-		source->read (buf, 4);
-
-		// Not an RMID
-		if (memcmp (buf, "RMID", 4))
-		{
-			cerr << "Invalid RMID" << endl;
-			return 0;
-		}
-
-		// Is a RMID
-
-		for (i = 4; i < len; i++)
-		{
-			// Read 4 bytes of type
-			source->read (buf, 4);
-
-			chunk_len = source->read4();
-
-			i+=8;
-
-			if (memcmp (buf, "data", 4))
-			{
-				// Must allign
-				source->skip ((chunk_len+1)&~1);
-				i+= (chunk_len+1)&~1;
-				continue;
-			}
-
-			return ExtractTracks (source);
-
-		}
-
-		cerr << "Failed to find midi data in RIFF Midi" << endl;
-		return 0;
 	}
 
 	return 0;

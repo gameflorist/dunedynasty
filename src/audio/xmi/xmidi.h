@@ -29,11 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // Conversion types for Midi files
 #define XMIDI_CONVERT_NOCONVERSION	0
-#define XMIDI_CONVERT_MT32_TO_GM	1
-#define XMIDI_CONVERT_MT32_TO_GS	2
-#define XMIDI_CONVERT_MT32_TO_GS127	3 // This one is broken so don't use
-#define XMIDI_CONVERT_MT32_TO_GS127DRUM	4 // This one is broken so don't use
-#define XMIDI_CONVERT_GS127_TO_GS	5
 
 // Midi Status Bytes
 #define MIDI_STATUS_NOTE_OFF		0x8
@@ -95,10 +90,7 @@ private:
 	midi_event		*list;
 	midi_event		*current;
 
-	const static char	mt32asgm[128];
-	const static char	mt32asgs[256];
 	BOOL 			bank127[16];
-	int			convert_type;
 	BOOL			*fixed;
 
 public:
@@ -117,11 +109,7 @@ public:
 	int retrieve (unsigned int track, DataSource *dest);
 
 	// External Event list functions
-	int retrieve (unsigned int track, midi_event **dest, int &ppqn);
 	static void DeleteEventList (midi_event *mlist);
-
-	// Not yet implimented
-	// int apply_patch (int track, DataSource *source);
 
 private:
 	XMIDI(); // No default constructor
@@ -135,7 +123,6 @@ private:
 	int PutVLQ(DataSource *dest, unsigned int value);
 
 	void MovePatchVolAndPan (int channel = -1);
-	void DuplicateAndMerge (int num = 0);
 
 	int ConvertEvent (const int time, const unsigned char status, DataSource *source, const int size);
 	int ConvertSystemMessage (const int time, const unsigned char status, DataSource *source);
@@ -144,7 +131,6 @@ private:
 	unsigned int ConvertListToMTrk (DataSource *dest, midi_event *mlist);
 
 	int ExtractTracksFromXmi (DataSource *source);
-	int ExtractTracksFromMid (DataSource *source);
 
 	int ExtractTracks (DataSource *source);
 };
