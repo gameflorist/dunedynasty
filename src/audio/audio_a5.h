@@ -11,8 +11,7 @@ extern "C" {
 extern void AudioA5_Init(void);
 extern void AudioA5_Uninit(void);
 
-extern void AudioA5_InitAdlibMusic(const MusicInfo *mid);
-extern void AudioA5_InitMidiMusic(const MusicInfo *mid);
+extern void AudioA5_InitInternalMusic(const MusicInfo *mid);
 extern void AudioA5_InitExternalMusic(const MusicInfo *ext);
 extern void AudioA5_SetMusicVolume(float volume);
 extern void AudioA5_StopMusic(void);

@@ -7,6 +7,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/audio/adl/sound_adlib.cpp
 	src/audio/audio.c
 	src/audio/audio_a5.cpp
+	src/audio/mt32mpu.c
 	src/binheap.c
 	src/buildqueue.c
 	src/codec/format40.c
@@ -122,11 +123,13 @@ endif(WITH_AUD)
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES}
+	src/audio/midi_win32.c
 	src/os/error_win32.c
 	)
 else(WIN32)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES}
+	src/audio/midi_alsa.c
 	src/os/error.c
 	)
 endif(WIN32)
@@ -137,10 +140,7 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/audio/dsp_none.c
 	src/audio/dsp_sdl.c
 	src/audio/dsp_win32.c
-	src/audio/midi_alsa.c
 	src/audio/midi_none.c
-	src/audio/midi_win32.c
-	src/audio/mt32mpu.c
 	src/audio/sound.c
 	src/config.c
 	src/crashlog/crashlog.c

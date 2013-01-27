@@ -35,10 +35,13 @@ extern "C" {
 #endif /* WITH_MAD */
 
 #include "audio.h"
+#include "midi.h"
+#include "mt32mpu.h"
 #include "../common_a5.h"
 #include "../file.h"
 #include "../house.h"
 #include "../table/sound.h"
+#include "../timer/timer.h"
 }
 
 /* Sample instance 0 for narrator voices.
@@ -50,6 +53,7 @@ extern "C" {
 enum MusicStreamType {
 	MUSICSTREAM_NONE,
 	MUSICSTREAM_ADLIB,
+	MUSICSTREAM_MIDI,
 	MUSICSTREAM_FLUIDSYNTH,
 	MUSICSTREAM_FLAC,
 	MUSICSTREAM_MP3,
@@ -66,6 +70,7 @@ static enum MusicStreamType curr_music_stream_type;
 static ALLEGRO_AUDIO_STREAM *s_music_stream;
 static ALLEGRO_AUDIO_STREAM *s_effect_stream;
 static SoundAdlibPC *s_adlib;
+static ALLEGRO_THREAD *s_music_thread;
 static MIDI_PLAYER *s_fluid_player;
 static MP3 *s_mp3;
 static AUDSTREAM *s_aud;
@@ -75,14 +80,75 @@ static ALLEGRO_SAMPLE_INSTANCE *s_instance[MAX_SAMPLE_INSTANCES];
 static ALLEGRO_VOICE *al_voice;
 static ALLEGRO_MIXER *al_mixer;
 
+static char *AudioA5_LoadInternalMusic(const MusicInfo *mid, uint32 *ret_length);
 static void AudioA5_InitAdlibEffects(void);
 static void AudioA5_FreeMusicStream(void);
 
 /*--------------------------------------------------------------*/
 
+typedef struct MPUThreadArg {
+	const MusicInfo *mid;
+	uint8 *data;
+} MPUThreadArg;
+
+static void *
+MPU_ThreadProc(ALLEGRO_THREAD *thread, void *arg0)
+{
+	const uint32 size = MPU_GetDataSize();
+	MPUThreadArg *arg = (MPUThreadArg *)arg0;
+	uint8 musicBuffer_buffer[size];
+	uint16 musicBuffer_index = MPU_SetData(arg->data, arg->mid->track, musicBuffer_buffer);
+	MPU_Play(musicBuffer_index);
+	MPU_SetVolume(musicBuffer_index, 100 * music_volume, 0);
+
+	ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
+	ALLEGRO_TIMER *timer = al_create_timer(1.0 / 120.0);
+	assert(queue != NULL && timer != NULL);
+
+	al_register_event_source(queue, al_get_timer_event_source(timer));
+	al_start_timer(timer);
+
+	while (!al_get_thread_should_stop(thread)) {
+		ALLEGRO_EVENT event;
+		al_wait_for_event(queue, &event);
+
+		MPU_Interrupt();
+
+		if (MPU_IsPlaying(musicBuffer_index) != 1)
+			break;
+	}
+
+	MPU_Uninit();
+	delete[] arg->data;
+	delete arg;
+
+	al_destroy_event_queue(queue);
+	al_destroy_timer(timer);
+
+	al_set_thread_should_stop(thread);
+	return NULL;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+AudioA5_DisableMusicSet(enum MusicSet music_set)
+{
+	for (int musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
+		MusicList *l = &g_table_music[musicID];
+
+		for (int s = 0; s < l->length; s++) {
+			if (l->song[s].music_set == music_set)
+				l->song[s].enable &=~MUSIC_FOUND;
+		}
+	}
+}
+
 void
 AudioA5_Init(void)
 {
+	bool enable_midi = false;
+
 	if (!al_install_audio()) {
 		fprintf(stderr, "al_install_audio() failed.\n");
 		goto audio_init_failed;
@@ -114,6 +180,14 @@ AudioA5_Init(void)
 	al_init_acodec_addon();
 #endif
 
+	/* Initialise MIDI player. */
+	if (g_table_music_set[MUSICSET_DUNE2_MIDI].enable)
+		enable_midi = midi_init();
+
+	if (!enable_midi)
+		AudioA5_DisableMusicSet(MUSICSET_DUNE2_MIDI);
+
+	/* Initialise FluidSynth. */
 	if (g_table_music_set[MUSICSET_FLUIDSYNTH].enable && (sound_font_path[0] != '\0')) {
 		s_fluid_player = create_midi_player(sound_font_path);
 
@@ -127,14 +201,7 @@ AudioA5_Init(void)
 	}
 
 	if (s_fluid_player == NULL) {
-		for (int musicID = MUSIC_STOP; musicID < MUSICID_MAX; musicID++) {
-			MusicList *l = &g_table_music[musicID];
-
-			for (int s = 0; s < l->length; s++) {
-				if (l->song[s].music_set == MUSICSET_FLUIDSYNTH)
-					l->song[s].enable &=~MUSIC_FOUND;
-			}
-		}
+		AudioA5_DisableMusicSet(MUSICSET_FLUIDSYNTH);
 	}
 
 	AudioA5_InitAdlibEffects();
@@ -175,6 +242,8 @@ AudioA5_Uninit(void)
 		s_adlib = NULL;
 	}
 
+	midi_uninit();
+
 	if (s_fluid_player != NULL) {
 		destroy_midi_player(s_fluid_player);
 		s_fluid_player = NULL;
@@ -198,6 +267,7 @@ AudioA5_LoadInternalMusic(const MusicInfo *mid, uint32 *ret_length)
 	}
 
 	uint32 length = File_GetSize(file_index);
+	assert(length != 0);
 
 	char *buf = new char[length];
 	if (buf == NULL) {
@@ -300,6 +370,11 @@ AudioA5_FreeMusicStream(void)
 			}
 			break;
 
+		case MUSICSTREAM_MIDI:
+			al_destroy_thread(s_music_thread);
+			s_music_thread = NULL;
+			break;
+
 		case MUSICSTREAM_FLUIDSYNTH:
 			stop_midi_player(s_fluid_player);
 
@@ -341,7 +416,7 @@ AudioA5_FreeMusicStream(void)
 	}
 }
 
-void
+static void
 AudioA5_InitAdlibMusic(const MusicInfo *mid)
 {
 	const int track = mid->track;
@@ -370,8 +445,37 @@ AudioA5_InitAdlibEffects(void)
 		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1].song[0]);
 }
 
-void
+static void
 AudioA5_InitMidiMusic(const MusicInfo *mid)
+{
+	AudioA5_FreeMusicStream();
+	AudioA5_InitAdlibEffects();
+
+	MPU_Init();
+
+	/* Load music into memory in the main thread, otherwise the files
+	 * loaded array s_file might get corrupted.
+	 */
+	MPUThreadArg *arg = new MPUThreadArg;
+	uint32 length;
+	arg->mid = mid;
+	arg->data = (uint8 *)AudioA5_LoadInternalMusic(mid, &length);
+	assert(arg->data != NULL);
+
+	s_music_thread = al_create_thread(MPU_ThreadProc, (void *)arg);
+	if (s_music_thread == NULL) {
+		curr_music_stream_type = MUSICSTREAM_NONE;
+		delete[] arg->data;
+		delete arg;
+		return;
+	}
+
+	curr_music_stream_type = MUSICSTREAM_MIDI;
+	al_start_thread(s_music_thread);
+}
+
+static void
+AudioA5_InitFluidsynthMusic(const MusicInfo *mid)
 {
 	const int track = mid->track;
 
@@ -397,6 +501,20 @@ AudioA5_InitMidiMusic(const MusicInfo *mid)
 	al_set_audio_stream_pan(s_music_stream, ALLEGRO_AUDIO_PAN_NONE);
 	al_attach_audio_stream_to_mixer(s_music_stream, al_mixer);
 	curr_music_stream_type = MUSICSTREAM_FLUIDSYNTH;
+}
+
+void
+AudioA5_InitInternalMusic(const MusicInfo *mid)
+{
+	if (mid->music_set == MUSICSET_DUNE2_ADLIB) {
+		AudioA5_InitAdlibMusic(mid);
+	}
+	else if (mid->music_set == MUSICSET_DUNE2_MIDI) {
+		AudioA5_InitMidiMusic(mid);
+	}
+	else {
+		AudioA5_InitFluidsynthMusic(mid);
+	}
 }
 
 void
@@ -457,6 +575,11 @@ AudioA5_SetMusicVolume(float volume)
 {
 	if (s_music_stream != NULL)
 		al_set_audio_stream_gain(s_music_stream, volume);
+
+	if (curr_music_stream_type == MUSICSTREAM_MIDI) {
+		for (int i = 0; i < 8; i++)
+			MPU_SetVolume(i, 100 * volume, 1000);
+	}
 }
 
 void
@@ -474,6 +597,7 @@ AudioA5_StopMusic(void)
 				s_adlib->haltTrack();
 			break;
 
+		case MUSICSTREAM_MIDI:
 		case MUSICSTREAM_FLUIDSYNTH:
 		case MUSICSTREAM_FLAC:
 		case MUSICSTREAM_MP3:
@@ -529,7 +653,7 @@ AudioA5_PollMusic(void)
 bool
 AudioA5_MusicIsPlaying(void)
 {
-	if (s_music_stream == NULL)
+	if (s_music_stream == NULL && s_music_thread == NULL)
 		return false;
 
 	switch (curr_music_stream_type) {
@@ -539,6 +663,9 @@ AudioA5_MusicIsPlaying(void)
 
 		case MUSICSTREAM_ADLIB:
 			return s_adlib->isPlaying();
+
+		case MUSICSTREAM_MIDI:
+			return (s_music_thread != NULL) && (!al_get_thread_should_stop(s_music_thread));
 
 		case MUSICSTREAM_FLUIDSYNTH:
 			return get_midi_playing(s_fluid_player);

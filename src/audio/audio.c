@@ -207,12 +207,7 @@ Audio_PlayMusic(enum MusicID musicID)
 	}
 
 	if (m->music_set <= MUSICSET_FLUIDSYNTH) {
-		if (m->music_set == MUSICSET_DUNE2_ADLIB) {
-			AudioA5_InitAdlibMusic(m);
-		}
-		else {
-			AudioA5_InitMidiMusic(m);
-		}
+		AudioA5_InitInternalMusic(m);
 	}
 	else {
 		AudioA5_InitExternalMusic(m);

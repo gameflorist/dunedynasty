@@ -10,15 +10,16 @@
 #include "../os/endian.h"
 #include "../os/error.h"
 #include "../os/sleep.h"
-#include "../os/thread.h"
 
 #include "mt32mpu.h"
 
 #include "midi.h"
 
+#if 0
 static Semaphore s_mpu_sem = NULL;
 static Thread s_mpu_thread = NULL;
 static uint32 s_mpu_usec = 0;
+#endif
 
 typedef struct Controls {
 	uint8 volume;
@@ -92,7 +93,7 @@ static void MPU_ApplyVolume(MSData *data)
 		uint8 volume;
 
 		volume = data->controls[i].volume;
-		if (volume == 0xFF) continue;
+		/* if (volume == 0xFF) continue; */
 
 		volume = min((volume * data->variable_0024) / 100, 127);
 
@@ -792,6 +793,7 @@ uint16 MPU_GetDataSize(void)
 	return sizeof(MSData);
 }
 
+#if 0
 static int MPU_ThreadProc(void *data)
 {
 	Semaphore_Lock(s_mpu_sem);
@@ -802,11 +804,13 @@ static int MPU_ThreadProc(void *data)
 	Semaphore_Unlock(s_mpu_sem);
 	return 0;
 }
+#endif
 
 bool MPU_Init(void)
 {
 	uint8 i;
 
+#if 0
 	if (!midi_init()) return false;
 
 	s_mpu_sem = Semaphore_Create(0);
@@ -821,6 +825,7 @@ bool MPU_Init(void)
 		Semaphore_Destroy(s_mpu_sem);
 		return false;
 	}
+#endif
 
 	s_mpu_msdataSize = 0;
 	s_mpu_msdataCurrent = 0;
@@ -890,10 +895,14 @@ void MPU_Uninit(void)
 
 	s_mpu_initialized = false;
 
+#if 0
 	midi_uninit();
 	s_mpuIgnore = false;
 
 	Semaphore_Destroy(s_mpu_sem);
+#else
+	s_mpuIgnore = false;
+#endif
 }
 
 void MPU_ClearData(uint16 index)
@@ -921,6 +930,7 @@ void MPU_SetVolume(uint16 index, uint16 volume, uint16 arg0C)
 	if (index == 0xFFFF) return;
 
 	data = s_mpu_msdata[index];
+	if (data == NULL) return;
 
 	data->variable_0026 = volume;
 
@@ -938,6 +948,7 @@ void MPU_SetVolume(uint16 index, uint16 volume, uint16 arg0C)
 	data->variable_0028 = 0;
 }
 
+#if 0
 void MPU_StartThread(uint32 usec)
 {
 	s_mpu_usec = usec;
@@ -949,3 +960,4 @@ void MPU_StopThread(void)
 	Semaphore_Unlock(s_mpu_sem);
 	Thread_Wait(s_mpu_thread, NULL);
 }
+#endif
