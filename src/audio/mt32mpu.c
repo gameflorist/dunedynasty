@@ -320,7 +320,8 @@ static void MPU_Control(MSData *data, uint8 chan, uint8 data1, uint8 data2)
 
 		case 115: assert(0); /* Not decompiled code */
 
-		case 116: {
+		case 116: { /* EMIDI Track loop begin. */
+#if 0
 			uint8 i;
 
 			for (i = 0; i < 4; i++) {
@@ -330,9 +331,11 @@ static void MPU_Control(MSData *data, uint8 chan, uint8 data1, uint8 data2)
 					break;
 				}
 			}
+#endif
 		} break;
 
-		case 117: {
+		case 117: { /* EMIDI Track loop end. */
+#if 0
 			uint8 i;
 
 			if (data2 < 64) break;
@@ -347,6 +350,7 @@ static void MPU_Control(MSData *data, uint8 chan, uint8 data1, uint8 data2)
 					break;
 				}
 			}
+#endif
 		} break;
 
 		case 118: case 119: assert(0); /* Not decompiled code */
