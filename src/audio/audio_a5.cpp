@@ -235,6 +235,7 @@ AudioA5_InitAdlib(const MusicInfo *mid)
 	delete[] buf;
 
 	al_set_audio_stream_gain(stream, music_volume);
+	al_set_audio_stream_pan(stream, ALLEGRO_AUDIO_PAN_NONE);
 	al_attach_audio_stream_to_mixer(stream, al_mixer);
 	al_register_event_source(g_a5_input_queue, al_get_audio_stream_event_source(stream));
 	return stream;
@@ -393,6 +394,7 @@ AudioA5_InitMidiMusic(const MusicInfo *mid)
 
 	s_music_stream = get_midi_player_audio_stream(s_fluid_player);
 	al_set_audio_stream_gain(s_music_stream, music_volume);
+	al_set_audio_stream_pan(s_music_stream, ALLEGRO_AUDIO_PAN_NONE);
 	al_attach_audio_stream_to_mixer(s_music_stream, al_mixer);
 	curr_music_stream_type = MUSICSTREAM_FLUIDSYNTH;
 }
@@ -445,6 +447,7 @@ AudioA5_InitExternalMusic(const MusicInfo *ext)
 	s_mp3 = next_mp3;
 	s_aud = next_aud;
 	al_set_audio_stream_gain(s_music_stream, music_volume * ext->volume);
+	al_set_audio_stream_pan(s_music_stream, ALLEGRO_AUDIO_PAN_NONE);
 	al_attach_audio_stream_to_mixer(s_music_stream, al_mixer);
 	curr_music_stream_type = next_music_stream_type;
 }
