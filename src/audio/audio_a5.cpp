@@ -459,6 +459,9 @@ AudioA5_SetMusicVolume(float volume)
 void
 AudioA5_StopMusic(void)
 {
+	/* The difference between this and AudioA5_FreeMusicStream is that
+	 * we retain Adlib for sound effects.
+	 */
 	switch (curr_music_stream_type) {
 		case MUSICSTREAM_NONE:
 			return;
@@ -469,21 +472,11 @@ AudioA5_StopMusic(void)
 			break;
 
 		case MUSICSTREAM_MIDI:
-			if (s_midi != NULL) {
-				stop_midi_player(s_midi);
-
-				if (s_music_stream != NULL) {
-					al_detach_audio_stream(s_music_stream);
-					s_music_stream = NULL;
-				}
-			}
-			break;
-
 		case MUSICSTREAM_FLAC:
 		case MUSICSTREAM_MP3:
 		case MUSICSTREAM_OGG:
 		case MUSICSTREAM_AUD:
-			al_set_audio_stream_playing(s_music_stream, false);
+			AudioA5_FreeMusicStream();
 			break;
 	}
 }
