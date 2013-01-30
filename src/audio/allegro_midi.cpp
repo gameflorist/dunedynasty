@@ -87,7 +87,7 @@ play_xmidi(MIDI_PLAYER *pl, char *data, unsigned int length, int track)
 {
     bool ok;
 
-    stop_midi_player(pl);
+    /* stop_midi_player(pl); */
 
     ok = true;
 
