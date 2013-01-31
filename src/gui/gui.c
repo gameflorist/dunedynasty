@@ -332,13 +332,12 @@ void GUI_DrawChar_(unsigned char c, int x, int y)
 void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour)
 {
 	uint8 colours[2];
-	uint16 x;
+	int x;
 	uint16 y;
 	const char *s;
 
 	if (g_fontCurrent == NULL) return;
 
-	if (left < 0) left = 0;
 	if (top  < 0) top  = 0;
 	if (left > TRUE_DISPLAY_WIDTH) return;
 	if (top  > TRUE_DISPLAY_HEIGHT) return;
