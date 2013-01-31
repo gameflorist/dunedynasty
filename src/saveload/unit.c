@@ -58,7 +58,7 @@ static const SaveLoadDesc s_saveUnitNew[] = {
 
 static const SaveLoadDesc s_saveUnit2[] = {
 	SLD_ENTRY (Unit, SLDT_UINT16, o.index),
-	SLD_ENTRY2(Unit, SLDT_UINT8,  deviationHouse, SLDT_UINT32),
+	SLD_EMPTY (      SLDT_UINT8), /* Was deviatedHouse before OpenDUNE implemented it. */
 	SLD_ENTRY2(Unit, SLDT_UINT8,  squadID,        SLDT_UINT32),
 	SLD_ENTRY2(Unit, SLDT_UINT8,  aiSquad,        SLDT_UINT32),
 	SLD_END
@@ -107,7 +107,6 @@ bool Unit_Load(FILE *fp, uint32 length)
 		*u = ul;
 
 		/* Extra data. */
-		u->deviationHouse = HOUSE_ORDOS;
 		u->squadID = SQUADID_INVALID;
 		u->aiSquad = SQUADID_INVALID;
 	}
@@ -222,7 +221,6 @@ Unit_Load2(FILE *fp, uint32 length)
 			return false;
 
 		/* Extra data. */
-		u->deviationHouse = ul.deviationHouse;
 		u->squadID = ul.squadID;
 		u->aiSquad = ul.aiSquad;
 	}

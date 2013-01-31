@@ -131,6 +131,7 @@ static bool GameLoop_IsLevelFinished(void)
 			s = Structure_Find(&find);
 			if (s == NULL) break;
 
+			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
 
@@ -197,7 +198,7 @@ static bool GameLoop_IsLevelWon(void)
 			s = Structure_Find(&find);
 			if (s == NULL) break;
 
-			if (s->o.type == STRUCTURE_WALL) continue;
+			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
 
@@ -237,19 +238,6 @@ static bool GameLoop_IsLevelWon(void)
 	return win;
 }
 
-#if 0
-/* Moved to cutscene.c. */
-static void GameLoop_PrepareAnimation(const HouseAnimation_Animation *animation, const HouseAnimation_Subtitle *subtitle, uint16 arg_8062, const HouseAnimation_SoundEffect *soundEffect);
-static void Memory_ClearBlock(Screen index);
-static void GameLoop_FinishAnimation(void);
-static void GameLoop_PlaySoundEffect(uint8 animation);
-static void GameLoop_DrawText(char *string, uint16 top);
-static void GameLoop_PlaySubtitle(uint8 animation);
-static uint16 GameLoop_PalettePart_Update(bool finishNow);
-static void GameLoop_PlayAnimation(void);
-static void GameLoop_LevelEndAnimation(void);
-#endif
-
 void GameLoop_Uninit(void)
 {
 	while (g_widgetLinkedListHead != NULL) {
@@ -264,14 +252,6 @@ void GameLoop_Uninit(void)
 
 	free(g_readBuffer); g_readBuffer = NULL;
 }
-
-#if 0
-static void GameCredits_SwapScreen(uint16 top, uint16 height, Screen screenID, void *buffer);
-static void GameCredits_Play(char *data, uint16 windowID, Screen memory, Screen screenID, uint16 delay);
-static void GameCredits_LoadPalette(void);
-static void GameLoop_GameCredits(void);
-static void GameLoop_GameEndAnimation(void);
-#endif
 
 /**
  * Checks if the level comes to an end. If so, it shows all end-level stuff,
@@ -363,15 +343,10 @@ static void GameLoop_LevelEnd(void)
 }
 
 #if 0
-/* Moved to cutscene.c. */
-static void Gameloop_Logos(void);
-static void GameLoop_GameIntroAnimation(void);
-
-static uint16 GameLoop_B4E6_0000(uint16 arg06, uint32 arg08, uint16 arg0C);
-static void GameLoop_B4E6_0108(uint16 arg06, char **strings, uint32 arg0C, uint16 arg10, uint16 arg12);
+static void GameLoop_DrawMenu(char **strings);
 static void GameLoop_DrawText2(char *string, uint16 left, uint16 top, uint8 fgColourNormal, uint8 fgColourSelected, uint8 bgColour);
 static bool GameLoop_IsInRange(uint16 x, uint16 y, uint16 minX, uint16 minY, uint16 maxX, uint16 maxY);
-static uint16 GameLoop_HandleEvents(uint16 arg06, char **strings, uint32 arg10, uint16 arg14);
+static uint16 GameLoop_HandleEvents(char **strings);
 #endif
 
 static void Window_WidgetClick_Create(void)
@@ -409,311 +384,6 @@ static void Window_WidgetClick_Create(void)
 /* Moved to scenario.c. */
 static void ReadProfileIni(void);
 #endif
-
-/**
- * Intro menu.
- */
-static void GameLoop_GameIntroAnimationMenu(void)
-{
-#if 0
-	static const uint16 mainMenuStrings[][6] = {
-		{STR_PLAY_A_GAME, STR_REPLAY_INTRODUCTION, STR_EXIT_GAME, STR_NULL,         STR_NULL,         STR_NULL}, /* Neither HOF nor save. */
-		{STR_PLAY_A_GAME, STR_REPLAY_INTRODUCTION, STR_LOAD_GAME, STR_EXIT_GAME,    STR_NULL,         STR_NULL}, /* Has a save game. */
-		{STR_PLAY_A_GAME, STR_REPLAY_INTRODUCTION, STR_EXIT_GAME, STR_HALL_OF_FAME, STR_NULL,         STR_NULL}, /* Has a HOF. */
-		{STR_PLAY_A_GAME, STR_REPLAY_INTRODUCTION, STR_LOAD_GAME, STR_EXIT_GAME,    STR_HALL_OF_FAME, STR_NULL}  /* Has a HOF and a save game. */
-	};
-
-	bool loc02 = false;
-
-	Input_Flags_SetBits(INPUT_FLAG_KEY_REPEAT | INPUT_FLAG_UNKNOWN_0010 | INPUT_FLAG_UNKNOWN_0200 |
-	                    INPUT_FLAG_UNKNOWN_2000);
-	Input_Flags_ClearBits(INPUT_FLAG_KEY_RELEASE | INPUT_FLAG_UNKNOWN_0400 | INPUT_FLAG_UNKNOWN_0100 |
-	                      INPUT_FLAG_UNKNOWN_0080 | INPUT_FLAG_UNKNOWN_0040 | INPUT_FLAG_UNKNOWN_0020 |
-	                      INPUT_FLAG_UNKNOWN_0008 | INPUT_FLAG_UNKNOWN_0004 | INPUT_FLAG_NO_TRANSLATE);
-#endif
-
-	Timer_SetTimer(TIMER_GUI, true);
-
-	g_campaignID = 0;
-	g_scenarioID = 1;
-	g_playerHouseID = HOUSE_INVALID;
-	g_debugScenario = false;
-	g_selectionType = SELECTIONTYPE_MENTAT;
-	g_selectionTypeNew = SELECTIONTYPE_MENTAT;
-
-	memset(g_palette1, 0, 3 * 256);
-	memset(g_palette2, 0, 3 * 256);
-
-	g_readBufferSize = 0x2EE0;
-	g_readBuffer = calloc(1, g_readBufferSize);
-
-	/* ReadProfileIni("PROFILE.INI"); */
-
-	free(g_readBuffer); g_readBuffer = NULL;
-
-	File_ReadBlockFile("IBM.PAL", g_palette_998A, 256 * 3);
-
-	memmove(g_palette1, g_palette_998A, 256 * 3);
-
-	GUI_ClearScreen(SCREEN_0);
-
-	GFX_SetPalette(g_palette1);
-	GFX_SetPalette(g_palette2);
-
-	GUI_Palette_CreateMapping(g_palette1, g_paletteMapping1, 0xC, 0x55);
-	g_paletteMapping1[0xFF] = 0xFF;
-	g_paletteMapping1[0xDF] = 0xDF;
-	g_paletteMapping1[0xEF] = 0xEF;
-
-	GUI_Palette_CreateMapping(g_palette1, g_paletteMapping2, 0xF, 0x55);
-	g_paletteMapping2[0xFF] = 0xFF;
-	g_paletteMapping2[0xDF] = 0xDF;
-	g_paletteMapping2[0xEF] = 0xEF;
-
-	Script_LoadFromFile("TEAM.EMC", g_scriptTeam, g_scriptFunctionsTeam, NULL);
-	Script_LoadFromFile("BUILD.EMC", g_scriptStructure, g_scriptFunctionsStructure, NULL);
-
-	GUI_Palette_CreateRemap(HOUSE_MERCENARY);
-
-	Video_SetCursor(SHAPE_CURSOR_NORMAL);
-
-#if 0
-	while (g_mouseHiddenDepth > 1) {
-		GUI_Mouse_Show_Safe();
-	}
-#endif
-
-	Window_WidgetClick_Create();
-	Unit_Init();
-	UnitAI_ClearSquads();
-	Team_Init();
-	House_Init();
-	Structure_Init();
-
-#if 0
-	if (!g_debugSkipDialogs) {
-		uint16 stringID;
-		uint16 maxWidth;
-		bool hasSave;
-		bool hasFame;
-		bool loc06 = true;
-		bool loc10;
-
-		loc10 = true;
-
-		hasSave = File_Exists_Personal("_SAVE000.DAT");
-		hasFame = File_Exists_Personal("SAVEFAME.DAT");
-
-		stringID = STR_REPLAY_INTRODUCTION;
-
-		for (;; sleepIdle()) {
-			char *strings[6];
-
-			switch (stringID) {
-				case STR_REPLAY_INTRODUCTION:
-					Music_Play(0);
-
-					free(g_readBuffer);
-					g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x6D60;
-					g_readBuffer = calloc(1, g_readBufferSize);
-
-					GUI_Mouse_Hide_Safe();
-
-					Driver_Music_FadeOut();
-
-					GameLoop_GameIntroAnimation();
-
-					Sound_Output_Feedback(0xFFFE);
-
-					File_ReadBlockFile("IBM.PAL", g_palette_998A, 256 * 3);
-					memmove(g_palette1, g_palette_998A, 256 * 3);
-
-					Music_Play(0);
-
-					free(g_readBuffer);
-					g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x4E20;
-					g_readBuffer = calloc(1, g_readBufferSize);
-
-					GUI_Mouse_Show_Safe();
-
-					Music_Play(28);
-
-					loc06 = true;
-					break;
-
-				case STR_EXIT_GAME:
-					PrepareEnd();
-					exit(0);
-					break;
-
-				case STR_HALL_OF_FAME:
-					GUI_HallOfFame_Show(0xFFFF);
-
-					GFX_SetPalette(g_palette2);
-
-					hasFame = File_Exists_Personal("SAVEFAME.DAT");
-					loc06 = true;
-					break;
-
-				case STR_LOAD_GAME:
-					GUI_Mouse_Hide_Safe();
-					GUI_SetPaletteAnimated(g_palette2, 30);
-					GUI_ClearScreen(SCREEN_0);
-					GUI_Mouse_Show_Safe();
-
-					GFX_SetPalette(g_palette1);
-
-					if (GUI_Widget_SaveLoad_Click(false)) {
-						loc02 = true;
-						loc10 = false;
-						if (g_gameMode == GM_RESTART) break;
-						g_gameMode = GM_NORMAL;
-					} else {
-						GFX_SetPalette(g_palette2);
-
-						loc06 = true;
-					}
-					break;
-
-				default: break;
-			}
-
-			if (loc06) {
-				uint16 index = (hasFame ? 2 : 0) + (hasSave ? 1 : 0);
-				uint16 i;
-
-				g_widgetProperties[21].height = 0;
-
-				for (i = 0; i < 6; i++) {
-					strings[i] = NULL;
-
-					if (mainMenuStrings[index][i] == 0) {
-						if (g_widgetProperties[21].height == 0) g_widgetProperties[21].height = i;
-						continue;
-					}
-
-					strings[i] = String_Get_ByIndex(mainMenuStrings[index][i]);
-				}
-
-				GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
-
-				maxWidth = 0;
-
-				for (i = 0; i < g_widgetProperties[21].height; i++) {
-					if (Font_GetStringWidth(strings[i]) <= maxWidth) continue;
-					maxWidth = Font_GetStringWidth(strings[i]);
-				}
-
-				maxWidth += 7;
-
-				g_widgetProperties[21].width  = maxWidth;
-				g_widgetProperties[13].width  = g_widgetProperties[21].width + 2*8;
-				g_widgetProperties[13].xBase  = 19*8 - maxWidth;
-				g_widgetProperties[13].yBase  = 160 - ((g_widgetProperties[21].height * g_fontCurrent->height) >> 1);
-				g_widgetProperties[13].height = (g_widgetProperties[21].height * g_fontCurrent->height) + 11;
-
-				Sprites_LoadImage(String_GenerateFilename("TITLE"), SCREEN_1, NULL);
-
-				GUI_Mouse_Hide_Safe();
-
-				GUI_ClearScreen(SCREEN_0);
-
-				GUI_Screen_Copy(0, 0, 0, 0, SCREEN_WIDTH / 8, SCREEN_HEIGHT, SCREEN_1, SCREEN_0);
-
-				GUI_SetPaletteAnimated(g_palette1, 30);
-
-				GUI_DrawText_Wrapper("V1.07", 319, 192, 133, 0, 0x231, 0x39);
-				GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
-
-				Widget_SetCurrentWidget(13);
-
-				GUI_Widget_DrawBorder(13, 2, 1);
-
-				GameLoop_B4E6_0108(0, strings, 0xFFFF, 0, 0);
-
-				GUI_Mouse_Show_Safe();
-
-				loc06 = false;
-			}
-
-			if (!loc10) break;
-
-			stringID = GameLoop_HandleEvents(0, strings, 0xFF, 0);
-
-			if (stringID != 0xFFFF) {
-				uint16 index = (hasFame ? 2 : 0) + (hasSave ? 1 : 0);
-				stringID = mainMenuStrings[index][stringID];
-			}
-
-			GUI_PaletteAnimate();
-
-			if (stringID == STR_PLAY_A_GAME) break;
-		}
-	} else {
-		Audio_PlayMusic(MUSIC_STOP);
-
-		free(g_readBuffer);
-		g_readBufferSize = (g_enableVoices == 0) ? 0x2EE0 : 0x4E20;
-		g_readBuffer = calloc(1, g_readBufferSize);
-	}
-
-	GUI_DrawFilledRectangle(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase + g_curWidgetWidth, g_curWidgetYBase + g_curWidgetHeight, 12);
-
-	if (!loc02) {
-		Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
-
-		GUI_SetPaletteAnimated(g_palette2, 15);
-
-		GUI_ClearScreen(SCREEN_0);
-	}
-
-	Input_History_Clear();
-
-	if (s_enableLog != 0) Mouse_SetMouseMode((uint8)s_enableLog, "DUNE.LOG");
-
-	if (!loc02) {
-		if (g_playerHouseID == HOUSE_INVALID) {
-			GUI_Mouse_Show_Safe();
-
-			g_playerHouseID = HOUSE_MERCENARY;
-			g_playerHouseID = GUI_PickHouse();
-
-			GUI_Mouse_Hide_Safe();
-		}
-
-		Sprites_LoadTiles();
-
-		GUI_Palette_CreateRemap(g_playerHouseID);
-
-		Voice_LoadVoices(g_playerHouseID);
-
-		GUI_Mouse_Show_Safe();
-
-		if (g_campaignID != 0) g_scenarioID = GUI_StrategicMap_Show(g_campaignID, true);
-
-		Game_LoadScenario(g_playerHouseID, g_scenarioID);
-		if (!g_debugScenario && !g_debugSkipDialogs) GUI_Mentat_ShowBriefing();
-
-		GUI_Mouse_Hide_Safe();
-
-		GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
-	}
-#else
-	{
-		Audio_PlayMusic(MUSIC_STOP);
-
-		free(g_readBuffer);
-		g_readBufferSize = 0x6D60;
-		g_readBuffer = calloc(1, g_readBufferSize);
-
-		Menu_Run();
-	}
-#endif
-
-	GFX_SetPalette(g_palette1);
-
-	return;
-}
 
 /* Process input not caught by widgets, including keypad scrolling,
  * squad selection, and changing zoom levels.  Also handles screen
@@ -1030,6 +700,72 @@ GameLoop_TweakWidgetDimensions(void)
 	g_factoryWindowTotal = -1;
 
 	Window_WidgetClick_Create();
+}
+
+/**
+ * Intro menu.
+ */
+static void GameLoop_GameIntroAnimationMenu(void)
+{
+	Timer_SetTimer(TIMER_GUI, true);
+
+	g_campaignID = 0;
+	g_scenarioID = 1;
+	g_playerHouseID = HOUSE_INVALID;
+	g_debugScenario = false;
+	g_selectionType = SELECTIONTYPE_MENTAT;
+	g_selectionTypeNew = SELECTIONTYPE_MENTAT;
+
+	memset(g_palette1, 0, 3 * 256);
+	memset(g_palette2, 0, 3 * 256);
+
+	g_readBufferSize = 12000;
+	g_readBuffer = NULL;
+
+	File_ReadBlockFile("IBM.PAL", g_palette_998A, 256 * 3);
+
+	memmove(g_palette1, g_palette_998A, 256 * 3);
+
+	GUI_ClearScreen(SCREEN_0);
+
+	GFX_SetPalette(g_palette1);
+	GFX_SetPalette(g_palette2);
+
+	GUI_Palette_CreateMapping(g_palette1, g_paletteMapping1, 0xC, 0x55);
+	g_paletteMapping1[0xFF] = 0xFF;
+	g_paletteMapping1[0xDF] = 0xDF;
+	g_paletteMapping1[0xEF] = 0xEF;
+
+	GUI_Palette_CreateMapping(g_palette1, g_paletteMapping2, 0xF, 0x55);
+	g_paletteMapping2[0xFF] = 0xFF;
+	g_paletteMapping2[0xDF] = 0xDF;
+	g_paletteMapping2[0xEF] = 0xEF;
+
+	Script_LoadFromFile("TEAM.EMC", g_scriptTeam, g_scriptFunctionsTeam, NULL);
+	Script_LoadFromFile("BUILD.EMC", g_scriptStructure, g_scriptFunctionsStructure, NULL);
+
+	GUI_Palette_CreateRemap(HOUSE_MERCENARY);
+
+	Video_SetCursor(SHAPE_CURSOR_NORMAL);
+
+	Window_WidgetClick_Create();
+	Unit_Init();
+	UnitAI_ClearSquads();
+	Team_Init();
+	House_Init();
+	Structure_Init();
+
+	{
+		Audio_PlayMusic(MUSIC_STOP);
+
+		free(g_readBuffer);
+		g_readBufferSize = 0x6D60;
+		g_readBuffer = calloc(1, g_readBufferSize);
+
+		Menu_Run();
+	}
+
+	GFX_SetPalette(g_palette1);
 }
 
 /**
@@ -1382,6 +1118,7 @@ void Game_Prepare(void)
 
 		s = Structure_Find(&find);
 		if (s == NULL) break;
+		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
 		if (s->o.flags.s.isNotOnMap) continue;
 

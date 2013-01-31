@@ -951,6 +951,7 @@ StartGame_Loop(bool new_game)
 	A5_UseTransform(SCREENDIV_MENU);
 
 	switch (g_gameMode) {
+		case GM_MENU:
 		case GM_NORMAL:
 			break;
 

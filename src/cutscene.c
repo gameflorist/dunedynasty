@@ -377,15 +377,6 @@ static void GameLoop_PrepareAnimation(const HouseAnimation_Animation *animation,
 	GUI_InitColors(colors, 0, 15);
 }
 
-/**
- * Clears the given memory block.
- * @param index The memory block.
- */
-static void Memory_ClearBlock(Screen index)
-{
-	memset(GFX_Screen_Get_ByIndex(index), 0, GFX_Screen_GetSize_ByIndex(index));
-}
-
 static void GameLoop_FinishAnimation(void)
 {
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x1);
@@ -397,7 +388,7 @@ static void GameLoop_FinishAnimation(void)
 
 	Input_History_Clear();
 
-	Memory_ClearBlock(SCREEN_3);
+	GFX_ClearBlock(SCREEN_3);
 
 	File_ReadBlockFile("IBM.PAL", g_palette1, 3 * 256);
 	memcpy(g_palette_998A, g_palette1, 3 * 256);
@@ -1330,19 +1321,6 @@ static void Gameloop_Logos(void)
 		Audio_PollMusic();
 		sleepIdle();
 	}
-
-#if 0
-	for (; g_timerTimeout != 0; sleepIdle()) {
-		if (Input_Keyboard_NextKey() == 0 || !s_var_37B4) continue;
-
-		GUI_SetPaletteAnimated(g_palette2, 30);
-
-		GUI_ClearScreen(SCREEN_0);
-
-		GFX_Screen_SetActive(oldScreenID);
-		return;
-	}
-#endif
 
 	Cutscene_SetPaletteAnimated(g_palette2, 60);
 

@@ -7,12 +7,13 @@
 #include "types.h"
 
 typedef enum GameMode {
-	GM_NORMAL    = 0,
-	GM_RESTART   = 1,
-	GM_PICKHOUSE = 2,
-	GM_WIN       = 3,
-	GM_LOSE      = 4,
-	GM_QUITGAME  = 5
+	GM_MENU      = 0,
+	GM_NORMAL    = 1,
+	GM_RESTART   = 2,
+	GM_PICKHOUSE = 3,
+	GM_WIN       = 4,
+	GM_LOSE      = 5,
+	GM_QUITGAME  = 6
 } GameMode;
 
 enum GameOverlay {
@@ -72,7 +73,6 @@ extern void *g_readBuffer;
 extern uint32 g_readBufferSize;
 
 extern void Main(void);
-extern void GameLoop_Uninit(void);
 extern void GameLoop_TweakWidgetDimensions(void);
 extern void GameLoop_Main(bool new_game);
 extern void Game_Prepare(void);

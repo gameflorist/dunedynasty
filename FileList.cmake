@@ -148,6 +148,8 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/gui/security.c
 	src/input/input_opendune.c
 	src/input/mouse_opendune.c
+	src/os/thread_sdl.c
+	src/os/thread_win32.c
 	src/timer/timer_opendune.c
 	src/video/video_sdl.c
 	src/video/video_win32.c
