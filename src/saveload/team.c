@@ -1,5 +1,7 @@
 /** @file src/saveload/team.c Load/save routines for Team. */
 
+#include <string.h>
+
 #include "enumeration.h"
 #include "saveload.h"
 #include "../pool/pool.h"
@@ -36,6 +38,8 @@ bool Team_Load(FILE *fp, uint32 length)
 	while (length > 0) {
 		Team *t;
 		Team tl;
+
+		memset(&tl, 0, sizeof(tl));
 
 		/* Read the next Structure from disk */
 		if (!SaveLoad_Load(s_saveTeam, fp, &tl)) return false;

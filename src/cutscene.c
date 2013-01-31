@@ -1,4 +1,4 @@
-/* cutscene.c */
+/** @file src/cutscene.c Introduction movie and cutscenes routines. */
 
 #include <assert.h>
 #include <stdio.h>

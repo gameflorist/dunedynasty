@@ -239,23 +239,22 @@ static void Unit_MovementTick(Unit *unit)
 {
 	uint16 speed;
 
-	if (unit->speed == 0 && unit->speedSub == 0) return;
+	if (unit->speed == 0) return;
 
-	/* Calculate the speed per tick */
-	speed = unit->speed * 16;
-	speed += unit->speedSub;
+	speed = unit->speedRemainder;
 
 	/* Units in the air don't feel the effect of gameSpeed */
-	if (g_table_unitInfo[unit->o.type].movementType != MOVEMENT_WINGER) speed = Tools_AdjustToGameSpeed(speed, 1, 0xFFFF, false);
-
-	/* Add the remainder of last movement, calculate the new remainder and make steps go per 16 */
-	speed += unit->speedRemainder;
-	unit->speedRemainder = speed & 0xF;
-	speed &= 0xFFF0;
-
-	if (speed != 0) {
-		Unit_Move(unit, min(speed, Tile_GetDistance(unit->o.position, unit->currentDestination) + 16));
+	if (g_table_unitInfo[unit->o.type].movementType != MOVEMENT_WINGER) {
+		speed += Tools_AdjustToGameSpeed(unit->speedPerTick, 1, 255, false);
+	} else {
+		speed += unit->speedPerTick;
 	}
+
+	if ((speed & 0xFF00) != 0) {
+		Unit_Move(unit, min(unit->speed * 16, Tile_GetDistance(unit->o.position, unit->currentDestination) + 16));
+	}
+
+	unit->speedRemainder = speed & 0xFF;
 }
 
 /**
@@ -385,7 +384,7 @@ void GameLoop_Unit(void)
 
 		if (tickUnknown5) {
 			if (u->timer == 0) {
-				if ((ui->movementType == MOVEMENT_FOOT && (u->speed != 0 || u->speedSub != 0)) || u->o.flags.s.isSmoking) {
+				if ((ui->movementType == MOVEMENT_FOOT && u->speed != 0) || u->o.flags.s.isSmoking) {
 					if (u->spriteOffset >= 0) {
 						u->spriteOffset &= 0x3F;
 						u->spriteOffset++;
@@ -472,7 +471,11 @@ void GameLoop_Unit(void)
  */
 uint8 Unit_GetHouseID(const Unit *u)
 {
-	if (u->deviated != 0) return u->deviationHouse;
+	if (u->deviated != 0) {
+		/* ENHANCEMENT -- Deviated units always belong to Ordos, no matter who did the deviating. */
+		if (enhancement_nonordos_deviation) return u->deviatedHouse;
+		return HOUSE_ORDOS;
+	}
 	return u->o.houseID;
 }
 
@@ -767,14 +770,6 @@ void Unit_Sort(void)
 
 		u1 = g_unitFindArray[i];
 		u2 = g_unitFindArray[i + 1];
-
-		if ((u1->o.seenByHouses & (1 << g_playerHouseID)) != 0 && !u1->o.flags.s.isNotOnMap) {
-			if (House_AreAllied(u1->o.houseID, g_playerHouseID)) {
-				h->unitCountAllied++;
-			} else {
-				h->unitCountEnemy++;
-			}
-		}
 		y1 = Tile_GetY(u1->o.position);
 		y2 = Tile_GetY(u2->o.position);
 		if (g_table_unitInfo[u1->o.type].movementType == MOVEMENT_FOOT) y1 -= 0x100;
@@ -783,6 +778,19 @@ void Unit_Sort(void)
 		if ((int16)y1 > (int16)y2) {
 			g_unitFindArray[i] = u2;
 			g_unitFindArray[i + 1] = u1;
+		}
+	}
+
+	for (i = 0; i < g_unitFindCount; i++) {
+		Unit *u;
+
+		u = g_unitFindArray[i];
+		if ((u->o.seenByHouses & (1 << g_playerHouseID)) != 0 && !u->o.flags.s.isNotOnMap) {
+			if (House_AreAllied(u->o.houseID, g_playerHouseID)) {
+				h->unitCountAllied++;
+			} else {
+				h->unitCountEnemy++;
+			}
 		}
 	}
 }
@@ -1116,8 +1124,8 @@ Unit *Unit_FindBestTargetUnit(Unit *u, uint16 mode)
 	tile32 position;
 	uint16 distance;
 	PoolFindStruct find;
-	Unit *targetBest = NULL;
-	uint16 priorityMax = 0;
+	Unit *best = NULL;
+	uint16 bestPriority = 0;
 
 	if (u == NULL) return NULL;
 
@@ -1142,8 +1150,6 @@ Unit *Unit_FindBestTargetUnit(Unit *u, uint16 mode)
 		target = Unit_Find(&find);
 
 		if (target == NULL) break;
-		if (House_AreAllied(Unit_GetHouseID(u), Unit_GetHouseID(target))) continue;
-		if ((target->o.seenByHouses & (1 << u->o.houseID)) == 0) continue;
 
 		if (mode != 0 && mode != 4) {
 			if (mode == 1) {
@@ -1156,28 +1162,28 @@ Unit *Unit_FindBestTargetUnit(Unit *u, uint16 mode)
 
 		priority = Unit_GetTargetUnitPriority(u, target);
 
-		if ((int16)priority > (int16)priorityMax) {
-			targetBest = target;
-			priorityMax = priority;
+		if ((int16)priority > (int16)bestPriority) {
+			best = target;
+			bestPriority = priority;
 		}
 	}
 
-	if (priorityMax == 0) return NULL;
+	if (bestPriority == 0) return NULL;
 
-	return targetBest;
+	return best;
 }
 
 /**
- * Get the score for a target. Various of things have influence on this score,
+ * Get the priority for a target. Various of things have influence on this score,
  *  most noticeable the movementType of the target, his distance to you, and
  *  if he is moving/firing.
  * @note It only considers units on sand.
  *
  * @param unit The Unit that is requesting the score.
  * @param target The Unit that is being targeted.
- * @return The score of the target.
+ * @return The priority of the target.
  */
-static uint16 Unit_Sandworm_GetTargetScore(Unit *unit, Unit *target)
+static uint16 Unit_Sandworm_GetTargetPriority(Unit *unit, Unit *target)
 {
 	uint16 res;
 	uint16 distance;
@@ -1194,7 +1200,7 @@ static uint16 Unit_Sandworm_GetTargetScore(Unit *unit, Unit *target)
 		default:                 res = 0;      break;
 	}
 
-	if (target->speed != 0 || target->speedSub != 0 || target->fireDelay != 0) res *= 4;
+	if (target->speed != 0 || target->fireDelay != 0) res *= 4;
 
 	distance = Tile_GetDistanceRoundedUp(unit->o.position, target->o.position);
 
@@ -1212,9 +1218,9 @@ static uint16 Unit_Sandworm_GetTargetScore(Unit *unit, Unit *target)
  */
 Unit *Unit_Sandworm_FindBestTarget(Unit *unit)
 {
-	Unit *target = NULL;
+	Unit *best = NULL;
 	PoolFindStruct find;
-	uint16 scoreMax = 0;
+	uint16 bestPriority = 0;
 
 	if (unit == NULL) return NULL;
 
@@ -1224,23 +1230,23 @@ Unit *Unit_Sandworm_FindBestTarget(Unit *unit)
 
 	while (true) {
 		Unit *u;
-		uint16 score;
+		uint16 priority;
 
 		u = Unit_Find(&find);
 
 		if (u == NULL) break;
 
-		score = Unit_Sandworm_GetTargetScore(unit, u);
+		priority = Unit_Sandworm_GetTargetPriority(unit, u);
 
-		if (score >= scoreMax) {
-			target = u;
-			scoreMax = score;
+		if (priority >= bestPriority) {
+			best = u;
+			bestPriority = priority;
 		}
 	}
 
-	if (scoreMax == 0) return NULL;
+	if (bestPriority == 0) return NULL;
 
-	return target;
+	return best;
 }
 
 /**
@@ -1286,6 +1292,7 @@ bool Unit_StartMovement(Unit *unit)
 	if (unit->o.type == UNIT_SABOTEUR && type == LST_WALL) speed = 255;
 	unit->o.flags.s.isSmoking = false;
 
+	/* ENHANCEMENT -- the flag is never set to false in original Dune2; in result, once the wobbling starts, it never stops. */
 	if (enhancement_fix_everlasting_unit_wobble) {
 		unit->o.flags.s.isWobbling = g_table_landscapeInfo[type].letUnitWobble;
 	} else {
@@ -1395,8 +1402,8 @@ bool Unit_Deviation_Decrease(Unit *unit, uint16 amount)
 	}
 
 	Unit_UntargetMe(unit);
-	Unit_SetTarget(unit, 0);
-	Unit_SetDestination(unit, 0);
+	unit->targetAttack = 0;
+	unit->targetMove = 0;
 
 	return true;
 }
@@ -1434,9 +1441,10 @@ Unit_RemoveFog(Unit *unit)
  *
  * @param unit The Unit to deviate.
  * @param probability The probability for deviation to succeed.
+ * @param houseID House controlling the deviator.
  * @return True if and only if the unit beacame deviated.
  */
-bool Unit_Deviate(Unit *unit, uint16 probability, enum HouseType houseID)
+bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 {
 	const UnitInfo *ui;
 
@@ -1459,8 +1467,8 @@ bool Unit_Deviate(Unit *unit, uint16 probability, enum HouseType houseID)
 	if (!enhancement_nonordos_deviation)
 		houseID = HOUSE_ORDOS;
 
-	unit->deviated = 0x78;
-	unit->deviationHouse = houseID;
+	unit->deviated = 120;
+	unit->deviatedHouse = houseID;
 
 	Unit_UpdateMap(2, unit);
 
@@ -1487,6 +1495,8 @@ bool Unit_Deviate(Unit *unit, uint16 probability, enum HouseType houseID)
 	}
 
 	Unit_UntargetMe(unit);
+	unit->targetAttack = 0;
+	unit->targetMove = 0;
 
 	return true;
 }
@@ -1662,7 +1672,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 						if (ui->flags.impactOnSand && g_map[Tile_PackTile(unit->o.position)].index == 0 && Map_GetLandscapeType(Tile_PackTile(unit->o.position)) == LST_NORMAL_SAND) {
 							Map_MakeExplosion(EXPLOSION_SAND_BURST, newPosition, unit->o.hitpoints, unit->originEncoded);
 						} else if (unit->o.type == UNIT_MISSILE_DEVIATOR) {
-							Map_DeviateArea(ui->explosionType, newPosition, 32, Unit_GetHouseID(unit));
+							Map_DeviateArea(ui->explosionType, newPosition, 32, unit->o.houseID);
 						} else {
 							Map_MakeExplosion((ui->explosionType + unit->o.hitpoints / 20) & 3, newPosition, unit->o.hitpoints, unit->originEncoded);
 						}
@@ -1689,11 +1699,10 @@ bool Unit_Move(Unit *unit, uint16 distance)
 						if (enhancement_targetted_sabotage) {
 							detonate = (unit->actionID == ACTION_SABOTAGE && Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
 						}
-						/* ENHANCEMENT -- Make detonation consistent with game speed. */
+						/* ENHANCEMENT -- Saboteurs tend to forget their goal, depending on terrain and game speed: to blow up on reaching their destination. */
 						else if (g_dune2_enhanced) {
 							detonate = (unit->targetMove != 0 && Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
-						}
-						else {
+						} else {
 							detonate = (unit->targetMove != 0 && Tile_GetDistance(unit->o.position, Tools_Index_GetTile(unit->targetMove)) < 32);
 						}
 					}
@@ -1702,13 +1711,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 						Map_MakeExplosion(EXPLOSION_SABOTEUR_DEATH, newPosition, 500, 0);
 
 						/* ENHANCEMENT -- Use Unit_Remove so that the saboteur is cleared from the map. */
-						if (g_dune2_enhanced) {
-							Unit_Remove(unit);
-						}
-						else {
-							Unit_Free(unit);
-						}
-
+						Unit_Remove(unit);
 						return true;
 					}
 				}
@@ -2164,33 +2167,49 @@ bool Unit_IsTileOccupied(Unit *unit)
  */
 void Unit_SetSpeed(Unit *unit, uint16 speed)
 {
+	uint16 speedPerTick;
+
 	assert(unit != NULL);
+
+	speedPerTick = 0;
 
 	unit->speed          = 0;
 
 	if (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE)
 		unit->speedRemainder = 0;
 
-	unit->speedSub       = 0;
-	unit->movingSpeed    = 0;
+	unit->speedPerTick   = 0;
 
 	if (speed == 0) return;
 
-	/* The more spice there is in the harvester, the slower it will move. unit->amount is at max 100, so ~60% of its original speed. */
 	if (unit->o.type == UNIT_HARVESTER) {
 		speed = ((255 - unit->amount) * speed) / 256;
 	}
 
-	unit->movingSpeed = speed & 0xFF;
+	if (speed == 0 || speed >= 256) {
+		unit->movingSpeed = 0;
+		return;
+	}
 
+	unit->movingSpeed = speed & 0xFF;
 	speed = g_table_unitInfo[unit->o.type].movingSpeedFactor * speed / 256;
 
-	/* We can only store up to 12bits (which is really fast), so max out if required */
-	if (speed >= (1 << 12)) speed = (1 << 12) - 1;
+	/* Units in the air don't feel the effect of gameSpeed */
+	if (g_table_unitInfo[unit->o.type].movementType != MOVEMENT_WINGER) {
+		speed = Tools_AdjustToGameSpeed(speed, 1, 255, false);
+	}
 
-	/* We move in steps of 16 */
-	unit->speedSub = speed & 0xF;
-	unit->speed    = (speed / 16) & 0xFF;
+	speedPerTick = speed << 4;
+	speed        = speed >> 4;
+
+	if (speed != 0) {
+		speedPerTick = 255;
+	} else {
+		speed = 1;
+	}
+
+	unit->speed = speed & 0xFF;
+	unit->speedPerTick = speedPerTick & 0xFF;
 }
 
 /**
@@ -2498,7 +2517,7 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 
 	if (unit->o.type == UNIT_SABOTEUR) {
 		Structure_Damage(s, 500, 1);
-		Unit_Free(unit);
+		Unit_Remove(unit);
 		return;
 	}
 
@@ -2534,7 +2553,7 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 		House_CalculatePowerAndCredit(House_Get_ByIndex(s->o.houseID));
 		Structure_UpdateMap(s);
 
-		/* ENHANCEMENT: When taking over a structure, untarget it. Else you will destroy the structure you just have taken over very easily */
+		/* ENHANCEMENT -- When taking over a structure, untarget it. Else you will destroy the structure you just have taken over very easily */
 		if (g_dune2_enhanced) Structure_UntargetMe(s);
 	} else {
 		uint16 damage;
@@ -2552,7 +2571,7 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 
 	Object_Script_Variable4_Clear(&s->o);
 
-	Unit_Free(unit);
+	Unit_Remove(unit);
 }
 
 /**
@@ -2586,6 +2605,7 @@ static Structure *Unit_FindBestTargetStructure(Unit *unit, uint16 mode)
 
 		s = Structure_Find(&find);
 		if (s == NULL) break;
+		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
 		curPosition.tile = s->o.position.tile + g_table_structure_layoutTileDiff[g_table_structureInfo[s->o.type].layout].tile;
 
@@ -2606,7 +2626,7 @@ static Structure *Unit_FindBestTargetStructure(Unit *unit, uint16 mode)
 		}
 	}
 
-	if (bestPriority == 0) best = NULL;
+	if (bestPriority == 0) return NULL;
 
 	return best;
 }
@@ -2654,7 +2674,7 @@ int16 Unit_GetTileEnterScore(Unit *unit, uint16 packed, uint16 direction)
 	res = g_table_landscapeInfo[type].movementSpeed[ui->movementType];
 
 	if (unit->o.type == UNIT_SABOTEUR && type == LST_WALL) {
-		if (!House_AreAllied(g_map[packed].houseID, unit->o.houseID)) res = 255;
+		if (!House_AreAllied(g_map[packed].houseID, Unit_GetHouseID(unit))) res = 255;
 	}
 
 	if (res == 0) return 256;
@@ -2847,8 +2867,7 @@ uint16 Unit_GetTargetStructurePriority(Unit *unit, Structure *target)
 	if (unit == NULL || target == NULL) return 0;
 
 	if (House_AreAllied(Unit_GetHouseID(unit), target->o.houseID)) return 0;
-
-	if ((target->o.seenByHouses & (1 << unit->o.houseID)) == 0) return 0;
+	if ((target->o.seenByHouses & (1 << Unit_GetHouseID(unit))) == 0) return 0;
 
 	si = &g_table_structureInfo[target->o.type];
 	priority = si->o.priorityBuild + si->o.priorityTarget;

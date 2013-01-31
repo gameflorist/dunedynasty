@@ -666,8 +666,9 @@ void Map_Update(uint16 packed, uint16 type, bool ignoreInvisible)
  * @param type The type of explosion.
  * @param position The position of the explosion.
  * @param radius The radius.
+ * @param houseID House controlling the deviator.
  */
-void Map_DeviateArea(uint16 type, tile32 position, uint16 radius, enum HouseType houseID)
+void Map_DeviateArea(uint16 type, tile32 position, uint16 radius, uint8 houseID)
 {
 	PoolFindStruct find;
 
@@ -1258,6 +1259,8 @@ void Map_SelectNext(bool getNext)
 
 		s = Structure_Find(&find);
 		if (s == NULL) break;
+
+		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
 		if (!Map_IsTileVisible(Tile_PackTile(s->o.position))) continue;
 

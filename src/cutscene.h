@@ -1,3 +1,5 @@
+/** @file src/cutscene.h Introduction movie and cutscenes definitions. */
+
 #ifndef CUTSCENE_H
 #define CUTSCENE_H
 

@@ -7,10 +7,17 @@
 #include "../os/common.h"
 #include "../os/math.h"
 #include "../os/endian.h"
+#include "../os/error.h"
+#include "../os/sleep.h"
+#include "../os/thread.h"
 
 #include "mt32mpu.h"
 
 #include "midi.h"
+
+static Semaphore s_mpu_sem = NULL;
+static Thread s_mpu_thread = NULL;
+static uint32 s_mpu_usec = 0;
 
 typedef struct Controls {
 	uint8 volume;
@@ -53,7 +60,7 @@ typedef struct MSData {
 	Controls controls[16];                                  /*!< ?? */
 	uint8  noteOnChans[32];                                 /*!< ?? */
 	uint8  noteOnNotes[32];                                 /*!< ?? */
-	uint32 noteOnDuration[32];                              /*!< ?? */
+	int32  noteOnDuration[32];                              /*!< ?? */
 } MSData;
 
 static MSData *s_mpu_msdata[8];
@@ -133,7 +140,7 @@ static uint16 MPU_NoteOn(MSData *data)
 
 	data->noteOnChans[i] = chan;
 	data->noteOnNotes[i] = note;
-	data->noteOnDuration[i] = duration;
+	data->noteOnDuration[i] = duration - 1;
 
 	chan = data->chanMaps[chan];
 	s_mpu_noteOnCount[chan]++;
@@ -478,7 +485,7 @@ void MPU_Interrupt(void)
 				}
 				if (index == 0x20) break;
 
-				if (--data->noteOnDuration[index] > 0) continue;
+				if (--data->noteOnDuration[index] >= 0) continue;
 
 				chan = data->chanMaps[data->noteOnChans[index]];
 				data->noteOnChans[index] = 0xFF;
@@ -784,11 +791,35 @@ uint16 MPU_GetDataSize(void)
 	return sizeof(MSData);
 }
 
+static int MPU_ThreadProc(void *data)
+{
+	Semaphore_Lock(s_mpu_sem);
+	while (!Semaphore_TryLock(s_mpu_sem)) {
+		msleep(s_mpu_usec / 1000);
+		MPU_Interrupt();
+	}
+	Semaphore_Unlock(s_mpu_sem);
+	return 0;
+}
+
 bool MPU_Init(void)
 {
 	uint8 i;
 
 	if (!midi_init()) return false;
+
+	s_mpu_sem = Semaphore_Create(0);
+	if (s_mpu_sem == NULL) {
+		Error("Failed to create semaphore\n");
+		return false;
+	}
+
+	s_mpu_thread = Thread_Create(MPU_ThreadProc, NULL);
+	if (s_mpu_thread == NULL) {
+		Error("Failed to create thread\n");
+		Semaphore_Destroy(s_mpu_sem);
+		return false;
+	}
 
 	s_mpu_msdataSize = 0;
 	s_mpu_msdataCurrent = 0;
@@ -860,6 +891,8 @@ void MPU_Uninit(void)
 
 	midi_uninit();
 	s_mpuIgnore = false;
+
+	Semaphore_Destroy(s_mpu_sem);
 }
 
 void MPU_ClearData(uint16 index)
@@ -902,4 +935,16 @@ void MPU_SetVolume(uint16 index, uint16 volume, uint16 arg0C)
 	data->variable_002C = 10 * arg0C / abs(diff);
 	if (data->variable_002C == 0) data->variable_002C = 1;
 	data->variable_0028 = 0;
+}
+
+void MPU_StartThread(uint32 usec)
+{
+	s_mpu_usec = usec;
+	Semaphore_Unlock(s_mpu_sem);
+}
+
+void MPU_StopThread(void)
+{
+	Semaphore_Unlock(s_mpu_sem);
+	Thread_Wait(s_mpu_thread, NULL);
 }

@@ -65,6 +65,7 @@ extern void GFX_Init_SpriteInfo(uint16 widthSize, uint16 heightSize);
 extern void GFX_Screen_Copy2(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, Screen screenSrc, Screen screenDst, bool skipNull);
 extern void GFX_Screen_Copy(int16 xSrc, int16 ySrc, int16 xDst, int16 yDst, int16 width, int16 height, Screen screenSrc, Screen screenDst);
 extern void GFX_ClearScreen(void);
+extern void GFX_ClearBlock(Screen index);
 extern void GFX_SetPalette(uint8 *palette);
 
 extern void GFX_ScreenShake_Start(int num_ticks);

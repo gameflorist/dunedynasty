@@ -1,5 +1,7 @@
 /** @file src/saveload/structure.c Load/save routines for Structure. */
 
+#include <string.h>
+
 #include "saveload.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
@@ -49,6 +51,8 @@ bool Structure_Load(FILE *fp, uint32 length)
 	while (length > 0) {
 		Structure *s;
 		Structure sl;
+
+		memset(&sl, 0, sizeof(sl));
 
 		/* Read the next Structure from disk */
 		if (!SaveLoad_Load(s_saveStructure, fp, &sl)) return false;

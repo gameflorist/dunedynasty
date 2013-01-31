@@ -140,10 +140,10 @@ uint16 Script_Structure_RefineSpice(ScriptEngine *script)
 
 	if (House_AreAllied(g_playerHouseID, s->o.houseID)) {
 		g_scenario.harvestedAllied += creditsStep;
-		if (g_scenario.harvestedAllied > 0xFDE8) g_scenario.harvestedAllied = 0xFDE8;
+		if (g_scenario.harvestedAllied > 65000) g_scenario.harvestedAllied = 65000;
 	} else {
 		g_scenario.harvestedEnemy += creditsStep;
-		if (g_scenario.harvestedEnemy > 0xFDE8) g_scenario.harvestedEnemy = 0xFDE8;
+		if (g_scenario.harvestedEnemy > 65000) g_scenario.harvestedEnemy = 65000;
 	}
 
 	h = House_Get_ByIndex(s->o.houseID);
@@ -363,7 +363,7 @@ uint16 Script_Structure_FindTargetUnit(ScriptEngine *script)
 		uf = Unit_Find(&find);
 		if (uf == NULL) break;
 
-		if (House_AreAllied(s->o.houseID, uf->o.houseID)) continue;
+		if (House_AreAllied(s->o.houseID, Unit_GetHouseID(uf))) continue;
 
 		if (uf->o.type != UNIT_ORNITHOPTER) {
 			if ((uf->o.seenByHouses & (1 << s->o.houseID)) == 0) continue;
