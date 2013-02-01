@@ -288,7 +288,7 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 			action = ACTION_HARVEST;
 
 			if (g_map[s->rallyPoint].isUnveiled) {
-				const enum LandscapeType lst = Map_GetLandscapeType(s->rallyPoint);
+				const enum LandscapeType lst = Map_GetLandscapeTypeVisible(s->rallyPoint);
 
 				if (!g_table_landscapeInfo[lst].isSand)
 					action = ACTION_MOVE;
