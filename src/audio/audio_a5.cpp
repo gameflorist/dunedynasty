@@ -75,7 +75,7 @@ static ALLEGRO_SAMPLE_INSTANCE *s_instance[MAX_SAMPLE_INSTANCES];
 static ALLEGRO_VOICE *al_voice;
 static ALLEGRO_MIXER *al_mixer;
 
-static ALLEGRO_AUDIO_STREAM *AudioA5_InitAdlib(const MusicInfo *mid);
+static void AudioA5_InitAdlibEffects(void);
 static void AudioA5_FreeMusicStream(void);
 
 /*--------------------------------------------------------------*/
@@ -137,7 +137,7 @@ AudioA5_Init(void)
 		}
 	}
 
-	s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1].song[0]);
+	AudioA5_InitAdlibEffects();
 	return;
 
 audio_init_failed:
@@ -362,6 +362,13 @@ AudioA5_InitAdlibMusic(const MusicInfo *mid)
 	curr_music_stream_type = MUSICSTREAM_ADLIB;
 }
 
+static void
+AudioA5_InitAdlibEffects(void)
+{
+	if (s_effect_stream == NULL)
+		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1].song[0]);
+}
+
 void
 AudioA5_InitMidiMusic(const MusicInfo *mid)
 {
@@ -376,15 +383,13 @@ AudioA5_InitMidiMusic(const MusicInfo *mid)
 		return;
 
 	AudioA5_FreeMusicStream();
+	AudioA5_InitAdlibEffects();
 
 	bool play = play_xmidi(s_midi, buf, length, track);
 	delete[] buf;
 
 	if (!play)
 		return;
-
-	if (s_effect_stream == NULL)
-		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1].song[0]);
 
 	s_music_stream = get_midi_player_audio_stream(s_midi);
 	al_set_audio_stream_gain(s_music_stream, music_volume);
@@ -433,13 +438,8 @@ AudioA5_InitExternalMusic(const MusicInfo *ext)
 		return;
 	}
 
-	/* If current stream is Adlib, reinitialise effect stream in case
-	 * it opened a file without the game sound effects.
-	 */
 	AudioA5_FreeMusicStream();
-
-	if (s_effect_stream == NULL)
-		s_effect_stream = AudioA5_InitAdlib(&g_table_music[MUSIC_IDLE1].song[0]);
+	AudioA5_InitAdlibEffects();
 
 	s_music_stream = stream;
 	s_mp3 = next_mp3;
