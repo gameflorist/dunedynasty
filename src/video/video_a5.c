@@ -2771,12 +2771,21 @@ Video_DrawMinimap(int left, int top, int map_scale, int mode)
 static void
 VideoA5_InitCursor(unsigned char *buf)
 {
-	/* Double-sized mouse cursors on 640x400 and above. */
+	/* Double-sized mouse cursors on 640x400 and above.
+	 * Note that Windows cursors are always 32x32, so we can't go
+	 * above 2x scaling.  Also, we can't do the shifting trick/hack.
+	 */
 	const int scale = (TRUE_DISPLAY_WIDTH >= 640) ? 2 : 1;
-	const int sw = al_get_bitmap_width(s_shape[SHAPE_CURSOR_NORMAL][HOUSE_HARKONNEN]);
-	const int sh = al_get_bitmap_height(s_shape[SHAPE_CURSOR_NORMAL][HOUSE_HARKONNEN]);
+	const int sw = 16;
+	const int sh = 16;
+
+#ifdef ALLEGRO_WINDOWS
 	const int dw = scale * sw;
 	const int dh = scale * sh;
+#else
+	const int dw = scale * (sw + 8);
+	const int dh = scale * (sh + 8);
+#endif
 
 	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
 
@@ -2795,9 +2804,17 @@ VideoA5_InitCursor(unsigned char *buf)
 
 		GUI_DrawSprite_(SCREEN_0, g_sprites[i], 0, 0, 0, 0);
 		VideoA5_CopyBitmap(SCREEN_WIDTH, buf, src, TRANSPARENT_COLOUR_0);
+
+#ifdef ALLEGRO_WINDOWS
 		al_draw_scaled_bitmap(src, 0.0f, 0.0f, sw, sh, 0.0f, 0.0f, dw, dh, 0);
 
 		s_cursor[i] = al_create_mouse_cursor(bmp, scale * cursor_focus[i].x, scale * cursor_focus[i].y);
+#else
+		al_draw_scaled_bitmap(src, 0.0f, 0.0f, sw, sh,
+				scale * (8 - cursor_focus[i].x), scale * (8 - cursor_focus[i].y), scale * sw, scale * sh, 0);
+
+		s_cursor[i] = al_create_mouse_cursor(bmp, scale * 8, scale * 8);
+#endif
 	}
 
 	al_set_mouse_cursor(display, s_cursor[0]);
