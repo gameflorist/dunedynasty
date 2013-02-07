@@ -526,8 +526,11 @@ Audio_PlayVoice(enum VoiceID voiceID)
 	assert(voiceID < VOICEID_MAX);
 	const Feedback *s = &g_feedback[voiceID];
 
-	if (s->soundId != SOUND_INVALID)
+	if ((s->soundId != SOUND_INVALID) &&
+			(g_enable_sound_effects == SOUNDEFFECTS_SYNTH_ONLY ||
+			 g_enable_sound_effects == SOUNDEFFECTS_SYNTH_AND_SAMPLES)) {
 		Audio_PlayEffect(s->soundId);
+	}
 
 	if (g_enable_voices) {
 		for (int i = 0; i < NUM_SPEECH_PARTS; i++) {
