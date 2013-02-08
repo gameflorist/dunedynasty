@@ -717,14 +717,9 @@ Viewport_Click(Widget *w)
 				viewport_click_action = VIEWPORT_SELECTION_BOX;
 			}
 
-			/* Holding LMB begins selection box or fast scroll. */
-			else if (Timer_GetTicks() - viewport_click_time >= 10) {
-				if (Viewport_MouseInScrollWidget()) {
-					viewport_click_action = VIEWPORT_FAST_SCROLL;
-				}
-				else {
-					viewport_click_action = VIEWPORT_SELECTION_BOX;
-				}
+			/* Holding LMB begins fast scroll. */
+			else if (Viewport_MouseInScrollWidget() && (Timer_GetTicks() - viewport_click_time >= 10)) {
+				viewport_click_action = VIEWPORT_FAST_SCROLL;
 			}
 		}
 
