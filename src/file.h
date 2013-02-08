@@ -44,6 +44,7 @@ extern void FileHash_Init(void);
 extern FileInfo *FileHash_Store(const char *key);
 extern unsigned int FileHash_FindIndex(const char *key);
 
+extern void File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const char *filename, bool convert_to_lowercase);
 extern FILE *File_Open_CaseInsensitive(enum SearchDirectory dir, const char *filename, const char *mode);
 extern void File_Close(uint8 index);
 extern uint32 File_Read(uint8 index, void *buffer, uint32 length);

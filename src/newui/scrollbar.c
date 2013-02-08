@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "../os/math.h"
+#include "../os/strings.h"
 
 #include "scrollbar.h"
 
@@ -267,15 +268,48 @@ Scrollbar_FreeItems(void)
 	s_scrollbar_max_items = 0;
 }
 
+static int
+Scrollbar_Sorter(const void *a, const void *b)
+{
+	const ScrollbarItem *sa = a;
+	const ScrollbarItem *sb = b;
+	const int ia = atoi(sa->text + 5);
+	const int ib = atoi(sb->text + 5);
+
+	if (ia == ib) {
+		return strcasecmp(sb->text, sa->text);
+	}
+	else {
+		return ib - ia;
+	}
+}
+
+void
+Scrollbar_Sort(Widget *w)
+{
+	WidgetScrollbar *ws = w->data;
+
+	if (ws->scrollMax <= 1)
+		return;
+
+	qsort(s_scrollbar_item, ws->scrollMax, sizeof(s_scrollbar_item[0]), Scrollbar_Sorter);
+}
+
 ScrollbarItem *
-Scrollbar_GetSelectedItem(const Widget *w)
+Scrollbar_GetItem(const Widget *w, int i)
 {
 	const WidgetScrollbar *ws = w->data;
 
-	if (!(0 <= s_selectedHelpSubject && s_selectedHelpSubject < ws->scrollMax))
+	if (!(0 <= i && i < ws->scrollMax))
 		return NULL;
 
-	return &s_scrollbar_item[s_selectedHelpSubject];
+	return &s_scrollbar_item[i];
+}
+
+ScrollbarItem *
+Scrollbar_GetSelectedItem(const Widget *w)
+{
+	return Scrollbar_GetItem(w, s_selectedHelpSubject);
 }
 
 static void

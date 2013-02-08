@@ -29,6 +29,8 @@ extern void GUI_Widget_Free_WithScrollbar(Widget *w);
 extern Widget *Scrollbar_Allocate(Widget *list, enum WindowID parentID, int listarea_dx, int scrollbar_dx, int dy, bool set_mentat_widgets);
 extern ScrollbarItem *Scrollbar_AllocItem(Widget *w, enum ScrollbarItemType type);
 extern void Scrollbar_FreeItems(void);
+extern void Scrollbar_Sort(Widget *w);
+extern ScrollbarItem *Scrollbar_GetItem(const Widget *w, int i);
 extern ScrollbarItem *Scrollbar_GetSelectedItem(const Widget *w);
 extern void Scrollbar_CycleUp(Widget *w);
 extern void Scrollbar_CycleDown(Widget *w);

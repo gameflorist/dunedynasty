@@ -114,7 +114,7 @@ FileHash_Init(void)
 
 /*--------------------------------------------------------------*/
 
-static void
+void
 File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const char *filename, bool convert_to_lowercase)
 {
 	int i = 0;

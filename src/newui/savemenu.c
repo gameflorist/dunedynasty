@@ -1,6 +1,8 @@
 /* savemenu.c */
 
 #include <assert.h>
+#include <allegro5/allegro.h>
+#include <ctype.h>
 #include <string.h>
 #include "fourcc.h"
 #include "../os/endian.h"
@@ -9,6 +11,7 @@
 
 #include "savemenu.h"
 
+#include "scrollbar.h"
 #include "../audio/audio.h"
 #include "../file.h"
 #include "../gui/gui.h"
@@ -21,48 +24,128 @@
 #include "../string.h"
 #include "../table/strings.h"
 
+static Widget *s_scrollbar;
+static int s_last_index;
+
 char g_savegameDesc[5][51];                                 /*!< Array of savegame descriptions for the SaveLoad window. */
-static uint16 s_savegameIndexBase = 0;
-static uint16 s_savegameCountOnDisk = 0;                    /*!< Amount of savegames on disk. */
 
-static char *GenerateSavegameFilename(uint16 number)
+static bool
+SaveMenu_IsValidFilename(const ALLEGRO_PATH *path)
 {
-	static char filename[13];
-	sprintf(filename, "_SAVE%03d.DAT", number);
-	return filename;
-}
+	const char *extension = al_get_path_extension(path);
+	if (strcasecmp(extension, ".DAT") != 0)
+		return false;
 
-static uint16
-GetSavegameCount(void)
-{
-	for (int i = 0;; i++) {
-		if (!File_Exists_Personal(GenerateSavegameFilename(i))) return i;
+	const char *basename = al_get_path_basename(path);
+	if (strncasecmp(basename, "_SAVE", 5) != 0)
+		return false;
+
+	const char *digit = basename + 5;
+	while (*digit != '\0') {
+		if (!isdigit(*digit))
+			return false;
+
+		digit++;
 	}
+
+	return true;
 }
 
 static void
-FillSavegameDesc(bool save)
+SaveMenu_FindSavedGames(bool save, Widget *scrollbar)
 {
+	char dirname[1024];
+	File_MakeCompleteFilename(dirname, sizeof(dirname), SEARCHDIR_PERSONAL_DATA_DIR, "", false);
+
+	WidgetScrollbar *ws = scrollbar->data;
+	ws->scrollMax = 0;
+
+	ALLEGRO_FS_ENTRY *e = al_create_fs_entry(dirname);
+	if (e != NULL) {
+		if (al_open_directory(e)) {
+			ALLEGRO_FS_ENTRY *f = al_read_directory(e);
+			while (f != NULL) {
+				ALLEGRO_PATH *path = al_create_path(al_get_fs_entry_name(f));
+
+				/* Filename should be _SAVE###.DAT */
+				if (SaveMenu_IsValidFilename(path)) {
+					const char *filename = al_get_path_filename(path);
+					ScrollbarItem *si = Scrollbar_AllocItem(scrollbar, SCROLLBAR_ITEM);
+					int index;
+
+					strncpy(si->text, filename, sizeof(si->text));
+					sscanf(filename + 5, "%d", &index);
+					s_last_index = max(index, s_last_index);
+				}
+
+				al_destroy_path(path);
+				al_destroy_fs_entry(f);
+				f = al_read_directory(e);
+			}
+
+			al_close_directory(e);
+		}
+
+		al_destroy_fs_entry(e);
+	}
+
+	/* If saving, generate a new name. */
+	if (save) {
+		ScrollbarItem *si = Scrollbar_AllocItem(scrollbar, SCROLLBAR_ITEM);
+		snprintf(si->text, sizeof(si->text), "_SAVE%03d.DAT", s_last_index + 1);
+	}
+
+	Scrollbar_Sort(scrollbar);
+	GUI_Widget_Scrollbar_Init(scrollbar, ws->scrollMax, 5, 0);
+}
+
+static void
+SaveMenu_FillSavegameDesc(bool save, Widget *scrollbar)
+{
+	WidgetScrollbar *ws = scrollbar->data;
+
 	for (int i = 0; i < 5; i++) {
+		const int entry = ws->scrollPosition + i;
 		char *desc = g_savegameDesc[i];
 		*desc = '\0';
 
-		if (s_savegameIndexBase - i < 0) continue;
+		ScrollbarItem *si = Scrollbar_GetItem(scrollbar, entry);
+		if (si == NULL)
+			continue;
 
-		if (s_savegameIndexBase - i == s_savegameCountOnDisk) {
-			if (!save) continue;
-
+		if (save && entry == 0) {
 			strcpy(desc, String_Get_ByIndex(STR_EMPTY_SLOT_));
 			continue;
 		}
 
-		const char *filename = GenerateSavegameFilename(s_savegameIndexBase - i);
+		const char *filename = si->text;
 		if (!File_Exists_Personal(filename)) continue;
 
 		uint8 fileId = ChunkFile_Open_Personal(filename);
 		ChunkFile_Read(fileId, HTOBE32(CC_NAME), desc, 50);
 		ChunkFile_Close(fileId);
 	}
+}
+
+static void
+SaveMenu_FreeScrollbar(void)
+{
+	Widget *w = s_scrollbar;
+
+	while (w != NULL) {
+		Widget *next = w->next;
+
+		if (w == s_scrollbar) {
+			GUI_Widget_Free_WithScrollbar(w);
+		}
+		else {
+			free(w);
+		}
+
+		w = next;
+	}
+
+	s_scrollbar = NULL;
 }
 
 /* return values:
@@ -76,6 +159,7 @@ GUI_Widget_Savegame_Click(uint16 key)
 	const uint16 loc08 = 1;
 	char *saveDesc = g_savegameDesc[key];
 	Widget *w = g_widgetLinkedListTail;
+	Widget *scrollbar = s_scrollbar;
 	int loc0A = GUI_EditBox(saveDesc, 50, 15, g_widgetLinkedListTail, NULL, loc08);
 
 	if ((loc0A & 0x8000) == 0)
@@ -88,10 +172,15 @@ GUI_Widget_Savegame_Click(uint16 key)
 			if (*saveDesc == '\0')
 				break;
 
-			SaveFile(GenerateSavegameFilename(s_savegameIndexBase - key), saveDesc);
+			const WidgetScrollbar *ws = scrollbar->data;
+			const int entry = ws->scrollPosition + key;
+			const ScrollbarItem *si = Scrollbar_GetItem(scrollbar, entry);
+			SaveFile(si->text, saveDesc);
+			SaveMenu_FreeScrollbar();
 			return -2;
 
 		case 0x1F:
+			SaveMenu_FreeScrollbar();
 			return -1;
 
 		default:
@@ -102,17 +191,13 @@ GUI_Widget_Savegame_Click(uint16 key)
 }
 
 static void
-UpdateArrows(bool save, bool force)
+SaveMenu_UpdateArrows(Widget *scrollbar)
 {
-	static uint16 previousIndex = 0;
+	WidgetScrollbar *ws = scrollbar->data;
 	Widget *w;
 
-	if (!force && s_savegameIndexBase == previousIndex) return;
-
-	previousIndex = s_savegameIndexBase;
-
 	w = &g_table_windowWidgets[7];
-	if (s_savegameCountOnDisk - (save ? 0 : 1) > s_savegameIndexBase) {
+	if (ws->scrollPosition > 0) {
 		GUI_Widget_MakeVisible(w);
 	}
 	else {
@@ -120,7 +205,7 @@ UpdateArrows(bool save, bool force)
 	}
 
 	w = &g_table_windowWidgets[8];
-	if (s_savegameIndexBase >= 5) {
+	if (ws->scrollPosition + ws->scrollPageSize < ws->scrollMax) {
 		GUI_Widget_MakeVisible(w);
 	}
 	else {
@@ -133,17 +218,18 @@ GUI_Widget_InitSaveLoad(bool save)
 {
 	WindowDesc *desc = &g_saveLoadWindowDesc;
 
-	s_savegameCountOnDisk = GetSavegameCount();
+	s_scrollbar = Scrollbar_Allocate(NULL, 0, 0, 0, 0, false);
 
-	s_savegameIndexBase = max(0, s_savegameCountOnDisk - (save ? 0 : 1));
-
-	FillSavegameDesc(save);
+	s_last_index = -1;
+	SaveMenu_FindSavedGames(save, s_scrollbar);
+	SaveMenu_FillSavegameDesc(save, s_scrollbar);
 
 	desc->stringID = save ? STR_SELECT_A_POSITION_TO_SAVE_TO : STR_SELECT_A_SAVED_GAME_TO_LOAD;
 
 	GUI_Window_Create(desc);
 
-	if (s_savegameCountOnDisk >= 5 && desc->addArrows) {
+	WidgetScrollbar *ws = s_scrollbar->data;
+	if (ws->scrollMax >= 5 && desc->addArrows) {
 		Widget *w = &g_table_windowWidgets[7];
 
 		w->drawParameterNormal.sprite   = SHAPE_SAVE_LOAD_SCROLL_UP;
@@ -171,7 +257,7 @@ GUI_Widget_InitSaveLoad(bool save)
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 	}
 
-	UpdateArrows(save, true);
+	SaveMenu_UpdateArrows(s_scrollbar);
 }
 
 /* return values:
@@ -184,11 +270,10 @@ GUI_Widget_InitSaveLoad(bool save)
 int
 GUI_Widget_SaveLoad_Click(bool save)
 {
+	Widget *scrollbar = s_scrollbar;
 	Widget *w = g_widgetLinkedListTail;
 	uint16 key = GUI_Widget_HandleEvents(w);
 	int ret = 0;
-
-	UpdateArrows(save, false);
 
 	if (key == (0x80 | MOUSE_ZAXIS)) {
 		if ((g_mouseDZ > 0) && (!g_table_windowWidgets[7].flags.s.invisible)) {
@@ -209,22 +294,28 @@ GUI_Widget_SaveLoad_Click(bool save)
 			case 0x25: /* Up */
 			case 0x26: /* Down */
 				if (key == 0x25) {
-					s_savegameIndexBase = min(s_savegameCountOnDisk - (save ? 0 : 1), s_savegameIndexBase + 1);
+					Scrollbar_ArrowUp_Click(scrollbar);
 				}
 				else {
-					s_savegameIndexBase = max(0, s_savegameIndexBase - 1);
+					Scrollbar_ArrowDown_Click(scrollbar);
 				}
 
-				FillSavegameDesc(save);
+				SaveMenu_UpdateArrows(scrollbar);
+				SaveMenu_FillSavegameDesc(save, scrollbar);
 				GUI_Widget_MakeNormal(w2, false);
 				return -3;
 
 			case 0x23: /* Cancel */
+				SaveMenu_FreeScrollbar();
 				return -1;
 
 			default:
 				if (!save) {
-					LoadFile(GenerateSavegameFilename(s_savegameIndexBase - (key - 0x1E)));
+					const WidgetScrollbar *ws = scrollbar->data;
+					const int entry = ws->scrollPosition + (key - 0x1E);
+					const ScrollbarItem *si = Scrollbar_GetItem(scrollbar, entry);
+					LoadFile(si->text);
+					SaveMenu_FreeScrollbar();
 					Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 					return -2;
 				}
