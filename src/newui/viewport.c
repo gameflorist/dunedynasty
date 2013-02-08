@@ -387,7 +387,7 @@ Viewport_MouseInScrollWidget(void)
 }
 
 static bool
-Viewport_ScrollMap(Widget *w, enum ShapeID *cursorID)
+Viewport_ScrollMap(enum ShapeID *cursorID)
 {
 	const WidgetInfo *wi;
 	int dx = 0, dy = 0;
@@ -407,22 +407,26 @@ Viewport_ScrollMap(Widget *w, enum ShapeID *cursorID)
 	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT];
 	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dx--;
 
+	if (viewport_click_action == VIEWPORT_FAST_SCROLL) {
+		const int speed = max(1, 2 * g_gameConfig.scrollSpeed);
+		Map_MoveDirection(speed * dx, speed * dy);
+	}
+	else if (g_gameConfig.autoScroll) {
+		const int speed = max(1, g_gameConfig.scrollSpeed);
+		Map_MoveDirection(speed * dx, speed * dy);
+	}
+	else if ((!g_gameConfig.autoScroll) && (viewport_click_action == VIEWPORT_SELECTION_BOX)) {
+		dx = 0;
+		dy = 0;
+	}
+
 	if (dx < 0) *cursorID = SHAPE_CURSOR_LEFT;
 	else if (dx > 0) *cursorID = SHAPE_CURSOR_RIGHT;
 
 	if (dy < 0) *cursorID = SHAPE_CURSOR_UP;
 	else if (dy > 0) *cursorID = SHAPE_CURSOR_DOWN;
 
-	if (viewport_click_action == VIEWPORT_FAST_SCROLL) {
-		const int speed = max(1, 2 * g_gameConfig.scrollSpeed);
-		Map_MoveDirection(speed * dx, speed * dy);
-	}
-	else if (g_gameConfig.autoScroll || ((!g_gameConfig.autoScroll) && (w->state.s.buttonState & 0x02))) {
-		const int speed = max(1, g_gameConfig.scrollSpeed);
-		Map_MoveDirection(speed * dx, speed * dy);
-	}
-
-	return false;
+	return (dx != 0 && dy != 0);
 }
 
 static void
@@ -584,7 +588,7 @@ Viewport_Click(Widget *w)
 		return true;
 	}
 
-	if (Viewport_ScrollMap(w, &cursorID))
+	if (Viewport_ScrollMap(&cursorID))
 		return true;
 
 	int mouseX, mouseY;
@@ -671,16 +675,22 @@ Viewport_Click(Widget *w)
 
 		/* Clicking LMB begins selection box or fast scroll. */
 		else if (viewport_click_action == VIEWPORT_CLICK_NONE) {
-			viewport_click_action = VIEWPORT_LMB;
 			viewport_click_time = Timer_GetTicks();
 			viewport_click_x = mouseX;
 			viewport_click_y = mouseY;
 
 			if (Input_Test(SCANCODE_LSHIFT)) {
 				selection_box_add_to_selection = true;
+				viewport_click_action = VIEWPORT_SELECTION_BOX;
 			}
 			else {
+				viewport_click_action = VIEWPORT_LMB;
 				selection_box_add_to_selection = false;
+
+				/* For non-auto-scroll, decide fast scroll. */
+				if ((!g_gameConfig.autoScroll) && Viewport_MouseInScrollWidget()) {
+					viewport_click_action = VIEWPORT_FAST_SCROLL;
+				}
 			}
 		}
 
