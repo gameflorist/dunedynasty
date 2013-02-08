@@ -1352,7 +1352,7 @@ Viewport_DrawSelectionHealthBars(void)
 static void
 Viewport_DrawSelectedUnit(int x, int y)
 {
-	if (enhancement_new_selection_cursor) {
+	if (enhancement_high_res_overlays) {
 		const int x1 = x - TILE_SIZE/2 + 1;
 		const int y1 = y - TILE_SIZE/2 + 1;
 		const int x2 = x1 + TILE_SIZE - 2;

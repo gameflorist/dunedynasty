@@ -125,6 +125,7 @@ static const GameOption s_game_option[] = {
 
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
 	{ "enhancement",    "fog_of_war",               CONFIG_BOOL,.d._bool = &enhancement_fog_of_war },
+	{ "enhancement",    "hi_res_overlays",          CONFIG_BOOL,.d._bool = &enhancement_high_res_overlays },
 	{ "enhancement",    "infantry_squad_death_anim",CONFIG_BOOL,.d._bool = &enhancement_infantry_squad_death_animations },
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
 	{ "enhancement",    "raise_scenario_unit_cap",  CONFIG_BOOL,.d._bool = &enhancement_raise_scenario_unit_cap },

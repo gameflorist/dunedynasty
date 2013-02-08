@@ -77,6 +77,12 @@ bool enhancement_fog_covers_units = true;
 bool enhancement_fog_of_war = false;
 
 /**
+ * High-resolution overlays includes a new selection cursor, thinner
+ * health bar borders, and invalid building crosses.
+ */
+bool enhancement_high_res_overlays = true;
+
+/**
  * Dune II likes to search the tiles surrounding the one you clicked
  * for an appropriate target, which can be annoying.
  */
@@ -99,12 +105,6 @@ bool enhancement_insatiable_sandworms = false;
  * the minimap.
  */
 bool enhancement_invisible_saboteurs = false;
-
-/**
- * The original selection cursor can be a little obstructive with
- * multiple units selected.
- */
-bool enhancement_new_selection_cursor = true;
 
 /**
  * Do not pause game play when playing the radar activation and
