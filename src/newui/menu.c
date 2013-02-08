@@ -744,21 +744,19 @@ PickHouse_Draw(void)
 	uint8 fg = (w->state.s.hover1) ? 130 : 133;
 
 	/* Width is 70/72 with the EU font, 73-75 with the US font. */
-	const float y1 = 182.0f;
-	const float y2 = 184.5f;
-	const float y3 = 187.0f;
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
 	const int width = Font_GetStringWidth("Start level: 9");
-	float xl, xr;
-
 	GUI_DrawText_Wrapper("Start level: %d", (SCREEN_WIDTH - width) / 2, SCREEN_HEIGHT - 20, fg, 0, 0x22, g_campaignID + 1);
 
-	xr = (SCREEN_WIDTH - width) / 2 - 2.5f;
-	xl = xr - 2.5f;
-	Prim_FillTriangle(xl, y2, xr, y1, xr, y3, fg);
+	const float xl = (SCREEN_WIDTH - width) / 2 - 7.0f;
+	Video_SetClippingArea(div->scalex * (xl + 1) + div->x, div->scaley * (SCREEN_HEIGHT - 18) + div->y, div->scalex * 3, div->scaley * 5);
+	Shape_DrawTint(SHAPE_CURSOR_LEFT, xl, SCREEN_HEIGHT - 21, fg, 0, 0);
 
-	xl = (SCREEN_WIDTH + width) / 2 + 2.5f;
-	xr = xl + 3.0f;
-	Prim_FillTriangle(xr, y2, xl, y1, xl, y3, fg);
+	const float xr = (SCREEN_WIDTH + width) / 2 - 2.0f;
+	Video_SetClippingArea(div->scalex * (xr + 5) + div->x, div->scaley * (SCREEN_HEIGHT - 18) + div->y, div->scalex * 3, div->scaley * 5);
+	Shape_DrawTint(SHAPE_CURSOR_RIGHT, xr, SCREEN_HEIGHT - 21, fg, 0, 0);
+
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
 
 static int
