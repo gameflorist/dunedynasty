@@ -578,12 +578,12 @@ MenuBar_TickOptions(void)
 	switch (widgetID) {
 		case 0x8000 | 30: /* STR_LOAD_A_GAME */
 			g_gameOverlay = GAMEOVERLAY_LOAD_GAME;
-			GUI_Widget_InitSaveLoad(false);
+			SaveMenu_InitSaveLoad(false);
 			break;
 
 		case 0x8000 | 31: /* STR_SAVE_THIS_GAME */
 			g_gameOverlay = GAMEOVERLAY_SAVE_GAME;
-			GUI_Widget_InitSaveLoad(true);
+			SaveMenu_InitSaveLoad(true);
 			break;
 
 		case 0x8000 | 32: /* STR_GAME_CONTROLS */
@@ -622,7 +622,7 @@ static void
 MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 {
 	if (overlay == GAMEOVERLAY_SAVE_ENTRY) {
-		const int ret = GUI_Widget_Savegame_Click(s_save_entry);
+		const int ret = SaveMenu_Savegame_Click(s_save_entry);
 
 		if (ret == -1) {
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
@@ -634,7 +634,7 @@ MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 	}
 	else {
 		const bool save = (overlay == GAMEOVERLAY_SAVE_GAME);
-		const int ret = GUI_Widget_SaveLoad_Click(save);
+		const int ret = SaveMenu_SaveLoad_Click(save);
 
 		if (ret == -1) {
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;

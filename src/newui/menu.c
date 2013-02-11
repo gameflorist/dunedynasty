@@ -623,7 +623,7 @@ MainMenu_Loop(void)
 			return MENU_BLINK_CONFIRM | MENU_EXTRAS;
 
 		case 0x8000 | MENU_LOAD_GAME:
-			GUI_Widget_InitSaveLoad(false);
+			SaveMenu_InitSaveLoad(false);
 			Campaign_Load();
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
@@ -1100,7 +1100,7 @@ LoadGame_Draw(void)
 static enum MenuAction
 LoadGame_Loop(void)
 {
-	const int ret = GUI_Widget_SaveLoad_Click(false);
+	const int ret = SaveMenu_SaveLoad_Click(false);
 	bool redraw = false;
 
 	if (ret == -1) {

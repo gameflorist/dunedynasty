@@ -154,7 +154,7 @@ SaveMenu_FreeScrollbar(void)
  *  0: stay in save game loop.
  */
 int
-GUI_Widget_Savegame_Click(uint16 key)
+SaveMenu_Savegame_Click(uint16 key)
 {
 	const uint16 loc08 = 1;
 	char *saveDesc = g_savegameDesc[key];
@@ -214,7 +214,7 @@ SaveMenu_UpdateArrows(Widget *scrollbar)
 }
 
 void
-GUI_Widget_InitSaveLoad(bool save)
+SaveMenu_InitSaveLoad(bool save)
 {
 	WindowDesc *desc = &g_saveLoadWindowDesc;
 
@@ -268,7 +268,7 @@ GUI_Widget_InitSaveLoad(bool save)
  * 1+: begin save game entry.
  */
 int
-GUI_Widget_SaveLoad_Click(bool save)
+SaveMenu_SaveLoad_Click(bool save)
 {
 	Widget *scrollbar = s_scrollbar;
 	Widget *w = g_widgetLinkedListTail;
