@@ -3,34 +3,24 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "fourcc.h"
 #include "types.h"
-#include "../os/endian.h"
-#include "../os/math.h"
 #include "../os/sleep.h"
-#include "../os/strings.h"
 
 #include "gui.h"
 #include "widget.h"
 #include "../audio/audio.h"
 #include "../config.h"
 #include "../enhancement.h"
-#include "../file.h"
 #include "../gfx.h"
 #include "../house.h"
-#include "../input/input.h"
-#include "../input/mouse.h"
-#include "../load.h"
 #include "../map.h"
 #include "../newui/actionpanel.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
-#include "../save.h"
 #include "../shape.h"
 #include "../sprites.h"
-#include "../string.h"
 #include "../structure.h"
 #include "../table/strings.h"
 #include "../tile.h"
@@ -38,18 +28,10 @@
 #include "../unit.h"
 #include "../video/video.h"
 
-char g_savegameDesc[5][51];                                 /*!< Array of savegame descriptions for the SaveLoad window. */
-static uint16 s_savegameIndexBase = 0;
-static uint16 s_savegameCountOnDisk = 0;                    /*!< Amount of savegames on disk. */
-
-static char *GenerateSavegameFilename(uint16 number)
-{
-	static char filename[13];
-	sprintf(filename, "_SAVE%03d.DAT", number);
-	return filename;
-}
-
 #if 0
+/* Moved to newui/savemenu.c. */
+static char *GenerateSavegameFilename(uint16 number);
+
 /* Moved to newui/scrollbar.c. */
 static void GUI_Widget_Scrollbar_Scroll(WidgetScrollbar *scrollbar, uint16 scroll);
 #endif
@@ -407,6 +389,7 @@ void GUI_Window_Create(WindowDesc *desc)
 		GUI_Widget_MakeNormal(w, false);
 	}
 
+#if 0
 	if (s_savegameCountOnDisk >= 5 && desc->addArrows) {
 		Widget *w = &g_table_windowWidgets[7];
 
@@ -434,6 +417,7 @@ void GUI_Window_Create(WindowDesc *desc)
 
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 	}
+#endif
 
 	Widget_SetCurrentWidget(old_widget);
 
@@ -448,202 +432,15 @@ static void ShadeScreen(void);
 static void UnshadeScreen(void);
 static bool GUI_YesNo(uint16 stringID);
 extern bool GUI_Widget_Options_Click(Widget *w);
+
+/* Moved to newui/savemenu.c. */
+static uint16 GetSavegameCount(void);
+static void FillSavegameDesc(bool save);
+extern int GUI_Widget_Savegame_Click(uint16 key);
+static void UpdateArrows(bool save, bool force);
+extern void GUI_Widget_InitSaveLoad(bool save);
+extern int GUI_Widget_SaveLoad_Click(bool save);
 #endif
-
-static uint16 GetSavegameCount(void)
-{
-	uint16 i;
-
-	for (i = 0;; i++) {
-		if (!File_Exists_Personal(GenerateSavegameFilename(i))) return i;
-	}
-}
-
-static void FillSavegameDesc(bool save)
-{
-	uint8 i;
-
-	for (i = 0; i < 5; i++) {
-		char *desc = g_savegameDesc[i];
-		char *filename;
-		uint8 fileId;
-
-		*desc = '\0';
-
-		if (s_savegameIndexBase - i < 0) continue;
-
-		if (s_savegameIndexBase - i == s_savegameCountOnDisk) {
-			if (!save) continue;
-
-			strcpy(desc, String_Get_ByIndex(STR_EMPTY_SLOT_));
-			continue;
-		}
-
-		filename = GenerateSavegameFilename(s_savegameIndexBase - i);
-
-		if (!File_Exists_Personal(filename)) continue;
-
-		fileId = ChunkFile_Open_Personal(filename);
-		ChunkFile_Read(fileId, HTOBE32(CC_NAME), desc, 50);
-		ChunkFile_Close(fileId);
-		continue;
-	}
-}
-
-/* return values:
- * -2: game was saved.
- * -1: cancel clicked.
- *  0: stay in save game loop.
- */
-int GUI_Widget_Savegame_Click(uint16 key)
-{
-	char *saveDesc = g_savegameDesc[key];
-	uint16 loc08 = 1;
-
-#if 0
-	if (*saveDesc == '[') *saveDesc = 0;
-	if (*saveDesc == '[') key = s_savegameCountOnDisk;
-
-	GFX_Screen_SetActive(SCREEN_0);
-	Widget_SetCurrentWidget(15);
-#endif
-
-	{
-		Widget *w = g_widgetLinkedListTail;
-
-#if 0
-		GUI_DrawText_Wrapper(NULL, 0, 0, 232, 235, 0x22);
-#endif
-
-		int loc0A = GUI_EditBox(saveDesc, 50, 15, g_widgetLinkedListTail, NULL, loc08);
-		loc08 = 2;
-
-		if ((loc0A & 0x8000) == 0)
-			return 0;
-
-		GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(w, loc0A & 0x7FFF), false);
-
-		switch (loc0A & 0x7FFF) {
-			case 0x1E:
-				if (*saveDesc == 0) break;
-
-				SaveFile(GenerateSavegameFilename(s_savegameIndexBase - key), saveDesc);
-				return -2;
-
-			case 0x1F:
-				return -1;
-
-			default:
-				break;
-		}
-	}
-
-	return 0;
-}
-
-static void UpdateArrows(bool save, bool force)
-{
-	static uint16 previousIndex = 0;
-	Widget *w;
-
-	if (!force && s_savegameIndexBase == previousIndex) return;
-
-	previousIndex = s_savegameIndexBase;
-
-	w = &g_table_windowWidgets[8];
-	if (s_savegameIndexBase >= 5) {
-		GUI_Widget_MakeVisible(w);
-	} else {
-		GUI_Widget_MakeInvisible(w);
-	}
-
-	w = &g_table_windowWidgets[7];
-	if (s_savegameCountOnDisk - (save ? 0 : 1) > s_savegameIndexBase) {
-		GUI_Widget_MakeVisible(w);
-	} else {
-		GUI_Widget_MakeInvisible(w);
-	}
-}
-
-void GUI_Widget_InitSaveLoad(bool save)
-{
-	WindowDesc *desc = &g_saveLoadWindowDesc;
-
-	s_savegameCountOnDisk = GetSavegameCount();
-
-	s_savegameIndexBase = max(0, s_savegameCountOnDisk - (save ? 0 : 1));
-
-	FillSavegameDesc(save);
-
-	desc->stringID = save ? STR_SELECT_A_POSITION_TO_SAVE_TO : STR_SELECT_A_SAVED_GAME_TO_LOAD;
-
-	GUI_Window_Create(desc);
-
-	UpdateArrows(save, true);
-}
-
-/* return values:
- * -3: scroll button pressed.
- * -2: game was loaded.
- * -1: cancel clicked.
- *  0: stay in save/load game loop.
- * 1+: begin save game entry.
- */
-int GUI_Widget_SaveLoad_Click(bool save)
-{
-	Widget *w = g_widgetLinkedListTail;
-	uint16 key = GUI_Widget_HandleEvents(w);
-	int ret = 0;
-
-	UpdateArrows(save, false);
-
-	if (key == (0x80 | MOUSE_ZAXIS)) {
-		if ((g_mouseDZ > 0) && (!g_table_windowWidgets[7].flags.s.invisible)) {
-			key = 0x8025;
-		}
-		else if ((g_mouseDZ < 0) && (!g_table_windowWidgets[8].flags.s.invisible)) {
-			key = 0x8026;
-		}
-	}
-
-	if (key & 0x8000) {
-		Widget *w2;
-
-		key &= 0x7FFF;
-		w2 = GUI_Widget_Get_ByIndex(w, key);
-
-		switch (key) {
-			case 0x25: /* Up */
-				s_savegameIndexBase = min(s_savegameCountOnDisk - (save ? 0 : 1), s_savegameIndexBase + 1);
-				FillSavegameDesc(save);
-				ret = -3;
-				break;
-
-			case 0x26: /* Down */
-				s_savegameIndexBase = max(0, s_savegameIndexBase - 1);
-				FillSavegameDesc(save);
-				ret = -3;
-				break;
-
-			case 0x23: /* Cancel */
-				return -1;
-
-			default:
-				if (!save) {
-					LoadFile(GenerateSavegameFilename(s_savegameIndexBase - (key - 0x1E)));
-					Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
-					return -2;
-				}
-				else {
-					return key;
-				}
-		}
-
-		GUI_Widget_MakeNormal(w2, false);
-	}
-
-	return ret;
-}
 
 /**
  * Handles Click event for "Clear List" button.

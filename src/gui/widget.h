@@ -222,9 +222,6 @@ extern bool GUI_Widget_Cancel_Click(Widget *w);
 extern bool GUI_Widget_Picture_Click(Widget *w);
 extern bool GUI_Widget_RepairUpgrade_Click(Widget *w);
 extern void GUI_Window_Create(WindowDesc *desc);
-extern void GUI_Widget_InitSaveLoad(bool save);
-extern int GUI_Widget_SaveLoad_Click(bool save);
-extern int GUI_Widget_Savegame_Click(uint16 key);
 extern int GUI_Widget_HOF_ClearList_Click(Widget *w);
 
 /* widget_draw.c */

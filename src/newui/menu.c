@@ -16,6 +16,7 @@
 #include "halloffame.h"
 #include "mentat.h"
 #include "menubar.h"
+#include "savemenu.h"
 #include "scrollbar.h"
 #include "strategicmap.h"
 #include "../audio/audio.h"

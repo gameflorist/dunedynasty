@@ -77,8 +77,6 @@ extern uint16 g_cursorSpriteID;
 
 extern bool g_variable_37B2;
 
-extern char g_savegameDesc[5][51];
-
 extern void GUI_ClearScreen(Screen screenID);
 extern void GUI_DrawScreen(Screen screenID);
 extern void GUI_DrawSprite_(Screen memory, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...);

@@ -33,6 +33,7 @@
 #include "../newui/halloffame.h"
 #include "../newui/menu.h"
 #include "../newui/menubar.h"
+#include "../newui/savemenu.h"
 #include "../opendune.h"
 #include "../pool/pool.h"
 #include "../pool/house.h"

@@ -13,6 +13,7 @@
 #include "../house.h"
 #include "../map.h"
 #include "../newui/actionpanel.h"
+#include "../newui/savemenu.h"
 #include "../pool/house.h"
 #include "../pool/unit.h"
 #include "../sprites.h"

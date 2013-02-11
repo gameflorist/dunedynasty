@@ -11,6 +11,7 @@
 #include "menubar.h"
 
 #include "mentat.h"
+#include "savemenu.h"
 #include "scrollbar.h"
 #include "slider.h"
 #include "viewport.h"
