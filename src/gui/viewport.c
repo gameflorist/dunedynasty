@@ -348,14 +348,15 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 	if (g_selectionType == SELECTIONTYPE_PLACE) {
 		const int x1 = TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - Tile_GetPackedX(g_viewportPosition)) - g_viewport_scrollOffsetX;
 		const int y1 = TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - Tile_GetPackedY(g_viewportPosition)) - g_viewport_scrollOffsetY;
-		const int x2 = x1 + (TILE_SIZE * g_selectionWidth) - 1;
-		const int y2 = y1 + (TILE_SIZE * g_selectionHeight) - 1;
-
-		Prim_Rect_i(x1, y1, x2, y2, 0xFF);
 
 		if (g_selectionState == 0 && g_selectionType == SELECTIONTYPE_PLACE) {
-			Prim_Line(x1 + 0.33f, y1 + 0.33f, x2 + 0.66f, y2 + 0.66f, 0xFF, 0.75f);
-			Prim_Line(x2 + 0.66f, y1 + 0.33f, x1 + 0.33f, y2 + 0.66f, 0xFF, 0.75f);
+			VideoA5_DrawRectCross(x1, y1, g_selectionWidth, g_selectionHeight, 0xFF);
+		}
+		else {
+			const int x2 = x1 + (TILE_SIZE * g_selectionWidth) - 1;
+			const int y2 = y1 + (TILE_SIZE * g_selectionHeight) - 1;
+
+			Prim_Rect_i(x1, y1, x2, y2, 0xFF);
 		}
 	}
 

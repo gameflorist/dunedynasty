@@ -1638,6 +1638,23 @@ end:
 }
 
 static void
+VideoA5_CreateInvalidPlacementMask(int x1, int y1)
+{
+	for (enum StructureLayout layout = STRUCTURE_LAYOUT_1x1; layout <= STRUCTURE_LAYOUT_3x3; layout++) {
+		const int w = g_table_structure_layoutSize[layout].width;
+		const int h = g_table_structure_layoutSize[layout].height;
+		const int x2 = x1 + w * TILE_SIZE - 1;
+		const int y2 = y1 + h * TILE_SIZE - 1;
+
+		Prim_Rect_i(x1, y1, x2, y2, 0xFF);
+		Prim_Line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, 0xFF, 0.0f);
+		Prim_Line(x2 + 0.5f, y1 + 0.5f, x1 + 0.5f, y2 + 0.5f, 0xFF, 0.0f);
+
+		x1 += w * TILE_SIZE + 1;
+	}
+}
+
+static void
 VideoA5_MaskDebrisTiles(ALLEGRO_BITMAP *membmp)
 {
 	const struct {
@@ -1761,6 +1778,9 @@ VideoA5_InitIcons(unsigned char *buf)
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 	VideoA5_CopyBitmap(WINDOW_W, buf, icon_texture, TRANSPARENT_COLOUR_0);
 
+	/* Generate pixellated invalid placement mask things. */
+	VideoA5_CreateInvalidPlacementMask(1, 975);
+
 	/* Apply rubble mask for transparent rubble. */
 	VideoA5_MaskDebrisTiles(icon_texture);
 
@@ -1854,6 +1874,32 @@ VideoA5_DrawIconAlpha(uint16 iconID, int x, int y, unsigned char alpha)
 
 	al_draw_tinted_bitmap_region(icon_texture, tint,
 			coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
+}
+
+void
+VideoA5_DrawRectCross(int x1, int y1, int w, int h, unsigned char c)
+{
+	/* sx[((h - 1) << 2) | w] -> int. 1 <= w, h <= 3 */
+	const int sx[] = {
+		0,  1,  18,   0, /* h = 1 */
+		0, 51,  68, 134, /* h = 2 */
+		0,  0, 101, 183, /* h = 3 */
+	};
+
+	if (enhancement_high_res_overlays || w >= 4 || h >= 4) {
+		const int x2 = x1 + (w * TILE_SIZE) - 1;
+		const int y2 = y1 + (h * TILE_SIZE) - 1;
+
+		Prim_Rect_i(x1, y1, x2, y2, c);
+		Prim_Line(x1 + 0.33f, y1 + 0.33f, x2 + 0.66f, y2 + 0.66f, c, 0.75f);
+		Prim_Line(x2 + 0.66f, y1 + 0.33f, x1 + 0.33f, y2 + 0.66f, c, 0.75f);
+	}
+	else {
+		const int idx = ((h - 1) << 2) | w;
+
+		al_draw_tinted_bitmap_region(icon_texture, paltoRGB[c],
+				sx[idx], 975, w * TILE_SIZE, h * TILE_SIZE, x1, y1, 0);
+	}
 }
 
 /*--------------------------------------------------------------*/
