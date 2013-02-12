@@ -1565,6 +1565,7 @@ VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 	*rety = y;
 }
 
+#if 0
 static ALLEGRO_BITMAP *
 VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 {
@@ -1696,6 +1697,7 @@ end:
 
 	return dst;
 }
+#endif
 
 static void
 VideoA5_CreateInvalidPlacementMask(int x1, int y1)
@@ -1844,10 +1846,12 @@ VideoA5_InitIcons(unsigned char *buf)
 	/* Apply rubble mask for transparent rubble. */
 	VideoA5_MaskDebrisTiles(icon_texture);
 
+#if 0
 	/* Load external tile sheets. */
 	VideoA5_InitExternalTiles("icons16.map", "icons16.png", 16);
 	icon_texture32 = VideoA5_InitExternalTiles("icons32.map", "icons32.png", 32);
 	icon_texture48 = VideoA5_InitExternalTiles("icons48.map", "icons48.png", 48);
+#endif
 
 	/* Connect neighbours for interpolation. */
 	VideoA5_DrawIconPadding(icon_texture, connect);
