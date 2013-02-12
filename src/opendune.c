@@ -609,6 +609,7 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 void
 GameLoop_TweakWidgetDimensions(void)
 {
+	const ScreenDiv *menubar = &g_screenDiv[SCREENDIV_MENUBAR];
 	const ScreenDiv *sidebar = &g_screenDiv[SCREENDIV_SIDEBAR];
 	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
 
@@ -670,13 +671,13 @@ GameLoop_TweakWidgetDimensions(void)
 	}
 	else {
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = viewport->scalex * viewport->width;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height = 16;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height = menubar->scaley * 16;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = viewport->y;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetY = viewport->y - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height;
 
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width = 10;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width = sidebar->scalex * 10;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].height = viewport->scaley * viewport->height;
-		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetX = viewport->scalex * viewport->width - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].width;
+		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetX = viewport->scalex * viewport->width;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_RIGHT].offsetY = viewport->y;
 
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_LEFT].width = 5; /* 2px is a little hard when in a window. */
