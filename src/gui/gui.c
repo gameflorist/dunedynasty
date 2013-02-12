@@ -20,6 +20,7 @@
 #include "../codec/format80.h"
 #include "../common_a5.h"
 #include "../config.h"
+#include "../enhancement.h"
 #include "../explosion.h"
 #include "../file.h"
 #include "../gfx.h"
@@ -1677,6 +1678,12 @@ GUI_String_Get_ByIndex(int16 stringID)
 		case -51: return (g_gameConfig.holdControlToZoom) ? "Scroll sidebar" : "Zoom viewport";
 		case -52: return (g_gameConfig.scrollAlongScreenEdge) ? "Screen" : "Viewport";
 		case -53: onoff = g_gameConfig.autoScroll; break;
+
+		case -70: onoff = enhancement_draw_health_bars; break;
+		case -71: onoff = enhancement_high_res_overlays; break;
+		case -72: onoff = enhancement_smooth_unit_animation; break;
+		case -73: onoff = enhancement_infantry_squad_death_animations; break;
+		case -74: onoff = g_gameConfig.hardwareCursor; break;
 
 		default: break;
 	}

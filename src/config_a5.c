@@ -36,6 +36,7 @@ typedef struct GameOption {
 		CONFIG_INT,
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_16,
+		CONFIG_SMOOTH_ANIM,
 		CONFIG_SOUND_EFFECTS,
 		CONFIG_STRING,
 		CONFIG_LANGUAGE,
@@ -53,6 +54,7 @@ typedef struct GameOption {
 		enum GraphicsDriver *_graphics_driver;
 		enum Language *_language;
 		enum MusicSet *_music_set;
+		enum SmoothUnitAnimationMode *_smooth_anim;
 		enum SoundEffectSources *_sound_effects;
 		enum SubtitleOverride *_subtitle;
 		enum WindowMode *_window_mode;
@@ -127,11 +129,13 @@ static const GameOption s_game_option[] = {
 
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
 	{ "enhancement",    "fog_of_war",               CONFIG_BOOL,.d._bool = &enhancement_fog_of_war },
+	{ "enhancement",    "health_bars",              CONFIG_BOOL,.d._bool = &enhancement_draw_health_bars },
 	{ "enhancement",    "hi_res_overlays",          CONFIG_BOOL,.d._bool = &enhancement_high_res_overlays },
 	{ "enhancement",    "infantry_squad_death_anim",CONFIG_BOOL,.d._bool = &enhancement_infantry_squad_death_animations },
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
 	{ "enhancement",    "raise_scenario_unit_cap",  CONFIG_BOOL,.d._bool = &enhancement_raise_scenario_unit_cap },
 	{ "enhancement",    "repeat_reinforcements",    CONFIG_BOOL,.d._bool = &enhancement_repeat_reinforcements },
+	{ "enhancement",    "smooth_unit_animation",    CONFIG_SMOOTH_ANIM, .d._smooth_anim = &enhancement_smooth_unit_animation },
 	{ "enhancement",    "subtitle_override",        CONFIG_SUBTITLE,.d._subtitle = &enhancement_subtitle_override },
 
 	{ NULL, NULL, CONFIG_BOOL, .d._bool = NULL }
@@ -335,6 +339,23 @@ Config_SetMusicPack(ALLEGRO_CONFIG *config, const char *section, const char *key
 		value = MUSICSET_DUNE2_ADLIB;
 
 	al_set_config_value(config, section, key, g_table_music_set[value].prefix);
+}
+
+static void
+Config_SetSmoothAnimation(ALLEGRO_CONFIG *config, const char *section, const char *key, enum SmoothUnitAnimationMode value)
+{
+	const bool enable = (value != SMOOTH_UNIT_ANIMATION_DISABLE);
+
+	al_set_config_value(config, section, key, enable ? "1" : "0");
+}
+
+static void
+Config_GetSmoothAnimation(const char *str, enum SmoothUnitAnimationMode *value)
+{
+	const char c = tolower(str[0]);
+
+	     if (c == '1' || c == 't' || c == 'y') *value = SMOOTH_UNIT_ANIMATION_ENABLE;
+	else if (c == '0' || c == 'f' || c == 'n') *value = SMOOTH_UNIT_ANIMATION_DISABLE;
 }
 
 static void
@@ -559,6 +580,10 @@ GameOptions_Load(void)
 				Config_GetMusicPack(str, opt->d._music_set);
 				break;
 
+			case CONFIG_SMOOTH_ANIM:
+				Config_GetSmoothAnimation(str, opt->d._smooth_anim);
+				break;
+
 			case CONFIG_SOUND_EFFECTS:
 				Config_GetSoundEffects(str, opt->d._sound_effects);
 				break;
@@ -691,6 +716,10 @@ GameOptions_Save(void)
 
 			case CONFIG_MUSIC_PACK:
 				Config_SetMusicPack(s_configFile, opt->section, opt->key, *(opt->d._music_set));
+				break;
+
+			case CONFIG_SMOOTH_ANIM:
+				Config_SetSmoothAnimation(s_configFile, opt->section, opt->key, *(opt->d._smooth_anim));
 				break;
 
 			case CONFIG_SOUND_EFFECTS:

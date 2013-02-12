@@ -318,13 +318,17 @@ MenuBar_DrawGameControlLabel(Widget *w)
 static bool
 MenuBar_ClickRadioButton(Widget *radio)
 {
-	const int visible_widgets[2][3 + 5*3 + 1] = {
-		{ 35, 90, 91,
+	const int visible_widgets[3][4 + 5*3 + 1] = {
+		{ 35, 90, 91, 92,
 		  20, 30, 100, 21, 31, 101, 22, 32, 102, 23, 33, 103, 24, 34, 104,
 		  -1
 		},
-		{ 35, 90, 91,
+		{ 35, 90, 91, 92,
 		  40, 50, 110, 41, 51, 111, 42, 52, 112, 43, 53, 113, 44, 54, 114,
+		  -1
+		},
+		{ 35, 90, 91, 92,
+		  60, 70, 120, 61, 71, 121, 62, 72, 122, 63, 73, 123, 64, 74, 124,
 		  -1
 		},
 	};
@@ -433,8 +437,14 @@ MenuBar_CreateGameControls(void)
 	 * 43, 53, 113  -- auto scroll label, on/off, slider.
 	 * 44, 54, 114  -- pan sensitivity label, slider.
 	 *
+	 * 60, 70   -- health bars label, off/on/always on.
+	 * 61, 71   -- hi-res overlays label, off/on.
+	 * 62, 72   -- smooth unit animation label, off/on.
+	 * 63, 73   -- infantry squad death label, off/on.
+	 * 64, 74   -- hardware mouse cursor label, off/on.
+	 *
 	 * 25 -- previous.
-	 * 90, 91 -- radio buttons.
+	 * 90, 91, 92   -- radio buttons.
 	 */
 
 	const WindowDesc *desc = &g_gameControlWindowDesc;
@@ -443,17 +453,13 @@ MenuBar_CreateGameControls(void)
 	GUI_Window_Create(&g_gameControlWindowDesc);
 
 	/* Radio buttons. */
-	w = GUI_Widget_Allocate(90, 0,  8, g_widgetProperties[g_gameControlWindowDesc.index].height - 17, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
-	w->parentID = g_gameControlWindowDesc.index;
-	w->clickProc = MenuBar_ClickRadioButton;
-	w->state.s.selected = 0;
-	g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
-
-	w = GUI_Widget_Allocate(91, 0, 18, g_widgetProperties[g_gameControlWindowDesc.index].height - 17, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
-	w->parentID = g_gameControlWindowDesc.index;
-	w->clickProc = MenuBar_ClickRadioButton;
-	w->state.s.selected = 0;
-	g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
+	for (int page = 0; page < 3; page++) {
+		w = GUI_Widget_Allocate(90 + page, 0, 8 + 10 * page, g_widgetProperties[g_gameControlWindowDesc.index].height - 17, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
+		w->parentID = g_gameControlWindowDesc.index;
+		w->clickProc = MenuBar_ClickRadioButton;
+		w->state.s.selected = 0;
+		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
+	}
 
 	/* Labels. */
 	const struct {
@@ -471,10 +477,15 @@ MenuBar_CreateGameControls(void)
 		{ 42, 2, "Scrolling edge" },
 		{ 43, 3, String_Get_ByIndex(STR_AUTO_SCROLL_IS) },
 		{ 44, 4, "Pan sensitivity" },
+		{ 60, 0, "Health bars" },
+		{ 61, 1, "Hi-res overlays" },
+		{ 62, 2, "Smooth unit animation" },
+		{ 63, 3, "Infantry squad corpses" },
+		{ 64, 4, "Hardware mouse cursor" },
 	};
 
 	for (unsigned int i = 0; i < lengthof(label); i++) {
-		const uint16 x = desc->widgets[label[i].position].offsetX;
+		const uint16 x = desc->widgets[label[i].position].offsetX + (label[i].index >= 60 ? 40 : 0);
 		const uint16 y = desc->widgets[label[i].position].offsetY;
 
 		w = GUI_Widget_Allocate(label[i].index, 0, x, y, -2, STR_NULL);
@@ -496,10 +507,15 @@ MenuBar_CreateGameControls(void)
 		{ 51, 1, 104 }, /* Mouse wheel. */
 		{ 52, 2, 104 }, /* Scrolling edge. */
 		{ 53, 3,  46 }, /* Auto scroll. */
+		{ 70, 0,  64 }, /* Health bars. */
+		{ 71, 1,  64 }, /* Hi-res vector graphics. */
+		{ 72, 2,  64 }, /* Smooth unit animation. */
+		{ 73, 3,  64 }, /* Infantry squad corpses. */
+		{ 74, 4,  64 }, /* Hardware mouse cursor. */
 	};
 
 	for (unsigned int i = 0; i < lengthof(button); i++) {
-		const uint16 x = desc->widgets[button[i].position].offsetX;
+		const uint16 x = desc->widgets[button[i].position].offsetX + (button[i].index >= 60 ? 40 : 0);
 		const uint16 y = desc->widgets[button[i].position].offsetY;
 
 		w = GUI_Widget_Allocate(button[i].index, 0, x, y, -2, -button[i].index);
@@ -715,6 +731,15 @@ MenuBar_TickGameControls(void)
 		case 0x8000 | 51: g_gameConfig.holdControlToZoom ^= 0x1; break;
 		case 0x8000 | 52: g_gameConfig.scrollAlongScreenEdge ^= 0x1; break;
 		case 0x8000 | 53: g_gameConfig.autoScroll ^= 0x1; break;
+
+		case 0x8000 | 70: enhancement_draw_health_bars ^= 0x1; break;
+		case 0x8000 | 71: enhancement_high_res_overlays ^= 0x1; break;
+		case 0x8000 | 72: enhancement_smooth_unit_animation = (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE) ? SMOOTH_UNIT_ANIMATION_ENABLE : SMOOTH_UNIT_ANIMATION_DISABLE; break;
+		case 0x8000 | 73: enhancement_infantry_squad_death_animations ^= 0x1; break;
+		case 0x8000 | 74:
+			g_gameConfig.hardwareCursor ^= 0x1;
+			Mouse_SwitchHWCursor();
+			break;
 
 		default:
 			break;
