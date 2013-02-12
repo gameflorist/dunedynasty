@@ -1235,7 +1235,12 @@ Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
 	if (curr <= max / 2) colour = 5;
 	if (curr <= max / 4) colour = 8;
 
-	Prim_FillRect(x - deltax, y - deltay, x + width + 1.0f + deltax, y + 1.0f + deltay, 12);
+	if (enhancement_high_res_overlays) {
+		Prim_FillRect(x - deltax, y - deltay, x + width + 1.0f + deltax, y + 1.0f + deltay, 12);
+	}
+	else {
+		Prim_FillRect_i(x - 1, y - 1, x + width + 1, y + 1, 12);
+	}
 
 	if (w < width)
 		Prim_Hline(x + w + 1, y, x + width, 13);
@@ -1261,7 +1266,12 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 	const int w = 2 * (num_bricks * curr / max);
 
 	/* Black outline. */
-	Prim_FillRect(x - deltax, y - deltay, x + width + deltax, y + 1.0f + deltay, 12);
+	if (enhancement_high_res_overlays) {
+		Prim_FillRect(x - deltax, y - deltay, x + width + deltax, y + 1.0f + deltay, 12);
+	}
+	else {
+		Prim_FillRect_i(x - 1, y - 1, x + width, y + 1, 12);
+	}
 
 	if (curr < max) {
 		/* Interpolate from 0x545454 to 0xFC4400. */
@@ -1280,8 +1290,9 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 
 	/* Divide into bricks. */
 	x += 2;
+	float thickness = enhancement_high_res_overlays ? 0.0f : 1.0f;
 	for (int i = 0; i < num_bricks - 1; i++, x += 2) {
-		Prim_Line(x, y, x, y + 1.0f + deltay, 12, 0.0f);
+		Prim_Line(x, y, x, y + 1.0f + deltay, 12, thickness);
 	}
 }
 
