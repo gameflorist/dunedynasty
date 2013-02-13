@@ -1436,7 +1436,6 @@ Menu_Run(void)
 		/* Draw. */
 		if (redraw && (last_redraw_time < Timer_GetTicks())) {
 			redraw = false;
-			last_redraw_time = Timer_GetTicks();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 
 			switch (curr_menu & 0xFF) {
@@ -1484,6 +1483,7 @@ Menu_Run(void)
 			}
 
 			Video_Tick();
+			last_redraw_time = Timer_GetTicks();
 		}
 
 		/* Menu input. */
