@@ -1031,6 +1031,7 @@ int main(int argc, char **argv)
 	/* g_var_7097 = 0; */
 
 	Audio_ScanMusic();
+	Audio_LoadSampleSet(SAMPLESET_INVALID);
 	String_Init();
 
 	Campaign *camp;

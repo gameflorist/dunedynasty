@@ -35,11 +35,7 @@
 #include "../timer/timer.h"
 #include "../tools.h"
 #include "../video/video.h"
-
-enum {
-	RADAR_ANIMATION_FRAME_COUNT = 21,
-	RADAR_ANIMATION_DELAY = 3,
-};
+#include "../wsa.h"
 
 static enum {
 	RADAR_ANIMATION_NONE,

@@ -474,6 +474,11 @@ Audio_LoadSampleSet(enum SampleSet setID)
 	if (!g_enable_audio)
 		return;
 
+	/* Initialisation. */
+	if (setID == SAMPLESET_INVALID) {
+		Audio_LoadSample(g_table_voices[SAMPLE_RADAR_STATIC].string + 1, SAMPLE_RADAR_STATIC);
+	}
+
 	if (s_curr_sample_set == setID)
 		return;
 

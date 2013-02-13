@@ -104,6 +104,7 @@ static enum ExtrasMenu extras_page;
 static int extras_credits;
 static int main_menu_campaign_selected;
 static bool skirmish_regenerate_map;
+static int64_t skirmish_radar_timer;
 
 static void Extras_ShowScrollbar(void);
 static void Extras_HideScrollbar(void);
@@ -1652,6 +1653,21 @@ PickMusic_Loop(MentatState *mentat, int widgetID)
 /*--------------------------------------------------------------*/
 
 static void
+Skirmish_RequestRegeneration(bool force)
+{
+	/* If radar animation is still going, do not restart it. */
+	if (Timer_GetTicks() - skirmish_radar_timer < RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
+		if (force)
+			skirmish_regenerate_map = true;
+	}
+	else {
+		skirmish_regenerate_map = true;
+		skirmish_radar_timer = Timer_GetTicks();
+		Audio_PlaySound(SOUND_RADAR_STATIC);
+	}
+}
+
+static void
 Skirmish_Initialise(void)
 {
 	Widget *w;
@@ -1700,7 +1716,13 @@ Skirmish_Draw(void)
 
 	Prim_FillRect_i(x1, y1, x2, y2, 12);
 
-	if (skirmish_regenerate_map) {
+	if (Timer_GetTicks() - skirmish_radar_timer < RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
+		const int frame = max(0, (Timer_GetTicks() - skirmish_radar_timer) / RADAR_ANIMATION_DELAY);
+
+		GUI_DrawText_Wrapper("Generating", x1 + 32, y1 - 8, 31, 0, 0x111);
+		VideoA5_DrawWSAStatic(RADAR_ANIMATION_FRAME_COUNT - frame - 1, x1, y1);
+	}
+	else if (skirmish_regenerate_map) {
 		GUI_DrawText_Wrapper("Generating", x1 + 32, y1 - 8, 31, 0, 0x111);
 		VideoA5_DrawWSAStatic(0, x1, y1);
 	}
@@ -1763,13 +1785,13 @@ Skirmish_Loop(int widgetID)
 					*(si->d.brain) = new_brain;
 
 					if (!Skirmish_GenerateMap(false))
-						skirmish_regenerate_map = true;
+						Skirmish_RequestRegeneration(true);
 				}
 			}
 			break;
 
 		case 0x8000 | 9:
-			skirmish_regenerate_map = true;
+			Skirmish_RequestRegeneration(false);
 			break;
 	}
 

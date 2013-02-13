@@ -3,6 +3,11 @@
 #ifndef WSA_H
 #define WSA_H
 
+enum {
+	RADAR_ANIMATION_FRAME_COUNT = 21,
+	RADAR_ANIMATION_DELAY = 3,
+};
+
 extern uint16 WSA_GetFrameCount(void *wsa);
 extern void *WSA_LoadFile(const char *filename, void *wsa, uint32 wsaSize, bool reserveDisplayFrame);
 extern void WSA_Unload(void *wsa);
