@@ -1859,9 +1859,8 @@ Options_Initialise(void)
 	si->d.checkbox = &enhancement_raise_scenario_unit_cap;
 	snprintf(si->text, sizeof(si->text), "Raise scenario unit cap");
 
-	bool dummy = true;
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->d.checkbox = &dummy;
+	si->d.checkbox = &g_gameConfig.hardwareCursor;
 	snprintf(si->text, sizeof(si->text), "Hardware mouse cursor");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
@@ -1888,6 +1887,9 @@ Options_Loop(int widgetID)
 			si = Scrollbar_GetSelectedItem(scrollbar);
 			if ((si != NULL) && (si->type == SCROLLBAR_CHECKBOX)) {
 				*(si->d.checkbox) = !(*(si->d.checkbox));
+
+				if (si->d.checkbox == &g_gameConfig.hardwareCursor)
+					Mouse_SwitchHWCursor();
 			}
 
 			break;
