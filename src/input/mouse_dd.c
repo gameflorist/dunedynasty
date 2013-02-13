@@ -6,6 +6,8 @@
 #include "mouse.h"
 
 #include "input.h"
+#include "../config.h"
+#include "../video/video.h"
 
 int g_mouseX;
 int g_mouseY;
@@ -15,10 +17,24 @@ int g_mouseDZ;
 int g_mouseClickX;
 int g_mouseClickY;
 bool g_mousePanning;
+bool g_mouseHidden;
 
 void
 Mouse_Init(void)
 {
+	g_mouseX = -16;
+	g_mouseY = -16;
+}
+
+void
+Mouse_SwitchHWCursor(void)
+{
+	if (g_gameConfig.hardwareCursor) {
+		Video_ShowCursor();
+	}
+	else {
+		Video_HideHWCursor();
+	}
 }
 
 void

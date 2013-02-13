@@ -278,8 +278,6 @@ MenuBar_DrawMentatOverlay(void)
 	A5_UseTransform(SCREENDIV_MENU);
 
 	MentatHelp_Draw(mentatID, &g_mentat_state);
-
-	A5_UseTransform(SCREENDIV_MAIN);
 }
 
 /*--------------------------------------------------------------*/
@@ -833,8 +831,6 @@ MenuBar_DrawOptionsOverlay(void)
 	}
 
 	GUI_Widget_DrawAll(g_widgetLinkedListTail);
-
-	A5_UseTransform(SCREENDIV_MAIN);
 }
 
 /*--------------------------------------------------------------*/

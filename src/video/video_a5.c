@@ -131,6 +131,12 @@ static const uint8 font_palette[][8] = {
 	{ 0x00, 0xFF, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0x00 }, /* Intro. */
 };
 
+static const struct {
+	int x, y;
+} cursor_focus[CURSOR_MAX] = {
+	{ 0, 0 }, { 5, 0 }, { 8, 5 }, { 5, 8 }, { 0, 5 }, { 8, 8 }
+};
+
 enum GraphicsDriver g_graphics_driver;
 
 /* Exposed for prim_a5.c. */
@@ -600,6 +606,20 @@ VideoA5_Tick(void)
 		}
 	}
 
+	/* Draw software mouse cursor for people who have trouble with hardware cursors. */
+	if (!g_gameConfig.hardwareCursor && !g_mouseHidden) {
+		const int size = (TRUE_DISPLAY_WIDTH >= 640) ? 32 : 16;
+		const enum ScreenDivID div = A5_SaveTransform();
+		const int x = g_screenDiv[div].scalex * (g_mouseX - cursor_focus[g_cursorSpriteID].x) + g_screenDiv[div].x;
+		const int y = g_screenDiv[div].scaley * (g_mouseY - cursor_focus[g_cursorSpriteID].y) + g_screenDiv[div].y;
+
+		A5_UseTransform(SCREENDIV_MAIN);
+
+		al_draw_scaled_bitmap(s_shape[g_cursorSpriteID][HOUSE_HARKONNEN], 0, 0, 16, 16, x, y, size, size, 0);
+
+		A5_UseTransform(div);
+	}
+
 	al_flip_display();
 	al_clear_to_color(paltoRGB[0]);
 }
@@ -642,11 +662,21 @@ Video_SetCursor(int spriteID)
 void
 Video_ShowCursor(void)
 {
-	al_show_mouse_cursor(display);
+	if (g_gameConfig.hardwareCursor)
+		al_show_mouse_cursor(display);
+
+	g_mouseHidden = false;
 }
 
 void
 Video_HideCursor(void)
+{
+	al_hide_mouse_cursor(display);
+	g_mouseHidden = true;
+}
+
+void
+Video_HideHWCursor(void)
 {
 	al_hide_mouse_cursor(display);
 }
@@ -2711,13 +2741,6 @@ Video_DrawMinimap(int left, int top, int map_scale, int mode)
 static void
 VideoA5_InitCursor(unsigned char *buf)
 {
-	/* From gui/viewport.c */
-	const struct {
-		int x, y;
-	} focus[CURSOR_MAX] = {
-		{ 0, 0 }, { 5, 0 }, { 8, 5 }, { 5, 8 }, { 0, 5 }, { 8, 8 }
-	};
-
 	/* Double-sized mouse cursors on 640x400 and above. */
 	const int scale = (TRUE_DISPLAY_WIDTH >= 640) ? 2 : 1;
 	const int sw = al_get_bitmap_width(s_shape[SHAPE_CURSOR_NORMAL][HOUSE_HARKONNEN]);
@@ -2744,11 +2767,12 @@ VideoA5_InitCursor(unsigned char *buf)
 		VideoA5_CopyBitmap(SCREEN_WIDTH, buf, src, TRANSPARENT_COLOUR_0);
 		al_draw_scaled_bitmap(src, 0.0f, 0.0f, sw, sh, 0.0f, 0.0f, dw, dh, 0);
 
-		s_cursor[i] = al_create_mouse_cursor(bmp, scale * focus[i].x, scale * focus[i].y);
+		s_cursor[i] = al_create_mouse_cursor(bmp, scale * cursor_focus[i].x, scale * cursor_focus[i].y);
 	}
 
 	al_set_mouse_cursor(display, s_cursor[0]);
 	al_destroy_bitmap(bmp);
+	Mouse_SwitchHWCursor();
 }
 
 void

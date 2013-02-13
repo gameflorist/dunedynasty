@@ -72,6 +72,7 @@ GameCfg g_gameConfig = {
 	false,  /* leftClickOrders */
 	false,  /* holdControlToZoom */
 	1.0f,   /* panSensitivity */
+	true,   /* hardwareCursor */
 };
 
 static int saved_screen_width = 640;
@@ -93,6 +94,7 @@ static const GameOption s_game_option[] = {
 	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scalex },
 	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scalex },
 	{ "graphics",   "viewport_scale",   CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scalex },
+	{ "graphics",   "hardware_cursor",  CONFIG_BOOL,            .d._bool = &g_gameConfig.hardwareCursor },
 
 	{ "controls",   "auto_scroll",              CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
 	{ "controls",   "scroll_speed",             CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },

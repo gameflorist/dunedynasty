@@ -922,6 +922,7 @@ void GameLoop_Main(bool new_game)
 			}
 
 			Video_Tick();
+			A5_UseTransform(SCREENDIV_MAIN);
 		}
 		else {
 			frames_skipped++;

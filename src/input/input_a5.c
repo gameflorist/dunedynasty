@@ -8,6 +8,7 @@
 
 #include "../audio/audio.h"
 #include "../common_a5.h"
+#include "../config.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../opendune.h"
@@ -132,7 +133,7 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			else {
 				Mouse_EventHandler(apply_mouse_transform, event->mouse.x, event->mouse.y, event->mouse.dz, mouse_event);
 			}
-			break;
+			return (!g_gameConfig.hardwareCursor && !g_mouseHidden);
 
 		case ALLEGRO_EVENT_KEY_CHAR:
 			if ((event->keyboard.keycode == ALLEGRO_KEY_F11) ||

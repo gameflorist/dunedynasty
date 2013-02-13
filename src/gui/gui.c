@@ -1279,8 +1279,6 @@ void GUI_DrawInterfaceAndRadar(void)
 
 	GUI_DrawScreen(g_screenActiveID);
 
-	A5_UseTransform(SCREENDIV_MAIN);
-
 #if 0
 	find.houseID = HOUSE_INVALID;
 	find.index   = 0xFFFF;

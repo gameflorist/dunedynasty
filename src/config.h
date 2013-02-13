@@ -29,6 +29,7 @@ typedef struct GameCfg {
 	bool leftClickOrders;
 	bool holdControlToZoom;
 	float panSensitivity;
+	bool hardwareCursor;
 } GameCfg;
 
 extern GameCfg g_gameConfig;
