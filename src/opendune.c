@@ -1184,8 +1184,6 @@ void Game_Prepare(void)
 		if (s != NULL) Map_SetSelectionSize(g_table_structureInfo[s->o.type].layout);
 	}
 
-	Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
-
 	g_tickHousePowerMaintenance = max(g_timerGame + 70, g_tickHousePowerMaintenance);
 	g_viewport_forceRedraw = true;
 	g_playerCredits = 0xFFFF;

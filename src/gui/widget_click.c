@@ -631,6 +631,7 @@ int GUI_Widget_SaveLoad_Click(bool save)
 			default:
 				if (!save) {
 					LoadFile(GenerateSavegameFilename(s_savegameIndexBase - (key - 0x1E)));
+					Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 					return -2;
 				}
 				else {
