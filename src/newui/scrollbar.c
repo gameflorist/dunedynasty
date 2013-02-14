@@ -493,7 +493,8 @@ ScrollListArea_Click(Widget *w)
 	if (wi->yBase + w->offsetY <= g_mouseY && g_mouseY < wi->yBase + w->offsetY + w->height) {
 		const int y = (g_mouseY - w->offsetY - wi->yBase) / 8;
 
-		s_selectedHelpSubject = ws->scrollPosition + y;
+		if (ws->scrollPosition + y < ws->scrollMax)
+			s_selectedHelpSubject = ws->scrollPosition + y;
 	}
 
 	if ((w->state.s.buttonState & 0x11) == 0) return true;
