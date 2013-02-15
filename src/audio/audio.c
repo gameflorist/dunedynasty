@@ -300,6 +300,20 @@ Audio_PlayMusicNextInSequence(void)
 	}
 }
 
+void
+Audio_StopMusicUnlessMenu(void)
+{
+	if (curr_music == NULL)
+		return;
+
+	const MusicList *l = &g_table_music[MUSIC_MAIN_MENU];
+	for (int i = 0; i < l->length; i++) {
+		if (curr_music == &l->song[i])
+			return;
+	}
+
+	AudioA5_StopMusic();
+}
 
 void
 Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)

@@ -1840,8 +1840,7 @@ Extras_Loop(MentatState *mentat)
 	}
 
 	if ((res & 0xFF) != MENU_EXTRAS) {
-		/* XXX : should only stop if not menu music. */
-		Audio_PlayMusic(MUSIC_STOP);
+		Audio_StopMusicUnlessMenu();
 	}
 	else if (!Audio_MusicIsPlaying()) {
 		if (l_pause < curr_ticks) {
