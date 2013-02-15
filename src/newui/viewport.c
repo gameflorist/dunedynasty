@@ -1773,13 +1773,16 @@ static void
 Viewport_InterpolateMovement(const Unit *u, int *x, int *y)
 {
 	const int frame = clamp(0, (3 + g_timerGame - g_tickUnitUnknown1), 2);
+	const uint16 speedPerTick = Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false);
+
+	if (((u->speedRemainder + speedPerTick) & 0xFF00) == 0)
+		return;
+
+	const float speed = speedPerTick * frame / 3.0f;
 
 	tile32 origin;
 	origin.s.x = *x;
 	origin.s.y = *y;
-
-	float speed = u->speedRemainder;
-	speed += Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false) * frame / 3.0f;
 
 	int destx, desty;
 	Map_IsPositionInViewport(u->currentDestination, &destx, &desty);

@@ -2168,10 +2168,7 @@ void Unit_SetSpeed(Unit *unit, uint16 speed)
 	speedPerTick = 0;
 
 	unit->speed          = 0;
-
-	if (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE)
-		unit->speedRemainder = 0;
-
+	unit->speedRemainder = 0;
 	unit->speedPerTick   = 0;
 
 	if (speed == 0) return;
