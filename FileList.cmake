@@ -100,6 +100,17 @@ set(DUNEDYNASTY_SRC_FILES
 	src/wsa.c
 	)
 
+if(WIN32)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES} src/audio/midi_win32.c)
+elseif(WITH_ALSA)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES} src/audio/midi_alsa.c)
+else()
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES} src/audio/midi_none.c)
+endif()
+
 if(WITH_FLUIDSYNTH)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES}
@@ -110,30 +121,20 @@ endif(WITH_FLUIDSYNTH)
 
 if(WITH_MAD)
     set(DUNEDYNASTY_SRC_FILES
-	${DUNEDYNASTY_SRC_FILES}
-	src/audio/allegro_mad.c
-	)
+	${DUNEDYNASTY_SRC_FILES} src/audio/allegro_mad.c)
 endif(WITH_MAD)
 
 if(WITH_AUD)
     set(DUNEDYNASTY_SRC_FILES
-	${DUNEDYNASTY_SRC_FILES}
-	src/audio/audlib/audlib_a5.c
-	)
+	${DUNEDYNASTY_SRC_FILES} src/audio/audlib/audlib_a5.c)
 endif(WITH_AUD)
 
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES
-	${DUNEDYNASTY_SRC_FILES}
-	src/audio/midi_win32.c
-	src/os/error_win32.c
-	)
+	${DUNEDYNASTY_SRC_FILES} src/os/error_win32.c)
 else(WIN32)
     set(DUNEDYNASTY_SRC_FILES
-	${DUNEDYNASTY_SRC_FILES}
-	src/audio/midi_alsa.c
-	src/os/error.c
-	)
+	${DUNEDYNASTY_SRC_FILES} src/os/error.c)
 endif(WIN32)
 
 set(OPENDUNE_UNUSED_SRC_FILES
@@ -142,7 +143,6 @@ set(OPENDUNE_UNUSED_SRC_FILES
 	src/audio/dsp_none.c
 	src/audio/dsp_sdl.c
 	src/audio/dsp_win32.c
-	src/audio/midi_none.c
 	src/audio/sound.c
 	src/config.c
 	src/crashlog/crashlog.c

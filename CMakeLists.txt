@@ -1,11 +1,18 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(dunedynasty)
-set(DUNE_DYNASTY_VERSION 1.4)
+set(DUNE_DYNASTY_VERSION 1.5)
 
 set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
 option(WITH_ACODEC "FLAC and Ogg Vorbis music" ON)
+
+if(WIN32)
+	set(WITH_ALSA OFF)
+else(WIN32)
+	option(WITH_ALSA "ALSA MIDI music" ON)
+endif(WIN32)
+
 option(WITH_AUD "AUD music (Dune 2000)" ON)
-option(WITH_FLUIDSYNTH "FluidSynth" ON)
+option(WITH_FLUIDSYNTH "FluidSynth MIDI music" ON)
 option(WITH_MAD "MP3 music" ON)
 
 if(NOT DUNE_DATA_DIR)
@@ -14,8 +21,13 @@ endif(NOT DUNE_DATA_DIR)
 
 include(FindPkgConfig)
 
-set(ALLEGRO_VERSION 5.0)
-pkg_check_modules(ALLEGRO5 REQUIRED allegro-${ALLEGRO_VERSION})
+set(ALLEGRO_VERSION 5)
+pkg_check_modules(ALLEGRO5 allegro-${ALLEGRO_VERSION})
+if(NOT ALLEGRO5_FOUND)
+	set(ALLEGRO_VERSION 5.0)
+	pkg_check_modules(ALLEGRO5 REQUIRED allegro-${ALLEGRO_VERSION})
+endif(NOT ALLEGRO5_FOUND)
+
 pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-${ALLEGRO_VERSION})
 pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-${ALLEGRO_VERSION})
 pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-${ALLEGRO_VERSION})
@@ -26,7 +38,7 @@ endif(APPLE)
 include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
 
 find_package(OpenGL)
-include_directories(SYSTEM ${OPENGL_INCLUDE_DIRS})
+include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 
 if(WITH_ACODEC)
     pkg_check_modules(ALLEGRO5_ACODEC allegro_acodec-${ALLEGRO_VERSION})
@@ -35,6 +47,16 @@ if(WITH_ACODEC)
 	set(WITH_ACODEC OFF)
     endif(NOT ALLEGRO5_ACODEC_FOUND)
 endif(WITH_ACODEC)
+
+if(WITH_ALSA)
+    pkg_check_modules(ALSA alsa)
+    if(ALSA_FOUND)
+	include_directories(SYSTEM ${ALSA_INCLUDE_DIRS})
+    else(ALSA_FOUND)
+	message("ALSA not found")
+	set(WITH_ALSA OFF)
+    endif(ALSA_FOUND)
+endif(WITH_ALSA)
 
 if(WITH_FLUIDSYNTH)
     pkg_check_modules(FLUIDSYNTH fluidsynth)
@@ -78,9 +100,7 @@ if(MINGW)
 endif(MINGW)
 
 add_executable(dunedynasty WIN32
-	${DUNEDYNASTY_SRC_FILES}
-	${CMAKE_SOURCE_DIR}/src/icon/icon.rc
-	)
+	${DUNEDYNASTY_SRC_FILES} ${CMAKE_SOURCE_DIR}/src/icon/icon.rc)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition -pedantic")
@@ -100,6 +120,12 @@ if(WITH_ACODEC)
 	target_link_libraries(dunedynasty ${ALLEGRO5_ACODEC_LIBRARIES})
 endif(WITH_ACODEC)
 
+if(WIN32)
+	target_link_libraries(dunedynasty winmm)
+elseif(WITH_ALSA)
+	target_link_libraries(dunedynasty ${ALSA_LIBRARIES})
+endif()
+
 if(WITH_FLUIDSYNTH)
 	target_link_libraries(dunedynasty ${FLUIDSYNTH_LIBRARIES})
 endif(WITH_FLUIDSYNTH)
@@ -112,7 +138,7 @@ install(TARGETS dunedynasty DESTINATION "bin")
 install(FILES
 	${CMAKE_SOURCE_DIR}/CHANGES.txt
 	${CMAKE_SOURCE_DIR}/COPYING
-	${CMAKE_SOURCE_DIR}/README.txt
+	${CMAKE_SOURCE_DIR}/README_dd.txt
 	${CMAKE_SOURCE_DIR}/enhancement.txt
 	${CMAKE_SOURCE_DIR}/opendune.txt
 	${CMAKE_SOURCE_DIR}/dist/dunedynasty.cfg-sample
@@ -153,16 +179,15 @@ endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
 #endif(FLUIDSYNTH_FOUND)
 
 #if(MAD_FOUND)
-#    add_executable(allegro_mad
-#	src/audio/allegro_mad.c
-#	)
+#    add_executable(allegro_mad src/audio/allegro_mad.c)
 #
 #    set_target_properties(allegro_mad
-#	PROPERTIES COMPILE_FLAGS -DTEST
-#	)
+#	PROPERTIES COMPILE_FLAGS -DTEST)
 #
 #    target_link_libraries(allegro_mad
 #	${ALLEGRO5_AUDIO_LIBRARIES}
 #	${MAD_LIBRARIES}
 #	)
 #endif(MAD_FOUND)
+
+# vim: noexpandtab
