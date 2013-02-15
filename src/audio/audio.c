@@ -414,7 +414,7 @@ Audio_PlaySample(enum SampleID sampleID, int volume, float pan)
 	const int64_t curr_ticks = Timer_GetTicks();
 	assert(sampleID < SAMPLEID_MAX);
 
-	if (curr_ticks - s_sample_last_played[sampleID] > 6) {
+	if (curr_ticks - s_sample_last_played[sampleID] > 8) {
 		s_sample_last_played[sampleID] = curr_ticks;
 		AudioA5_PlaySample(sampleID, (float)volume / 255.0f, pan);
 	}
