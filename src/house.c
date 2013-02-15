@@ -507,9 +507,12 @@ void House_CalculatePowerAndCredit(House *h)
 		GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_POWER_WINDTRAP_IS_NEEDED), 1);
 	}
 
-	/* If there are no buildings left, you lose your right on 'credits without storage' */
+	/* If there are no buildings left, you lose your right on 'credits without storage'
+	 * ENHANCEMENT -- check if we actually lost a structure, or if it was an MCV start.
+	 */
 	if (h->index == g_playerHouseID && h->structuresBuilt == 0 && g_validateStrictIfZero == 0) {
-		g_playerCreditsNoSilo = 0;
+		if (g_scenario.destroyedAllied > 0)
+			g_playerCreditsNoSilo = 0;
 	}
 }
 
