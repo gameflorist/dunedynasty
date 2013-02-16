@@ -55,9 +55,19 @@
 #include "../tools.h"
 #include "../wsa.h"
 
+#ifndef MULTIPLE_WINDOW_ICONS
+# if (ALLEGRO_VERSION == 5 && ALLEGRO_SUB_VERSION == 0 && ALLEGRO_WIP_VERSION >= 9) || \
+     (ALLEGRO_VERSION == 5 && ALLEGRO_SUB_VERSION == 1 && ALLEGRO_WIP_VERSION >= 5)
+#  define MULTIPLE_WINDOW_ICONS
+# endif
+#endif
+
 #include "dune2_16x16.xpm"
-/* #include "dune2_32x32.xpm" */
+
+#ifdef MULTIPLE_WINDOW_ICONS
+#include "dune2_32x32.xpm"
 /* #include "dune2_32x32a.xpm" */
+#endif
 
 #define OUTPUT_TEXTURES     false
 #define ICONID_MAX          512
@@ -248,7 +258,7 @@ VideoA5_ReadPalette(const char *filename)
 	paletteRGB[3*WINDTRAP_COLOUR + 2] = 0x00;
 }
 
-static void
+static ALLEGRO_BITMAP *
 VideoA5_InitDisplayIcon(char **xpm, int w, int h, int colours)
 {
 	struct {
@@ -260,7 +270,7 @@ VideoA5_InitDisplayIcon(char **xpm, int w, int h, int colours)
 
 	icon = al_create_bitmap(w, h);
 	if (icon == NULL)
-		return;
+		return NULL;
 
 	for (int ln = 2; ln < 1 + colours; ln++) {
 		unsigned char sym;
@@ -297,9 +307,32 @@ VideoA5_InitDisplayIcon(char **xpm, int w, int h, int colours)
 	}
 
 	al_unlock_bitmap(icon);
+	return icon;
+}
 
-	al_set_display_icon(display, icon);
-	al_destroy_bitmap(icon);
+static void
+VideoA5_InitWindowIcons(void)
+{
+	ALLEGRO_BITMAP *icon[2];
+
+	icon[0] = VideoA5_InitDisplayIcon(dune2_16x16_xpm, 16, 16, 32);
+	if (icon[0] == NULL)
+		return;
+
+#ifdef MULTIPLE_WINDOW_ICONS
+	icon[1] = VideoA5_InitDisplayIcon(dune2_32x32_xpm, 32, 32, 23);
+	/* icon[1] = VideoA5_InitDisplayIcon(dune2_32x32a_xpm, 32, 32, 13); */
+
+	if (icon[1] != NULL) {
+		al_set_display_icons(display, 2, icon);
+		al_destroy_bitmap(icon[1]);
+		al_destroy_bitmap(icon[0]);
+		return;
+	}
+#endif
+
+	al_set_display_icon(display, icon[0]);
+	al_destroy_bitmap(icon[0]);
 }
 
 bool
@@ -343,11 +376,8 @@ VideoA5_Init(void)
 	TRUE_DISPLAY_WIDTH = al_get_display_width(display);
 	TRUE_DISPLAY_HEIGHT = al_get_display_height(display);
 
-	VideoA5_InitDisplayIcon(dune2_16x16_xpm, 16, 16, 32);
-	/* VideoA5_InitDisplayIcon(dune2_32x32_xpm, 32, 32, 23); */
-	/* VideoA5_InitDisplayIcon(dune2_32x32a_xpm, 32, 32, 13); */
-
 	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
+	VideoA5_InitWindowIcons();
 	interface_texture = al_create_bitmap(w, h);
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
