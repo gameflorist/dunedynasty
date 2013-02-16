@@ -8,8 +8,6 @@
 
 #include "gui.h"
 #include "widget.h"
-#include "../audio/driver.h"
-#include "../audio/sound.h"
 #include "../common_a5.h"
 #include "../config.h"
 #include "../enhancement.h"
