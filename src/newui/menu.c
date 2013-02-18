@@ -416,13 +416,14 @@ Menu_ScanCampaigns(void)
 
 	f = al_read_directory(e);
 	while (f != NULL) {
-		ALLEGRO_PATH *path = al_create_path(al_get_fs_entry_name(f));
+		const bool is_directory = (al_get_fs_entry_mode(f) & ALLEGRO_FILEMODE_ISDIR);
 
-		const bool is_directory = (al_get_path_basename(path)[0] == '\0');
-		if (is_directory)
+		if (is_directory) {
+			ALLEGRO_PATH *path = al_create_path_for_directory(al_get_fs_entry_name(f));
 			Menu_AddCampaign(path);
+			al_destroy_path(path);
+		}
 
-		al_destroy_path(path);
 		al_destroy_fs_entry(f);
 		f = al_read_directory(e);
 	}
