@@ -935,6 +935,8 @@ void GameLoop_Main(bool new_game)
 
 	Audio_PlayVoice(VOICE_STOP);
 	Widget_SetCurrentWidget(0);
+	g_selectionPosition = 0xFFFF;
+	Unit_UnselectAll();
 
 #if 0
 	/* XXX: This fading effect doesn't work. */
