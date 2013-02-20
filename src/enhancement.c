@@ -27,7 +27,7 @@ bool enhancement_brutal_ai = false;
  * Draw structure and unit health bars in directly in the viewport.
  * Toggle in game with back-quote.
  */
-bool enhancement_draw_health_bars = true;
+enum HealthBarMode enhancement_draw_health_bars = HEALTH_BAR_SELECTED_UNITS;
 
 /**
  * Fix the often incorrect warning message regarding the direction of

@@ -5,6 +5,14 @@
 
 #include <stdbool.h>
 
+enum HealthBarMode {
+	HEALTH_BAR_DISABLE,
+	HEALTH_BAR_SELECTED_UNITS,
+	HEALTH_BAR_ALL_UNITS,
+
+	NUM_HEALTH_BAR_MODES
+};
+
 enum RepairCostFormula {
 	REPAIR_COST_v107,
 	REPAIR_COST_v100,
@@ -40,7 +48,7 @@ extern bool const enhancement_fix_typos;
 
 extern bool enhancement_ai_respects_structure_placement;
 extern bool enhancement_brutal_ai;
-extern bool enhancement_draw_health_bars;
+extern enum HealthBarMode enhancement_draw_health_bars;
 extern bool enhancement_fog_covers_units;
 extern bool enhancement_fog_of_war;
 extern bool enhancement_high_res_overlays;

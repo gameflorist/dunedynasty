@@ -33,6 +33,7 @@ typedef struct GameOption {
 		CONFIG_FLOAT_05_2,
 		CONFIG_FLOAT_1_3,
 		CONFIG_GRAPHICS_DRIVER,
+		CONFIG_HEALTH_BAR,
 		CONFIG_INT,
 		CONFIG_INT_0_4,
 		CONFIG_INT_1_16,
@@ -52,6 +53,7 @@ typedef struct GameOption {
 		char *_string;
 		enum AspectRatioCorrection *_aspect_correction;
 		enum GraphicsDriver *_graphics_driver;
+		enum HealthBarMode *_health_bar;
 		enum Language *_language;
 		enum MusicSet *_music_set;
 		enum SmoothUnitAnimationMode *_smooth_anim;
@@ -129,7 +131,7 @@ static const GameOption s_game_option[] = {
 
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
 	{ "enhancement",    "fog_of_war",               CONFIG_BOOL,.d._bool = &enhancement_fog_of_war },
-	{ "enhancement",    "health_bars",              CONFIG_BOOL,.d._bool = &enhancement_draw_health_bars },
+	{ "enhancement",    "health_bars",              CONFIG_HEALTH_BAR,  .d._health_bar = &enhancement_draw_health_bars },
 	{ "enhancement",    "hi_res_overlays",          CONFIG_BOOL,.d._bool = &enhancement_high_res_overlays },
 	{ "enhancement",    "infantry_squad_death_anim",CONFIG_BOOL,.d._bool = &enhancement_infantry_squad_death_animations },
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
@@ -279,6 +281,27 @@ Config_SetGraphicsDriver(ALLEGRO_CONFIG *config, const char *section, const char
 	}
 
 	al_set_config_value(config, section, key, str);
+}
+
+static void
+Config_GetHealthBars(const char *str, enum HealthBarMode *value)
+{
+	const char c = tolower(str[0]);
+
+	     if (c == 'n') *value = HEALTH_BAR_DISABLE;
+	else if (c == 's') *value = HEALTH_BAR_SELECTED_UNITS;
+	else if (c == 'a') *value = HEALTH_BAR_ALL_UNITS;
+}
+
+static void
+Config_SetHealthBars(ALLEGRO_CONFIG *config, const char *section, const char *key, enum HealthBarMode value)
+{
+	const char *str[] = { "none", "selected", "all" };
+
+	if (value > HEALTH_BAR_ALL_UNITS)
+		value = HEALTH_BAR_DISABLE;
+
+	al_set_config_value(config, section, key, str[value]);
 }
 
 static void
@@ -556,6 +579,10 @@ GameOptions_Load(void)
 				Config_GetGraphicsDriver(str, opt->d._graphics_driver);
 				break;
 
+			case CONFIG_HEALTH_BAR:
+				Config_GetHealthBars(str, opt->d._health_bar);
+				break;
+
 			case CONFIG_INT:
 				Config_GetInt(str, 0, INT_MAX, opt->d._int);
 				break;
@@ -698,6 +725,10 @@ GameOptions_Save(void)
 
 			case CONFIG_GRAPHICS_DRIVER:
 				Config_SetGraphicsDriver(s_configFile, opt->section, opt->key, *(opt->d._graphics_driver));
+				break;
+
+			case CONFIG_HEALTH_BAR:
+				Config_SetHealthBars(s_configFile, opt->section, opt->key, *(opt->d._health_bar));
 				break;
 
 			case CONFIG_INT:

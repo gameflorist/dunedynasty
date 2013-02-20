@@ -732,7 +732,16 @@ MenuBar_TickGameControls(void)
 		case 0x8000 | 52: g_gameConfig.scrollAlongScreenEdge ^= 0x1; break;
 		case 0x8000 | 53: g_gameConfig.autoScroll ^= 0x1; break;
 
-		case 0x8000 | 70: enhancement_draw_health_bars ^= 0x1; break;
+		case 0x8000 | 70: /* Health bars. */
+			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 70);
+			if (w->state.s.buttonState & 0x04) {
+				enhancement_draw_health_bars = (enhancement_draw_health_bars + 1) % NUM_HEALTH_BAR_MODES;
+			}
+			else {
+				enhancement_draw_health_bars = (enhancement_draw_health_bars + NUM_HEALTH_BAR_MODES - 1) % NUM_HEALTH_BAR_MODES;
+			}
+			break;
+
 		case 0x8000 | 71: enhancement_high_res_overlays ^= 0x1; break;
 		case 0x8000 | 72: enhancement_smooth_unit_animation = (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE) ? SMOOTH_UNIT_ANIMATION_ENABLE : SMOOTH_UNIT_ANIMATION_DISABLE; break;
 		case 0x8000 | 73: enhancement_infantry_squad_death_animations ^= 0x1; break;

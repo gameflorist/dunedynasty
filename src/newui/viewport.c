@@ -1304,20 +1304,52 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 void
 Viewport_DrawSelectionHealthBars(void)
 {
-	if (!enhancement_draw_health_bars)
+	if (enhancement_draw_health_bars == HEALTH_BAR_DISABLE)
 		return;
 
+	PoolFindStruct find;
 	int iter;
-
+	Structure *s;
 	Unit *u = Unit_FirstSelected(&iter);
-
 	const bool unit_selected = (u != NULL);
+
+	/* Draw a structure's spice bricks under a unit's health bar. */
+	if (!unit_selected &&
+			(g_selectionType != SELECTIONTYPE_PLACE) &&
+			(g_mapVisible[g_selectionPosition].fogOverlayBits != 0xF) &&
+			(s = Structure_Get_ByPackedTile(g_selectionPosition)) != NULL) {
+		const StructureInfo *si = &g_table_structureInfo[s->o.type];
+		const int x = TILE_SIZE * (Tile_GetPackedX(g_selectionPosition) - Tile_GetPackedX(g_viewportPosition)) - g_viewport_scrollOffsetX;
+		const int ty = Tile_GetPackedY(g_selectionPosition);
+
+		int y = TILE_SIZE * (ty - Tile_GetPackedY(g_viewportPosition)) - g_viewport_scrollOffsetY;
+
+		if ((s->o.type == STRUCTURE_REFINERY || s->o.type == STRUCTURE_SILO) && (s->o.houseID == g_playerHouseID)) {
+			const House *h = g_playerHouse;
+			const StructureInfo *si = &g_table_structureInfo[s->o.type];
+			int creditsStored = h->credits * si->creditsStorage / h->creditsStorage;
+			if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
+
+			Viewport_DrawSpiceBricks(x + 2, y + TILE_SIZE * g_selectionHeight - 3, 10, creditsStored, si->creditsStorage);
+		}
+
+		y += (ty == g_mapInfos[g_scenario.mapScale].minY ? 1 : -2);
+		Viewport_DrawHealthBar(x + 1, y, TILE_SIZE * g_selectionWidth - 3, s->o.hitpoints, si->o.hitpoints);
+	}
+
+	if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS) {
+		find.houseID = g_playerHouseID;
+		find.type = 0xFFFF;
+		find.index = 0xFFFF;
+
+		u = Unit_Find(&find);
+	}
 
 	while (u != NULL) {
 		const uint16 packed = Tile_PackTile(u->o.position);
+		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 
-		if (Map_IsValidPosition(packed) && (g_mapVisible[packed].fogOverlayBits != 0xF)) {
-			const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+		if (ui->o.flags.tabSelectable && Map_IsValidPosition(packed) && (g_mapVisible[packed].fogOverlayBits != 0xF)) {
 			int x, y;
 
 			Map_IsPositionInViewport(u->o.position, &x, &y);
@@ -1335,32 +1367,11 @@ Viewport_DrawSelectionHealthBars(void)
 				Viewport_DrawSpiceBricks(x - 7, y + 2, 7, u->amount, 100);
 		}
 
-		u = Unit_NextSelected(&iter);
-	}
-
-	if (unit_selected || (g_selectionType == SELECTIONTYPE_PLACE))
-		return;
-
-	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
-	if (s != NULL) {
-		if (g_mapVisible[g_selectionPosition].fogOverlayBits != 0xF) {
-			const StructureInfo *si = &g_table_structureInfo[s->o.type];
-			const int x = TILE_SIZE * (Tile_GetPackedX(g_selectionPosition) - Tile_GetPackedX(g_viewportPosition)) - g_viewport_scrollOffsetX;
-			const int ty = Tile_GetPackedY(g_selectionPosition);
-
-			int y = TILE_SIZE * (ty - Tile_GetPackedY(g_viewportPosition)) - g_viewport_scrollOffsetY;
-
-			if ((s->o.type == STRUCTURE_REFINERY || s->o.type == STRUCTURE_SILO) && (s->o.houseID == g_playerHouseID)) {
-				const House *h = g_playerHouse;
-				const StructureInfo *si = &g_table_structureInfo[s->o.type];
-				int creditsStored = h->credits * si->creditsStorage / h->creditsStorage;
-				if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
-
-				Viewport_DrawSpiceBricks(x + 2, y + TILE_SIZE * g_selectionHeight - 3, 10, creditsStored, si->creditsStorage);
-			}
-
-			y += (ty == g_mapInfos[g_scenario.mapScale].minY ? 1 : -2);
-			Viewport_DrawHealthBar(x + 1, y, TILE_SIZE * g_selectionWidth - 3, s->o.hitpoints, si->o.hitpoints);
+		if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS) {
+			u = Unit_Find(&find);
+		}
+		else {
+			u = Unit_NextSelected(&iter);
 		}
 	}
 }

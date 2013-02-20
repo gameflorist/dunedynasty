@@ -1679,7 +1679,13 @@ GUI_String_Get_ByIndex(int16 stringID)
 		case -52: return (g_gameConfig.scrollAlongScreenEdge) ? "Screen" : "Viewport";
 		case -53: onoff = g_gameConfig.autoScroll; break;
 
-		case -70: onoff = enhancement_draw_health_bars; break;
+		case -70:
+			if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS)
+				return "ALL";
+
+			onoff = enhancement_draw_health_bars;
+			break;
+
 		case -71: onoff = enhancement_high_res_overlays; break;
 		case -72: onoff = enhancement_smooth_unit_animation; break;
 		case -73: onoff = enhancement_infantry_squad_death_animations; break;
