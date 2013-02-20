@@ -498,10 +498,6 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 			}
 			return;
 
-		case SCANCODE_TILDE:
-			enhancement_draw_health_bars = !enhancement_draw_health_bars;
-			break;
-
 		case 0x80 | MOUSE_ZAXIS:
 			if (g_mouseDZ == 0)
 				break;
