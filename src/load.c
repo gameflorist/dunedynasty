@@ -15,8 +15,10 @@
 #include "file.h"
 #include "gui/gui.h"
 #include "map.h"
+#include "mapgenerator/skirmish.h"
 #include "opendune.h"
 #include "saveload/saveload.h"
+#include "scenario.h"
 #include "sprites.h"
 #include "string.h"
 #include "structure.h"
@@ -62,6 +64,12 @@ static bool Load_Main(FILE *fp)
 	/* The next 'chunk' is fake, and has no length field */
 	if (fread(&header, sizeof(uint32), 1, fp) != 1) return false;
 	if (BETOH32(header) != CC_SCEN) return false;
+
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+			g_skirmish.brain[h] = BRAIN_NONE;
+		}
+	}
 
 	position = ftell(fp);
 
@@ -149,6 +157,13 @@ static bool Load_Main(FILE *fp)
 				}
 				break;
 
+			case CC_DDS2:
+				if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+					if (!Scenario_Load2(fp, length))
+						return false;
+				}
+				break;
+
 			case CC_DDU2:
 				if (load_unit) {
 					if (!Unit_Load2(fp, length))
@@ -167,6 +182,16 @@ static bool Load_Main(FILE *fp)
 		/* Savegames are word aligned */
 		position += length + 8 + (length & 1);
 		fseek(fp, position, SEEK_SET);
+	}
+
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+		if (Skirmish_IsPlayable()) {
+			Skirmish_Prepare();
+		}
+		else {
+			GUI_DisplayModalMessage("Missing skirmish saved game data!", 0xFFFF);
+			return false;
+		}
 	}
 
 	return true;

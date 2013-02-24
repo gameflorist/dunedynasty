@@ -277,6 +277,13 @@ Skirmish_TweakTechTree(void)
 	g_table_unitInfo[UNIT_ORNITHOPTER].o.availableHouse &= (1 << g_playerHouseID);
 }
 
+void
+Skirmish_Prepare(void)
+{
+	Skirmish_ResetAlliances();
+	Skirmish_TweakTechTree();
+}
+
 static void
 Skirmish_GenGeneral(void)
 {
@@ -862,8 +869,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 
 	if (generate_houses) {
 		Campaign_Load();
-		Skirmish_ResetAlliances();
-		Skirmish_TweakTechTree();
+		Skirmish_Prepare();
 	}
 
 	Game_Init();

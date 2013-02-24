@@ -159,6 +159,8 @@ extern bool Map_Save(FILE *fp);
 extern void Map_Load2Fallback(void);
 extern bool Map_Load2(FILE *fp, uint32 length);
 extern bool Map_Save2(FILE *fp);
+extern bool Scenario_Load2(FILE *fp, uint32 length);
+extern bool Scenario_Save2(FILE *fp);
 extern bool Structure_Load(FILE *fp, uint32 length);
 extern bool Structure_Save(FILE *fp);
 extern bool Structure_Load2(FILE *fp, uint32 length);
