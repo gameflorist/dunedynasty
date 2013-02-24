@@ -471,6 +471,45 @@ Viewport_GenericCommandCanSabotageAlly(uint16 packed)
 }
 
 static bool
+Viewport_LMBAttemptsGenericCommand(uint16 packed)
+{
+	/* If hold shift, always add to selection. */
+	if (Input_Test(SCANCODE_LSHIFT))
+		return false;
+
+	/* If only non-player units selected, false. */
+	bool found_player = false;
+	int iter;
+	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
+		if (Unit_GetHouseID(u) == g_playerHouseID) {
+			found_player = true;
+			break;
+		}
+	}
+
+	if (!found_player)
+		return false;
+
+	const bool sabotage = Viewport_GenericCommandCanSabotageAlly(packed);
+	if (sabotage)
+		return true;
+
+	enum HouseType houseID = HOUSE_INVALID;
+
+	Structure *s = Structure_Get_ByPackedTile(packed);
+	if (s != NULL)
+		houseID = s->o.houseID;
+
+	if (houseID == HOUSE_INVALID) {
+		Unit *u = Unit_Get_ByPackedTile(packed);
+		if (u != NULL)
+			houseID = Unit_GetHouseID(u);
+	}
+
+	return !House_AreAllied(houseID, g_playerHouseID);
+}
+
+static bool
 Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 {
 	const enum LandscapeType lst = Map_GetLandscapeTypeVisible(packed);
@@ -744,20 +783,7 @@ Viewport_Click(Widget *w)
 		else if (viewport_click_action == VIEWPORT_LMB) {
 			if (g_gameConfig.leftClickOrders) {
 				if (Unit_AnySelected()) {
-					const bool sabotage = Viewport_GenericCommandCanSabotageAlly(packed);
-					enum HouseType houseID = HOUSE_INVALID;
-
-					Structure *s = Structure_Get_ByPackedTile(packed);
-					if (s != NULL)
-						houseID = s->o.houseID;
-
-					if (houseID == HOUSE_INVALID) {
-						Unit *u = Unit_Get_ByPackedTile(packed);
-						if (u != NULL)
-							houseID = Unit_GetHouseID(u);
-					}
-
-					if ((!House_AreAllied(houseID, g_playerHouseID) || (sabotage && !Input_Test(SCANCODE_LSHIFT))))
+					if (Viewport_LMBAttemptsGenericCommand(packed))
 						perform_context_sensitive_action = true;
 				}
 				else {
