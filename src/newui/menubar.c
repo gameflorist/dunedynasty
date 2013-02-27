@@ -235,8 +235,9 @@ MenuBar_ClickMentat(Widget *w)
 
 	Widget *scrollbar = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
 	Mentat_LoadHelpSubjects(scrollbar, true, SEARCHDIR_CAMPAIGN_DIR, g_playerHouseID, g_campaignID, false);
-	return true;
 
+	Mouse_TransformToDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
+	return true;
 }
 
 void
@@ -267,6 +268,8 @@ MenuBar_TickMentatOverlay(void)
 		Sprites_LoadTiles();
 
 		Audio_PlayMusic(MUSIC_RANDOM_IDLE);
+
+		Mouse_TransformFromDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 	}
 }
 
@@ -294,6 +297,8 @@ MenuBar_ClickOptions(Widget *w)
 	Video_SetCursor(SHAPE_CURSOR_NORMAL);
 	Timer_SetTimer(TIMER_GAME, false);
 	GUI_Window_Create(&g_optionsWindowDesc);
+
+	Mouse_TransformToDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 	return true;
 }
 
@@ -791,6 +796,8 @@ MenuBar_TickOptionsOverlay(void)
 		Timer_SetTimer(TIMER_GAME, true);
 		Structure_Recount();
 		Unit_Recount();
+
+		Mouse_TransformFromDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 	}
 }
 

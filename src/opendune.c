@@ -787,6 +787,8 @@ void GameLoop_Main(bool new_game)
 	static int64_t l_timerUnitStatus = 0;
 	static int16  l_selectionState = -2;
 
+	Mouse_TransformFromDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
+
 	Sprites_UnloadTiles();
 	Sprites_LoadTiles();
 	Viewport_Init();
@@ -946,6 +948,9 @@ void GameLoop_Main(bool new_game)
 	GFX_ClearScreen();
 	GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, SCREEN_1, SCREEN_0);
 #endif
+
+	if (g_gameOverlay == GAMEOVERLAY_NONE)
+		Mouse_TransformToDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 }
 
 static bool Unknown_25C4_000E(void)

@@ -72,6 +72,16 @@ Mouse_TransformToDiv(enum ScreenDivID div, int *mouseX, int *mouseY)
 		*mouseY = (g_mouseY - g_screenDiv[div].y) / g_screenDiv[div].scaley;
 }
 
+void
+Mouse_TransformFromDiv(enum ScreenDivID div, int *mouseX, int *mouseY)
+{
+	if (mouseX != NULL)
+		*mouseX = (g_screenDiv[div].scalex * g_mouseX) + g_screenDiv[div].x;
+
+	if (mouseY != NULL)
+		*mouseY = (g_screenDiv[div].scaley * g_mouseY) + g_screenDiv[div].y;
+}
+
 bool
 Mouse_InRegion(int x1, int y1, int x2, int y2)
 {
