@@ -60,10 +60,10 @@ extern bool enhancement_soldier_engineers;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 extern enum SubtitleOverride enhancement_subtitle_override;
 extern bool enhancement_targetted_sabotage;
-extern bool enhancement_undelay_ordos_siege_tank_tech;
 
 extern bool enhancement_fix_scenario_typos;
 extern bool enhancement_read_scenario_structure_health;
+extern bool enhancement_undelay_ordos_siege_tank_tech;
 extern bool enhancement_infantry_mini_rockets;
 extern enum RepairCostFormula enhancement_repair_cost_formula;
 extern bool enhancement_special_trooper_portaits;

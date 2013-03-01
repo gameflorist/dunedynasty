@@ -124,7 +124,6 @@ static const GameOption s_game_option[] = {
 	{ "music",  "default",          CONFIG_MUSIC_PACK,  .d._music_set = &default_music_pack },
 
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
-	{ "enhancement",    "fix_ordos_siege_tank_tech",CONFIG_BOOL,.d._bool = &enhancement_undelay_ordos_siege_tank_tech },
 	{ "enhancement",    "fog_of_war",               CONFIG_BOOL,.d._bool = &enhancement_fog_of_war },
 	{ "enhancement",    "infantry_squad_death_anim",CONFIG_BOOL,.d._bool = &enhancement_infantry_squad_death_animations },
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },

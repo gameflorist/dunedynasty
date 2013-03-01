@@ -180,12 +180,6 @@ enum SubtitleOverride enhancement_subtitle_override = SUBTITLE_THE_BUILDING_OF_L
  */
 bool enhancement_targetted_sabotage = true;
 
-/**
- * In the original game, Ordos get siege tanks one level later
- * (affects both players and AI), which serves as a difficulty level.
- */
-bool enhancement_undelay_ordos_siege_tank_tech = true;
-
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 
@@ -200,6 +194,12 @@ bool enhancement_fix_scenario_typos;
  * percentage specified in the scenarios.  Fix your scenarios!
  */
 bool enhancement_read_scenario_structure_health;
+
+/**
+ * [Skirmish only] The original game delays Ordos siege tanks by one
+ * level, leading to unfairness in skirmish mode.
+ */
+bool enhancement_undelay_ordos_siege_tank_tech;
 
 /**
  * [Dune 2 eXtended] Make infantry fire mini-rockets when attacking

@@ -144,6 +144,13 @@ Campaign_ResetEnhancements(void)
 		enhancement_read_scenario_structure_health = true;
 	}
 
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+		enhancement_undelay_ordos_siege_tank_tech = true;
+	}
+	else {
+		enhancement_undelay_ordos_siege_tank_tech = false;
+	}
+
 	enhancement_infantry_mini_rockets = false;
 	enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
 	enhancement_special_trooper_portaits = true;
