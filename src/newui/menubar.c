@@ -698,13 +698,8 @@ MenuBar_TickGameControls(void)
 			}
 			break;
 
-		case 0x8000 | 33: /* STR_HINTS_ARE */
-			g_gameConfig.hints ^= 0x1;
-			break;
-
-		case 0x8000 | 34: /* Subtitles. */
-			g_enable_subtitles ^= 0x1;
-			break;
+		case 0x8000 | 33: g_gameConfig.hints ^= 0x1; break;
+		case 0x8000 | 34: g_enable_subtitles ^= 0x1; break;
 
 		case 0x8000 | 35: /* STR_PREVIOUS */
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
@@ -716,21 +711,10 @@ MenuBar_TickGameControls(void)
 			GUI_Window_Create(&g_optionsWindowDesc);
 			break;
 
-		case 0x8000 | 50: /* Control style. */
-			g_gameConfig.leftClickOrders ^= 0x1;
-			break;
-
-		case 0x8000 | 51: /* Mouse wheel. */
-			g_gameConfig.holdControlToZoom ^= 0x1;
-			break;
-
-		case 0x8000 | 52: /* Scrolling edge. */
-			g_gameConfig.scrollAlongScreenEdge ^= 0x1;
-			break;
-
-		case 0x8000 | 53: /* STR_AUTO_SCROLL_IS */
-			g_gameConfig.autoScroll ^= 0x1;
-			break;
+		case 0x8000 | 50: g_gameConfig.leftClickOrders ^= 0x1; break;
+		case 0x8000 | 51: g_gameConfig.holdControlToZoom ^= 0x1; break;
+		case 0x8000 | 52: g_gameConfig.scrollAlongScreenEdge ^= 0x1; break;
+		case 0x8000 | 53: g_gameConfig.autoScroll ^= 0x1; break;
 
 		default:
 			break;

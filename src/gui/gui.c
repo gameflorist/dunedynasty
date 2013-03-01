@@ -1645,6 +1645,8 @@ GUI_String_Get_ByIndex(int16 stringID)
 		STR_SLOWEST, STR_SLOW, STR_NORMAL, STR_FAST, STR_FASTEST
 	};
 
+	int onoff = 0xFFFF;
+
 	switch (stringID) {
 		case -5: case -4: case -3: case -2: case -1: {
 			char *s = g_savegameDesc[abs((int16)stringID + 1)];
@@ -1652,9 +1654,7 @@ GUI_String_Get_ByIndex(int16 stringID)
 			return s;
 		}
 
-		case -10:
-			stringID = (g_enable_music ? STR_ON : STR_OFF);
-			break;
+		case -10: onoff = g_enable_music; break;
 
 		case -11:
 			if (SOUNDEFFECTS_SYNTH_ONLY <= g_enable_sound_effects && g_enable_sound_effects <= SOUNDEFFECTS_SYNTH_AND_SAMPLES) {
@@ -1669,33 +1669,20 @@ GUI_String_Get_ByIndex(int16 stringID)
 				break;
 			}
 
-		case -12:
-			stringID = speedStrings[g_gameConfig.gameSpeed];
-			break;
+		case -12: stringID = speedStrings[g_gameConfig.gameSpeed]; break;
+		case -13: onoff = g_gameConfig.hints; break;
+		case -14: onoff = g_enable_subtitles; break;
 
-		case -13:
-			stringID = (g_gameConfig.hints != 0) ? STR_ON : STR_OFF;
-			break;
-
-		case -14:
-			stringID = (g_enable_subtitles ? STR_ON : STR_OFF);
-			break;
-
-		case -50:
-			return (g_gameConfig.leftClickOrders) ? "Left-click" : "Right-click";
-
-		case -51:
-			return (g_gameConfig.holdControlToZoom) ? "Scroll factory" : "Zoom viewport";
-
-		case -52:
-			return (g_gameConfig.scrollAlongScreenEdge) ? "Screen" : "Viewport";
-
-		case -53:
-			stringID = (g_gameConfig.autoScroll != 0) ? STR_ON : STR_OFF;
-			break;
+		case -50: return (g_gameConfig.leftClickOrders) ? "Left-click" : "Right-click";
+		case -51: return (g_gameConfig.holdControlToZoom) ? "Scroll sidebar" : "Zoom viewport";
+		case -52: return (g_gameConfig.scrollAlongScreenEdge) ? "Screen" : "Viewport";
+		case -53: onoff = g_gameConfig.autoScroll; break;
 
 		default: break;
 	}
+
+	if (onoff != 0xFFFF)
+		stringID = (onoff != 0) ? STR_ON : STR_OFF;
 
 	return String_Get_ByIndex(stringID);
 }
