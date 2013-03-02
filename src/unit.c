@@ -1532,8 +1532,19 @@ bool Unit_Move(Unit *unit, uint16 distance)
 			return true;
 		}
 
-		newPosition = unit->o.position;
-		Unit_SetOrientation(unit, unit->orientation[0].current + (Tools_Random_256() & 0xF), false, 0);
+		const int r = (Tools_Random_256() & 0xF);
+
+		Unit_SetOrientation(unit, unit->orientation[0].current + r, false, 0);
+
+		/* Due to a carryall's turning radius, it will sometimes not
+		 * rotate even though the current orientation is not the
+		 * target orientation.  This can cause carryalls on the edge
+		 * of the map to get stuck.
+		 */
+		if ((unit->orientation[0].current != unit->orientation[0].target) &&
+		    (unit->orientation[0].speed == 0)) {
+			Unit_SetOrientation(unit, unit->orientation[0].current + r, true, 0);
+		}
 	}
 
 	if (ui->flags.canWobble && unit->o.flags.s.isWobbling) {
