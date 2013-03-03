@@ -65,7 +65,7 @@ bool midi_init(void)
 	}
 
 	if (!found) {
-		Error("No valid MIDI output ports.\n  Please install and start Timidity++ like: timidity -iA\n");
+		Error("No valid MIDI output ports.\n  Please install and start Timidity++ like: timidity -iA -B 4,8\n");
 		snd_seq_delete_port(s_midi, s_midiPort);
 		snd_seq_close(s_midi);
 		s_midi = NULL;
