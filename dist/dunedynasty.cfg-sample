@@ -17,6 +17,10 @@ driver=opengl
 window_mode=windowed
 screen_width=640
 screen_height=480
+menubar_scale=1.00
+sidebar_scale=1.00
+viewport_scale=2.00
+hardware_cursor=1
 
 # correct_aspect_ratio is one of:
 #
@@ -28,10 +32,6 @@ screen_height=480
 # where auto is the same as menu except when the screen height is less
 # than 800 pixels.
 correct_aspect_ratio=auto,1.1
-
-menubar_scale=1.00
-sidebar_scale=1.00
-viewport_scale=2.00
 
 [controls]
 auto_scroll=1
@@ -55,12 +55,14 @@ sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
 
 [enhancement]
 brutal_ai=0
-fix_ordos_siege_tank_tech=1
 fog_of_war=0
+health_bars=selected
+hi_res_overlays=1
 infantry_squad_death_anim=1
 insatiable_sandworms=0
 raise_scenario_unit_cap=0
 repeat_reinforcements=1
+smooth_unit_animation=1
 # subtitle_override is one of: eu, us, dynasty
 subtitle_override=dynasty
 
@@ -79,8 +81,10 @@ Harkonnen=0
 # The relative volumes of external songs can be adjusted in the
 # volume.cfg file of each music pack.
 dune2_adlib=1
-dune2_c55=1
+dune2_midi=0
+fluidsynth=1
 fed2k_mt32=1
+rcblanke_sc55=1
 d2tm_adlib=1
 d2tm_mt32=1 # Subset of fed2k_mt32.
 d2tm_sc55=1
