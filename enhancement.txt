@@ -253,9 +253,9 @@ Glitches and improvement suggestions
     infantry/trooper squad spawns a single soldier/trooper, like in
     the Sega version.
 
-- Add a proper follow (escort) mode (in Dune II, a unit will only
+[n] Add a proper follow (escort) mode (in Dune II, a unit will only
     follow another unit until either of the units stops moving).
-    *** Not yet.
+    *** Units on escort mode don't fire, potential source of confusion.
 
 [n] Make ground vehicles' shadows transparent, like the air units' shadows.
     *** Shadows are drawn into the original sprites.
@@ -282,7 +282,8 @@ Mission-specific fixes
     *** Note that, by default, structure hit points are ignored.
 
 [n] Changed the player's starting credits from 1500 to 1000 in SCENO022.
-    *** Could be intentional, since Ordos is meant to be a wealthy house.
+    *** Could be justified by saying Ordos is a wealthy house.  Use
+    MrFlibble's fixed scenarios if desired (harder Ordos campaign).
 
 [n] Changed Atreides Troopers to Atreides Infantry.
     *** Doesn't really hurt, but maybe they should be Fremen?
