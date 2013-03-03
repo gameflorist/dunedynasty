@@ -1,6 +1,60 @@
 Dune Dynasty
 ============
 
+Version 1.5, 2013-03-03
+-----------------------
+
+Features:
+
+  - Add skirmish mode with random map generator.
+  - Add Options and Extras menu, including picture gallery and juke box.
+  - Add support for Dune 2 eXtended campaign.
+
+Controls and gameplay:
+
+  - Units return to guard after destroying walls and spice blooms.
+  - Fix units on guard command not attacking structures in range.
+  - Fix selection issues with left-click orders.
+  - If using left-click orders, right-clicking on the selected structure
+    will now remove its rally point.
+  - In non-auto-scroll mode, dragging a selection box over the
+    scrolling region will no longer cause the map to scroll.
+  - Fix scrolling regions when using scrolling along viewport edge.
+  - A saboteur can now sabotage an allied unit if it is the only unit
+    selected and is ordered a context-sensitive command.
+  - Fix bug allowing Fremen, Sardaukar, and Mercenaries to build raider trikes.
+  - Fix carryalls spinning in circles and failing to deliver reinforcements.
+  - Refresh starport list when new stock arrives or prices change.
+  - Starport restocks items that are not delivered.
+  - Remove option for Ordos getting siege tanks in level 6.  Ordos now
+    receive siege tanks one level later than others, like in Dune II.
+  - Add Super Dune II Classic's sandworm controls.
+
+Graphics:
+
+  - Shadows darkened and flicker to be more like in the original game.
+  - Improve support for the wider US fonts.
+  - Centre English menu text, like in the US version.
+  - Add options to give a more original look.
+  - Add option to use software mouse cursor.
+
+Audio:
+
+  - Add support for system MIDI output (Windows, ALSA).
+  - Add support for rcblanke's SC-55 music pack.
+  - Disable interactive music if there are no attack songs,
+    e.g. when using the Sega Mega Drive music pack only.
+  - Fix playing synth effects alongside announcements when using
+    digitalised sounds only.
+  - Move music volume configuration out of main config file.
+
+Other:
+
+  - Saved games no longer need to be numbered consecutively to be found.
+  - Add large window icon.
+  - Fix some compilation errors on OS X.
+
+
 Version 1.4, 2012-11-25
 -----------------------
 
