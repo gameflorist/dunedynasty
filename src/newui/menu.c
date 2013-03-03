@@ -452,6 +452,8 @@ Menu_Init(void)
 		w->drawParameterDown.text = w->drawParameterNormal.text;
 	}
 
+	g_skirmish.seed = rand() & 0x7FFF;
+
 	A5_UseTransform(SCREENDIV_MENU);
 }
 
