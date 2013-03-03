@@ -22,12 +22,14 @@ Dune Dynasty features these modern enhancements:
 Plus:
 
   - Emulated Ad-Lib sound and music playback
-  - General MIDI playback using FluidSynth
+  - General MIDI playback
   - Custom campaigns
   - Fog of war option
-  - Bug fixes
   - Smoother unit animation
   - Brutal AI mode
+  - Skirmish mode
+  - Jukebox
+  - Bug fixes
 
 Dune Dynasty is licensed under the GNU General Public License version
 2.0.  For more information, see the `COPYING` file included with every
@@ -119,7 +121,6 @@ Keyboard shortcuts are mostly just the first letter of the action.
     Ctrl-1      Assign control group 1
     Ctrl-2      Assign control group 2, etc.
     1-0         Jump to control group 1-0
-    `           Toggle health bars
 
     -, +        Zoom in or out
     [, ]        Toggle size of menu and side bars
@@ -162,12 +163,18 @@ replace it with `dunedynasty.cfg-sample`.
 General MIDI music
 ------------------
 
-Dune Dynasty can play MIDI music if it was compiled with FluidSynth support.
-You will need to set the `sound_font` path in the configuration file to
-an appropriate sound font (.sf2) file, e.g.
+Dune Dynasty can play MIDI music via FluidSynth.  You will need
+to set the `sound_font` path in the configuration file to an
+appropriate sound font (.sf2) file, e.g.
 
     [audio]
     sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
+
+Dune Dynasty can also play music via the system MIDI output on Windows and
+Linux (ALSA).  If you use [Timidity++] as an ALSA sequencer client on Linux you
+should start it with smaller buffer sizes to avoid the "drunk drummer" problem:
+
+    timidity -iA -B 4,8
 
 
 External music packs
@@ -185,7 +192,7 @@ rips only as required:
 
     [music]
     dune2_adlib=0
-    dune2_sc55=0
+    dune2_midi=0
     ...
     dune2_smd=1
     default=fed2k_mt32
@@ -219,9 +226,9 @@ Custom campaigns
 ----------------
 
 Dune Dynasty can play [fan-made campaigns] such as [Super Dune II Classic],
-[Stefan Hendriks' Atreides Campaign], and [MrFlibble's Alternate Scenarios].
-These should be placed in the subdirectories inside the campaign/ directory.
-Click the "The Building of a Dynasty" subtitle to switch between campaigns.
+[Stefan Hendriks' Atreides Campaign], and [Dune 2 eXtended].  These should
+be placed in the subdirectories inside the campaign/ directory.  Click the
+"The Building of a Dynasty" subtitle to switch between campaigns.
 
 You can also create your own campaigns.  A campaign should consist of
 a META.INI file, a REGIONX.INI file for each playable House, where X
@@ -261,7 +268,7 @@ Peter, for help on various bits of the code, the music code, and AUDlib.
 Nyerguds, for his Dune II editor.
 
 Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
-purplescrin, EagleEye, gerwin.
+purplescrin, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar.
 
 Westwood Studios, for an amazing game!
 
@@ -276,6 +283,7 @@ David Wang <dswang@users.sourceforge.net>
 [OpenDUNE]: http://www.opendune.org/
 [Allegro 5]: http://alleg.sourceforge.net/
 [CMake]: http://www.cmake.org/
+[Timidity++]: http://timidity.sourceforge.net/
 [FluidSynth]: http://sourceforge.net/apps/trac/fluidsynth/
 [MAD]: http://www.underbit.com/products/mad/
 [Download]: http://sourceforge.net/projects/dunedynasty/files/
@@ -284,5 +292,5 @@ David Wang <dswang@users.sourceforge.net>
 [Fan-made campaigns]: http://forum.dune2k.com/topic/20526-dune-ii-goodies-extras/
 [Super Dune II Classic]: http://forum.dune2k.com/topic/20065-super-dune-ii-classic/
 [Stefan Hendriks' Atreides Campaign]: http://arrakis.dune2k.com/downloads.html
-[MrFlibble's Alternate Scenarios]: http://forum.opendune.org/viewtopic.php?p=134#p134
+[Dune 2 eXtended]: http://forum.dune2k.com/topic/18360-dune-2-extended-project/
 [changes]: changes.html
