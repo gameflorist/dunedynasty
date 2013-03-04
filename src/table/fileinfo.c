@@ -9,12 +9,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 0 */
 		/* filename             */ "DUNE.PAK",
 		/* fileSize             */ 439833,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -22,12 +20,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 1 */
 		/* filename             */ "MENTAT.PAK",
 		/* fileSize             */ 573794,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -35,12 +31,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 2 */
 		/* filename             */ "INTRO.PAK",
 		/* fileSize             */ 1154074,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -48,12 +42,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 3 */
 		/* filename             */ "SOUND.PAK",
 		/* fileSize             */ 1201761,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -61,12 +53,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 4 */
 		/* filename             */ "VOC.PAK",
 		/* fileSize             */ 427826,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -74,12 +64,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 5 */
 		/* filename             */ "SCENARIO.PAK",
 		/* fileSize             */ 226797,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -87,12 +75,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 6 */
 		/* filename             */ "FINALE.PAK",
 		/* fileSize             */ 481314,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -100,12 +86,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 7 */
 		/* filename             */ "ENGLISH.PAK",
 		/* fileSize             */ 39066,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -113,12 +97,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 8 */
 		/* filename             */ "INTROVOC.PAK",
 		/* fileSize             */ 983052,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -126,12 +108,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 9 */
 		/* filename             */ "HARK.PAK",
 		/* fileSize             */ 407953,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -139,12 +119,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 10 */
 		/* filename             */ "ATRE.PAK",
 		/* fileSize             */ 391782,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -152,12 +130,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 11 */
 		/* filename             */ "ORDOS.PAK",
 		/* fileSize             */ 444719,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -165,12 +141,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 12 */
 		/* filename             */ "MERC.PAK",
 		/* fileSize             */ 100000,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -178,12 +152,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 13 */
 		/* filename             */ "GERMAN.PAK",
 		/* fileSize             */ 50000,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -191,12 +163,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 14 */
 		/* filename             */ "FRENCH.PAK",
 		/* fileSize             */ 50000,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -204,12 +174,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 15 */
 		/* filename             */ "GRAYRMAP.TBL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -217,12 +185,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 16 */
 		/* filename             */ "CHOAM.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -230,12 +196,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 17 */
 		/* filename             */ "WIN1.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -243,12 +207,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 18 */
 		/* filename             */ "WIN2.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -256,12 +218,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 19 */
 		/* filename             */ "MOUSE.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -269,12 +229,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 20 */
 		/* filename             */ "BUILD.EMC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -282,12 +240,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 21 */
 		/* filename             */ "IBM.PAL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -295,12 +251,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 22 */
 		/* filename             */ "BENE.PAL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -308,12 +262,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 23 */
 		/* filename             */ "ICON.ICN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -321,12 +273,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 24 */
 		/* filename             */ "ICON.MAP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -334,12 +284,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 25 */
 		/* filename             */ "FAME.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -347,12 +295,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 26 */
 		/* filename             */ "LOSTBILD.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -360,12 +306,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 27 */
 		/* filename             */ "LOSTVEHC.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -373,12 +317,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 28 */
 		/* filename             */ "MENTATM.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -386,12 +328,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 29 */
 		/* filename             */ "MENTATA.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -399,12 +339,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 30 */
 		/* filename             */ "MENTATH.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -412,12 +350,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 31 */
 		/* filename             */ "MENTATO.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -425,12 +361,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 32 */
 		/* filename             */ "MENSHPM.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -438,12 +372,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 33 */
 		/* filename             */ "MENSHPA.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -451,12 +383,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 34 */
 		/* filename             */ "MENSHPH.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -464,12 +394,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 35 */
 		/* filename             */ "MENSHPO.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -477,12 +405,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 36 */
 		/* filename             */ "NEW10P.FNT",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -490,12 +416,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 37 */
 		/* filename             */ "NEW6P.FNT",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -503,12 +427,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 38 */
 		/* filename             */ "NEW6PG.FNT",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -516,12 +438,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 39 */
 		/* filename             */ "NEW8P.FNT",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -529,12 +449,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 40 */
 		/* filename             */ "SCREEN.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -542,12 +460,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 41 */
 		/* filename             */ "STATIC.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -555,12 +471,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 42 */
 		/* filename             */ "STD3P.FNT",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -568,12 +482,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 43 */
 		/* filename             */ "TEAM.EMC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -581,12 +493,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 44 */
 		/* filename             */ "UNIT.EMC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -594,12 +504,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 45 */
 		/* filename             */ "SHAPES.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -607,12 +515,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 46 */
 		/* filename             */ "UNITS.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -620,12 +526,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 47 */
 		/* filename             */ "UNITS1.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -633,12 +537,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 48 */
 		/* filename             */ "UNITS2.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -646,12 +548,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 49 */
 		/* filename             */ "PIECES.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -659,12 +559,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 50 */
 		/* filename             */ "ARROWS.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -672,12 +570,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 51 */
 		/* filename             */ "DUNEMAP.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -685,12 +581,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 52 */
 		/* filename             */ "MAPMACH.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -698,12 +592,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 53 */
 		/* filename             */ "DUNERGN.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -711,12 +603,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 54 */
 		/* filename             */ "RGNCLK.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -724,12 +614,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 55 */
 		/* filename             */ "PLANET.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -737,12 +625,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 56 */
 		/* filename             */ "INTRO.FNT",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -750,12 +636,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 57 */
 		/* filename             */ "INTRO.PAL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -763,12 +647,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 58 */
 		/* filename             */ "INTRO1.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -776,12 +658,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 59 */
 		/* filename             */ "INTRO10.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -789,12 +669,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 60 */
 		/* filename             */ "INTRO11.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -802,12 +680,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 61 */
 		/* filename             */ "INTRO2.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -815,12 +691,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 62 */
 		/* filename             */ "INTRO3.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -828,12 +702,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 63 */
 		/* filename             */ "INTRO4.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -841,12 +713,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 64 */
 		/* filename             */ "INTRO5.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -854,12 +724,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 65 */
 		/* filename             */ "INTRO6.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -867,12 +735,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 66 */
 		/* filename             */ "INTRO7A.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -880,12 +746,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 67 */
 		/* filename             */ "INTRO7B.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -893,12 +757,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 68 */
 		/* filename             */ "INTRO8a.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -906,12 +768,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 69 */
 		/* filename             */ "INTRO8b.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -919,12 +779,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 70 */
 		/* filename             */ "INTRO8c.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -932,12 +790,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 71 */
 		/* filename             */ "INTRO9.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -945,12 +801,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 72 */
 		/* filename             */ "VIRGIN.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -958,12 +812,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 73 */
 		/* filename             */ "WESTWOOD.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -971,12 +823,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 74 */
 		/* filename             */ "WESTWOOD.PAL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 2,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -984,12 +834,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 75 */
 		/* filename             */ "SARDUKAR.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -997,12 +845,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 76 */
 		/* filename             */ "4SLAB.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1010,12 +856,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 77 */
 		/* filename             */ "BARRAC.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1023,12 +867,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 78 */
 		/* filename             */ "CARRYALL.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1036,12 +878,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 79 */
 		/* filename             */ "CONSTRUC.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1049,12 +889,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 80 */
 		/* filename             */ "FARTR.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1062,12 +900,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 81 */
 		/* filename             */ "FHARK.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1075,12 +911,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 82 */
 		/* filename             */ "FORDOS.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1088,12 +922,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 83 */
 		/* filename             */ "FREMEN.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1101,12 +933,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 84 */
 		/* filename             */ "FRIGATE.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1114,12 +944,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 85 */
 		/* filename             */ "GOLD-BB.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1127,12 +955,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 86 */
 		/* filename             */ "HARKTANK.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1140,12 +966,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 87 */
 		/* filename             */ "HARVEST.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1153,12 +977,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 88 */
 		/* filename             */ "HEADQRTS.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1166,12 +988,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 89 */
 		/* filename             */ "HITCFTRY.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1179,12 +999,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 90 */
 		/* filename             */ "HTANK.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1192,12 +1010,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 91 */
 		/* filename             */ "HVYFTRY.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1205,12 +1021,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 92 */
 		/* filename             */ "HYINFY.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1218,12 +1032,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 93 */
 		/* filename             */ "INFANTRY.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1231,12 +1043,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 94 */
 		/* filename             */ "IX.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1244,12 +1054,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 95 */
 		/* filename             */ "LITEFTRY.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1257,12 +1065,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 96 */
 		/* filename             */ "LTANK.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1270,12 +1076,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 97 */
 		/* filename             */ "MCV.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1283,12 +1087,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 98 */
 		/* filename             */ "ORDRTANK.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1296,12 +1098,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 99 */
 		/* filename             */ "ORNI.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1309,12 +1109,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 100 */
 		/* filename             */ "OTRIKE.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1322,12 +1120,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 101 */
 		/* filename             */ "PALACE.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1335,12 +1131,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 102 */
 		/* filename             */ "QUAD.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1348,12 +1142,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 103 */
 		/* filename             */ "REFINERY.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1361,12 +1153,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 104 */
 		/* filename             */ "REPAIR.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1374,12 +1164,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 105 */
 		/* filename             */ "RTANK.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1387,12 +1175,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 106 */
 		/* filename             */ "SABOTURE.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1400,12 +1186,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 107 */
 		/* filename             */ "SLAB.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1413,12 +1197,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 108 */
 		/* filename             */ "STANK.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1426,12 +1208,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 109 */
 		/* filename             */ "STARPORT.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1439,12 +1219,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 110 */
 		/* filename             */ "STORAGE.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1452,12 +1230,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 111 */
 		/* filename             */ "TRIKE.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1465,12 +1241,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 112 */
 		/* filename             */ "RTURRET.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1478,12 +1252,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 113 */
 		/* filename             */ "TURRET.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1491,12 +1263,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 114 */
 		/* filename             */ "WALL.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1504,12 +1274,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 115 */
 		/* filename             */ "WINDTRAP.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1517,12 +1285,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 116 */
 		/* filename             */ "WOR.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1530,12 +1296,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 117 */
 		/* filename             */ "WORM.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 1,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1543,12 +1307,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 118 */
 		/* filename             */ "algdig.adv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1556,12 +1318,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 119 */
 		/* filename             */ "pasdig.adv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1569,12 +1329,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 120 */
 		/* filename             */ "sbdig.adv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1582,12 +1340,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 121 */
 		/* filename             */ "sbpdig.adv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1595,12 +1351,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 122 */
 		/* filename             */ "tandy.adv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1608,12 +1362,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 123 */
 		/* filename             */ "mt32mpu.adv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1621,12 +1373,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 124 */
 		/* filename             */ "pcsound.drv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1634,12 +1384,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 125 */
 		/* filename             */ "pcspkr.adv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1647,12 +1395,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 126 */
 		/* filename             */ "alfx.drv",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1660,12 +1406,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 127 */
 		/* filename             */ "DUNE0.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1673,12 +1417,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 128 */
 		/* filename             */ "DUNE1.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1686,12 +1428,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 129 */
 		/* filename             */ "DUNE2.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1699,12 +1439,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 130 */
 		/* filename             */ "DUNE3.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1712,12 +1450,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 131 */
 		/* filename             */ "DUNE4.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1725,12 +1461,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 132 */
 		/* filename             */ "DUNE5.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1738,12 +1472,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 133 */
 		/* filename             */ "DUNE6.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1751,12 +1483,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 134 */
 		/* filename             */ "DUNE7.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1764,12 +1494,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 135 */
 		/* filename             */ "DUNE8.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1777,12 +1505,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 136 */
 		/* filename             */ "DUNE9.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1790,12 +1516,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 137 */
 		/* filename             */ "DUNE10.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1803,12 +1527,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 138 */
 		/* filename             */ "DUNE11.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1816,12 +1538,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 139 */
 		/* filename             */ "DUNE12.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1829,12 +1549,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 140 */
 		/* filename             */ "DUNE13.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1842,12 +1560,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 141 */
 		/* filename             */ "DUNE14.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1855,12 +1571,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 142 */
 		/* filename             */ "DUNE15.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1868,12 +1582,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 143 */
 		/* filename             */ "DUNE16.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1881,12 +1593,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 144 */
 		/* filename             */ "DUNE17.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1894,12 +1604,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 145 */
 		/* filename             */ "DUNE18.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1907,12 +1615,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 146 */
 		/* filename             */ "DUNE19.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1920,12 +1626,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 147 */
 		/* filename             */ "DUNE20.ADL",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1933,12 +1637,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 148 */
 		/* filename             */ "DUNEINIT.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1946,12 +1648,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 149 */
 		/* filename             */ "DUNE0.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1959,12 +1659,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 150 */
 		/* filename             */ "DUNE1.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1972,12 +1670,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 151 */
 		/* filename             */ "DUNE2.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1985,12 +1681,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 152 */
 		/* filename             */ "DUNE3.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -1998,12 +1692,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 153 */
 		/* filename             */ "DUNE4.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2011,12 +1703,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 154 */
 		/* filename             */ "DUNE5.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2024,12 +1714,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 155 */
 		/* filename             */ "DUNE6.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2037,12 +1725,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 156 */
 		/* filename             */ "DUNE7.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2050,12 +1736,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 157 */
 		/* filename             */ "DUNE8.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2063,12 +1747,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 158 */
 		/* filename             */ "DUNE9.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2076,12 +1758,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 159 */
 		/* filename             */ "DUNE10.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2089,12 +1769,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 160 */
 		/* filename             */ "DUNE11.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2102,12 +1780,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 161 */
 		/* filename             */ "DUNE12.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2115,12 +1791,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 162 */
 		/* filename             */ "DUNE13.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2128,12 +1802,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 163 */
 		/* filename             */ "DUNE14.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2141,12 +1813,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 164 */
 		/* filename             */ "DUNE15.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2154,12 +1824,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 165 */
 		/* filename             */ "DUNE16.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2167,12 +1835,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 166 */
 		/* filename             */ "DUNE17.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2180,12 +1846,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 167 */
 		/* filename             */ "DUNE18.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2193,12 +1857,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 168 */
 		/* filename             */ "DUNE19.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2206,12 +1868,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 169 */
 		/* filename             */ "DUNE20.XMI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2219,12 +1879,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 170 */
 		/* filename             */ "DUNE0.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2232,12 +1890,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 171 */
 		/* filename             */ "DUNE1.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2245,12 +1901,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 172 */
 		/* filename             */ "DUNE2.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2258,12 +1912,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 173 */
 		/* filename             */ "DUNE3.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2271,12 +1923,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 174 */
 		/* filename             */ "DUNE4.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2284,12 +1934,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 175 */
 		/* filename             */ "DUNE5.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2297,12 +1945,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 176 */
 		/* filename             */ "DUNE6.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2310,12 +1956,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 177 */
 		/* filename             */ "DUNE7.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2323,12 +1967,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 178 */
 		/* filename             */ "DUNE8.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2336,12 +1978,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 179 */
 		/* filename             */ "DUNE9.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2349,12 +1989,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 180 */
 		/* filename             */ "DUNE10.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2362,12 +2000,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 181 */
 		/* filename             */ "DUNE11.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2375,12 +2011,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 182 */
 		/* filename             */ "DUNE12.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2388,12 +2022,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 183 */
 		/* filename             */ "DUNE13.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2401,12 +2033,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 184 */
 		/* filename             */ "DUNE14.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2414,12 +2044,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 185 */
 		/* filename             */ "DUNE15.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2427,12 +2055,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 186 */
 		/* filename             */ "DUNE16.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2440,12 +2066,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 187 */
 		/* filename             */ "DUNE17.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2453,12 +2077,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 188 */
 		/* filename             */ "DUNE18.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2466,12 +2088,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 189 */
 		/* filename             */ "DUNE19.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2479,12 +2099,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 190 */
 		/* filename             */ "DUNE20.C55",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2492,12 +2110,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 191 */
 		/* filename             */ "DUNE0.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2505,12 +2121,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 192 */
 		/* filename             */ "DUNE1.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2518,12 +2132,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 193 */
 		/* filename             */ "DUNE2.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2531,12 +2143,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 194 */
 		/* filename             */ "DUNE3.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2544,12 +2154,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 195 */
 		/* filename             */ "DUNE4.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2557,12 +2165,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 196 */
 		/* filename             */ "DUNE5.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2570,12 +2176,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 197 */
 		/* filename             */ "DUNE6.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2583,12 +2187,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 198 */
 		/* filename             */ "DUNE7.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2596,12 +2198,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 199 */
 		/* filename             */ "DUNE8.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2609,12 +2209,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 200 */
 		/* filename             */ "DUNE9.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2622,12 +2220,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 201 */
 		/* filename             */ "DUNE10.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2635,12 +2231,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 202 */
 		/* filename             */ "DUNE11.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2648,12 +2242,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 203 */
 		/* filename             */ "DUNE12.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2661,12 +2253,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 204 */
 		/* filename             */ "DUNE13.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2674,12 +2264,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 205 */
 		/* filename             */ "DUNE14.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2687,12 +2275,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 206 */
 		/* filename             */ "DUNE15.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2700,12 +2286,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 207 */
 		/* filename             */ "DUNE16.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2713,12 +2297,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 208 */
 		/* filename             */ "DUNE17.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2726,12 +2308,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 209 */
 		/* filename             */ "DUNE18.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2739,12 +2319,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 210 */
 		/* filename             */ "DUNE19.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2752,12 +2330,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 211 */
 		/* filename             */ "DUNE20.PCS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2765,12 +2341,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 212 */
 		/* filename             */ "DUNE0.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2778,12 +2352,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 213 */
 		/* filename             */ "DUNE1.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2791,12 +2363,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 214 */
 		/* filename             */ "DUNE2.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2804,12 +2374,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 215 */
 		/* filename             */ "DUNE3.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2817,12 +2385,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 216 */
 		/* filename             */ "DUNE4.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2830,12 +2396,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 217 */
 		/* filename             */ "DUNE5.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2843,12 +2407,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 218 */
 		/* filename             */ "DUNE6.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2856,12 +2418,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 219 */
 		/* filename             */ "DUNE7.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2869,12 +2429,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 220 */
 		/* filename             */ "DUNE8.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2882,12 +2440,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 221 */
 		/* filename             */ "DUNE9.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2895,12 +2451,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 222 */
 		/* filename             */ "DUNE10.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2908,12 +2462,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 223 */
 		/* filename             */ "DUNE11.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2921,12 +2473,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 224 */
 		/* filename             */ "DUNE12.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2934,12 +2484,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 225 */
 		/* filename             */ "DUNE13.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2947,12 +2495,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 226 */
 		/* filename             */ "DUNE14.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2960,12 +2506,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 227 */
 		/* filename             */ "DUNE15.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2973,12 +2517,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 228 */
 		/* filename             */ "DUNE16.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2986,12 +2528,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 229 */
 		/* filename             */ "DUNE17.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -2999,12 +2539,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 230 */
 		/* filename             */ "DUNE18.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3012,12 +2550,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 231 */
 		/* filename             */ "DUNE19.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3025,12 +2561,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 232 */
 		/* filename             */ "DUNE20.TAN",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 3,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3038,12 +2572,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 233 */
 		/* filename             */ "SQUISH2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3051,12 +2583,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 234 */
 		/* filename             */ "MISLTINP.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3064,12 +2594,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 235 */
 		/* filename             */ "WORMET3P.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3077,12 +2605,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 236 */
 		/* filename             */ "STATICP.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3090,12 +2616,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 237 */
 		/* filename             */ "EXTINY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3103,12 +2627,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 238 */
 		/* filename             */ "DROPEQ2P.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3116,12 +2638,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 239 */
 		/* filename             */ "BUTTON.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3129,12 +2649,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 240 */
 		/* filename             */ "CRUMBLE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3142,12 +2660,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 241 */
 		/* filename             */ "EXCANNON.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3155,12 +2671,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 242 */
 		/* filename             */ "EXDUD.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3168,12 +2682,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 243 */
 		/* filename             */ "EXGAS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3181,12 +2693,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 244 */
 		/* filename             */ "EXLARGE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3194,12 +2704,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 245 */
 		/* filename             */ "EXMED.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3207,12 +2715,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 246 */
 		/* filename             */ "EXSAND.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3220,12 +2726,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 247 */
 		/* filename             */ "EXSMALL.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3233,12 +2737,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 248 */
 		/* filename             */ "GUN.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3246,12 +2748,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 249 */
 		/* filename             */ "GUNMULTI.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3259,12 +2759,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 250 */
 		/* filename             */ "ROCKET.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3272,12 +2770,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 251 */
 		/* filename             */ "VSCREAM1.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3285,12 +2781,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 252 */
 		/* filename             */ "VSCREAM2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3298,12 +2792,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 253 */
 		/* filename             */ "VSCREAM3.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3311,12 +2803,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 254 */
 		/* filename             */ "VSCREAM4.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3324,12 +2814,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 255 */
 		/* filename             */ "VSCREAM5.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3337,12 +2825,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 256 */
 		/* filename             */ "ZAFFIRM.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3350,12 +2836,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 257 */
 		/* filename             */ "ZREPORT1.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3363,12 +2847,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 258 */
 		/* filename             */ "ZREPORT2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3376,12 +2858,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 259 */
 		/* filename             */ "ZREPORT3.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3389,12 +2869,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 260 */
 		/* filename             */ "ZOVEROUT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3402,12 +2880,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 261 */
 		/* filename             */ "ZMOVEOUT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3415,12 +2891,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 262 */
 		/* filename             */ "POPPA.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3428,12 +2902,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 263 */
 		/* filename             */ "SANDBUG.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 4,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3441,12 +2913,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 264 */
 		/* filename             */ "HATTACK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3454,12 +2924,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 265 */
 		/* filename             */ "HARRIVE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3467,12 +2935,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 266 */
 		/* filename             */ "HCONST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3480,12 +2946,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 267 */
 		/* filename             */ "HONE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3493,12 +2957,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 268 */
 		/* filename             */ "HTWO.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3506,12 +2968,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 269 */
 		/* filename             */ "HTHREE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3519,12 +2979,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 270 */
 		/* filename             */ "HFOUR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3532,12 +2990,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 271 */
 		/* filename             */ "HFIVE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3545,12 +3001,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 272 */
 		/* filename             */ "HAPPRCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3558,12 +3012,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 273 */
 		/* filename             */ "HENEMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3571,12 +3023,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 274 */
 		/* filename             */ "HHARK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3584,12 +3034,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 275 */
 		/* filename             */ "HATRE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3597,12 +3045,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 276 */
 		/* filename             */ "HORDOS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3610,12 +3056,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 277 */
 		/* filename             */ "HFREMEN.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3623,12 +3067,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 278 */
 		/* filename             */ "HSARD.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3636,12 +3078,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 279 */
 		/* filename             */ "HMERC.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3649,12 +3089,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 280 */
 		/* filename             */ "HUNIT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3662,12 +3100,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 281 */
 		/* filename             */ "HSTRUCT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3675,12 +3111,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 282 */
 		/* filename             */ "HBLOOM.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3688,12 +3122,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 283 */
 		/* filename             */ "HDEPLOY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3701,12 +3133,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 284 */
 		/* filename             */ "HDESTROY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3714,12 +3144,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 285 */
 		/* filename             */ "HEAST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3727,12 +3155,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 286 */
 		/* filename             */ "HFRIGATE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3740,12 +3166,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 287 */
 		/* filename             */ "HLOCATED.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3753,12 +3177,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 288 */
 		/* filename             */ "HLOSE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3766,12 +3188,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 289 */
 		/* filename             */ "HMISSILE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3779,12 +3199,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 290 */
 		/* filename             */ "HNORTH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3792,12 +3210,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 291 */
 		/* filename             */ "HRADAR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3805,12 +3221,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 292 */
 		/* filename             */ "HOFF.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3818,12 +3232,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 293 */
 		/* filename             */ "HON.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3831,12 +3243,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 294 */
 		/* filename             */ "HSABOT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3844,12 +3254,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 295 */
 		/* filename             */ "HSOUTH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3857,12 +3265,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 296 */
 		/* filename             */ "HWARNING.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3870,12 +3276,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 297 */
 		/* filename             */ "HWEST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3883,12 +3287,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 298 */
 		/* filename             */ "HWIN.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3896,12 +3298,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 299 */
 		/* filename             */ "HLAUNCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3909,12 +3309,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 300 */
 		/* filename             */ "HVEHICLE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3922,12 +3320,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 301 */
 		/* filename             */ "HREPAIR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3935,12 +3331,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 302 */
 		/* filename             */ "HHARVEST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3948,12 +3342,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 303 */
 		/* filename             */ "HWORMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3961,12 +3353,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 304 */
 		/* filename             */ "HCAPTURE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3974,12 +3364,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 305 */
 		/* filename             */ "AATTACK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -3987,12 +3375,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 306 */
 		/* filename             */ "AATTACK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4000,12 +3386,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 307 */
 		/* filename             */ "AARRIVE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4013,12 +3397,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 308 */
 		/* filename             */ "ACONST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4026,12 +3408,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 309 */
 		/* filename             */ "AONE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4039,12 +3419,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 310 */
 		/* filename             */ "ATWO.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4052,12 +3430,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 311 */
 		/* filename             */ "ATHREE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4065,12 +3441,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 312 */
 		/* filename             */ "AFOUR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4078,12 +3452,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 313 */
 		/* filename             */ "AFIVE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4091,12 +3463,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 314 */
 		/* filename             */ "AAPPRCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4104,12 +3474,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 315 */
 		/* filename             */ "AENEMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4117,12 +3485,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 316 */
 		/* filename             */ "AHARK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4130,12 +3496,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 317 */
 		/* filename             */ "AATRE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4143,12 +3507,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 318 */
 		/* filename             */ "AORDOS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4156,12 +3518,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 319 */
 		/* filename             */ "AFREMEN.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4169,12 +3529,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 320 */
 		/* filename             */ "ASARD.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4182,12 +3540,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 321 */
 		/* filename             */ "AMERC.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4195,12 +3551,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 322 */
 		/* filename             */ "AUNIT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4208,12 +3562,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 323 */
 		/* filename             */ "ASTRUCT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4221,12 +3573,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 324 */
 		/* filename             */ "ABLOOM.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4234,12 +3584,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 325 */
 		/* filename             */ "ADEPLOY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4247,12 +3595,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 326 */
 		/* filename             */ "ADESTROY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4260,12 +3606,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 327 */
 		/* filename             */ "AEAST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4273,12 +3617,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 328 */
 		/* filename             */ "AFRIGATE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4286,12 +3628,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 329 */
 		/* filename             */ "ALOCATED.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4299,12 +3639,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 330 */
 		/* filename             */ "ALOSE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4312,12 +3650,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 331 */
 		/* filename             */ "AMISSILE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4325,12 +3661,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 332 */
 		/* filename             */ "ANORTH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4338,12 +3672,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 333 */
 		/* filename             */ "ARADAR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4351,12 +3683,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 334 */
 		/* filename             */ "AOFF.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4364,12 +3694,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 335 */
 		/* filename             */ "AON.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4377,12 +3705,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 336 */
 		/* filename             */ "ASABOT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4390,12 +3716,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 337 */
 		/* filename             */ "ASOUTH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4403,12 +3727,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 338 */
 		/* filename             */ "AWARNING.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4416,12 +3738,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 339 */
 		/* filename             */ "AWEST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4429,12 +3749,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 340 */
 		/* filename             */ "AWIN.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4442,12 +3760,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 341 */
 		/* filename             */ "ALAUNCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4455,12 +3771,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 342 */
 		/* filename             */ "AVEHICLE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4468,12 +3782,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 343 */
 		/* filename             */ "AREPAIR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4481,12 +3793,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 344 */
 		/* filename             */ "AHARVEST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4494,12 +3804,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 345 */
 		/* filename             */ "AWORMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4507,12 +3815,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 346 */
 		/* filename             */ "ACAPTURE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4520,12 +3826,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 347 */
 		/* filename             */ "OATTACK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4533,12 +3837,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 348 */
 		/* filename             */ "OARRIVE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4546,12 +3848,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 349 */
 		/* filename             */ "OCONST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4559,12 +3859,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 350 */
 		/* filename             */ "OONE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4572,12 +3870,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 351 */
 		/* filename             */ "OTWO.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4585,12 +3881,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 352 */
 		/* filename             */ "OTHREE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4598,12 +3892,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 353 */
 		/* filename             */ "OFOUR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4611,12 +3903,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 354 */
 		/* filename             */ "OFIVE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4624,12 +3914,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 355 */
 		/* filename             */ "OAPPRCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4637,12 +3925,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 356 */
 		/* filename             */ "OENEMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4650,12 +3936,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 357 */
 		/* filename             */ "OHARK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4663,12 +3947,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 358 */
 		/* filename             */ "OATRE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4676,12 +3958,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 359 */
 		/* filename             */ "OORDOS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4689,12 +3969,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 360 */
 		/* filename             */ "OFREMEN.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4702,12 +3980,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 361 */
 		/* filename             */ "OSARD.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4715,12 +3991,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 362 */
 		/* filename             */ "OMERC.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4728,12 +4002,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 363 */
 		/* filename             */ "OUNIT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4741,12 +4013,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 364 */
 		/* filename             */ "OSTRUCT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4754,12 +4024,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 365 */
 		/* filename             */ "OBLOOM.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4767,12 +4035,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 366 */
 		/* filename             */ "ODEPLOY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4780,12 +4046,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 367 */
 		/* filename             */ "ODESTROY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4793,12 +4057,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 368 */
 		/* filename             */ "OEAST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4806,12 +4068,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 369 */
 		/* filename             */ "OFRIGATE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4819,12 +4079,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 370 */
 		/* filename             */ "OLOCATED.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4832,12 +4090,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 371 */
 		/* filename             */ "OLOSE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4845,12 +4101,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 372 */
 		/* filename             */ "OMISSILE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4858,12 +4112,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 373 */
 		/* filename             */ "ONORTH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4871,12 +4123,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 374 */
 		/* filename             */ "ORADAR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4884,12 +4134,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 375 */
 		/* filename             */ "OOFF.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4897,12 +4145,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 376 */
 		/* filename             */ "OON.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4910,12 +4156,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 377 */
 		/* filename             */ "OSABOT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4923,12 +4167,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 378 */
 		/* filename             */ "OSOUTH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4936,12 +4178,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 379 */
 		/* filename             */ "OWARNING.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4949,12 +4189,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 380 */
 		/* filename             */ "OWEST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4962,12 +4200,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 381 */
 		/* filename             */ "OWIN.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4975,12 +4211,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 382 */
 		/* filename             */ "OLAUNCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -4988,12 +4222,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 383 */
 		/* filename             */ "OVEHICLE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5001,12 +4233,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 384 */
 		/* filename             */ "OREPAIR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5014,12 +4244,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 385 */
 		/* filename             */ "OHARVEST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5027,12 +4255,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 386 */
 		/* filename             */ "OWORMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5040,12 +4266,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 387 */
 		/* filename             */ "OCAPTURE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5053,12 +4277,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 388 */
 		/* filename             */ "MSELECT1.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 12,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5066,12 +4288,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 389 */
 		/* filename             */ "MSELECT2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 12,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5079,12 +4299,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 390 */
 		/* filename             */ "MATRE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 12,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5092,12 +4310,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 391 */
 		/* filename             */ "MHARK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 12,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5105,12 +4321,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 392 */
 		/* filename             */ "MORDOS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 12,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5118,12 +4332,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 393 */
 		/* filename             */ "HOUSE.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5131,12 +4343,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 394 */
 		/* filename             */ "REGIONA.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5144,12 +4354,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 395 */
 		/* filename             */ "REGIONH.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5157,12 +4365,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 396 */
 		/* filename             */ "REGIONO.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5170,12 +4376,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 397 */
 		/* filename             */ "SCENA001.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5183,12 +4387,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 398 */
 		/* filename             */ "SCENA002.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5196,12 +4398,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 399 */
 		/* filename             */ "SCENA003.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5209,12 +4409,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 400 */
 		/* filename             */ "SCENA004.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5222,12 +4420,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 401 */
 		/* filename             */ "SCENA005.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5235,12 +4431,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 402 */
 		/* filename             */ "SCENA006.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5248,12 +4442,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 403 */
 		/* filename             */ "SCENA007.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5261,12 +4453,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 404 */
 		/* filename             */ "SCENA008.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5274,12 +4464,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 405 */
 		/* filename             */ "SCENA009.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5287,12 +4475,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 406 */
 		/* filename             */ "SCENA010.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5300,12 +4486,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 407 */
 		/* filename             */ "SCENA011.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5313,12 +4497,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 408 */
 		/* filename             */ "SCENA012.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5326,12 +4508,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 409 */
 		/* filename             */ "SCENA013.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5339,12 +4519,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 410 */
 		/* filename             */ "SCENA014.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5352,12 +4530,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 411 */
 		/* filename             */ "SCENA015.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5365,12 +4541,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 412 */
 		/* filename             */ "SCENA016.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5378,12 +4552,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 413 */
 		/* filename             */ "SCENA017.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5391,12 +4563,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 414 */
 		/* filename             */ "SCENA018.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5404,12 +4574,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 415 */
 		/* filename             */ "SCENA019.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5417,12 +4585,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 416 */
 		/* filename             */ "SCENA020.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5430,12 +4596,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 417 */
 		/* filename             */ "SCENA021.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5443,12 +4607,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 418 */
 		/* filename             */ "SCENA022.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5456,12 +4618,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 419 */
 		/* filename             */ "SCENH001.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5469,12 +4629,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 420 */
 		/* filename             */ "SCENH002.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5482,12 +4640,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 421 */
 		/* filename             */ "SCENH003.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5495,12 +4651,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 422 */
 		/* filename             */ "SCENH004.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5508,12 +4662,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 423 */
 		/* filename             */ "SCENH005.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5521,12 +4673,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 424 */
 		/* filename             */ "SCENH006.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5534,12 +4684,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 425 */
 		/* filename             */ "SCENH007.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5547,12 +4695,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 426 */
 		/* filename             */ "SCENH008.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5560,12 +4706,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 427 */
 		/* filename             */ "SCENH009.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5573,12 +4717,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 428 */
 		/* filename             */ "SCENH010.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5586,12 +4728,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 429 */
 		/* filename             */ "SCENH011.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5599,12 +4739,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 430 */
 		/* filename             */ "SCENH012.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5612,12 +4750,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 431 */
 		/* filename             */ "SCENH013.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5625,12 +4761,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 432 */
 		/* filename             */ "SCENH014.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5638,12 +4772,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 433 */
 		/* filename             */ "SCENH015.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5651,12 +4783,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 434 */
 		/* filename             */ "SCENH016.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5664,12 +4794,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 435 */
 		/* filename             */ "SCENH017.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5677,12 +4805,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 436 */
 		/* filename             */ "SCENH018.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5690,12 +4816,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 437 */
 		/* filename             */ "SCENH019.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5703,12 +4827,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 438 */
 		/* filename             */ "SCENH020.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5716,12 +4838,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 439 */
 		/* filename             */ "SCENH021.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5729,12 +4849,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 440 */
 		/* filename             */ "SCENH022.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5742,12 +4860,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 441 */
 		/* filename             */ "SCENO001.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5755,12 +4871,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 442 */
 		/* filename             */ "SCENO002.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5768,12 +4882,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 443 */
 		/* filename             */ "SCENO003.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5781,12 +4893,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 444 */
 		/* filename             */ "SCENO004.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5794,12 +4904,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 445 */
 		/* filename             */ "SCENO005.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5807,12 +4915,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 446 */
 		/* filename             */ "SCENO006.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5820,12 +4926,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 447 */
 		/* filename             */ "SCENO007.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5833,12 +4937,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 448 */
 		/* filename             */ "SCENO008.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5846,12 +4948,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 449 */
 		/* filename             */ "SCENO009.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5859,12 +4959,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 450 */
 		/* filename             */ "SCENO010.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5872,12 +4970,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 451 */
 		/* filename             */ "SCENO011.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5885,12 +4981,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 452 */
 		/* filename             */ "SCENO012.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5898,12 +4992,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 453 */
 		/* filename             */ "SCENO013.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5911,12 +5003,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 454 */
 		/* filename             */ "SCENO014.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5924,12 +5014,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 455 */
 		/* filename             */ "SCENO015.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5937,12 +5025,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 456 */
 		/* filename             */ "SCENO016.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5950,12 +5036,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 457 */
 		/* filename             */ "SCENO017.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5963,12 +5047,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 458 */
 		/* filename             */ "SCENO018.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5976,12 +5058,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 459 */
 		/* filename             */ "SCENO019.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -5989,12 +5069,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 460 */
 		/* filename             */ "SCENO020.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6002,12 +5080,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 461 */
 		/* filename             */ "SCENO021.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6015,12 +5091,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 462 */
 		/* filename             */ "SCENO022.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 5,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6028,12 +5102,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 463 */
 		/* filename             */ "AFINALA.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6041,12 +5113,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 464 */
 		/* filename             */ "AFINALB.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6054,12 +5124,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 465 */
 		/* filename             */ "HFINALA.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6067,12 +5135,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 466 */
 		/* filename             */ "HFINALB.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6080,12 +5146,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 467 */
 		/* filename             */ "HFINALC.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6093,12 +5157,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 468 */
 		/* filename             */ "OFINALA.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6106,12 +5168,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 469 */
 		/* filename             */ "OFINALB.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6119,12 +5179,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 470 */
 		/* filename             */ "OFINALC.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6132,12 +5190,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 471 */
 		/* filename             */ "OFINALd.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6145,12 +5201,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 472 */
 		/* filename             */ "EFINALA.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6158,12 +5212,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 473 */
 		/* filename             */ "EFINALB.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6171,12 +5223,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 474 */
 		/* filename             */ "MEANWHIL.WSA",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6184,12 +5234,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 475 */
 		/* filename             */ "CREDIT1.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6197,12 +5245,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 476 */
 		/* filename             */ "CREDIT2.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6210,12 +5256,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 477 */
 		/* filename             */ "CREDIT3.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6223,12 +5267,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 478 */
 		/* filename             */ "CREDIT4.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6236,12 +5278,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 479 */
 		/* filename             */ "CREDIT5.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6249,12 +5289,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 480 */
 		/* filename             */ "CREDIT6.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6262,12 +5300,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 481 */
 		/* filename             */ "CREDIT7.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6275,12 +5311,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 482 */
 		/* filename             */ "CREDIT8.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6288,12 +5322,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 483 */
 		/* filename             */ "CREDIT9.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6301,12 +5333,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 484 */
 		/* filename             */ "CREDIT10.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6314,12 +5344,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 485 */
 		/* filename             */ "CREDIT11.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6327,12 +5355,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 486 */
 		/* filename             */ "CREDIT12.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6340,12 +5366,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 487 */
 		/* filename             */ "CREDIT13.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6353,12 +5377,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 488 */
 		/* filename             */ "CREDIT14.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6366,12 +5388,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 489 */
 		/* filename             */ "CREDIT15.SHP",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6379,12 +5399,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 490 */
 		/* filename             */ "BIGPLAN.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6392,12 +5410,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 491 */
 		/* filename             */ "MAPPLAN.CPS",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 6,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6405,12 +5421,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 492 */
 		/* filename             */ "DUNE.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6418,12 +5432,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 493 */
 		/* filename             */ "TEXTA.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6431,12 +5443,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 494 */
 		/* filename             */ "TEXTH.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6444,12 +5454,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 495 */
 		/* filename             */ "TEXTO.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6457,12 +5465,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 496 */
 		/* filename             */ "MENTATA.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6470,12 +5476,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 497 */
 		/* filename             */ "MENTATO.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6483,12 +5487,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 498 */
 		/* filename             */ "MENTATH.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6496,12 +5498,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 499 */
 		/* filename             */ "MESSAGE.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6509,12 +5509,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 500 */
 		/* filename             */ "PROTECT.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6522,12 +5520,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 501 */
 		/* filename             */ "INTRO.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6535,12 +5531,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 502 */
 		/* filename             */ "CREDITS.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6548,12 +5542,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 503 */
 		/* filename             */ "MENTAT.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6561,12 +5553,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 504 */
 		/* filename             */ "CHOAM.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6574,12 +5564,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 505 */
 		/* filename             */ "MISC.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6587,12 +5575,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 506 */
 		/* filename             */ "BTTN.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6600,12 +5586,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 507 */
 		/* filename             */ "AND.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6613,12 +5597,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 508 */
 		/* filename             */ "TITLE.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6626,12 +5608,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 509 */
 		/* filename             */ "HERALD.ENG",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 7,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6639,12 +5619,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 510 */
 		/* filename             */ "WIND2BP.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6652,12 +5630,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 511 */
 		/* filename             */ "ORNY2P.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6665,12 +5641,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 512 */
 		/* filename             */ "BRAKES2P.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6678,12 +5652,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 513 */
 		/* filename             */ "LANDINGL.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6691,12 +5663,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 514 */
 		/* filename             */ "GUNSHOT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6704,12 +5674,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 515 */
 		/* filename             */ "GLASS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6717,12 +5685,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 516 */
 		/* filename             */ "MISSLE8.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6730,12 +5696,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 517 */
 		/* filename             */ "BEDUP2LP.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6743,12 +5707,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 518 */
 		/* filename             */ "CLANK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6756,12 +5718,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 519 */
 		/* filename             */ "BLOWUP1.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6769,12 +5729,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 520 */
 		/* filename             */ "BLOWUP2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6782,12 +5740,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 521 */
 		/* filename             */ "BLASTER.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6795,12 +5751,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 522 */
 		/* filename             */ "GLASS6.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6808,12 +5762,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 523 */
 		/* filename             */ "LIZARD1.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6821,12 +5773,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 524 */
 		/* filename             */ "FLESH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6834,12 +5784,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 525 */
 		/* filename             */ "CLICK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6847,12 +5795,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 526 */
 		/* filename             */ "3HOUSES.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6860,12 +5806,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 527 */
 		/* filename             */ "ANDNOW.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6873,12 +5817,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 528 */
 		/* filename             */ "ARRIVED.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6886,12 +5828,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 529 */
 		/* filename             */ "BATTLE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6899,12 +5839,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 530 */
 		/* filename             */ "BEGINS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6912,12 +5850,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 531 */
 		/* filename             */ "BLDING.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6925,12 +5861,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 532 */
 		/* filename             */ "CONTROL2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6938,12 +5872,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 533 */
 		/* filename             */ "CONTROL3.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6951,12 +5883,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 534 */
 		/* filename             */ "CONTROL4.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6964,12 +5894,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 535 */
 		/* filename             */ "CONTROLS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6977,12 +5905,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 536 */
 		/* filename             */ "DUNE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -6990,12 +5916,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 537 */
 		/* filename             */ "DYNASTY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7003,12 +5927,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 538 */
 		/* filename             */ "EACHHOME.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7016,12 +5938,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 539 */
 		/* filename             */ "EANDNO.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7029,12 +5949,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 540 */
 		/* filename             */ "ECONTROL.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7042,12 +5960,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 541 */
 		/* filename             */ "EHOUSE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7055,12 +5971,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 542 */
 		/* filename             */ "EMPIRE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7068,12 +5982,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 543 */
 		/* filename             */ "EPRODUCE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7081,12 +5993,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 544 */
 		/* filename             */ "ERULES.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7094,12 +6004,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 545 */
 		/* filename             */ "ETERRIT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7107,12 +6015,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 546 */
 		/* filename             */ "EMOST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7120,12 +6026,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 547 */
 		/* filename             */ "ENOSET.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7133,12 +6037,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 548 */
 		/* filename             */ "EVIL.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7146,12 +6048,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 549 */
 		/* filename             */ "HARK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7159,12 +6059,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 550 */
 		/* filename             */ "HOME.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7172,12 +6070,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 551 */
 		/* filename             */ "HOUSE2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7185,12 +6081,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 552 */
 		/* filename             */ "INSID.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7198,12 +6092,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 553 */
 		/* filename             */ "KING.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7211,12 +6103,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 554 */
 		/* filename             */ "KNOWN.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7224,12 +6114,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 555 */
 		/* filename             */ "MELANGE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7237,12 +6125,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 556 */
 		/* filename             */ "NOBLE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7250,12 +6136,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 557 */
 		/* filename             */ "NOW.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7263,12 +6147,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 558 */
 		/* filename             */ "OFDUNE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7276,12 +6158,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 559 */
 		/* filename             */ "ORD.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7289,12 +6169,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 560 */
 		/* filename             */ "PLANET.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7302,12 +6180,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 561 */
 		/* filename             */ "PREVAIL.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7315,12 +6191,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 562 */
 		/* filename             */ "PROPOSED.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7328,12 +6202,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 563 */
 		/* filename             */ "SANDLAND.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7341,12 +6213,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 564 */
 		/* filename             */ "SPICE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7354,12 +6224,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 565 */
 		/* filename             */ "SPICE2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7367,12 +6235,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 566 */
 		/* filename             */ "VAST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7380,12 +6246,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 567 */
 		/* filename             */ "WHOEVER.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7393,12 +6257,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 568 */
 		/* filename             */ "YOUR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7406,12 +6268,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 569 */
 		/* filename             */ "FILLER.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 8,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7419,12 +6279,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 570 */
 		/* filename             */ "GAFFIRM.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7432,12 +6290,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 571 */
 		/* filename             */ "GREPORT1.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7445,12 +6301,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 572 */
 		/* filename             */ "GREPORT2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7458,12 +6312,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 573 */
 		/* filename             */ "GREPORT3.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7471,12 +6323,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 574 */
 		/* filename             */ "GOVEROUT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7484,12 +6334,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 575 */
 		/* filename             */ "GMOVEOUT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7497,12 +6345,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 576 */
 		/* filename             */ "GHARVEST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7510,12 +6356,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 577 */
 		/* filename             */ "GHARK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7523,12 +6367,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 578 */
 		/* filename             */ "GATRE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7536,12 +6378,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 579 */
 		/* filename             */ "GORDOS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7549,12 +6389,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 580 */
 		/* filename             */ "GNEXT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7562,12 +6400,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 581 */
 		/* filename             */ "GREPAIR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7575,12 +6411,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 582 */
 		/* filename             */ "GVEHICLE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7588,12 +6422,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 583 */
 		/* filename             */ "GATTACK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7601,12 +6433,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 584 */
 		/* filename             */ "GONE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7614,12 +6444,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 585 */
 		/* filename             */ "GTWO.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7627,12 +6455,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 586 */
 		/* filename             */ "GTHREE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7640,12 +6466,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 587 */
 		/* filename             */ "GFOUR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7653,12 +6477,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 588 */
 		/* filename             */ "GFIVE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7666,12 +6488,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 589 */
 		/* filename             */ "GLAUNCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7679,12 +6499,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 590 */
 		/* filename             */ "GMISSILE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7692,12 +6510,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 591 */
 		/* filename             */ "GFRIGATE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7705,12 +6521,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 592 */
 		/* filename             */ "GWORMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7718,12 +6532,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 593 */
 		/* filename             */ "GBLOOM.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7731,12 +6543,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 594 */
 		/* filename             */ "GDEPLOY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7744,12 +6554,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 595 */
 		/* filename             */ "GON.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7757,12 +6565,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 596 */
 		/* filename             */ "GOFF.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7770,12 +6576,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 597 */
 		/* filename             */ "GSTRUCT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7783,12 +6587,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 598 */
 		/* filename             */ "GDESTROY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7796,12 +6598,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 599 */
 		/* filename             */ "GAPPRCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7809,12 +6609,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 600 */
 		/* filename             */ "GUNIT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7822,12 +6620,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 601 */
 		/* filename             */ "GSABOT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7835,12 +6631,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 602 */
 		/* filename             */ "GCONST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7848,12 +6642,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 603 */
 		/* filename             */ "GWARNING.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7861,12 +6653,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 604 */
 		/* filename             */ "GENEMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7874,12 +6664,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 605 */
 		/* filename             */ "DUNE.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7887,12 +6675,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 606 */
 		/* filename             */ "TEXTA.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7900,12 +6686,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 607 */
 		/* filename             */ "TEXTH.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7913,12 +6697,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 608 */
 		/* filename             */ "TEXTO.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7926,12 +6708,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 609 */
 		/* filename             */ "MENTATA.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7939,12 +6719,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 610 */
 		/* filename             */ "MENTATO.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7952,12 +6730,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 611 */
 		/* filename             */ "MENTATH.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7965,12 +6741,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 612 */
 		/* filename             */ "MESSAGE.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7978,12 +6752,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 613 */
 		/* filename             */ "PROTECT.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -7991,12 +6763,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 614 */
 		/* filename             */ "INTRO.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8004,12 +6774,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 615 */
 		/* filename             */ "CREDITS.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8017,12 +6785,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 616 */
 		/* filename             */ "MENTAT.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8030,12 +6796,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 617 */
 		/* filename             */ "CHOAM.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8043,12 +6807,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 618 */
 		/* filename             */ "MISC.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8056,12 +6818,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 619 */
 		/* filename             */ "BTTN.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8069,12 +6829,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 620 */
 		/* filename             */ "AND.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8082,12 +6840,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 621 */
 		/* filename             */ "TITLE.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8095,12 +6851,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 622 */
 		/* filename             */ "HERALD.GER",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 13,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8108,12 +6862,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 623 */
 		/* filename             */ "FAFFIRM.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8121,12 +6873,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 624 */
 		/* filename             */ "FREPORT1.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8134,12 +6884,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 625 */
 		/* filename             */ "FREPORT2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8147,12 +6895,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 626 */
 		/* filename             */ "FREPORT3.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8160,12 +6906,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 627 */
 		/* filename             */ "FOVEROUT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8173,12 +6917,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 628 */
 		/* filename             */ "FMOVEOUT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8186,12 +6928,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 629 */
 		/* filename             */ "FHARVEST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8199,12 +6939,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 630 */
 		/* filename             */ "FHARK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8212,12 +6950,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 631 */
 		/* filename             */ "FATRE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8225,12 +6961,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 632 */
 		/* filename             */ "FORDOS.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8238,12 +6972,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 633 */
 		/* filename             */ "FNEXT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8251,12 +6983,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 634 */
 		/* filename             */ "FREPAIR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8264,12 +6994,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 635 */
 		/* filename             */ "FVEHICLE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8277,12 +7005,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 636 */
 		/* filename             */ "FATTACK.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8290,12 +7016,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 637 */
 		/* filename             */ "FONE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8303,12 +7027,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 638 */
 		/* filename             */ "FTWO.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8316,12 +7038,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 639 */
 		/* filename             */ "FTHREE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8329,12 +7049,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 640 */
 		/* filename             */ "FFOUR.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8342,12 +7060,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 641 */
 		/* filename             */ "FFIVE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8355,12 +7071,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 642 */
 		/* filename             */ "FLAUNCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8368,12 +7082,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 643 */
 		/* filename             */ "FMISSILE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8381,12 +7093,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 644 */
 		/* filename             */ "FFRIGATE.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8394,12 +7104,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 645 */
 		/* filename             */ "FWORMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8407,12 +7115,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 646 */
 		/* filename             */ "FBLOOM.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8420,12 +7126,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 647 */
 		/* filename             */ "FDEPLOY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8433,12 +7137,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 648 */
 		/* filename             */ "FON.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8446,12 +7148,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 649 */
 		/* filename             */ "FOFF.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8459,12 +7159,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 650 */
 		/* filename             */ "FSTRUCT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8472,12 +7170,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 651 */
 		/* filename             */ "FDESTROY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8485,12 +7181,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 652 */
 		/* filename             */ "FAPPRCH.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8498,12 +7192,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 653 */
 		/* filename             */ "FUNIT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8511,12 +7203,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 654 */
 		/* filename             */ "FSABOT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8524,12 +7214,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 655 */
 		/* filename             */ "FCONST.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8537,12 +7225,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 656 */
 		/* filename             */ "FWARNING.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8550,12 +7236,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 657 */
 		/* filename             */ "FENEMY.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8563,12 +7247,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 658 */
 		/* filename             */ "DUNE.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8576,12 +7258,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 659 */
 		/* filename             */ "TEXTA.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8589,12 +7269,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 660 */
 		/* filename             */ "TEXTH.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8602,12 +7280,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 661 */
 		/* filename             */ "TEXTO.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8615,12 +7291,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 662 */
 		/* filename             */ "MENTATA.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8628,12 +7302,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 663 */
 		/* filename             */ "MENTATO.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8641,12 +7313,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 664 */
 		/* filename             */ "MENTATH.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8654,12 +7324,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 665 */
 		/* filename             */ "MESSAGE.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8667,12 +7335,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 666 */
 		/* filename             */ "PROTECT.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8680,12 +7346,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 667 */
 		/* filename             */ "INTRO.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8693,12 +7357,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 668 */
 		/* filename             */ "CREDITS.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8706,12 +7368,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 669 */
 		/* filename             */ "MENTAT.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8719,12 +7379,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 670 */
 		/* filename             */ "CHOAM.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8732,12 +7390,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 671 */
 		/* filename             */ "MISC.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8745,12 +7401,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 672 */
 		/* filename             */ "BTTN.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8758,12 +7412,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 673 */
 		/* filename             */ "AND.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8771,12 +7423,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 674 */
 		/* filename             */ "TITLE.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8784,12 +7434,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 675 */
 		/* filename             */ "HERALD.FRE",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 14,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8799,12 +7447,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 676 */
 		/* filename             */ "HNEXT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8812,12 +7458,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 677 */
 		/* filename             */ "HNEXT2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8825,12 +7469,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 678 */
 		/* filename             */ "ANEXT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8838,12 +7480,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 679 */
 		/* filename             */ "ANEXT2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8851,12 +7491,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 680 */
 		/* filename             */ "ONEXT.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8864,12 +7502,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 681 */
 		/* filename             */ "ONEXT2.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8877,12 +7513,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 682 */
 		/* filename             */ "PROFILE.INI",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 0,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ false,
 		},
 	},
@@ -8890,12 +7524,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 683 */
 		/* filename             */ "HMERC.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 9,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8903,12 +7535,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 684 */
 		/* filename             */ "AMERC.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 10,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	},
@@ -8916,12 +7546,10 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	{ /* 685 */
 		/* filename             */ "OMERC.VOC",
 		/* fileSize             */ 0,
-		/* buffer               */ NULL,
 		/* filePosition         */ 0,
 		/* parentIndex          */ 11,
 		{ /* flags */
 		/* isLoaded             */ false,
-		/* inMemory             */ false,
 		/* inPAKFile            */ true,
 		},
 	}
