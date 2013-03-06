@@ -1316,6 +1316,7 @@ Viewport_DrawSelectionHealthBars(void)
 	/* Draw a structure's spice bricks under a unit's health bar. */
 	if (!unit_selected &&
 			(g_selectionType != SELECTIONTYPE_PLACE) &&
+			(g_selectionPosition != 0xFFFF) &&
 			(g_mapVisible[g_selectionPosition].fogOverlayBits != 0xF) &&
 			(s = Structure_Get_ByPackedTile(g_selectionPosition)) != NULL) {
 		const StructureInfo *si = &g_table_structureInfo[s->o.type];
