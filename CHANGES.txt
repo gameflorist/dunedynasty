@@ -1,6 +1,13 @@
 Dune Dynasty
 ============
 
+Version 1.5.2, 2013-03-10
+-------------------------
+
+  - Fix crash due to out-of-bound memory access, which can occur after
+    deselecting a structure.
+
+
 Version 1.5, 2013-03-03
 -----------------------
 
