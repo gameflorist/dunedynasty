@@ -156,7 +156,7 @@ String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int
 		s_stringsCount = start + count;
 	}
 
-	for (i = 0, j = 0; i < count; i++, j++) {
+	for (i = 0, j = 0; j < count; i++, j++) {
 		char *src = (char *)buf + ((uint16 *)buf)[i];
 		char *dst = NULL;
 
