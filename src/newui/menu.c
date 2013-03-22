@@ -1601,8 +1601,8 @@ PickMusic_Initialise(void)
 				else if (lump_together) {
 					const char *str = l->songname;
 
-					if (strncmp(l->songname, category[c].name, strlen(category[c].name)) == 0) {
-						str += strlen(category[c].name) + 5;
+					if (c == 0) { /* Idle n: Title */
+						str += 8;
 					}
 
 					snprintf(si->text, sizeof(si->text), "%s", str);
