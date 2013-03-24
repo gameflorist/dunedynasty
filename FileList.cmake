@@ -103,7 +103,7 @@ set(DUNEDYNASTY_SRC_FILES
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES} src/audio/midi_win32.c)
-elseif(WITH_ALSA)
+elseif(WITH_ALSA_MIDI)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES} src/audio/midi_alsa.c)
 else()

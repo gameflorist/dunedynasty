@@ -6,9 +6,9 @@ set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
 option(WITH_ACODEC "FLAC and Ogg Vorbis music" ON)
 
 if(WIN32)
-	set(WITH_ALSA OFF)
+	set(WITH_ALSA_MIDI OFF)
 else(WIN32)
-	option(WITH_ALSA "ALSA MIDI music" ON)
+	option(WITH_ALSA_MIDI "ALSA MIDI music" ON)
 endif(WIN32)
 
 option(WITH_AUD "AUD music (Dune 2000)" ON)
@@ -18,6 +18,19 @@ option(WITH_MAD "MP3 music" ON)
 if(NOT DUNE_DATA_DIR)
 	set(DUNE_DATA_DIR ".")
 endif(NOT DUNE_DATA_DIR)
+
+# ----------------------------------------------------------------
+
+if(MINGW)
+	# Work around cmake bug #12480 when cross-compiling.
+	# Fixed in cmake commit 6ddb1e5b
+	include(Platform/Windows-windres)
+endif(MINGW)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition -pedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wno-unused-parameter")
+set(OPTIONAL_LIBRARIES "")
 
 include(FindPkgConfig)
 
@@ -42,26 +55,32 @@ include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 
 if(WITH_ACODEC)
     pkg_check_modules(ALLEGRO5_ACODEC allegro_acodec-${ALLEGRO_VERSION})
-    if(NOT ALLEGRO5_ACODEC_FOUND)
+    if(ALLEGRO5_ACODEC_FOUND)
+	set(OPTIONAL_LIBRARIES ${OPTIONAL_LIBRARIES} ${ALLEGRO5_ACODEC_LIBRARIES})
+    elseif(ALLEGRO5_ACODEC_FOUND)
 	message("Allegro 5 audio codecs addon not found")
 	set(WITH_ACODEC OFF)
-    endif(NOT ALLEGRO5_ACODEC_FOUND)
+    endif(ALLEGRO5_ACODEC_FOUND)
 endif(WITH_ACODEC)
 
-if(WITH_ALSA)
+if(WIN32)
+	set(OPTIONAL_LIBRARIES ${OPTIONAL_LIBRARIES} winmm)
+elseif(WITH_ALSA_MIDI)
     pkg_check_modules(ALSA alsa)
     if(ALSA_FOUND)
 	include_directories(SYSTEM ${ALSA_INCLUDE_DIRS})
+	set(OPTIONAL_LIBRARIES ${OPTIONAL_LIBRARIES} ${ALSA_LIBRARIES})
     else(ALSA_FOUND)
 	message("ALSA not found")
-	set(WITH_ALSA OFF)
+	set(WITH_ALSA_MIDI OFF)
     endif(ALSA_FOUND)
-endif(WITH_ALSA)
+endif()
 
 if(WITH_FLUIDSYNTH)
     pkg_check_modules(FLUIDSYNTH fluidsynth)
     if(FLUIDSYNTH_FOUND)
 	include_directories(SYSTEM ${FLUIDSYNTH_INCLUDE_DIRS})
+	set(OPTIONAL_LIBRARIES ${OPTIONAL_LIBRARIES} ${FLUIDSYNTH_LIBRARIES})
     else(FLUIDSYNTH_FOUND)
 	message("FluidSynth not found")
 	set(WITH_FLUIDSYNTH OFF)
@@ -79,6 +98,7 @@ if(WITH_MAD)
 
     if(MAD_FOUND)
 	include_directories(SYSTEM ${MAD_INCLUDE_DIRS})
+	set(OPTIONAL_LIBRARIES ${OPTIONAL_LIBRARIES} ${MAD_LIBRARIES})
     else(MAD_FOUND)
 	message("MAD not found")
 	set(WITH_MAD OFF)
@@ -88,25 +108,14 @@ endif(WITH_MAD)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "dist")
 configure_file("${CMAKE_SOURCE_DIR}/include/buildcfg.h.in" "${PROJECT_BINARY_DIR}/include/buildcfg.h")
 
-# ----------------------------------------------------------------
-
 include(FileList.cmake)
 include_directories("include" "${PROJECT_BINARY_DIR}/include")
-
-if(MINGW)
-	# Work around cmake bug #12480 when cross-compiling.
-	# Fixed in cmake commit 6ddb1e5b
-	include(Platform/Windows-windres)
-endif(MINGW)
 
 add_executable(dunedynasty WIN32
 	${DUNEDYNASTY_SRC_FILES} ${CMAKE_SOURCE_DIR}/src/icon/icon.rc)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wno-unused-parameter")
-
 target_link_libraries(dunedynasty
+	${OPTIONAL_LIBRARIES}
 	${ALLEGRO5_AUDIO_LDFLAGS}
 	${ALLEGRO5_IMAGE_LDFLAGS}
 	${ALLEGRO5_MEMFILE_LDFLAGS}
@@ -115,24 +124,6 @@ target_link_libraries(dunedynasty
 	${ALLEGRO5_LDFLAGS}
 	${OPENGL_LIBRARIES}
 	)
-
-if(WITH_ACODEC)
-	target_link_libraries(dunedynasty ${ALLEGRO5_ACODEC_LIBRARIES})
-endif(WITH_ACODEC)
-
-if(WIN32)
-	target_link_libraries(dunedynasty winmm)
-elseif(WITH_ALSA)
-	target_link_libraries(dunedynasty ${ALSA_LIBRARIES})
-endif()
-
-if(WITH_FLUIDSYNTH)
-	target_link_libraries(dunedynasty ${FLUIDSYNTH_LIBRARIES})
-endif(WITH_FLUIDSYNTH)
-
-if(WITH_MAD)
-	target_link_libraries(dunedynasty ${MAD_LIBRARIES})
-endif(WITH_MAD)
 
 install(TARGETS dunedynasty DESTINATION "bin")
 install(FILES
