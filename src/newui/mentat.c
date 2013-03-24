@@ -238,7 +238,7 @@ Mentat_DrawBackground(enum MentatID mentatID)
 		Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, background[g_playerHouseID]);
 	}
 	else {
-		const enum HouseType houseID = (mentatID == MENTAT_BENE_GESSERIT) ? HOUSE_MERCENARY : mentatID;
+		const enum HouseType houseID = (mentatID == MENTAT_BENE_GESSERIT) ? HOUSE_MERCENARY : (enum HouseType)mentatID;
 		Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, background[houseID]);
 	}
 }

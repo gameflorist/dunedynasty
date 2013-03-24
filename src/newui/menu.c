@@ -1728,7 +1728,7 @@ Skirmish_Initialise(void)
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		si = Scrollbar_AllocItem(w, SCROLLBAR_BRAIN);
 		si->d.brain = &g_skirmish.brain[h];
-		snprintf(si->text, sizeof(si->text), g_table_houseInfo[h].name);
+		snprintf(si->text, sizeof(si->text), "%s", g_table_houseInfo[h].name);
 	}
 
 	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);

@@ -416,7 +416,7 @@ Sprites_InitMentat(enum MentatID mentatID)
 		Sprites_Load(SEARCHDIR_CAMPAIGN_DIR, shapes[g_playerHouseID], SHAPE_MENTAT_EYES, SHAPE_MENTAT_EYES + 15 - 1);
 	}
 	else {
-		const enum HouseType houseID = (mentatID == MENTAT_BENE_GESSERIT) ? HOUSE_MERCENARY : mentatID;
+		const enum HouseType houseID = (mentatID == MENTAT_BENE_GESSERIT) ? HOUSE_MERCENARY : (enum HouseType)mentatID;
 		Sprites_Load(SEARCHDIR_GLOBAL_DATA_DIR, shapes[houseID], SHAPE_MENTAT_EYES, SHAPE_MENTAT_EYES + 15 - 1);
 	}
 
