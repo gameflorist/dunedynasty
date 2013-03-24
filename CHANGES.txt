@@ -1,6 +1,14 @@
 Dune Dynasty
 ============
 
+Version 1.5.3, 2013-03-24
+-------------------------
+
+  - Fix crash due to missing strings (sandworm hint and Ordos end game
+    cutscene).
+  - Fix song titles in jukebox when only AdLib music available.
+
+
 Version 1.5.2, 2013-03-10
 -------------------------
 
