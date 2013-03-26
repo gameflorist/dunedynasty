@@ -145,6 +145,18 @@ static const GameOption s_game_option[] = {
 
 /*--------------------------------------------------------------*/
 
+static ALLEGRO_CONFIG *
+Config_CreateConfigFile(void)
+{
+	ALLEGRO_CONFIG *config = al_create_config();
+
+	if (config != NULL) {
+		al_add_config_comment(config, NULL, "# Dune Dynasty config file");
+	}
+
+	return config;
+}
+
 static void
 Config_GetAspectCorrection(const char *str, enum AspectRatioCorrection *value)
 {
@@ -212,6 +224,12 @@ Config_SaveCampaignCompletion(void)
 {
 	const Campaign *camp = &g_campaign_list[g_campaign_selected];
 	char filename[1024];
+
+	if (s_configFile == NULL) {
+		s_configFile = Config_CreateConfigFile();
+		if (s_configFile == NULL)
+			return;
+	}
 
 	for (unsigned int h = 0; h < 3; h++) {
 		const enum HouseType houseID = camp->house[h];
@@ -698,11 +716,9 @@ GameOptions_Save(void)
 	char filename[1024];
 
 	if (s_configFile == NULL) {
-		s_configFile = al_create_config();
+		s_configFile = Config_CreateConfigFile();
 		if (s_configFile == NULL)
 			return;
-
-		al_add_config_comment(s_configFile, NULL, "# Dune Dynasty config file");
 	}
 
 	for (int i = 0; s_game_option[i].key != NULL; i++) {
