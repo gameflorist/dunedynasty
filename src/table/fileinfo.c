@@ -7638,7 +7638,7 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	},
 
 	{ /* 587 */
-		/* filename             */ "GFOURE.VOC",
+		/* filename             */ "GFOUR.VOC",
 		/* fileSize             */ 0,
 		/* buffer               */ NULL,
 		/* filePosition         */ 0,
@@ -8327,7 +8327,7 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 	},
 
 	{ /* 640 */
-		/* filename             */ "FFOURE.VOC",
+		/* filename             */ "FFOUR.VOC",
 		/* fileSize             */ 0,
 		/* buffer               */ NULL,
 		/* filePosition         */ 0,
