@@ -29,12 +29,6 @@ enum GameOverlay {
 	GAMEOVERLAY_CONFIRM_QUIT,
 };
 
-/** X and Y coordinate. */
-typedef struct XYPosition {
-	uint16 x; /*!< X coordinate. */
-	uint16 y; /*!< Y coordinate. */
-} XYPosition;
-
 extern uint32 g_hintsShown1;
 extern uint32 g_hintsShown2;
 extern GameMode g_gameMode;
