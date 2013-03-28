@@ -104,8 +104,8 @@ enum ShapeID {
 	SHAPE_ARROW = 505,
 	SHAPE_ARROW_FINAL = 513,
 
-	/* 558 .. 598: SHAPE_ARROW .. SHAPE_ARROW_FINAL, 5 white masks each. */
-	SHAPE_ARROW_TINT = 598 - 5 * 8,
+	/* 553 .. 598: SHAPE_ARROW .. SHAPE_ARROW_FINAL, 5 white masks each. */
+	SHAPE_ARROW_TINT = 598 - 5 * 9,
 	SHAPE_ARROW_TINT_FINAL = 598,
 
 	/* 599 .. 639: SHAPE_CONCRETE_SLAB .. SHAPE_FREMEN greyed out. */

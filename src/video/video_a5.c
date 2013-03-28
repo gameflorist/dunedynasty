@@ -2179,6 +2179,7 @@ VideoA5_InitShapes(unsigned char *buf)
 
 		for (int i = 4; i >= 0; i--) {
 			const int c = (i == 0) ? STRATEGIC_MAP_ARROW_EDGE_COLOUR : (STRATEGIC_MAP_ARROW_COLOUR + i - 1);
+			assert(s_shape[tintID + i][0] == NULL);
 
 			s_shape[tintID + i][0] = al_create_sub_bitmap(region_texture, x + i * w, y, w, h);
 			assert(s_shape[tintID + i][0] != NULL);
