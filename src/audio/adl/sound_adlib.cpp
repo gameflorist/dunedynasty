@@ -79,12 +79,12 @@ typedef uint32_t	uint32;
 typedef int32_t	int32;
 typedef uint8_t	byte;
 
-static inline uint16 READ_LE_uint16(const void *ptr) {
+static inline uint16 READ_LE_UINT16(const void *ptr) {
   const byte *b = (const byte *)ptr;
   return (b[1] << 8) + b[0];
 }
 
-static inline uint16 READ_BE_uint16(const void *ptr) {
+static inline uint16 READ_BE_UINT16(const void *ptr) {
   const byte *b = (const byte *)ptr;
   return (b[0] << 8) + b[1];
 }
@@ -288,15 +288,15 @@ private:
 	// * One for instruments, starting at offset 500.
 
 	uint8 *getProgram(int progId) {
-		uint16 offset = READ_LE_uint16(_soundData + 2 * progId);
+		uint16 offset = READ_LE_UINT16(_soundData + 2 * progId);
 		//TODO: Check in LoL CD Adlib driver
 		if (offset == 0xFFFF)
 			return 0;
-		return _soundData + READ_LE_uint16(_soundData + 2 * progId);
+		return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
 	}
 
 	uint8 *getInstrument(int instrumentId) {
-		unsigned short tmp = READ_LE_uint16(_soundData + (_v2 ? 1000 : 500) + 2 * instrumentId);
+		unsigned short tmp = READ_LE_UINT16(_soundData + (_v2 ? 1000 : 500) + 2 * instrumentId);
 		if(tmp == 0xFFFF) {
 		   return NULL;
 		} else {
@@ -1423,7 +1423,7 @@ int AdlibDriver::update_setRepeat(uint8 *&dataptr, Channel &channel, uint8 value
 int AdlibDriver::update_checkRepeat(uint8 *&dataptr, Channel &channel, uint8 value) {
 	++dataptr;
 	if (--channel.repeatCounter) {
-		int16 add = READ_LE_uint16(dataptr - 2);
+		int16 add = READ_LE_UINT16(dataptr - 2);
 		dataptr += add;
 	}
 	return 0;
@@ -1464,7 +1464,7 @@ int AdlibDriver::update_setNoteSpacing(uint8 *&dataptr, Channel &channel, uint8 
 
 int AdlibDriver::update_jump(uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
-	int16 add = READ_LE_uint16(dataptr); dataptr += 2;
+	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
 	dataptr += add;
 	if (_syncJumpMask & (1 << (&channel - _channels)))
 		channel.lock = true;
@@ -1473,7 +1473,7 @@ int AdlibDriver::update_jump(uint8 *&dataptr, Channel &channel, uint8 value) {
 
 int AdlibDriver::update_jumpToSubroutine(uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
-	int16 add = READ_LE_uint16(dataptr); dataptr += 2;
+	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
 	channel.dataptrStack[channel.dataptrStackPos++] = dataptr;
 	dataptr += add;
 	return 0;
@@ -1525,7 +1525,7 @@ int AdlibDriver::update_setupSecondaryEffect1(uint8 *&dataptr, Channel &channel,
 	channel.unk19 = value;
 	channel.unk20 = channel.unk21 = *dataptr++;
 	channel.unk22 = *dataptr++;
-	channel.offset = READ_LE_uint16(dataptr); dataptr += 2;
+	channel.offset = READ_LE_UINT16(dataptr); dataptr += 2;
 	channel.secondaryEffect = &AdlibDriver::secondaryEffect1;
 	return 0;
 }
@@ -1556,7 +1556,7 @@ int AdlibDriver::update_setupInstrument(uint8 *&dataptr, Channel &channel, uint8
 
 int AdlibDriver::update_setupPrimaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value) {
 	channel.unk29 = value;
-	channel.unk30 = READ_BE_uint16(dataptr);
+	channel.unk30 = READ_BE_UINT16(dataptr);
 	dataptr += 2;
 	channel.primaryEffect = &AdlibDriver::primaryEffect1;
 	channel.unk31 = 0xFF;
