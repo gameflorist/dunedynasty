@@ -1,6 +1,18 @@
 Dune Dynasty
 ============
 
+Version 1.5.4, 2013-03-31
+-------------------------
+
+  - Fix crash caused by completing a level when a config file has not
+    been created.
+  - Fix crash due to out-of-bound memory access in AdLib driver.
+  - Fix carryalls and harvesters disappearing off the map.
+  - Fix greyed out version of some structure icons.
+  - Fix announcement of the number four in French and German missile
+    countdowns.
+
+
 Version 1.5.3, 2013-03-24
 -------------------------
 
