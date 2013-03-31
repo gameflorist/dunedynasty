@@ -54,7 +54,7 @@
 #include <SDL_mixer.h>
 #endif
 
-class AdlibDriver;
+class AdLibDriver;
 
 /**
  * AdLib implementation of the sound output device.
@@ -64,10 +64,10 @@ class AdlibDriver;
  * Kyrandia 1 are using exact the same format, the
  * one of Kyrandia 2 slightly differs.
  *
- * See AdlibDriver for more information.
- * @see AdlibDriver
+ * See AdLibDriver for more information.
+ * @see AdLibDriver
  */
-class SoundAdlibPC {
+class SoundAdLibPC {
 public:
 	typedef int8_t Sint8;
 	typedef uint8_t Uint8;
@@ -75,10 +75,10 @@ public:
 	typedef uint16_t Uint16;
 
 #ifdef __USE_SDL__
-	SoundAdlibPC(SDL_RWops* rwop, bool bMAME = true);
+	SoundAdLibPC(SDL_RWops* rwop, bool bMAME = true);
 #endif
-	SoundAdlibPC(ALLEGRO_FILE* rwop, int freq, bool bMAME = true);
-	~SoundAdlibPC();
+	SoundAdLibPC(ALLEGRO_FILE* rwop, int freq, bool bMAME = true);
+	~SoundAdLibPC();
 
 	static void callback(void *, Uint8 *, int);
 
@@ -107,7 +107,7 @@ private:
 	void unk1();
 	void unk2();
 
-	AdlibDriver *_driver;
+	AdLibDriver *_driver;
 
 	uint8_t _trackEntries[500];
 	uint8_t *_soundDataPtr;

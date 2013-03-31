@@ -60,7 +60,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16_t *buffer, int length) {
 	OPL->readBuffer(buffer, length);
 }
 
-FM_OPL *makeAdlibOPL(int rate, bool bMAME) {
+FM_OPL *makeAdLibOPL(int rate, bool bMAME) {
 	FM_OPL *opl	;
 	if(bMAME) {
 		opl = new OPL::MAME::OPL();

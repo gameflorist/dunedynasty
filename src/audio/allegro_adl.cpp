@@ -38,7 +38,7 @@ int main(int argc, const char **argv)
 
     mame = atoi(argv[3]);
 
-    SoundAdlibPC adlib(f, SRATE, mame);
+    SoundAdLibPC adlib(f, SRATE, mame);
 
     al_fclose(f);
 
@@ -60,7 +60,7 @@ int main(int argc, const char **argv)
         if (ev.type == ALLEGRO_EVENT_AUDIO_STREAM_FRAGMENT) {
             void *frag = al_get_audio_stream_fragment(stream);
 
-            adlib.callback(&adlib, (SoundAdlibPC::Uint8 *)frag,
+            adlib.callback(&adlib, (SoundAdLibPC::Uint8 *)frag,
                 FRAGLEN * al_get_audio_depth_size(ALLEGRO_AUDIO_DEPTH_INT16));
 
             al_set_audio_stream_fragment(stream, frag);

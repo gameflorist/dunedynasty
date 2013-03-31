@@ -69,7 +69,7 @@ static const int FRAGLEN = 2048;
 static enum MusicStreamType curr_music_stream_type;
 static ALLEGRO_AUDIO_STREAM *s_music_stream;
 static ALLEGRO_AUDIO_STREAM *s_effect_stream;
-static SoundAdlibPC *s_adlib;
+static SoundAdLibPC *s_adlib;
 static ALLEGRO_THREAD *s_music_thread;
 static MIDI_PLAYER *s_fluid_player;
 static MP3 *s_mp3;
@@ -281,7 +281,7 @@ AudioA5_LoadInternalMusic(const MusicInfo *mid, uint32 *ret_length)
 	return buf;
 }
 
-/* Note: We can only have one instance of SoundAdlibPC. */
+/* Note: We can only have one instance of SoundAdLibPC. */
 static ALLEGRO_AUDIO_STREAM *
 AudioA5_InitAdlib(const MusicInfo *mid)
 {
@@ -300,7 +300,7 @@ AudioA5_InitAdlib(const MusicInfo *mid)
 
 	ALLEGRO_FILE *f = al_open_memfile(buf, length, "r");
 	delete s_adlib;
-	s_adlib = new SoundAdlibPC(f, SRATE, g_opl_mame);
+	s_adlib = new SoundAdLibPC(f, SRATE, g_opl_mame);
 	al_fclose(f);
 	delete[] buf;
 
@@ -644,7 +644,7 @@ AudioA5_PollMusic(void)
 	if (frag == NULL)
 		return;
 
-	s_adlib->callback(s_adlib, (SoundAdlibPC::Uint8 *)frag,
+	s_adlib->callback(s_adlib, (SoundAdLibPC::Uint8 *)frag,
 			FRAGLEN * al_get_audio_depth_size(ALLEGRO_AUDIO_DEPTH_INT16));
 
 	al_set_audio_stream_fragment(stream, frag);
