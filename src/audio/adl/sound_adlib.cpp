@@ -79,6 +79,8 @@ typedef uint32_t	uint32;
 typedef int32_t	int32;
 typedef uint8_t	byte;
 
+const int kDebugLevelSound = 0;
+
 static inline uint16 READ_LE_UINT16(const void *ptr) {
   const byte *b = (const byte *)ptr;
   return (b[1] << 8) + b[0];
@@ -97,7 +99,7 @@ static inline void warning(const char *str, ...)
 	fprintf(stderr,"\n");
 }
 
-static inline void debugC(int level, const char *str, ...)
+static inline void debugC(int level, int debugChannels, const char *str, ...)
 {
 /*
 	va_list args;
@@ -534,7 +536,7 @@ int AdlibDriver::callback(int opcode, ...) {
 		return 0;
 	}
 
-	debugC(9, "Calling opcode '%s' (%d)", _opcodeList[opcode].name, opcode);
+	debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d)", _opcodeList[opcode].name, opcode);
 
 	va_list args;
 	va_start(args, opcode);
@@ -848,13 +850,13 @@ void AdlibDriver::executePrograms() {
 						opcode &= 0x7F;
 						if (opcode >= _parserOpcodeTableSize)
 							opcode = _parserOpcodeTableSize - 1;
-						debugC(9, "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
+						debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
 						result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
 						channel.dataptr = dataptr;
 						if (result)
 							break;
 					} else {
-						debugC(9, "Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
+						debugC(9, kDebugLevelSound, "Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
 						setupNote(opcode, channel);
 						noteOn(channel);
 						setupDuration(param, channel);
@@ -879,7 +881,7 @@ void AdlibDriver::executePrograms() {
 //
 
 void AdlibDriver::resetAdlibState() {
-	debugC(9, "resetAdlibState()");
+	debugC(9, kDebugLevelSound, "resetAdlibState()");
 	_rnd = 0x1234;
 
 	// Authorize the control of the waveforms
@@ -911,7 +913,7 @@ void AdlibDriver::writeOPL(uint8 reg, uint8 val) {
 }
 
 void AdlibDriver::initChannel(Channel &channel) {
-	debugC(9, "initChannel(%lu)", (long)(&channel - _channels));
+	debugC(9, kDebugLevelSound, "initChannel(%lu)", (long)(&channel - _channels));
 	memset(&channel.dataptr, 0, sizeof(Channel) - ((char *)&channel.dataptr - (char *)&channel));
 
 	channel.tempo = 0xFF;
@@ -924,7 +926,7 @@ void AdlibDriver::initChannel(Channel &channel) {
 }
 
 void AdlibDriver::noteOff(Channel &channel) {
-	debugC(9, "noteOff(%lu)", (long)(&channel - _channels));
+	debugC(9, kDebugLevelSound, "noteOff(%lu)", (long)(&channel - _channels));
 
 	// The control channel has no corresponding Adlib channel
 
@@ -944,7 +946,7 @@ void AdlibDriver::noteOff(Channel &channel) {
 }
 
 void AdlibDriver::unkOutput2(uint8 chan) {
-	debugC(9, "unkOutput2(%d)", chan);
+	debugC(9, kDebugLevelSound, "unkOutput2(%d)", chan);
 
 	// The control channel has no corresponding Adlib channel
 
@@ -1003,7 +1005,7 @@ uint16 AdlibDriver::getRandomNr() {
 }
 
 void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
-	debugC(9, "setupDuration(%d, %lu)", duration, (long)(&channel - _channels));
+	debugC(9, kDebugLevelSound, "setupDuration(%d, %lu)", duration, (long)(&channel - _channels));
 	if (channel.durationRandomness) {
 		channel.duration = duration + (getRandomNr() & channel.durationRandomness);
 		return;
@@ -1017,7 +1019,7 @@ void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
 // to noteOn(), which will always play the current note.
 
 void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
-	debugC(9, "setupNote(%d, %lu)", rawNote, (long)(&channel - _channels));
+	debugC(9, kDebugLevelSound, "setupNote(%d, %lu)", rawNote, (long)(&channel - _channels));
 
 	if (_curChannel >= 9)
 		return;
@@ -1129,7 +1131,7 @@ void AdlibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 }
 
 void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &channel) {
-	debugC(9, "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
+	debugC(9, kDebugLevelSound, "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
 
 	if(dataptr == NULL) {
 		return;
@@ -1181,7 +1183,7 @@ void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &chan
 // primary effect 2.
 
 void AdlibDriver::noteOn(Channel &channel) {
-	debugC(9, "noteOn(%lu)", (long)(&channel - _channels));
+	debugC(9, kDebugLevelSound, "noteOn(%lu)", (long)(&channel - _channels));
 
 	// The "note on" bit is set, and the current note is played.
 
@@ -1198,7 +1200,7 @@ void AdlibDriver::noteOn(Channel &channel) {
 }
 
 void AdlibDriver::adjustVolume(Channel &channel) {
-	debugC(9, "adjustVolume(%lu)", (long)(&channel - _channels));
+	debugC(9, kDebugLevelSound, "adjustVolume(%lu)", (long)(&channel - _channels));
 
 	if (_curChannel >= 9)
 		return;
@@ -1227,7 +1229,7 @@ void AdlibDriver::adjustVolume(Channel &channel) {
 // unk31 - determines how often the notes are played
 
 void AdlibDriver::primaryEffect1(Channel &channel) {
-	debugC(9, "Calling primaryEffect1 (channel: %d)", _curChannel);
+	debugC(9, kDebugLevelSound, "Calling primaryEffect1 (channel: %d)", _curChannel);
 
 	if (_curChannel >= 9)
 		return;
@@ -1314,7 +1316,7 @@ void AdlibDriver::primaryEffect1(Channel &channel) {
 // is a bit sloppy.
 
 void AdlibDriver::primaryEffect2(Channel &channel) {
-	debugC(9, "Calling primaryEffect2 (channel: %d)", _curChannel);
+	debugC(9, kDebugLevelSound, "Calling primaryEffect2 (channel: %d)", _curChannel);
 
 	if (_curChannel >= 9)
 		return;
@@ -1373,7 +1375,7 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
 // offset - the offset to the data chunk
 
 void AdlibDriver::secondaryEffect1(Channel &channel) {
-	debugC(9, "Calling secondaryEffect1 (channel: %d)", _curChannel);
+	debugC(9, kDebugLevelSound, "Calling secondaryEffect1 (channel: %d)", _curChannel);
 
 	if (_curChannel >= 9)
 		return;
