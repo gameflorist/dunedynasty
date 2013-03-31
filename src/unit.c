@@ -1534,6 +1534,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 
 		const int r = (Tools_Random_256() & 0xF);
 
+		newPosition = unit->o.position;
 		Unit_SetOrientation(unit, unit->orientation[0].current + r, false, 0);
 
 		/* Due to a carryall's turning radius, it will sometimes not
