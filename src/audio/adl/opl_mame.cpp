@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  * LGPL licensed version of MAMEs fmopl (V0.37a modified) by
  * Tatsuyuki Satoh. Included from LGPL'ed AdPlug.
  */
@@ -704,7 +701,7 @@ static int OPLOpenTable(void) {
 		return 0;
 	}
 	/* make total level table */
-	for (t = 0; t < EG_ENT - 1 ; t++) {
+	for (t = 0; t < EG_ENT - 1; t++) {
 		rate = ((1 << TL_BITS) - 1) / pow(10.0, EG_STEP * t / 20);	/* dB -> voltage */
 		TL_TABLE[         t] =  (int)rate;
 		TL_TABLE[TL_MAX + t] = -TL_TABLE[t];
@@ -1092,10 +1089,10 @@ void OPLResetChip(FM_OPL *OPL) {
 	for (i = 0xff; i >= 0x20; i--)
 		OPLWriteReg(OPL,i,0);
 	/* reset OPerator parameter */
-	for (c = 0; c < OPL->max_ch ;c++ ) {
+	for (c = 0; c < OPL->max_ch; c++) {
 		OPL_CH *CH = &OPL->P_CH[c];
 		/* OPL->P_CH[c].PAN = OPN_CENTER; */
-		for (s = 0; s < 2; s++ ) {
+		for (s = 0; s < 2; s++) {
 			/* wave table */
 			CH->SLOT[s].wavetable = &SIN_TABLE[0];
 			/* CH->SLOT[s].evm = ENV_MOD_RR; */
@@ -1144,7 +1141,7 @@ FM_OPL *OPLCreate(int type, int clock, int rate) {
 	return OPL;
 }
 
-/* ----------  Destroy one of vietual YM3812 ----------       */
+/* ----------  Destroy one of virtual YM3812 ----------       */
 void OPLDestroy(FM_OPL *OPL) {
 	OPL_UnLockTable();
 	free(OPL);

@@ -17,9 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  */
 
 #ifndef SOUND_FMOPL_H
@@ -98,7 +95,9 @@ public:
 
 	/**
 	 * Function to directly write to a specific OPL register.
-	 * This writes to *both* chips for a Dual OPL2.
+	 * This writes to *both* chips for a Dual OPL2. We allow
+	 * writing to secondary OPL registers by using register
+	 * values >= 0x100.
 	 *
 	 * @param r		hardware register number to write to
 	 * @param v		value, which will be written

@@ -34,9 +34,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef SOUND_ADLIB_H
@@ -90,7 +87,7 @@ public:
 	void playTrack(uint8_t track);
 	void haltTrack();
 
-	bool isPlaying();
+	bool isPlaying() const;
 
 	void playSoundEffect(uint8_t track);
 
@@ -103,9 +100,6 @@ private:
 	void internalLoadFile(ALLEGRO_FILE* rwop);
 
 	void play(uint8_t track);
-
-	void unk1();
-	void unk2();
 
 	AdLibDriver *_driver;
 
