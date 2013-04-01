@@ -39,6 +39,7 @@ int main(int argc, const char **argv)
     mame = atoi(argv[3]);
 
     SoundAdLibPC adlib(f, SRATE, mame);
+    adlib.init();
 
     al_fclose(f);
 

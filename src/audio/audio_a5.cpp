@@ -301,6 +301,7 @@ AudioA5_InitAdlib(const MusicInfo *mid)
 	ALLEGRO_FILE *f = al_open_memfile(buf, length, "r");
 	delete s_adlib;
 	s_adlib = new SoundAdLibPC(f, SRATE, g_opl_mame);
+	s_adlib->init();
 	al_fclose(f);
 	delete[] buf;
 
