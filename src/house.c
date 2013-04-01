@@ -40,14 +40,6 @@ enum HouseType g_playerHouseID = HOUSE_INVALID;
 uint16 g_houseMissileCountdown = 0;
 uint16 g_playerCreditsNoSilo = 0;
 uint16 g_playerCredits = 0; /*!< Credits shown to player as 'current'. */
-int64_t g_tickHousePowerMaintenance = 0;
-
-static int64_t s_tickHouseHouse = 0;
-static int64_t s_tickHouseStarport = 0;
-static int64_t s_tickHouseReinforcement = 0;
-static int64_t s_tickHouseMissileCountdown = 0;
-static int64_t s_tickHouseStarportAvailability = 0;
-static int64_t s_tickHouseStarportRecalculatePrices = 0;
 
 /**
  * Loop over all houses, preforming various of tasks.
@@ -65,9 +57,9 @@ void GameLoop_House(void)
 
 	if (g_debugScenario) return;
 
-	if (s_tickHouseHouse <= g_timerGame) {
+	if (g_tickHouseHouse <= g_timerGame) {
 		tickHouse = true;
-		s_tickHouseHouse = g_timerGame + 900;
+		g_tickHouseHouse = g_timerGame + 900;
 	}
 
 	if (g_tickHousePowerMaintenance <= g_timerGame) {
@@ -75,31 +67,31 @@ void GameLoop_House(void)
 		g_tickHousePowerMaintenance = g_timerGame + 10800;
 	}
 
-	if (s_tickHouseStarport <= g_timerGame) {
+	if (g_tickHouseStarport <= g_timerGame) {
 		tickStarport = true;
-		s_tickHouseStarport = g_timerGame + 180;
+		g_tickHouseStarport = g_timerGame + 180;
 	}
 
-	if (s_tickHouseReinforcement <= g_timerGame) {
+	if (g_tickHouseReinforcement <= g_timerGame) {
 		tickReinforcement = true;
-		s_tickHouseReinforcement = g_timerGame + (g_debugGame ? 60 : 600);
+		g_tickHouseReinforcement = g_timerGame + (g_debugGame ? 60 : 600);
 	}
 
-	if (s_tickHouseMissileCountdown <= g_timerGame) {
+	if (g_tickHouseMissileCountdown <= g_timerGame) {
 		tickMissileCountdown = true;
-		s_tickHouseMissileCountdown = g_timerGame + 60;
+		g_tickHouseMissileCountdown = g_timerGame + 60;
 	}
 
-	if (s_tickHouseStarportAvailability <= g_timerGame) {
+	if (g_tickHouseStarportAvailability <= g_timerGame) {
 		tickStarportAvailability = true;
-		s_tickHouseStarportAvailability = g_timerGame + 1800;
+		g_tickHouseStarportAvailability = g_timerGame + 1800;
 	}
 
-	if (s_tickHouseStarportRecalculatePrices <= g_timerGame) {
+	if (g_tickHouseStarportRecalculatePrices <= g_timerGame) {
 		const int64_t next_minute = Random_Starport_GetSeedTime() + 1;
 		const uint16 seed = Random_Starport_GetSeed(g_scenarioID, g_playerHouseID);
 
-		s_tickHouseStarportRecalculatePrices = g_tickScenarioStart + next_minute * 60 * 60;
+		g_tickHouseStarportRecalculatePrices = g_tickScenarioStart + next_minute * 60 * 60;
 		Random_Starport_Seed(seed);
 		g_factoryWindowTotal = -1;
 	}

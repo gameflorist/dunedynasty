@@ -11,8 +11,6 @@
 static ALLEGRO_TIMER *s_timer[2];
 ALLEGRO_EVENT_QUEUE *s_timer_queue;
 
-int64_t g_timerGame;
-
 bool
 TimerA5_Init(void)
 {

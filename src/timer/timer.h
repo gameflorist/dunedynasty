@@ -13,6 +13,30 @@ enum TimerType {
 #define Timer_GetTicks()    Timer_GetTimer(TIMER_GUI)
 
 extern int64_t g_timerGame;
+extern int64_t g_tickScenarioStart;
+
+extern int64_t g_tickHousePowerMaintenance;
+extern int64_t g_tickHouseHouse;
+extern int64_t g_tickHouseStarport;
+extern int64_t g_tickHouseReinforcement;
+extern int64_t g_tickHouseMissileCountdown;
+extern int64_t g_tickHouseStarportAvailability;
+extern int64_t g_tickHouseStarportRecalculatePrices;
+
+extern int64_t g_tickStructureDegrade;
+extern int64_t g_tickStructureStructure;
+extern int64_t g_tickStructureScript;
+extern int64_t g_tickStructurePalace;
+
+extern int64_t g_tickTeamGameLoop;
+
+extern int64_t g_tickUnitMovement;
+extern int64_t g_tickUnitRotation;
+extern int64_t g_tickUnitBlinking;
+extern int64_t g_tickUnitUnknown4;
+extern int64_t g_tickUnitScript;
+extern int64_t g_tickUnitUnknown5;
+extern int64_t g_tickUnitDeviation;
 
 extern bool Timer_SetTimer(enum TimerType timer, bool set);
 extern int64_t Timer_GetTimer(enum TimerType timer);

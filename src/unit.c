@@ -43,14 +43,6 @@
 #include "tools/random_general.h"
 
 
-int64_t g_tickUnitMovement  = 0;        /*!< Indicates next time the Movement function is executed. */
-int64_t g_tickUnitRotation  = 0;        /*!< Indicates next time the Rotation function is executed. */
-static int64_t s_tickUnitBlinking  = 0; /*!< Indicates next time the Blinking function is executed. */
-static int64_t s_tickUnitUnknown4  = 0; /*!< Indicates next time the Unknown4 function is executed. */
-static int64_t s_tickUnitScript    = 0; /*!< Indicates next time the Script function is executed. */
-static int64_t s_tickUnitUnknown5  = 0; /*!< Indicates next time the Unknown5 function is executed. */
-static int64_t s_tickUnitDeviation = 0; /*!< Indicates next time the Deviation function is executed. */
-
 Unit *g_unitActive = NULL;
 Unit *g_unitHouseMissile = NULL;
 static Unit *g_unitSelected[MAX_SELECTABLE_UNITS];
@@ -281,29 +273,29 @@ void GameLoop_Unit(void)
 		g_tickUnitRotation = g_timerGame + Tools_AdjustToGameSpeed(4, 2, 8, true);
 	}
 
-	if (s_tickUnitBlinking <= g_timerGame) {
+	if (g_tickUnitBlinking <= g_timerGame) {
 		tickBlinking = true;
-		s_tickUnitBlinking = g_timerGame + 3;
+		g_tickUnitBlinking = g_timerGame + 3;
 	}
 
-	if (s_tickUnitUnknown4 <= g_timerGame) {
+	if (g_tickUnitUnknown4 <= g_timerGame) {
 		tickUnknown4 = true;
-		s_tickUnitUnknown4 = g_timerGame + 20;
+		g_tickUnitUnknown4 = g_timerGame + 20;
 	}
 
-	if (s_tickUnitScript <= g_timerGame) {
+	if (g_tickUnitScript <= g_timerGame) {
 		tickScript = true;
-		s_tickUnitScript = g_timerGame + 5;
+		g_tickUnitScript = g_timerGame + 5;
 	}
 
-	if (s_tickUnitUnknown5 <= g_timerGame) {
+	if (g_tickUnitUnknown5 <= g_timerGame) {
 		tickUnknown5 = true;
-		s_tickUnitUnknown5 = g_timerGame + 5;
+		g_tickUnitUnknown5 = g_timerGame + 5;
 	}
 
-	if (s_tickUnitDeviation <= g_timerGame) {
+	if (g_tickUnitDeviation <= g_timerGame) {
 		tickDeviation = true;
-		s_tickUnitDeviation = g_timerGame + 60;
+		g_tickUnitDeviation = g_timerGame + 60;
 	}
 
 	find.houseID = HOUSE_INVALID;

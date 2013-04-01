@@ -7,7 +7,6 @@
 #include <assert.h>
 #include "random_starport.h"
 
-#include "../opendune.h"
 #include "../structure.h"
 #include "../timer/timer.h"
 #include "../unit.h"

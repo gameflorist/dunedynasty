@@ -113,9 +113,6 @@ typedef struct ActionInfo {
 struct Team;
 struct Structure;
 
-extern int64_t g_tickUnitMovement;
-extern int64_t g_tickUnitRotation;
-
 extern const char * const g_table_movementTypeName[MOVEMENT_MAX];
 
 extern const uint16 g_table_actionsAI[4];

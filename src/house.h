@@ -111,7 +111,6 @@ extern enum HouseType g_playerHouseID;
 extern uint16 g_houseMissileCountdown;
 extern uint16 g_playerCreditsNoSilo;
 extern uint16 g_playerCredits;
-extern int64_t g_tickHousePowerMaintenance;
 
 extern void GameLoop_House(void);
 extern uint8 House_StringToType(const char *name);
