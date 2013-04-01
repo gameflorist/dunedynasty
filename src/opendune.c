@@ -806,6 +806,7 @@ void GameLoop_Main(bool new_game)
 		GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
 	}
 
+	Timer_ResetScriptTimers();
 	Timer_SetTimer(TIMER_GAME, true);
 
 	/* Note: original game chose only MUSIC_IDLE1 .. MUSIC_IDLE6. */

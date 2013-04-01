@@ -38,6 +38,8 @@ extern int64_t g_tickUnitScript;
 extern int64_t g_tickUnitUnknown5;
 extern int64_t g_tickUnitDeviation;
 
+extern void Timer_ResetScriptTimers(void);
+
 extern bool Timer_SetTimer(enum TimerType timer, bool set);
 extern int64_t Timer_GetTimer(enum TimerType timer);
 extern void Timer_Sleep(int tics);
