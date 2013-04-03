@@ -2820,14 +2820,14 @@ void Unit_RemovePlayer(Unit *unit)
 	if (!Unit_IsSelected(unit))
 		return;
 
-	if (g_selectionType == SELECTIONTYPE_TARGET) {
+	Unit_Unselect(unit);
+
+	if ((g_selectionType == SELECTIONTYPE_TARGET) && !Unit_AnySelected()) {
 		g_unitActive = NULL;
 		g_activeAction = 0xFFFF;
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 	}
-
-	Unit_Unselect(unit);
 }
 
 /**
