@@ -549,10 +549,7 @@ MentatHelp_Draw(enum MentatID mentatID, MentatState *mentat)
 			MentatBriefing_DrawText(mentat);
 	}
 
-	if (mentat->state == MENTAT_SHOW_CONTENTS || mentat->state == MENTAT_IDLE) {
-		GUI_Widget_Draw(g_widgetMentatFirst);
-	}
-
+	GUI_Widget_Draw(g_widgetMentatFirst);
 	Mentat_Draw(mentatID);
 }
 
@@ -600,30 +597,31 @@ MentatHelp_Tick(MentatState *mentat)
 
 			if (mentat->state == MENTAT_PAUSE_DESCRIPTION)
 				mentat->desc_timer = Timer_GetTicks() + 30;
+
+			return false;
 		}
 	}
-	else if (mentat->state == MENTAT_PAUSE_DESCRIPTION) {
+
+	const int widgetID = GUI_Widget_HandleEvents(g_widgetMentatFirst);
+	if (widgetID == 0x8001) {
+		mentat->state = MENTAT_SHOW_CONTENTS;
+		mentat->speaking_mode = 0;
+		mentat->wsa = NULL;
+	}
+
+	if (mentat->state == MENTAT_PAUSE_DESCRIPTION) {
 		MentatHelp_TickPauseDescription(mentat);
 	}
 	else if (mentat->state == MENTAT_SHOW_DESCRIPTION) {
 		MentatHelp_TickShowDescription(mentat);
 	}
 	else if (mentat->state == MENTAT_SHOW_TEXT) {
-		if (Input_IsInputAvailable()) {
-			const int key = Input_GetNextKey();
+		if (widgetID != 0x8001) {
+			const int key = widgetID;
 
 			if (key == SCANCODE_ESCAPE || key == SCANCODE_SPACE || key == MOUSE_LMB || key == MOUSE_RMB)
 				MentatBriefing_AdvanceText(mentat);
 		}
 	}
-	else {
-		const int widgetID = GUI_Widget_HandleEvents(g_widgetMentatFirst);
-
-		if (widgetID == 0x8001) {
-			mentat->state = MENTAT_SHOW_CONTENTS;
-			mentat->wsa = NULL;
-		}
-	}
-
 	return false;
 }
