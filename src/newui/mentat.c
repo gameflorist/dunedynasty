@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fourcc.h"
+#include "multichar.h"
 #include "../os/endian.h"
 #include "../os/strings.h"
 

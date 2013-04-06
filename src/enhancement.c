@@ -30,8 +30,8 @@ bool enhancement_brutal_ai = false;
 enum HealthBarMode enhancement_draw_health_bars = HEALTH_BAR_SELECTED_UNITS;
 
 /**
- * Fix the often incorrect warning message regarding the direction of
- * incoming enemies in the early missions.
+ * [OpenDUNE bug] Someone messed up the calculation regarding the
+ * direction of incoming enemies in the early missions.
  */
 bool const enhancement_fix_enemy_approach_direction_warning = true;
 

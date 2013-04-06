@@ -3126,14 +3126,17 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 
 						s = Structure_Find(&find);
 						if (s != NULL) {
-							/* ENHANCEMENT -- Dune2's calculation is wrong, giving unhelpful messages about the direction of the incoming enemy. */
+							/* ENHANCEMENT -- Dune2's calculation for the direction is cruder than it needs to be. */
 							if (enhancement_fix_enemy_approach_direction_warning) {
 								const uint8 orient16 = Orientation_Orientation256ToOrientation16(Tile_GetDirection(s->o.position, unit->o.position));
 								const uint8 orient4 = ((orient16 + 1) & 0xF) / 4;
 
 								feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING_FROM_THE_NORTH + orient4;
 							} else {
-								feedbackID = ((Orientation_Orientation256ToOrientation8(Tile_GetDirection(s->o.position, unit->o.position)) + 1) & 7) / 2 + 2;
+								const uint8 orient8 = Orientation_Orientation256ToOrientation8(Tile_GetDirection(s->o.position, unit->o.position));
+								const uint8 orient4 = ((orient8 + 1) & 0x7) / 2;
+
+								feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING_FROM_THE_NORTH + orient4;
 							}
 						} else {
 							feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING;

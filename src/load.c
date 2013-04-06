@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "fourcc.h"
+#include "multichar.h"
 #include "types.h"
 #include "os/endian.h"
 #include "os/error.h"

@@ -4,7 +4,7 @@
 #include <allegro5/allegro.h>
 #include <ctype.h>
 #include <string.h>
-#include "fourcc.h"
+#include "multichar.h"
 #include "../os/endian.h"
 #include "../os/math.h"
 #include "../os/strings.h"
