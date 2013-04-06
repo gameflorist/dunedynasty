@@ -4,7 +4,7 @@
 #include "types.h"
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
-/*#include "midi.h"*/
+#include "midi.h"
 
 #if defined(AUDIO_TOOLBOX_VERSION) && (AUDIO_TOOLBOX_VERSION >= 0x0105)
 /* Use the new functions in favor of deprecated ones from OS X 10.5 onward */
@@ -17,7 +17,7 @@ static AUGraph graph = 0;
 static AudioUnit synthUnit;
 
 /* This call creates the Graph and the Synth unit... */
-OSStatus CreateAUGraph()
+static OSStatus CreateAUGraph(void)
 {
 	OSStatus result;
 	/*create the nodes of the graph*/

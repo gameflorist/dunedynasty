@@ -405,11 +405,11 @@ ActionPanel_ScrollFactory(const Widget *widget, Structure *s)
 	int x1, y1, x2, y2;
 
 	ActionPanel_ScrollButtonDimensions(widget, true, &x1, &y1, &x2, &y2);
-	if ((widget->state.s.buttonState & 0x44) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
+	if ((widget->state.buttonState & 0x44) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 		delta = 1;
 
 	ActionPanel_ScrollButtonDimensions(widget, false, &x1, &y1, &x2, &y2);
-	if ((widget->state.s.buttonState & 0x44) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
+	if ((widget->state.buttonState & 0x44) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 		delta = -1;
 
 	if (delta == 0)
@@ -443,7 +443,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if (s->o.flags.s.upgrading)
 		return false;
 
-	if (widget->state.s.keySelected) {
+	if (widget->state.keySelected) {
 		if (g_productionStringID == STR_PLACE_IT)
 			ActionPanel_BeginPlacementMode(s);
 		return true;
@@ -464,8 +464,8 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	if (mouseY >= widget->offsetY + ActionPanel_ProductionListHeight(widget))
 		return false;
 
-	const bool lmb = (widget->state.s.buttonState & 0x04);
-	const bool rmb = (widget->state.s.buttonState & 0x40);
+	const bool lmb = (widget->state.buttonState & 0x04);
+	const bool rmb = (widget->state.buttonState & 0x40);
 	int item;
 
 	for (item = 0; item < g_factoryWindowTotal; item++) {
@@ -583,7 +583,8 @@ ActionPanel_ClickStarportOrder(Structure *s)
 		g_validateStrictIfZero++;
 		{
 			tile32 tile;
-			tile.tile = 0xFFFFFFFF;
+			tile.x = 0xFFFF;
+			tile.y = 0xFFFF;
 			u = Unit_Create(UNIT_INDEX_INVALID, (uint8)objectType, s->o.houseID, tile, 0);
 		}
 		g_validateStrictIfZero--;
@@ -654,8 +655,8 @@ ActionPanel_ClickStarportMinus(Structure *s, int entry)
 bool
 ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 {
-	const bool lmb = (widget->state.s.buttonState & 0x04);
-	const bool rmb = (widget->state.s.buttonState & 0x40);
+	const bool lmb = (widget->state.buttonState & 0x04);
+	const bool rmb = (widget->state.buttonState & 0x40);
 
 	int x1, y1, x2, y2;
 	int item;
@@ -705,7 +706,7 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 bool
 ActionPanel_ClickPalace(const Widget *widget, Structure *s)
 {
-	const bool lmb = (widget->state.s.buttonState & 0x04);
+	const bool lmb = (widget->state.buttonState & 0x04);
 	const int xcentre = widget->offsetX + widget->width / 2;
 	int y1, y2, w;
 
@@ -754,7 +755,7 @@ ActionPanel_DrawScrollButtons(const Widget *widget)
 	if (g_factoryWindowTotal <= items_per_screen)
 		return;
 
-	const bool pressed = (widget->state.s.hover1);
+	const bool pressed = (widget->state.hover1);
 	int x1, y1, x2, y2;
 
 	ActionPanel_ScrollButtonDimensions(widget, true, &x1, &y1, &x2, &y2);
@@ -793,7 +794,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 		fg = 0xE;
 	}
 	else {
-		const bool buttonDown = (widget->state.s.hover1 && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2));
+		const bool buttonDown = (widget->state.hover1 && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2));
 
 		Prim_DrawBorder(x1, y1, w, h, 1, true, true, buttonDown ? 0 : 1);
 		fg = 0xF;

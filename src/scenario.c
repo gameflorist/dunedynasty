@@ -1608,7 +1608,7 @@ void Scenario_CentreViewport(uint8 houseID)
 
 	Structure *s = Structure_Find(&find);
 	if (s != NULL) {
-		Map_CentreViewport((s->o.position.s.x >> 4) + TILE_SIZE, (s->o.position.s.y >> 4) + TILE_SIZE);
+		Map_CentreViewport((s->o.position.x >> 4) + TILE_SIZE, (s->o.position.y >> 4) + TILE_SIZE);
 		return;
 	}
 
@@ -1619,7 +1619,7 @@ void Scenario_CentreViewport(uint8 houseID)
 
 	Unit *u = Unit_Find(&find);
 	if (u != NULL) {
-		Map_CentreViewport(u->o.position.s.x >> 4, u->o.position.s.y >> 4);
+		Map_CentreViewport(u->o.position.x >> 4, u->o.position.y >> 4);
 	}
 }
 

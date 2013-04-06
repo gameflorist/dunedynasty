@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../os/math.h"
 
 #include "slider.h"
@@ -73,12 +74,12 @@ Slider_Allocate(uint16 index, uint16 parentID, uint16 offsetX, uint16 offsetY, i
 	w->fgColourNormal = 232;
 	w->bgColourNormal = 235;
 
-	w->flags.all = 0;
-	w->flags.s.buttonFilterLeft = 7;
-	w->flags.s.loseSelect = true;
+	memset(&w->flags, 0, sizeof(w->flags));
+	w->flags.buttonFilterLeft = 7;
+	w->flags.loseSelect = true;
 
-	w->state.all = 0;
-	w->state.s.hover2Last = true;
+	memset(&w->state, 0, sizeof(w->state));
+	w->state.hover2Last = true;
 
 	w->drawModeNormal   = DRAW_MODE_CUSTOM_PROC;
 	w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;

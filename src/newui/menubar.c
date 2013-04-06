@@ -358,7 +358,7 @@ MenuBar_ClickRadioButton(Widget *radio)
 
 		if (w->clickProc == MenuBar_ClickRadioButton) {
 			w->drawParameterNormal.sprite = SHAPE_RADIO_BUTTON_OFF;
-			w->state.s.selected = 0;
+			w->state.selected = 0;
 		}
 
 		w = GUI_Widget_GetNext(w);
@@ -368,7 +368,7 @@ MenuBar_ClickRadioButton(Widget *radio)
 	 * after we click something else.
 	 */
 	radio->drawParameterNormal.sprite = SHAPE_RADIO_BUTTON_ON;
-	radio->state.s.selected = 1;
+	radio->state.selected = 1;
 
 	return true;
 }
@@ -389,7 +389,7 @@ MenuBar_ClickMusicVolumeSlider(Widget *w)
 static bool
 MenuBar_ClickSoundVolumeSlider(Widget *w)
 {
-	if (Slider_Click(w) || w->state.s.buttonState & 0x01) {
+	if (Slider_Click(w) || w->state.buttonState & 0x01) {
 		const enum SampleID sampleID = Tools_RandomLCG_Range(SAMPLE_AFFIRMATIVE, SAMPLE_MOVING_OUT);
 		const SliderData *data = w->data;
 
@@ -459,7 +459,7 @@ MenuBar_CreateGameControls(void)
 		w = GUI_Widget_Allocate(90 + page, 0, 8 + 10 * page, g_widgetProperties[g_gameControlWindowDesc.index].height - 17, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
 		w->parentID = g_gameControlWindowDesc.index;
 		w->clickProc = MenuBar_ClickRadioButton;
-		w->state.s.selected = 0;
+		w->state.selected = 0;
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 	}
 
@@ -690,7 +690,7 @@ MenuBar_TickGameControls(void)
 
 		case 0x8000 | 31: /* STR_SOUNDS_ARE */
 			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 31);
-			if (w->state.s.buttonState & 0x04) {
+			if (w->state.buttonState & 0x04) {
 				g_enable_sound_effects++;
 				if (g_enable_sound_effects > SOUNDEFFECTS_SYNTH_AND_SAMPLES)
 					g_enable_sound_effects = SOUNDEFFECTS_NONE;
@@ -706,7 +706,7 @@ MenuBar_TickGameControls(void)
 
 		case 0x8000 | 32: /* STR_GAME_SPEED */
 			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 32);
-			if (w->state.s.buttonState & 0x04) {
+			if (w->state.buttonState & 0x04) {
 				if (++g_gameConfig.gameSpeed >= 5)
 					g_gameConfig.gameSpeed = 0;
 			}
@@ -736,7 +736,7 @@ MenuBar_TickGameControls(void)
 
 		case 0x8000 | 70: /* Health bars. */
 			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 70);
-			if (w->state.s.buttonState & 0x04) {
+			if (w->state.buttonState & 0x04) {
 				enhancement_draw_health_bars = (enhancement_draw_health_bars + 1) % NUM_HEALTH_BAR_MODES;
 			}
 			else {

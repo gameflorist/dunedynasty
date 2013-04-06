@@ -630,7 +630,7 @@ Viewport_Click(Widget *w)
 		Video_SetCursor(cursorID);
 	}
 
-	if (w->state.s.buttonState & 0x01) {
+	if (w->state.buttonState & 0x01) {
 		const bool mouse_in_scroll_widget = Viewport_MouseInScrollWidget();
 
 		/* Clicking LMB performs target. */
@@ -697,7 +697,7 @@ Viewport_Click(Widget *w)
 		}
 	}
 
-	if (w->state.s.buttonState & 0x10) {
+	if (w->state.buttonState & 0x10) {
 		/* Clicking RMB begins panning. */
 		if (viewport_click_action == VIEWPORT_CLICK_NONE) {
 			viewport_click_action = VIEWPORT_RMB;
@@ -714,7 +714,7 @@ Viewport_Click(Widget *w)
 		}
 	}
 
-	if (w->state.s.buttonState & 0x22) {
+	if (w->state.buttonState & 0x22) {
 		if (viewport_click_action == VIEWPORT_LMB) {
 			const int dx = viewport_click_x - mouseX;
 			const int dy = viewport_click_y - mouseY;
@@ -776,7 +776,7 @@ Viewport_Click(Widget *w)
 		}
 	}
 
-	if (w->state.s.buttonState & 0x04) {
+	if (w->state.buttonState & 0x04) {
 		bool perform_selection_box = false;
 
 		/* Releasing LMB performs selection box. */
@@ -837,7 +837,7 @@ Viewport_Click(Widget *w)
 		viewport_click_action = VIEWPORT_CLICK_NONE;
 	}
 
-	if (w->state.s.buttonState & 0x40) {
+	if (w->state.buttonState & 0x40) {
 		/* Releasing RMB cancels pan, but not target, placement. */
 		if (viewport_click_action == VIEWPORT_PAN) {
 		}
@@ -919,8 +919,8 @@ Viewport_Hotkey(enum SquadID squad)
 			if ((Unit_GetHouseID(u) == g_playerHouseID) && Unit_IsSelected(u)) {
 				u->squadID = squad;
 
-				cx += (u->o.position.s.x >> 4);
-				cy += (u->o.position.s.y >> 4);
+				cx += (u->o.position.x >> 4);
+				cy += (u->o.position.y >> 4);
 				count++;
 			}
 			else if (u->squadID == squad) {
@@ -977,8 +977,8 @@ Viewport_Hotkey(enum SquadID squad)
 			}
 
 			if (Unit_IsSelected(u)) {
-				cx += (u->o.position.s.x >> 4);
-				cy += (u->o.position.s.y >> 4);
+				cx += (u->o.position.x >> 4);
+				cy += (u->o.position.y >> 4);
 				count++;
 			}
 
@@ -1000,8 +1000,8 @@ Viewport_Hotkey(enum SquadID squad)
 						modified_selection = true;
 
 					Map_SetSelection(Tile_PackTile(s->o.position));
-					cx = (s->o.position.s.x >> 4) + TILE_SIZE * layout->width / 2;
-					cy = (s->o.position.s.y >> 4) + TILE_SIZE * layout->height / 2;
+					cx = (s->o.position.x >> 4) + TILE_SIZE * layout->width / 2;
+					cy = (s->o.position.y >> 4) + TILE_SIZE * layout->height / 2;
 					count = 1;
 					break;
 				}
@@ -1048,7 +1048,7 @@ Viewport_Homekey(void)
 		}
 
 		if (centre_on_selection) {
-			Map_CentreViewport((s->o.position.s.x >> 4) + TILE_SIZE, (s->o.position.s.y >> 4) + TILE_SIZE);
+			Map_CentreViewport((s->o.position.x >> 4) + TILE_SIZE, (s->o.position.y >> 4) + TILE_SIZE);
 		}
 	}
 }
@@ -1355,8 +1355,8 @@ Viewport_DrawSelectionHealthBars(void)
 			y = y - TILE_SIZE / 2 - 3;
 
 			/* Shift the meter down if off the top of the screen. */
-			if ((u->o.position.s.y >> 4) - TILE_SIZE / 2 - 3 <= TILE_SIZE * g_mapInfos[g_scenario.mapScale].minY) {
-				y += TILE_SIZE * g_mapInfos[g_scenario.mapScale].minY - ((u->o.position.s.y >> 4) - TILE_SIZE / 2 - 3);
+			if ((u->o.position.y >> 4) - TILE_SIZE / 2 - 3 <= TILE_SIZE * g_mapInfos[g_scenario.mapScale].minY) {
+				y += TILE_SIZE * g_mapInfos[g_scenario.mapScale].minY - ((u->o.position.y >> 4) - TILE_SIZE / 2 - 3);
 			}
 
 			Viewport_DrawHealthBar(x - 7, y, 13, u->o.hitpoints, ui->o.hitpoints);
@@ -1507,8 +1507,8 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 			return;
 	}
 
-	x += (int16)g_table_tilediff[0][u->wobbleIndex].s.x;
-	y += (int16)g_table_tilediff[0][u->wobbleIndex].s.y;
+	x += (int16)g_table_tilediff[0][u->wobbleIndex].x;
+	y += (int16)g_table_tilediff[0][u->wobbleIndex].y;
 
 	uint16 s_spriteFlags = 0;
 	uint16 index;
@@ -1868,8 +1868,8 @@ Viewport_InterpolateMovement(const Unit *u, int *x, int *y)
 	const float speed = speedPerTick * frame / 3.0f;
 
 	tile32 origin;
-	origin.s.x = *x;
-	origin.s.y = *y;
+	origin.x = *x;
+	origin.y = *y;
 
 	int destx, desty;
 	Map_IsPositionInViewport(u->currentDestination, &destx, &desty);
@@ -1882,6 +1882,6 @@ Viewport_InterpolateMovement(const Unit *u, int *x, int *y)
 
 	const tile32 pos = Tile_MoveByDirection(origin, u->orientation[0].current, dist);
 
-	*x = (int16)pos.s.x;
-	*y = (int16)pos.s.y;
+	*x = (int16)pos.x;
+	*y = (int16)pos.y;
 }

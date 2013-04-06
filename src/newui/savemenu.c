@@ -276,10 +276,10 @@ SaveMenu_SaveLoad_Click(bool save)
 	int ret = 0;
 
 	if (key == (0x80 | MOUSE_ZAXIS)) {
-		if ((g_mouseDZ > 0) && (!g_table_windowWidgets[7].flags.s.invisible)) {
+		if ((g_mouseDZ > 0) && (!g_table_windowWidgets[7].flags.invisible)) {
 			key = 0x8025;
 		}
-		else if ((g_mouseDZ < 0) && (!g_table_windowWidgets[8].flags.s.invisible)) {
+		else if ((g_mouseDZ < 0) && (!g_table_windowWidgets[8].flags.invisible)) {
 			key = 0x8026;
 		}
 	}

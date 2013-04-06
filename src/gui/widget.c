@@ -459,7 +459,7 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
 		}
 
 		if ((!widgetHover) && (buttonState & 0x2200) != 0) {
-			w->state.s.selected = false;
+			w->state.selected = false;
 		}
 
 		/* Check if we are not pressing a button */

@@ -2638,17 +2638,15 @@ Unit_StructureInRange(const Unit *unit, const Structure *s, uint16 distance)
 	 * whereas they would fire at it when on attack command.
 	 */
 	if (!enhancement_fix_firing_logic) {
-		curPosition.tile = s->o.position.tile + g_table_structure_layoutTileDiff[layout].tile;
+		curPosition.x = s->o.position.x + g_table_structure_layoutTileDiff[layout].x;
+		curPosition.y = s->o.position.y + g_table_structure_layoutTileDiff[layout].y;
 		return (Tile_GetDistance(unit->o.position, curPosition) <= distance);
 	}
 
 	for (int i = 0; i < g_table_structure_layoutSize[layout].height; i++) {
 		for (int j = 0; j < g_table_structure_layoutSize[layout].width; j++) {
-			curPosition.tile = s->o.position.tile;
-			curPosition.d.ox = 0x80;
-			curPosition.d.oy = 0x80;
-			curPosition.d.px += j;
-			curPosition.d.py += i;
+			curPosition.x = ((s->o.position.x & 0xFF00) + (j << 8)) | 0x80;
+			curPosition.y = ((s->o.position.y & 0xFF00) + (i << 8)) | 0x80;
 
 			if (Tile_GetDistance(unit->o.position, curPosition) <= distance)
 				return true;

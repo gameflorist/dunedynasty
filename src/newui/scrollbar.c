@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../os/math.h"
 #include "../os/strings.h"
 
@@ -103,12 +104,12 @@ GUI_Widget_Allocate_WithScrollbar(uint16 index, enum WindowID parentID,
 	w->fgColourNormal = 15;
 	w->bgColourNormal = 12;
 
-	w->flags.all = 0;
-	w->flags.s.buttonFilterLeft = 7;
-	w->flags.s.loseSelect = true;
+	memset(&w->flags, 0, sizeof(w->flags));
+	w->flags.buttonFilterLeft = 7;
+	w->flags.loseSelect = true;
 
-	w->state.all = 0;
-	w->state.s.hover2Last = true;
+	memset(&w->state, 0, sizeof(w->state));
+	w->state.hover2Last = true;
 
 	w->drawModeNormal   = DRAW_MODE_CUSTOM_PROC;
 	w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;
@@ -159,12 +160,12 @@ GUI_Widget_Allocate3(uint16 index, enum WindowID parentID, uint16 offsetX, uint1
 	w->width  = Shape_Width(sprite1);
 	w->height = Shape_Height(sprite1);
 
-	w->flags.all = 0;
-	w->flags.s.requiresClick     = true;
-	w->flags.s.clickAsHover      = true;
-	w->flags.s.loseSelect        = true;
-	w->flags.s.buttonFilterLeft  = 1;
-	w->flags.s.buttonFilterRight = 1;
+	memset(&w->flags, 0, sizeof(w->flags));
+	w->flags.requiresClick     = true;
+	w->flags.clickAsHover      = true;
+	w->flags.loseSelect        = true;
+	w->flags.buttonFilterLeft  = 1;
+	w->flags.buttonFilterRight = 1;
 
 	w->drawParameterNormal.sprite   = sprite1;
 	w->drawParameterSelected.sprite = sprite1;
@@ -468,11 +469,11 @@ Scrollbar_Click(Widget *w)
 	if (w->offsetY < 0) positionY += g_widgetProperties[w->parentID].height;
 	positionY += g_widgetProperties[w->parentID].yBase;
 
-	if ((w->state.s.buttonState & 0x44) != 0) {
+	if ((w->state.buttonState & 0x44) != 0) {
 		scrollbar->pressed = 0;
 	}
 
-	if ((w->state.s.buttonState & 0x11) != 0) {
+	if ((w->state.buttonState & 0x11) != 0) {
 		int16 positionCurrent;
 		int16 positionBegin;
 		int16 positionEnd;
@@ -498,7 +499,7 @@ Scrollbar_Click(Widget *w)
 		}
 	}
 
-	if ((w->state.s.buttonState & 0x22) != 0 && scrollbar->pressed != 0) {
+	if ((w->state.buttonState & 0x22) != 0 && scrollbar->pressed != 0) {
 		int16 position, size;
 
 		if (w->width > w->height) {
@@ -602,7 +603,7 @@ ScrollListArea_Click(Widget *w)
 			s_selectedHelpSubject = ws->scrollPosition + y;
 	}
 
-	if ((w->state.s.buttonState & 0x11) == 0) return true;
+	if ((w->state.buttonState & 0x11) == 0) return true;
 
 	return false;
 }
@@ -614,9 +615,9 @@ ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID, int x, int y)
 
 	w->index = 3;
 
-	w->flags.all = 0;
-	w->flags.s.buttonFilterLeft = 9;
-	w->flags.s.buttonFilterRight = 1;
+	memset(&w->flags, 0, sizeof(w->flags));
+	w->flags.buttonFilterLeft = 9;
+	w->flags.buttonFilterRight = 1;
 
 	w->clickProc = &ScrollListArea_Click;
 
@@ -627,7 +628,7 @@ ScrollListArea_Allocate(Widget *scrollbar, enum WindowID parentID, int x, int y)
 	w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;
 	w->drawModeDown = DRAW_MODE_CUSTOM_PROC;
 
-	w->state.all = 0;
+	memset(&w->state, 0, sizeof(w->state));
 
 	w->offsetX = x;
 	w->offsetY = y;

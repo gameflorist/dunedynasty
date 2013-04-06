@@ -200,8 +200,8 @@ bool GUI_Widget_Name_Click(Widget *w)
 
 	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 	if (s != NULL) {
-		cx = (s->o.position.s.x >> 4) + TILE_SIZE * g_selectionWidth / 2;
-		cy = (s->o.position.s.y >> 4) + TILE_SIZE * g_selectionHeight / 2;
+		cx = (s->o.position.x >> 4) + TILE_SIZE * g_selectionWidth / 2;
+		cy = (s->o.position.y >> 4) + TILE_SIZE * g_selectionHeight / 2;
 		Map_CentreViewport(cx, cy);
 		return false;
 	}
@@ -210,8 +210,8 @@ bool GUI_Widget_Name_Click(Widget *w)
 	Unit *u = Unit_FirstSelected(&iter);
 
 	while (u != NULL) {
-		cx += (u->o.position.s.x >> 4);
-		cy += (u->o.position.s.y >> 4);
+		cx += (u->o.position.x >> 4);
+		cy += (u->o.position.y >> 4);
 		count++;
 
 		u = Unit_NextSelected(&iter);

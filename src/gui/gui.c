@@ -1499,12 +1499,12 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 			while (w != NULL) {
 				const int8 *s = g_table_selectionType[selectionType].visibleWidgets;
 
-				w->state.s.selected = false;
-				w->flags.s.invisible = true;
+				w->state.selected = false;
+				w->flags.invisible = true;
 
 				for (; *s != -1; s++) {
 					if (*s == w->index) {
-						w->flags.s.invisible = false;
+						w->flags.invisible = false;
 						break;
 					}
 				}
@@ -2099,7 +2099,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 			Widget *widget = g_widgetLinkedListTail;
 			while (widget != NULL) {
-				if (widget->state.s.selected != widget->state.s.selectedLast) {
+				if (widget->state.selected != widget->state.selectedLast) {
 					redraw = true;
 					break;
 				}
@@ -2120,7 +2120,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 			Widget *widget = w;
 			while (widget != NULL) {
-				if (widget->state.s.hover1 != widget->state.s.hover1Last) {
+				if (widget->state.hover1 != widget->state.hover1Last) {
 					redraw = true;
 					break;
 				}

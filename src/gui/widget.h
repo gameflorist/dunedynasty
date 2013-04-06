@@ -63,17 +63,17 @@ typedef struct Widget {
 	uint8  drawModeSelected;                                /*!< Draw mode when selected. */
 	uint8  drawModeDown;                                    /*!< Draw mode when down. */
 	struct {
-		BIT_U8 requiresClick:1;                         /*!< Requires click. */
+		BIT_U8 requiresClick:1;                             /*!< Requires click. */
 		BIT_U8 notused1:1;
-		BIT_U8 clickAsHover:1;                          /*!< Click as hover. */
-		BIT_U8 invisible:1;                             /*!< Widget is invisible. */
-		BIT_U8 greyWhenInvisible:1;                     /*!< Make the widget grey out when made invisible, instead of making it invisible. */
-		BIT_U8 noClickCascade:1;                        /*!< Don't cascade the click event to any other widgets. */
-		BIT_U8 loseSelect:1;                            /*!< Lose select when leave. */
+		BIT_U8 clickAsHover:1;                              /*!< Click as hover. */
+		BIT_U8 invisible:1;                                 /*!< Widget is invisible. */
+		BIT_U8 greyWhenInvisible:1;                         /*!< Make the widget grey out when made invisible, instead of making it invisible. */
+		BIT_U8 noClickCascade:1;                            /*!< Don't cascade the click event to any other widgets. */
+		BIT_U8 loseSelect:1;                                /*!< Lose select when leave. */
 		BIT_U8 notused2:1;
-		BIT_U8 buttonFilterLeft:4;                      /*!< Left button filter. */
-		BIT_U8 buttonFilterRight:4;                     /*!< Right button filter. */
-	} flags;                                /*!< General flags of the Widget. */
+		BIT_U8 buttonFilterLeft:4;                          /*!< Left button filter. */
+		BIT_U8 buttonFilterRight:4;                         /*!< Right button filter. */
+	} flags;                                                /*!< General flags of the Widget. */
 	WidgetDrawParameter drawParameterNormal;                /*!< Draw parameter when normal. */
 	WidgetDrawParameter drawParameterSelected;              /*!< Draw parameter when selected. */
 	WidgetDrawParameter drawParameterDown;                  /*!< Draw parameter when down. */
@@ -89,16 +89,16 @@ typedef struct Widget {
 	uint8  fgColourDown;                                    /*!< Foregroud colour for draw proc when down. */
 	uint8  bgColourDown;                                    /*!< Background colour for draw proc when down. */
 	struct {
-		BIT_U8 selected:1;                              /*!< Selected. */
-		BIT_U8 hover1:1;                                /*!< Hover. */
-		BIT_U8 hover2:1;                                /*!< Hover. */
-		BIT_U8 selectedLast:1;                          /*!< Last Selected. */
-		BIT_U8 hover1Last:1;                            /*!< Last Hover. */
-		BIT_U8 hover2Last:1;                            /*!< Last Hover. */
+		BIT_U8 selected:1;                                  /*!< Selected. */
+		BIT_U8 hover1:1;                                    /*!< Hover. */
+		BIT_U8 hover2:1;                                    /*!< Hover. */
+		BIT_U8 selectedLast:1;                              /*!< Last Selected. */
+		BIT_U8 hover1Last:1;                                /*!< Last Hover. */
+		BIT_U8 hover2Last:1;                                /*!< Last Hover. */
 		BIT_U8 notused:1;
-		BIT_U8 keySelected:1;                           /*!< Key Selected. */
-		BIT_U8 buttonState:8;                           /*!< Button state. */
-	} state;                                /*!< State of the Widget. */
+		BIT_U8 keySelected:1;                               /*!< Key Selected. */
+		BIT_U8 buttonState:8;                               /*!< Button state. */
+	} state;                                                /*!< State of the Widget. */
 	ClickProc *clickProc;                                   /*!< Function to execute when widget is pressed. */
 	void *data;                                             /*!< If non-NULL, it points to WidgetScrollbar or HallOfFameData belonging to this widget. */
 	uint16 stringID;                                        /*!< Strings to print on the widget. Index above 0xFFF2 are special. */

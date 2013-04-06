@@ -48,6 +48,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/newui/viewport.c
 	src/object.c
 	src/opendune.c
+	src/os/endian.c
 	src/pool/house.c
 	src/pool/structure.c
 	src/pool/team.c
@@ -103,6 +104,9 @@ set(DUNEDYNASTY_SRC_FILES
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES} src/audio/midi_win32.c)
+elseif(APPLE)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES} src/audio/midi_osx.c)
 elseif(WITH_ALSA_MIDI)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES} src/audio/midi_alsa.c)

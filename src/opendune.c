@@ -515,7 +515,7 @@ GameLoop_ProcessUnhandledInput(uint16 key)
 				if (!Input_Test(SCANCODE_LCTRL)) {
 					Widget *w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 5);
 
-					if ((w != NULL) && !w->flags.s.invisible)
+					if ((w != NULL) && !w->flags.invisible)
 						GUI_Widget_SpriteTextButton_Click(w);
 
 					break;

@@ -727,7 +727,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 							GUI_Widget_MakeSelected(buttons[i], false);
 						} else {
 							/* GUI_Widget_MakeNormal(buttons[i], false); */
-							buttons[i]->state.s.selected = false;
+							buttons[i]->state.selected = false;
 						}
 					}
 				} break;

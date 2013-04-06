@@ -136,7 +136,7 @@ MainMenu_InitMenuItem(int nth, uint16 index, const char *string)
 	w->drawParameterDown.text = w->drawParameterNormal.text;
 	w->fgColourSelected = prop21->fgColourSelected;
 	w->fgColourDown = prop21->fgColourSelected;
-	w->flags.s.clickAsHover = false;
+	w->flags.clickAsHover = false;
 
 	return w;
 }
@@ -196,7 +196,7 @@ MainMenu_InitWidgets(void)
 	w->drawParameterNormal.text = g_campaign_list[g_campaign_selected].name;
 	w->drawParameterSelected.text = w->drawParameterNormal.text;
 	w->drawParameterDown.text = w->drawParameterNormal.text;
-	w->flags.s.clickAsHover = false;
+	w->flags.clickAsHover = false;
 	main_menu_widgets = GUI_Widget_Link(main_menu_widgets, w);
 
 	subtitle_timer = -2 * SUBTITLE_FADE_TICKS;
@@ -235,10 +235,10 @@ PickHouse_InitWidgets(void)
 		w = GUI_Widget_Allocate(menuitem[i].index, menuitem[i].shortcut, menuitem[i].x, menuitem[i].y, SHAPE_INVALID, STR_NULL);
 		w->width = menuitem[i].w;
 		w->height = menuitem[i].h;
-		w->flags.all = 0x0;
-		w->flags.s.loseSelect = true;
-		w->flags.s.buttonFilterLeft = 1;
-		w->flags.s.buttonFilterRight = 1;
+		memset(&w->flags, 0, sizeof(w->flags));
+		w->flags.loseSelect = true;
+		w->flags.buttonFilterLeft = 1;
+		w->flags.buttonFilterRight = 1;
 
 		pick_house_widgets = GUI_Widget_Link(pick_house_widgets, w);
 	}
@@ -270,7 +270,7 @@ Extras_AllocateAndLinkRadioButton(Widget *list, int index, uint16 shortcut, int 
 	w = GUI_Widget_Allocate(index, shortcut, x, y, SHAPE_INVALID, STR_NULL);
 	w->width = 32;
 	w->height = 24;
-	w->flags.s.buttonFilterLeft = 0x4;
+	w->flags.buttonFilterLeft = 0x4;
 	w->clickProc = Extras_ClickRadioButton;
 
 	w->drawModeNormal = DRAW_MODE_CUSTOM_PROC;
@@ -529,7 +529,7 @@ MainMenu_Draw(Widget *widget)
 	const Widget *w = GUI_Widget_Get_ByIndex(widget, 100);
 	const char *subtitle;
 	int alpha = 0;
-	int colour = (w->state.s.hover1) ? 192 : 144;
+	int colour = (w->state.hover1) ? 192 : 144;
 
 	if (curr_ticks - subtitle_timer < SUBTITLE_FADE_TICKS) {
 		/* Interesting colours: 192, 216, 231, 240. */
@@ -593,7 +593,7 @@ static bool
 MainMenu_IsDirty(Widget *w)
 {
 	while (w != NULL) {
-		if (w->state.s.hover1 != w->state.s.hover1Last)
+		if (w->state.hover1 != w->state.hover1Last)
 			return true;
 
 		w = GUI_Widget_GetNext(w);
@@ -645,7 +645,7 @@ MainMenu_Loop(void)
 			Widget *subtitle = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
 			subtitle->drawParameterDown.text = subtitle->drawParameterNormal.text;
 
-			if (subtitle->state.s.buttonState & 0x04) {
+			if (subtitle->state.buttonState & 0x04) {
 				g_campaign_selected++;
 
 				if (g_campaign_selected == CAMPAIGNID_SKIRMISH)
@@ -742,7 +742,7 @@ PickHouse_Draw(void)
 		Prim_FillRect_RGBA(208.0f, 50.0f, 208.0f + 96.0f, 150.0f, 0x00, 0x00, 0x00, 0xC0);
 
 	const Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, 10);
-	uint8 fg = (w->state.s.hover1) ? 130 : 133;
+	uint8 fg = (w->state.hover1) ? 130 : 133;
 
 	/* Width is 70/72 with the EU font, 73-75 with the US font. */
 	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
@@ -817,7 +817,7 @@ PickHouse_Loop(void)
 	}
 
 	Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, 10);
-	if (w->state.s.hover1 != w->state.s.hover1Last)
+	if (w->state.hover1 != w->state.hover1Last)
 		redraw = true;
 
 	return (redraw ? MENU_REDRAW : 0) | MENU_PICK_HOUSE;
@@ -1114,8 +1114,8 @@ LoadGame_Loop(void)
 
 	Widget *w = g_widgetLinkedListTail;
 	while (w != NULL) {
-		if ((w->state.s.selected != w->state.s.selectedLast) ||
-			(w->state.s.hover1 != w->state.s.hover1Last)) {
+		if ((w->state.selected != w->state.selectedLast) ||
+			(w->state.hover1 != w->state.hover1Last)) {
 			redraw = true;
 			break;
 		}

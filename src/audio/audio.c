@@ -543,7 +543,7 @@ Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position)
 		int volume = 255;
 		float pan = 0.0f;
 
-		if (position.tile != 0) {
+		if (position.x != 0 && position.y != 0) {
 			const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
 			const int cx = Tile_GetPackedX(g_viewportPosition) + wi->width / (2 * TILE_SIZE);
 			const int cy = Tile_GetPackedY(g_viewportPosition) + wi->height / (2 * TILE_SIZE);
@@ -568,7 +568,8 @@ Audio_PlaySound(enum SoundID soundID)
 {
 	tile32 tile;
 
-	tile.tile = 0;
+	tile.x = 0;
+	tile.y = 0;
 	Audio_PlaySoundAtTile(soundID, tile);
 }
 
