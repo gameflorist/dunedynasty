@@ -1858,12 +1858,12 @@ Options_Initialise(void)
 	snprintf(si->text, sizeof(si->text), "Raise scenario unit cap");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->d.checkbox = &g_gameConfig.hardwareCursor;
-	snprintf(si->text, sizeof(si->text), "Hardware mouse cursor");
+	si->d.checkbox = &enhancement_true_game_speed_adjustment;
+	snprintf(si->text, sizeof(si->text), "True game speed adjustment");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->d.checkbox = &enhancement_infantry_squad_death_animations;
-	snprintf(si->text, sizeof(si->text), "Infantry squad corpses");
+	si->d.checkbox = &g_gameConfig.hardwareCursor;
+	snprintf(si->text, sizeof(si->text), "Hardware mouse cursor");
 
 	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
 }
