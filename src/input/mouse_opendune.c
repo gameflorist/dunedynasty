@@ -13,7 +13,6 @@
 #include "../gui/gui.h"
 #include "../input/input.h"
 #include "../timer.h"
-#include "../tools.h"
 #include "../video/video.h"
 
 uint16 g_mouseLock;          /*!< Lock for when handling mouse movement. */

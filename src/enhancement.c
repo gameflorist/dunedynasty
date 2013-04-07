@@ -186,6 +186,12 @@ enum SubtitleOverride enhancement_subtitle_override = SUBTITLE_THE_BUILDING_OF_L
  */
 bool enhancement_targetted_sabotage = true;
 
+/**
+ * Dune II's game speed implementation doesn't affect scripts and
+ * other things.  This also fixes the sonic tank range bug.
+ */
+bool enhancement_true_game_speed_adjustment = true;
+
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 

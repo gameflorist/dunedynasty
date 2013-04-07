@@ -20,7 +20,6 @@
 #include "../string.h"
 #include "../table/strings.h"
 #include "../timer.h"
-#include "../tools.h"
 #include "../wsa.h"
 
 

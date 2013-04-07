@@ -5,6 +5,7 @@
 #include "timer.h"
 
 #include "../config.h"
+#include "../enhancement.h"
 
 int64_t g_timerGame;
 int64_t g_tickScenarioStart = 0;
@@ -63,6 +64,12 @@ uint16
 Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum,
 		bool inverseSpeed)
 {
+	/* ENHANCEMENT -- true game speed achieved by adjusting game timer
+	 * tick rate directly.
+	 */
+	if (enhancement_true_game_speed_adjustment)
+		return normal;
+
 	uint16 gameSpeed = g_gameConfig.gameSpeed;
 
 	if (gameSpeed == 2) return normal;

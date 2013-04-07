@@ -7,6 +7,22 @@
 
 #include "../audio/audio.h"
 #include "../common_a5.h"
+#include "../config.h"
+#include "../enhancement.h"
+
+enum GameSpeed {
+	GAMESPEED_SLOWEST   = 0,
+	GAMESPEED_SLOW      = 1,
+	GAMESPEED_NORMAL    = 2,
+	GAMESPEED_FAST      = 3,
+	GAMESPEED_FASTEST   = 4,
+
+	GAMESPEED_MAX
+};
+
+static const double s_game_speed[GAMESPEED_MAX] = {
+	1.0/30.0, 1.0/45.0, 1.0/60.0, 1.0/90.0, 1.0/120.0
+};
 
 static ALLEGRO_TIMER *s_timer[2];
 ALLEGRO_EVENT_QUEUE *s_timer_queue;
@@ -14,8 +30,8 @@ ALLEGRO_EVENT_QUEUE *s_timer_queue;
 bool
 TimerA5_Init(void)
 {
-	s_timer[TIMER_GUI] = al_create_timer(1.0 / 60.0);
-	s_timer[TIMER_GAME] = al_create_timer(1.0 / 60.0);
+	s_timer[TIMER_GUI] = al_create_timer(s_game_speed[GAMESPEED_NORMAL]);
+	s_timer[TIMER_GAME] = al_create_timer(s_game_speed[GAMESPEED_NORMAL]);
 	if (s_timer[TIMER_GUI] == NULL || s_timer[TIMER_GAME] == NULL)
 		return false;
 
@@ -42,6 +58,15 @@ Timer_SetTimer(enum TimerType timer, bool set)
 	assert(timer <= TIMER_GAME);
 
 	if (set) {
+		if (timer == TIMER_GAME) {
+			if (enhancement_true_game_speed_adjustment) {
+				al_set_timer_speed(s_timer[timer], s_game_speed[g_gameConfig.gameSpeed]);
+			}
+			else {
+				al_set_timer_speed(s_timer[timer], s_game_speed[GAMESPEED_NORMAL]);
+			}
+		}
+
 		al_start_timer(s_timer[timer]);
 		return true;
 	}

@@ -272,9 +272,17 @@ void GameLoop_Unit(void)
 		g_tickUnitRotation = g_timerGame + Tools_AdjustToGameSpeed(4, 2, 8, true);
 	}
 
-	if (g_tickUnitBlinking <= g_timerGame) {
-		tickBlinking = true;
-		g_tickUnitBlinking = g_timerGame + 3;
+	if (enhancement_true_game_speed_adjustment) {
+		if (g_tickUnitBlinking <= Timer_GetTicks()) {
+			tickBlinking = true;
+			g_tickUnitBlinking = Timer_GetTicks() + 3;
+		}
+	}
+	else {
+		if (g_tickUnitBlinking <= g_timerGame) {
+			tickBlinking = true;
+			g_tickUnitBlinking = g_timerGame + 3;
+		}
 	}
 
 	if (g_tickUnitUnknown4 <= g_timerGame) {
