@@ -620,7 +620,9 @@ Audio_PlayVoice(enum VoiceID voiceID)
 
 	if (g_enable_voices) {
 		for (int i = 0; i < NUM_SPEECH_PARTS; i++) {
-			const enum SampleID sampleID = s->voiceId[i];
+			const enum SampleID sampleID
+				= (g_gameConfig.language == LANGUAGE_FRENCH || g_gameConfig.language == LANGUAGE_GERMAN)
+				? g_translatedVoice[voiceID][i] : s->voiceId[i];
 
 			if (sampleID == SAMPLE_INVALID)
 				break;
