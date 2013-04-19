@@ -6,6 +6,8 @@
 #include <inttypes.h>
 #include "enumeration.h"
 #include "types.h"
+
+#include "buildqueue.h"
 #include "table/sound.h"
 
 /**
@@ -62,6 +64,8 @@ typedef struct House {
 	uint16 starportTimeLeft;                                /*!< How much time is left before starport transport arrives. */
 	uint16 starportLinkedID;                                /*!< If there is a starport delivery, this indicates the first unit of the linked list. Otherwise it is 0xFFFF. */
 	uint16 ai_structureRebuild[5][2];                       /*!< An array for the AI which stores the type and position of a destroyed structure, for rebuilding. */
+
+	BuildQueue starportQueue;
 } House;
 
 /**

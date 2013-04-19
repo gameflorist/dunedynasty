@@ -3,6 +3,8 @@
 #include <string.h>
 
 #include "saveload.h"
+#include "../house.h"
+#include "../pool/house.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
 #include "../structure.h"
@@ -135,7 +137,25 @@ Structure_Load2(FILE *fp, uint32 length)
 		s->squadID = sl.squadID;
 		s->rallyPoint = sl.rallyPoint;
 		s->factoryOffsetY = sl.factoryOffsetY;
-		s->queue = sl.queue;
+
+		/* Old saved game files had separate starport queues.
+		 * Append these to the House starport queue.
+		 */
+		if (s->o.type == STRUCTURE_STARPORT) {
+			House *h = House_Get_ByIndex(s->o.houseID);
+
+			if (BuildQueue_IsEmpty(&h->starportQueue)) {
+				h->starportQueue = sl.queue;
+			}
+			else {
+				sl.queue.first->prev = h->starportQueue.last;
+				h->starportQueue.last->next = sl.queue.first;
+				h->starportQueue.last = sl.queue.last;
+			}
+		}
+		else {
+			s->queue = sl.queue;
+		}
 	}
 
 	if (length != 0)
@@ -201,14 +221,31 @@ SaveLoad_Structure_BuildQueue(void *object, uint32 value, bool loading)
 		}
 	}
 	else {
-		uint32 count = BuildQueue_Count(&s->queue, 0xFFFF);
+		/* Save starport queue into first starport for backwards
+		 * compatability.
+		 */
+		BuildQueue *queue = &s->queue;
+		if (s->o.type == STRUCTURE_STARPORT) {
+			PoolFindStruct find;
+
+			find.houseID = s->o.houseID;
+			find.type = STRUCTURE_STARPORT;
+			find.index = 0xFFFF;
+
+			if (s == Structure_Find(&find)) {
+				House *h = House_Get_ByIndex(s->o.houseID);
+				queue = &h->starportQueue;
+			}
+		}
+
+		uint32 count = BuildQueue_Count(queue, 0xFFFF);
 
 		if (fwrite(&count, sizeof(uint32), 1, fp) != 1)
 			return 0;
 
 		size += sizeof(count);
 
-		BuildQueueItem *item = s->queue.first;
+		BuildQueueItem *item = queue->first;
 		while (item != NULL) {
 			if (!SaveLoad_Save(s_saveBuildQueue, fp, item))
 				return 0;

@@ -100,6 +100,8 @@ void House_Free(House *h)
 	}
 	assert(i < g_houseFindCount); /* We should always find an entry */
 
+	BuildQueue_Free(&h->starportQueue);
+
 	g_houseFindCount--;
 
 	/* If needed, close the gap */

@@ -575,9 +575,9 @@ ActionPanel_ClickStarportOrder(Structure *s)
 {
 	House *h = g_playerHouse;
 
-	while (!BuildQueue_IsEmpty(&s->queue)) {
-		int credits = s->queue.first->credits;
-		uint16 objectType = BuildQueue_RemoveHead(&s->queue);
+	while (!BuildQueue_IsEmpty(&h->starportQueue)) {
+		int credits = h->starportQueue.first->credits;
+		uint16 objectType = BuildQueue_RemoveHead(&h->starportQueue);
 		Unit *u;
 
 		g_validateStrictIfZero++;
@@ -613,15 +613,15 @@ ActionPanel_ClickStarportOrder(Structure *s)
 }
 
 static void
-ActionPanel_ClickStarportPlus(Structure *s, int entry)
+ActionPanel_ClickStarportPlus(const Structure *s, int entry)
 {
 	const FactoryWindowItem *item = &g_factoryWindowItems[entry];
 	const uint16 type = item->objectType;
 
-	House *h = g_playerHouse;
+	House *h = House_Get_ByIndex(s->o.houseID);
 
 	if ((g_starportAvailable[type] > 0) && (item->credits <= h->credits)) {
-		BuildQueue_Add(&s->queue, item->objectType, item->credits);
+		BuildQueue_Add(&h->starportQueue, item->objectType, item->credits);
 
 		if (g_starportAvailable[type] == 1) {
 			g_starportAvailable[type] = -1;
@@ -638,15 +638,15 @@ ActionPanel_ClickStarportPlus(Structure *s, int entry)
 }
 
 static void
-ActionPanel_ClickStarportMinus(Structure *s, int entry)
+ActionPanel_ClickStarportMinus(const Structure *s, int entry)
 {
 	const FactoryWindowItem *item = &g_factoryWindowItems[entry];
 	const uint16 type = item->objectType;
 
-	House *h = g_playerHouse;
+	House *h = House_Get_ByIndex(s->o.houseID);
 	int credits;
 
-	if (BuildQueue_RemoveTail(&s->queue, type, &credits)) {
+	if (BuildQueue_RemoveTail(&h->starportQueue, type, &credits)) {
 		Structure_Starport_Restock(type);
 		h->credits += credits;
 	}
@@ -778,7 +778,7 @@ ActionPanel_DrawScrollButtons(const Widget *widget)
 }
 
 static void
-ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
+ActionPanel_DrawStarportOrder(const Widget *widget)
 {
 	if (s_factory_panel_layout == FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL)
 		return;
@@ -788,7 +788,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget, const Structure *s)
 
 	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, &w, &h);
 
-	if (BuildQueue_IsEmpty(&s->queue)) {
+	if (BuildQueue_IsEmpty(&g_playerHouse->starportQueue)) {
 		Prim_FillRect_RGBA(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8, 0XFF);
 		Prim_DrawBorder(x1, y1, w, h, 1, true, false, 1);
 		fg = 0xE;
@@ -1055,7 +1055,14 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		}
 
 		/* Draw build queue count. */
-		int count = BuildQueue_Count(&s->queue, object_type);
+		int count;
+		if (s->o.type == STRUCTURE_STARPORT) {
+			count = BuildQueue_Count(&g_playerHouse->starportQueue, object_type);
+		}
+		else {
+			count = BuildQueue_Count(&s->queue, object_type);
+		}
+
 		if (count > 0) {
 			if (s->objectType == object_type)
 				count++;
@@ -1074,7 +1081,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
 	if (s->o.type == STRUCTURE_STARPORT)
-		ActionPanel_DrawStarportOrder(widget, s);
+		ActionPanel_DrawStarportOrder(widget);
 }
 
 void
