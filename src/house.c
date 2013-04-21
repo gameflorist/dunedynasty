@@ -116,7 +116,10 @@ void GameLoop_House(void)
 			Audio_PlayVoice(voiceID);
 		}
 
-		if (g_houseMissileCountdown == 0) Unit_LaunchHouseMissile(Map_FindLocationTile(4, g_playerHouseID));
+		if (g_houseMissileCountdown == 0) {
+			Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+			Unit_LaunchHouseMissile(s, Map_FindLocationTile(4, g_playerHouseID));
+		}
 	}
 
 	if (tickStarportAvailability) {

@@ -657,7 +657,8 @@ Viewport_Click(Widget *w)
 					Audio_PlayVoice(VOICE_MISSILE_LAUNCHED);
 				}
 
-				Unit_LaunchHouseMissile(packed);
+				Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+				Unit_LaunchHouseMissile(s, packed);
 				return true;
 			}
 

@@ -1031,7 +1031,7 @@ void Structure_ActivateSpecial(Structure *s)
 
 					if (House_AreAllied(s->o.houseID, sf->o.houseID)) continue;
 
-					Unit_LaunchHouseMissile(Tile_PackTile(sf->o.position));
+					Unit_LaunchHouseMissile(s, Tile_PackTile(sf->o.position));
 
 					return;
 				}

@@ -2989,7 +2989,7 @@ uint16 Unit_GetTargetStructurePriority(Unit *unit, Structure *target)
 	return min(priority, 32000);
 }
 
-void Unit_LaunchHouseMissile(uint16 packed)
+void Unit_LaunchHouseMissile(const Structure *s, uint16 packed)
 {
 	tile32 tile;
 	enum HouseType houseID;
@@ -3008,7 +3008,21 @@ void Unit_LaunchHouseMissile(uint16 packed)
 
 	Unit_Free(g_unitHouseMissile);
 
-	Unit_CreateBullet(h->palacePosition, g_unitHouseMissile->o.type, g_unitHouseMissile->o.houseID, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
+	/* ENHANCEMENT -- In Dune II, you always launch missiles from the
+	 * top-left of the last palace placed, even if it has been destroyed!
+	 */
+	tile32 origin;
+	if (enhancement_fix_firing_logic && s != NULL && s->o.type == STRUCTURE_PALACE) {
+		const enum StructureLayout layout = g_table_structureInfo[s->o.type].layout;
+		origin = s->o.position;
+		origin.x += g_table_structure_layoutTileDiff[layout].x;
+		origin.y += g_table_structure_layoutTileDiff[layout].y;
+	}
+	else {
+		origin = h->palacePosition;
+	}
+
+	Unit_CreateBullet(origin, g_unitHouseMissile->o.type, g_unitHouseMissile->o.houseID, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
 
 	g_houseMissileCountdown = 0;
 	g_unitHouseMissile = NULL;

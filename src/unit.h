@@ -181,7 +181,7 @@ extern void Unit_RemovePlayer(Unit *unit);
 extern void Unit_UpdateMap(uint16 type, Unit *unit);
 extern void Unit_RemoveFromTile(Unit *unit, uint16 packed);
 extern void Unit_AddToTile(Unit *unit, uint16 packed);
-extern void Unit_LaunchHouseMissile(uint16 packed);
+extern void Unit_LaunchHouseMissile(const struct Structure *s, uint16 packed);
 extern void Unit_HouseUnitCount_Remove(Unit *unit);
 extern void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID);
 
