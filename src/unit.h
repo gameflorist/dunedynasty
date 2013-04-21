@@ -56,6 +56,7 @@ typedef struct Unit {
 	tile32 lastPosition;
 	bool permanentFollow;
 	bool detonateAtTarget;
+	bool deviationDecremented;
 	enum SquadID squadID;
 	enum SquadID aiSquad;
 } Unit;

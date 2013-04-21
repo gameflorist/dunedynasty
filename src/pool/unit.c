@@ -147,6 +147,7 @@ Unit *Unit_Allocate(uint16 index, uint8 type, uint8 houseID)
 	u->route[0]            = 0xFF;
 	u->permanentFollow = false;
 	u->detonateAtTarget = false;
+	u->deviationDecremented = false;
 	u->squadID = SQUADID_INVALID;
 	u->aiSquad = SQUADID_INVALID;
 	if (type == UNIT_SANDWORM) u->amount = 3;

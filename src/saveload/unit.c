@@ -115,6 +115,7 @@ bool Unit_Load(FILE *fp, uint32 length)
 		u->lastPosition = u->o.position;
 		u->permanentFollow = false;
 		u->detonateAtTarget = false;
+		u->deviationDecremented = false;
 		u->squadID = SQUADID_INVALID;
 		u->aiSquad = SQUADID_INVALID;
 	}

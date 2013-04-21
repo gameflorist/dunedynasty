@@ -255,6 +255,15 @@ Viewport_Target(Unit *u, enum UnitActionType action, bool command_button, uint16
 		return;
 	}
 
+	if (u->deviated != 0 && !u->deviationDecremented) {
+		Unit_Deviation_Decrease(u, 5);
+		if (u->deviated == 0)
+			return;
+	}
+	else {
+		u->deviationDecremented = false;
+	}
+
 	if (action == ACTION_SABOTAGE) {
 		u->detonateAtTarget = true;
 		action = ACTION_MOVE;

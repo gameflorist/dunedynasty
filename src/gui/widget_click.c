@@ -138,11 +138,15 @@ static bool GUI_Widget_TextButton_Click_(Widget *w, ActionType ref, Unit *u)
 	 * For multiple selection, we need to abort the outer loop.
 	 */
 	if (ai->selectionType != g_selectionType) {
+		u->deviationDecremented = true;
 		g_unitActive = u;
 		g_activeAction = action;
 		GUI_ChangeSelectionType(ai->selectionType);
 
 		return false;
+	}
+	else {
+		u->deviationDecremented = false;
 	}
 
 	Object_Script_Variable4_Clear(&u->o);
@@ -253,6 +257,14 @@ bool GUI_Widget_Cancel_Click(Widget *w)
 	}
 
 	if (g_unitActive == NULL) return true;
+
+	int iter;
+	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
+		if (Unit_GetHouseID(u) != g_playerHouseID)
+			continue;
+
+		u->deviationDecremented = false;
+	}
 
 	g_unitActive = NULL;
 	g_activeAction = 0xFFFF;
