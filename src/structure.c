@@ -1981,7 +1981,7 @@ Structure_GetAvailable(const Structure *s, int i)
 {
 	if (s->o.type == STRUCTURE_STARPORT) {
 		assert(UNIT_CARRYALL <= i && i <= UNIT_MCV);
-		return g_starportAvailable[i];
+		return (g_starportAvailable[i] == 0) ? 0 : 1;
 	}
 
 	const uint32 structuresBuilt = House_Get_ByIndex(s->o.houseID)->structuresBuilt;

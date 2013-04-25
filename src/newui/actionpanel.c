@@ -942,8 +942,8 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		}
 
 		/* Draw production status. */
-		if ((s->o.type == STRUCTURE_STARPORT) && (g_starportAvailable[object_type] < 0)) {
-			if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+		if (s->o.type == STRUCTURE_STARPORT) {
+			if ((g_starportAvailable[object_type] < 0) && (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG)) {
 				GUI_DrawText_Wrapper("OUT OF", xcentre, y1 +  7, 6, 0, 0x132);
 				GUI_DrawText_Wrapper("STOCK",  xcentre, y1 + 18, 6, 0, 0x132);
 			}
