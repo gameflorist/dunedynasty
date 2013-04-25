@@ -29,6 +29,7 @@
 #include "../opendune.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
+#include "../scenario.h"
 #include "../sprites.h"
 #include "../string.h"
 #include "../table/strings.h"
@@ -234,7 +235,8 @@ MenuBar_ClickMentat(Widget *w)
 	GUI_Mentat_Create_HelpScreen_Widgets();
 
 	Widget *scrollbar = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
-	Mentat_LoadHelpSubjects(scrollbar, true, SEARCHDIR_CAMPAIGN_DIR, g_playerHouseID, g_campaignID, false);
+	const bool skip_advice = (g_campaign_selected == CAMPAIGNID_SKIRMISH);
+	Mentat_LoadHelpSubjects(scrollbar, true, SEARCHDIR_CAMPAIGN_DIR, g_playerHouseID, g_campaignID, skip_advice);
 
 	Mouse_TransformToDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 	return true;
