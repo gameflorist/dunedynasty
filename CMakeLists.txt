@@ -74,7 +74,7 @@ if(WITH_MAD)
 	set(MAD_LIBRARIES "mad")
 	set(MAD_FOUND ON)
     else(MINGW)
-	pkg_check_modules(MAD REQUIRED mad)
+	pkg_check_modules(MAD mad)
     endif(MINGW)
 
     if(MAD_FOUND)
