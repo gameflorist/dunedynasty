@@ -2,6 +2,7 @@
 #define BINHEAP_H
 
 #include <inttypes.h>
+#include <stdbool.h>
 
 typedef struct BinHeapElem {
 	int64_t key;
@@ -17,6 +18,7 @@ typedef struct BinHeap {
 
 extern void BinHeap_Init(BinHeap *heap, size_t elem_size);
 extern void BinHeap_Free(BinHeap *heap);
+extern bool BinHeap_Resize(BinHeap *heap, int new_size);
 extern BinHeapElem *BinHeap_GetElem(BinHeap *heap, int i);
 
 extern void *BinHeap_Push(BinHeap *heap, int64_t key);
