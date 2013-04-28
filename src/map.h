@@ -57,7 +57,9 @@ typedef struct FogOfWarTile {
 	uint8 overlaySpriteID;
 	enum HouseType houseID;
 	bool hasStructure;
-	uint16 fogOverlayBits;  /* 1,2,4,8 for up, right, down, left. */
+
+	uint8 fogSpriteID;      /* Opaque fog.  Used to be shared with craters in overlaySpriteID. */
+	uint8 fogOverlayBits;   /* 1,2,4,8 for up, right, down, left. */
 } FogOfWarTile;
 
 /** Definition of the map size of a map scale. */

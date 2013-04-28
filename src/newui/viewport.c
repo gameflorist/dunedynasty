@@ -1130,7 +1130,7 @@ Viewport_DrawTilesInRange(int x0, int y0,
 		const FogOfWarTile *f = &g_mapVisible[curPos];
 
 		for (left = viewportX1; left < viewportX2; left += TILE_SIZE, curPos++, t++, f++) {
-			if (draw_tile && (t->overlaySpriteID != g_veiledSpriteID)) {
+			if (draw_tile && (f->fogSpriteID != g_veiledSpriteID - 1) && (f->fogSpriteID != g_veiledSpriteID)) {
 				if (Viewport_TileIsDebris(f->groundSpriteID)) {
 					const uint16 iconID = g_mapSpriteID[curPos] & ~0x8000;
 
@@ -1153,17 +1153,11 @@ Viewport_DrawTilesInRange(int x0, int y0,
 				}
 			}
 
-			if (draw_fog) {
-				const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
-
-				if (overlay_is_fog) {
-					uint16 iconID = t->overlaySpriteID;
-
-					if (t->overlaySpriteID == g_veiledSpriteID)
-						iconID = g_veiledSpriteID - 1;
-
-					Video_DrawIcon(iconID, t->houseID, left, top);
-				}
+			if (draw_fog && (f->fogSpriteID != 0)) {
+				const uint16 iconID
+					= (f->fogSpriteID == g_veiledSpriteID)
+					? (g_veiledSpriteID - 1) : f->fogSpriteID;
+				Video_DrawIcon(iconID, f->houseID, left, top);
 			}
 		}
 	}

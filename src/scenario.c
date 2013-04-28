@@ -1375,7 +1375,7 @@ static void Scenario_Load_Map(const char *key, char *settings)
 	t->groundSpriteID = atoi(s) & 0x01FF;
 	if (g_mapSpriteID[packed] != t->groundSpriteID) g_mapSpriteID[packed] |= 0x8000;
 
-	if (!t->isUnveiled) t->overlaySpriteID = g_veiledSpriteID;
+	if (!t->isUnveiled) g_mapVisible[packed].fogSpriteID = g_veiledSpriteID;
 }
 
 void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)

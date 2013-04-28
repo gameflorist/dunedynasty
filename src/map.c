@@ -161,7 +161,7 @@ void Map_SetSelection(uint16 packed)
 		return;
 	}
 
-	if ((packed != 0xFFFF && g_map[packed].overlaySpriteID != g_veiledSpriteID) || g_debugScenario) {
+	if ((packed != 0xFFFF && g_mapVisible[packed].fogSpriteID != g_veiledSpriteID) || g_debugScenario) {
 		Structure *s;
 
 		s = Structure_Get_ByPackedTile(packed);
@@ -384,14 +384,13 @@ bool Map_IsValidPosition(uint16 position)
  */
 bool Map_IsPositionUnveiled(uint16 position)
 {
-	Tile *t;
-
 	if (g_debugScenario) return true;
 
-	t = &g_map[position];
+	if (!g_map[position].isUnveiled)
+		return false;
 
-	if (!t->isUnveiled) return false;
-	if (!Sprite_IsUnveiled(t->overlaySpriteID)) return false;
+	if (!Sprite_IsUnveiled(g_mapVisible[position].fogSpriteID))
+		return false;
 
 	return true;
 }
@@ -1327,17 +1326,17 @@ void Map_SelectNext(bool getNext)
 static void Map_UnveilTile_Neighbour(uint16 packed)
 {
 	uint16 spriteID;
-	Tile *t;
 
 	if (!Map_InRangePacked(packed)) return;
 
-	t = &g_map[packed];
+	FogOfWarTile *f = &g_mapVisible[packed];
 
 	spriteID = 15;
-	if (t->isUnveiled) {
+	if (g_map[packed].isUnveiled) {
 		int i;
 
-		if (g_validateStrictIfZero == 0 && Sprite_IsUnveiled(t->overlaySpriteID)) return;
+		if (g_validateStrictIfZero == 0 && Sprite_IsUnveiled(f->fogSpriteID))
+			return;
 
 		spriteID = 0;
 
@@ -1363,7 +1362,7 @@ static void Map_UnveilTile_Neighbour(uint16 packed)
 		spriteID = g_iconMap[g_iconMap[ICM_ICONGROUP_FOG_OF_WAR] + spriteID];
 	}
 
-	t->overlaySpriteID = spriteID;
+	f->fogSpriteID = spriteID;
 
 	Map_Update(packed, 0, false);
 }
@@ -1378,15 +1377,16 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 {
 	Structure *s;
 	Unit *u;
-	Tile *t;
 
 	if (houseID != g_playerHouseID) return false;
 	if (Tile_IsOutOfMap(packed)) return false;
 
-	t = &g_map[packed];
-	g_mapVisible[packed].timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
+	Tile *t = &g_map[packed];
+	FogOfWarTile *f = &g_mapVisible[packed];
 
-	if (t->isUnveiled && Sprite_IsUnveiled(t->overlaySpriteID)) return false;
+	f->timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
+
+	if (t->isUnveiled && Sprite_IsUnveiled(f->fogSpriteID)) return false;
 	t->isUnveiled = true;
 
 	u = Unit_Get_ByPackedTile(packed);
@@ -1429,7 +1429,10 @@ Map_ResetFogOfWar(void)
 	memset(g_mapVisible, 0, sizeof(g_mapVisible));
 
 	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
-		g_mapVisible[packed].fogOverlayBits = 0xF;
+		FogOfWarTile *f = &g_mapVisible[packed];
+
+		f->fogSpriteID = g_veiledSpriteID;
+		f->fogOverlayBits = 0xF;
 	}
 }
 
@@ -1446,10 +1449,7 @@ Map_UpdateFogOfWar(void)
 			}
 			else {
 				f->groundSpriteID = t->groundSpriteID;
-
-				if (!(g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID))
-					f->overlaySpriteID = t->overlaySpriteID;
-
+				f->overlaySpriteID = t->overlaySpriteID;
 				f->houseID = t->houseID;
 				f->hasStructure = t->hasStructure;
 				f->fogOverlayBits = 0;
@@ -1467,10 +1467,7 @@ Map_UpdateFogOfWar(void)
 			FogOfWarTile *f = &g_mapVisible[packed];
 
 			f->groundSpriteID = t->groundSpriteID;
-
-			if (!(g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID))
-				f->overlaySpriteID = t->overlaySpriteID;
-
+			f->overlaySpriteID = t->overlaySpriteID;
 			f->houseID = t->houseID;
 			f->hasStructure = t->hasStructure;
 			f->fogOverlayBits = (t->isUnveiled ? 0x0 : 0xF);
@@ -1769,13 +1766,13 @@ void Map_CreateLandscape(uint32 seed)
 		Tile *t = &g_map[i];
 
 		t->groundSpriteID  = iconMap[t->groundSpriteID];
-		t->overlaySpriteID = g_veiledSpriteID;
+		t->overlaySpriteID = 0;
 		t->houseID         = HOUSE_HARKONNEN;
 		t->isUnveiled      = false;
 		t->hasUnit         = false;
 		t->hasStructure    = false;
 		t->hasAnimation    = false;
-		t->hasExplosion  = false;
+		t->hasExplosion    = false;
 		t->index           = 0;
 	}
 

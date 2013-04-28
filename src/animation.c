@@ -101,8 +101,6 @@ static void Animation_Func_SetOverlaySprite(Animation *animation, int16 paramete
 	uint16 packed = Tile_PackTile(animation->tile);
 	assert(parameter >= 0);
 
-	if (!Map_IsPositionUnveiled(packed)) return;
-
 	Tile *t = &g_map[packed];
 	t->overlaySpriteID = g_iconMap[g_iconMap[animation->iconGroup] + parameter];
 	t->houseID = animation->houseID;

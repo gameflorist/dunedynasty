@@ -553,14 +553,13 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 
 			t = &g_map[position];
 			t->groundSpriteID = g_wallSpriteID + 1;
+			t->overlaySpriteID = 0;
 			/* ENHANCEMENT -- Dune2 wrongfully only removes the lower 2 bits, where the lower 3 bits are the owner. This is no longer visible. */
 			t->houseID  = s->o.houseID;
 
 			g_mapSpriteID[position] |= 0x8000;
 
 			if (s->o.houseID == g_playerHouseID) Tile_RemoveFogInRadius(Tile_UnpackTile(position), 1);
-
-			if (Map_IsPositionUnveiled(position)) t->overlaySpriteID = 0;
 
 			Structure_ConnectWall(position, true);
 			Structure_Free(s);
@@ -580,13 +579,12 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 				if (Structure_IsValidBuildLocation(curPos, STRUCTURE_SLAB_1x1) == 0) continue;
 
 				t->groundSpriteID = g_builtSlabSpriteID;
+				t->overlaySpriteID = 0;
 				t->houseID = s->o.houseID;
 
 				g_mapSpriteID[curPos] |= 0x8000;
 
 				if (s->o.houseID == g_playerHouseID) Tile_RemoveFogInRadius(Tile_UnpackTile(curPos), 1);
-
-				if (Map_IsPositionUnveiled(curPos)) t->overlaySpriteID = 0;
 
 				Map_Update(curPos, 0, false);
 
@@ -602,13 +600,13 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 					if (Structure_IsValidBuildLocation(curPos, STRUCTURE_SLAB_1x1) == 0) continue;
 
 					t->groundSpriteID = g_builtSlabSpriteID;
+					t->overlaySpriteID = 0;
 					t->houseID = s->o.houseID;
 
 					g_mapSpriteID[curPos] |= 0x8000;
 
 					if (s->o.houseID == g_playerHouseID) {
 						Tile_RemoveFogInRadius(Tile_UnpackTile(curPos), 1);
-						t->overlaySpriteID = 0;
 					}
 
 					Map_Update(curPos, 0, false);
@@ -1934,8 +1932,7 @@ void Structure_UpdateMap(Structure *s)
 		t->index = s->o.index + 1;
 
 		t->groundSpriteID = iconMap[i] + s->rotationSpriteDiff;
-
-		if (Sprite_IsUnveiled(t->overlaySpriteID)) t->overlaySpriteID = 0;
+		t->overlaySpriteID = 0;
 
 		Map_Update(position, 0, false);
 	}

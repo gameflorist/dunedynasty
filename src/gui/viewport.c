@@ -178,7 +178,7 @@ bool GUI_Widget_Viewport_Click(Widget *w)
 			position = Unit_FindTargetAround(packed);
 		}
 
-		if (g_map[position].overlaySpriteID != g_veiledSpriteID || g_debugScenario) {
+		if (g_mapVisible[position].fogSpriteID != g_veiledSpriteID || g_debugScenario) {
 			if (Object_GetByPackedTile(position) != NULL || g_debugScenario) {
 				Map_SetSelection(position);
 				/* Unit_DisplayStatusText(g_unitSelected); */
@@ -251,52 +251,7 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 	oldValue_07AE_0000 = Widget_SetCurrentWidget(2);
 
-#if 0
-	if (g_dirtyViewportCount != 0 || forceRedraw) {
-		for (y = 0; y < 10; y++) {
-			uint16 top = (y << 4) + 0x28;
-			for (x = 0; x < (drawToMainScreen ? 15 : 16); x++) {
-				Tile *t;
-				uint16 left;
-
-				curPos = g_viewportPosition + Tile_PackXY(x, y);
-
-				if (x < 15 && !forceRedraw && BitArray_Test(g_dirtyViewport, curPos)) {
-					if (maxX[y] < x) maxX[y] = x;
-					if (minX[y] > x) minX[y] = x;
-					updateDisplay = true;
-				}
-
-				if (!BitArray_Test(g_dirtyMinimap, curPos) && !forceRedraw) continue;
-
-				BitArray_Set(g_dirtyViewport, curPos);
-
-				if (x < 15) {
-					updateDisplay = true;
-					if (maxX[y] < x) maxX[y] = x;
-					if (minX[y] > x) minX[y] = x;
-				}
-
-				t = &g_map[curPos];
-				left = x << 4;
-
-				if (!g_debugScenario && g_veiledSpriteID == t->overlaySpriteID) {
-					GUI_DrawFilledRectangle(left, top, left + 15, top + 15, 12);
-					continue;
-				}
-
-				GFX_DrawSprite(t->groundSpriteID, left, top, t->houseID);
-
-				if (t->overlaySpriteID == 0 || g_debugScenario) continue;
-
-				GFX_DrawSprite(t->overlaySpriteID, left, top, t->houseID);
-			}
-		}
-		g_dirtyViewportCount = 0;
-	}
-#else
 	Viewport_DrawTiles();
-#endif
 
 	{
 		find.type    = UNIT_SANDWORM;
