@@ -252,12 +252,12 @@ static uint16 FileInfo_FindIndex_ByName(const char *filename)
 static uint8
 _File_OpenInDir(enum SearchDirectory dir, const char *filename, uint8 mode)
 {
-	const char *mode_str = (mode == 2) ? "wb" : ((mode == 3) ? "wb+" : "rb");
+	const char *mode_str = (mode == FILE_MODE_WRITE) ? "wb" : ((mode == FILE_MODE_READ_WRITE) ? "wb+" : "rb");
 
 	const char *pakName;
 	uint8 fileIndex;
 
-	if ((mode & 1) == 0 && (mode & 2) == 0) return FILE_INVALID;
+	if ((mode & FILE_MODE_READ_WRITE) == 0) return FILE_INVALID;
 
 	/* Find a free spot in our limited array */
 	for (fileIndex = 0; fileIndex < FILE_MAX; fileIndex++) {
@@ -273,7 +273,7 @@ _File_OpenInDir(enum SearchDirectory dir, const char *filename, uint8 mode)
 		s_file[fileIndex].size     = 0;
 
 		/* We can only check the size of the file if we are reading (or appending) */
-		if ((mode & 1) != 0) {
+		if ((mode & FILE_MODE_READ) != 0) {
 			fseek(s_file[fileIndex].fp, 0, SEEK_END);
 			s_file[fileIndex].size = ftell(s_file[fileIndex].fp);
 			fseek(s_file[fileIndex].fp, 0, SEEK_SET);
@@ -283,7 +283,7 @@ _File_OpenInDir(enum SearchDirectory dir, const char *filename, uint8 mode)
 	}
 
 	/* We never allow writing of files inside PAKs */
-	if ((mode & 2) != 0) return FILE_INVALID;
+	if ((mode & FILE_MODE_WRITE) != 0) return FILE_INVALID;
 
 	/* Check if the file could be inside any of our PAK files */
 	FileInfo *fileInfoIndex = FileHash_Find(filename);
@@ -410,7 +410,7 @@ File_Exists_Ex(enum SearchDirectory dir, const char *filename)
 {
 	uint8 index;
 
-	index = _File_Open(dir, filename, 1);
+	index = _File_Open(dir, filename, FILE_MODE_READ);
 	if (index == FILE_INVALID) {
 		return false;
 	}
@@ -611,7 +611,7 @@ File_ReadBlockFile_Ex(enum SearchDirectory dir, const char *filename, void *buff
 {
 	uint8 index;
 
-	index = File_Open_Ex(dir, filename, 1);
+	index = File_Open_Ex(dir, filename, FILE_MODE_READ);
 	length = File_Read(index, buffer, length);
 	File_Close(index);
 	return length;
@@ -631,7 +631,7 @@ File_ReadWholeFile_Ex(enum SearchDirectory dir, const char *filename)
 	uint32 length;
 	void *buffer;
 
-	index = File_Open_Ex(dir, filename, 1);
+	index = File_Open_Ex(dir, filename, FILE_MODE_READ);
 	length = File_GetSize(index);
 
 	buffer = malloc(length + 1);
@@ -662,7 +662,7 @@ uint16 *File_ReadWholeFileLE16(const char *filename)
 	uint32 i;
 #endif
 
-	index = File_Open(filename, 1);
+	index = File_Open(filename, FILE_MODE_READ);
 	count = File_GetSize(index) / sizeof(uint16);
 
 	buffer = malloc(count * sizeof(uint16));
@@ -695,7 +695,7 @@ File_ReadFile_Ex(enum SearchDirectory dir, const char *filename, void *buf)
 	uint8 index;
 	uint32 length;
 
-	index = File_Open_Ex(dir, filename, 1);
+	index = File_Open_Ex(dir, filename, FILE_MODE_READ);
 	length = File_Seek(index, 0, 2);
 	File_Seek(index, 0, 0);
 	File_Read(index, buf, length);
@@ -717,10 +717,10 @@ ChunkFile_Open_Ex(enum SearchDirectory dir, const char *filename)
 	uint32 header;
 
 	/* XXX: what is with this? */
-	/* index = File_Open_Ex(dir, filename, 1); */
+	/* index = File_Open_Ex(dir, filename, FILE_MODE_READ); */
 	/* File_Close(index); */
 
-	index = File_Open_Ex(dir, filename, 1);
+	index = File_Open_Ex(dir, filename, FILE_MODE_READ);
 
 	File_Read(index, &header, 4);
 

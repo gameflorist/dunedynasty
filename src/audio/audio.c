@@ -400,7 +400,7 @@ Audio_LoadSample(const char *filename, enum SampleID sampleID)
 	if (filename == NULL || !File_Exists(filename))
 		return;
 
-	const uint8 file_index = File_Open(filename, 1);
+	const uint8 file_index = File_Open(filename, FILE_MODE_READ);
 	const uint32 file_size = File_GetSize(file_index);
 
 	AudioA5_StoreSample(sampleID, file_index, file_size);

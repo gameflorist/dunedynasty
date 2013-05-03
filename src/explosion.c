@@ -33,7 +33,7 @@ typedef struct Explosion {
 
 static BinHeap s_explosions;
 
-extern const ExplosionCommandStruct *g_table_explosion[];
+extern const ExplosionCommandStruct *g_table_explosion[EXPLOSIONTYPE_MAX];
 
 /**
  * Update the tile a Explosion is on.

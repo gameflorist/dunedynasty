@@ -260,7 +260,7 @@ static char *
 AudioA5_LoadInternalMusic(const MusicInfo *mid, uint32 *ret_length)
 {
 	const char *filename = mid->filename;
-	uint16 file_index = File_Open(filename, 1);
+	uint16 file_index = File_Open(filename, FILE_MODE_READ);
 
 	if (file_index == FILE_INVALID) {
 		return NULL;

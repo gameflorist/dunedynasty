@@ -1979,7 +1979,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 		uint16 written;
 		GUI_HallOfFame_Encode(data);
 
-		fileID = File_Open_Personal("SAVEFAME.DAT", 2);
+		fileID = File_Open_Personal("SAVEFAME.DAT", FILE_MODE_WRITE);
 		written = File_Write(fileID, data, 128);
 		File_Close(fileID);
 
@@ -2059,7 +2059,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 		memcpy(&g_widgetProperties[19], &backupProperties, sizeof(WidgetProperties));
 
 		GUI_HallOfFame_Encode(data);
-		fileID = File_Open_Personal("SAVEFAME.DAT", 2);
+		fileID = File_Open_Personal("SAVEFAME.DAT", FILE_MODE_WRITE);
 		File_Write(fileID, data, 128);
 		File_Close(fileID);
 		GUI_HallOfFame_Decode(data);

@@ -249,12 +249,6 @@ VideoA5_ReadPalette(const char *filename)
 	File_ReadBlockFile(filename, paletteRGB, 3 * 256);
 	Video_SetPalette(paletteRGB, 0, 256);
 
-	/* Make pure white colour. */
-	paltoRGB[0xFF] = al_map_rgb(0xFF, 0xFF, 0xFF);
-	paletteRGB[3*0xFF + 0] = 0xFF;
-	paletteRGB[3*0xFF + 1] = 0xFF;
-	paletteRGB[3*0xFF + 2] = 0xFF;
-
 	/* A bit of a hack: make windtrap magic pink black. */
 	paltoRGB[WINDTRAP_COLOUR] = al_map_rgb(0x00, 0x00, 0x00);
 	paletteRGB[3*WINDTRAP_COLOUR + 0] = 0x00;
@@ -667,9 +661,13 @@ Video_SetPalette(const uint8 *palette, int from, int length)
 	assert(from + length <= 256);
 
 	for (int i = from; i < from + length; i++) {
-		const uint8 r = ((*p++) & 0x3F) * 4;
-		const uint8 g = ((*p++) & 0x3F) * 4;
-		const uint8 b = ((*p++) & 0x3F) * 4;
+		uint8 r = ((*p++) & 0x3F);
+		uint8 g = ((*p++) & 0x3F);
+		uint8 b = ((*p++) & 0x3F);
+
+		r = (r << 2) | (r >> 4);
+		g = (g << 2) | (g >> 4);
+		b = (b << 2) | (b >> 4);
 
 		paltoRGB[i] = al_map_rgb(r, g, b);
 		paletteRGB[3*i + 0] = r;
@@ -2115,7 +2113,7 @@ VideoA5_InitShapes(unsigned char *buf)
 	int x = 0, y = 0, row_h = 0;
 	unsigned char greymap[256];
 
-	uint8 fileID = File_Open("GRAYRMAP.TBL", 1);
+	uint8 fileID = File_Open("GRAYRMAP.TBL", FILE_MODE_READ);
 	assert(fileID != FILE_INVALID);
 
 	File_Read(fileID, greymap, 256);
