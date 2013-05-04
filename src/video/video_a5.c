@@ -15,10 +15,14 @@
 #include <assert.h>
 
 #ifdef __APPLE__
-#include <OpenGL/gl.h>
+# include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
-#endif
+# ifdef __PANDORA__
+#  include <GLES/gl.h>
+# else
+#  include <GL/gl.h>
+# endif /* __PANDORA__ */
+#endif /* __APPLE__ */
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>

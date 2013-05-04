@@ -66,7 +66,12 @@ typedef struct GameOption {
 static ALLEGRO_CONFIG *s_configFile;
 
 GameCfg g_gameConfig = {
+#ifdef __PANDORA__
+	WM_FULLSCREEN,
+#else
 	WM_WINDOWED,
+#endif
+
 	LANGUAGE_ENGLISH,
 	2,      /* gameSpeed */
 	true,   /* hints */
@@ -76,11 +81,21 @@ GameCfg g_gameConfig = {
 	false,  /* leftClickOrders */
 	false,  /* holdControlToZoom */
 	1.0f,   /* panSensitivity */
+
+#ifdef __PANDORA__
+	false,  /* hardwareCursor */
+#else
 	true,   /* hardwareCursor */
+#endif
 };
 
-static int saved_screen_width = 640;
+#ifdef __PANDORA__
+static int saved_screen_width  = 800;
 static int saved_screen_height = 480;
+#else
+static int saved_screen_width  = 640;
+static int saved_screen_height = 480;
+#endif
 
 /*--------------------------------------------------------------*/
 
