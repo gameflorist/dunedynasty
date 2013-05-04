@@ -1410,14 +1410,17 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 }
 
 void
-Map_RefreshTile(uint16 packed)
+Map_RefreshTile(uint16 packed, int duration)
 {
 	if (Tile_IsOutOfMap(packed)) return;
 
-	Tile *t = &g_map[packed];
+	if (g_map[packed].isUnveiled) {
+		const int64_t timeout = g_timerGame + Tools_AdjustToGameSpeed(duration * 60, 0x0000, 0xFFFF, true);
+		FogOfWarTile *f = &g_mapVisible[packed];
 
-	if (t->isUnveiled)
-		g_mapVisible[packed].timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
+		if (f->timeout < timeout)
+			f->timeout = timeout;
+	}
 }
 
 void

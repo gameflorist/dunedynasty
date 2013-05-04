@@ -16,6 +16,7 @@
 #include "shape.h"
 #include "sprites.h"
 #include "structure.h"
+#include "tile.h"
 #include "timer/timer.h"
 #include "tools/coord.h"
 #include "tools/random_general.h"
@@ -282,13 +283,9 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 		g_map[packed].hasExplosion = true;
 
 		/* Do not unveil for explosion types 13 (sandworm eat) and 19 (spice bloom). */
-		if (enhancement_fog_of_war && g_map[packed].isUnveiled &&
+		if (enhancement_fog_of_war &&
 				!(explosionType == EXPLOSION_SANDWORM_SWALLOW || explosionType == EXPLOSION_SPICE_BLOOM_TREMOR)) {
-			FogOfWarTile *f = &g_mapVisible[packed];
-			int64_t timeout = g_timerGame + Tools_AdjustToGameSpeed(2 * 60, 0x0000, 0xFFFF, true);
-
-			if (f->timeout < timeout)
-				f->timeout = timeout;
+			Tile_RefreshFogInRadius(position, 1, false);
 		}
 	}
 }

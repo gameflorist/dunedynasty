@@ -122,7 +122,7 @@ extern uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID);
 extern void Map_UpdateAround(uint16 arg06, tile32 position, struct Unit *unit, uint8 function);
 extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
 extern bool Map_UnveilTile(uint16 packed, uint8 houseID);
-extern void Map_RefreshTile(uint16 packed);
+extern void Map_RefreshTile(uint16 packed, int duration);
 extern void Map_ResetFogOfWar(void);
 extern void Map_UpdateFogOfWar(void);
 extern void Map_CreateLandscape(uint32 seed);
