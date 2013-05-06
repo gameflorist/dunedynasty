@@ -2891,10 +2891,6 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 	ui = &g_table_unitInfo[unit->o.type];
 
 	if (ui->movementType == MOVEMENT_WINGER) {
-		if (type != 0) {
-			unit->o.flags.s.isDirty = true;
-		}
-
 		Map_UpdateAround(g_table_unitInfo[unit->o.type].dimension, unit->o.position, unit, g_functions[0][type]);
 		return;
 	}
@@ -2919,10 +2915,6 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 			t->index = unit->o.index + 1;
 			t->hasUnit = true;
 		}
-	}
-
-	if (type != 0) {
-		unit->o.flags.s.isDirty = true;
 	}
 
 	radius = ui->dimension + 3;

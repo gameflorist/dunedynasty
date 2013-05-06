@@ -179,7 +179,7 @@ bool SaveLoad_Load(const SaveLoadDesc *sld, FILE *fp, void *object)
 					f->s.byScenario = (value & 0x0200) ? true : false;
 					f->s.degrades = (value & 0x0400) ? true : false;
 					f->s.isHighlighted = (value & 0x0800) ? true : false;
-					f->s.isDirty = (value & 0x1000) ? true : false;
+					f->s.isDirty = false;
 					f->s.repairing = (value & 0x2000) ? true : false;
 					f->s.onHold = (value & 0x4000) ? true : false;
 					f->s.notused_4_8000 = 0;
