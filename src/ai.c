@@ -317,7 +317,7 @@ StructureAI_GetBuildable(const Structure *s)
 				ret |= (1 << i);
 		}
 	}
-	else {
+	else if (s->o.type != STRUCTURE_STARPORT) {
 		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
 		for (int i = 0; i < 8; i++) {
