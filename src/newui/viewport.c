@@ -386,14 +386,14 @@ Viewport_MouseInScrollWidget(void)
 	return false;
 }
 
-static bool
+static void
 Viewport_ScrollMap(enum ShapeID *cursorID)
 {
 	const WidgetInfo *wi;
 	int dx = 0, dy = 0;
 
 	if (viewport_click_action == VIEWPORT_PAN_MINIMAP)
-		return false;
+		return;
 
 	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP];
 	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dy--;
@@ -425,8 +425,6 @@ Viewport_ScrollMap(enum ShapeID *cursorID)
 
 	if (dy < 0) *cursorID = SHAPE_CURSOR_UP;
 	else if (dy > 0) *cursorID = SHAPE_CURSOR_DOWN;
-
-	return (dx != 0 && dy != 0);
 }
 
 static void
@@ -588,8 +586,7 @@ Viewport_Click(Widget *w)
 		return true;
 	}
 
-	if (Viewport_ScrollMap(&cursorID))
-		return true;
+	Viewport_ScrollMap(&cursorID);
 
 	int mouseX, mouseY;
 	uint16 packed;
