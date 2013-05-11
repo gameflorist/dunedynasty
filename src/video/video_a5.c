@@ -56,7 +56,7 @@
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
 #include "../tools/coord.h"
-#include "../tools/random_lcg.h"
+#include "../tools/random_xorshift.h"
 #include "../wsa.h"
 
 #ifndef MULTIPLE_WINDOW_ICONS
@@ -1008,7 +1008,7 @@ VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool f
 	}
 
 	for (int i = 0; i < w; i++) {
-		const int j = Tools_RandomLCG_Range(0, w - 1);
+		const int j = Random_Xorshift_Range(0, w - 1);
 		const int swap = aux->cols[j];
 
 		aux->cols[j] = aux->cols[i];
@@ -1016,7 +1016,7 @@ VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool f
 	}
 
 	for (int i = 0; i < h; i++) {
-		const int j = Tools_RandomLCG_Range(0, h - 1);
+		const int j = Random_Xorshift_Range(0, h - 1);
 		const int swap = aux->rows[j];
 
 		aux->rows[j] = aux->rows[i];

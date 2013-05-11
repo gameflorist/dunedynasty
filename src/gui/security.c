@@ -116,7 +116,7 @@ bool GUI_Security_Show(void)
 		uint32 tickWaitTill;
 		char buffer[81];
 
-		questionIndex = Tools_RandomLCG_Range(0, questionsCount - 1) * 3 + STR_SECURITY_QUESTIONS;
+		questionIndex = Random_Xorshift_Range(0, questionsCount - 1) * 3 + STR_SECURITY_QUESTIONS;
 
 		Widget_SetCurrentWidget(8);
 

@@ -75,6 +75,7 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "timer/timer.h"
 #include "tools/coord.h"
 #include "tools/random_lcg.h"
+#include "tools/random_xorshift.h"
 #include "unit.h"
 #include "video/video.h"
 
@@ -665,6 +666,7 @@ static bool Unknown_25C4_000E(void)
 
 	srand((unsigned)time(NULL));
 	Tools_RandomLCG_Seed((unsigned)time(NULL));
+	Random_Xorshift_Seed(rand(), rand(), rand(), rand());
 
 	Widget_SetCurrentWidget(0);
 

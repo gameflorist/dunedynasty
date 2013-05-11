@@ -48,7 +48,7 @@
 #include "../structure.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
-#include "../tools/random_lcg.h"
+#include "../tools/random_xorshift.h"
 #include "../unit.h"
 #include "../video/video.h"
 #include "../wsa.h"
@@ -1769,7 +1769,7 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		uint16 index;
 		uint16 temp;
 
-		index = Tools_RandomLCG_Range(0, width - 1);
+		index = Random_Xorshift_Range(0, width - 1);
 
 		temp = offsetsX[index];
 		offsetsX[index] = offsetsX[x];
@@ -1780,7 +1780,7 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		uint16 index;
 		uint16 temp;
 
-		index = Tools_RandomLCG_Range(0, height - 1);
+		index = Random_Xorshift_Range(0, height - 1);
 
 		temp = offsetsY[index];
 		offsetsY[index] = offsetsY[y];

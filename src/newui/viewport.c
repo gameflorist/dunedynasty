@@ -33,7 +33,7 @@
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"
 #include "../tools/orientation.h"
-#include "../tools/random_general.h"
+#include "../tools/random_xorshift.h"
 #include "../unit.h"
 #include "../video/video.h"
 
@@ -314,7 +314,7 @@ Viewport_Target(Unit *u, enum UnitActionType action, bool command_button, uint16
 		Audio_PlaySample(g_table_actionInfo[action].soundID, 255, 0.0);
 	}
 	else {
-		const enum SampleID sampleID = (((Tools_Random_256() & 0x1) == 0) ? SAMPLE_ACKNOWLEDGED : SAMPLE_AFFIRMATIVE);
+		const enum SampleID sampleID = (((Random_Xorshift_256() & 0x1) == 0) ? SAMPLE_ACKNOWLEDGED : SAMPLE_AFFIRMATIVE);
 
 		Audio_PlaySample(sampleID, 255, 0.0);
 	}

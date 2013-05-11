@@ -31,7 +31,7 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../timer/timer.h"
-#include "../tools/random_lcg.h"
+#include "../tools/random_xorshift.h"
 #include "../wsa.h"
 
 #if 0
@@ -367,7 +367,7 @@ bool GUI_Widget_Mentat_Click(Widget *w)
 
 	GUI_DrawInterfaceAndRadar(SCREEN_0);
 
-	Music_Play(Tools_RandomLCG_Range(0, 5) + 8);
+	Music_Play(Random_Xorshift_Range(0, 5) + 8);
 
 	return true;
 }
@@ -576,13 +576,13 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 			case MENTAT_RADNOR:
 				break;
 			case MENTAT_CYRIL:
-				movingOtherTimer = Timer_GetTicks() + 60 * Tools_RandomLCG_Range(1,3);
+				movingOtherTimer = Timer_GetTicks() + 60 * Random_Xorshift_Range(1,3);
 				break;
 			case MENTAT_AMMON:
 				if (otherSprite != 0) {
 					movingOtherTimer = Timer_GetTicks() + 6;
 				} else {
-					movingOtherTimer = Timer_GetTicks() + 60 * Tools_RandomLCG_Range(10, 19);
+					movingOtherTimer = Timer_GetTicks() + 60 * Random_Xorshift_Range(10, 19);
 				}
 				break;
 			case MENTAT_BENE_GESSERIT:
@@ -594,19 +594,19 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 
 	if (speakingMode == 1) {
 		if (movingMouthTimer < Timer_GetTicks()) {
-			movingMouthSprite = Tools_RandomLCG_Range(0, 4);
+			movingMouthSprite = Random_Xorshift_Range(0, 4);
 
 			switch (movingMouthSprite) {
 				case 0:
-					movingMouthTimer = Timer_GetTicks() + Tools_RandomLCG_Range(7, 30);
+					movingMouthTimer = Timer_GetTicks() + Random_Xorshift_Range(7, 30);
 					break;
 				case 1:
 				case 2:
 				case 3:
-					movingMouthTimer = Timer_GetTicks() + Tools_RandomLCG_Range(6, 10);
+					movingMouthTimer = Timer_GetTicks() + Random_Xorshift_Range(6, 10);
 					break;
 				case 4:
-					movingMouthTimer = Timer_GetTicks() + Tools_RandomLCG_Range(5, 6);
+					movingMouthTimer = Timer_GetTicks() + Random_Xorshift_Range(5, 6);
 					break;
 				default:
 					break;
@@ -621,7 +621,7 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 		} else if (Mouse_InRegion(s_mouthLeft, s_mouthTop, s_mouthRight, s_mouthBottom) != 0) {
 			if (movingMouthTimer != 0xFFFFFFFF) {
 				movingMouthTimer = 0xFFFFFFFF;
-				movingMouthSprite = Tools_RandomLCG_Range(1, 4);
+				movingMouthSprite = Random_Xorshift_Range(1, 4);
 			}
 		} else {
 			if (movingMouthSprite != 0) {
@@ -667,15 +667,15 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 			movingEyesNextSprite = 0;
 
 			if (movingEyesSprite != 4) {
-				movingEyesTimer = Timer_GetTicks() + Tools_RandomLCG_Range(20, 180);
+				movingEyesTimer = Timer_GetTicks() + Random_Xorshift_Range(20, 180);
 			} else {
-				movingEyesTimer = Timer_GetTicks() + Tools_RandomLCG_Range(12, 30);
+				movingEyesTimer = Timer_GetTicks() + Random_Xorshift_Range(12, 30);
 			}
 		} else {
 			i = 0;
 			switch (speakingMode) {
 				case 0:
-					i = Tools_RandomLCG_Range(0, 7);
+					i = Random_Xorshift_Range(0, 7);
 					if (i > 5) {
 						i = 1;
 					} else {
@@ -689,7 +689,7 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 					if (movingEyesSprite != ((!g_interrogation) ? 0 : 3)) {
 						i = 0;
 					} else {
-						i = Tools_RandomLCG_Range(0, 17);
+						i = Random_Xorshift_Range(0, 17);
 						if (i > 9) {
 							i = 0;
 						} else {
@@ -701,7 +701,7 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 					break;
 
 				default:
-					i = Tools_RandomLCG_Range(0, 15);
+					i = Random_Xorshift_Range(0, 15);
 					if (i > 10) {
 						i = 2;
 					} else {
@@ -715,7 +715,7 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 			if ((i == 2 && movingEyesSprite == 1) || (i == 1 && movingEyesSprite == 2)) {
 				movingEyesNextSprite = i;
 				movingEyesSprite = 0;
-				movingEyesTimer = Timer_GetTicks() + Tools_RandomLCG_Range(1, 5);
+				movingEyesTimer = Timer_GetTicks() + Random_Xorshift_Range(1, 5);
 			} else {
 				if (i != movingEyesSprite && (i == 4 || movingEyesSprite == 4)) {
 					movingEyesNextSprite = i;
@@ -724,9 +724,9 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 				} else {
 					movingEyesSprite = i;
 					if (i != 4) {
-						movingEyesTimer = Timer_GetTicks() + Tools_RandomLCG_Range(15, 180);
+						movingEyesTimer = Timer_GetTicks() + Random_Xorshift_Range(15, 180);
 					} else {
-						movingEyesTimer = Timer_GetTicks() + Tools_RandomLCG_Range(6, 60);
+						movingEyesTimer = Timer_GetTicks() + Random_Xorshift_Range(6, 60);
 					}
 				}
 			}
