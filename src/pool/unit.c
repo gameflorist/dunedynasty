@@ -65,6 +65,10 @@ void Unit_Init(void)
 	memset(g_unitArray, 0, sizeof(g_unitArray));
 	memset(g_unitFindArray, 0, sizeof(g_unitFindArray));
 	g_unitFindCount = 0;
+
+	for (int i = 0; i < UNIT_INDEX_MAX; i++) {
+		g_unitArray[i].o.index = i;
+	}
 }
 
 /**
