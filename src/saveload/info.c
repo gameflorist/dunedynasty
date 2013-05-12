@@ -1,6 +1,7 @@
 /** @file src/saveload/info.c Load/save routines for Info. */
 
 #include "saveload.h"
+#include "../file.h"
 #include "../gui/gui.h"
 #include "../map.h"
 #include "../newui/strategicmap.h"
@@ -201,7 +202,7 @@ bool Info_Save(FILE *fp)
 {
 	const uint16 savegameVersion = 0x0290;
 
-	if (fwrite(&savegameVersion, sizeof(uint16), 1, fp) != 1) return false;
+	if (!fwrite_le_uint16(savegameVersion, fp)) return false;
 
 	if (!SaveLoad_Save(s_saveInfo, fp, NULL)) return false;
 

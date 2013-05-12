@@ -4,6 +4,7 @@
 #include <string.h>
 #include "types.h"
 #include "os/math.h"
+#include "os/endian.h"
 #include "gfx.h"
 
 #include "wsa.h"
@@ -63,6 +64,7 @@ uint16 WSA_GetFrameCount(void *wsa)
 {
 	WSAHeader *header = (WSAHeader *)wsa;
 
+	if (header == NULL) return 0;
 	return header->frames;
 }
 
@@ -76,17 +78,19 @@ uint16 WSA_GetFrameCount(void *wsa)
 static uint32 WSA_GetFrameOffset_FromMemory(WSAHeader *header, uint16 frame)
 {
 	uint16 lengthAnimation = 0;
-	uint32 *animationArray;
+	uint32 animationFrame;
+	uint32 animation0;
 
-	animationArray = (uint32 *)header->fileContent;
+	animationFrame = READ_LE_UINT32(header->fileContent + frame * 4);
 
-	if (animationArray[frame] == 0) return 0;
+	if (animationFrame == 0) return 0;
 
-	if (animationArray[0] != 0) {
-		lengthAnimation = animationArray[1] - animationArray[0];
+	animation0 = READ_LE_UINT32(header->fileContent);
+	if (animation0 != 0) {
+		lengthAnimation = READ_LE_UINT32(header->fileContent + 4) - animation0;
 	}
 
-	return animationArray[frame] - lengthAnimation - 10;
+	return animationFrame - lengthAnimation - 10;
 }
 
 /**
@@ -98,12 +102,12 @@ static uint32 WSA_GetFrameOffset_FromMemory(WSAHeader *header, uint16 frame)
  */
 static uint32 WSA_GetFrameOffset_FromDisk(uint8 fileno, uint16 frame)
 {
-	uint32 length;
+	uint32 offset;
 
 	File_Seek(fileno, frame * 4 + 10, 0);
-	if (File_Read(fileno, &length, 4) != 4) return 0;
+	offset = File_Read_LE32(fileno);
 
-	return length;
+	return offset;
 }
 
 /**
@@ -202,13 +206,13 @@ void *WSA_LoadFile(const char *filename, void *wsa, uint32 wsaSize, bool reserve
 	memset(&flags, 0, sizeof(flags));
 
 	fileno = File_Open_Ex(SEARCHDIR_CAMPAIGN_DIR, filename, 1);
-	File_Read(fileno, &fileheader.frames, sizeof(fileheader.frames));
-	File_Read(fileno, &fileheader.width, sizeof(fileheader.width));
-	File_Read(fileno, &fileheader.height, sizeof(fileheader.height));
-	File_Read(fileno, &fileheader.requiredBufferSize, sizeof(fileheader.requiredBufferSize));
-	File_Read(fileno, &fileheader.isSpecial, sizeof(fileheader.isSpecial));
-	File_Read(fileno, &fileheader.animationOffsetStart, sizeof(fileheader.animationOffsetStart));
-	File_Read(fileno, &fileheader.animationOffsetEnd, sizeof(fileheader.animationOffsetEnd));
+	fileheader.frames = File_Read_LE16(fileno);
+	fileheader.width = File_Read_LE16(fileno);
+	fileheader.height = File_Read_LE16(fileno);
+	fileheader.requiredBufferSize = File_Read_LE16(fileno);
+	fileheader.isSpecial = File_Read_LE16(fileno);
+	fileheader.animationOffsetStart = File_Read_LE32(fileno);
+	fileheader.animationOffsetEnd = File_Read_LE32(fileno);
 
 	lengthSpecial = 0;
 	if (fileheader.isSpecial) {

@@ -973,7 +973,7 @@ bool GUI_Mentat_List_Click(Widget *w)
 		return true;
 	}
 
-	if ((w->state.s.buttonState & 0x11) == 0 && !s_selectMentatHelp) return true;
+	if ((w->state.buttonState & 0x11) == 0 && !s_selectMentatHelp) return true;
 
 	if (w->stringID != 0x31) return true;
 

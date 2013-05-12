@@ -57,11 +57,11 @@ static const uint8 *Sprites_GetSprite(const uint8 *buffer, uint16 index)
 	uint32 offset;
 
 	if (buffer == NULL) return NULL;
-	if (*(uint16 *)buffer <= index) return NULL;
+	if (READ_LE_UINT16(buffer) <= index) return NULL;
 
 	buffer += 2;
 
-	offset = *(uint32*)(buffer + 4 * index);
+	offset = READ_LE_UINT32(buffer + 4 * index);
 
 	if (offset == 0) return NULL;
 
@@ -82,7 +82,7 @@ Sprites_Load(enum SearchDirectory dir, const char *filename, int start, int end)
 	uint16 i;
 
 	buffer = File_ReadWholeFile_Ex(dir, filename);
-	count = *(uint16 *)buffer;
+	count = READ_LE_UINT16(buffer);
 
 	assert(count == end - start + 1);
 	count = min(count, end - start + 1);
@@ -92,7 +92,7 @@ Sprites_Load(enum SearchDirectory dir, const char *filename, int start, int end)
 		uint8 *dst = NULL;
 
 		if (src != NULL) {
-			uint16 size = ((uint16 *)src)[3];
+			uint16 size = READ_LE_UINT16(src + 6);
 			dst = (uint8 *)malloc(size);
 			memcpy(dst, src, size);
 		}
@@ -148,16 +148,16 @@ static uint32 Sprites_Decode(const uint8 *source, uint8 *dest)
 	switch(*source) {
 		case 0x0:
 			source += 2;
-			size = *((uint32 *)source);
+			size = READ_LE_UINT32(source);
 			source += 4;
-			source += *((uint16 *)source);
+			source += READ_LE_UINT16(source);
 			source += 2;
 			memmove(dest, source, size);
 			break;
 
 		case 0x4:
 			source += 6;
-			source += *((uint16 *)source);
+			source += READ_LE_UINT16(source);
 			source += 2;
 			size = Format80_Decode(dest, source, 0xFFFF);
 			break;
@@ -225,7 +225,7 @@ void Sprites_LoadTiles(void)
 	Sprites_LoadICNFile("ICON.ICN");
 
 	free(g_iconMap);
-	g_iconMap = File_ReadWholeFile("ICON.MAP");
+	g_iconMap = File_ReadWholeFileLE16("ICON.MAP");
 
 	g_veiledSpriteID    = g_iconMap[g_iconMap[ICM_ICONGROUP_FOG_OF_WAR] + 16];
 	g_bloomSpriteID     = g_iconMap[g_iconMap[ICM_ICONGROUP_SPICE_BLOOM]];
@@ -258,19 +258,20 @@ Sprites_LoadCPSFile(enum SearchDirectory dir, const char *filename,
 {
 	uint8 index;
 	uint16 size;
-	void *buffer;
+	uint8 *buffer;
 	uint8 *buffer2;
 	uint16 paletteSize;
 
 	buffer = GFX_Screen_Get_ByIndex(screenID);
 
 	index = File_Open_Ex(dir, filename, 1);
-	File_Read(index, &size, 2);
+	size = File_Read_LE16(index);
+
 	File_Read(index, buffer, 8);
 
 	size -= 8;
 
-	paletteSize = ((uint16 *)buffer)[3];
+	paletteSize = READ_LE_UINT16(buffer + 6);
 
 	if (palette != NULL && paletteSize != 0) {
 		File_Read(index, palette, paletteSize);
@@ -278,7 +279,8 @@ Sprites_LoadCPSFile(enum SearchDirectory dir, const char *filename,
 		File_Seek(index, paletteSize, 1);
 	}
 
-	((uint16 *)buffer)[3] = 0;
+	buffer[6] = 0;	/* dont read palette next time */
+	buffer[7] = 0;
 	size -= paletteSize;
 
 	buffer2 = GFX_Screen_Get_ByIndex(screenID);

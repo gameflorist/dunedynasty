@@ -114,6 +114,54 @@ FileHash_Init(void)
 
 /*--------------------------------------------------------------*/
 
+/**
+ * Read a uint32 value from a little endian file.
+ */
+bool fread_le_uint32(uint32 *value, FILE *stream)
+{
+	uint8 buffer[4];
+	if (value == NULL) return false;
+	if (fread(buffer, 1, 4, stream) != 4) return false;
+	*value = READ_LE_UINT32(buffer);
+	return true;
+}
+
+/**
+ * Read a uint16 value from a little endian file.
+ */
+bool fread_le_uint16(uint16 *value, FILE *stream)
+{
+	uint8 buffer[2];
+	if (value == NULL) return false;
+	if (fread(buffer, 1, 2, stream) != 2) return false;
+	*value = READ_LE_UINT16(buffer);
+	return true;
+}
+
+/**
+ * Write a uint32 value from a little endian file.
+ */
+bool fwrite_le_uint32(uint32 value, FILE *stream)
+{
+	if (putc(value & 0xff, stream) == EOF) return false;
+	if (putc((value >> 8) & 0xff, stream) == EOF) return false;
+	if (putc((value >> 16) & 0xff, stream) == EOF) return false;
+	if (putc((value >> 24) & 0xff, stream) == EOF) return false;
+	return true;
+}
+
+/**
+ * Write a uint16 value from a little endian file.
+ */
+bool fwrite_le_uint16(uint16 value, FILE *stream)
+{
+	if (putc(value & 0xff, stream) == EOF) return false;
+	if (putc((value >> 8) & 0xff, stream) == EOF) return false;
+	return true;
+}
+
+/*--------------------------------------------------------------*/
+
 void
 File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const char *filename, bool convert_to_lowercase)
 {
@@ -436,6 +484,32 @@ uint32 File_Read(uint8 index, void *buffer, uint32 length)
 }
 
 /**
+ * Read a 16bit unsigned from the file (written on disk in Little endian)
+ *
+ * @param index The index given by File_Open() of the file.
+ * @return The integer read.
+ */
+uint16 File_Read_LE16(uint8 index)
+{
+	uint8 buffer[2];
+	File_Read(index, buffer, sizeof(buffer));
+	return READ_LE_UINT16(buffer);
+}
+
+/**
+ * Read a 32bit unsigned from the file (written on disk in Little endian)
+ *
+ * @param index The index given by File_Open() of the file.
+ * @return The integer read.
+ */
+uint32 File_Read_LE32(uint8 index)
+{
+	uint8 buffer[4];
+	File_Read(index, buffer, sizeof(buffer));
+	return READ_LE_UINT32(buffer);
+}
+
+/**
  * Write bytes from a buffer to a file.
  *
  * @param index The index given by File_Open() of the file.
@@ -548,7 +622,7 @@ File_ReadBlockFile_Ex(enum SearchDirectory dir, const char *filename, void *buff
  *
  * @param filename The name of the file to open.
  * @param mallocFlags The type of memory to allocate.
- * @return The CS:IP of the allocated memory where the file has been read.
+ * @return The pointer to allocated memory where the file has been read.
  */
 void *
 File_ReadWholeFile_Ex(enum SearchDirectory dir, const char *filename)
@@ -567,6 +641,43 @@ File_ReadWholeFile_Ex(enum SearchDirectory dir, const char *filename)
 	((char *)buffer)[length] = '\0';
 
 	File_Close(index);
+
+	return buffer;
+}
+
+/**
+ * Reads the whole file in the memory. The file should contain little endian
+ * 16bits unsigned integers. It is converted to host byte ordering if needed.
+ *
+ * @param filename The name of the file to open.
+ * @param mallocFlags The type of memory to allocate.
+ * @return The pointer to allocated memory where the file has been read.
+ */
+uint16 *File_ReadWholeFileLE16(const char *filename)
+{
+	uint8 index;
+	uint32 count;
+	uint16 *buffer;
+#if __BYTE_ORDER == __BIG_ENDIAN
+	uint32 i;
+#endif
+
+	index = File_Open(filename, 1);
+	count = File_GetSize(index) / sizeof(uint16);
+
+	buffer = malloc(count * sizeof(uint16));
+	if (File_Read(index, buffer, count * sizeof(uint16)) != count * sizeof(uint16)) {
+		free(buffer);
+		return NULL;
+	}
+
+	File_Close(index);
+
+#if __BYTE_ORDER == __BIG_ENDIAN
+	for(i = 0; i < count; i++) {
+		buffer[i] = LETOH16(buffer[i]);
+	}
+#endif
 
 	return buffer;
 }

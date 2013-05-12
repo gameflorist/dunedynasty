@@ -11,6 +11,7 @@
 #include "os/common.h"
 #include "os/math.h"
 #include "os/strings.h"
+#include "os/endian.h"
 
 #include "string.h"
 
@@ -134,12 +135,12 @@ String_IsOverridable(int stringID)
 static void
 String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int start, int end)
 {
-	void *buf;
+	uint8 *buf;
 	uint16 count;
 	uint16 i, j;
 
 	buf = File_ReadWholeFile_Ex(dir, String_GenerateFilename(filename));
-	count = *(uint16 *)buf / 2;
+	count = READ_LE_UINT16(buf) / 2;
 
 	if (end >= 0)
 		count = min(count, end - start + 1);
@@ -157,7 +158,7 @@ String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int
 	}
 
 	for (i = 0, j = 0; j < count; i++, j++) {
-		char *src = (char *)buf + ((uint16 *)buf)[i];
+		char *src = (char *)buf + READ_LE_UINT16(buf + i * 2);
 		char *dst = NULL;
 
 		if (strlen(src) == 0) {

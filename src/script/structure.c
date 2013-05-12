@@ -215,7 +215,7 @@ uint16 Script_Structure_FindUnitByType(ScriptEngine *script)
 
 	u = Unit_Get_ByIndex(s->o.linkedID);
 
-	if (g_playerHouseID == s->o.houseID && u->o.type == UNIT_HARVESTER && u->targetLast.tile == 0 && position != 0) {
+	if (g_playerHouseID == s->o.houseID && u->o.type == UNIT_HARVESTER && (u->targetLast.x == 0 && u->targetLast.y == 0) && position != 0) {
 		return IT_NONE;
 	}
 
@@ -563,9 +563,8 @@ uint16 Script_Structure_Fire(ScriptEngine *script)
 		}
 	}
 
-	position.tile = s->o.position.tile;
-	position.s.x += 0x80;
-	position.s.y += 0x80;
+	position.x = s->o.position.x + 0x80;
+	position.y = s->o.position.y + 0x80;
 	u = Unit_CreateBullet(position, type, s->o.houseID, damage, target);
 
 	if (u == NULL) return 0;

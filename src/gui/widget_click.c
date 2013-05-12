@@ -382,7 +382,7 @@ void GUI_Window_Create(WindowDesc *desc)
 		w->drawParameterSelected.proc = &GUI_Widget_TextButton_Draw;
 		w->drawParameterDown.proc     = &GUI_Widget_TextButton_Draw;
 		w->parentID = desc->index;
-		w->state.all = 0x0;
+		memset(&w->state, 0, sizeof(w->state));
 
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 

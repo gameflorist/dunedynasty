@@ -1475,8 +1475,8 @@ Scenario_Create_Reinforcement(uint8 index, enum HouseType houseType,
 	tile32 position;
 	Unit *u;
 
-	position.s.x = 0xFFFF;
-	position.s.y = 0xFFFF;
+	position.x = 0xFFFF;
+	position.y = 0xFFFF;
 	u = Unit_Create(UNIT_INDEX_INVALID, unitType, houseType, position, 0);
 	if (u == NULL) return;
 

@@ -48,10 +48,13 @@ extern void File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirector
 extern FILE *File_Open_CaseInsensitive(enum SearchDirectory dir, const char *filename, const char *mode);
 extern void File_Close(uint8 index);
 extern uint32 File_Read(uint8 index, void *buffer, uint32 length);
+extern uint16 File_Read_LE16(uint8 index);
+extern uint32 File_Read_LE32(uint8 index);
 extern uint32 File_Write(uint8 index, void *buffer, uint32 length);
 extern uint32 File_Seek(uint8 index, uint32 position, uint8 mode);
 extern uint32 File_GetSize(uint8 index);
 extern void File_Delete_Personal(const char *filename);
+extern uint16 *File_ReadWholeFileLE16(const char *filename);
 extern void ChunkFile_Close(uint8 index);
 extern uint32 ChunkFile_Seek(uint8 index, uint32 header);
 extern uint32 ChunkFile_Read(uint8 index, uint32 header, void *buffer, uint32 buflen);
@@ -72,5 +75,15 @@ extern uint32 File_ReadBlockFile_Ex(enum SearchDirectory dir, const char *filena
 extern void *File_ReadWholeFile_Ex(enum SearchDirectory dir, const char *filename);
 extern uint32 File_ReadFile_Ex(enum SearchDirectory dir, const char *filename, void *buf);
 extern uint8 ChunkFile_Open_Ex(enum SearchDirectory dir, const char *filename);
+
+extern bool fread_le_uint32(uint32 *value, FILE *stream);
+extern bool fread_le_uint16(uint16 *value, FILE *stream);
+extern bool fwrite_le_uint32(uint32 value, FILE *stream);
+extern bool fwrite_le_uint16(uint16 value, FILE *stream);
+
+#define fread_le_int32(p, f) fread_le_uint32((uint32 *)(p), (f))
+#define fread_le_int16(p, f) fread_le_uint16((uint16 *)(p), (f))
+#define fwrite_le_int32(v, f) fwrite_le_uint32((uint32)(v), (f))
+#define fwrite_le_int16(v, f) fwrite_le_uint16((uint16)(v), (f))
 
 #endif /* FILE_H */

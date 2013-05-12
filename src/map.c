@@ -404,8 +404,8 @@ bool Map_IsPositionUnveiled(uint16 position)
 bool Map_IsPositionInViewport(tile32 position, int *retX, int *retY)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-	const int x = (position.s.x >> 4) - (Tile_GetPackedX(g_viewportPosition) * TILE_SIZE) - g_viewport_scrollOffsetX;
-	const int y = (position.s.y >> 4) - (Tile_GetPackedY(g_viewportPosition) * TILE_SIZE) - g_viewport_scrollOffsetY;
+	const int x = (position.x >> 4) - (Tile_GetPackedX(g_viewportPosition) * TILE_SIZE) - g_viewport_scrollOffsetX;
+	const int y = (position.y >> 4) - (Tile_GetPackedY(g_viewportPosition) * TILE_SIZE) - g_viewport_scrollOffsetY;
 
 	if (retX != NULL) *retX = x;
 	if (retY != NULL) *retY = y;
@@ -1063,19 +1063,19 @@ uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID)
  */
 void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function)
 {
-	static const uint32 tileOffsets[] = {
-		0x00800080, 0x00880088, 0x00900090, 0x00980098,
-		0x00A000A0, 0x00A800A8, 0x00B000B0, 0x00B800B8,
-		0x00C000C0, 0x00C800C8, 0x00D000D0, 0x00D800D8,
-		0x00E000E0, 0x00E800E8, 0x00F000F0, 0x00F800F8,
-		0x01000100, 0x01800180
+	static const uint16 tileOffsets[] = {
+		0x0080, 0x0088, 0x0090, 0x0098,
+		0x00A0, 0x00A8, 0x00B0, 0x00B8,
+		0x00C0, 0x00C8, 0x00D0, 0x00D8,
+		0x00E0, 0x00E8, 0x00F0, 0x00F8,
+		0x0100, 0x0180
 	};
 
 	uint16 i;
 	tile32 diff;
 	uint16 lastPacked;
 
-	if (radius == 0 || position.tile == 0) return;
+	if (radius == 0 || (position.x == 0 && position.y == 0)) return;
 
 	radius--;
 
@@ -1107,9 +1107,11 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 	}
 
 	radius = max(radius, 15);
-	position.tile -= tileOffsets[radius - 15];
+	position.x -= tileOffsets[radius - 15];
+	position.y -= tileOffsets[radius - 15];
 
-	diff.tile = 0;
+	diff.x = 0;
+	diff.y = 0;
 	lastPacked = 0;
 
 	i = 0;
@@ -1134,7 +1136,7 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 
 		if (i == 8) break;
 		diff = g_table_tilediff[radius + 1][i++];
-	} while (diff.tile != 0);
+	} while ((diff.x != 0) || (diff.y != 0));
 }
 
 /**

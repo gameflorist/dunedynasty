@@ -9,6 +9,7 @@
 #include "../os/math.h"
 #include "../os/sleep.h"
 #include "../os/strings.h"
+#include "../os/endian.h"
 
 #include "gui.h"
 
@@ -767,7 +768,7 @@ void GUI_DrawSprite_(Screen screenID, uint8 *sprite, int16 posX, int16 posY, uin
 
 	bottom = g_widgetProperties[windowID].yBase + g_widgetProperties[windowID].height;
 
-	loc10 = *(uint16 *)sprite;
+	loc10 = READ_LE_UINT16(sprite);
 	sprite += 2;
 
 	loc12 = *sprite++;
@@ -780,7 +781,7 @@ void GUI_DrawSprite_(Screen screenID, uint8 *sprite, int16 posX, int16 posY, uin
 
 	if ((flags & 0x8000) != 0) posY -= loc12 / 2;
 
-	loc1A = *(uint16 *)sprite;
+	loc1A = READ_LE_UINT16(sprite);
 	sprite += 2;
 
 	loc14 = loc1A;
@@ -797,7 +798,7 @@ void GUI_DrawSprite_(Screen screenID, uint8 *sprite, int16 posX, int16 posY, uin
 
 	sprite += 3;
 
-	locbx = *(uint16 *)sprite;
+	locbx = READ_LE_UINT16(sprite);
 	sprite += 2;
 
 	if ((loc10 & 0x1) != 0 && (flags & 0x2000) == 0) loc3E = sprite;
@@ -1875,14 +1876,26 @@ static Widget *GUI_HallOfFame_CreateButtons(HallOfFameStruct *data)
 	wClear = GUI_Widget_Allocate(100, *clearString, 160 - width - 18, 180, 0xFFFE, 0x147);
 	wClear->width     = width;
 	wClear->height    = 10;
-	wClear->flags.all = 0x44C5;
+	memset(&wClear->flags, 0, sizeof(wClear->flags));
+	wClear->flags.requiresClick = true;
+	wClear->flags.clickAsHover = true;
+	wClear->flags.loseSelect = true;
+	wClear->flags.notused2 = true;
+	wClear->flags.buttonFilterLeft = 4;
+	wClear->flags.buttonFilterRight = 4;
 	wClear->data      = data;
 
 	/* "Resume Game" */
 	wResume = GUI_Widget_Allocate(101, *resumeString, 178, 180, 0xFFFE, 0x146);
 	wResume->width     = width;
 	wResume->height    = 10;
-	wResume->flags.all = 0x44C5;
+	memset(&wResume->flags, 0, sizeof(wResume->flags));
+	wResume->flags.requiresClick = true;
+	wResume->flags.clickAsHover = true;
+	wResume->flags.loseSelect = true;
+	wResume->flags.notused2 = true;
+	wResume->flags.buttonFilterLeft = 4;
+	wResume->flags.buttonFilterRight = 4;
 	wResume->data      = data;
 
 	return GUI_Widget_Insert(wClear, wResume);

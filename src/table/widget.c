@@ -15,7 +15,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ false,
@@ -26,7 +26,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused2              */ false,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -41,7 +41,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -51,7 +51,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
@@ -65,7 +65,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ false,
@@ -76,7 +76,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused2              */ false,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -91,7 +91,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -101,7 +101,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
@@ -115,7 +115,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ false,
@@ -126,7 +126,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused2              */ false,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -141,7 +141,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -151,7 +151,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
@@ -165,7 +165,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ false,
@@ -176,7 +176,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused2              */ false,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -191,7 +191,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -201,7 +201,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
@@ -215,7 +215,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ false,
@@ -226,7 +226,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused2              */ false,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -241,7 +241,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -251,7 +251,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
@@ -265,7 +265,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ false,
@@ -276,7 +276,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused2              */ false,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -291,7 +291,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -301,7 +301,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
@@ -315,7 +315,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ false,
@@ -326,7 +326,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused2              */ false,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -341,7 +341,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -351,7 +351,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
@@ -365,7 +365,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ true,
@@ -376,7 +376,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused2              */ true,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -391,7 +391,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -401,7 +401,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
@@ -415,7 +415,7 @@ Widget g_table_windowWidgets[] = {
 		/* drawModeNormal        */ 1,
 		/* drawModeSelected      */ 1,
 		/* drawModeDown          */ 1,
-		{ { /* flags */
+		{ /* flags */
 		/* requiresClick         */ true,
 		/* notused1              */ true,
 		/* clickAsHover          */ true,
@@ -426,7 +426,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ true,
 		/* buttonFilterLeft      */ 4,
 		/* buttonFilterRight     */ 4
-		} },
+		},
 		/* drawProcNormal        */ { 0x0 },
 		/* drawProcSelected      */ { 0x0 },
 		/* drawProcDown          */ { 0x0 },
@@ -441,7 +441,7 @@ Widget g_table_windowWidgets[] = {
 		/* bgColourSelected      */ 12,
 		/* fgColourDown          */ 15,
 		/* bgColourDown          */ 12,
-		{ { /* state */
+		{ /* state */
 		/* selected              */ false,
 		/* hover1                */ false,
 		/* hover2                */ false,
@@ -451,7 +451,7 @@ Widget g_table_windowWidgets[] = {
 		/* notused               */ false,
 		/* keySelected           */ false,
 		/* buttonState           */ 0,
-		} },
+		},
 		/* clickProc             */ NULL,
 		/* data                  */ NULL,
 		/* stringID              */ STR_NULL,
