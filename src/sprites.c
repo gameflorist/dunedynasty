@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fourcc.h"
+#include "multichar.h"
 #include "types.h"
 #include "os/common.h"
 #include "os/endian.h"

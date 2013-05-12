@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include "multichar.h"
 #include "types.h"
 #include "../os/sleep.h"
 

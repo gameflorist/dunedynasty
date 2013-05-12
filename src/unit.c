@@ -3133,7 +3133,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 
 								feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING_FROM_THE_NORTH + orient4;
 							} else {
-								feedbackID = ((Orientation_Orientation256ToOrientation16(Tile_GetDirection(s->o.position, unit->o.position)) + 1) & 7) / 2 + 1;
+								feedbackID = ((Orientation_Orientation256ToOrientation8(Tile_GetDirection(s->o.position, unit->o.position)) + 1) & 7) / 2 + 2;
 							}
 						} else {
 							feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING;

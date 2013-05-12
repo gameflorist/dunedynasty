@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fourcc.h"
+#include "multichar.h"
 #include "types.h"
 #include "../os/common.h"
 #include "../os/math.h"
@@ -798,8 +798,9 @@ uint16 MPU_GetDataSize(void)
 }
 
 #if 0
-static int WINAPI MPU_ThreadProc(void *data)
+static ThreadStatus WINAPI MPU_ThreadProc(void *data)
 {
+	VARIABLE_NOT_USED(data);
 	Semaphore_Lock(s_mpu_sem);
 	while (!Semaphore_TryLock(s_mpu_sem)) {
 		msleep(s_mpu_usec / 1000);
