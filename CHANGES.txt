@@ -1,6 +1,18 @@
 Dune Dynasty
 ============
 
+Version 1.5.5, 2013-05-12
+-------------------------
+
+  - Fix crash caused by playing on maps where the AI has a starport.
+  - Fix starport sometimes showing items as requiring an upgrade.
+  - Fix box selection when mouse released in corner of screen.
+  - Fix loss of selection when a unit dies during targetting mode.
+  - Fix synth sound for unit acknowledgements and radar (de-)activation.
+  - Fix voices when playing in French or German.
+  - Always show the exit button in the mentat screen.
+
+
 Version 1.5.4, 2013-03-31
 -------------------------
 
