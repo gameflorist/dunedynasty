@@ -1,4 +1,4 @@
-/* map.c */
+/** @file src/saveload/map.c Load/save routines for Map. */
 
 #include "saveload.h"
 #include "../map.h"

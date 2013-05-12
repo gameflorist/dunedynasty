@@ -7,6 +7,10 @@
 #include "types.h"
 
 enum {
+	FILE_MODE_READ       = 0x01,
+	FILE_MODE_WRITE      = 0x02,
+	FILE_MODE_READ_WRITE = FILE_MODE_READ | FILE_MODE_WRITE,
+
 	FILEINFO_MAX     = 686,
 	FILEINFO_INVALID = 0xFFFF,
 

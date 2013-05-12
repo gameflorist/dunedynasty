@@ -1626,12 +1626,11 @@ bool Unit_Move(Unit *unit, uint16 distance)
 			s = Structure_Get_ByPackedTile(packed);
 
 			if (s != NULL) {
-				/* ENHANCEMENT -- Original game did not announce base
-				 * under attack when hit by sonic blasts, so don't.
-				 * However, sonic blasts should trigger the counter attack.
-				 */
-				if (g_dune2_enhanced && s->o.houseID != g_playerHouseID && !House_AreAllied(unit->o.houseID, s->o.houseID))
+				/* ENHANCEMENT -- make sonic blast trigger counter attack, but
+				 * do not warn about base under attack (original behaviour). */
+				if (g_dune2_enhanced && s->o.houseID != g_playerHouseID && !House_AreAllied(unit->o.houseID, s->o.houseID)) {
 					Structure_HouseUnderAttack(s->o.houseID);
+				}
 
 				Structure_Damage(s, damage, 0);
 			} else {
@@ -1682,7 +1681,9 @@ bool Unit_Move(Unit *unit, uint16 distance)
 							p.y += offsetY[i];
 							p.x += offsetX[i];
 
-							Map_MakeExplosion(ui->explosionType, p, 200, 0);
+							if (Tile_IsValid(p)) {
+								Map_MakeExplosion(ui->explosionType, p, 200, 0);
+							}
 						}
 					} else if (ui->explosionType != 0xFFFF) {
 						if (ui->flags.impactOnSand && g_map[Tile_PackTile(unit->o.position)].index == 0 && Map_GetLandscapeType(Tile_PackTile(unit->o.position)) == LST_NORMAL_SAND) {
@@ -2589,6 +2590,9 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 		h = House_Get_ByIndex(s->o.houseID);
 		s->o.houseID = Unit_GetHouseID(unit);
 		h->structuresBuilt = Structure_GetStructuresBuilt(h);
+
+		/* ENHANCEMENT -- recalculate the power and credits for the house losing the structure. */
+		if (g_dune2_enhanced) House_CalculatePowerAndCredit(h);
 
 		h = House_Get_ByIndex(s->o.houseID);
 		h->structuresBuilt = Structure_GetStructuresBuilt(h);

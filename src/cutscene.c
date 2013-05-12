@@ -1285,12 +1285,7 @@ static void Gameloop_Logos(void)
 
 	const int64_t timeout1 = 360 + Timer_GetTicks();
 
-	while (true) {
-		bool displayed;
-
-		displayed = WSA_DisplayFrame(wsa, frame++, 0, 0, SCREEN_0);
-		if (!displayed) break;
-
+	while (WSA_DisplayFrame(wsa, frame++, 0, 0, SCREEN_0)) {
 		Cutscene_CopyScreen();
 		Timer_Sleep(6);
 	}

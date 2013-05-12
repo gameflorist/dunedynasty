@@ -24,8 +24,8 @@ typedef enum TeamActionType {
  * flags for Team structure
  */
 typedef struct {
-		BIT_U8 used:1;                                      /*!< The Team is in use (no longer free in the pool). */
-		BIT_U8 notused_0002:7;                              /*!< Never used - remaining bits. */
+	BIT_U8 used:1;                                      /*!< The Team is in use (no longer free in the pool). */
+	BIT_U8 notused_0002:7;                              /*!< Never used - remaining bits. */
 } TeamFlags;
 
 /**
@@ -47,7 +47,7 @@ typedef struct Team {
 	ScriptEngine script;                                    /*!< The script engine instance of this Team. */
 } Team;
 
-extern const char *g_table_teamActionName[];
+extern const char * const g_table_teamActionName[TEAM_ACTION_MAX];
 
 extern void GameLoop_Team(void);
 extern Team *Team_Create(uint8 houseID, uint8 teamActionType, uint8 movementType, uint16 unknown1, uint16 unknown2);

@@ -177,6 +177,9 @@ extern bool Unit_Save(FILE *fp);
 extern bool Unit_Load2(FILE *fp, uint32 length);
 extern bool Unit_Save2(FILE *fp);
 
+extern bool Map_Save(FILE *fp);
+extern bool Map_Load(FILE *fp, uint32 length);
+
 extern bool Unit_Load(FILE *fp, uint32 length);
 extern bool Unit_Save(FILE *fp);
 extern bool UnitNew_Load(FILE *fp, uint32 length);

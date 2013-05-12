@@ -29,20 +29,6 @@ enum GameOverlay {
 	GAMEOVERLAY_CONFIRM_QUIT,
 };
 
-/**
- * Types of Language available in the game.
- */
-typedef enum Language {
-	LANGUAGE_ENGLISH     = 0,
-	LANGUAGE_FRENCH      = 1,
-	LANGUAGE_GERMAN      = 2,
-	LANGUAGE_ITALIAN     = 3,
-	LANGUAGE_SPANSIH     = 4,
-
-	LANGUAGE_MAX         = 5,
-	LANGUAGE_INVALID     = 0xFF
-} Language;
-
 /** X and Y coordinate. */
 typedef struct XYPosition {
 	uint16 x; /*!< X coordinate. */

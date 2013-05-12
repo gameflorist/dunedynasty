@@ -72,6 +72,7 @@ char *Ini_GetString(const char *category, const char *key, const char *defaultVa
 
 				/* Now validate the size and if we match at all */
 				if (*value != '=' || strncasecmp(current, key, keyLength) != 0) {
+					/* Search for LF to support both CR/LF and LF line endings. */
 					current = strchr(current, '\n');
 					if (current == NULL) break;
 					while (isspace((uint8)*current)) current++;

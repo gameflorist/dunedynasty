@@ -82,11 +82,11 @@ typedef struct Widget {
 	 int16 offsetY;                                         /*!< Y position from parent we are at, in pixels. */
 	uint16 width;                                           /*!< Width of widget in pixels. */
 	uint16 height;                                          /*!< Height of widget in pixels. */
-	uint8  fgColourNormal;                                  /*!< Foregroud colour for draw proc when normal. */
+	uint8  fgColourNormal;                                  /*!< Foreground colour for draw proc when normal. */
 	uint8  bgColourNormal;                                  /*!< Background colour for draw proc when normal. */
-	uint8  fgColourSelected;                                /*!< Foregroud colour for draw proc when selected. */
+	uint8  fgColourSelected;                                /*!< Foreground colour for draw proc when selected. */
 	uint8  bgColourSelected;                                /*!< Background colour for draw proc when selected. */
-	uint8  fgColourDown;                                    /*!< Foregroud colour for draw proc when down. */
+	uint8  fgColourDown;                                    /*!< Foreground colour for draw proc when down. */
 	uint8  bgColourDown;                                    /*!< Background colour for draw proc when down. */
 	struct {
 		BIT_U8 selected:1;                                  /*!< Selected. */
@@ -186,7 +186,7 @@ extern uint16 g_curWidgetHeight;
 extern uint8  g_curWidgetFGColourBlink;
 extern uint8  g_curWidgetFGColourNormal;
 
-extern Widget g_table_windowWidgets[];
+extern Widget g_table_windowWidgets[9];
 
 
 extern Widget *GUI_Widget_GetNext(Widget *w);

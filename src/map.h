@@ -85,13 +85,13 @@ typedef struct LandscapeInfo {
 
 struct Unit;
 
-extern uint16 g_mapSpriteID[];
+extern uint16 g_mapSpriteID[MAP_SIZE_MAX * MAP_SIZE_MAX];
 extern Tile g_map[MAP_SIZE_MAX * MAP_SIZE_MAX];
 extern FogOfWarTile g_mapVisible[MAP_SIZE_MAX * MAP_SIZE_MAX];
 extern const uint8 g_functions[3][3];
 
 extern const MapInfo g_mapInfos[3];
-extern const tile32 g_table_tilediff[][8];
+extern const tile32 g_table_tilediff[34][8];
 
 extern const LandscapeInfo g_table_landscapeInfo[LST_MAX];
 

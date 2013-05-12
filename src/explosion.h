@@ -28,6 +28,7 @@ typedef enum ExplosionType {
 	EXPLOSION_MINI_ROCKET         = 18,
 	EXPLOSION_SPICE_BLOOM_TREMOR  = 19,
 
+	EXPLOSIONTYPE_MAX             = 20,
 	EXPLOSION_INVALID             = 0xFFFF
 } ExplosionType;
 

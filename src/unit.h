@@ -116,10 +116,10 @@ struct Structure;
 extern int64_t g_tickUnitUnknown1;
 extern int64_t g_tickUnitUnknown2;
 
-extern const char *g_table_movementTypeName[];
+extern const char * const g_table_movementTypeName[MOVEMENT_MAX];
 
-extern const uint16 g_table_actionsAI[];
-extern const ActionInfo g_table_actionInfo[];
+extern const uint16 g_table_actionsAI[4];
+extern const ActionInfo g_table_actionInfo[ACTION_MAX];
 extern const UnitInfo g_table_unitInfo_original[UNIT_MAX];
 extern UnitInfo g_table_unitInfo[UNIT_MAX];
 

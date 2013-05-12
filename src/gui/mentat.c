@@ -830,7 +830,7 @@ GUI_Mentat_ShowHelp(Widget *scrollbar, enum SearchDirectory dir,
 	text = g_readBuffer;
 	compressedText = malloc(info.length);
 
-	fileID = File_Open_Ex(dir, s_mentatFilename, 1);
+	fileID = File_Open_Ex(dir, s_mentatFilename, FILE_MODE_READ);
 	File_Seek(fileID, offset, 0);
 	File_Read(fileID, compressedText, info.length);
 	String_Decompress(compressedText, text);
