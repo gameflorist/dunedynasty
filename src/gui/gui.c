@@ -163,7 +163,7 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 	if (scrollInProgress) {
 		if (buffer[0] != '\0') {
 			if (strcasecmp(buffer, displayLine2) != 0 && importance >= line3Importance) {
-				strcpy(displayLine3, buffer);
+				strncpy(displayLine3, buffer, sizeof(displayLine3));
 				line3Importance = importance;
 			}
 		}
@@ -207,11 +207,11 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		}
 
 		/* Finished scrolling, move line 2 to line 1. */
-		strcpy(displayLine1, displayLine2);
+		strncpy(displayLine1, displayLine2, sizeof(displayLine1));
 		line1Importance = (line2Importance != 0) ? line2Importance - 1 : 0;
 
 		/* And move line 3 to line 2. */
-		strcpy(displayLine2, displayLine3);
+		strncpy(displayLine2, displayLine3, sizeof(displayLine2));
 		line2Importance = line3Importance;
 		displayLine3[0] = '\0';
 
@@ -226,21 +226,21 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		 * insert it at the right place.
 		 */
 		if (strcasecmp(buffer, displayLine1) != 0 && strcasecmp(buffer, displayLine2) != 0 && strcasecmp(buffer, displayLine3) != 0) {
-			/* This was originally important >= line2Importance.
+			/* This was originally importance >= line2Importance.
 			 * However, that means that newer messages of equal
 			 * importance are inserted before older messages.
 			 */
 			if (importance > line2Importance) {
 				/* Move line 2 to line 2 to make room for the new line. */
-				strcpy(displayLine3, displayLine2);
+				strncpy(displayLine3, displayLine2, sizeof(displayLine3));
 				line3Importance = line2Importance;
 				/* Copy new line to line 2. */
-				strcpy(displayLine2, buffer);
+				strncpy(displayLine2, buffer, sizeof(displayLine2));
 				line2Importance = importance;
 
 			} else if (importance >= line3Importance) {
 				/* Copy new line to line 3. */
-				strcpy(displayLine3, buffer);
+				strncpy(displayLine3, buffer, sizeof(displayLine3));
 				line3Importance = importance;
 			}
 		}
