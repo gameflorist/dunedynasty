@@ -53,6 +53,7 @@ typedef struct Unit {
 	uint16 timer;                                           /*!< Timer used in animation, to count down when to do the next step. */
 	uint8  route[14];                                       /*!< The current route the Unit is following. */
 
+	tile32 lastPosition;
 	bool permanentFollow;
 	bool detonateAtTarget;
 	enum SquadID squadID;
@@ -132,6 +133,7 @@ extern void Unit_AddSelected(Unit *unit);
 extern void Unit_Unselect(const Unit *unit);
 extern void Unit_UnselectAll(void);
 extern Unit *Unit_GetForActionPanel(void);
+extern tile32 Unit_GetNextDestination(const Unit *u);
 
 extern void GameLoop_Unit(void);
 extern uint8 Unit_GetHouseID(const Unit *u);

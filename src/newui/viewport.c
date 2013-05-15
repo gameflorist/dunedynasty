@@ -72,7 +72,7 @@ static int selection_box_y2;
 static int viewport_pan_dx;
 static int viewport_pan_dy;
 
-static void Viewport_InterpolateMovement(const Unit *u, int *x, int *y);
+static bool Viewport_InterpolateMovement(const Unit *u, int *x, int *y);
 
 /*--------------------------------------------------------------*/
 
@@ -1628,11 +1628,8 @@ Viewport_DrawAirUnit(const Unit *u)
 		return;
 
 	int x, y;
-	if (!Map_IsPositionInViewport(u->o.position, &x, &y))
+	if (!Viewport_InterpolateMovement(u, &x, &y))
 		return;
-
-	if (enhancement_smooth_unit_animation != SMOOTH_UNIT_ANIMATION_DISABLE)
-		Viewport_InterpolateMovement(u, &x, &y);
 
 	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 	const bool smooth_rotation =
@@ -1859,32 +1856,19 @@ Viewport_RenderBrush(int x, int y, int blurx)
 	Viewport_DrawInterface(g_playerHouseID, x, blurx);
 }
 
-static void
+static bool
 Viewport_InterpolateMovement(const Unit *u, int *x, int *y)
 {
-	const double frame = Timer_GetUnitMovementFrame();
-	const uint16 speedPerTick = Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false);
+	if (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE) {
+		return Map_IsPositionInViewport(u->o.position, x, y);
+	}
+	else {
+		const double frame = Timer_GetUnitMovementFrame();
+		tile32 pos = Unit_GetNextDestination(u);
 
-	if (((u->speedRemainder + speedPerTick) & 0xFF00) == 0)
-		return;
+		pos.x = u->lastPosition.x + ((int)pos.x - u->lastPosition.x) * frame;
+		pos.y = u->lastPosition.y + ((int)pos.y - u->lastPosition.y) * frame;
 
-	const float speed = speedPerTick * frame;
-
-	tile32 origin;
-	origin.x = *x;
-	origin.y = *y;
-
-	int destx, desty;
-	Map_IsPositionInViewport(u->currentDestination, &destx, &desty);
-
-	const int dx = abs(destx - *x);
-	const int dy = abs(desty - *y);
-
-	int dist = max(dx, dy) + min(dx, dy) / 2;
-	dist = min(u->speed * speed / 256.0f, dist);
-
-	const tile32 pos = Tile_MoveByDirection(origin, u->orientation[0].current, dist);
-
-	*x = (int16)pos.x;
-	*y = (int16)pos.y;
+		return Map_IsPositionInViewport(pos, x, y);
+	}
 }

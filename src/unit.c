@@ -230,9 +230,25 @@ static void Unit_Rotate(Unit *unit, uint16 level)
 	Unit_UpdateMap(2, unit);
 }
 
+tile32
+Unit_GetNextDestination(const Unit *u)
+{
+	if ((enhancement_true_game_speed_adjustment && u->speedPerTick == 255) ||
+		(u->speedRemainder + Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false) > 0xFF)) {
+		const int dist = min(u->speed * 16, Tile_GetDistance(u->o.position, u->currentDestination) + 16);
+
+		return Tile_MoveByDirectionUnlimited(u->o.position, u->orientation[0].current, dist);
+	}
+	else {
+		return u->o.position;
+	}
+}
+
 static void Unit_MovementTick(Unit *unit)
 {
 	uint16 speed;
+
+	unit->lastPosition = Unit_GetNextDestination(unit);
 
 	if (unit->speed == 0) return;
 
@@ -574,6 +590,7 @@ Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, in
 	Unit_SetSpeed(u, 0);
 	u->speedRemainder = 0;
 
+	u->lastPosition     = position;
 	u->o.position       = position;
 	u->o.hitpoints      = ui->o.hitpoints;
 	u->currentDestination.x = 0;
