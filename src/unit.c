@@ -236,10 +236,15 @@ static void Unit_MovementTick(Unit *unit)
 
 	if (unit->speed == 0) return;
 
-	speed = unit->speedRemainder;
-	speed += Tools_AdjustToGameSpeed(unit->speedPerTick, 1, 255, false);
+	/* ENHANCEMENT -- always move units with maximum speedPerTick. */
+	if (enhancement_true_game_speed_adjustment && unit->speedPerTick == 255) {
+		speed = unit->speedRemainder + 256;
+	}
+	else {
+		speed = unit->speedRemainder + Tools_AdjustToGameSpeed(unit->speedPerTick, 1, 255, false);
+	}
 
-	if ((speed & 0xFF00) != 0) {
+	if (speed > 0xFF) {
 		Unit_Move(unit, min(unit->speed * 16, Tile_GetDistance(unit->o.position, unit->currentDestination) + 16));
 	}
 
