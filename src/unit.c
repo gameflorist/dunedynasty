@@ -1442,6 +1442,7 @@ Unit_RefreshFog(Unit *unit, bool unveil)
 
 	if (unit == NULL) return;
 	if (unit->o.flags.s.isNotOnMap) return;
+	if (unit->o.flags.s.inTransport) return;
 	if ((unit->o.position.x == 0xFFFF && unit->o.position.y == 0xFFFF) || (unit->o.position.x == 0 && unit->o.position.y == 0)) return;
 	if (!House_AreAllied(Unit_GetHouseID(unit), g_playerHouseID)) return;
 
