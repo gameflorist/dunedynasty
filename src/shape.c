@@ -98,7 +98,7 @@ Shape_DrawRemapRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
 
 	const int duration = Tools_AdjustToGameSpeed(4, 2, 8, true);
-	const int frame = clamp(0, duration + g_timerGame - g_tickUnitUnknown2, duration - 1);
+	const int frame = clamp(0, duration + g_timerGame - g_tickUnitRotation, duration - 1);
 	const int speed = orient->speed;
 
 	/* Based on Unit_Rotate. */
