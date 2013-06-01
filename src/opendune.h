@@ -52,6 +52,7 @@ extern int16 g_musicInBattle;
 extern void *g_readBuffer;
 extern uint32 g_readBufferSize;
 
+extern void GameLoop_LevelEnd(void);
 extern void GameLoop_TweakWidgetDimensions(void);
 extern void GameLoop_Main(bool new_game);
 extern void Game_Prepare(void);

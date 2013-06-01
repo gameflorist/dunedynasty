@@ -19,6 +19,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/enhancement.c
 	src/explosion.c
 	src/file.c
+	src/gameloop.c
 	src/gfx.c
 	src/gui/editbox.c
 	src/gui/font.c

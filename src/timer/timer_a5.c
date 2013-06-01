@@ -87,38 +87,44 @@ Timer_GetTimer(enum TimerType timer)
 void
 Timer_RegisterSource(void)
 {
-	ALLEGRO_EVENT_SOURCE *source = al_get_timer_event_source(s_timer[TIMER_GUI]);
-
-	al_register_event_source(s_timer_queue, source);
+	al_register_event_source(s_timer_queue, al_get_timer_event_source(s_timer[TIMER_GUI]));
+	al_register_event_source(s_timer_queue, al_get_timer_event_source(s_timer[TIMER_GAME]));
 	al_flush_event_queue(s_timer_queue);
 }
 
 void
 Timer_UnregisterSource(void)
 {
-	ALLEGRO_EVENT_SOURCE *source = al_get_timer_event_source(s_timer[TIMER_GUI]);
-
-	al_unregister_event_source(s_timer_queue, source);
+	al_unregister_event_source(s_timer_queue, al_get_timer_event_source(s_timer[TIMER_GUI]));
+	al_unregister_event_source(s_timer_queue, al_get_timer_event_source(s_timer[TIMER_GAME]));
 }
 
-void
+enum TimerType
 Timer_WaitForEvent(void)
 {
 	ALLEGRO_EVENT ev;
 	al_wait_for_event(s_timer_queue, &ev);
+
+	if (ev.timer.source == s_timer[TIMER_GUI]) {
+		return TIMER_GUI;
+	}
+	else {
+		return TIMER_GAME;
+	}
 }
 
 void
 Timer_Sleep(int tics)
 {
-	Timer_RegisterSource();
+	al_register_event_source(s_timer_queue, al_get_timer_event_source(s_timer[TIMER_GUI]));
+	al_flush_event_queue(s_timer_queue);
 
 	for (int i = 0; i < tics; i++) {
 		Timer_WaitForEvent();
 		Audio_PollMusic();
 	}
 
-	Timer_UnregisterSource();
+	al_unregister_event_source(s_timer_queue, al_get_timer_event_source(s_timer[TIMER_GUI]));
 }
 
 bool

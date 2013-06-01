@@ -49,7 +49,7 @@ extern int64_t Timer_GetTimer(enum TimerType timer);
 extern void Timer_Sleep(int tics);
 extern void Timer_RegisterSource(void);
 extern void Timer_UnregisterSource(void);
-extern void Timer_WaitForEvent(void);
+extern enum TimerType Timer_WaitForEvent(void);
 extern bool Timer_QueueIsEmpty(void);
 
 #if 0
