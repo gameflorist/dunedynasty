@@ -1109,7 +1109,7 @@ void Structure_ActivateSpecial(Structure *s)
 				s->countDown = g_table_houseInfo[s->o.houseID].specialCountDown;
 				Unit_SetAction(u, ACTION_SABOTAGE);
 			}
-			else if (enhancement_play_additional_voices) {
+			else if (enhancement_play_additional_voices && s->o.houseID == g_playerHouseID) {
 				Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 			}
 		} break;
