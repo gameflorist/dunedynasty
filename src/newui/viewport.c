@@ -30,7 +30,6 @@
 #include "../table/widgetinfo.h"
 #include "../tile.h"
 #include "../timer/timer.h"
-#include "../tools.h"
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"
 #include "../tools/orientation.h"

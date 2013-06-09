@@ -23,7 +23,6 @@
 #include "enhancement.h"
 #include "sprites.h"
 #include "timer/timer.h"
-#include "tools.h"
 #include "video/video.h"
 
 #define Video_DrawShape             VideoA5_DrawShape

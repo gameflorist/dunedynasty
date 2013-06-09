@@ -28,7 +28,6 @@
 #include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
-#include "../tools.h"
 #include "../tools/coord.h"
 #include "../unit.h"
 #include "../video/video.h"

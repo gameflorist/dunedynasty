@@ -24,7 +24,7 @@
 #include "../structure.h"
 #include "../table/strings.h"
 #include "../tile.h"
-#include "../tools.h"
+#include "../timer/timer.h"
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"
 #include "../tools/orientation.h"

@@ -26,7 +26,7 @@
 #include "../scenario.h"
 #include "../structure.h"
 #include "../table/strings.h"
-#include "../tools.h"
+#include "../timer/timer.h"
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"
 #include "../tools/random_general.h"

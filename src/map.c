@@ -30,7 +30,6 @@
 #include "table/widgetinfo.h"
 #include "team.h"
 #include "timer/timer.h"
-#include "tools.h"
 #include "tools/coord.h"
 #include "tools/encoded_index.h"
 #include "tools/random_general.h"
