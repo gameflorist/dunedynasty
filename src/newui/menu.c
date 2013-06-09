@@ -1599,11 +1599,8 @@ PickMusic_Initialise(void)
 					snprintf(si->text, sizeof(si->text), "%s", m->songname);
 				}
 				else if (lump_together) {
-					const char *str = l->songname;
-
-					if (c == 0) { /* Idle n: Title */
-						str += 8;
-					}
+					const char *sub = strchr(l->songname, ':');
+					const char *str = (sub == NULL) ? l->songname : (sub + 2);
 
 					snprintf(si->text, sizeof(si->text), "%s", str);
 				}
