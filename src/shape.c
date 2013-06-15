@@ -95,8 +95,7 @@ Shape_DrawRemapRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y
 {
 	Shape_FixXY(shapeID, x, y, windowID, flags, &x, &y);
 
-	const int duration = Tools_AdjustToGameSpeed(4, 2, 8, true);
-	const int frame = clamp(0, duration + g_timerGame - g_tickUnitRotation, duration - 1);
+	const double frame = Timer_GetUnitRotationFrame();
 	const int speed = orient->speed;
 
 	/* Based on Unit_Rotate. */
@@ -107,10 +106,10 @@ Shape_DrawRemapRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y
 	if (diff < -128) diff += 256;
 
 	if (abs(speed) >= abs(diff)) {
-		orient256 = orient->current + diff * frame / duration;
+		orient256 = orient->current + diff * frame;
 	}
 	else {
-		orient256 = orient->current + speed * frame / duration;
+		orient256 = orient->current + speed * frame;
 	}
 
 	Video_DrawShapeRotate(shapeID, houseID, x, y, orient256, flags & 0x3F0);

@@ -1,6 +1,7 @@
 /* timer.c */
 
 #include <assert.h>
+#include "../os/math.h"
 
 #include "timer.h"
 
@@ -90,4 +91,22 @@ Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum,
 
 	/* Never reached, but avoids compiler errors */
 	return normal;
+}
+
+double
+Timer_GetUnitMovementFrame(void)
+{
+	const int duration = 3;
+	const int frame = clamp(0, duration + g_timerGame - g_tickUnitMovement, duration - 1);
+
+	return (double)frame / duration;
+}
+
+double
+Timer_GetUnitRotationFrame(void)
+{
+	const int duration = Tools_AdjustToGameSpeed(4, 2, 8, true);
+	const int frame = clamp(0, duration + g_timerGame - g_tickUnitRotation, duration - 1);
+
+	return (double)frame / duration;
 }

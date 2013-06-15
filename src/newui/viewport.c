@@ -1862,13 +1862,13 @@ Viewport_RenderBrush(int x, int y, int blurx)
 static void
 Viewport_InterpolateMovement(const Unit *u, int *x, int *y)
 {
-	const int frame = clamp(0, (3 + g_timerGame - g_tickUnitMovement), 2);
+	const double frame = Timer_GetUnitMovementFrame();
 	const uint16 speedPerTick = Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false);
 
 	if (((u->speedRemainder + speedPerTick) & 0xFF00) == 0)
 		return;
 
-	const float speed = speedPerTick * frame / 3.0f;
+	const float speed = speedPerTick * frame;
 
 	tile32 origin;
 	origin.x = *x;

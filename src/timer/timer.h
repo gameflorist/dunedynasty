@@ -41,6 +41,8 @@ extern int64_t g_tickUnitDeviation;
 
 extern void Timer_ResetScriptTimers(void);
 extern uint16 Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum, bool inverseSpeed);
+extern double Timer_GetUnitMovementFrame(void);
+extern double Timer_GetUnitRotationFrame(void);
 
 extern bool Timer_SetTimer(enum TimerType timer, bool set);
 extern int64_t Timer_GetTimer(enum TimerType timer);
