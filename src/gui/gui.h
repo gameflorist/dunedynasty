@@ -62,7 +62,7 @@ extern uint8 g_remap[256];
 extern uint16 g_productionStringID;
 
 extern uint16 g_viewportMessageCounter;
-extern char *g_viewportMessageText;
+extern const char *g_viewportMessageText;
 extern uint16 g_viewportPosition;
 extern int g_viewport_scrollOffsetX;
 extern int g_viewport_scrollOffsetY;

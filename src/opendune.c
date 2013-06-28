@@ -352,10 +352,10 @@ static void GameLoop_LevelEnd(void)
 }
 
 #if 0
-static void GameLoop_DrawMenu(char **strings);
-static void GameLoop_DrawText2(char *string, uint16 left, uint16 top, uint8 fgColourNormal, uint8 fgColourSelected, uint8 bgColour);
+static void GameLoop_DrawMenu(const char **strings);
+static void GameLoop_DrawText2(const char *string, uint16 left, uint16 top, uint8 fgColourNormal, uint8 fgColourSelected, uint8 bgColour);
 static bool GameLoop_IsInRange(uint16 x, uint16 y, uint16 minX, uint16 minY, uint16 maxX, uint16 maxY);
-static uint16 GameLoop_HandleEvents(char **strings);
+static uint16 GameLoop_HandleEvents(const char **strings);
 #endif
 
 static void Window_WidgetClick_Create(void)

@@ -66,7 +66,7 @@ uint16 g_cursorSpriteID;
 bool g_structureHighHealth;
 
 uint16 g_viewportMessageCounter;                            /*!< Countdown counter for displaying #g_viewportMessageText, bit 0 means 'display the text'. */
-char *g_viewportMessageText;                                /*!< If not \c NULL, message text displayed in the viewport. */
+const char *g_viewportMessageText;                          /*!< If not \c NULL, message text displayed in the viewport. */
 
 uint16 g_viewportPosition;                                  /*!< Top-left tile of the viewport. */
 int g_viewport_scrollOffsetX;
@@ -1858,8 +1858,8 @@ extern uint16 GUI_HallOfFame_Tick(void);
 
 static Widget *GUI_HallOfFame_CreateButtons(HallOfFameStruct *data)
 {
-	char *resumeString;
-	char *clearString;
+	const char *resumeString;
+	const char *clearString;
 	Widget *wClear;
 	Widget *wResume;
 	uint16 width;
@@ -2177,8 +2177,8 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 	VARIABLE_NOT_USED(show);
 
 	Screen oldScreenID;
-	char *scoreString;
-	char *battleString;
+	const char *scoreString;
+	const char *battleString;
 	uint16 width = 0;
 	uint16 offsetY;
 	uint16 scoreX;
