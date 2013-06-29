@@ -262,9 +262,9 @@ void GameLoop_Structure(void)
 
 							if (s->o.houseID == g_playerHouseID) {
 								if (s->o.type != STRUCTURE_BARRACKS && s->o.type != STRUCTURE_WOR_TROOPER) {
-									uint16 stringID = 0x83; /* "is completed and awaiting orders." */
-									if (s->o.type == STRUCTURE_HIGH_TECH) stringID = 0x81; /* "is complete." */
-									if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) stringID = 0x82; /* "is completed and ready to place." */
+									uint16 stringID = STR_IS_COMPLETED_AND_AWAITING_ORDERS;
+									if (s->o.type == STRUCTURE_HIGH_TECH) stringID = STR_IS_COMPLETE;
+									if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) stringID = STR_IS_COMPLETED_AND_READY_TO_PLACE;
 
 									GUI_DisplayText("%s %s", 0, String_Get_ByIndex(oi->stringID_full), String_Get_ByIndex(stringID));
 
@@ -305,7 +305,7 @@ void GameLoop_Structure(void)
 					} else {
 						/* Out of money means the building gets put on hold */
 						if (s->o.houseID == g_playerHouseID) {
-							s->o.type |= 0x4000;
+							s->o.flags.s.onHold = true;
 							GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_FUNDS_CONSTRUCTION_IS_HALTED), 0);
 						}
 					}
@@ -1698,7 +1698,7 @@ void Structure_CancelBuild(Structure *s)
 bool Structure_BuildObject(Structure *s, uint16 objectType)
 {
 	const StructureInfo *si;
-	char *str;
+	const char *str;
 	Object *o;
 	ObjectInfo *oi;
 	assert(objectType != 0xFFFF); /* Factory window. */
