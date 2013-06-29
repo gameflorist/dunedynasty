@@ -305,7 +305,8 @@ void GameLoop_Structure(void)
 					} else {
 						/* Out of money means the building gets put on hold */
 						if (s->o.houseID == g_playerHouseID) {
-							s->o.flags.s.onHold = true;
+							if (!enhancement_construction_does_not_pause)
+								s->o.flags.s.onHold = true;
 							GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_FUNDS_CONSTRUCTION_IS_HALTED), 0);
 						}
 					}

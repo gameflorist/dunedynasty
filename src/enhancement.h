@@ -48,6 +48,7 @@ extern bool const enhancement_fix_typos;
 
 extern bool enhancement_ai_respects_structure_placement;
 extern bool enhancement_brutal_ai;
+extern bool enhancement_construction_does_not_pause;
 extern enum HealthBarMode enhancement_draw_health_bars;
 extern bool enhancement_fog_covers_units;
 extern bool enhancement_fog_of_war;

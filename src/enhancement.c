@@ -24,6 +24,12 @@ bool enhancement_ai_respects_structure_placement = true;
 bool enhancement_brutal_ai = false;
 
 /**
+ * In Dune II, construction automatically goes on hold when you run
+ * out of funds.  This behaviour does not work well with build queues.
+ */
+bool enhancement_construction_does_not_pause = true;
+
+/**
  * Draw structure and unit health bars in directly in the viewport.
  * Toggle in game with back-quote.
  */
