@@ -46,7 +46,8 @@ uint16 Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum, bo
  * @param id The encoded index to get the type of.
  * @return The type
  */
-IndexType Tools_Index_GetType(uint16 encoded)
+enum IndexType
+Tools_Index_GetType(uint16 encoded)
 {
 	switch(encoded & 0xC000) {
 		case 0x4000: return IT_UNIT;
@@ -75,7 +76,7 @@ uint16 Tools_Index_Decode(uint16 encoded)
  * @param type The type of the encoded Index.
  * @return The encoded Index.
  */
-uint16 Tools_Index_Encode(uint16 index, IndexType type)
+uint16 Tools_Index_Encode(uint16 index, enum IndexType type)
 {
 	switch (type) {
 		case IT_TILE: {

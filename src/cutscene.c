@@ -42,13 +42,13 @@ static uint16 s_houseAnimation_currentSoundEffect = 0; /* Current voice (index) 
 static bool s_subtitleActive = false; /* Unknown animation data. */
 
 /** Direction of change in the #GameLoop_PalettePart_Update function. */
-typedef enum PalettePartDirection {
+enum PalettePartDirection {
 	PPD_STOPPED,        /*!< Not changing. */
 	PPD_TO_NEW_PALETTE, /*!< Modifying towards #s_palettePartTarget */
 	PPD_TO_BLACK        /*!< Modifying towards all black. */
-} PalettePartDirection;
+};
 
-static PalettePartDirection s_palettePartDirection;    /*!< Direction of change. @see PalettePartDirection */
+static enum PalettePartDirection s_palettePartDirection;    /*!< Direction of change. @see PalettePartDirection */
 static int64_t              s_paletteAnimationTimeout; /*!< Timeout value for the next palette change. */
 static uint16               s_palettePartCount;        /*!< Number of steps left before the target palette is reached. */
 static uint8                s_palettePartTarget[18];   /*!< Target palette part (6 colours). */

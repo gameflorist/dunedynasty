@@ -9,7 +9,7 @@
 /**
  * Types of storage we support / understand.
  */
-typedef enum SaveLoadType {
+enum SaveLoadType {
 	SLDT_INVALID,                                           /*!< Invalid value. */
 	SLDT_UINT8,                                             /*!< 8bit unsigned integer. */
 	SLDT_UINT16,                                            /*!< 16bit unsigned integer. */
@@ -29,7 +29,7 @@ typedef enum SaveLoadType {
 	SLDT_CUSTOM,
 
 	SLDT_NULL                                               /*!< Not stored. */
-} SaveLoadType;
+};
 
 #define offset(c, m) (((size_t)&((c *)8)->m) - 8)
 #define item_size(c, m) sizeof(((c *)0)->m)
@@ -129,8 +129,8 @@ typedef enum SaveLoadType {
  */
 typedef struct SaveLoadDesc {
 	size_t offset;                                          /*!< The offset in the object, in bytes. */
-	SaveLoadType type_disk;                                 /*!< The type it is on disk. */
-	SaveLoadType type_memory;                               /*!< The type it is in memory. */
+	enum SaveLoadType type_disk;                            /*!< The type it is on disk. */
+	enum SaveLoadType type_memory;                          /*!< The type it is in memory. */
 	uint16 count;                                           /*!< The number of elements */
 	const struct SaveLoadDesc *sld;                         /*!< The SaveLoadDesc. */
 	size_t size;                                            /*!< The size of an element. */

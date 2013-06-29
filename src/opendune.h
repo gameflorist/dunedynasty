@@ -6,7 +6,7 @@
 #include <inttypes.h>
 #include "types.h"
 
-typedef enum GameMode {
+enum GameMode {
 	GM_MENU      = 0,
 	GM_NORMAL    = 1,
 	GM_RESTART   = 2,
@@ -14,7 +14,7 @@ typedef enum GameMode {
 	GM_WIN       = 4,
 	GM_LOSE      = 5,
 	GM_QUITGAME  = 6
-} GameMode;
+};
 
 enum GameOverlay {
 	GAMEOVERLAY_NONE,
@@ -31,7 +31,7 @@ enum GameOverlay {
 
 extern uint32 g_hintsShown1;
 extern uint32 g_hintsShown2;
-extern GameMode g_gameMode;
+extern enum GameMode g_gameMode;
 extern enum GameOverlay g_gameOverlay;
 extern uint16 g_campaignID;
 extern uint16 g_scenarioID;

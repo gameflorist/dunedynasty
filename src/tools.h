@@ -8,21 +8,21 @@
 /**
  * Types of encoded Index.
  */
-typedef enum IndexType {
+enum IndexType {
 	IT_NONE      = 0,
 	IT_TILE      = 1,
 	IT_UNIT      = 2,
 	IT_STRUCTURE = 3
-} IndexType;
+};
 
 struct Unit;
 struct Structure;
 struct Object;
 
 extern uint16 Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum, bool inverseSpeed);
-extern IndexType Tools_Index_GetType(uint16 encoded);
+extern enum IndexType Tools_Index_GetType(uint16 encoded);
 extern uint16 Tools_Index_Decode(uint16 encoded);
-extern uint16 Tools_Index_Encode(uint16 index, IndexType type);
+extern uint16 Tools_Index_Encode(uint16 index, enum IndexType type);
 extern bool Tools_Index_IsValid(uint16 encoded);
 extern uint16 Tools_Index_GetPackedTile(uint16 encoded);
 extern tile32 Tools_Index_GetTile(uint16 encoded);
