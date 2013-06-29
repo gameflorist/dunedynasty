@@ -8,7 +8,7 @@
 /**
  * Types of TeamActions available in the game.
  */
-typedef enum TeamActionType {
+enum TeamActionType {
 	TEAM_ACTION_NORMAL   = 0,
 	TEAM_ACTION_STAGING  = 1,
 	TEAM_ACTION_FLEE     = 2,
@@ -17,8 +17,7 @@ typedef enum TeamActionType {
 
 	TEAM_ACTION_MAX      = 5,
 	TEAM_ACTION_INVALID  = 0xFF
-} TeamActionType;
-
+};
 
 /**
  * flags for Team structure

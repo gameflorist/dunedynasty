@@ -10,7 +10,7 @@
 /**
  * The possible selection types.
  */
-typedef enum SelectionType {
+enum SelectionType {
 	SELECTIONTYPE_MENTAT    = 0,                            /*!< Used in most mentat screens. */
 	SELECTIONTYPE_TARGET    = 1,                            /*!< Used when attacking or moving a unit, the target screen. */
 	SELECTIONTYPE_PLACE     = 2,                            /*!< Used when placing a structure. */
@@ -21,7 +21,7 @@ typedef enum SelectionType {
 	SELECTIONTYPE_INTRO     = 7,                            /*!< Used in intro of the game. */
 
 	SELECTIONTYPE_MAX       = 8
-} SelectionType;
+};
 
 /**
  * Hall Of Fame data struct.

@@ -9,7 +9,7 @@
 /**
  * Types of Language available in the game.
  */
-typedef enum Language {
+enum Language {
 	LANGUAGE_ENGLISH     = 0,
 	LANGUAGE_FRENCH      = 1,
 	LANGUAGE_GERMAN      = 2,
@@ -18,7 +18,7 @@ typedef enum Language {
 
 	LANGUAGE_MAX         = 5,
 	LANGUAGE_INVALID     = 0xFF
-} Language;
+};
 
 extern const char * const g_languageSuffixes[LANGUAGE_MAX];
 extern const char * const g_gameSubtitle[3];

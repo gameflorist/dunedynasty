@@ -22,7 +22,7 @@ enum {
  * index i, the last one is one entry before the start of icon group i+1 (where 0
  * means EOF, as explained already).
  */
-typedef enum IconMapEntries {
+enum IconMapEntries {
 	ICM_ICONGROUP_COUNT,                 /*!< Number of icon groups. */
 	/* Icon groups. */
 	ICM_ICONGROUP_ROCK_CRATERS           =  1, /*!< Rock craters spriteIDs. */
@@ -52,7 +52,7 @@ typedef enum IconMapEntries {
 	ICM_ICONGROUP_SPICE_STORAGE_SILO     = 25, /*!< Spice storage spriteIDs. */
 	ICM_ICONGROUP_RADAR_OUTPOST          = 26, /*!< Radar outpost spriteIDs. */
 	ICM_ICONGROUP_EOF                    = 27  /*!< End of file spriteIDs. */
-} IconMapEntries;
+};
 
 extern uint8 *g_sprites[SHAPE_MAX];
 extern uint8 *g_spriteBuffer;

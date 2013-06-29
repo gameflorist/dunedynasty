@@ -6,7 +6,7 @@
 /**
  * The valid types for command in AnimationCommandStruct.
  */
-typedef enum AnimationCommand {
+enum AnimationCommand {
 	ANIMATION_STOP,                                         /*!< Gracefully stop with animation. Clean up the tiles etc. */
 	ANIMATION_ABORT,                                        /*!< Abort animation. Leave it as it is. */
 	ANIMATION_SET_OVERLAY_SPRITE,                           /*!< Set a new overlay sprite. Param: the new overlay sprite. */
@@ -16,7 +16,7 @@ typedef enum AnimationCommand {
 	ANIMATION_SET_GROUND_SPRITE,                            /*!< Set a new ground sprite. Param: the new ground sprite. */
 	ANIMATION_FORWARD,                                      /*!< Forward the animation. Param: how many commands to forward. */
 	ANIMATION_SET_ICONGROUP                                 /*!< Set a newicongroup. Param: the new icongroup. */
-} AnimationCommand;
+};
 
 /**
  * How a single command looks like.

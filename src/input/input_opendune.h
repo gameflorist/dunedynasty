@@ -8,7 +8,7 @@
 /**
  * Several flags for input handling.
  */
-typedef enum InputFlagsEnum {
+enum InputFlagsEnum {
 	INPUT_FLAG_KEY_REPEAT   = 0x0001,                       /*!< Allow repeated input of the same key. */
 	INPUT_FLAG_NO_TRANSLATE = 0x0002,                       /*!< Don't translate a key. */
 	INPUT_FLAG_UNKNOWN_0004 = 0x0004,                       /*!< ?? */
@@ -23,17 +23,17 @@ typedef enum InputFlagsEnum {
 	INPUT_FLAG_KEY_RELEASE  = 0x0800,                       /*!< Record release of keys (not for buttons). */
 	INPUT_FLAG_NO_CLICK     = 0x1000,                       /*!< Don't record mouse button clicks. */
 	INPUT_FLAG_UNKNOWN_2000 = 0x2000                        /*!< ?? */
-} InputFlagsEnum;
+};
 
 /**
  * There are three different mouse modes.
  *  It looks like only the first (normal) mode is ever used.
  */
-typedef enum InputMouseMode {
+enum InputMouseMode {
 	INPUT_MOUSE_MODE_NORMAL = 0,                            /*!< Normal mouse mode. */
 	INPUT_MOUSE_MODE_RECORD = 1,                            /*!< Record mouse events to a file. */
 	INPUT_MOUSE_MODE_PLAY   = 2                             /*!< Plays mouse events from a file. */
-} InputMouseMode;
+};
 
 extern void Input_Init(void);
 extern void Input_EventHandler(uint8 key);

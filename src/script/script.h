@@ -12,7 +12,7 @@ enum {
 /**
  * The valid types for command in ScriptInfo->start array.
  */
-typedef enum ScriptCommand {
+enum ScriptCommand {
 	SCRIPT_JUMP                    = 0,                     /*!< Jump to the instruction given by the parameter. */
 	SCRIPT_SETRETURNVALUE          = 1,                     /*!< Set the return value to the value given by the parameter. */
 	SCRIPT_PUSH_RETURN_OR_LOCATION = 2,                     /*!< Push the return value (parameter = 0) or the location + framepointer (parameter = 1) on the stack. */
@@ -32,7 +32,7 @@ typedef enum ScriptCommand {
 	SCRIPT_UNARY                   = 16,                    /*!< Perform unary operations. */
 	SCRIPT_BINARY                  = 17,                    /*!< Perform binary operations. */
 	SCRIPT_RETURN                  = 18                     /*!< Return from a subroutine. */
-} ScriptCommand;
+};
 
 /**
  * A ScriptEngine as stored in the memory.

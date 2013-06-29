@@ -6,7 +6,7 @@
 /**
  * Types of Explosions available in the game.
  */
-typedef enum ExplosionType {
+enum ExplosionType {
 	EXPLOSION_IMPACT_SMALL        = 0,
 	EXPLOSION_IMPACT_MEDIUM       = 1,
 	EXPLOSION_IMPACT_LARGE        = 2,
@@ -30,12 +30,12 @@ typedef enum ExplosionType {
 
 	EXPLOSIONTYPE_MAX             = 20,
 	EXPLOSION_INVALID             = 0xFFFF
-} ExplosionType;
+};
 
 /**
  * The valid types for command in Explosion.
  */
-typedef enum ExplosionCommand {
+enum ExplosionCommand {
 	EXPLOSION_STOP,                                         /*!< Stop the Explosion. */
 	EXPLOSION_SET_SPRITE,                                   /*!< Set the sprite for the Explosion. */
 	EXPLOSION_SET_TIMEOUT,                                  /*!< Set the timeout for the Explosion. */
@@ -46,7 +46,7 @@ typedef enum ExplosionCommand {
 	EXPLOSION_SCREEN_SHAKE,                                 /*!< Shake the screen around. */
 	EXPLOSION_SET_ANIMATION,                                /*!< Set the animation for the Explosion. */
 	EXPLOSION_BLOOM_EXPLOSION                               /*!< Make a bloom explode. */
-} ExplosionCommand;
+};
 
 /**
  * The layout of a single explosion command.

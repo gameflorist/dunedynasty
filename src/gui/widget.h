@@ -9,7 +9,7 @@
 /**
  * Types of DrawMode available in the game.
  */
-typedef enum DrawMode {
+enum DrawMode {
 	DRAW_MODE_NONE                = 0,                      /*!< Draw nothing. */
 	DRAW_MODE_SPRITE              = 1,                      /*!< Draw a sprite. */
 	DRAW_MODE_TEXT                = 2,                      /*!< Draw text. */
@@ -19,7 +19,7 @@ typedef enum DrawMode {
 	DRAW_MODE_XORFILLED_RECTANGLE = 6,                      /*!< Draw a filled rectangle using xor. */
 
 	DRAW_MODE_MAX             = 7
-} DrawMode;
+};
 
 enum WindowID {
 	WINDOWID_MODAL_MESSAGE      = 1,

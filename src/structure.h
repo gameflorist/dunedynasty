@@ -9,7 +9,7 @@
 #include "object.h"
 
 /** Available structure layouts. */
-typedef enum StructureLayout {
+enum StructureLayout {
 	STRUCTURE_LAYOUT_1x1 = 0,
 	STRUCTURE_LAYOUT_2x1 = 1,
 	STRUCTURE_LAYOUT_1x2 = 2,
@@ -19,16 +19,16 @@ typedef enum StructureLayout {
 	STRUCTURE_LAYOUT_3x3 = 6,
 
 	STRUCTURE_LAYOUT_MAX = 7
-} StructureLayout;
+};
 
 /** States a structure can be in */
-typedef enum StructureState {
+enum StructureState {
 	STRUCTURE_STATE_DETECT    = -2,                        /*!< Used when setting state, meaning to detect which state it has by looking at other properties. */
 	STRUCTURE_STATE_JUSTBUILT = -1,                        /*!< This shows you the building animation etc. */
 	STRUCTURE_STATE_IDLE      = 0,                         /*!< Structure is doing nothing. */
 	STRUCTURE_STATE_BUSY      = 1,                         /*!< Structure is busy (harvester in refinery, unit in repair, .. */
 	STRUCTURE_STATE_READY     = 2                          /*!< Structure is ready and unit will be deployed soon. */
-} StructureState;
+};
 
 /**
  * A Structure as stored in the memory.

@@ -13,7 +13,7 @@ enum {
 };
 
 /** Types of available landscapes. */
-typedef enum LandscapeType {
+enum LandscapeType {
 	LST_NORMAL_SAND       =  0,                             /*<! Flat sand. */
 	LST_PARTIAL_ROCK      =  1,                             /*!< Edge of a rocky area (mostly sand). */
 	LST_ENTIRELY_DUNE     =  2,                             /*!< Entirely sand dunes. */
@@ -31,7 +31,7 @@ typedef enum LandscapeType {
 	LST_BLOOM_FIELD       = 14,                             /*!< Bloom field. */
 
 	LST_MAX               = 15
-} LandscapeType;
+};
 
 MSVC_PACKED_BEGIN
 /**
