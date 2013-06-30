@@ -857,7 +857,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 1 - Level 4: Harkonnen */
 		{ /* 0 */
-			/* stringID       */ STR_AT_THE_EMPERORS_PALACE3,
+			/* stringID       */ STR_CUTSCENE_4_HARKONNEN_1,
 			/* colour         */ 0,
 			/* animationID    */ 0,
 			/* top            */ 85,
@@ -868,7 +868,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_YOU_RECEIVE_THE_ASSISTANCEYOU_REQUIRE_AND_THEN_FAIL_ME,
+			/* stringID       */ STR_CUTSCENE_4_HARKONNEN_2,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -879,7 +879,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_NO_YOUR,
+			/* stringID       */ STR_CUTSCENE_4_HARKONNEN_3,
 			/* colour         */ 2,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -890,7 +890,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_MY_SARDAUKAR_COULD_HELP_DEFEAT_THEHARKONNEN_BUT_YOU_WASTED_THEM,
+			/* stringID       */ STR_CUTSCENE_4_HARKONNEN_4,
 			/* colour         */ 4,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -901,7 +901,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_WE_DIDNT_HAVE,
+			/* stringID       */ STR_CUTSCENE_4_HARKONNEN_5,
 			/* colour         */ 2,
 			/* animationID    */ 3,
 			/* top            */ 154,
@@ -912,7 +912,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 5 */
-			/* stringID       */ STR_I_WANT_NO_EXCUSESDO_NOT_FAIL_ME_AGAIN,
+			/* stringID       */ STR_CUTSCENE_4_HARKONNEN_6,
 			/* colour         */ 4,
 			/* animationID    */ 3,
 			/* top            */ 154,
@@ -936,7 +936,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 2 - Level 4: Atreides */
 		{ /* 0 */
-			/* stringID       */ STR_AT_THE_EMPERORS_PALACE,
+			/* stringID       */ STR_CUTSCENE_4_ATREIDES_1,
 			/* colour         */ 1,
 			/* animationID    */ 0,
 			/* top            */ 85,
@@ -947,7 +947,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_YOU_OF_ALL_PEOPLE_SHOULDUNDERSTAND_THE_IMPORTANCE_OF_VICTORY,
+			/* stringID       */ STR_CUTSCENE_4_ATREIDES_2,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -958,7 +958,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_YES_YOUR_EXCELLENCY_I,
+			/* stringID       */ STR_CUTSCENE_4_ATREIDES_3,
 			/* colour         */ 0,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -969,7 +969,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_YOU_LET_THE_ATREIDES_DEFEATYOU_AND_MY_SARDAUKAR,
+			/* stringID       */ STR_CUTSCENE_4_ATREIDES_4,
 			/* colour         */ 4,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -980,7 +980,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_I_DID_NOT_LET,
+			/* stringID       */ STR_CUTSCENE_4_ATREIDES_5,
 			/* colour         */ 0,
 			/* animationID    */ 3,
 			/* top            */ 154,
@@ -991,7 +991,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 5 */
-			/* stringID       */ STR_I_WILL_NOT_ALLOW_IT_TO_HAPPEN_AGAIN,
+			/* stringID       */ STR_CUTSCENE_4_ATREIDES_6,
 			/* colour         */ 4,
 			/* animationID    */ 3,
 			/* top            */ 154,
@@ -1015,7 +1015,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 3 - Level 4: Ordos */
 		{ /* 0 */
-			/* stringID       */ STR_AT_THE_EMPERORS_PALACE2,
+			/* stringID       */ STR_CUTSCENE_4_ORDOS_1,
 			/* colour         */ 2,
 			/* animationID    */ 0,
 			/* top            */ 85,
@@ -1026,7 +1026,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_I_CANNOT_BELIEVE_THEINCOMPETENCE_I_SEE_BEFORE_ME,
+			/* stringID       */ STR_CUTSCENE_4_ORDOS_2,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1037,7 +1037,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_YOUR_HIGHNESS,
+			/* stringID       */ STR_CUTSCENE_4_ORDOS_3,
 			/* colour         */ 1,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1048,7 +1048,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_I_GIVE_YOU_MY_SARDAUKAR_TO_ASSISTAGAINST_THE_ORDOS_AND_YOU_FAILED_ME,
+			/* stringID       */ STR_CUTSCENE_4_ORDOS_4,
 			/* colour         */ 4,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -1059,7 +1059,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_WE,
+			/* stringID       */ STR_CUTSCENE_4_ORDOS_5,
 			/* colour         */ 1,
 			/* animationID    */ 3,
 			/* top            */ 154,
@@ -1070,7 +1070,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 5 */
-			/* stringID       */ STR_DO_NOT_FAIL_ME_AGAINYOU_ARE_DISMISSED,
+			/* stringID       */ STR_CUTSCENE_4_ORDOS_6,
 			/* colour         */ 4,
 			/* animationID    */ 3,
 			/* top            */ 154,
@@ -1094,7 +1094,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 4 - Level 8: Harkonnen */
 		{ /* 0 */
-			/* stringID       */ STR_AT_THE_EMPERORS_PALACEON_DUNE3,
+			/* stringID       */ STR_CUTSCENE_8_HARKONNEN_1,
 			/* colour         */ 0,
 			/* animationID    */ 0,
 			/* top            */ 85,
@@ -1105,7 +1105,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_I_SHOULD_HAVE_KNOWN_YOUR_HOUSESCOULDNT_STAND_UP_TO_THE_HARKONNEN,
+			/* stringID       */ STR_CUTSCENE_8_HARKONNEN_2,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1116,7 +1116,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_EXCELLENCY_THEY_ARE,
+			/* stringID       */ STR_CUTSCENE_8_HARKONNEN_3,
 			/* colour         */ 2,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1127,7 +1127,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_SILENCE,
+			/* stringID       */ STR_CUTSCENE_8_HARKONNEN_4,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1138,7 +1138,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_YOU_ARE_TO_DEFEND_MY_PALACE,
+			/* stringID       */ STR_CUTSCENE_8_HARKONNEN_5,
 			/* colour         */ 4,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -1149,7 +1149,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 5 */
-			/* stringID       */ STR_I_WILL_SHOW_YOU_HOWTO_CRUSH_THE_HARKONNEN,
+			/* stringID       */ STR_CUTSCENE_8_HARKONNEN_6,
 			/* colour         */ 4,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -1173,7 +1173,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 5 - Level 8: Atreides */
 		{ /* 0 */
-			/* stringID       */ STR_AT_THE_EMPERORS_PALACEON_DUNE,
+			/* stringID       */ STR_CUTSCENE_8_ATREIDES_1,
 			/* colour         */ 1,
 			/* animationID    */ 0,
 			/* top            */ 85,
@@ -1184,7 +1184,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_FOOLSI_GAVE_YOU_WEAPONS_AND_TROOPS,
+			/* stringID       */ STR_CUTSCENE_8_ATREIDES_2,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1195,7 +1195,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_AND_STILL_YOU_FAILTO_DEFEAT_THE_ATREIDES,
+			/* stringID       */ STR_CUTSCENE_8_ATREIDES_3,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1206,7 +1206,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_BUT_EXCELL,
+			/* stringID       */ STR_CUTSCENE_8_ATREIDES_4,
 			/* colour         */ 0,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1217,7 +1217,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_ENOUGH_TOGETHER_WE_MUST_MAKESURE_THE_ATREIDES_DO_NOT_SUCCEED,
+			/* stringID       */ STR_CUTSCENE_8_ATREIDES_5,
 			/* colour         */ 4,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -1241,7 +1241,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 6 - Level 8: Ordos */
 		{ /* 0 */
-			/* stringID       */ STR_AT_THE_EMPERORS_PALACEON_DUNE2,
+			/* stringID       */ STR_CUTSCENE_8_ORDOS_1,
 			/* colour         */ 2,
 			/* animationID    */ 0,
 			/* top            */ 85,
@@ -1252,7 +1252,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_THE_ORDOS_WERE_NOTSUPPOSED_TO_GET_THIS_FAR,
+			/* stringID       */ STR_CUTSCENE_8_ORDOS_2,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1263,7 +1263,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_YOUR_HIGHNESS_LET_US_EXPLAIN,
+			/* stringID       */ STR_CUTSCENE_8_ORDOS_3,
 			/* colour         */ 1,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1274,7 +1274,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_NO_MORE_EXPLANATIONSYOU_ARE_TO_DEFEND_MY_PALACE,
+			/* stringID       */ STR_CUTSCENE_8_ORDOS_4,
 			/* colour         */ 4,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -1285,7 +1285,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_ONLY_TOGETHER_WILLWE_DEFEAT_THE_ORDOS,
+			/* stringID       */ STR_CUTSCENE_8_ORDOS_5,
 			/* colour         */ 4,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -1309,7 +1309,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 7 - Level 9: Harkonnen */
 		{ /* 0 */
-			/* stringID       */ STR_YOU_ARE_INDEED_NOT_ENTIRELYTRUE_TO_YOUR_WORD_EMPEROR,
+			/* stringID       */ STR_CUTSCENE_9_HARKONNEN_1,
 			/* colour         */ 0,
 			/* animationID    */ 0,
 			/* top            */ 154,
@@ -1320,7 +1320,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_YOU_HAVE_LIED_TO_US,
+			/* stringID       */ STR_CUTSCENE_9_HARKONNEN_2,
 			/* colour         */ 0,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1331,7 +1331,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_WHAT_LIES_WHAT_AREYOU_TALKING_ABOUT,
+			/* stringID       */ STR_CUTSCENE_9_HARKONNEN_3,
 			/* colour         */ 4,
 			/* animationID    */ 3,
 			/* top            */ 154,
@@ -1342,7 +1342,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_YOUR_LIES_OF_LOYALTYYOUR_DECEIT,
+			/* stringID       */ STR_CUTSCENE_9_HARKONNEN_4,
 			/* colour         */ 0,
 			/* animationID    */ 4,
 			/* top            */ 154,
@@ -1353,7 +1353,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_A_CRIME_FOR_WHICH_YOU_WILLINDEED_PAY_DEARLY,
+			/* stringID       */ STR_CUTSCENE_9_HARKONNEN_5,
 			/* colour         */ 0,
 			/* animationID    */ 5,
 			/* top            */ 154,
@@ -1364,7 +1364,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 5 */
-			/* stringID       */ STR_WITH_YOUR_LIFE,
+			/* stringID       */ STR_CUTSCENE_9_HARKONNEN_6,
 			/* colour         */ 0,
 			/* animationID    */ 5,
 			/* top            */ 154,
@@ -1375,7 +1375,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 6 */
-			/* stringID       */ STR_NO_NO_NOOO,
+			/* stringID       */ STR_CUTSCENE_9_HARKONNEN_7,
 			/* colour         */ 4,
 			/* animationID    */ 8,
 			/* top            */ 154,
@@ -1399,7 +1399,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 8 - Level 9: Atreides */
 		{ /* 0 */
-			/* stringID       */ STR_GREETINGS_EMPEROR,
+			/* stringID       */ STR_CUTSCENE_9_ATREIDES_1,
 			/* colour         */ 1,
 			/* animationID    */ 0,
 			/* top            */ 154,
@@ -1410,7 +1410,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_WHAT_IS_THE_MEANINGOF_THIS_INTRUSION,
+			/* stringID       */ STR_CUTSCENE_9_ATREIDES_2,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1421,7 +1421,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_YOU_ARE_FORMALLY_CHARGED_WITH_CRIMESOF_TREASON_AGAINST_HOUSE_ATREIDES,
+			/* stringID       */ STR_CUTSCENE_9_ATREIDES_3,
 			/* colour         */ 1,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -1432,7 +1432,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_THE_HOUSE_SHALL_DETERMINEYOUR_GUILT_OR_INNOCENCE,
+			/* stringID       */ STR_CUTSCENE_9_ATREIDES_4,
 			/* colour         */ 1,
 			/* animationID    */ 4,
 			/* top            */ 154,
@@ -1443,7 +1443,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_UNTIL_THEN_YOU_SHALL_NOLONGER_REIGN_AS_EMPEROR,
+			/* stringID       */ STR_CUTSCENE_9_ATREIDES_5,
 			/* colour         */ 1,
 			/* animationID    */ 4,
 			/* top            */ 154,
@@ -1467,7 +1467,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 
 	{ /* 9 - Level 9: Ordos */
 		{ /* 0 */
-			/* stringID       */ STR_YOU_ARE_AWARE_EMPEROR_THAT_WEHAVE_GROWN_WEARY_OF_YOUR_GAMES,
+			/* stringID       */ STR_CUTSCENE_9_ORDOS_1,
 			/* colour         */ 2,
 			/* animationID    */ 0,
 			/* top            */ 154,
@@ -1478,7 +1478,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 1 */
-			/* stringID       */ STR_WHAT_GAMES_WHAT_AREYOU_TALKING_ABOUT,
+			/* stringID       */ STR_CUTSCENE_9_ORDOS_2,
 			/* colour         */ 4,
 			/* animationID    */ 1,
 			/* top            */ 154,
@@ -1489,7 +1489,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 2 */
-			/* stringID       */ STR_I_AM_REFERRING_TOYOUR_GAME_OF_CHESS,
+			/* stringID       */ STR_CUTSCENE_9_ORDOS_3,
 			/* colour         */ 2,
 			/* animationID    */ 2,
 			/* top            */ 154,
@@ -1500,7 +1500,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 3 */
-			/* stringID       */ STR_WE_WERE_YOUR_PAWNS_ANDDUNE_WAS_YOUR_BOARD,
+			/* stringID       */ STR_CUTSCENE_9_ORDOS_4,
 			/* colour         */ 2,
 			/* animationID    */ 4,
 			/* top            */ 154,
@@ -1511,7 +1511,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 4 */
-			/* stringID       */ STR_WE_HAVE_DECIDED_TO_TAKE_MATTERSINTO_OUR_OWN_HANDS,
+			/* stringID       */ STR_CUTSCENE_9_ORDOS_5,
 			/* colour         */ 2,
 			/* animationID    */ 6,
 			/* top            */ 154,
@@ -1522,7 +1522,7 @@ const HouseAnimation_Subtitle g_table_houseAnimation_subtitle[HOUSEANIMATION_MAX
 		},
 
 		{ /* 5 */
-			/* stringID       */ STR_YOU_ARE_TO_BE_OUR_PAWNIN_OUR_GAME,
+			/* stringID       */ STR_CUTSCENE_9_ORDOS_6,
 			/* colour         */ 2,
 			/* animationID    */ 8,
 			/* top            */ 154,
