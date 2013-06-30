@@ -196,7 +196,7 @@ String_ReloadCampaignStrings(void)
 		for (unsigned int i = 0; i < 40; i++) {
 			/* Default string. */
 			const uint16 stringID
-				= STR_HOUSE_HARKONNENFROM_THE_DARK_WORLD_OF_GIEDI_PRIME_THE_SAVAGE_HOUSE_HARKONNEN_HAS_SPREAD_ACROSS_THE_UNIVERSE_A_CRUEL_PEOPLE_THE_HARKONNEN_ARE_RUTHLESS_TOWARDS_BOTH_FRIEND_AND_FOE_IN_THEIR_FANATICAL_PURSUIT_OF_POWER
+				= STR_ORDERS_HARKONNEN_0
 				+ 40 * g_table_houseRemap6to3[houseID] + i;
 
 			char *def = String_Get_ByIndex(stringID);
