@@ -3123,7 +3123,9 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 				 * plays the warning (a second time).
 				 */
 				{
-					const int hint = STR_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND - STR_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
+					const int hint
+						= STR_HINT_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND
+						- STR_HINT_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
 					assert(hint == 27);
 
 					const int mask = (1 << hint);
@@ -3137,7 +3139,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 				}
 
 				if (g_gameConfig.language == LANGUAGE_ENGLISH) {
-					GUI_DisplayHint(STR_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND, 105);
+					GUI_DisplayHint(STR_HINT_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND, 105);
 				}
 
 				hp->timerSandwormAttack = 8;

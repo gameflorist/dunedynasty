@@ -315,7 +315,7 @@ void String_Init(void)
 		if (str != NULL)
 			str[8] = 'i';
 
-		str = s_strings[STR_STARPORT_THE_STARPORT_IS_USED_TO_ORDER_AND_RECEIVE_SHIPMENTS_FROM_CHOAM];
+		str = s_strings[STR_HINT_STARPORT];
 		if (strncmp(str, "Startport", 9) == 0)
 			memmove(str + 4, str + 5, strlen(str + 5) + 1);
 	}
