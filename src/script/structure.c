@@ -25,6 +25,7 @@
 #include "../table/strings.h"
 #include "../tile.h"
 #include "../tools.h"
+#include "../tools/orientation.h"
 #include "../unit.h"
 
 
@@ -425,7 +426,7 @@ uint16 Script_Structure_RotateTurret(ScriptEngine *script)
 	if (rotation < 0 || rotation > 7) return 1;
 
 	/* Find what rotation we should have to look at the target */
-	rotationNeeded = Orientation_Orientation256ToOrientation8(Tile_GetDirection(s->o.position, lookAt));
+	rotationNeeded = Orientation_256To8(Tile_GetDirection(s->o.position, lookAt));
 
 	/* Do we need to rotate */
 	if (rotationNeeded == rotation) return 0;
@@ -473,7 +474,7 @@ uint16 Script_Structure_GetDirection(ScriptEngine *script)
 
 	tile = Tools_Index_GetTile(encoded);
 
-	return Orientation_Orientation256ToOrientation8(Tile_GetDirection(s->o.position, tile)) << 5;
+	return Orientation_256To8(Tile_GetDirection(s->o.position, tile)) << 5;
 }
 
 /**

@@ -22,6 +22,7 @@
 #include "tile.h"
 #include "timer/timer.h"
 #include "tools.h"
+#include "tools/orientation.h"
 
 #ifndef M_PI
 # define M_PI (3.14159265358979323846)
@@ -885,7 +886,7 @@ UnitAI_ArrangeBattleFormation(AISquad *squad)
 
 	float theta = atan2f(currx - targetx, targety - curry);
 	uint8 orient256 = (int8)(theta * 128.0f / M_PI);
-	uint8 orient8 = Orientation_Orientation256ToOrientation8(orient256);
+	uint8 orient8 = Orientation_256To8(orient256);
 	uint8 tangent8 = (orient8 + 2) & 0x7;
 	int distance = aisquad_attack_plan[squad->plan].distance3;
 	int rank = 1;

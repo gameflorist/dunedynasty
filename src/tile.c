@@ -11,6 +11,7 @@
 #include "house.h"
 #include "map.h"
 #include "tools.h"
+#include "tools/orientation.h"
 
 
 /**
@@ -566,7 +567,7 @@ tile32 Tile_MoveByOrientation(tile32 position, uint8 orientation)
 	x = Tile_GetX(position);
 	y = Tile_GetY(position);
 
-	orientation = Orientation_Orientation256ToOrientation8(orientation);
+	orientation = Orientation_256To8(orientation);
 
 	x += xOffsets[orientation];
 	y += yOffsets[orientation];
@@ -577,24 +578,4 @@ tile32 Tile_MoveByOrientation(tile32 position, uint8 orientation)
 	position.y = y;
 
 	return position;
-}
-
-/**
- * Convert an orientation that goes from 0 .. 255 to one that goes from 0 .. 7.
- * @param orientation The 256-based orientation.
- * @return A 8-based orientation.
- */
-uint8 Orientation_Orientation256ToOrientation8(uint8 orientation)
-{
-	return ((orientation + 16) / 32) & 0x7;
-}
-
-/**
- * Convert an orientation that goes from 0 .. 255 to one that goes from 0 .. 15.
- * @param orientation The 256-based orientation.
- * @return A 16-based orientation.
- */
-uint8 Orientation_Orientation256ToOrientation16(uint8 orientation)
-{
-	return ((orientation + 8) / 16) & 0xF;
 }

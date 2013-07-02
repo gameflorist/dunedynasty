@@ -37,6 +37,7 @@
 #include "tile.h"
 #include "timer/timer.h"
 #include "tools.h"
+#include "tools/orientation.h"
 
 
 int64_t g_tickUnitMovement  = 0;        /*!< Indicates next time the Movement function is executed. */
@@ -230,7 +231,7 @@ static void Unit_Rotate(Unit *unit, uint16 level)
 
 	unit->orientation[level].current = newCurrent;
 
-	if (Orientation_Orientation256ToOrientation16(newCurrent) == Orientation_Orientation256ToOrientation16(current) && Orientation_Orientation256ToOrientation8(newCurrent) == Orientation_Orientation256ToOrientation8(current)) return;
+	if (Orientation_256To16(newCurrent) == Orientation_256To16(current) && Orientation_256To8(newCurrent) == Orientation_256To8(current)) return;
 
 	Unit_UpdateMap(2, unit);
 }
@@ -1590,7 +1591,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 			uint16 type = Map_GetLandscapeType(packed);
 			/* Produce tracks in the sand */
 			if ((type == LST_NORMAL_SAND || type == LST_ENTIRELY_DUNE) && g_map[packed].overlaySpriteID == 0) {
-				uint8 animationID = Orientation_Orientation256ToOrientation8(unit->orientation[0].current);
+				uint8 animationID = Orientation_256To8(unit->orientation[0].current);
 
 				assert(animationID < 8);
 				Animation_Start(g_table_animation_unitMove[animationID], unit->o.position, 0, unit->o.houseID, 5);
@@ -3139,12 +3140,12 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 						if (s != NULL) {
 							/* ENHANCEMENT -- Dune2's calculation for the direction is cruder than it needs to be. */
 							if (enhancement_fix_enemy_approach_direction_warning) {
-								const uint8 orient16 = Orientation_Orientation256ToOrientation16(Tile_GetDirection(s->o.position, unit->o.position));
+								const uint8 orient16 = Orientation_256To16(Tile_GetDirection(s->o.position, unit->o.position));
 								const uint8 orient4 = ((orient16 + 1) & 0xF) / 4;
 
 								feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING_FROM_THE_NORTH + orient4;
 							} else {
-								const uint8 orient8 = Orientation_Orientation256ToOrientation8(Tile_GetDirection(s->o.position, unit->o.position));
+								const uint8 orient8 = Orientation_256To8(Tile_GetDirection(s->o.position, unit->o.position));
 								const uint8 orient4 = ((orient8 + 1) & 0x7) / 2;
 
 								feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING_FROM_THE_NORTH + orient4;

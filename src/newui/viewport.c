@@ -31,6 +31,7 @@
 #include "../tile.h"
 #include "../timer/timer.h"
 #include "../tools.h"
+#include "../tools/orientation.h"
 #include "../unit.h"
 #include "../video/video.h"
 
@@ -1448,7 +1449,7 @@ Viewport_DrawUnitTurret(const Unit *u, const UnitInfo *ui, int x, int y)
 		{-1, -3}, { 0, -3}, {-2, -4}, {1, -3}
 	};
 
-	uint8 orientation = Orientation_Orientation256ToOrientation8(u->orientation[ui->o.flags.hasTurret ? 1 : 0].current);
+	uint8 orientation = Orientation_256To8(u->orientation[ui->o.flags.hasTurret ? 1 : 0].current);
 	enum ShapeID shapeID = ui->turretSpriteID + values_32A4[orientation][0];
 	uint16 spriteFlags = values_32A4[orientation][1];
 
@@ -1514,7 +1515,7 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 	uint16 index;
 
 	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
-	uint8 orientation = Orientation_Orientation256ToOrientation8(u->orientation[0].current);
+	uint8 orientation = Orientation_256To8(u->orientation[0].current);
 
 	if (u->spriteOffset >= 0 || ui->destroyedSpriteID == 0) {
 		index = ui->groundSpriteID;
@@ -1647,7 +1648,7 @@ Viewport_DrawAirUnit(const Unit *u)
 
 		case DISPLAYMODE_UNIT: /* carryall, frigate */
 			if (!smooth_rotation) {
-				orientation = Orientation_Orientation256ToOrientation8(orientation);
+				orientation = Orientation_256To8(orientation);
 
 				index += values_32E4[orientation][0];
 				s_spriteFlags |= values_32E4[orientation][1];
@@ -1655,7 +1656,7 @@ Viewport_DrawAirUnit(const Unit *u)
 			break;
 
 		case DISPLAYMODE_ROCKET: /* rockets */
-			orientation = Orientation_Orientation256ToOrientation16(orientation);
+			orientation = Orientation_256To16(orientation);
 
 			index += values_3304[orientation][0];
 			s_spriteFlags |= values_3304[orientation][1];
@@ -1663,7 +1664,7 @@ Viewport_DrawAirUnit(const Unit *u)
 
 		case DISPLAYMODE_ORNITHOPTER: /* ornithopter */
 			if (!smooth_rotation) {
-				orientation = Orientation_Orientation256ToOrientation8(orientation);
+				orientation = Orientation_256To8(orientation);
 
 				index += (values_32E4[orientation][0] * 3);
 				s_spriteFlags |= values_32E4[orientation][1];

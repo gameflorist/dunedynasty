@@ -31,7 +31,4 @@ extern tile32 Tile_MoveByRandom(tile32 tile, uint16 distance, bool arg0C);
 extern int8 Tile_GetDirection(tile32 from, tile32 to);
 extern tile32 Tile_MoveByOrientation(tile32 position, uint8 orientation);
 
-extern uint8 Orientation_Orientation256ToOrientation8(uint8 orientation);
-extern uint8 Orientation_Orientation256ToOrientation16(uint8 orientation);
-
 #endif /* TILE_H */
