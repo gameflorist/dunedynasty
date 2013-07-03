@@ -16,6 +16,7 @@
 #include "../structure.h"
 #include "../tile.h"
 #include "../tools.h"
+#include "../tools/random_general.h"
 #include "../unit.h"
 
 /**

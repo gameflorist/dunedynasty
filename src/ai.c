@@ -23,6 +23,7 @@
 #include "timer/timer.h"
 #include "tools.h"
 #include "tools/orientation.h"
+#include "tools/random_general.h"
 
 #ifndef M_PI
 # define M_PI (3.14159265358979323846)

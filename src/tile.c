@@ -10,8 +10,8 @@
 
 #include "house.h"
 #include "map.h"
-#include "tools.h"
 #include "tools/orientation.h"
+#include "tools/random_general.h"
 
 
 /**

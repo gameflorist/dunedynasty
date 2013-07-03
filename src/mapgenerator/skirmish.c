@@ -20,6 +20,7 @@
 #include "../tile.h"
 #include "../timer/timer.h"
 #include "../tools.h"
+#include "../tools/random_general.h"
 
 typedef struct {
 	int x, y;

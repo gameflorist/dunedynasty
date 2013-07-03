@@ -21,6 +21,7 @@
 #include "../tile.h"
 #include "../timer/timer.h"
 #include "../tools.h"
+#include "../tools/random_general.h"
 
 bool g_enable_audio;
 

@@ -38,6 +38,7 @@
 #include "timer/timer.h"
 #include "tools.h"
 #include "tools/orientation.h"
+#include "tools/random_general.h"
 
 
 int64_t g_tickUnitMovement  = 0;        /*!< Indicates next time the Movement function is executed. */

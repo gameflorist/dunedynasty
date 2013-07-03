@@ -31,6 +31,7 @@
 #include "team.h"
 #include "timer/timer.h"
 #include "tools.h"
+#include "tools/random_general.h"
 #include "tile.h"
 #include "unit.h"
 #include "video/video.h"

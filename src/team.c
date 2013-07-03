@@ -13,7 +13,7 @@
 #include "pool/team.h"
 #include "pool/house.h"
 #include "timer/timer.h"
-#include "tools.h"
+#include "tools/random_general.h"
 
 static int64_t s_tickTeamGameLoop = 0; /*!< Indicates next time the GameLoop function is executed. */
 
