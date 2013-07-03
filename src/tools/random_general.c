@@ -6,8 +6,15 @@
 
 #include "random_general.h"
 
+/** variable_76A2. */
 static uint8 s_seed[4];
 
+/**
+ * @brief   Sets s_seed (variable_76A2).
+ * @details f__257A_000D_001A_3B75 between labels (l__0090, l__00AC),
+ *          f__257A_000D_001A_3B75 between labels (l__00FD, l__0125),
+ *          f__B4B8_0000_001F_3BC3 between labels (l__0000, l__001F).
+ */
 void
 Tools_Random_Seed(uint32 seed)
 {
@@ -17,6 +24,10 @@ Tools_Random_Seed(uint32 seed)
 	s_seed[3] = (seed >> 24) & 0xFF;
 }
 
+/**
+ * @brief   f__2BB4_0004_0027_DC1D.
+ * @details Likely to have been hand-written assembly.
+ */
 uint8
 Tools_Random_256(void)
 {
