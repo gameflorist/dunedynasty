@@ -769,8 +769,8 @@ void Unit_Sort(void)
 
 		u1 = g_unitFindArray[i];
 		u2 = g_unitFindArray[i + 1];
-		y1 = Tile_GetY(u1->o.position);
-		y2 = Tile_GetY(u2->o.position);
+		y1 = u1->o.position.y;
+		y2 = u2->o.position.y;
 		if (g_table_unitInfo[u1->o.type].movementType == MOVEMENT_FOOT) y1 -= 0x100;
 		if (g_table_unitInfo[u2->o.type].movementType == MOVEMENT_FOOT) y2 -= 0x100;
 

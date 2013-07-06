@@ -4,9 +4,6 @@
 #define TILE_H
 
 extern bool Tile_IsValid(tile32 tile);
-extern uint16 Tile_GetX(tile32 tile);
-extern uint16 Tile_GetY(tile32 tile);
-extern uint32 Tile_GetXY(tile32 tile);
 extern uint8 Tile_GetPosX(tile32 tile);
 extern uint8 Tile_GetPosY(tile32 tile);
 extern tile32 Tile_MakeXY(uint16 x, uint16 y);

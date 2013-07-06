@@ -66,39 +66,6 @@ uint8 Tile_GetPosY(tile32 tile)
 }
 
 /**
- * Returns the tile as an uint32 value.
- *
- * @param tile The tile32 to retrieve the data from.
- * @return The uint32 representation of the tile32.
- */
-uint32 Tile_GetXY(tile32 tile)
-{
-	return ((uint32)tile.x | ((uint32)tile.y << 16));
-}
-
-/**
- * Returns the X-position of the tile.
- *
- * @param tile The tile32 to get the X-position from.
- * @return The X-position of the tile.
- */
-uint16 Tile_GetX(tile32 tile)
-{
-	return tile.x;
-}
-
-/**
- * Returns the Y-position of the tile.
- *
- * @param tile The tile32 to get the Y-position from.
- * @return The Y-position of the tile.
- */
-uint16 Tile_GetY(tile32 tile)
-{
-	return tile.y;
-}
-
-/**
  * Packs a 32 bits tile struct into a 12 bits packed tile.
  *
  * @param tile The tile32 to get it's Y-position from.
@@ -425,8 +392,8 @@ tile32 Tile_MoveByRandom(tile32 tile, uint16 distance, bool center)
 
 	if (distance == 0) return tile;
 
-	x = Tile_GetX(tile);
-	y = Tile_GetY(tile);
+	x = tile.x;
+	y = tile.y;
 
 	newDistance = Tools_Random_256();
 	while (newDistance > distance) newDistance /= 2;
@@ -516,13 +483,14 @@ int8 Tile_GetDirection(tile32 from, tile32 to)
  */
 tile32 Tile_MoveByOrientation(tile32 position, uint8 orientation)
 {
-	uint16 xOffsets[8] = {0, 256, 256, 256, 0, -256, -256, -256};
-	uint16 yOffsets[8] = {-256, -256, 0, 256, 256, 256, 0, -256};
+	static const uint16 xOffsets[8] = {0, 256, 256, 256, 0, -256, -256, -256};
+	static const uint16 yOffsets[8] = {-256, -256, 0, 256, 256, 256, 0, -256};
+
 	uint16 x;
 	uint16 y;
 
-	x = Tile_GetX(position);
-	y = Tile_GetY(position);
+	x = position.x;
+	y = position.y;
 
 	orientation = Orientation_256To8(orientation);
 
