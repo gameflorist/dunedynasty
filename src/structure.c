@@ -37,6 +37,7 @@
 #include "tools.h"
 #include "tools/random_general.h"
 #include "tools/random_lcg.h"
+#include "tools/random_starport.h"
 #include "unit.h"
 
 
@@ -2119,13 +2120,6 @@ void Structure_HouseUnderAttack(uint8 houseID)
 	}
 }
 
-static uint16 GUI_FactoryWindow_CalculateStarportPrice(uint16 credits)
-{
-	credits = (credits / 10) * 4 + (credits / 10) * (Tools_RandomLCG_Range(0, 6) + Tools_RandomLCG_Range(0, 6));
-
-	return min(credits, 999);
-}
-
 static int GUI_FactoryWindow_Sorter(const void *a, const void *b)
 {
 	const FactoryWindowItem *pa = a;
@@ -2145,7 +2139,7 @@ void Structure_InitFactoryItems(const Structure *s)
 		uint16 seed = minutes + g_scenarioID + g_playerHouseID;
 		seed *= seed;
 
-		Tools_RandomLCG_Seed(seed);
+		Random_Starport_Seed(seed);
 	}
 
 	const StructureInfo *si = &g_table_structureInfo[s->o.type];
@@ -2179,7 +2173,7 @@ void Structure_InitFactoryItems(const Structure *s)
 			g_factoryWindowItems[g_factoryWindowTotal].shapeID = oi->spriteID;
 
 			if (s->o.type == STRUCTURE_STARPORT) {
-				g_factoryWindowItems[g_factoryWindowTotal].credits = GUI_FactoryWindow_CalculateStarportPrice(oi->buildCredits);
+				g_factoryWindowItems[g_factoryWindowTotal].credits = Random_Starport_CalculatePrice(oi->buildCredits);
 			}
 			else if (available == -1) {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = floor(si->o.buildCredits / 40) * 20;
