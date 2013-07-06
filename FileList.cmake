@@ -99,6 +99,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/tools/random_general.c
 	src/tools/random_lcg.c
 	src/tools/random_starport.c
+	src/tools/random_xorshift.c
 	src/unit.c
 	src/video/prim_a5.c
 	src/video/video_a5.c
