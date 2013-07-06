@@ -10,6 +10,7 @@
 
 #include "house.h"
 #include "map.h"
+#include "tools/coord.h"
 #include "tools/orientation.h"
 #include "tools/random_general.h"
 
@@ -109,18 +110,6 @@ uint16 Tile_PackTile(tile32 tile)
 }
 
 /**
- * Packs an x and y coordinate into a 12 bits packed tile.
- *
- * @param x The X-coordinate from.
- * @param x The Y-coordinate from.
- * @return The coordinates packed into 12 bits.
- */
-uint16 Tile_PackXY(uint16 x, uint16 y)
-{
-	return (y << 6) | x;
-}
-
-/**
  * Unpacks a 12 bits packed tile to a 32 bits tile struct.
  *
  * @param packed The uint16 containing the 12 bits packed tile information.
@@ -134,38 +123,6 @@ tile32 Tile_UnpackTile(uint16 packed)
 	tile.y = (((packed >> 6) & 0x3F) << 8) | 0x80;
 
 	return tile;
-}
-
-/**
- * Unpacks a 12 bits packed tile and retrieves the X-position.
- *
- * @param packed The uint16 containing the 12 bits packed tile.
- * @return The unpacked X-position.
- */
-uint8 Tile_GetPackedX(uint16 packed)
-{
-	return (packed >> 0) & 0x3F;
-}
-
-/**
- * Unpacks a 12 bits packed tile and retrieves the Y-position.
- *
- * @param packed The uint16 containing the 12 bits packed tile.
- * @return The unpacked Y-position.
- */
-uint8 Tile_GetPackedY(uint16 packed)
-{
-	return (packed >> 6) & 0x3F;
-}
-
-/**
- * Check if a packed tile is out of map. Useful after additional or substraction.
- * @param packed The packed tile to check.
- * @return True if and only if the tile is out of map.
- */
-bool Tile_IsOutOfMap(uint16 packed)
-{
-	return (packed & 0xF000) != 0;
 }
 
 /**

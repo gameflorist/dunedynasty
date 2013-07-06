@@ -20,6 +20,7 @@
 #include "../table/widgetinfo.h"
 #include "../tile.h"
 #include "../timer/timer.h"
+#include "../tools/coord.h"
 #include "../tools/random_general.h"
 #include "../tools/random_lcg.h"
 

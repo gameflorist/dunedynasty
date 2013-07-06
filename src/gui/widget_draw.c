@@ -21,7 +21,7 @@
 #include "../structure.h"
 #include "../table/strings.h"
 #include "../table/widgetinfo.h"
-#include "../tile.h"
+#include "../tools/coord.h"
 #include "../unit.h"
 #include "../video/video.h"
 

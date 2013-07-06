@@ -34,6 +34,7 @@
 #include "team.h"
 #include "tile.h"
 #include "timer/timer.h"
+#include "tools/coord.h"
 #include "unit.h"
 #include "gui/gui.h"
 

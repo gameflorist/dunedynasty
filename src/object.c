@@ -10,6 +10,7 @@
 #include "structure.h"
 #include "tile.h"
 #include "tools.h"
+#include "tools/coord.h"
 #include "tools/orientation.h"
 #include "unit.h"
 

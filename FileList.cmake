@@ -95,6 +95,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/tile.c
 	src/timer/timer_a5.c
 	src/tools.c
+	src/tools/coord.c
 	src/tools/orientation.c
 	src/tools/random_general.c
 	src/tools/random_lcg.c

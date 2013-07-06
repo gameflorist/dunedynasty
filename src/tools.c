@@ -11,6 +11,7 @@
 #include "pool/unit.h"
 #include "structure.h"
 #include "tile.h"
+#include "tools/coord.h"
 #include "unit.h"
 
 uint16 Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum, bool inverseSpeed)

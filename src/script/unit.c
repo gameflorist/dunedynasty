@@ -27,6 +27,7 @@
 #include "../structure.h"
 #include "../table/strings.h"
 #include "../tools.h"
+#include "../tools/coord.h"
 #include "../tools/random_general.h"
 #include "../tools/random_lcg.h"
 #include "../tile.h"

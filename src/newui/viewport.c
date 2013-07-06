@@ -31,6 +31,7 @@
 #include "../tile.h"
 #include "../timer/timer.h"
 #include "../tools.h"
+#include "../tools/coord.h"
 #include "../tools/orientation.h"
 #include "../tools/random_general.h"
 #include "../unit.h"
