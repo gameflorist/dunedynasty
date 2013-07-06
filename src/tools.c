@@ -13,8 +13,6 @@
 #include "tile.h"
 #include "unit.h"
 
-static uint32 s_randomLCG;
-
 uint16 Tools_AdjustToGameSpeed(uint16 normal, uint16 minimum, uint16 maximum, bool inverseSpeed)
 {
 	uint16 gameSpeed = g_gameConfig.gameSpeed;
@@ -228,47 +226,4 @@ Object *Tools_Index_GetObject(uint16 encoded)
 
 		default: return NULL;
 	}
-}
-
-/**
- * Set the seed for the LCG randomizer.
- */
-void Tools_RandomLCG_Seed(uint16 seed)
-{
-	s_randomLCG = (uint16)seed;
-}
-
-/**
- * Get a random value from the LCG.
- */
-static int16 Tools_RandomLCG(void)
-{
-	/* Borland C/C++ 'a' and 'b' value, bits 30..16, as used by Dune2 */
-	s_randomLCG = 0x015A4E35 * s_randomLCG + 1;
-	return (s_randomLCG >> 16) & 0x7FFF;
-}
-
-/**
- * Get a random value between the given values.
- *
- * @param min The minimum value.
- * @param max The maximum value.
- * @return The random value.
- */
-uint16 Tools_RandomLCG_Range(uint16 min, uint16 max)
-{
-	uint16 ret;
-
-	if (min > max) {
-		uint16 temp = min;
-		min = max;
-		max = temp;
-	}
-
-	do {
-		uint16 value = (int32)Tools_RandomLCG() * (max - min + 1) / 0x8000 + min;
-		ret = value;
-	} while (ret > max);
-
-	return ret;
 }

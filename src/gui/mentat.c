@@ -31,7 +31,7 @@
 #include "../string.h"
 #include "../table/strings.h"
 #include "../timer/timer.h"
-#include "../tools.h"
+#include "../tools/random_lcg.h"
 #include "../wsa.h"
 
 #if 0

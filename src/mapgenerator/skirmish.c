@@ -19,8 +19,8 @@
 #include "../sprites.h"
 #include "../tile.h"
 #include "../timer/timer.h"
-#include "../tools.h"
 #include "../tools/random_general.h"
+#include "../tools/random_lcg.h"
 
 typedef struct {
 	int x, y;

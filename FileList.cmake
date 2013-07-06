@@ -97,6 +97,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/tools.c
 	src/tools/orientation.c
 	src/tools/random_general.c
+	src/tools/random_lcg.c
 	src/unit.c
 	src/video/prim_a5.c
 	src/video/video_a5.c

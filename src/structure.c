@@ -36,6 +36,7 @@
 #include "timer/timer.h"
 #include "tools.h"
 #include "tools/random_general.h"
+#include "tools/random_lcg.h"
 #include "unit.h"
 
 

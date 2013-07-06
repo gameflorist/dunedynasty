@@ -35,7 +35,7 @@
 #include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
-#include "../tools.h"
+#include "../tools/random_lcg.h"
 #include "../video/video.h"
 #include "../wsa.h"
 
