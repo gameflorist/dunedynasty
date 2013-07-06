@@ -50,3 +50,58 @@ Tile_PackXY(uint16 x, uint16 y)
 {
 	return (y << 6) | x;
 }
+
+bool
+Tile_IsValid(tile32 tile)
+{
+	return ((tile.x & 0xC000) == 0) && ((tile.y & 0xC000) == 0);
+}
+
+uint8
+Tile_GetPosX(tile32 tile)
+{
+	return (tile.x >> 8);
+}
+
+uint8
+Tile_GetPosY(tile32 tile)
+{
+	return (tile.y >> 8);
+}
+
+tile32
+Tile_MakeXY(uint16 x, uint16 y)
+{
+	tile32 tile;
+
+	tile.x = (x << 8);
+	tile.y = (y << 8);
+
+	return tile;
+}
+
+tile32
+Tile_Center(tile32 tile)
+{
+	tile.x = (tile.x & 0xFF00) | 0x80;
+	tile.y = (tile.y & 0xFF00) | 0x80;
+
+	return tile;
+}
+
+uint16
+Tile_PackTile(tile32 tile)
+{
+	return Tile_PackXY(Tile_GetPosX(tile), Tile_GetPosY(tile));
+}
+
+tile32
+Tile_UnpackTile(uint16 packed)
+{
+	tile32 tile;
+
+	tile.x = (Tile_GetPackedX(packed) << 8) | 0x80;
+	tile.y = (Tile_GetPackedY(packed) << 8) | 0x80;
+
+	return tile;
+}

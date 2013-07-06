@@ -16,9 +16,9 @@
 #include "shape.h"
 #include "sprites.h"
 #include "structure.h"
-#include "tile.h"
 #include "timer/timer.h"
 #include "tools.h"
+#include "tools/coord.h"
 #include "tools/random_general.h"
 #include "tools/random_lcg.h"
 

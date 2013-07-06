@@ -47,7 +47,6 @@
 #include "../structure.h"
 #include "../table/strings.h"
 #include "../table/widgetinfo.h"
-#include "../tile.h"
 #include "../timer/timer.h"
 #include "../tools/random_lcg.h"
 #include "../unit.h"

@@ -12,8 +12,8 @@
 #include "map.h"
 #include "sprites.h"
 #include "structure.h"
-#include "tile.h"
 #include "timer/timer.h"
+#include "tools/coord.h"
 #include "tools/random_general.h"
 
 typedef struct Animation {

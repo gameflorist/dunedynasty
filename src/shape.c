@@ -22,7 +22,6 @@
 
 #include "enhancement.h"
 #include "sprites.h"
-#include "tile.h"
 #include "timer/timer.h"
 #include "tools.h"
 #include "video/video.h"

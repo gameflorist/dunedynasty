@@ -71,7 +71,6 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "table/strings.h"
 #include "table/widgetinfo.h"
 #include "team.h"
-#include "tile.h"
 #include "timer/timer.h"
 #include "tools.h"
 #include "tools/coord.h"

@@ -14,84 +14,6 @@
 #include "tools/orientation.h"
 #include "tools/random_general.h"
 
-
-/**
- * Check whether a tile is valid.
- *
- * @param tile The tile32 to check for validity.
- * @return True if valid, false if not.
- */
-bool Tile_IsValid(tile32 tile)
-{
-	return (tile.x & 0xc000) == 0 && (tile.y & 0xc000) == 0;
-}
-
-/**
- * Make a tile32 from an X- and Y-position.
- *
- * @param x The X-position.
- * @param y The Y-position.
- * @return A tile32 at the top-left corner of the X- and Y-position.
- */
-tile32 Tile_MakeXY(uint16 x, uint16 y)
-{
-	tile32 tile;
-
-	tile.x = x << 8;
-	tile.y = y << 8;
-
-	return tile;
-}
-
-/**
- * Returns the X-position of the tile.
- *
- * @param tile The tile32 to get the X-position from.
- * @return The X-position of the tile.
- */
-uint8 Tile_GetPosX(tile32 tile)
-{
-	return (tile.x >> 8) & 0x3f;
-}
-
-/**
- * Returns the Y-position of the tile.
- *
- * @param tile The tile32 to get the Y-position from.
- * @return The Y-position of the tile.
- */
-uint8 Tile_GetPosY(tile32 tile)
-{
-	return (tile.y >> 8) & 0x3f;
-}
-
-/**
- * Packs a 32 bits tile struct into a 12 bits packed tile.
- *
- * @param tile The tile32 to get it's Y-position from.
- * @return The tile packed into 12 bits.
- */
-uint16 Tile_PackTile(tile32 tile)
-{
-	return (Tile_GetPosY(tile) << 6) | Tile_GetPosX(tile);
-}
-
-/**
- * Unpacks a 12 bits packed tile to a 32 bits tile struct.
- *
- * @param packed The uint16 containing the 12 bits packed tile information.
- * @return The unpacked tile.
- */
-tile32 Tile_UnpackTile(uint16 packed)
-{
-	tile32 tile;
-
-	tile.x = (((packed >> 0) & 0x3F) << 8) | 0x80;
-	tile.y = (((packed >> 6) & 0x3F) << 8) | 0x80;
-
-	return tile;
-}
-
 /**
  * Calculates the distance between the two given tiles.
  *
@@ -121,22 +43,6 @@ tile32 Tile_AddTileDiff(tile32 from, tile32 diff)
 
 	result.x = from.x + diff.x;
 	result.y = from.y + diff.y;
-
-	return result;
-}
-
-/**
- * Centers the offset of the tile.
- *
- * @param tile The tile to center.
- */
-tile32 Tile_Center(tile32 tile)
-{
-	tile32 result;
-
-	result = tile;
-	result.x = (result.x & 0xff00) | 0x80;
-	result.y = (result.y & 0xff00) | 0x80;
 
 	return result;
 }

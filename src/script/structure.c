@@ -25,6 +25,7 @@
 #include "../table/strings.h"
 #include "../tile.h"
 #include "../tools.h"
+#include "../tools/coord.h"
 #include "../tools/orientation.h"
 #include "../tools/random_general.h"
 #include "../unit.h"
