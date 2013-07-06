@@ -15,12 +15,21 @@
 static uint16 s_initialSeed;
 static uint32 s_seed;
 
+/**
+ * @brief   Gets the number of minutes elapsed.
+ * @details f__B495_17E6_002B_0A6D, between labels (l__17E6, l__1863).
+ */
 int64_t
 Random_Starport_GetSeedTime(void)
 {
 	return (g_timerGame - g_tickScenarioStart) / 60 / 60;
 }
 
+/**
+ * @brief   Gets the starport seed.
+ * @details f__B495_17E6_002B_0A6D, between labels (l__17E6, l__1863).
+ *          Added scenarioID and houseID as parameters.
+ */
 uint16
 Random_Starport_GetSeed(uint16 scenarioID, enum HouseType houseID)
 {
@@ -30,12 +39,20 @@ Random_Starport_GetSeed(uint16 scenarioID, enum HouseType houseID)
 	return seed * seed;
 }
 
+/**
+ * @brief   Restores the starport LCG to the initial state.
+ * @details @see Tools_RandomLCG_Seed.
+ */
 void
 Random_Starport_Reseed(void)
 {
 	s_seed = s_initialSeed;
 }
 
+/**
+ * @brief   Tools_RandomLCG_Seed, for starport.
+ * @details @see Tools_RandomLCG_Seed.
+ */
 void
 Random_Starport_Seed(uint16 seed)
 {
@@ -43,6 +60,10 @@ Random_Starport_Seed(uint16 seed)
 	s_seed = seed;
 }
 
+/**
+ * @brief   Tools_RandomLCG, for starport.
+ * @details @see Tools_RandomLCG.
+ */
 static int16
 Random_Starport_RandomLCG(void)
 {
@@ -50,6 +71,10 @@ Random_Starport_RandomLCG(void)
 	return (s_seed >> 16) & 0x7FFF;
 }
 
+/**
+ * @brief   Tools_RandomLCG_Range, for starport.
+ * @details @see Tools_RandomLCG_Range.
+ */
 static uint16
 Random_Starport_Range(uint16 min, uint16 max)
 {
@@ -67,6 +92,10 @@ Random_Starport_Range(uint16 min, uint16 max)
 	return ret;
 }
 
+/**
+ * @brief   f__B495_19B0_0016_09F7.
+ * @details Exact.
+ */
 uint16
 Random_Starport_CalculatePrice(uint16 credits)
 {
@@ -81,6 +110,10 @@ Random_Starport_CalculatePrice(uint16 credits)
 	return credits;
 }
 
+/**
+ * @brief   Calculate the current price for the unit type.
+ * @details Based on f__B495_17E6_002B_0A6D.
+ */
 uint16
 Random_Starport_CalculateUnitPrice(enum UnitType unitType)
 {
