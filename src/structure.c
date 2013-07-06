@@ -1986,7 +1986,7 @@ int
 Structure_GetAvailable(const Structure *s, int i)
 {
 	if (s->o.type == STRUCTURE_STARPORT) {
-		assert(UNIT_CARRYALL <= i && i <= UNIT_MCV);
+		assert(UNIT_CARRYALL <= i && i <= UNIT_MAX);
 		return (g_starportAvailable[i] == 0) ? 0 : 1;
 	}
 
@@ -2135,11 +2135,7 @@ void Structure_InitFactoryItems(const Structure *s)
 	memset(g_factoryWindowItems, 0, MAX_FACTORY_WINDOW_ITEMS * sizeof(FactoryWindowItem));
 
 	if (s->o.type == STRUCTURE_STARPORT) {
-		uint16 minutes = Structure_Starport_SeedTime();
-		uint16 seed = minutes + g_scenarioID + g_playerHouseID;
-		seed *= seed;
-
-		Random_Starport_Seed(seed);
+		Random_Starport_Reseed();
 	}
 
 	const StructureInfo *si = &g_table_structureInfo[s->o.type];
@@ -2221,12 +2217,6 @@ void Structure_InitFactoryItems(const Structure *s)
 
 	if (g_factoryWindowTotal > 0)
 		qsort(g_factoryWindowItems, g_factoryWindowTotal, sizeof(FactoryWindowItem), GUI_FactoryWindow_Sorter);
-}
-
-int64_t
-Structure_Starport_SeedTime(void)
-{
-	return (g_timerGame - g_tickScenarioStart) / 60 / 60;
 }
 
 void

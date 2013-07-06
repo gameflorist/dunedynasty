@@ -29,6 +29,7 @@
 #include "tools.h"
 #include "tools/random_general.h"
 #include "tools/random_lcg.h"
+#include "tools/random_starport.h"
 #include "unit.h"
 #include "video/video.h"
 #include "wsa.h"
@@ -95,9 +96,11 @@ void GameLoop_House(void)
 	}
 
 	if (s_tickHouseStarportRecalculatePrices <= g_timerGame) {
-		const int64_t curr_minute = Structure_Starport_SeedTime();
-		const int64_t next_minute = (curr_minute + 1);
+		const int64_t next_minute = Random_Starport_GetSeedTime() + 1;
+		const uint16 seed = Random_Starport_GetSeed(g_scenarioID, g_playerHouseID);
+
 		s_tickHouseStarportRecalculatePrices = g_tickScenarioStart + next_minute * 60 * 60;
+		Random_Starport_Seed(seed);
 		g_factoryWindowTotal = -1;
 	}
 

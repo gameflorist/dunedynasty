@@ -118,7 +118,6 @@ extern bool Structure_SetRepairingState(Structure *s, int8 value, struct Widget 
 extern void Structure_UpdateMap(Structure *s);
 extern int Structure_GetAvailable(const Structure *s, int i);
 extern void Structure_InitFactoryItems(const Structure *s);
-extern int64_t Structure_Starport_SeedTime(void);
 extern void Structure_Starport_Restock(enum UnitType type);
 extern void Structure_HouseUnderAttack(uint8 houseID);
 
