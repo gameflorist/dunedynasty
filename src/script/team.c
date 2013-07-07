@@ -13,8 +13,8 @@
 #include "../pool/unit.h"
 #include "../team.h"
 #include "../tile.h"
-#include "../tools.h"
 #include "../tools/coord.h"
+#include "../tools/encoded_index.h"
 #include "../tools/random_lcg.h"
 #include "../unit.h"
 

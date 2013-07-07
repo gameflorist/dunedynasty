@@ -102,4 +102,11 @@ typedef struct tile32 {
 	uint16 y;
 } tile32;
 
+enum IndexType {
+	IT_NONE         = 0,
+	IT_TILE         = 1,
+	IT_UNIT         = 2,
+	IT_STRUCTURE    = 3
+};
+
 #endif /* TYPES_H */
