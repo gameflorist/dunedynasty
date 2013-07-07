@@ -2,6 +2,23 @@
  * @file src/tools/encoded_index.c
  *
  * Encoded index routines.
+ *
+ * An encoded index is a uint16 with one of the following formats:
+ * <pre>
+ *
+ *  IT_NONE      = 00__ ____ ____ ____,
+ *      if the encoded index is invalid;
+ *
+ *  IT_UNIT      = 01__ ____ ____ xxxx,
+ *      where x is the index of the unit;
+ *
+ *  IT_STRUCTURE = 10__ ____ ____ xxxx,
+ *      where x is the index of the structure; or
+ *
+ *  IT_TILE      = 11yy yyyy 1xxx xxx1,
+ *      where (x, y) is the coordinate of the packed tile.
+ *
+ * </pre>
  */
 
 #include <stdlib.h>
@@ -15,6 +32,10 @@
 #include "../tile.h"
 #include "../unit.h"
 
+/**
+ * @brief   f__167E_0005_0013_AF0C.
+ * @details Removed guard for IT_UNIT.
+ */
 bool
 Tools_Index_IsValid(uint16 encoded)
 {
@@ -44,6 +65,10 @@ Tools_Index_IsValid(uint16 encoded)
 	return false;
 }
 
+/**
+ * @brief   f__167E_0088_001A_60ED.
+ * @details Exact.
+ */
 enum IndexType
 Tools_Index_GetType(uint16 encoded)
 {
@@ -55,6 +80,10 @@ Tools_Index_GetType(uint16 encoded)
 	}
 }
 
+/**
+ * @brief   f__167E_00F3_001E_8CB3.
+ * @details Simplified logic for IT_TILE.
+ */
 uint16
 Tools_Index_Encode(uint16 index, enum IndexType type)
 {
@@ -83,6 +112,10 @@ Tools_Index_Encode(uint16 index, enum IndexType type)
 	return 0;
 }
 
+/**
+ * @brief   f__167E_00B7_0034_F3DA.
+ * @details Simplified logic for IT_TILE.
+ */
 uint16
 Tools_Index_Decode(uint16 encoded)
 {
@@ -96,6 +129,10 @@ Tools_Index_Decode(uint16 encoded)
 	}
 }
 
+/**
+ * @brief   f__167E_0162_000D_A6D2.
+ * @details Exact.
+ */
 uint16
 Tools_Index_GetPackedTile(uint16 encoded)
 {
@@ -124,6 +161,11 @@ Tools_Index_GetPackedTile(uint16 encoded)
 	return 0;
 }
 
+/**
+ * @brief   f__167E_01BB_0010_85F6.
+ * @details IT_TILE is centred due to the '1' bit after the x/y in
+ *          (encoded & 0x3F80) and (encoded & 0x7F).
+ */
 tile32
 Tools_Index_GetTile(uint16 encoded)
 {
@@ -159,6 +201,10 @@ Tools_Index_GetTile(uint16 encoded)
 	return tile;
 }
 
+/**
+ * @brief   f__167E_02D8_000C_4C9F.
+ * @details Simplified logic.
+ */
 Object *
 Tools_Index_GetObject(uint16 encoded)
 {
@@ -184,6 +230,10 @@ Tools_Index_GetObject(uint16 encoded)
 	return NULL;
 }
 
+/**
+ * @brief   f__167E_02AE_000C_CC85.
+ * @details Exact.
+ */
 Structure *
 Tools_Index_GetStructure(uint16 encoded)
 {
@@ -195,6 +245,10 @@ Tools_Index_GetStructure(uint16 encoded)
 	}
 }
 
+/**
+ * @brief   f__167E_0284_000C_4C88.
+ * @details Exact.
+ */
 Unit *
 Tools_Index_GetUnit(uint16 encoded)
 {
