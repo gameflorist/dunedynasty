@@ -1650,7 +1650,7 @@ GUI_String_Get_ByIndex(int16 stringID)
 
 	switch (stringID) {
 		case -5: case -4: case -3: case -2: case -1: {
-			char *s = g_savegameDesc[abs((int16)stringID + 1)];
+			const char *s = g_savegameDesc[abs((int16)stringID + 1)];
 			if (*s == '\0') return NULL;
 			return s;
 		}

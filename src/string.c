@@ -90,7 +90,7 @@ char *String_Get_ByIndex(uint16 stringID)
 	return s_strings[stringID];
 }
 
-char *
+const char *
 String_GetMentatString(enum HouseType houseID, int stringID)
 {
 	return s_strings_mentat[houseID][stringID];
@@ -102,7 +102,7 @@ String_GetMentatString(enum HouseType houseID, int stringID)
  * @param source The untranslated string.
  * @param dest The translated string.
  */
-void String_TranslateSpecial(char *source, char *dest)
+void String_TranslateSpecial(const char *source, char *dest)
 {
 	if (source == NULL || dest == NULL) return;
 
@@ -155,7 +155,7 @@ String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int
 	}
 
 	for (i = 0, j = 0; j < count; i++, j++) {
-		char *src = (char *)buf + READ_LE_UINT16(buf + i * 2);
+		const char *src = (const char *)buf + READ_LE_UINT16(buf + i * 2);
 		char *dst = NULL;
 
 		if (strlen(src) == 0) {
@@ -226,7 +226,7 @@ String_ReloadCampaignStrings(void)
 
 		for (unsigned int i = 0; i < count; i++) {
 			const bool compressed = true;
-			char *src = (char *)buf + ((uint16 *)buf)[i];
+			const char *src = (const char *)buf + ((const uint16 *)buf)[i];
 			char *dst;
 
 			if (strlen(src) <= 1)
@@ -266,7 +266,7 @@ void String_Init(void)
 		s_strings[STR_LOAD_GAME] = strdup(s_strings[STR_LOAD_A_GAME]);
 	}
 	else {
-		char *str = s_strings[STR_LOAD_GAME];
+		const char *str = s_strings[STR_LOAD_GAME];
 		while (*str == ' ') str++;
 
 		if (*str == '\0') {
