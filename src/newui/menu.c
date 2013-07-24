@@ -4,6 +4,7 @@
 #include <allegro5/allegro.h>
 #include <ctype.h>
 #include "buildcfg.h"
+#include "enum_string.h"
 #include "types.h"
 #include "../os/common.h"
 #include "../os/math.h"
@@ -38,7 +39,6 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../table/sound.h"
-#include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
 #include "../wsa.h"

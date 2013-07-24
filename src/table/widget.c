@@ -1,10 +1,10 @@
 /** @file src/table/widget.c Widget file table. */
 
 #include <stdio.h>
+#include "enum_string.h"
 #include "types.h"
 
 #include "../gui/widget.h"
-#include "strings.h"
 
 Widget g_table_windowWidgets[9] = {
 	{ /* 0 */

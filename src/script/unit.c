@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "enum_string.h"
 #include "types.h"
 #include "../os/common.h"
 #include "../os/math.h"
@@ -25,7 +26,6 @@
 #include "../pool/structure.h"
 #include "../scenario.h"
 #include "../structure.h"
-#include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "enum_string.h"
 #include "types.h"
 #include "os/common.h"
 #include "os/math.h"
@@ -32,7 +33,6 @@
 #include "string.h"
 #include "structure.h"
 #include "table/sound.h"
-#include "table/strings.h"
 #include "team.h"
 #include "tile.h"
 #include "timer/timer.h"

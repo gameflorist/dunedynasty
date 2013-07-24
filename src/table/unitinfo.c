@@ -1,6 +1,7 @@
 /** @file src/table/unitinfo.c UnitInfo file table. */
 
 #include <stdio.h>
+#include "enum_string.h"
 #include "enumeration.h"
 #include "types.h"
 
@@ -8,7 +9,6 @@
 #include "../shape.h"
 #include "../table/sound.h"
 #include "../unit.h"
-#include "strings.h"
 
 const uint16 g_table_actionsAI[4] = {ACTION_HUNT, ACTION_AREA_GUARD, ACTION_AMBUSH, ACTION_GUARD};
 

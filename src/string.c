@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include "enum_string.h"
 #include "types.h"
 #include "os/common.h"
 #include "os/math.h"
@@ -21,7 +22,6 @@
 #include "house.h"
 #include "opendune.h"
 #include "scenario.h"
-#include "table/strings.h"
 
 static char **s_strings = NULL;
 static uint16 s_stringsCount = 0;

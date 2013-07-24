@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include "enum_string.h"
 #include "../os/math.h"
 
 #include "actionpanel.h"
@@ -25,7 +26,6 @@
 #include "../pool/structure.h"
 #include "../pool/unit.h"
 #include "../string.h"
-#include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
 #include "../unit.h"

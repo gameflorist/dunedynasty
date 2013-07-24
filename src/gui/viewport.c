@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "enum_string.h"
 #include "types.h"
 #include "../os/common.h"
 #include "../os/math.h"
@@ -25,7 +26,6 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../structure.h"
-#include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
 #include "../tools/coord.h"

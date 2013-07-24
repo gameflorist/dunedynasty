@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include "enum_string.h"
 #include "../os/math.h"
 #include "../gfx.h"
 
@@ -14,7 +15,6 @@
 #include "../newui/scrollbar.h"
 #include "../string.h"
 #include "../sprites.h"
-#include "../table/strings.h"
 #include "../video/video.h"
 
 

@@ -24,6 +24,7 @@ extern int _al_mangled_main(int argc, char **argv);
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include "enum_string.h"
 #include "os/common.h"
 #include "os/error.h"
 #include "os/math.h"
@@ -68,7 +69,6 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "string.h"
 #include "structure.h"
 #include "table/sound.h"
-#include "table/strings.h"
 #include "table/widgetinfo.h"
 #include "team.h"
 #include "timer/timer.h"

@@ -13,7 +13,6 @@
 #include "../input/mouse.h"
 #include "../shape.h"
 #include "../string.h"
-#include "../table/strings.h"
 #include "../video/video.h"
 
 static ScrollbarItem *s_scrollbar_item;

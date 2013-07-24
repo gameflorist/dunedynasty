@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "enum_string.h"
 #include "../os/math.h"
 
 #include "strategicmap.h"
@@ -20,7 +21,6 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../table/sound.h"
-#include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
 

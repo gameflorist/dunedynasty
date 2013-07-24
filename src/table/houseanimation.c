@@ -1,8 +1,8 @@
 /** @file src/table/houseanimation.c House animation tables. */
 
-#include "houseanimation.h"
+#include "enum_string.h"
 
-#include "strings.h"
+#include "houseanimation.h"
 
 const HouseAnimation_Animation g_table_houseAnimation_animation[HOUSEANIMATION_MAX][32] = {
 	{ /* 0 - intro */

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include "enum_string.h"
 #include "../os/math.h"
 
 #include "halloffame.h"
@@ -13,7 +14,6 @@
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../string.h"
-#include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
 

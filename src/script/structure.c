@@ -1,6 +1,7 @@
 /** @file src/script/structure.c %Structure script routines. */
 
 #include <stdio.h>
+#include "enum_string.h"
 #include "types.h"
 #include "../os/math.h"
 
@@ -22,7 +23,6 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../structure.h"
-#include "../table/strings.h"
 #include "../tile.h"
 #include "../timer/timer.h"
 #include "../tools/coord.h"

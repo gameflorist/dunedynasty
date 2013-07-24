@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include "enum_string.h"
 #include "multichar.h"
 #include "types.h"
 #include "../os/sleep.h"
@@ -23,7 +24,6 @@
 #include "../shape.h"
 #include "../sprites.h"
 #include "../structure.h"
-#include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../unit.h"
 #include "../video/video.h"

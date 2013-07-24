@@ -1,6 +1,7 @@
 /** @file src/gui/widget_draw.c %Widget drawing routines. */
 
 #include <stdio.h>
+#include "enum_string.h"
 #include "types.h"
 
 #include "font.h"
@@ -19,7 +20,6 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../structure.h"
-#include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../tools/coord.h"
 #include "../unit.h"

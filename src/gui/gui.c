@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include "enum_string.h"
 #include "../os/common.h"
 #include "../os/math.h"
 #include "../os/sleep.h"
@@ -45,7 +46,6 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../structure.h"
-#include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
 #include "../tools/random_lcg.h"

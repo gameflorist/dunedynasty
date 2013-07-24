@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "enum_string.h"
 #include "multichar.h"
 #include "../os/endian.h"
 #include "../os/strings.h"
@@ -23,7 +24,6 @@
 #include "../opendune.h"
 #include "../shape.h"
 #include "../string.h"
-#include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../tools/random_lcg.h"
 #include "../video/video.h"

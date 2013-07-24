@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "enum_string.h"
 #include "multichar.h"
 #include "types.h"
 #include "../os/endian.h"
@@ -29,7 +30,6 @@
 #include "../shape.h"
 #include "../sprites.h"
 #include "../string.h"
-#include "../table/strings.h"
 #include "../timer/timer.h"
 #include "../tools/random_lcg.h"
 #include "../wsa.h"

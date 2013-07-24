@@ -1,6 +1,7 @@
 /** @file src/house.c %House management routines. */
 
 #include <stdio.h>
+#include "enum_string.h"
 #include "os/math.h"
 #include "os/strings.h"
 #include "os/sleep.h"
@@ -23,7 +24,6 @@
 #include "scenario.h"
 #include "string.h"
 #include "structure.h"
-#include "table/strings.h"
 #include "timer/timer.h"
 #include "tools/coord.h"
 #include "tools/encoded_index.h"

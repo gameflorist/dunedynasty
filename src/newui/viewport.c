@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include "enum_string.h"
 #include "../os/math.h"
 
 #include "viewport.h"
@@ -26,7 +27,6 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../structure.h"
-#include "../table/strings.h"
 #include "../table/widgetinfo.h"
 #include "../tile.h"
 #include "../timer/timer.h"

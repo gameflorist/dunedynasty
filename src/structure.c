@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include "enum_string.h"
 #include "types.h"
 #include "os/math.h"
 #include "os/strings.h"
@@ -30,7 +31,6 @@
 #include "scenario.h"
 #include "sprites.h"
 #include "string.h"
-#include "table/strings.h"
 #include "team.h"
 #include "tile.h"
 #include "timer/timer.h"

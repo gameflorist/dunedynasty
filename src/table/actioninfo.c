@@ -1,12 +1,12 @@
 /** @file src/table/actioninfo.c ActionInfo file table. */
 
 #include <stdio.h>
+#include "enum_string.h"
 #include "types.h"
 
 #include "../gui/gui.h"
 #include "../unit.h"
 #include "sound.h"
-#include "strings.h"
 
 const ActionInfo g_table_actionInfo[ACTION_MAX] = {
 	{ /* 0 */

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "enum_string.h"
 #include "types.h"
 #include "os/common.h"
 #include "os/error.h"
@@ -25,7 +26,6 @@
 #include "string.h"
 #include "table/houseanimation.h"
 #include "table/sound.h"
-#include "table/strings.h"
 #include "timer/timer.h"
 #include "tools/random_lcg.h"
 #include "video/video.h"

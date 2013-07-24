@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "enum_string.h"
 #include "types.h"
 #include "../os/strings.h"
 
@@ -18,7 +19,6 @@
 #include "../opendune.h"
 #include "../sprites.h"
 #include "../string.h"
-#include "../table/strings.h"
 #include "../timer.h"
 #include "../wsa.h"
 

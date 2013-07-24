@@ -1,8 +1,8 @@
 /** @file src/table/windowdesc.c WindowDesc file table. */
 
+#include "enum_string.h"
 #include "types.h"
 
-#include "strings.h"
 #include "../gui/widget.h"
 #include "../input/scancode.h"
 

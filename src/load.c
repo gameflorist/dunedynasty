@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "enum_string.h"
 #include "multichar.h"
 #include "types.h"
 #include "os/endian.h"
@@ -22,7 +23,6 @@
 #include "sprites.h"
 #include "string.h"
 #include "structure.h"
-#include "table/strings.h"
 #include "team.h"
 #include "unit.h"
 

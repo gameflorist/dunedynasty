@@ -1,6 +1,7 @@
 /** @file src/table/widgetinfo.c WidgetInfo file table. */
 
 #include <stdio.h>
+#include "enum_string.h"
 
 #include "widgetinfo.h"
 
@@ -9,7 +10,6 @@
 #include "../input/scancode.h"
 #include "../newui/menubar.h"
 #include "../newui/viewport.h"
-#include "strings.h"
 
 WidgetInfo g_table_gameWidgetInfo[GAME_WIDGET_MAX + 1] = {
 	{ /* 0 */

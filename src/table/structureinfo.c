@@ -1,12 +1,12 @@
 /** @file src/table/structureinfo.c StructureInfo file table. */
 
 #include <stdio.h>
+#include "enum_string.h"
 #include "enumeration.h"
 
 #include "../shape.h"
 #include "../sprites.h"
 #include "../structure.h"
-#include "strings.h"
 
 const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 	{ /* 0 */

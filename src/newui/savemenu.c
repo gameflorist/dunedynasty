@@ -4,6 +4,7 @@
 #include <allegro5/allegro.h>
 #include <ctype.h>
 #include <string.h>
+#include "enum_string.h"
 #include "multichar.h"
 #include "../os/endian.h"
 #include "../os/math.h"
@@ -22,7 +23,6 @@
 #include "../save.h"
 #include "../shape.h"
 #include "../string.h"
-#include "../table/strings.h"
 
 static Widget *s_scrollbar;
 static int s_last_index;
