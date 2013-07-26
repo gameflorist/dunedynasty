@@ -409,7 +409,7 @@ Skirmish_IsIslandEnclosed(int start, int end, const SkirmishData *sd)
 }
 
 static void
-Skirmish_DivideIsland(int island, SkirmishData *sd)
+Skirmish_DivideIsland(enum HouseType houseID, int island, SkirmishData *sd)
 {
 	int start = sd->island[island].start;
 	const int len = sd->island[island].end - sd->island[island].start;
@@ -431,13 +431,13 @@ Skirmish_DivideIsland(int island, SkirmishData *sd)
 			sd->nislands++;
 			sd->nislands_unused++;
 		}
-		else if (area > 0) {
+		else if (area > 0 && houseID != HOUSE_INVALID) {
 			/* Fill enclosed areas with walls to prevent units getting trapped. */
 			if (Skirmish_IsIslandEnclosed(start, start + area, sd)) {
 				g_validateStrictIfZero++;
 
 				for (int j = start; j < start + area; j++) {
-					Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_WALL, HOUSE_ATREIDES, sd->buildable[j].packed);
+					Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_WALL, houseID, sd->buildable[j].packed);
 				}
 
 				g_validateStrictIfZero--;
@@ -612,7 +612,7 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 		 * remaining buildable tiles.
 		 */
 		g_validateStrictIfZero++;
-		Skirmish_DivideIsland(island, sd);
+		Skirmish_DivideIsland(houseID, island, sd);
 
 		if (structure_count <= 0)
 			return true;
@@ -903,7 +903,7 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 	}
 
 	memset(sd->islandID, 0, MAP_SIZE_MAX * MAP_SIZE_MAX * sizeof(sd->islandID[0]));
-	Skirmish_DivideIsland(0, sd);
+	Skirmish_DivideIsland(HOUSE_INVALID, 0, sd);
 
 	if (sd->nislands_unused == 0)
 		return false;
