@@ -1283,7 +1283,11 @@ static void Gameloop_Logos(void)
 
 	while (WSA_DisplayFrame(wsa, frame++, 0, 0, SCREEN_0)) {
 		Cutscene_CopyScreen();
-		Timer_Sleep(6);
+
+		for (int i = 0; i < 6; i++) {
+			Input_Tick(true);
+			Timer_Sleep(1);
+		}
 	}
 
 	WSA_Unload(wsa);
