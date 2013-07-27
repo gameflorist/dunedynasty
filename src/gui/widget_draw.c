@@ -517,7 +517,6 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 	House *h;
 	Widget *buttons[4];
 	Widget *widget24, *widget28, *widget2C, *widget30, *widget34;
-	int i;
 
 	o  = NULL;
 	u  = NULL;
@@ -616,7 +615,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 		GUI_Widget_MakeInvisible(widget34);
 
 		/* Create the 4 buttons */
-		for (i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			buttons[i] = GUI_Widget_Get_ByIndex(w, i + 8);
 			GUI_Widget_MakeInvisible(buttons[i]);
 		}
@@ -702,7 +701,6 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 				{
 					const uint16 *actions;
 					uint16 actionCurrent;
-					int i;
 
 					GUI_Widget_MakeVisible(widget34);
 
@@ -718,7 +716,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 					actions = oi->actionsPlayer;
 					if (isNotPlayerOwned && o->type != UNIT_HARVESTER) actions = g_table_actionsAI;
 
-					for (i = 0; i < 4; i++) {
+					for (int i = 0; i < 4; i++) {
 						buttons[i]->stringID = g_table_actionInfo[actions[i]].stringID;
 						GUI_Widget_SetShortcuts(buttons[i]);
 						GUI_Widget_MakeVisible(buttons[i]);
@@ -805,7 +803,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 		GUI_Widget_Draw(widget30);
 		GUI_Widget_Draw(widget34);
 
-		for (i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			GUI_Widget_Draw(buttons[i]);
 		}
 	}

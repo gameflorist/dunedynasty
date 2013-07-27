@@ -1128,10 +1128,10 @@ static void Scenario_Load_Houses(void)
 		int num_houses = 0;
 
 		for (houseID = 0; houseID < HOUSE_MAX; houseID++) {
-			House *h = House_Get_ByIndex(houseID);
+			House *h2 = House_Get_ByIndex(houseID);
 
-			if (h->unitCountMax > 0) {
-				free_units -= h->unitCountMax;
+			if (h2->unitCountMax > 0) {
+				free_units -= h2->unitCountMax;
 				num_houses++;
 			}
 		}
@@ -1141,10 +1141,10 @@ static void Scenario_Load_Houses(void)
 			return;
 
 		for (houseID = 0; houseID < HOUSE_MAX; houseID++) {
-			House *h = House_Get_ByIndex(houseID);
+			House *h2 = House_Get_ByIndex(houseID);
 
-			if (h->unitCountMax > 0)
-				h->unitCountMax += inc;
+			if (h2->unitCountMax > 0)
+				h2->unitCountMax += inc;
 		}
 	}
 }

@@ -1337,7 +1337,6 @@ Viewport_DrawSelectionHealthBars(void)
 
 		if ((s->o.type == STRUCTURE_REFINERY || s->o.type == STRUCTURE_SILO) && (s->o.houseID == g_playerHouseID)) {
 			const House *h = g_playerHouse;
-			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 			int creditsStored = h->credits * si->creditsStorage / h->creditsStorage;
 			if (h->credits > h->creditsStorage) creditsStored = si->creditsStorage;
 

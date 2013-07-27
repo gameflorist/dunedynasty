@@ -2069,11 +2069,11 @@ VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
 	assert(s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN] != NULL);
 	assert(s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN] != NULL);
 
-	for (enum HouseType h = HOUSE_HARKONNEN + 1; h < HOUSE_MAX; h++) {
-		s_shape[SHAPE_SEND_ORDER  + 0][h] = s_shape[SHAPE_SEND_ORDER  + 0][HOUSE_HARKONNEN];
-		s_shape[SHAPE_SEND_ORDER  + 1][h] = s_shape[SHAPE_SEND_ORDER  + 1][HOUSE_HARKONNEN];
-		s_shape[SHAPE_RESUME_GAME + 0][h] = s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN];
-		s_shape[SHAPE_RESUME_GAME + 1][h] = s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN];
+	for (enum HouseType houseID = HOUSE_HARKONNEN + 1; houseID < HOUSE_MAX; houseID++) {
+		s_shape[SHAPE_SEND_ORDER  + 0][houseID] = s_shape[SHAPE_SEND_ORDER  + 0][HOUSE_HARKONNEN];
+		s_shape[SHAPE_SEND_ORDER  + 1][houseID] = s_shape[SHAPE_SEND_ORDER  + 1][HOUSE_HARKONNEN];
+		s_shape[SHAPE_RESUME_GAME + 0][houseID] = s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN];
+		s_shape[SHAPE_RESUME_GAME + 1][houseID] = s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN];
 	}
 }
 

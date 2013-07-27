@@ -495,7 +495,7 @@ int XMIDI::ConvertFiletoList (DataSource *source, const BOOL is_xmi)
 			if (status == 0xFF)
 			{
 				int	pos = source->getPos();
-				unsigned int	data = source->read1();
+				data = source->read1();
 
 				if (data == 0x2F) // End
 					end = 1;
@@ -804,8 +804,6 @@ int XMIDI::ExtractTracks (DataSource *source)
 		if (count != info.tracks)
 		{
 			cerr << "Error: unable to extract all (" << info.tracks << ") tracks specified from XMIDI. Only ("<< count << ")" << endl;
-
-			int i = 0;
 
 			for (i = 0; i < info.tracks; i++)
 				DeleteEventList (events[i]);

@@ -837,7 +837,7 @@ bool MPU_Init(void)
 	s_mpu_msdataCurrent = 0;
 	memset(s_mpu_msdata, 0, sizeof(s_mpu_msdata));
 
-	for (int i = 0; i < 9; i++) {
+	for (i = 0; i < 9; i++) {
 		uint8 chan = i + 1;
 		old_volume[i] = s_mpu_controls[chan].volume;
 	}

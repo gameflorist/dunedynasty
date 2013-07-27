@@ -425,10 +425,10 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 		A5_UseTransform(SCREENDIV_MENU);
 
 		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-		const int x = (wi->width * g_screenDiv[SCREENDIV_VIEWPORT].scalex) / (2 * g_screenDiv[SCREENDIV_MENU].scalex);
-		const int y = SCREEN_HEIGHT - 61;
+		const int xcentre = (wi->width * g_screenDiv[SCREENDIV_VIEWPORT].scalex) / (2 * g_screenDiv[SCREENDIV_MENU].scalex);
+		const int ymessage = SCREEN_HEIGHT - 61;
 
-		GUI_DrawText_Wrapper(g_viewportMessageText, x, y, 15, 0, 0x132);
+		GUI_DrawText_Wrapper(g_viewportMessageText, xcentre, ymessage, 15, 0, 0x132);
 		minX[6] = -1;
 		maxX[6] = 14;
 
@@ -441,11 +441,11 @@ void GUI_Widget_Viewport_Draw(bool forceRedraw, bool arg08, bool drawToMainScree
 
 			/* ENHANCEMENT -- When fading in the game on start, you don't see the fade as it is against the already drawn screen. */
 			if (g_dune2_enhanced) {
-				Screen oldScreenID = g_screenActiveID;
+				Screen oldScreenID2 = g_screenActiveID;
 
 				GFX_Screen_SetActive(SCREEN_0);
 				Prim_FillRect_i(g_curWidgetXBase, g_curWidgetYBase, g_curWidgetXBase + g_curWidgetWidth, g_curWidgetYBase + g_curWidgetHeight, 0);
-				GFX_Screen_SetActive(oldScreenID);
+				GFX_Screen_SetActive(oldScreenID2);
 			}
 
 			GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, g_screenActiveID, SCREEN_0);
