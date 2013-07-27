@@ -1074,7 +1074,7 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 		0x0100, 0x0180
 	};
 
-	uint16 i;
+	int16 i, j;
 	tile32 diff;
 	uint16 lastPacked;
 
@@ -1086,8 +1086,6 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 	if (radius >= 32) {
 		uint16 x = Tile_GetPosX(position);
 		uint16 y = Tile_GetPosY(position);
-		int16 j;
-		int16 i;
 
 		for (i = -2; i <= 2; i++) {
 			for (j = -2; j <= 2; j++) {

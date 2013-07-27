@@ -168,7 +168,7 @@ void Mouse_SetMouseMode(uint8 mouseMode, const char *filename)
 			File_Create(filename);
 
 			Tools_RandomLCG_Seed(0x1234);
-			Tools_Random_Seed(0x21433412);
+			Tools_Random_Seed(0x12344321);
 
 			g_mouseFileID = File_Open(filename, FILE_MODE_READ_WRITE);
 
@@ -184,7 +184,7 @@ void Mouse_SetMouseMode(uint8 mouseMode, const char *filename)
 				g_mouseFileID = File_Open(filename, FILE_MODE_READ);
 
 				Tools_RandomLCG_Seed(0x1234);
-				Tools_Random_Seed(0x21433412);
+				Tools_Random_Seed(0x12344321);
 			}
 
 			g_var_701B = true;
