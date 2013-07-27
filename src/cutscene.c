@@ -122,9 +122,9 @@ Cutscene_DrawText(char *str, int left, int top, uint8 fg, uint8 bg)
 }
 
 static void
-Cutscene_DrawText_Wrapper(char *str, int x, int y)
+Cutscene_DrawText_Wrapper(const char *str, int x, int y)
 {
-	char *s = str;
+	const char *s = str;
 
 	x -= Font_GetStringWidth(str) / 2;
 

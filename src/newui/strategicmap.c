@@ -246,7 +246,7 @@ StrategicMap_ReadOwnership(int campaignID, StrategicMapData *map)
 			if (Ini_GetString(category, key, NULL, buf, sizeof(buf), g_fileRegionINI) == NULL)
 				continue;
 
-			char *s = buf;
+			const char *s = buf;
 			while (*s != '\0') {
 				const int region = atoi(s);
 
