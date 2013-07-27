@@ -1406,6 +1406,7 @@ void GameLoop_GameIntroAnimation(void)
 
 	GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
 	Video_ShowCursor();
+	Audio_PlayVoice(VOICE_STOP);
 	Audio_PlayMusic(MUSIC_STOP);
 
 	g_playerHouseID = h;
