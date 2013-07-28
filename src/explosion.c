@@ -25,7 +25,6 @@ typedef struct Explosion {
 	/* Heap key. */
 	int64_t timeOut;                        /*!< Time out for the next command. */
 
-	bool isDirty;                           /*!< Does the Explosion require a redraw next round. */
 	uint8 current;                          /*!< Index in #commands pointing to the next command. */
 	enum ShapeID spriteID;                  /*!< SpriteID. */
 	const ExplosionCommandStruct *commands; /*!< Commands being executed. */
@@ -36,20 +35,10 @@ static BinHeap s_explosions;
 
 extern const ExplosionCommandStruct *g_table_explosion[EXPLOSIONTYPE_MAX];
 
-/**
- * Update the tile a Explosion is on.
- * @param type Are we introducing (0) or updating (2) the tile.
- * @param e The Explosion in question.
- */
-static void Explosion_Update(uint16 type, Explosion *e)
+static void
+Explosion_Update(const Explosion *e)
 {
-	if (e == NULL) return;
-
-	if (type == 1 && e->isDirty) return;
-
-	e->isDirty = (type != 0);
-
-	Map_UpdateAround(24, e->position, NULL, g_functions[2][type]);
+	Map_UpdateAround(24, e->position, NULL, 0);
 }
 
 /**
@@ -203,7 +192,7 @@ static void Explosion_Func_Stop(Explosion *e, uint16 parameter)
 
 	g_map[packed].hasExplosion = false;
 
-	Explosion_Update(0, e);
+	Explosion_Update(e);
 
 	e->commands = NULL;
 }
@@ -237,7 +226,7 @@ static void Explosion_Func_SetSpriteID(Explosion *e, uint16 spriteID)
 {
 	e->spriteID = spriteID;
 
-	Explosion_Update(2, e);
+	Explosion_Update(e);
 }
 
 /**
@@ -289,7 +278,6 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 		e->current  = 0;
 		e->spriteID = 0;
 		e->position = position;
-		e->isDirty  = false;
 
 		g_map[packed].hasExplosion = true;
 
