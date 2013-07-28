@@ -1,6 +1,20 @@
 Dune Dynasty
 ============
 
+Version 1.5.6, 2013-07-28
+-------------------------
+
+  - Fix crash due to scenarios incorrectly using "MaxUnits" when it
+    should be "MaxUnit" (e.g. Stefan Hendriks' Atreides Campaign).
+  - Implemented true (timer-based) game speed adjustment option.
+    Enabling this will fix game-speed-dependent bugs in the original
+    game such as the sonic blast range and the launcher's inaccuracy.
+  - Fix error sound being played continuously when an AI cannot
+    release a saboteur.
+  - Launch deathhand missiles from the centre of the selected palace.
+  - In skirmish mode, fix walls being revealed to the player.
+
+
 Version 1.5.5, 2013-05-12
 -------------------------
 
