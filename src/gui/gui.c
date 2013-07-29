@@ -1229,30 +1229,28 @@ extern void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height,
  * @param spriteID The sprite to show with the hint.
  * @return Zero or the return value of GUI_DisplayModalMessage.
  */
-uint16 GUI_DisplayHint(uint16 stringID, uint16 spriteID)
+void
+GUI_DisplayHint(enum HouseType houseID, uint16 stringID, uint16 spriteID)
 {
-	uint32 *hintsShown;
-	uint32 mask;
-	uint16 hint;
+	if (g_debugGame
+			|| stringID == STR_NULL
+			|| !g_gameConfig.hints
+			|| houseID != g_playerHouseID
+			|| g_selectionType == SELECTIONTYPE_MENTAT)
+		return;
 
-	if (g_debugGame || stringID == STR_NULL || !g_gameConfig.hints || g_selectionType == SELECTIONTYPE_MENTAT) return 0;
-
-	hint = stringID - STR_HINT_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
-
+	const uint16 hint
+		= stringID
+		- STR_HINT_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
 	assert(hint < 64);
 
-	if (hint < 32) {
-		mask = (1 << hint);
-		hintsShown = &g_hintsShown1;
-	} else {
-		mask = (1 << (hint - 32));
-		hintsShown = &g_hintsShown2;
+	const uint32 mask = (1 << (hint % 32));
+	uint32 *hintsShown = (hint < 32) ? &g_hintsShown1 : &g_hintsShown2;
+
+	if (!(*hintsShown & mask)) {
+		*hintsShown |= mask;
+		GUI_DisplayModalMessage(String_Get_ByIndex(stringID), spriteID);
 	}
-
-	if ((*hintsShown & mask) != 0) return 0;
-	*hintsShown |= mask;
-
-	return GUI_DisplayModalMessage(String_Get_ByIndex(stringID), spriteID);
 }
 
 #if 0

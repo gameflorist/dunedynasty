@@ -2071,7 +2071,7 @@ void Unit_Select(Unit *unit)
 		/* Plays the 'reporting' sound file. */
 		Audio_PlaySample(ui->movementType == MOVEMENT_FOOT ? SAMPLE_YES_SIR : SAMPLE_REPORTING, 255, 0.0);
 
-		GUI_DisplayHint(ui->o.hintStringID, ui->o.spriteID);
+		GUI_DisplayHint(g_playerHouseID, ui->o.hintStringID, ui->o.spriteID);
 	}
 
 	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
@@ -3136,7 +3136,9 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 				}
 
 				if (g_gameConfig.language == LANGUAGE_ENGLISH) {
-					GUI_DisplayHint(STR_HINT_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND, 105);
+					GUI_DisplayHint(houseID,
+							STR_HINT_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND,
+							SHAPE_SANDWORM);
 				}
 
 				h->timerSandwormAttack = 8;

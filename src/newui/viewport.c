@@ -361,7 +361,7 @@ Viewport_Place(void)
 		g_structureActive = NULL;
 		g_selectionState = 0; /* Invalid. */
 
-		GUI_DisplayHint(si->o.hintStringID, si->o.spriteID);
+		GUI_DisplayHint(s->o.houseID, si->o.hintStringID, si->o.spriteID);
 
 		House_UpdateRadarState(h);
 
@@ -380,7 +380,9 @@ Viewport_Place(void)
 		GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_FOUNDATION_HERE), 2);
 	}
 	else {
-		GUI_DisplayHint(STR_HINT_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE, 0xFFFF);
+		GUI_DisplayHint(s->o.houseID,
+				STR_HINT_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE,
+				SHAPE_INVALID);
 		GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_S_HERE), 2, String_Get_ByIndex(si->o.stringID_abbrev));
 	}
 }

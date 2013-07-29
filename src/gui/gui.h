@@ -100,7 +100,7 @@ extern void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColo
 extern void GUI_DrawText_Wrapper(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour, uint16 flags, ...);
 extern void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top);
 extern uint16 GUI_DisplayModalMessage(const char *str, uint16 stringID, ...);
-extern uint16 GUI_DisplayHint(uint16 stringID, uint16 spriteID);
+extern void GUI_DisplayHint(enum HouseType houseID, uint16 stringID, uint16 spriteID);
 
 extern void GUI_UpdateProductionStringID(void);
 extern uint16 GUI_SplitText(char *str, uint16 maxwidth, char delimiter);

@@ -166,12 +166,9 @@ void Map_SetSelection(uint16 packed)
 
 		s = Structure_Get_ByPackedTile(packed);
 		if (s != NULL) {
-			const StructureInfo *si;
+			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
-			si = &g_table_structureInfo[s->o.type];
-			if (s->o.houseID == g_playerHouseID && g_selectionType != SELECTIONTYPE_MENTAT) {
-				GUI_DisplayHint(si->o.hintStringID, si->o.spriteID);
-			}
+			GUI_DisplayHint(s->o.houseID, si->o.hintStringID, si->o.spriteID);
 
 			packed = Tile_PackTile(s->o.position);
 

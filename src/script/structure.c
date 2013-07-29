@@ -302,8 +302,11 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 	Unit_SetOrientation(u, Tile_GetDirection(s->o.position, u->o.position) & 0xE0, true, 0);
 	Unit_SetOrientation(u, u->orientation[0].current, true, 1);
 
-	if (u->o.houseID == g_playerHouseID && u->o.type == UNIT_HARVESTER) {
-		GUI_DisplayHint(STR_HINT_SEARCH_FOR_SPICE_FIELDS_TO_HARVEST, 0x6A);
+	/* ENHANCEMENT -- Only display the hint for harvesters. */
+	if (u->o.type == UNIT_HARVESTER) {
+		GUI_DisplayHint(u->o.houseID,
+				STR_HINT_SEARCH_FOR_SPICE_FIELDS_TO_HARVEST,
+				0x6A);
 	}
 
 	if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
