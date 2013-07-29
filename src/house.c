@@ -37,7 +37,6 @@
 
 House *g_playerHouse = NULL;
 enum HouseType g_playerHouseID = HOUSE_INVALID;
-uint16 g_houseMissileCountdown = 0;
 uint16 g_playerCreditsNoSilo = 0;
 uint16 g_playerCredits = 0; /*!< Credits shown to player as 'current'. */
 
@@ -96,10 +95,11 @@ void GameLoop_House(void)
 		g_factoryWindowTotal = -1;
 	}
 
-	if (tickMissileCountdown && g_houseMissileCountdown != 0) {
-		g_houseMissileCountdown--;
+	if (tickMissileCountdown && g_playerHouse->houseMissileCountdown != 0) {
+		g_playerHouse->houseMissileCountdown--;
 
-		const enum VoiceID voiceID = VOICE_MISSILE_LAUNCHED + g_houseMissileCountdown - 1;
+		const enum VoiceID voiceID
+			= VOICE_MISSILE_LAUNCHED + g_playerHouse->houseMissileCountdown - 1;
 
 		/* Don't queue up the countdown numbers. */
 		if (voiceID >= VOICE_ONE) {
@@ -116,7 +116,7 @@ void GameLoop_House(void)
 			Audio_PlayVoice(voiceID);
 		}
 
-		if (g_houseMissileCountdown == 0) {
+		if (g_playerHouse->houseMissileCountdown == 0) {
 			Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 			Unit_LaunchHouseMissile(s, Map_FindLocationTile(4, g_playerHouseID));
 		}

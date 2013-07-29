@@ -649,11 +649,12 @@ Viewport_Click(Widget *w)
 		if ((g_selectionType == SELECTIONTYPE_TARGET) && !mouse_in_scroll_widget) {
 			GUI_DisplayText(NULL, -1);
 
-			if (g_unitHouseMissile != NULL) {
+			if (g_playerHouse->houseMissileID != UNIT_INDEX_INVALID) {
 				/* ENHANCEMENT -- In Dune 2 you only hear "Missile launched" if you let the timer run out.
 				 * Note: you actually get one second to choose a target after the narrator says "Missile launched".
 				 */
-				if (enhancement_play_additional_voices && g_houseMissileCountdown > 1) {
+				if (enhancement_play_additional_voices
+						&& g_playerHouse->houseMissileCountdown > 1) {
 					Audio_PlayVoice(VOICE_MISSILE_LAUNCHED);
 				}
 

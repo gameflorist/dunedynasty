@@ -107,6 +107,7 @@ static bool Load_Main(FILE *fp)
 
 	/* Rewind, and read other chunks */
 	bool load_bldg = false;
+	bool load_plyr = false;
 	bool load_unit = false;
 	bool load_map  = false;
 	fseek(fp, position, SEEK_SET);
@@ -121,7 +122,7 @@ static bool Load_Main(FILE *fp)
 			case CC_NAME: break; /* 'NAME' chunk is of no interest to us */
 			case CC_INFO: break; /* 'INFO' chunk is already read */
 			case CC_MAP : if (!Map_Load      (fp, length)) return false; load_map  = true; Map_Load2Fallback(); break;
-			case CC_PLYR: if (!House_Load    (fp, length)) return false; break;
+			case CC_PLYR: if (!House_Load    (fp, length)) return false; load_plyr = true; break;
 			case CC_UNIT: if (!Unit_Load     (fp, length)) return false; load_unit = true; break;
 			case CC_BLDG: if (!Structure_Load(fp, length)) return false; load_bldg = true; break;
 			case CC_TEAM: if (!Team_Load     (fp, length)) return false; break;
@@ -133,6 +134,11 @@ static bool Load_Main(FILE *fp)
 			case CC_DDB2:
 				skip  = !load_bldg;
 				abort = !skip && !Structure_Load2(fp, length);
+				break;
+
+			case CC_DDH2:
+				skip  = !load_plyr;
+				abort = !skip && !House_Load2(fp, length);
 				break;
 
 			case CC_DDI2:

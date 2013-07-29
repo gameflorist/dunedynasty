@@ -143,6 +143,8 @@ typedef struct SaveLoad_CustomCallbackData {
 	void *object;
 } SaveLoad_CustomCallbackData;
 
+struct House;
+
 extern const SaveLoadDesc g_saveObject[];
 extern const SaveLoadDesc g_saveScriptEngine[];
 extern const SaveLoadDesc g_saveScenario[];
@@ -154,8 +156,11 @@ extern bool SaveLoad_Save(const SaveLoadDesc *sld, FILE *fp, void *object);
 extern bool House_Load(FILE *fp, uint32 length);
 extern bool House_LoadOld(FILE *fp, uint32 length);
 extern bool House_Save(FILE *fp);
+extern bool House_Load2(FILE *fp, uint32 length);
+extern bool House_Save2(FILE *fp);
 extern bool Info_Load(FILE *fp, uint32 length);
 extern bool Info_LoadOld(FILE *fp, uint32 length);
+extern void Info_Load_PlayerHouseGlobals(struct House *h);
 extern bool Info_Save(FILE *fp);
 extern bool Info_Load2(FILE *fp, uint32 length);
 extern bool Info_Save2(FILE *fp);

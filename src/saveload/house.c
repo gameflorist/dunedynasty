@@ -6,6 +6,8 @@
 #include "../house.h"
 #include "../pool/house.h"
 #include "../pool/pool.h"
+#include "../pool/structure.h"
+#include "../pool/unit.h"
 
 static const SaveLoadDesc s_saveHouse[] = {
 	SLD_ENTRY2(House, SLDT_UINT16, index,           SLDT_UINT8),
@@ -31,6 +33,13 @@ static const SaveLoadDesc s_saveHouse[] = {
 	SLD_ENTRY (House, SLDT_UINT16, starportTimeLeft),
 	SLD_ENTRY (House, SLDT_UINT16, starportLinkedID),
 	SLD_ARRAY (House, SLDT_UINT16, ai_structureRebuild, 10),
+	SLD_END
+};
+
+static const SaveLoadDesc s_saveHouse2[] = {
+	SLD_ENTRY2(House, SLDT_UINT16, index,           SLDT_UINT8),
+	SLD_ENTRY (House, SLDT_UINT16, houseMissileCountdown),
+	SLD_ENTRY (House, SLDT_UINT16, houseMissileID),
 	SLD_END
 };
 
@@ -60,12 +69,17 @@ bool House_Load(FILE *fp, uint32 length)
 		/* Copy over the data */
 		*h = hl;
 
+		/* Extra data. */
+		h->houseMissileID   = UNIT_INDEX_INVALID;
+
 		/* See if it is a human house */
 		if (h->flags.human) {
 			g_playerHouseID = h->index;
 			g_playerHouse = h;
 
 			if (h->starportLinkedID != 0xFFFF && h->starportTimeLeft == 0) h->starportTimeLeft = 1;
+
+			Info_Load_PlayerHouseGlobals(h);
 		}
 	}
 	if (length != 0) return false;
@@ -120,6 +134,53 @@ bool House_Save(FILE *fp)
 		if (h == NULL) break;
 
 		if (!SaveLoad_Save(s_saveHouse, fp, h)) return false;
+	}
+
+	return true;
+}
+
+/*--------------------------------------------------------------*/
+
+bool
+House_Load2(FILE *fp, uint32 length)
+{
+	uint32 bytes_read = 0;
+
+	while (bytes_read < length) {
+		House hl;
+
+		if (!SaveLoad_Load(s_saveHouse2, fp, &hl))
+			return false;
+
+		bytes_read += SaveLoad_GetLength(s_saveHouse2);
+
+		House *h = House_Get_ByIndex(hl.index);
+		if (h == NULL)
+			return false;
+
+		h->houseMissileID = hl.houseMissileID;
+		h->houseMissileCountdown = hl.houseMissileCountdown;
+	}
+
+	return (bytes_read == length);
+}
+
+bool
+House_Save2(FILE *fp)
+{
+	PoolFindStruct find;
+
+	find.houseID = HOUSE_INVALID;
+	find.type    = 0xFFFF;
+	find.index   = 0xFFFF;
+
+	while (true) {
+		House *h = House_Find(&find);
+		if (h == NULL)
+			break;
+
+		if (!SaveLoad_Save(s_saveHouse2, fp, h))
+			return false;
 	}
 
 	return true;

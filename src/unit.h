@@ -123,7 +123,6 @@ extern const UnitInfo g_table_unitInfo_original[UNIT_MAX];
 extern UnitInfo g_table_unitInfo[UNIT_MAX];
 
 extern Unit *g_unitActive;
-extern Unit *g_unitHouseMissile;
 extern int16 g_starportAvailable[UNIT_MAX];
 
 extern Unit *Unit_FirstSelected(int *iter);

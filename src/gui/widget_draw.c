@@ -253,7 +253,7 @@ static uint16 GUI_Widget_ActionPanel_GetActionType(bool forceDraw)
 
 	if (g_selectionType == SELECTIONTYPE_PLACE) {
 		actionType = 7; /* Placement */
-	} else if (g_unitHouseMissile != NULL) {
+	} else if (g_playerHouse->houseMissileID != UNIT_INDEX_INVALID) {
 		actionType = 8; /* House Missile */
 	} else if (Unit_AnySelected()) {
 		if (g_selectionType == SELECTIONTYPE_TARGET) {
@@ -359,7 +359,7 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 		} break;
 
 		case 8: { /* House Missile */
-			u  = g_unitHouseMissile;
+			u  = Unit_Get_ByIndex(g_playerHouse->houseMissileID);
 			ui = &g_table_unitInfo[u->o.type];
 
 			o  = &u->o;
@@ -576,7 +576,8 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 					break;
 
 				case 8: /* House Missile */
-					ActionPanel_DrawMissileCountdown(g_curWidgetFGColourBlink, (int)g_houseMissileCountdown - 1);
+					ActionPanel_DrawMissileCountdown(g_curWidgetFGColourBlink,
+							(int)g_playerHouse->houseMissileCountdown - 1);
 					break;
 
 				default:

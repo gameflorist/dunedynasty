@@ -1007,9 +1007,9 @@ void Structure_ActivateSpecial(Structure *s)
 			u = Unit_Create(UNIT_INDEX_INVALID, UNIT_MISSILE_HOUSE, s->o.houseID, position, Tools_Random_256());
 			g_validateStrictIfZero--;
 
-			g_unitHouseMissile = u;
 			if (u == NULL) break;
 
+			h->houseMissileID = u->o.index;
 			s->countDown = g_table_houseInfo[s->o.houseID].specialCountDown;
 
 			if (!h->flags.human) {
@@ -1036,13 +1036,13 @@ void Structure_ActivateSpecial(Structure *s)
 
 				/* We failed to find a target, so remove the missile */
 				Unit_Free(u);
-				g_unitHouseMissile = NULL;
+				h->houseMissileID = UNIT_INDEX_INVALID;
 
 				return;
 			}
 
 			/* Give the user 7 seconds to select their target */
-			g_houseMissileCountdown = 7;
+			h->houseMissileCountdown = 7;
 
 			GUI_ChangeSelectionType(SELECTIONTYPE_TARGET);
 		} break;

@@ -849,11 +849,9 @@ void Game_Init(void)
 	Audio_PlayVoice(VOICE_STOP);
 
 	g_playerCreditsNoSilo     = 0;
-	g_houseMissileCountdown   = 0;
 	g_selectionState          = 0; /* Invalid. */
 	g_structureActivePosition = 0;
 
-	g_unitHouseMissile = NULL;
 	g_unitActive       = NULL;
 	g_structureActive  = NULL;
 

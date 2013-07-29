@@ -3,6 +3,7 @@
 #include "saveload.h"
 #include "../file.h"
 #include "../gui/gui.h"
+#include "../house.h"
 #include "../map.h"
 #include "../newui/strategicmap.h"
 #include "../opendune.h"
@@ -12,6 +13,10 @@
 #include "../sprites.h"
 #include "../structure.h"
 #include "../timer/timer.h"
+
+/* These were originally global variables. */
+static uint16 s_houseMissileCountdown;
+static uint16 s_houseMissileID;
 
 static uint32 SaveLoad_SelectionType(void *object, uint32 value, bool loading)
 {
@@ -100,26 +105,6 @@ static uint32 SaveLoad_TickScenarioStart(void *object, uint32 value, bool loadin
 	return g_timerGame - g_tickScenarioStart;
 }
 
-static uint32 SaveLoad_UnitHouseMissile(void *object, uint32 value, bool loading)
-{
-	VARIABLE_NOT_USED(object);
-
-	if (loading) {
-		if ((uint16)value != 0xFFFF && value < UNIT_INDEX_MAX) {
-			g_unitHouseMissile = Unit_Get_ByIndex((uint16)value);
-		} else {
-			g_unitHouseMissile = NULL;
-		}
-		return 0;
-	}
-
-	if (g_unitHouseMissile != NULL) {
-		return g_unitHouseMissile->o.index;
-	} else {
-		return 0xFFFF;
-	}
-}
-
 static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GSLD   (g_scenario,  g_saveScenario),
 	SLD_GENTRY (SLDT_UINT16, g_playerCreditsNoSilo),
@@ -140,8 +125,8 @@ static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GCALLB (SLDT_UINT32, g_tickScenarioStart, &SaveLoad_TickScenarioStart),
 	SLD_GENTRY (SLDT_UINT16, g_playerCreditsNoSilo),
 	SLD_GARRAY (SLDT_INT16,  g_starportAvailable, UNIT_MAX),
-	SLD_GENTRY (SLDT_UINT16, g_houseMissileCountdown),
-	SLD_GCALLB (SLDT_UINT16, g_unitHouseMissile, &SaveLoad_UnitHouseMissile),
+	SLD_GENTRY (SLDT_UINT16, s_houseMissileCountdown),
+	SLD_GENTRY (SLDT_UINT16, s_houseMissileID),
 	SLD_GENTRY (SLDT_UINT16, g_structureIndex),
 	SLD_END
 };
@@ -194,6 +179,13 @@ bool Info_LoadOld(FILE *fp, uint32 length)
 	return true;
 }
 
+void
+Info_Load_PlayerHouseGlobals(House *h)
+{
+	h->houseMissileCountdown= s_houseMissileCountdown;
+	h->houseMissileID       = s_houseMissileID;
+}
+
 /**
  * Save all kinds of important info to the savegame.
  * @param fp The file to save to.
@@ -202,6 +194,15 @@ bool Info_LoadOld(FILE *fp, uint32 length)
 bool Info_Save(FILE *fp)
 {
 	const uint16 savegameVersion = 0x0290;
+
+	if (g_playerHouse != NULL) {
+		s_houseMissileCountdown = g_playerHouse->houseMissileCountdown;
+		s_houseMissileID        = g_playerHouse->houseMissileID;
+	}
+	else {
+		s_houseMissileCountdown = 0;
+		s_houseMissileID        = UNIT_INDEX_INVALID;
+	}
 
 	if (!fwrite_le_uint16(savegameVersion, fp)) return false;
 
