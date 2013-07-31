@@ -18,6 +18,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../map.h"
+#include "../net/server.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 #include "../pool/pool.h"
@@ -365,10 +366,10 @@ Viewport_Place(void)
 
 		House_UpdateRadarState(h);
 
-		if (h->powerProduction < h->powerUsage) {
-			if ((h->structuresBuilt & FLAG_STRUCTURE_OUTPOST) != 0) {
-				GUI_DisplayText(String_Get_ByIndex(STR_NOT_ENOUGH_POWER_FOR_RADAR_BUILD_WINDTRAPS), 3);
-			}
+		if ((h->powerProduction < h->powerUsage)
+				&& (h->structuresBuilt & FLAG_STRUCTURE_OUTPOST)) {
+			Server_Send_StatusMessage1(1 << h->index, 3,
+					STR_NOT_ENOUGH_POWER_FOR_RADAR_BUILD_WINDTRAPS);
 		}
 
 		return;
@@ -377,13 +378,15 @@ Viewport_Place(void)
 	Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 
 	if (g_structureActiveType == STRUCTURE_SLAB_1x1 || g_structureActiveType == STRUCTURE_SLAB_2x2) {
-		GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_FOUNDATION_HERE), 2);
+		Server_Send_StatusMessage1(1 << h->index, 2,
+				STR_CAN_NOT_PLACE_FOUNDATION_HERE);
 	}
 	else {
 		GUI_DisplayHint(s->o.houseID,
 				STR_HINT_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE,
 				SHAPE_INVALID);
-		GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_S_HERE), 2, String_Get_ByIndex(si->o.stringID_abbrev));
+		Server_Send_StatusMessage2(1 << h->index, 2,
+				STR_CAN_NOT_PLACE_S_HERE, si->o.stringID_abbrev);
 	}
 }
 

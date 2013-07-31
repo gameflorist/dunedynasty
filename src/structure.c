@@ -21,6 +21,7 @@
 #include "gui/widget.h"
 #include "house.h"
 #include "map.h"
+#include "net/server.h"
 #include "newui/actionpanel.h"
 #include "opendune.h"
 #include "pool/pool.h"
@@ -260,11 +261,13 @@ void GameLoop_Structure(void)
 
 							if (s->o.houseID == g_playerHouseID) {
 								if (s->o.type != STRUCTURE_BARRACKS && s->o.type != STRUCTURE_WOR_TROOPER) {
-									uint16 stringID = STR_IS_COMPLETED_AND_AWAITING_ORDERS;
-									if (s->o.type == STRUCTURE_HIGH_TECH) stringID = STR_IS_COMPLETE;
-									if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) stringID = STR_IS_COMPLETED_AND_READY_TO_PLACE;
+									const uint16 stringID
+										= (s->o.type == STRUCTURE_HIGH_TECH) ? STR_IS_COMPLETE
+										: (s->o.type == STRUCTURE_CONSTRUCTION_YARD) ? STR_IS_COMPLETED_AND_READY_TO_PLACE
+										: STR_IS_COMPLETED_AND_AWAITING_ORDERS;
 
-									GUI_DisplayText("%s %s", 0, String_Get_ByIndex(oi->stringID_full), String_Get_ByIndex(stringID));
+									Server_Send_StatusMessage2(1 << s->o.houseID, 0,
+											stringID, oi->stringID_full);
 
 									Audio_PlayVoice(VOICE_CONSTRUCTION_COMPLETE);
 								}
@@ -305,8 +308,10 @@ void GameLoop_Structure(void)
 						if (s->o.houseID == g_playerHouseID) {
 							if (!enhancement_construction_does_not_pause)
 								s->o.flags.s.onHold = true;
-							GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_FUNDS_CONSTRUCTION_IS_HALTED), 0);
 						}
+
+						Server_Send_StatusMessage1(1 << s->o.houseID, 0,
+								STR_INSUFFICIENT_FUNDS_CONSTRUCTION_IS_HALTED);
 					}
 				}
 
@@ -1685,7 +1690,6 @@ void Structure_CancelBuild(Structure *s)
 bool Structure_BuildObject(Structure *s, uint16 objectType)
 {
 	const StructureInfo *si;
-	const char *str;
 	Object *o;
 	ObjectInfo *oi;
 	assert(objectType != 0xFFFF); /* Factory window. */
@@ -1749,7 +1753,6 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 		if (u != NULL) {
 			o = &u->o;
 			oi = &g_table_unitInfo[objectType].o;
-			str = String_Get_ByIndex(g_table_unitInfo[objectType].o.stringID_full);
 		}
 		else {
 			o = NULL;
@@ -1759,7 +1762,6 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 		if (st != NULL) {
 			o = &st->o;
 			oi = &g_table_structureInfo[objectType].o;
-			str = String_Get_ByIndex(g_table_structureInfo[objectType].o.stringID_full);
 
 			if (!Structure_CheckAvailableConcrete(objectType, s->o.houseID)) {
 				GUI_DisplayHint(s->o.houseID,
@@ -1781,18 +1783,17 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 
 		Structure_SetState(s, STRUCTURE_STATE_BUSY);
 
-		if (s->o.houseID != g_playerHouseID) return true;
-
-		GUI_DisplayText(String_Get_ByIndex(STR_PRODUCTION_OF_S_HAS_STARTED), 2, str);
+		Server_Send_StatusMessage2(1 << s->o.houseID, 2,
+				STR_PRODUCTION_OF_S_HAS_STARTED, oi->stringID_full);
 
 		return true;
 	}
+	else {
+		Server_Send_StatusMessage1(1 << s->o.houseID, 2,
+				STR_UNABLE_TO_CREATE_MORE);
 
-	if (s->o.houseID != g_playerHouseID) return false;
-
-	GUI_DisplayText(String_Get_ByIndex(STR_UNABLE_TO_CREATE_MORE), 2);
-
-	return false;
+		return false;
+	}
 }
 
 /**
@@ -1812,9 +1813,8 @@ bool Structure_SetUpgradingState(Structure *s, int8 state, Widget *w)
 	if (state == -1) state = s->o.flags.s.upgrading ? 0 : 1;
 
 	if (state == 0 && s->o.flags.s.upgrading) {
-		if (s->o.houseID == g_playerHouseID) {
-			GUI_DisplayText(String_Get_ByIndex(STR_UPGRADING_STOPS), 2);
-		}
+		Server_Send_StatusMessage1(1 << s->o.houseID, 2,
+				STR_UPGRADING_STOPS);
 
 		s->o.flags.s.upgrading = false;
 		s->o.flags.s.onHold = false;
@@ -1826,9 +1826,8 @@ bool Structure_SetUpgradingState(Structure *s, int8 state, Widget *w)
 
 	if (state == 0 || s->o.flags.s.upgrading || s->upgradeTimeLeft == 0) return ret;
 
-	if (s->o.houseID == g_playerHouseID) {
-		GUI_DisplayText(String_Get_ByIndex(STR_UPGRADING_STARTS), 2);
-	}
+	Server_Send_StatusMessage1(1 << s->o.houseID, 2,
+			STR_UPGRADING_STARTS);
 
 	s->o.flags.s.onHold = true;
 	s->o.flags.s.repairing = false;
@@ -1861,9 +1860,8 @@ bool Structure_SetRepairingState(Structure *s, int8 state, Widget *w)
 	if (state == -1) state = s->o.flags.s.repairing ? 0 : 1;
 
 	if (state == 0 && s->o.flags.s.repairing) {
-		if (s->o.houseID == g_playerHouseID) {
-			GUI_DisplayText(String_Get_ByIndex(STR_REPAIRING_STOPS), 2);
-		}
+		Server_Send_StatusMessage1(1 << s->o.houseID, 2,
+				STR_REPAIRING_STOPS);
 
 		s->o.flags.s.repairing = false;
 		s->o.flags.s.onHold = false;
@@ -1875,9 +1873,8 @@ bool Structure_SetRepairingState(Structure *s, int8 state, Widget *w)
 
 	if (state == 0 || s->o.flags.s.repairing || s->o.hitpoints == g_table_structureInfo[s->o.type].o.hitpoints) return ret;
 
-	if (s->o.houseID == g_playerHouseID) {
-		GUI_DisplayText(String_Get_ByIndex(STR_REPAIRING_STARTS), 2);
-	}
+	Server_Send_StatusMessage1(1 << s->o.houseID, 2,
+			STR_REPAIRING_STARTS);
 
 	s->o.flags.s.onHold = true;
 	s->o.flags.s.repairing = true;

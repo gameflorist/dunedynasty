@@ -20,6 +20,7 @@
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
+#include "../net/server.h"
 #include "../opendune.h"
 #include "../pool/unit.h"
 #include "../pool/pool.h"
@@ -1698,19 +1699,14 @@ uint16 Script_Unit_FindStructure(ScriptEngine *script)
  */
 uint16 Script_Unit_DisplayDestroyedText(ScriptEngine *script)
 {
-	const UnitInfo *ui;
-	Unit *u;
-
+	const Unit *u = g_scriptCurrentUnit;
+	const enum HouseType houseID = Unit_GetHouseID(u);
 	VARIABLE_NOT_USED(script);
 
-	u = g_scriptCurrentUnit;
-	ui = &g_table_unitInfo[u->o.type];
-
-	if (g_gameConfig.language == LANGUAGE_FRENCH) {
-		GUI_DisplayText(String_Get_ByIndex(STR_S_S_DESTROYED), 0, String_Get_ByIndex(ui->o.stringID_abbrev), g_table_houseInfo[Unit_GetHouseID(u)].name);
-	} else {
-		GUI_DisplayText(String_Get_ByIndex(STR_S_S_DESTROYED), 0, g_table_houseInfo[Unit_GetHouseID(u)].name, String_Get_ByIndex(ui->o.stringID_abbrev));
-	}
+	Server_Send_StatusMessage3((1 << houseID) | u->o.seenByHouses, 0,
+			STR_S_S_DESTROYED,
+			STR_HOUSE_HARKONNEN + houseID,
+			g_table_unitInfo[u->o.type].o.stringID_abbrev);
 
 	return 0;
 }
@@ -1956,10 +1952,11 @@ uint16 Script_Unit_MCVDeploy(ScriptEngine *script)
 
 	Unit_UpdateMap(0, u);
 
+	const enum HouseType houseID = Unit_GetHouseID(u);
 	for (i = 0; i < 4; i++) {
 		static int8 offsets[4] = { 0, -1, -64, -65 };
 
-		s = Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_CONSTRUCTION_YARD, Unit_GetHouseID(u), Tile_PackTile(u->o.position) + offsets[i]);
+		s = Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_CONSTRUCTION_YARD, houseID, Tile_PackTile(u->o.position) + offsets[i]);
 
 		if (s != NULL) {
 			const bool unit_was_selected = Unit_IsSelected(u);
@@ -1979,9 +1976,8 @@ uint16 Script_Unit_MCVDeploy(ScriptEngine *script)
 			break;
 	}
 
-	if (Unit_GetHouseID(u) == g_playerHouseID) {
-		GUI_DisplayText(String_Get_ByIndex(STR_UNIT_IS_UNABLE_TO_DEPLOY_HERE), 0);
-	}
+	Server_Send_StatusMessage1(1 << houseID, 0,
+			STR_UNIT_IS_UNABLE_TO_DEPLOY_HERE);
 
 	Unit_UpdateMap(1, u);
 

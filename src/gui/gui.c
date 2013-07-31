@@ -262,6 +262,59 @@ GUI_DrawStatusBarText(int x, int y)
 	GUI_DisplayText(NULL, 0);
 }
 
+void
+GUI_DrawStatusBarTextWrapper(uint8 priority,
+		uint16 str1, uint16 str2, uint16 str3)
+{
+	const char *format_str = NULL;
+	const char *arg1 = NULL;
+	const char *arg2 = NULL;
+	const char *arg3 = NULL;
+
+	if (str1 == STR_S_S_DESTROYED) {
+		format_str = String_Get_ByIndex(str1);
+
+		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+			arg1 = String_Get_ByIndex(str3); /* <Unit> */
+			arg2 = String_Get_ByIndex(str2); /* <House> */
+		}
+		else {
+			arg1 = String_Get_ByIndex(str2); /* <House> */
+			arg2 = String_Get_ByIndex(str3); /* <Unit> */
+		}
+	}
+	else if (str1 == STR_IS_COMPLETE
+	      || str1 == STR_IS_COMPLETED_AND_READY_TO_PLACE
+	      || str1 == STR_IS_COMPLETED_AND_AWAITING_ORDERS) {
+		format_str = "%s %s";
+		arg1 = String_Get_ByIndex(str2); /* <Object> */
+		arg2 = String_Get_ByIndex(str1); /* is complete. */
+	}
+	else if (str1 == STR_IS_DESTROYED) {
+		format_str = "%s %s %s";
+
+		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+			arg1 = String_Get_ByIndex(str3); /* <Structure> */
+			arg2 = String_Get_ByIndex(str2); /* <House> */
+			arg3 = String_Get_ByIndex(str1); /* is destroyed. */
+		}
+		else {
+			arg1 = String_Get_ByIndex(str2); /* <House> */
+			arg2 = String_Get_ByIndex(str3); /* <Structure> */
+			arg3 = String_Get_ByIndex(str1); /* is destroyed. */
+		}
+	}
+	else {
+		format_str = String_Get_ByIndex(str1);
+		arg1 = String_Get_ByIndex(str2);
+		arg2 = String_Get_ByIndex(str3);
+	}
+
+	if (format_str != NULL) {
+		GUI_DisplayText(format_str, priority, arg1, arg2, arg3);
+	}
+}
+
 /**
  * Draw a char on the screen.
  *

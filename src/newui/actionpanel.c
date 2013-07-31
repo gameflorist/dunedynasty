@@ -21,6 +21,7 @@
 #include "../gui/widget.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
+#include "../net/server.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 #include "../pool/structure.h"
@@ -597,8 +598,8 @@ ActionPanel_ClickStarportOrder(Structure *s)
 			h->credits += credits;
 			Structure_Starport_Restock(objectType);
 
-			if (s->o.houseID == g_playerHouseID)
-				GUI_DisplayText(String_Get_ByIndex(STR_UNABLE_TO_CREATE_MORE), 2);
+			Server_Send_StatusMessage1(1 << s->o.houseID, 2,
+					STR_UNABLE_TO_CREATE_MORE);
 
 			continue;
 		}

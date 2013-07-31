@@ -14,6 +14,7 @@
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "map.h"
+#include "net/server.h"
 #include "newui/actionpanel.h"
 #include "newui/menubar.h"
 #include "opendune.h"
@@ -207,25 +208,25 @@ void GameLoop_House(void)
 			if (h->credits > maxCredits) {
 				h->credits = maxCredits;
 
-				if (h->flags.human) {
-					GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_SPICE_STORAGE_AVAILABLE_SPICE_IS_LOST), 1);
-				}
+				Server_Send_StatusMessage1(1 << h->index, 1,
+						STR_INSUFFICIENT_SPICE_STORAGE_AVAILABLE_SPICE_IS_LOST);
 			}
 
 			if (h->creditsStorage > h->creditsStorageNoSilo) {
 				h->creditsStorageNoSilo = 0;
 			}
 
-			if (h->flags.human) {
-				if (h->creditsStorageNoSilo == 0 && g_campaignID > 1 && h->credits != 0) {
-					if (h->creditsStorage != 0 && ((h->credits * 256 / h->creditsStorage) > 200)) {
-						GUI_DisplayText(String_Get_ByIndex(STR_SPICE_STORAGE_CAPACITY_LOW_BUILD_SILOS), 0);
-					}
-				}
+			if (g_campaignID > 1
+					&& h->creditsStorageNoSilo == 0
+					&& h->credits != 0 && h->creditsStorage != 0
+					&& (h->credits * 256 / h->creditsStorage) > 200) {
+				Server_Send_StatusMessage1(1 << h->index, 0,
+						STR_SPICE_STORAGE_CAPACITY_LOW_BUILD_SILOS);
+			}
 
-				if (h->credits < 100 && h->creditsStorageNoSilo != 0) {
-					GUI_DisplayText(String_Get_ByIndex(STR_CREDITS_ARE_LOW_HARVEST_SPICE_FOR_MORE_CREDITS), 0);
-				}
+			if (h->credits < 100 && h->creditsStorageNoSilo != 0) {
+				Server_Send_StatusMessage1(1 << h->index, 0,
+						STR_CREDITS_ARE_LOW_HARVEST_SPICE_FOR_MORE_CREDITS);
 			}
 		}
 
@@ -351,9 +352,8 @@ void House_EnsureHarvesterAvailable(uint8 houseID)
 
 	if (Unit_CreateWrapper(houseID, UNIT_HARVESTER, Tools_Index_Encode(s->o.index, IT_STRUCTURE)) == NULL) return;
 
-	if (houseID != g_playerHouseID) return;
-
-	GUI_DisplayText(String_Get_ByIndex(STR_HARVESTER_IS_HEADING_TO_REFINERY), 0);
+	Server_Send_StatusMessage1(1 << houseID, 0,
+			STR_HARVESTER_IS_HEADING_TO_REFINERY);
 }
 
 /**
@@ -490,8 +490,9 @@ void House_CalculatePowerAndCredit(House *h)
 	}
 
 	/* Check if we are low on power */
-	if (h->flags.human && h->powerUsage > h->powerProduction) {
-		GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_POWER_WINDTRAP_IS_NEEDED), 1);
+	if (h->powerUsage > h->powerProduction) {
+		Server_Send_StatusMessage1(1 << h->index, 1,
+				STR_INSUFFICIENT_POWER_WINDTRAP_IS_NEEDED);
 	}
 
 	/* If there are no buildings left, you lose your right on 'credits without storage'
