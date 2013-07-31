@@ -111,6 +111,9 @@ static bool Load_Main(FILE *fp)
 	bool load_map  = false;
 	fseek(fp, position, SEEK_SET);
 	while (fread(&header, sizeof(uint32), 1, fp) == 1) {
+		bool abort = false;
+		bool skip = false;
+
 		if (fread(&length, sizeof(uint32), 1, fp) != 1) return false;
 		length = BETOH32(length);
 
@@ -128,55 +131,44 @@ static bool Load_Main(FILE *fp)
 			case CC_DDAI: if (!BrutalAI_Load (fp, length)) return false; break;
 
 			case CC_DDB2:
-				if (load_bldg) {
-					if (!Structure_Load2(fp, length))
-						return false;
-				}
-				else {
-					Error("Structure_Load2 called before Structure_Load. Skipped.\n");
-				}
+				skip  = !load_bldg;
+				abort = !skip && !Structure_Load2(fp, length);
 				break;
 
 			case CC_DDI2:
-				if (load_unit) {
-					if (!Info_Load2(fp, length))
-						return false;
-				}
-				else {
-					Error("Info_Load2 called before Unit_Load. Skipped.\n");
-				}
+				skip  = !load_unit;
+				abort = !skip && !Info_Load2(fp, length);
 				break;
 
 			case CC_DDM2:
-				if (load_map) {
-					if (!Map_Load2(fp, length))
-						return false;
-				}
-				else {
-					Error("Map_Load2 called before Map_Load. Skipped.\n");
-				}
+				skip  = !load_map;
+				abort = !skip && !Map_Load2(fp, length);
 				break;
 
 			case CC_DDS2:
-				if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
-					if (!Scenario_Load2(fp, length))
-						return false;
-				}
+				skip  = g_campaign_selected != CAMPAIGNID_SKIRMISH;
+				abort = !skip && !Scenario_Load2(fp, length);
 				break;
 
 			case CC_DDU2:
-				if (load_unit) {
-					if (!Unit_Load2(fp, length))
-						return false;
-				}
-				else {
-					Error("Unit_Load2 called before Unit_Load. Skipped.\n");
-				}
+				skip  = !load_unit;
+				abort = !skip && !Unit_Load2(fp, length);
 				break;
 
 			default:
-				Error("Unknown chunk in savegame: %c%c%c%c (length: %d). Skipped.\n", header, header >> 8, header >> 16, header >> 24, length);
+				skip  = true;
+				abort = false;
 				break;
+		}
+
+		if (skip) {
+			Error("Unknown chunk in savegame: %c%c%c%c (length: %d). Skipped.\n",
+					header, header >> 8, header >> 16, header >> 24, length);
+		}
+		else if (abort) {
+			Error("Faulty chunk in savegame: %c%c%c%c (length: %d).\n",
+					header, header >> 8, header >> 16, header >> 24, length);
+			return false;
 		}
 
 		/* Savegames are word aligned */
