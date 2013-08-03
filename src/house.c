@@ -96,29 +96,30 @@ void GameLoop_House(void)
 	}
 
 	if (tickMissileCountdown && g_playerHouse->houseMissileCountdown != 0) {
-		g_playerHouse->houseMissileCountdown--;
+		h = g_playerHouse;
+		h->houseMissileCountdown--;
 
 		const enum VoiceID voiceID
-			= VOICE_MISSILE_LAUNCHED + g_playerHouse->houseMissileCountdown - 1;
+			= VOICE_MISSILE_LAUNCHED + h->houseMissileCountdown - 1;
 
 		/* Don't queue up the countdown numbers. */
 		if (voiceID >= VOICE_ONE) {
 			const bool narrator_speaking = Audio_Poll();
 
 			if (!narrator_speaking) {
-				Audio_PlayVoice(voiceID);
+				Server_Send_PlayVoice(1 << h->index, voiceID);
 			}
 			else if (voiceID == VOICE_FIVE) {
-				Audio_PlayEffect(EFFECT_COUNT_DOWN_TICK);
+				Server_Send_PlaySound(1 << h->index, EFFECT_COUNT_DOWN_TICK);
 			}
 		}
 		else if (voiceID >= VOICE_MISSILE_LAUNCHED) {
-			Audio_PlayVoice(voiceID);
+			Server_Send_PlayVoice(1 << h->index, voiceID);
 		}
 
-		if (g_playerHouse->houseMissileCountdown == 0) {
+		if (h->houseMissileCountdown == 0) {
 			Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
-			Unit_LaunchHouseMissile(s, Map_FindLocationTile(4, g_playerHouseID));
+			Unit_LaunchHouseMissile(s, Map_FindLocationTile(4, h->index));
 		}
 	}
 
@@ -264,10 +265,15 @@ void GameLoop_House(void)
 					h->starportLinkedID = UNIT_INDEX_INVALID;
 					u->o.flags.s.inTransport = true;
 
-					Audio_PlayVoice(VOICE_FRIGATE_HAS_ARRIVED);
-				}
+					Server_Send_PlayVoice(1 << h->index,
+							VOICE_FRIGATE_HAS_ARRIVED);
 
-				h->starportTimeLeft = (u != NULL) ? g_table_houseInfo[h->index].starportDeliveryTime : 1;
+					h->starportTimeLeft
+						= g_table_houseInfo[h->index].starportDeliveryTime;
+				}
+				else {
+					h->starportTimeLeft = 1;
+				}
 			}
 		}
 

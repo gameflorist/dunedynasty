@@ -11,13 +11,13 @@
 #include "map.h"
 
 #include "animation.h"
-#include "audio/audio.h"
 #include "enhancement.h"
 #include "explosion.h"
 #include "gfx.h"
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "house.h"
+#include "net/server.h"
 #include "newui/actionpanel.h"
 #include "opendune.h"
 #include "pool/pool.h"
@@ -625,7 +625,7 @@ void Map_DeviateArea(uint16 type, tile32 position, uint16 radius, uint8 houseID)
  * @param packed Center position.
  * @param houseID %House causing the explosion.
  */
-void Map_Bloom_ExplodeSpice(uint16 packed, uint8 houseID)
+void Map_Bloom_ExplodeSpice(uint16 packed, enum HouseFlag houses)
 {
 	if (g_validateStrictIfZero == 0) {
 		Unit_Remove(Unit_Get_ByPackedTile(packed));
@@ -633,8 +633,7 @@ void Map_Bloom_ExplodeSpice(uint16 packed, uint8 houseID)
 		Map_MakeExplosion(EXPLOSION_SPICE_BLOOM_TREMOR, Tile_UnpackTile(packed), 0, 0);
 	}
 
-	if (houseID == g_playerHouseID)
-		Audio_PlayVoice(VOICE_SPICE_BLOOM_LOCATED);
+	Server_Send_PlayVoice(houses, VOICE_SPICE_BLOOM_LOCATED);
 
 	Map_FillCircleWithSpice(packed, 5);
 

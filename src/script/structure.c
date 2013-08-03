@@ -8,7 +8,6 @@
 #include "script.h"
 
 #include "../ai.h"
-#include "../audio/audio.h"
 #include "../config.h"
 #include "../enhancement.h"
 #include "../explosion.h"
@@ -260,8 +259,8 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 		if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
 		Object_Script_Variable4_Clear(&s->o);
 
-		if (s->o.houseID == g_playerHouseID)
-			Audio_PlayVoice(VOICE_HARKONNEN_UNIT_LAUNCHED + g_playerHouseID);
+		Server_Send_PlayVoice(1 << s->o.houseID,
+				VOICE_HARKONNEN_UNIT_LAUNCHED + s->o.houseID);
 
 		return 1;
 	}
@@ -313,7 +312,6 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 	if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
 	Object_Script_Variable4_Clear(&s->o);
 
-	if (s->o.houseID != g_playerHouseID) return 1;
 	if (s->o.type == STRUCTURE_REPAIR) {
 		/* ENHANCEMENT -- Units can be ejected from the repair bay.
 		 *
@@ -329,7 +327,11 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 		return 1;
 	}
 
-	Audio_PlayVoice(g_playerHouseID + ((u->o.type == UNIT_HARVESTER) ? VOICE_HARKONNEN_HARVESTER_DEPLOYED : VOICE_HARKONNEN_UNIT_DEPLOYED));
+	const enum VoiceID voiceID
+		= (u->o.type == UNIT_HARVESTER)
+		? VOICE_HARKONNEN_HARVESTER_DEPLOYED
+		: VOICE_HARKONNEN_UNIT_DEPLOYED;
+	Server_Send_PlayVoice(1 << s->o.houseID, voiceID + s->o.houseID);
 
 	return 1;
 }
@@ -521,9 +523,8 @@ uint16 Script_Structure_VoicePlay(ScriptEngine *script)
 
 	s = g_scriptCurrentStructure;
 
-	if (s->o.houseID != g_playerHouseID) return 0;
-
-	Audio_PlaySoundAtTile(STACK_PEEK(1), s->o.position);
+	Server_Send_PlaySoundAtTile(1 << s->o.houseID,
+			STACK_PEEK(1), s->o.position);
 
 	return 0;
 }
@@ -561,10 +562,10 @@ uint16 Script_Structure_Fire(ScriptEngine *script)
 		damage    = 20;
 		fireDelay = Tools_AdjustToGameSpeed(g_table_unitInfo[UNIT_TANK].fireDelay, 1, 0xFFFF, true);
 
-		/* Cannon turrets and rocket turrets at close range were silent. */
-		if (enhancement_play_additional_voices) {
-			Audio_PlaySoundAtTile(SOUND_TANK, s->o.position);
-		}
+		/* ENHANCEMENT -- Cannon turrets and rocket turrets at close
+		 * range were silent.
+		 */
+		Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL, SOUND_TANK, s->o.position);
 	}
 
 	position.x = s->o.position.x + 0x80;

@@ -8,11 +8,11 @@
 #include "explosion.h"
 
 #include "animation.h"
-#include "audio/audio.h"
 #include "binheap.h"
 #include "enhancement.h"
 #include "house.h"
 #include "map.h"
+#include "net/server.h"
 #include "shape.h"
 #include "sprites.h"
 #include "structure.h"
@@ -90,7 +90,7 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
 
 	/* Boom a bloom if there is one */
 	if (t->groundSpriteID == g_bloomSpriteID) {
-		Map_Bloom_ExplodeSpice(packed, g_playerHouseID);
+		Map_Bloom_ExplodeSpice(packed, FLAG_HOUSE_ALL);
 		return;
 	}
 
@@ -106,7 +106,7 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
  */
 static void Explosion_Func_PlayVoice(Explosion *e, uint16 voiceID)
 {
-	Audio_PlaySoundAtTile(voiceID, e->position);
+	Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL, voiceID, e->position);
 }
 
 /**
@@ -145,7 +145,7 @@ static void Explosion_Func_BloomExplosion(Explosion *e, uint16 parameter)
 
 	if (g_map[packed].groundSpriteID != g_bloomSpriteID) return;
 
-	Map_Bloom_ExplodeSpice(packed, g_playerHouseID);
+	Map_Bloom_ExplodeSpice(packed, FLAG_HOUSE_ALL);
 }
 
 /**

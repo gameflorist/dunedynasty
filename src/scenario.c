@@ -1394,7 +1394,7 @@ void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)
 
 void Scenario_Load_Map_Field(uint16 packed, Tile *t)
 {
-	Map_Bloom_ExplodeSpice(packed, HOUSE_INVALID);
+	Map_Bloom_ExplodeSpice(packed, 0);
 
 	/* Show where a field started in the preview mode by making it an odd looking sprite */
 	if (g_debugScenario) {

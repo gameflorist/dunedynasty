@@ -269,7 +269,8 @@ void GameLoop_Structure(void)
 									Server_Send_StatusMessage2(1 << s->o.houseID, 0,
 											stringID, oi->stringID_full);
 
-									Audio_PlayVoice(VOICE_CONSTRUCTION_COMPLETE);
+									Server_Send_PlayVoice(1 << s->o.houseID,
+											VOICE_CONSTRUCTION_COMPLETE);
 								}
 							} else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 								/* An AI immediately places the structure when it is done building */
@@ -373,8 +374,8 @@ void GameLoop_Structure(void)
 
 								Structure_SetState(s, STRUCTURE_STATE_READY);
 
-								if (s->o.houseID == g_playerHouseID)
-									Audio_PlayVoice(VOICE_HARKONNEN_VEHICLE_REPAIRED + g_playerHouseID);
+								Server_Send_PlayVoice(1 << s->o.houseID,
+										VOICE_HARKONNEN_VEHICLE_REPAIRED + s->o.houseID);
 							}
 						}
 					} else if (h->credits != 0) {
@@ -1105,8 +1106,9 @@ void Structure_ActivateSpecial(Structure *s)
 				s->countDown = g_table_houseInfo[s->o.houseID].specialCountDown;
 				Unit_SetAction(u, ACTION_SABOTAGE);
 			}
-			else if (enhancement_play_additional_voices && s->o.houseID == g_playerHouseID) {
-				Audio_PlaySound(EFFECT_ERROR_OCCURRED);
+			else if (enhancement_play_additional_voices) {
+				/* ENHANCEMENT -- Feedback if we cannot create a saboteur. */
+				Server_Send_PlaySound(1 << h->index, EFFECT_ERROR_OCCURRED);
 			}
 		} break;
 
@@ -1169,7 +1171,8 @@ static void Structure_Destroy(Structure *s)
 	Script_Reset(&s->o.script, g_scriptStructure);
 	Script_Load(&s->o.script, s->o.type);
 
-	Audio_PlaySoundAtTile(SOUND_STRUCTURE_DESTROYED, s->o.position);
+	Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
+			SOUND_STRUCTURE_DESTROYED, s->o.position);
 
 	linkedID = s->o.linkedID;
 
@@ -1230,11 +1233,20 @@ bool Structure_Damage(Structure *s, uint16 damage, uint16 range)
 
 		Structure_Destroy(s);
 
-		if (House_AreAllied(g_playerHouseID, s->o.houseID)) {
-			Audio_PlayVoice(VOICE_HARKONNEN_STRUCTURE_DESTROYED + s->o.houseID);
-		} else {
-			Audio_PlayVoice(VOICE_ENEMY_STRUCTURE_DESTROYED);
+		enum HouseFlag allies = 0;
+		enum HouseFlag enemies = 0;
+
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+			if (House_AreAllied(s->o.houseID, houseID)) {
+				allies |= 1 << houseID;
+			}
+			else {
+				enemies |= 1 << houseID;
+			}
 		}
+
+		Server_Send_PlayVoice(allies, VOICE_HARKONNEN_STRUCTURE_DESTROYED + s->o.houseID);
+		Server_Send_PlayVoice(enemies, VOICE_ENEMY_STRUCTURE_DESTROYED);
 
 		Structure_UntargetMe(s);
 		return true;
@@ -2071,7 +2083,7 @@ void Structure_HouseUnderAttack(uint8 houseID)
 	if (h->flags.human) {
 		if (h->timerStructureAttack != 0) return;
 
-		Audio_PlayVoice(VOICE_OUR_BASE_IS_UNDER_ATTACK);
+		Server_Send_PlayVoice(1 << houseID, VOICE_OUR_BASE_IS_UNDER_ATTACK);
 
 		h->timerStructureAttack = 8;
 		return;
