@@ -252,84 +252,6 @@ uint16 Map_SetSelectionObjectPosition(uint16 packed)
  */
 void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 {
-#if 0
-	/* Border tiles of the viewport relative to the top-left. */
-	static const uint16 viewportBorder[] = {
-		0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E,
-		0x0040, 0x004E,
-		0x0080, 0x008E,
-		0x00C0, 0x00CE,
-		0x0100, 0x010E,
-		0x0140, 0x014E,
-		0x0180, 0x018E,
-		0x01C0, 0x01CE,
-		0x0200, 0x020E,
-		0x0240, 0x0241, 0x0242, 0x0243, 0x0244, 0x0245, 0x0246, 0x0247, 0x0248, 0x0249, 0x024A, 0x024B, 0x024C, 0x024D, 0x024E,
-		0xFFFF
-	};
-
-	static uint16 minimapPreviousPosition = 0;
-
-	bool cleared;
-	Screen oldScreenID;
-
-	if (packed != 0xFFFF && packed == minimapPreviousPosition && !forceUpdate) return;
-	if (g_selectionType == SELECTIONTYPE_MENTAT) return;
-
-	oldScreenID = GFX_Screen_SetActive(SCREEN_1);
-
-	cleared = false;
-
-	if (minimapPreviousPosition != 0xFFFF && minimapPreviousPosition != packed) {
-		const uint16 *m;
-
-		cleared = true;
-
-		for (m = viewportBorder; *m != 0xFFFF; m++) {
-			uint16 curPacked;
-
-			curPacked = minimapPreviousPosition + *m;
-			BitArray_Clear(g_displayedMinimap, curPacked);
-
-			GUI_Widget_Viewport_DrawTile(curPacked);
-		}
-	}
-
-	if (packed != 0xFFFF && (packed != minimapPreviousPosition || forceUpdate)) {
-		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
-		const uint16 *m;
-		uint16 mapScale;
-		const MapInfo *mapInfo;
-		uint16 left, top, right, bottom;
-
-		mapScale = g_scenario.mapScale;
-		mapInfo = &g_mapInfos[mapScale];
-
-		left   = (Tile_GetPackedX(packed) - mapInfo->minX) * (mapScale + 1) + wi->offsetX;
-		right  = left + mapScale * 15 + 14;
-		top    = (Tile_GetPackedY(packed) - mapInfo->minY) * (mapScale + 1) + wi->offsetY;
-		bottom = top + mapScale * 10 + 9;
-
-		GUI_DrawWiredRectangle(left, top, right, bottom, 15);
-
-		for (m = viewportBorder; *m != 0xFFFF; m++) {
-			uint16 curPacked;
-
-			curPacked = packed + *m;
-			BitArray_Set(g_displayedMinimap, curPacked);
-		}
-	}
-
-	if (cleared && oldScreenID == SCREEN_0) {
-		GUI_Mouse_Hide_Safe();
-		GUI_Screen_Copy(32, 136, 32, 136, 8, 64, SCREEN_1, SCREEN_0);
-		GUI_Mouse_Show_Safe();
-	}
-
-	GFX_Screen_SetActive(oldScreenID);
-
-	minimapPreviousPosition = packed;
-#else
 	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
 	const WidgetInfo *minimap = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
 	const WidgetInfo *viewport = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
@@ -350,7 +272,6 @@ void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 	y2 = clamp(minimap->offsetY, y2, minimap->offsetY + minimap->height - 1);
 
 	Prim_Rect_i(x1, y1, x2, y2, 15);
-#endif
 }
 
 /**
@@ -1211,110 +1132,7 @@ uint16 Map_SearchSpice(uint16 packed, uint16 radius)
 }
 
 #if 0
-void Map_SelectNext(bool getNext)
-{
-	PoolFindStruct find;
-	Object *selected = NULL;
-	Object *previous = NULL;
-	Object *next = NULL;
-	Object *first = NULL;
-	Object *last = NULL;
-	bool hasPrevious = false;
-	bool hasNext = false;
-
-	if (g_unitSelected != NULL) {
-		if (Map_IsTileVisible(Tile_PackTile(g_unitSelected->o.position))) selected = &g_unitSelected->o;
-	} else {
-		Structure *s;
-
-		s = Structure_Get_ByPackedTile(g_selectionPosition);
-
-		if (s != NULL && Map_IsTileVisible(Tile_PackTile(s->o.position))) selected = &s->o;
-	}
-
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
-		if (!g_table_unitInfo[u->o.type].o.flags.tabSelectable) continue;
-
-		if (!Map_IsTileVisible(Tile_PackTile(u->o.position))) continue;
-
-		if ((u->o.seenByHouses & (1 << g_playerHouseID)) == 0) continue;
-
-		if (first == NULL) first = &u->o;
-		last = &u->o;
-		if (selected == NULL) selected = &u->o;
-
-		if (selected == &u->o) {
-			hasPrevious = true;
-			continue;
-		}
-
-		if (!hasPrevious) {
-			previous = &u->o;
-			continue;
-		}
-
-		if (!hasNext) {
-			next = &u->o;
-			hasNext = true;
-		}
-	}
-
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Structure *s;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
-
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
-
-		if (!Map_IsTileVisible(Tile_PackTile(s->o.position))) continue;
-
-		if ((s->o.seenByHouses & (1 << g_playerHouseID)) == 0) continue;
-
-		if (first == NULL) first = &s->o;
-		last = &s->o;
-		if (selected == NULL) selected = &s->o;
-
-		if (selected == &s->o) {
-			hasPrevious = true;
-			continue;
-		}
-
-		if (!hasPrevious) {
-			previous = &s->o;
-			continue;
-		}
-
-		if (!hasNext) {
-			next = &s->o;
-			hasNext = true;
-		}
-	}
-
-	if (previous == NULL) previous = last;
-	if (next == NULL) next = first;
-	if (previous == NULL) previous = next;
-	if (next == NULL) next = previous;
-
-	selected = getNext ? next : previous;
-
-	if (selected == NULL) return;
-
-	Map_SetSelection(Tile_PackTile(selected->position));
-}
+extern void Map_SelectNext(bool getNext);
 #endif
 
 /**

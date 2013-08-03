@@ -3,8 +3,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "enum_string.h"
-#include "../os/math.h"
-#include "../gfx.h"
 
 #include "widget.h"
 

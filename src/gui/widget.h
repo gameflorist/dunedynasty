@@ -207,7 +207,7 @@ extern uint16 Widget_SetAndPaintCurrentWidget(uint16 index);
 extern void Widget_PaintCurrentWidget(void);
 
 /* viewport.c */
-extern void GUI_Widget_Viewport_Draw(bool arg06, bool arg08, bool drawToMainScreen);
+extern void GUI_Widget_Viewport_Draw(void);
 extern void GUI_Widget_Viewport_RedrawMap(void);
 
 /* widget_click.c */

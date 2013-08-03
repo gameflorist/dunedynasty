@@ -77,15 +77,4 @@ extern void Video_DrawMinimap(int left, int top, int map_scale, int mode);
 	do {} while (false)
 #define GUI_Mouse_Hide_InWidget(w)
 
-#if 0
-#include "video_sdl.h"
-
-#define Video_Init                  VideoSDL_Init
-#define Video_Uninit                VideoSDL_Uninit
-#define Video_Tick                  VideoSDL_Tick
-#define Video_SetPalette            VideoSDL_SetPalette
-#define Video_Mouse_SetPosition     VideoSDL_Mouse_SetPosition
-#define Video_Mouse_SetRegion       VideoSDL_Mouse_SetRegion
-#endif
-
 #endif

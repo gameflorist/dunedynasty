@@ -48,7 +48,6 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "gui/font.h"
 #include "gui/gui.h"
 #include "gui/mentat.h"
-#include "gui/security.h"
 #include "gui/widget.h"
 #include "house.h"
 #include "ini.h"
@@ -104,7 +103,6 @@ static uint8 s_enableLog = 0; /*!< 0 = off, 1 = record game, 2 = playback game (
 uint16 g_validateStrictIfZero = 0; /*!< 0 = strict validation, basically: no-cheat-mode. */
 uint16 g_selectionType = 0;
 uint16 g_selectionTypeNew = 0;
-bool g_viewport_forceRedraw = false; /*!< Force a full redraw of the screen. */
 bool g_viewport_fadein = false; /*!< Fade in the screen. */
 
 int16 g_musicInBattle = 0; /*!< 0 = no battle, 1 = fight is going on, -1 = music of fight is going on is active. */
@@ -282,57 +280,14 @@ void GameLoop_LevelEnd(void)
 			Audio_PlayVoice(VOICE_YOUR_MISSION_IS_COMPLETE);
 
 			GUI_DisplayModalMessage(String_Get_ByIndex(STR_YOU_HAVE_SUCCESSFULLY_COMPLETED_YOUR_MISSION), 0xFFFF);
-#if 0
-			GUI_Mentat_ShowWin();
 
-			Sprites_UnloadTiles();
-
-			g_campaignID++;
-
-			GUI_EndStats_Show(g_scenario.killedAllied, g_scenario.killedEnemy, g_scenario.destroyedAllied, g_scenario.destroyedEnemy, g_scenario.harvestedAllied, g_scenario.harvestedEnemy, g_scenario.score, g_playerHouseID);
-
-			if (g_campaignID == 9) {
-				GUI_Mouse_Hide_Safe();
-
-				GUI_SetPaletteAnimated(g_palette2, 15);
-				GUI_ClearScreen(SCREEN_0);
-				GameLoop_GameEndAnimation();
-				PrepareEnd();
-				exit(0);
-			}
-
-			GUI_Mouse_Hide_Safe();
-			GameLoop_LevelEndAnimation();
-			GUI_Mouse_Show_Safe();
-
-			File_ReadBlockFile("IBM.PAL", g_palette1, 256 * 3);
-
-			g_scenarioID = GUI_StrategicMap_Show(g_campaignID, true);
-
-			GUI_SetPaletteAnimated(g_palette2, 15);
-
-			if (g_campaignID == 1 || g_campaignID == 7) {
-				if (!GUI_Security_Show()) {
-					PrepareEnd();
-					exit(0);
-				}
-			}
-#else
 			g_gameMode = GM_WIN;
-#endif
 		} else {
 			Audio_PlayVoice(VOICE_YOU_HAVE_FAILED_YOUR_MISSION);
 
 			GUI_DisplayModalMessage(String_Get_ByIndex(STR_YOU_HAVE_FAILED_YOUR_MISSION), 0xFFFF);
-#if 0
-			GUI_Mentat_ShowLose();
 
-			Sprites_UnloadTiles();
-
-			g_scenarioID = GUI_StrategicMap_Show(g_campaignID, false);
-#else
 			g_gameMode = GM_LOSE;
-#endif
 		}
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
@@ -609,10 +564,6 @@ void GameLoop_Main(bool new_game)
 
 	Timer_UnregisterSource();
 
-#if 0
-	if (s_enableLog != 0) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, "DUNE.LOG");
-#endif
-
 	Audio_PlayVoice(VOICE_STOP);
 	Widget_SetCurrentWidget(0);
 	g_selectionPosition = 0xFFFF;
@@ -869,7 +820,6 @@ void Game_Prepare(void)
 	}
 
 	g_tickHousePowerMaintenance = max(g_timerGame + 70, g_tickHousePowerMaintenance);
-	g_viewport_forceRedraw = true;
 	g_playerCredits = 0xFFFF;
 
 	g_selectionType = oldSelectionType;
@@ -957,10 +907,6 @@ void PrepareEnd(void)
 	String_Uninit();
 	Sprites_Uninit();
 	Font_Uninit();
-
-#if 0
-	if (g_mouseFileID != 0xFF) Mouse_SetMouseMode(INPUT_MOUSE_MODE_NORMAL, NULL);
-#endif
 
 	GFX_Uninit();
 	Video_Uninit();

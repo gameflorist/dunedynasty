@@ -1271,8 +1271,6 @@ void GUI_DrawInterfaceAndRadar(void)
 
 	oldScreenID = GFX_Screen_SetActive((screenID == SCREEN_0) ? SCREEN_1 : screenID);
 
-	g_viewport_forceRedraw = true;
-
 	MenuBar_Draw(g_playerHouseID);
 
 	A5_UseTransform(SCREENDIV_SIDEBAR);
@@ -1482,7 +1480,6 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 		}
 
 		if (g_table_selectionType[oldSelectionType].variable_04 && g_table_selectionType[selectionType].variable_06) {
-			g_viewport_forceRedraw = true;
 			g_viewport_fadein = true;
 		}
 
@@ -2269,20 +2266,14 @@ void GUI_Palette_CreateRemap(uint8 houseID)
 void GUI_DrawScreen(Screen screenID)
 {
 	static uint32 s_timerViewportMessage = 0;
-	bool loc10;
 	Screen oldScreenID;
-	uint16 xpos;
 
 	if (g_selectionType == SELECTIONTYPE_MENTAT) return;
 	if (g_selectionType == SELECTIONTYPE_DEBUG) return;
 	if (g_selectionType == SELECTIONTYPE_UNKNOWN6) return;
 	if (g_selectionType == SELECTIONTYPE_INTRO) return;
 
-	loc10 = false;
-
 	oldScreenID = GFX_Screen_SetActive(screenID);
-
-	if (screenID != SCREEN_0) g_viewport_forceRedraw = true;
 
 	Explosion_Tick();
 	Animation_Tick();
@@ -2290,67 +2281,22 @@ void GUI_DrawScreen(Screen screenID)
 
 	Map_UpdateFogOfWar();
 
-#if 0
-	if (!g_viewport_forceRedraw && g_viewportPosition != g_minimapPosition) {
-		uint16 viewportX = Tile_GetPackedX(g_viewportPosition);
-		uint16 viewportY = Tile_GetPackedY(g_viewportPosition);
-		int16 xOffset = Tile_GetPackedX(g_minimapPosition) - viewportX; /* Horizontal offset between viewport and minimap. */
-		int16 yOffset = Tile_GetPackedY(g_minimapPosition) - viewportY; /* Vertical offset between viewport and minmap. */
-
-		/* Overlap remaining in tiles. */
-		int16 xOverlap = 15 - abs(xOffset);
-		int16 yOverlap = 10 - abs(yOffset);
-
-		int16 x, y;
-
-		if (xOverlap < 1 || yOverlap < 1) g_viewport_forceRedraw = true;
-
-		if (!g_viewport_forceRedraw && (xOverlap != 15 || yOverlap != 10)) {
-			Map_SetSelectionObjectPosition(0xFFFF);
-			loc10 = true;
-
-			GUI_Mouse_Hide_InWidget(2);
-
-			GUI_Screen_Copy(max(-xOffset << 1, 0), 40 + max(-yOffset << 4, 0), max(0, xOffset << 1), 40 + max(0, yOffset << 4), xOverlap << 1, yOverlap << 4, SCREEN_0, SCREEN_1);
-		} else {
-			g_viewport_forceRedraw = true;
-		}
-
-		xOffset = max(0, xOffset);
-		yOffset = max(0, yOffset);
-
-		for (y = 0; y < 10; y++) {
-			uint16 mapYBase = (y + viewportY) << 6;
-
-			for (x = 0; x < 15; x++) {
-				if (x >= xOffset && (xOffset + xOverlap) > x && y >= yOffset && (yOffset + yOverlap) > y && !g_viewport_forceRedraw) continue;
-
-				Map_Update(x + viewportX + mapYBase, 0, true);
-			}
-		}
-	}
-#endif
-
-	if (loc10) {
-		Map_SetSelectionObjectPosition(0xFFFF);
-	}
-
 	g_selectionRectanglePosition = g_selectionPosition;
 
 	if (g_viewportMessageCounter != 0 && s_timerViewportMessage < Timer_GetTicks()) {
 		g_viewportMessageCounter--;
 		s_timerViewportMessage = Timer_GetTicks() + 60;
 
-		for (xpos = 0; xpos < 14; xpos++) {
+#if 0
+		for (int xpos = 0; xpos < 14; xpos++) {
 			Map_Update(g_viewportPosition + xpos + 6 * 64, 0, true);
 		}
+#endif
 	}
 
 	A5_UseTransform(SCREENDIV_VIEWPORT);
-	GUI_Widget_Viewport_Draw(g_viewport_forceRedraw, loc10, screenID != SCREEN_0);
+	GUI_Widget_Viewport_Draw();
 	A5_UseTransform(SCREENDIV_MAIN);
-
-	g_viewport_forceRedraw = false;
 
 	GFX_Screen_SetActive(oldScreenID);
 

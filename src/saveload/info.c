@@ -10,6 +10,7 @@
 #include "../pool/unit.h"
 #include "../scenario.h"
 #include "../sprites.h"
+#include "../structure.h"
 #include "../timer/timer.h"
 
 static uint32 SaveLoad_SelectionType(void *object, uint32 value, bool loading)

@@ -151,20 +151,10 @@ endif(WIN32)
 
 set(OPENDUNE_UNUSED_SRC_FILES
 	src/audio/driver.c
-	src/audio/dsp_alsa.c
-	src/audio/dsp_none.c
-	src/audio/dsp_sdl.c
-	src/audio/dsp_win32.c
 	src/audio/sound.c
 	src/config.c
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
-	src/gui/security.c
-	src/input/input_opendune.c
-	src/input/mouse_opendune.c
 	src/os/thread_sdl.c
 	src/os/thread_win32.c
-	src/timer/timer_opendune.c
-	src/video/video_sdl.c
-	src/video/video_win32.c
 	)

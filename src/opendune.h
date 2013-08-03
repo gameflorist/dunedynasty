@@ -44,7 +44,6 @@ extern bool   g_debugSkipDialogs;
 extern uint16 g_validateStrictIfZero;
 extern uint16 g_selectionType;
 extern uint16 g_selectionTypeNew;
-extern bool g_viewport_forceRedraw;
 extern bool g_viewport_fadein;
 
 extern int16 g_musicInBattle;

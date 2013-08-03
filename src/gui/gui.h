@@ -3,9 +3,9 @@
 #ifndef GUI_GUI_H
 #define GUI_GUI_H
 
+#include "enumeration.h"
 #include "types.h"
 #include "../gfx.h"
-#include "../structure.h"
 
 /**
  * The possible selection types.

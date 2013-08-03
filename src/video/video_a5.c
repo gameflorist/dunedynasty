@@ -53,6 +53,7 @@
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../sprites.h"
+#include "../structure.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
 #include "../tools/coord.h"

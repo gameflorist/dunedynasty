@@ -73,14 +73,6 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 		GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(w->stringID), positionX + 3, positionY + 2, colour, 0, 0x22);
 	}
 
-#if 0
-	if (oldScreenID == SCREEN_0) {
-		GUI_Mouse_Hide_InRegion(positionX, positionY, positionX + width, positionY + height);
-		GUI_Screen_Copy(positionX >> 3, positionY, positionX >> 3, positionY, width >> 3, height, SCREEN_1, SCREEN_0);
-		GUI_Mouse_Show_InRegion();
-	}
-#endif
-
 	GFX_Screen_SetActive(oldScreenID);
 }
 
@@ -97,33 +89,6 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 
 	if (w == NULL) return;
 
-#if 0
-	Screen oldScreenID;
-	uint16 spriteID;
-
-	spriteID = 0;
-	if (Unit_AnySelected()) {
-		const Unit *u = Unit_FirstSelected(NULL);
-		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
-
-		spriteID = ui->o.spriteID;
-	} else {
-		const StructureInfo *si;
-		Structure *s;
-
-		s = Structure_Get_ByPackedTile(g_selectionPosition);
-		if (s == NULL) return;
-		si = &g_table_structureInfo[s->o.type];
-
-		spriteID = si->o.spriteID;
-	}
-
-	oldScreenID = g_screenActiveID;
-	if (oldScreenID == SCREEN_0) {
-		GFX_Screen_SetActive(SCREEN_1);
-	}
-#endif
-
 	buttonDown = w->state.hover2;
 
 	positionX = w->offsetX;
@@ -131,23 +96,7 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
 	width     = w->width;
 	height    = w->height;
 
-#if 0
-	Prim_Rect_i(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
-
-	GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], positionX, positionY, 0, 0x100, g_paletteMapping1, buttonDown ? 1 : 0);
-
-	GUI_DrawBorder(positionX, positionY, width, height, buttonDown ? 0 : 1, false);
-
-	if (oldScreenID != SCREEN_0) return;
-
-	GUI_Mouse_Hide_InRegion(positionX - 1, positionY - 1, positionX + width + 1, positionY + height + 1);
-	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, SCREEN_1, SCREEN_0, false);
-	GUI_Mouse_Show_InRegion();
-
-	GFX_Screen_SetActive(SCREEN_0);
-#else
 	Prim_DrawBorder(positionX, positionY, width, height, 1, true, false, buttonDown ? 0 : 1);
-#endif
 }
 
 /**
@@ -157,159 +106,6 @@ void GUI_Widget_SpriteButton_Draw(Widget *w)
  */
 void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 {
-#if 0
-	Screen oldScreenID;
-	Structure *s;
-	uint16 positionX, positionY;
-	uint16 width, height;
-	uint16 spriteID;
-	uint16 percentDone;
-	bool buttonDown;
-
-	if (w == NULL) return;
-
-	spriteID    = 0;
-	percentDone = 0;
-
-	s = Structure_Get_ByPackedTile(g_selectionPosition);
-	if (s == NULL) return;
-
-	GUI_UpdateProductionStringID();
-
-	oldScreenID = g_screenActiveID;
-	if (oldScreenID == SCREEN_0) {
-		GFX_Screen_SetActive(SCREEN_1);
-	}
-
-	buttonDown = w->state.hover2;
-
-	positionX = w->offsetX;
-	positionY = w->offsetY;
-	width     = w->width;
-	height    = w->height;
-
-	GUI_DrawWiredRectangle(positionX - 1, positionY - 1, positionX + width, positionY + height, 12);
-	GUI_DrawBorder(positionX, positionY, width, height, buttonDown ? 0 : 1, true);
-
-	switch (g_productionStringID) {
-		case STR_LAUNCH:
-			spriteID = 0x1E;
-			break;
-
-		case STR_FREMEN:
-			spriteID = 0x5E;
-			break;
-
-		case STR_SABOTEUR:
-			spriteID = 0x60;
-			break;
-
-		case STR_UPGRADINGD_DONE:
-		default:
-			spriteID = 0x0;
-			break;
-
-		case STR_PLACE_IT:
-		case STR_COMPLETED:
-		case STR_ON_HOLD:
-		case STR_BUILD_IT:
-		case STR_D_DONE:
-			if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-				const StructureInfo *si;
-				uint16 spriteWidth;
-				uint16 x, y;
-				uint8 *sprite;
-
-				GUI_DrawSprite(g_screenActiveID, g_sprites[63], positionX + 37, positionY + 5, 0, 0x100, g_paletteMapping1, buttonDown ? 2 : 0);
-
-				sprite = g_sprites[24];
-				spriteWidth = Sprite_GetWidth(sprite) + 1;
-
-				si = &g_table_structureInfo[s->objectType];
-
-				for (y = 0; y < g_table_structure_layoutSize[si->layout].height; y++) {
-					for (x = 0; x < g_table_structure_layoutSize[si->layout].width; x++) {
-						GUI_DrawSprite(g_screenActiveID, sprite, positionX + x * spriteWidth + 38, positionY + y * spriteWidth + 6, 0, 0);
-					}
-				}
-
-				spriteID = si->o.spriteID;
-			} else {
-				const UnitInfo *ui;
-
-				ui = &g_table_unitInfo[s->objectType];
-				spriteID = ui->o.spriteID;
-			}
-			break;
-	}
-
-	if (spriteID != 0) GUI_DrawSprite(g_screenActiveID, g_sprites[spriteID], positionX + 2, positionY + 2, 0, 0x100, g_paletteMapping1, buttonDown ? 1 : 0);
-
-	if (g_productionStringID == STR_D_DONE) {
-		uint16 buildTime;
-		uint16 timeLeft;
-
-		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-			const StructureInfo *si;
-
-			si = &g_table_structureInfo[s->objectType];
-			buildTime = si->o.buildTime;
-		} else if (s->o.type == STRUCTURE_REPAIR) {
-			const UnitInfo *ui;
-
-			if (s->o.linkedID == 0xFF) return;
-
-			ui = &g_table_unitInfo[Unit_Get_ByIndex(s->o.linkedID)->o.type];
-			buildTime = ui->o.buildTime;
-		} else {
-			const UnitInfo *ui;
-
-			ui = &g_table_unitInfo[s->objectType];
-			buildTime = ui->o.buildTime;
-		}
-
-		timeLeft = buildTime - (s->countDown + 255) / 256;
-		percentDone = 100 * timeLeft / buildTime;
-	}
-
-	if (g_productionStringID == STR_UPGRADINGD_DONE) {
-		percentDone = 100 - s->upgradeTimeLeft;
-
-		GUI_DrawText_Wrapper(
-			String_Get_ByIndex(g_productionStringID),
-			positionX + 1,
-			positionY + height - 19,
-			buttonDown ? 0xE : 0xF,
-			0,
-			0x021,
-			percentDone
-		);
-	} else {
-		GUI_DrawText_Wrapper(
-			String_Get_ByIndex(g_productionStringID),
-			positionX + width / 2,
-			positionY + height - 9,
-			(g_productionStringID == STR_PLACE_IT) ? 0xEF : (buttonDown ? 0xE : 0xF),
-			0,
-			0x121,
-			percentDone
-		);
-	}
-
-	if (g_productionStringID == STR_D_DONE || g_productionStringID == STR_UPGRADINGD_DONE) {
-		w->shortcut = GUI_Widget_GetShortcut(*String_Get_ByIndex(STR_ON_HOLD));
-	} else {
-		w->shortcut = GUI_Widget_GetShortcut(*String_Get_ByIndex(g_productionStringID));
-	}
-
-	if (oldScreenID != SCREEN_0) return;
-
-	GUI_Mouse_Hide_InRegion(positionX - 1, positionY - 1, positionX + width + 1, positionY + height + 1);
-	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, SCREEN_1, SCREEN_0, false);
-	GUI_Mouse_Show_InRegion();
-
-	GFX_Screen_SetActive(SCREEN_0);
-#else
 	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 
 	if (s == NULL)
@@ -321,7 +117,6 @@ void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 	else {
 		ActionPanel_DrawFactory(w, s);
 	}
-#endif
 }
 
 /**
@@ -389,12 +184,6 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 	GUI_Widget_SetShortcuts(w);
 
 	if (oldScreenID != SCREEN_0) return;
-
-#if 0
-	GUI_Mouse_Hide_InRegion(positionX - 1, positionY - 1, positionX + width + 1, positionY + height + 1);
-	GFX_Screen_Copy2(positionX - 1, positionY - 1, positionX - 1, positionY - 1, width + 2, height + 2, SCREEN_1, SCREEN_0, false);
-	GUI_Mouse_Show_InRegion();
-#endif
 
 	GFX_Screen_SetActive(SCREEN_0);
 }

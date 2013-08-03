@@ -52,16 +52,4 @@ extern void Timer_UnregisterSource(void);
 extern enum TimerType Timer_WaitForEvent(void);
 extern bool Timer_QueueIsEmpty(void);
 
-#if 0
-#include "timer_opendune.h"
-
-#define Timer_Init          TimerOpenDune_Init
-#define Timer_Uninit        TimerOpenDune_Uninit
-#define Timer_SetTimer      TimerOpenDune_SetTimer
-#define Timer_GameTicks()   g_timerGame
-#define Timer_GetTicks()    g_timerGUI
-#define Timer_Wait()        TimerOpenDune_Sleep(1)
-#define Timer_Sleep         TimerOpenDune_Sleep
-#endif
-
 #endif
