@@ -1009,7 +1009,16 @@ uint16 Script_Unit_GetInfo(ScriptEngine *script)
 		case 0x10: return u->orientation[ui->o.flags.hasTurret ? 1 : 0].current;
 		case 0x11: return abs(u->orientation[ui->o.flags.hasTurret ? 1 : 0].target - u->orientation[ui->o.flags.hasTurret ? 1 : 0].current);
 		case 0x12: return (ui->movementType & 0x40) == 0 ? 0 : 1;
-		case 0x13: return (u->o.seenByHouses & (1 << g_playerHouseID)) == 0 ? 0 : 1;
+		case 0x13:
+			/* This function is used (by the AI) to transition a unit
+			 * scouted by the human from ACTION_AMBUSH to ACTION_HUNT.
+			 */
+			for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+				if (House_IsHuman(h) && (u->o.seenByHouses & (1 << h)))
+					return 1;
+			}
+			return 0;
+
 		default:   return 0;
 	}
 }
