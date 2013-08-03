@@ -453,18 +453,22 @@ void GameLoop_Unit(void)
 		if (tickScript) {
 			if (u->o.script.delay == 0) {
 				if (Script_IsLoaded(&u->o.script)) {
-					int opcodesLeft = SCRIPT_UNIT_OPCODES_PER_TICK + 2;
+					/* The scripts compare
+					 *
+					 *  u->o.script.variables[3] == g_playerHouseID to
+					 *  Script_Unit_GetInfo(14) == Unit_GetHouseID(u)
+					 *
+					 * to determine if a unit is human controllable.
+					 */
+					const enum HouseType houseID = Unit_GetHouseID(u);
+					u->o.script.variables[3]
+						= House_IsHuman(houseID) ? houseID : HOUSE_INVALID;
 
-#if 0
-					if (!ui->o.flags.scriptNoSlowdown && !Map_IsPositionInViewport(u->o.position, NULL, NULL)) {
-						opcodesLeft = 3;
-					}
-#endif
-
-					u->o.script.variables[3] = g_playerHouseID;
-
-					for (; opcodesLeft > 0 && u->o.script.delay == 0; opcodesLeft--) {
-						if (!Script_Run(&u->o.script)) break;
+					for (int opcodesLeft = SCRIPT_UNIT_OPCODES_PER_TICK + 2;
+							opcodesLeft > 0 && u->o.script.delay == 0;
+							opcodesLeft--) {
+						if (!Script_Run(&u->o.script))
+							break;
 					}
 				}
 			} else {
