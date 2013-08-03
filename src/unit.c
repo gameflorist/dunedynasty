@@ -2854,7 +2854,6 @@ uint16 Unit_FindBestTargetEncoded(Unit *unit, uint16 mode)
 void Unit_RemovePlayer(Unit *unit)
 {
 	if (unit == NULL) return;
-	if (Unit_GetHouseID(unit) != g_playerHouseID) return;
 	if (!unit->o.flags.s.allocated) return;
 
 	unit->o.flags.s.allocated = false;
