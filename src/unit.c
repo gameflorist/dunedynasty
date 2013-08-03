@@ -3079,12 +3079,10 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 {
 	const UnitInfo *ui;
 	uint16 houseIDBit;
-	House *hp;
 	House *h;
 
 	if (unit == NULL) return;
 
-	hp = House_Get_ByIndex(g_playerHouseID);
 	ui = &g_table_unitInfo[unit->o.type];
 	h = House_Get_ByIndex(houseID);
 	houseIDBit = (1 << houseID);
@@ -3122,7 +3120,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 
 	if (houseID == g_playerHouseID && g_selectionType != SELECTIONTYPE_MENTAT) {
 		if (unit->o.type == UNIT_SANDWORM) {
-			if (hp->timerSandwormAttack == 0) {
+			if (h->timerSandwormAttack == 0) {
 				if (g_musicInBattle == 0) g_musicInBattle = 1;
 
 				/* XXX -- Dodgy.  When a hint is drawn, it renders the
@@ -3149,12 +3147,12 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 					GUI_DisplayHint(STR_HINT_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND, 105);
 				}
 
-				hp->timerSandwormAttack = 8;
+				h->timerSandwormAttack = 8;
 			}
-		} else if (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(unit))) {
+		} else if (!House_AreAllied(houseID, Unit_GetHouseID(unit))) {
 			Team *t;
 
-			if (hp->timerUnitAttack == 0) {
+			if (h->timerUnitAttack == 0) {
 				if (g_musicInBattle == 0) g_musicInBattle = 1;
 
 				if (unit->o.type == UNIT_SABOTEUR) {
@@ -3193,7 +3191,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 					}
 				}
 
-				hp->timerUnitAttack = 8;
+				h->timerUnitAttack = 8;
 			}
 
 			t = Team_Get_ByIndex(unit->team);
