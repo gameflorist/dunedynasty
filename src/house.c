@@ -362,6 +362,12 @@ void House_EnsureHarvesterAvailable(uint8 houseID)
 			STR_HARVESTER_IS_HEADING_TO_REFINERY);
 }
 
+bool
+House_IsHuman(enum HouseType houseID)
+{
+	return House_Get_ByIndex(houseID)->flags.human;
+}
+
 /**
  * Checks if two houses are allied.
  *

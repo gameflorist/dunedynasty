@@ -643,7 +643,7 @@ Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, in
 
 	Unit_UpdateMap(1, u);
 
-	Unit_SetAction(u, (houseID == g_playerHouseID) ? ui->o.actionsPlayer[3] : ui->actionAI);
+	Unit_SetAction(u, House_IsHuman(houseID) ? ui->o.actionsPlayer[3] : ui->actionAI);
 
 	return u;
 }
@@ -1096,7 +1096,9 @@ bool Unit_SetPosition(Unit *u, tile32 position)
 		Unit_HouseUnitCount_Add(u, g_playerHouseID);
 	}
 
-	if (u->o.houseID != g_playerHouseID || u->o.type == UNIT_HARVESTER || u->o.type == UNIT_SABOTEUR) {
+	if (!House_IsHuman(u->o.houseID)
+			|| u->o.type == UNIT_HARVESTER
+			|| u->o.type == UNIT_SABOTEUR) {
 		Unit_SetAction(u, ui->actionAI);
 	} else {
 		Unit_SetAction(u, ui->o.actionsPlayer[3]);
@@ -1417,7 +1419,7 @@ bool Unit_Deviation_Decrease(Unit *unit, uint16 amount)
 	Unit_UpdateMap(2, unit);
 	unit->o.flags.s.bulletIsBig = false;
 
-	if (unit->o.houseID == g_playerHouseID) {
+	if (House_IsHuman(unit->o.houseID)) {
 		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
 		Unit_SetAction(unit, ui->actionAI);
@@ -1481,7 +1483,7 @@ bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 
 	if (probability == 0) probability = g_table_houseInfo[unit->o.houseID].toughness;
 
-	if (unit->o.houseID != g_playerHouseID) {
+	if (!House_IsHuman(unit->o.houseID)) {
 		probability -= probability / 8;
 	}
 
@@ -1495,7 +1497,7 @@ bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 
 	Unit_UpdateMap(2, unit);
 
-	if (g_playerHouseID == houseID) {
+	if (House_IsHuman(houseID)) {
 		/* Make brutal AI know about its own deviated units. */
 		if (AI_IsBrutalAI(unit->o.houseID)) {
 			unit->o.seenByHouses = 0xFF;
@@ -1503,14 +1505,10 @@ bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 
 		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
-		if (AI_IsBrutalAI(houseID)) {
-			/* Make brutal AI destruct devastators if outcome is desirable. */
-			if (UnitAI_ShouldDestructDevastator(unit)) {
-				Unit_SetAction(unit, ACTION_DESTRUCT);
-			}
-			else {
-				Unit_SetAction(unit, ui->actionAI);
-			}
+		/* Make brutal AI destruct devastators if outcome is desirable. */
+		if (AI_IsBrutalAI(houseID)
+				&& UnitAI_ShouldDestructDevastator(unit)) {
+			Unit_SetAction(unit, ACTION_DESTRUCT);
 		}
 		else {
 			Unit_SetAction(unit, ui->actionAI);
@@ -1654,7 +1652,9 @@ bool Unit_Move(Unit *unit, uint16 distance)
 			if (s != NULL) {
 				/* ENHANCEMENT -- make sonic blast trigger counter attack, but
 				 * do not warn about base under attack (original behaviour). */
-				if (g_dune2_enhanced && s->o.houseID != g_playerHouseID && !House_AreAllied(unit->o.houseID, s->o.houseID)) {
+				if (g_dune2_enhanced
+						&& !House_IsHuman(s->o.houseID)
+						&& !House_AreAllied(s->o.houseID, unit->o.houseID)) {
 					Structure_HouseUnderAttack(s->o.houseID);
 				}
 
@@ -1879,7 +1879,9 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 		Map_MakeExplosion((damage < 25) ? EXPLOSION_IMPACT_SMALL : EXPLOSION_IMPACT_MEDIUM, unit->o.position, 0, 0);
 	}
 
-	if (houseID != g_playerHouseID && unit->actionID == ACTION_AMBUSH && unit->o.type != UNIT_HARVESTER) {
+	if (!House_IsHuman(houseID)
+			&& unit->actionID == ACTION_AMBUSH
+			&& unit->o.type != UNIT_HARVESTER) {
 		Unit_SetAction(unit, ACTION_ATTACK);
 	}
 

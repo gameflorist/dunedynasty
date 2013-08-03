@@ -22,9 +22,10 @@
 #include "../map.h"
 #include "../net/server.h"
 #include "../opendune.h"
-#include "../pool/unit.h"
+#include "../pool/house.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
+#include "../pool/unit.h"
 #include "../scenario.h"
 #include "../structure.h"
 #include "../timer/timer.h"
@@ -283,7 +284,9 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 			/* Check if the unit has a return-to position or try to find spice in case of a harvester */
 			if (u2->targetLast.x != 0 || u2->targetLast.y != 0) {
 				u->targetMove = Tools_Index_Encode(Tile_PackTile(u2->targetLast), IT_TILE);
-			} else if (u2->o.type == UNIT_HARVESTER && Unit_GetHouseID(u2) != g_playerHouseID) {
+			}
+			else if (u2->o.type == UNIT_HARVESTER
+					&& !House_IsHuman(Unit_GetHouseID(u2))) {
 				u->targetMove = Tools_Index_Encode(Map_SearchSpice(Tile_PackTile(u->o.position), 20), IT_TILE);
 			}
 
@@ -906,7 +909,10 @@ uint16 Script_Unit_SetAction(ScriptEngine *script)
 
 	action = STACK_PEEK(1);
 
-	if (u->o.houseID == g_playerHouseID && action == ACTION_HARVEST && u->nextActionID != ACTION_INVALID) return 0;
+	if (House_IsHuman(u->o.houseID)
+			&& action == ACTION_HARVEST
+			&& u->nextActionID != ACTION_INVALID)
+		return 0;
 
 	Unit_SetAction(u, action);
 

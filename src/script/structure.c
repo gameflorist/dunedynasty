@@ -135,8 +135,11 @@ uint16 Script_Structure_RefineSpice(ScriptEngine *script)
 	if (u->amount != 0 && harvesterStep < 1) harvesterStep = 1;
 	if (harvesterStep == 0) return 0;
 
+	/* Humans' harvesters give 7 credits for each percent in the harvester.
+	 * CPUs' harvesters (may be deviated) give 6 to 9 credits.
+	 */
 	creditsStep = 7;
-	if (u->o.houseID != g_playerHouseID) {
+	if (!House_IsHuman(u->o.houseID)) {
 		creditsStep += (Tools_Random_256() % 4) - 1;
 	}
 
@@ -215,7 +218,14 @@ uint16 Script_Structure_FindUnitByType(ScriptEngine *script)
 
 	u = Unit_Get_ByIndex(s->o.linkedID);
 
-	if (g_playerHouseID == s->o.houseID && u->o.type == UNIT_HARVESTER && (u->targetLast.x == 0 && u->targetLast.y == 0) && position != 0) {
+	/* Humans' harvesters will not call for a carryall if the last
+	 * position is invalid and there is a free tile around the
+	 * structure.
+	 */
+	if (House_IsHuman(s->o.houseID)
+			&& (u->o.type == UNIT_HARVESTER)
+			&& (u->targetLast.x == 0 && u->targetLast.y == 0)
+			&& (position != 0)) {
 		return IT_NONE;
 	}
 
@@ -647,7 +657,7 @@ uint16 Script_Structure_Destroy(ScriptEngine *script)
 
 		u->o.hitpoints = g_table_unitInfo[UNIT_SOLDIER].o.hitpoints * (Tools_Random_256() & 3) / 256;
 
-		if (s->o.houseID != g_playerHouseID) {
+		if (!House_IsHuman(s->o.houseID)) {
 			/* AI units shouldn't use ACTION_ATTACK.  Use ACTION_HUNT
 			 * so the soldier will move and we can rebuild here later.
 			 */

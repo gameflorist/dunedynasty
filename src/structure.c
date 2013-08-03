@@ -183,7 +183,7 @@ void GameLoop_Structure(void)
 					h->credits -= repairCost;
 
 					/* AIs repair in early games slower than in later games */
-					if (s->o.houseID == g_playerHouseID || g_campaignID >= 3) {
+					if (House_IsHuman(s->o.houseID) || g_campaignID >= 3) {
 						s->o.hitpoints += 5;
 					} else {
 						s->o.hitpoints += 3;
@@ -219,7 +219,7 @@ void GameLoop_Structure(void)
 						buildSpeed = s->o.hitpoints * 256 / si->o.hitpoints;
 					}
 
-					if (g_playerHouseID != s->o.houseID) {
+					if (!House_IsHuman(s->o.houseID)) {
 						if (AI_IsBrutalAI(s->o.houseID)) {
 							/* For brutal AI, double production speed (except for ornithopters). */
 							if (!(s->o.type == STRUCTURE_HIGH_TECH && s->objectType == UNIT_ORNITHOPTER))
@@ -306,9 +306,9 @@ void GameLoop_Structure(void)
 						}
 					} else {
 						/* Out of money means the building gets put on hold */
-						if (s->o.houseID == g_playerHouseID) {
-							if (!enhancement_construction_does_not_pause)
-								s->o.flags.s.onHold = true;
+						if (!enhancement_construction_does_not_pause
+								&& House_IsHuman(s->o.houseID)) {
+							s->o.flags.s.onHold = true;
 						}
 
 						Server_Send_StatusMessage1(1 << s->o.houseID, 0,
@@ -385,7 +385,10 @@ void GameLoop_Structure(void)
 				}
 
 				/* AI maintenance on structures */
-				if (h->flags.isAIActive && s->o.flags.s.allocated && s->o.houseID != g_playerHouseID && h->credits != 0) {
+				if (!h->flags.human
+						&& h->flags.isAIActive
+						&& s->o.flags.s.allocated
+						&& h->credits != 0) {
 					/* When structure is below 50% hitpoints, start repairing */
 					if (s->o.hitpoints < si->o.hitpoints / 2) {
 						Structure_SetRepairingState(s, 1, NULL);
@@ -494,17 +497,6 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 
 	s->countDown = 0;
 
-#if 0
-	/* AIs get the full upgrade immediately */
-	if (houseID != g_playerHouseID) {
-		while (true) {
-			if (!Structure_IsUpgradable(s)) break;
-			s->upgradeLevel++;
-		}
-		s->upgradeTimeLeft = 0;
-	}
-#endif
-
 	if (position != 0xFFFF && !Structure_Place(s, position, houseID)) {
 		Structure_Free(s);
 		return NULL;
@@ -535,7 +527,7 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 	 * Also, upgrade the factory when it is placed so the player doesn't get the AI's free upgrades.
 	 */
 	s->o.houseID = houseID;
-	if (houseID != g_playerHouseID) {
+	if (!House_IsHuman(houseID)) {
 		while (true) {
 			if (!Structure_IsUpgradable(s)) break;
 			s->upgradeLevel++;
@@ -628,7 +620,8 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 	/* ENHANCEMENT -- Dune 2 AI disregards tile occupancy altogether.
 	 * This prevents the AI building structures on top of units and structures.
 	 */
-	if (enhancement_ai_respects_structure_placement && (s->o.houseID != g_playerHouseID)) {
+	if (enhancement_ai_respects_structure_placement
+			&& !House_IsHuman(houseID)) {
 		validBuildLocation = Structure_IsValidBuildLandscape(position, s->o.type);
 	}
 	else {
@@ -1196,7 +1189,8 @@ static void Structure_Destroy(Structure *s)
 
 	h->credits -= (h->creditsStorage == 0) ? h->credits : min(h->credits, (h->credits * 256 / h->creditsStorage) * si->creditsStorage / 256);
 
-	if (s->o.houseID != g_playerHouseID) h->credits += si->o.buildCredits + (g_campaignID > 7 ? si->o.buildCredits / 2 : 0);
+	if (!h->flags.human)
+		h->credits += si->o.buildCredits + (g_campaignID > 7 ? si->o.buildCredits / 2 : 0);
 
 	if (s->o.type != STRUCTURE_WINDTRAP) return;
 
@@ -1997,13 +1991,18 @@ Structure_GetAvailable(const Structure *s, int i)
 		/* Use per-house tech levels: non-Harkonnen light factory one level earlier. */
 		/* if ((s->o.houseID != HOUSE_HARKONNEN) && (i == STRUCTURE_LIGHT_VEHICLE)) {} */
 
-		if (((structuresBuilt & structuresRequired) == structuresRequired) || (s->o.houseID != g_playerHouseID)) {
+		if (((structuresBuilt & structuresRequired) == structuresRequired)
+				|| !House_IsHuman(s->o.houseID)) {
 
-			if ((g_campaignID >= availableCampaign - 1) && (si->o.availableHouse & (1 << s->o.houseID))) {
-				if ((s->upgradeLevel >= si->o.upgradeLevelRequired[s->o.houseID]) || (s->o.houseID != g_playerHouseID)) {
+			if ((g_campaignID >= availableCampaign - 1)
+					&& (si->o.availableHouse & (1 << s->o.houseID))) {
+
+				if ((s->upgradeLevel >= si->o.upgradeLevelRequired[s->o.houseID])
+						|| !House_IsHuman(s->o.houseID)) {
 					return 1;
 				}
-				else if ((s->upgradeTimeLeft != 0) && (s->upgradeLevel + 1 >= si->o.upgradeLevelRequired[s->o.houseID])) {
+				else if ((s->upgradeTimeLeft != 0)
+						&& (s->upgradeLevel + 1 >= si->o.upgradeLevelRequired[s->o.houseID])) {
 					return -1;
 				}
 			}
@@ -2077,9 +2076,6 @@ void Structure_HouseUnderAttack(uint8 houseID)
 
 	h = House_Get_ByIndex(houseID);
 
-	if (houseID != g_playerHouseID && h->flags.doneFullScaleAttack) return;
-	h->flags.doneFullScaleAttack = true;
-
 	if (h->flags.human) {
 		if (h->timerStructureAttack != 0) return;
 
@@ -2088,6 +2084,11 @@ void Structure_HouseUnderAttack(uint8 houseID)
 		h->timerStructureAttack = 8;
 		return;
 	}
+	else if (h->flags.doneFullScaleAttack) {
+		return;
+	}
+
+	h->flags.doneFullScaleAttack = true;
 
 	/* ENHANCEMENT -- Dune2 originally only searches for units with type 0 (Carry-all). In result, the rest of this function does nothing. */
 	if (!g_dune2_enhanced) return;
