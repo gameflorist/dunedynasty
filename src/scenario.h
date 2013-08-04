@@ -41,7 +41,6 @@ typedef struct Reinforcement {
  * Information about the current loaded scenario.
  */
 typedef struct Scenario {
-	uint16 score;                                           /*!< Base score. */
 	uint16 winFlags;                                        /*!< BASIC/WinFlags. */
 	uint16 loseFlags;                                       /*!< BASIC/LoseFlags. */
 	uint32 mapSeed;                                         /*!< MAP/Seed. */
@@ -50,14 +49,23 @@ typedef struct Scenario {
 	char   pictureBriefing[14];                             /*!< BASIC/BriefPicture. */
 	char   pictureWin[14];                                  /*!< BASIC/WinPicture. */
 	char   pictureLose[14];                                 /*!< BASIC/LosePicture. */
+	Reinforcement reinforcement[16];                        /*!< Reinforcement information. */
+
+	int32  score[HOUSE_MAX];                                /*!< Base score. */
+	uint16 unitsLost[HOUSE_MAX];                            /*!< Number of units lost by house. */
+	uint16 structuresLost[HOUSE_MAX];                       /*!< Number of structures lost by house. */
+	uint32 spiceHarvested[HOUSE_MAX];                       /*!< Total amount of spice harvested by house. */
+} Scenario;
+
+typedef struct OldScenarioStats {
+	int16  score;
 	uint16 killedAllied;                                    /*!< Number of units lost by "You". */
 	uint16 killedEnemy;                                     /*!< Number of units lost by "Enemy". */
 	uint16 destroyedAllied;                                 /*!< Number of structures lost by "You". */
 	uint16 destroyedEnemy;                                  /*!< Number of structures lost by "Enemy". */
 	uint16 harvestedAllied;                                 /*!< Total amount of spice harvested by "You". */
 	uint16 harvestedEnemy;                                  /*!< Total amount of spice harvested by "Enemy". */
-	Reinforcement reinforcement[16];                        /*!< Reinforcement information. */
-} Scenario;
+} OldScenarioStats;
 
 typedef struct Skirmish {
 	uint32 seed;
@@ -85,5 +93,7 @@ extern void Scenario_Load_Map_Special(uint16 packed, struct Tile *t);
 extern struct House *Scenario_Create_House(enum HouseType houseID, enum Brain brain, uint16 credits, uint16 creditsQuota, uint16 unitCountMax);
 extern void Scenario_Create_Unit(enum HouseType houseType, enum UnitType unitType, uint16 hitpoints, tile32 position, int8 orientation, enum UnitActionType actionType);
 extern void Scenario_Create_Reinforcement(uint8 index, enum HouseType houseType, enum UnitType unitType, uint8 locationID, uint16 timeBetween, bool repeat);
+
+extern void Scenario_GetOldStats(enum HouseType houseID, OldScenarioStats *stat);
 
 #endif /* SCENARIO_H */

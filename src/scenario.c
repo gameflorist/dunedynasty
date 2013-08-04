@@ -1668,3 +1668,32 @@ bool Scenario_Load(uint16 scenarioID, uint8 houseID)
 	free(s_scenarioBuffer); s_scenarioBuffer = NULL;
 	return true;
 }
+
+/*--------------------------------------------------------------*/
+
+void
+Scenario_GetOldStats(enum HouseType houseID, OldScenarioStats *stats)
+{
+	stats->score = 0;
+	stats->killedAllied     = 0;
+	stats->killedEnemy      = 0;
+	stats->destroyedAllied  = 0;
+	stats->destroyedEnemy   = 0;
+	stats->harvestedAllied  = 0;
+	stats->harvestedEnemy   = 0;
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (House_AreAllied(houseID, h)) {
+			stats->score += g_scenario.score[h];
+			stats->killedAllied += g_scenario.unitsLost[h];
+			stats->destroyedAllied += g_scenario.structuresLost[h];
+			stats->harvestedAllied = min(65000, stats->harvestedAllied + g_scenario.spiceHarvested[h]);
+		}
+		else {
+			stats->score -= g_scenario.score[h];
+			stats->killedEnemy += g_scenario.unitsLost[h];
+			stats->destroyedEnemy += g_scenario.structuresLost[h];
+			stats->harvestedEnemy = min(65000, stats->harvestedEnemy + g_scenario.spiceHarvested[h]);
+		}
+	}
+}

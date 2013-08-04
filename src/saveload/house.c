@@ -85,6 +85,9 @@ bool House_Load(FILE *fp, uint32 length)
 			Info_Load_PlayerHouseGlobals(h);
 		}
 	}
+
+	Scenario_Load_OldStats();
+
 	if (length != 0) return false;
 
 	return true;

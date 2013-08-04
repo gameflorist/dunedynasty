@@ -509,35 +509,23 @@ uint16 Script_Unit_MoveToTarget(ScriptEngine *script)
  */
 uint16 Script_Unit_Die(ScriptEngine *script)
 {
-	const UnitInfo *ui;
-	Unit *u;
-
+	Unit *u = g_scriptCurrentUnit;
+	const enum UnitType type = u->o.type;
+	const tile32 position = u->o.position;
+	const UnitInfo *ui = &g_table_unitInfo[type];
 	VARIABLE_NOT_USED(script);
 
-	u = g_scriptCurrentUnit;
-	ui = &g_table_unitInfo[u->o.type];
-
-	Unit_Remove(u);
-
 	if (ui->movementType != MOVEMENT_WINGER) {
-		uint16 credits;
-
-		credits = max(ui->o.buildCredits / 100, 1);
-
-		if (House_AreAllied(u->o.houseID, g_playerHouseID)) {
-			g_scenario.killedAllied++;
-			g_scenario.score -= credits;
-		} else {
-			g_scenario.killedEnemy++;
-			g_scenario.score += credits;
-		}
+		g_scenario.unitsLost[u->o.houseID]++;
+		g_scenario.score[u->o.houseID] -= max(ui->o.buildCredits / 100, 1);
 	}
 
+	Unit_Remove(u);
 	Unit_HouseUnitCount_Remove(u);
 
-	if (u->o.type != UNIT_SABOTEUR) return 0;
+	if (type == UNIT_SABOTEUR)
+		Map_MakeExplosion(EXPLOSION_SABOTEUR_DEATH, position, 300, 0);
 
-	Map_MakeExplosion(EXPLOSION_SABOTEUR_DEATH, u->o.position, 300, 0);
 	return 0;
 }
 

@@ -214,6 +214,7 @@ bool Info_Save(FILE *fp)
 
 	if (!fwrite_le_uint16(savegameVersion, fp)) return false;
 
+	Scenario_Save_OldStats();
 	if (!SaveLoad_Save(s_saveInfo, fp, NULL)) return false;
 
 	return true;

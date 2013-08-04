@@ -1220,18 +1220,8 @@ bool Structure_Damage(Structure *s, uint16 damage, uint16 range)
 	}
 
 	if (s->o.hitpoints == 0) {
-		uint16 score;
-
-		score = si->o.buildCredits / 100;
-		if (score < 1) score = 1;
-
-		if (House_AreAllied(g_playerHouseID, s->o.houseID)) {
-			g_scenario.destroyedAllied++;
-			g_scenario.score -= score;
-		} else {
-			g_scenario.destroyedEnemy++;
-			g_scenario.score += score;
-		}
+		g_scenario.structuresLost[s->o.houseID]++;
+		g_scenario.score[s->o.houseID] -= max(si->o.buildCredits / 100, 1);
 
 		Structure_Destroy(s);
 

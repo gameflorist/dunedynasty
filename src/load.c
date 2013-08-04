@@ -156,6 +156,11 @@ static bool Load_Main(FILE *fp)
 				abort = !skip && !Scenario_Load2(fp, length);
 				break;
 
+			case CC_DDS3:
+				skip  = !load_plyr;
+				abort = !skip && !Scenario_Load3(fp, length);
+				break;
+
 			case CC_DDU2:
 				skip  = !load_unit;
 				abort = !skip && !Unit_Load2(fp, length);

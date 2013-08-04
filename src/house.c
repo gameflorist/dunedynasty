@@ -498,7 +498,7 @@ void House_CalculatePowerAndCredit(House *h)
 	 * ENHANCEMENT -- check if we actually lost a structure, or if it was an MCV start.
 	 */
 	if (g_validateStrictIfZero == 0 && h->structuresBuilt == 0) {
-		if (g_scenario.destroyedAllied > 0)
+		if (g_scenario.structuresLost[h->index] > 0)
 			h->creditsStorageNoSilo = 0;
 	}
 }

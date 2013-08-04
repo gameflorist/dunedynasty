@@ -1158,23 +1158,24 @@ PlaySkirmish_Loop(void)
 static void
 BattleSummary_Initialise(enum HouseType houseID, HallOfFameData *fame)
 {
-	uint16 harvestedAllied = g_scenario.harvestedAllied;
-	uint16 harvestedEnemy = g_scenario.harvestedEnemy;
-	uint16 score = Update_Score(g_scenario.score, &harvestedAllied, &harvestedEnemy, houseID);
+	OldScenarioStats stats;
+
+	Scenario_GetOldStats(houseID, &stats);
 
 	fame->state = HALLOFFAME_PAUSE_START;
 	fame->pause_timer = Timer_GetTicks() + 45;
-	fame->score = score;
+	fame->score = Update_Score(stats.score,
+			&stats.harvestedAllied, &stats.harvestedEnemy, houseID);
 	fame->time = ((g_timerGame - g_tickScenarioStart) / 3600) + 1;
 
 	HallOfFame_InitRank(fame->score, fame);
 
-	fame->meter[0].max = harvestedAllied;
-	fame->meter[1].max = harvestedEnemy;
-	fame->meter[2].max = g_scenario.killedEnemy;
-	fame->meter[3].max = g_scenario.killedAllied;
-	fame->meter[4].max = g_scenario.destroyedEnemy;
-	fame->meter[5].max = g_scenario.destroyedAllied;
+	fame->meter[0].max = stats.harvestedAllied;
+	fame->meter[1].max = stats.harvestedEnemy;
+	fame->meter[2].max = stats.killedEnemy;
+	fame->meter[3].max = stats.killedAllied;
+	fame->meter[4].max = stats.destroyedEnemy;
+	fame->meter[5].max = stats.destroyedAllied;
 
 	for (int i = 0; i < 6; i += 2) {
 		const int ally = fame->meter[i + 0].max;
