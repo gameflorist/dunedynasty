@@ -37,7 +37,6 @@
 
 House *g_playerHouse = NULL;
 enum HouseType g_playerHouseID = HOUSE_INVALID;
-uint16 g_playerCreditsNoSilo = 0;
 uint16 g_playerCredits = 0; /*!< Credits shown to player as 'current'. */
 
 /**
@@ -204,31 +203,27 @@ void GameLoop_House(void)
 		if (tickHouse) {
 			/* ENHANCEMENT -- Originally this code was outside the house loop, which seems very odd.
 			 *  This problem is considered to be so bad, that the original code has been removed. */
-			if (h->index != g_playerHouseID) {
-				if (h->creditsStorage < h->credits) {
-					h->credits = h->creditsStorage;
-				}
-			} else {
-				uint16 maxCredits = max(h->creditsStorage, g_playerCreditsNoSilo);
-				if (h->credits > maxCredits) {
-					h->credits = maxCredits;
+			uint16 maxCredits = max(h->creditsStorage, h->creditsStorageNoSilo);
+			if (h->credits > maxCredits) {
+				h->credits = maxCredits;
 
+				if (h->flags.human) {
 					GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_SPICE_STORAGE_AVAILABLE_SPICE_IS_LOST), 1);
 				}
 			}
 
-			if (h->index == g_playerHouseID) {
-				if (h->creditsStorage > g_playerCreditsNoSilo) {
-					g_playerCreditsNoSilo = 0;
-				}
+			if (h->creditsStorage > h->creditsStorageNoSilo) {
+				h->creditsStorageNoSilo = 0;
+			}
 
-				if (g_playerCreditsNoSilo == 0 && g_campaignID > 1 && h->credits != 0) {
+			if (h->flags.human) {
+				if (h->creditsStorageNoSilo == 0 && g_campaignID > 1 && h->credits != 0) {
 					if (h->creditsStorage != 0 && ((h->credits * 256 / h->creditsStorage) > 200)) {
 						GUI_DisplayText(String_Get_ByIndex(STR_SPICE_STORAGE_CAPACITY_LOW_BUILD_SILOS), 0);
 					}
 				}
 
-				if (h->credits < 100 && g_playerCreditsNoSilo != 0) {
+				if (h->credits < 100 && h->creditsStorageNoSilo != 0) {
 					GUI_DisplayText(String_Get_ByIndex(STR_CREDITS_ARE_LOW_HARVEST_SPICE_FOR_MORE_CREDITS), 0);
 				}
 			}
@@ -495,16 +490,16 @@ void House_CalculatePowerAndCredit(House *h)
 	}
 
 	/* Check if we are low on power */
-	if (h->index == g_playerHouseID && h->powerUsage > h->powerProduction) {
+	if (h->flags.human && h->powerUsage > h->powerProduction) {
 		GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_POWER_WINDTRAP_IS_NEEDED), 1);
 	}
 
 	/* If there are no buildings left, you lose your right on 'credits without storage'
 	 * ENHANCEMENT -- check if we actually lost a structure, or if it was an MCV start.
 	 */
-	if (h->index == g_playerHouseID && h->structuresBuilt == 0 && g_validateStrictIfZero == 0) {
+	if (g_validateStrictIfZero == 0 && h->structuresBuilt == 0) {
 		if (g_scenario.destroyedAllied > 0)
-			g_playerCreditsNoSilo = 0;
+			h->creditsStorageNoSilo = 0;
 	}
 }
 

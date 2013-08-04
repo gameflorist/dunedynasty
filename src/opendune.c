@@ -848,7 +848,6 @@ void Game_Init(void)
 
 	Audio_PlayVoice(VOICE_STOP);
 
-	g_playerCreditsNoSilo     = 0;
 	g_selectionState          = 0; /* Invalid. */
 	g_structureActivePosition = 0;
 

@@ -15,6 +15,7 @@
 #include "../timer/timer.h"
 
 /* These were originally global variables. */
+static uint16 s_playerCreditsNoSilo;
 static uint16 s_houseMissileCountdown;
 static uint16 s_houseMissileID;
 static uint16 s_starportID;
@@ -108,7 +109,7 @@ static uint32 SaveLoad_TickScenarioStart(void *object, uint32 value, bool loadin
 
 static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GSLD   (g_scenario,  g_saveScenario),
-	SLD_GENTRY (SLDT_UINT16, g_playerCreditsNoSilo),
+	SLD_GENTRY (SLDT_UINT16, s_playerCreditsNoSilo),
 	SLD_GENTRY (SLDT_UINT16, g_viewportPosition),
 	SLD_GENTRY (SLDT_UINT16, g_selectionRectanglePosition),
 	SLD_GCALLB (SLDT_INT8,   g_selectionType, &SaveLoad_SelectionType),
@@ -124,7 +125,7 @@ static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GENTRY (SLDT_UINT32, g_hintsShown1),
 	SLD_GENTRY (SLDT_UINT32, g_hintsShown2),
 	SLD_GCALLB (SLDT_UINT32, g_tickScenarioStart, &SaveLoad_TickScenarioStart),
-	SLD_GENTRY (SLDT_UINT16, g_playerCreditsNoSilo),
+	SLD_GENTRY (SLDT_UINT16, s_playerCreditsNoSilo),
 	SLD_GARRAY (SLDT_INT16,  g_starportAvailable, UNIT_MAX),
 	SLD_GENTRY (SLDT_UINT16, s_houseMissileCountdown),
 	SLD_GENTRY (SLDT_UINT16, s_houseMissileID),
@@ -183,6 +184,7 @@ bool Info_LoadOld(FILE *fp, uint32 length)
 void
 Info_Load_PlayerHouseGlobals(House *h)
 {
+	h->creditsStorageNoSilo  = s_playerCreditsNoSilo;
 	h->houseMissileCountdown = s_houseMissileCountdown;
 	h->houseMissileID        = s_houseMissileID;
 	h->starportID            = s_starportID;
@@ -198,11 +200,13 @@ bool Info_Save(FILE *fp)
 	const uint16 savegameVersion = 0x0290;
 
 	if (g_playerHouse != NULL) {
+		s_playerCreditsNoSilo   = g_playerHouse->creditsStorageNoSilo;
 		s_houseMissileCountdown = g_playerHouse->houseMissileCountdown;
 		s_houseMissileID        = g_playerHouse->houseMissileID;
 		s_starportID            = g_playerHouse->starportID;
 	}
 	else {
+		s_playerCreditsNoSilo   = 0;
 		s_houseMissileCountdown = 0;
 		s_houseMissileID        = UNIT_INDEX_INVALID;
 		s_starportID            = STRUCTURE_INDEX_INVALID;

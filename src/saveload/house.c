@@ -38,6 +38,7 @@ static const SaveLoadDesc s_saveHouse[] = {
 
 static const SaveLoadDesc s_saveHouse2[] = {
 	SLD_ENTRY2(House, SLDT_UINT16, index,           SLDT_UINT8),
+	SLD_ENTRY (House, SLDT_UINT16, creditsStorageNoSilo),
 	SLD_ENTRY (House, SLDT_UINT16, houseMissileCountdown),
 	SLD_ENTRY (House, SLDT_UINT16, houseMissileID),
 	SLD_ENTRY (House, SLDT_UINT16, starportID),

@@ -1086,7 +1086,7 @@ Scenario_Create_House(enum HouseType houseID, enum Brain brain,
 
 	g_playerHouseID       = houseID;
 	g_playerHouse         = h;
-	g_playerCreditsNoSilo = h->credits;
+	h->creditsStorageNoSilo = h->credits;
 
 	return h;
 }
