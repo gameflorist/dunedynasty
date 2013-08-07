@@ -12,4 +12,6 @@ extern void Server_Send_PlaySound(enum HouseFlag houses, enum SoundID soundID);
 extern void Server_Send_PlaySoundAtTile(enum HouseFlag houses, enum SoundID soundID, tile32 position);
 extern void Server_Send_PlayVoice(enum HouseFlag houses, enum VoiceID voiceID);
 
+extern void Server_ProcessMessages(void);
+
 #endif

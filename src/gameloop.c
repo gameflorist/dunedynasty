@@ -17,6 +17,7 @@
 #include "input/input.h"
 #include "input/mouse.h"
 #include "map.h"
+#include "net/server.h"
 #include "newui/actionpanel.h"
 #include "newui/menubar.h"
 #include "newui/viewport.h"
@@ -35,6 +36,8 @@
 static void
 GameLoop_Server_Logic(void)
 {
+	Server_ProcessMessages();
+
 	UnitAI_SquadLoop();
 	GameLoop_Team();
 	GameLoop_Unit();

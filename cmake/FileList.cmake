@@ -37,6 +37,8 @@ set(DUNEDYNASTY_SRC_FILES
 	src/load.c
 	src/map.c
 	src/mapgenerator/skirmish.c
+	src/net/client.c
+	src/net/message.c
 	src/net/server.c
 	src/newui/actionpanel.c
 	src/newui/halloffame.c
