@@ -199,11 +199,11 @@ bool GUI_Widget_Cancel_Click(Widget *w)
 	if (g_unitActive == NULL) return true;
 
 	int iter;
-	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
-		if (Unit_GetHouseID(u) != g_playerHouseID)
-			continue;
-
-		u->deviationDecremented = false;
+	for (const Unit *u = Unit_FirstSelected(&iter);
+			u != NULL;
+			u = Unit_NextSelected(&iter)) {
+		if (Unit_GetHouseID(u) == g_playerHouseID)
+			Client_Send_IssueUnitAction(ACTION_CANCEL, 0, &u->o);
 	}
 
 	g_unitActive = NULL;

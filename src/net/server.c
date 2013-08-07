@@ -8,6 +8,7 @@
 
 #include "message.h"
 #include "../audio/audio.h"
+#include "../enhancement.h"
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../pool/unit.h"
@@ -132,6 +133,69 @@ Server_Recv_IssueUnitActionUntargetted(Unit *u, enum UnitActionType actionID)
 }
 
 static void
+Server_Recv_IssueUnitActionTargetted(Unit *u,
+		enum UnitActionType actionID, uint16 encoded)
+{
+	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+
+	actionID = Unit_GetSimilarAction(ui->o.actionsPlayer, actionID);
+
+	/* ENHANCEMENT -- Targetted sabotage is ACTION_MOVE + detonateAtTarget. */
+	bool detonateAtTarget = false;
+	if (enhancement_targetted_sabotage && actionID == ACTION_SABOTAGE) {
+		actionID = ACTION_MOVE;
+		detonateAtTarget = true;
+	}
+	else if (actionID == ACTION_INVALID
+			|| g_table_actionInfo[actionID].selectionType != SELECTIONTYPE_TARGET) {
+		return;
+	}
+
+	/* Since the deviation counter is decremented when you press the
+	 * command button, generic orders have a habit of by-passing that
+	 * logic.
+	 */
+	if ((u->deviated != 0) && (!u->deviationDecremented)) {
+		Unit_Deviation_Decrease(u, 5);
+		if (u->deviated == 0)
+			return;
+	}
+	else {
+		u->deviationDecremented = false;
+	}
+
+	Object_Script_Variable4_Clear(&u->o);
+	u->targetAttack = 0;
+	u->targetMove = 0;
+	u->route[0] = 0xFF;
+	u->detonateAtTarget = detonateAtTarget;
+
+	Unit_SetAction(u, actionID);
+
+	Unit *target = NULL;
+	if (actionID == ACTION_MOVE) {
+		Unit_SetDestination(u, encoded);
+
+		if (enhancement_targetted_sabotage && u->detonateAtTarget) {
+			target = Tools_Index_GetUnit(u->targetMove);
+		}
+		else if (enhancement_permanent_follow_mode) {
+			u->permanentFollow = (Tools_Index_GetType(u->targetMove) == IT_UNIT);
+		}
+	}
+	else if (actionID == ACTION_HARVEST) {
+		u->targetMove = encoded;
+	}
+	else {
+		Unit_SetTarget(u, encoded);
+		target = Tools_Index_GetUnit(u->targetAttack);
+	}
+
+	if (target != NULL)
+		target->blinkCounter = 8;
+}
+
+static void
 Server_Recv_IssueUnitAction(enum HouseType houseID, const unsigned char *buf)
 {
 	const uint8  actionID = Net_Decode_uint8(&buf);
@@ -141,15 +205,22 @@ Server_Recv_IssueUnitAction(enum HouseType houseID, const unsigned char *buf)
 	SERVER_LOG("actionID=%d, encoded=%x, objectID=%d",
 			actionID, encoded, objectID);
 
-	if (actionID >= ACTION_MAX || objectID >= UNIT_INDEX_MAX)
+	if ((actionID >= ACTION_MAX && actionID != ACTION_CANCEL)
+			|| (objectID >= UNIT_INDEX_MAX))
 		return;
 
 	Unit *u = Unit_Get_ByIndex(objectID);
 	if (!Server_PlayerCanControlUnit(houseID, u))
 		return;
 
-	if (Tools_Index_GetType(encoded) == IT_NONE) {
+	if (actionID == ACTION_CANCEL) {
+		u->deviationDecremented = false;
+	}
+	else if (Tools_Index_GetType(encoded) == IT_NONE) {
 		Server_Recv_IssueUnitActionUntargetted(u, actionID);
+	}
+	else if (Tools_Index_IsValid_Defensive(encoded)) {
+		Server_Recv_IssueUnitActionTargetted(u, actionID, encoded);
 	}
 }
 

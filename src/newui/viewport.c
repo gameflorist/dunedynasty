@@ -18,6 +18,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../map.h"
+#include "../net/client.h"
 #include "../net/server.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -237,46 +238,17 @@ Viewport_SelectRegion(void)
 }
 
 static void
-Viewport_Target(Unit *u, enum UnitActionType action, bool command_button, uint16 packed)
+Viewport_Target(const Unit *u, enum UnitActionType action, uint16 packed)
 {
 	uint16 encoded;
-	Unit *target = NULL;
 
 	if (Unit_GetHouseID(u) != g_playerHouseID)
 		return;
 
-	/* Action might not be available to the unit due to multiple selection
-	 * (e.g. no attack for saboteurs).
-	 */
 	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
-	if ((action != ui->o.actionsPlayer[0]) &&
-	    (action != ui->o.actionsPlayer[1]) &&
-	    (action != ui->o.actionsPlayer[2]) &&
-	    (action != ui->o.actionsPlayer[3])) {
+	action = Unit_GetSimilarAction(ui->o.actionsPlayer, action);
+	if (action == ACTION_INVALID)
 		return;
-	}
-
-	if (u->deviated != 0 && !u->deviationDecremented) {
-		Unit_Deviation_Decrease(u, 5);
-		if (u->deviated == 0)
-			return;
-	}
-	else {
-		u->deviationDecremented = false;
-	}
-
-	if (action == ACTION_SABOTAGE) {
-		u->detonateAtTarget = true;
-		action = ACTION_MOVE;
-	}
-	else {
-		u->detonateAtTarget = false;
-	}
-
-	Object_Script_Variable4_Clear(&u->o);
-	u->targetAttack = 0;
-	u->targetMove = 0;
-	u->route[0] = 0xFF;
 
 	if (action != ACTION_MOVE && action != ACTION_HARVEST) {
 		encoded = Tools_Index_Encode(Unit_FindTargetAround(packed), IT_TILE);
@@ -285,28 +257,7 @@ Viewport_Target(Unit *u, enum UnitActionType action, bool command_button, uint16
 		encoded = Tools_Index_Encode(packed, IT_TILE);
 	}
 
-	Unit_SetAction(u, action);
-
-	if (action == ACTION_MOVE) {
-		Unit_SetDestination(u, encoded);
-
-		if (u->detonateAtTarget) {
-			target = Tools_Index_GetUnit(u->targetMove);
-		}
-		else if (enhancement_permanent_follow_mode) {
-			u->permanentFollow = command_button;
-		}
-	}
-	else if (action == ACTION_HARVEST) {
-		u->targetMove = encoded;
-	}
-	else {
-		Unit_SetTarget(u, encoded);
-		target = Tools_Index_GetUnit(u->targetAttack);
-	}
-
-	if (target != NULL)
-		target->blinkCounter = 8;
+	Client_Send_IssueUnitAction(action, encoded, &u->o);
 
 	if (g_enable_sound_effects == SOUNDEFFECTS_SYNTH_ONLY) {
 		Audio_PlayEffect(EFFECT_SET_TARGET);
@@ -573,7 +524,7 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 					return true;
 			}
 			else {
-				Viewport_Target(u, action, false, packed);
+				Viewport_Target(u, action, packed);
 			}
 		}
 	}
@@ -666,7 +617,7 @@ Viewport_Click(Widget *w)
 
 			int iter;
 			for (Unit *u = Unit_FirstSelected(&iter); u; u = Unit_NextSelected(&iter)) {
-				Viewport_Target(u, g_activeAction, true, packed);
+				Viewport_Target(u, g_activeAction, packed);
 			}
 
 			g_activeAction = 0xFFFF;

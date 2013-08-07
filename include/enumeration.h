@@ -173,6 +173,7 @@ enum UnitActionType {
 	ACTION_DESTRUCT     = 13,
 
 	ACTION_MAX      = 14,
+	ACTION_CANCEL   = 15,
 	ACTION_INVALID  = 0xFF
 };
 

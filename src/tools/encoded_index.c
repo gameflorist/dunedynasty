@@ -66,6 +66,32 @@ Tools_Index_IsValid(uint16 encoded)
 }
 
 /**
+ * @brief   Like Tools_Index_IsValid, but guard against malicious input.
+ * @details @see Tools_Index_IsValid.
+ */
+bool
+Tools_Index_IsValid_Defensive(uint16 encoded)
+{
+	uint16 index = Tools_Index_Decode(encoded);
+	switch (Tools_Index_GetType(encoded)) {
+		case IT_UNIT:
+			return (index < UNIT_INDEX_MAX)
+				&& Tools_Index_IsValid(encoded);
+
+		case IT_STRUCTURE:
+			return (index < STRUCTURE_INDEX_MAX_HARD)
+				&& Tools_Index_IsValid(encoded);
+
+		case IT_TILE:
+		case IT_NONE:
+		default:
+			return true;
+	}
+
+	return false;
+}
+
+/**
  * @brief   f__167E_0088_001A_60ED.
  * @details Exact.
  */

@@ -10,6 +10,7 @@ struct Structure;
 struct Unit;
 
 extern bool Tools_Index_IsValid(uint16 encoded);
+extern bool Tools_Index_IsValid_Defensive(uint16 encoded);
 extern enum IndexType Tools_Index_GetType(uint16 encoded);
 extern uint16 Tools_Index_Encode(uint16 index, enum IndexType type);
 extern uint16 Tools_Index_Decode(uint16 encoded);
