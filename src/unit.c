@@ -192,6 +192,31 @@ Unit_GetForActionPanel(void)
 	return best_unit;
 }
 
+enum UnitActionType
+Unit_GetSimilarAction(const uint16 *actions, enum UnitActionType actionID)
+{
+	enum UnitActionType secondary_action = ACTION_INVALID;
+
+	for (int i = 0; i < 4; i++) {
+		if (actionID == actions[i])
+			return actionID;
+
+		if (secondary_action != ACTION_INVALID)
+			continue;
+
+		if ((actionID == ACTION_ATTACK  && actions[i] == ACTION_HARVEST)
+		 || (actionID == ACTION_HARVEST && actions[i] == ACTION_ATTACK)
+		 || (actionID == ACTION_RETREAT && actions[i] == ACTION_RETURN)
+		 || (actionID == ACTION_RETURN  && actions[i] == ACTION_RETREAT)
+		 || (actionID == ACTION_GUARD   && actions[i] == ACTION_STOP)
+		 || (actionID == ACTION_STOP    && actions[i] == ACTION_GUARD)) {
+			secondary_action = actionID;
+		}
+	}
+
+	return secondary_action;
+}
+
 /**
  * Rotate a unit (or his top).
  *

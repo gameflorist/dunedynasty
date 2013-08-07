@@ -12,6 +12,7 @@
 #include "../config.h"
 #include "../enhancement.h"
 #include "../map.h"
+#include "../net/client.h"
 #include "../newui/actionpanel.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -80,90 +81,6 @@ extern bool GUI_Widget_Scrollbar_ArrowDown_Click(Widget *w);
 extern bool GUI_Widget_Scrollbar_Click(Widget *w);
 #endif
 
-/**
- * Handles Click event for unit commands button.
- *
- * @param w The widget.
- * @return True, always.
- */
-static bool GUI_Widget_TextButton_Click_(Widget *w, ActionType ref, Unit *u)
-{
-	const UnitInfo *ui;
-	const ActionInfo *ai;
-	const uint16 *actions;
-	ActionType action;
-	uint16 *found;
-	ActionType unitAction;
-
-	ui = &g_table_unitInfo[u->o.type];
-
-	actions = ui->o.actionsPlayer;
-	if (Unit_GetHouseID(u) != g_playerHouseID && u->o.type != UNIT_HARVESTER) {
-		actions = g_table_actionsAI;
-	}
-
-	action = actions[w->index - 8];
-	if ((action == ref) ||
-	    (action == ACTION_RETREAT && ref == ACTION_RETURN) ||
-	    (action == ACTION_RETURN && ref == ACTION_RETREAT)) {
-	}
-	else {
-		return true;
-	}
-
-	unitAction = u->nextActionID;
-	if (unitAction == ACTION_INVALID) {
-		unitAction = u->actionID;
-	}
-
-	if (u->deviated != 0) {
-		Unit_Deviation_Decrease(u, 5);
-		if (u->deviated == 0) {
-			GUI_Widget_MakeNormal(w, false);
-			return true;
-		}
-	}
-
-	GUI_Widget_MakeSelected(w, false);
-
-	ai = &g_table_actionInfo[action];
-
-	/* For single selection, we enter this loop when the selection
-	 * type changes from SELECTIONTYPE_UNIT to SELECTIONTYPE_TARGET.
-	 * For multiple selection, we need to abort the outer loop.
-	 */
-	if (ai->selectionType != g_selectionType) {
-		u->deviationDecremented = true;
-		g_unitActive = u;
-		g_activeAction = action;
-		GUI_ChangeSelectionType(ai->selectionType);
-
-		return false;
-	}
-	else {
-		u->deviationDecremented = false;
-	}
-
-	Object_Script_Variable4_Clear(&u->o);
-	u->targetAttack = 0;
-	u->targetMove = 0;
-	u->route[0] = 0xFF;
-
-	Unit_SetAction(u, action);
-
-	if (ui->movementType == MOVEMENT_FOOT)
-		Audio_PlaySample(ai->soundID, 255, 0.0f);
-
-	if (unitAction == action) return true;
-
-	found = memchr(actions, unitAction, 4);
-	if (found == NULL) return true;
-
-	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, found - actions + 8), false);
-
-	return true;
-}
-
 bool GUI_Widget_TextButton_Click(Widget *w)
 {
 	Unit *ref = Unit_GetForActionPanel();
@@ -171,17 +88,45 @@ bool GUI_Widget_TextButton_Click(Widget *w)
 	if (ref == NULL)
 		return true;
 
-	UnitInfo *ui = &g_table_unitInfo[ref->o.type];
-	ActionType action = ui->o.actionsPlayer[w->index - 8];
+	const UnitInfo *ui = &g_table_unitInfo[ref->o.type];
+	const enum UnitActionType refaction = ui->o.actionsPlayer[w->index - 8];
 
-	int iter;
-	for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
-		if (GUI_Widget_TextButton_Click_(w, action, u) == false)
-			break;
+	/* If action requires a target, switch to targetting mode. */
+	if (g_table_actionInfo[refaction].selectionType == SELECTIONTYPE_TARGET) {
+		g_unitActive = ref;
+		g_activeAction = refaction;
+		GUI_ChangeSelectionType(SELECTIONTYPE_TARGET);
 	}
 
-	if (enhancement_play_additional_voices)
-		Audio_PlaySample(SAMPLE_BUTTON, 128, 0.0f);
+	enum SampleID sampleID
+		= enhancement_play_additional_voices ? SAMPLE_BUTTON : SAMPLE_INVALID;
+
+	/* Note that we need to inform the server when beginning
+	 * targetting mode to the decrease deviation count.
+	 */
+	int iter;
+	for (const Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
+		if (Unit_GetHouseID(u) != g_playerHouseID)
+			continue;
+
+		const enum UnitActionType actionID
+			= Unit_GetSimilarAction(ui->o.actionsPlayer, refaction);
+
+		if (actionID == ACTION_INVALID)
+			continue;
+
+		Client_Send_IssueUnitAction(actionID, 0, &u->o);
+
+		if (g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT)
+			sampleID = g_table_actionInfo[actionID].soundID;
+	}
+
+	if (sampleID == SAMPLE_BUTTON) {
+		Audio_PlaySample(sampleID, 128, 0.0f);
+	}
+	else if (sampleID != SAMPLE_INVALID) {
+		Audio_PlaySample(sampleID, 255, 0.0f);
+	}
 
 	return true;
 }

@@ -11,6 +11,8 @@ enum {
 enum ClientServerMsg {
 	CSMSG_DISCONNECT,
 
+	CSMSG_ISSUE_UNIT_ACTION,
+
 	CSMSG_MAX,
 	CSMSG_INVALID
 };

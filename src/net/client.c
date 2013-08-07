@@ -42,3 +42,17 @@ Client_Send_ObjectIndex(enum ClientServerMsg msg, const Object *o)
 
 	Net_Encode_ObjectIndex(&buf, o);
 }
+
+/*--------------------------------------------------------------*/
+
+void
+Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
+{
+	unsigned char *buf = Client_GetBuffer(CSMSG_ISSUE_UNIT_ACTION);
+	if (buf == NULL)
+		return;
+
+	Net_Encode_uint8 (&buf, actionID);
+	Net_Encode_uint16(&buf, encoded);
+	Net_Encode_ObjectIndex(&buf, o);
+}

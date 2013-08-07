@@ -133,6 +133,7 @@ extern void Unit_AddSelected(Unit *unit);
 extern void Unit_Unselect(const Unit *unit);
 extern void Unit_UnselectAll(void);
 extern Unit *Unit_GetForActionPanel(void);
+extern enum UnitActionType Unit_GetSimilarAction(const uint16 *actions, enum UnitActionType actionID);
 extern tile32 Unit_GetNextDestination(const Unit *u);
 
 extern void GameLoop_Unit(void);

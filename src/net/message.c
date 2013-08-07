@@ -11,6 +11,7 @@ static const struct {
 	int len;
 } s_table_csmsg[CSMSG_MAX] = {
 	{ 'x', 0 }, /* CSMSG_DISCONNECT */
+	{ 'u', 5 }, /* CSMSG_ISSUE_UNIT_ACTION */
 };
 
 unsigned char g_server2client_message_buf[MAX_SERVER_MESSAGE_LEN];
