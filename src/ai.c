@@ -519,8 +519,14 @@ UnitAI_CountUnits(enum HouseType houseID, enum UnitType unit_type)
 bool
 UnitAI_ShouldDestructDevastator(const Unit *devastator)
 {
-	if (devastator->o.type != UNIT_DEVASTATOR)
+	const UnitInfo *ui = &g_table_unitInfo[devastator->o.type];
+
+	if (ui->o.actionsPlayer[0] != ACTION_DESTRUCT
+	 && ui->o.actionsPlayer[1] != ACTION_DESTRUCT
+	 && ui->o.actionsPlayer[2] != ACTION_DESTRUCT
+	 && ui->o.actionsPlayer[3] != ACTION_DESTRUCT) {
 		return false;
+	}
 
 	int x = Tile_GetPosX(devastator->o.position);
 	int y = Tile_GetPosY(devastator->o.position);
