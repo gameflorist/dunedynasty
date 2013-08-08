@@ -240,20 +240,13 @@ GUI_Widget_Picture_Click(Widget *w)
 	return false;
 }
 
-/**
- * Handles Click event for "Repair/Upgrade" button.
- *
- * @param w The widget.
- * @return False, always.
- */
 bool GUI_Widget_RepairUpgrade_Click(Widget *w)
 {
-	Structure *s;
+	const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+	VARIABLE_NOT_USED(w);
 
-	s = Structure_Get_ByPackedTile(g_selectionPosition);
-
-	if (Structure_SetRepairingState(s, -1, w)) return false;
-	Structure_SetUpgradingState(s, -1, w);
+	if (s != NULL && s->o.houseID == g_playerHouseID)
+		Client_Send_RepairUpgradeStructure(&s->o);
 
 	return false;
 }

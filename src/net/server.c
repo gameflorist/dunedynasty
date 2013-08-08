@@ -11,8 +11,10 @@
 #include "../enhancement.h"
 #include "../gui/gui.h"
 #include "../house.h"
+#include "../pool/structure.h"
 #include "../pool/unit.h"
 #include "../string.h"
+#include "../structure.h"
 #include "../tools/encoded_index.h"
 #include "../unit.h"
 
@@ -84,6 +86,34 @@ Server_Send_PlayVoice(enum HouseFlag houses, enum VoiceID voiceID)
 	if (houses & (1 << g_playerHouseID)) {
 		Audio_PlayVoice(voiceID);
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+static bool
+Server_PlayerCanControlStructure(enum HouseType houseID, const Structure *s)
+{
+	return (s->o.houseID == houseID
+			&& s->o.flags.s.allocated
+			&& s->o.flags.s.used);
+}
+
+static void
+Server_Recv_RepairUpgradeStructure(enum HouseType houseID, const unsigned char *buf)
+{
+	const uint16 objectID = Net_Decode_ObjectIndex(&buf);
+
+	SERVER_LOG("objectID=%d", objectID);
+
+	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+		return;
+
+	Structure *s = Structure_Get_ByIndex(objectID);
+	if (!Server_PlayerCanControlStructure(houseID, s))
+		return;
+
+	if (!Structure_Server_SetRepairingState(s, -1))
+		Structure_Server_SetUpgradingState(s, -1);
 }
 
 /*--------------------------------------------------------------*/
@@ -247,6 +277,10 @@ Server_ProcessMessages(void)
 		switch (msg) {
 			case CSMSG_DISCONNECT:
 				assert(false);
+				break;
+
+			case CSMSG_REPAIR_UPGRADE_STRUCTURE:
+				Server_Recv_RepairUpgradeStructure(houseID, buf);
 				break;
 
 			case CSMSG_ISSUE_UNIT_ACTION:

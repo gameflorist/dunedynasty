@@ -408,7 +408,7 @@ void GameLoop_Structure(void)
 						&& h->credits != 0) {
 					/* When structure is below 50% hitpoints, start repairing */
 					if (s->o.hitpoints < si->o.hitpoints / 2) {
-						Structure_SetRepairingState(s, 1, NULL);
+						Structure_Server_SetRepairingState(s, 1);
 					}
 
 					/* If the structure is not doing something, but can build stuff, see if there is stuff to build */
@@ -1756,10 +1756,10 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 
 	if (!si->o.flags.factory) return false;
 
-	Structure_SetRepairingState(s, 0, NULL);
+	Structure_Server_SetRepairingState(s, 0);
 
 	if (objectType == 0xFFFD) {
-		Structure_SetUpgradingState(s, 1, NULL);
+		Structure_Server_SetUpgradingState(s, 1);
 		return false;
 	}
 
@@ -1859,11 +1859,10 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
  * @param w The widget.
  * @return True if and only if the state changed.
  */
-bool Structure_SetUpgradingState(Structure *s, int8 state, Widget *w)
+bool
+Structure_Server_SetUpgradingState(Structure *s, int state)
 {
 	bool ret = false;
-
-	if (s == NULL) return false;
 
 	if (state == -1) state = s->o.flags.s.upgrading ? 0 : 1;
 
@@ -1873,8 +1872,6 @@ bool Structure_SetUpgradingState(Structure *s, int8 state, Widget *w)
 
 		s->o.flags.s.upgrading = false;
 		s->o.flags.s.onHold = false;
-
-		GUI_Widget_MakeNormal(w, false);
 
 		ret = true;
 	}
@@ -1888,8 +1885,6 @@ bool Structure_SetUpgradingState(Structure *s, int8 state, Widget *w)
 	s->o.flags.s.repairing = false;
 	s->o.flags.s.upgrading = true;
 
-	GUI_Widget_MakeSelected(w, false);
-
 	return true;
 }
 
@@ -1901,11 +1896,10 @@ bool Structure_SetUpgradingState(Structure *s, int8 state, Widget *w)
  * @param w The widget.
  * @return True if and only if the state changed.
  */
-bool Structure_SetRepairingState(Structure *s, int8 state, Widget *w)
+bool
+Structure_Server_SetRepairingState(Structure *s, int state)
 {
 	bool ret = false;
-
-	if (s == NULL) return false;
 
 	/* ENHANCEMENT -- If a structure gets damaged during upgrading, pressing the "Upgrading" button silently starts the repair of the structure, and doesn't cancel upgrading. */
 	if (g_dune2_enhanced && s->o.flags.s.upgrading) return false;
@@ -1921,8 +1915,6 @@ bool Structure_SetRepairingState(Structure *s, int8 state, Widget *w)
 		s->o.flags.s.repairing = false;
 		s->o.flags.s.onHold = false;
 
-		GUI_Widget_MakeNormal(w, false);
-
 		ret = true;
 	}
 
@@ -1933,8 +1925,6 @@ bool Structure_SetRepairingState(Structure *s, int8 state, Widget *w)
 
 	s->o.flags.s.onHold = true;
 	s->o.flags.s.repairing = true;
-
-	GUI_Widget_MakeSelected(w, false);
 
 	return true;
 }

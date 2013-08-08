@@ -11,6 +11,7 @@ static const struct {
 	int len;
 } s_table_csmsg[CSMSG_MAX] = {
 	{ 'x', 0 }, /* CSMSG_DISCONNECT */
+	{ 'r', 2 }, /* CSMSG_REPAIR_UPGRADE_STRUCTURE */
 	{ 'u', 5 }, /* CSMSG_ISSUE_UNIT_ACTION */
 };
 
