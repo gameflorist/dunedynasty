@@ -6,6 +6,7 @@
 struct Object;
 
 extern void Client_Send_RepairUpgradeStructure(const struct Object *o);
+extern void Client_Send_SetRallyPoint(const struct Object *o, uint16 packed);
 extern void Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const struct Object *o);
 
 #endif

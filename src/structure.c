@@ -802,20 +802,18 @@ void Structure_SetState(Structure *s, int16 state)
 bool
 Structure_SupportsRallyPoints(enum StructureType s)
 {
-	return ((s == STRUCTURE_LIGHT_VEHICLE) ||
-	        (s == STRUCTURE_HEAVY_VEHICLE) ||
-	        (s == STRUCTURE_WOR_TROOPER) ||
-	        (s == STRUCTURE_BARRACKS) ||
-	        (s == STRUCTURE_STARPORT) ||
-	        (s == STRUCTURE_REFINERY) ||
-	        (s == STRUCTURE_REPAIR));
+	return (s == STRUCTURE_LIGHT_VEHICLE
+	     || s == STRUCTURE_HEAVY_VEHICLE
+	     || s == STRUCTURE_WOR_TROOPER
+	     || s == STRUCTURE_BARRACKS
+	     || s == STRUCTURE_STARPORT
+	     || s == STRUCTURE_REFINERY
+	     || s == STRUCTURE_REPAIR);
 }
 
-void Structure_SetRallyPoint(Structure *s, uint16 packed)
+uint16
+Structure_Client_GetRallyPoint(const Structure *s, uint16 packed)
 {
-	if (s->o.houseID != g_playerHouseID)
-		return;
-
 	const StructureInfo *si = &g_table_structureInfo[s->o.type];
 	const uint8 tx = Tile_GetPackedX(packed);
 	const uint8 ty = Tile_GetPackedY(packed);
@@ -825,10 +823,10 @@ void Structure_SetRallyPoint(Structure *s, uint16 packed)
 	const uint8 y2 = y1 + g_table_structure_layoutSize[si->layout].height - 1;
 
 	if ((x1 <= tx && tx <= x2) && (y1 <= ty && ty <= y2)) {
-		s->rallyPoint = 0xFFFF;
+		return 0xFFFF;
 	}
 	else {
-		s->rallyPoint = packed;
+		return packed;
 	}
 }
 

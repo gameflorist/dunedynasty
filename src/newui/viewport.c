@@ -840,8 +840,11 @@ Viewport_Click(Widget *w)
 		Viewport_PerformContextSensitiveAction(packed, false);
 
 		Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
-		if (s != NULL) {
-			Structure_SetRallyPoint(s, packed);
+		if ((s != NULL)
+				&& (s->o.houseID == g_playerHouseID)
+				&& Structure_SupportsRallyPoints(s->o.type)) {
+			Client_Send_SetRallyPoint(&s->o,
+					Structure_Client_GetRallyPoint(s, packed));
 		}
 	}
 

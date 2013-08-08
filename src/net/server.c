@@ -15,6 +15,7 @@
 #include "../pool/unit.h"
 #include "../string.h"
 #include "../structure.h"
+#include "../tools/coord.h"
 #include "../tools/encoded_index.h"
 #include "../unit.h"
 
@@ -114,6 +115,30 @@ Server_Recv_RepairUpgradeStructure(enum HouseType houseID, const unsigned char *
 
 	if (!Structure_Server_SetRepairingState(s, -1))
 		Structure_Server_SetUpgradingState(s, -1);
+}
+
+static void
+Server_Recv_SetRallyPoint(enum HouseType houseID, const unsigned char *buf)
+{
+	const uint16 objectID = Net_Decode_ObjectIndex(&buf);
+	const uint16 packed   = Net_Decode_uint16(&buf);
+
+	SERVER_LOG("objectID=%d, packed=%d", objectID, packed);
+
+	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+		return;
+
+	Structure *s = Structure_Get_ByIndex(objectID);
+	if (!Server_PlayerCanControlStructure(houseID, s)
+			|| !Structure_SupportsRallyPoints(s->o.type))
+		return;
+
+	if (Tile_IsOutOfMap(packed)) {
+		s->rallyPoint = 0xFFFF;
+	}
+	else {
+		s->rallyPoint = packed;
+	}
 }
 
 /*--------------------------------------------------------------*/
@@ -281,6 +306,10 @@ Server_ProcessMessages(void)
 
 			case CSMSG_REPAIR_UPGRADE_STRUCTURE:
 				Server_Recv_RepairUpgradeStructure(houseID, buf);
+				break;
+
+			case CSMSG_SET_RALLY_POINT:
+				Server_Recv_SetRallyPoint(houseID, buf);
 				break;
 
 			case CSMSG_ISSUE_UNIT_ACTION:

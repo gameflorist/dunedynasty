@@ -95,7 +95,7 @@ extern bool Structure_Place(Structure *s, uint16 position, enum HouseType houseI
 extern void Structure_CalculateHitpointsMax(struct House *h);
 extern void Structure_SetState(Structure *s, int16 animation);
 extern bool Structure_SupportsRallyPoints(enum StructureType s);
-extern void Structure_SetRallyPoint(Structure *s, uint16 packed);
+extern uint16 Structure_Client_GetRallyPoint(const Structure *s, uint16 packed);
 extern Structure *Structure_Get_ByPackedTile(uint16 packed);
 extern uint32 Structure_GetStructuresBuilt(struct House *h);
 extern int16 Structure_IsValidBuildLandscape(uint16 position, enum StructureType type);

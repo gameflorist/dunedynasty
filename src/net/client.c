@@ -52,6 +52,17 @@ Client_Send_RepairUpgradeStructure(const Object *o)
 }
 
 void
+Client_Send_SetRallyPoint(const Object *o, uint16 packed)
+{
+	unsigned char *buf = Client_GetBuffer(CSMSG_SET_RALLY_POINT);
+	if (buf == NULL)
+		return;
+
+	Net_Encode_ObjectIndex(&buf, o);
+	Net_Encode_uint16(&buf, packed);
+}
+
+void
 Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
 {
 	unsigned char *buf = Client_GetBuffer(CSMSG_ISSUE_UNIT_ACTION);

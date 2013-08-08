@@ -12,6 +12,7 @@ static const struct {
 } s_table_csmsg[CSMSG_MAX] = {
 	{ 'x', 0 }, /* CSMSG_DISCONNECT */
 	{ 'r', 2 }, /* CSMSG_REPAIR_UPGRADE_STRUCTURE */
+	{ 'g', 4 }, /* CSMSG_SET_RALLY_POINT */
 	{ 'u', 5 }, /* CSMSG_ISSUE_UNIT_ACTION */
 };
 
