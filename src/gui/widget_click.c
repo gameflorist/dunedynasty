@@ -177,23 +177,10 @@ bool GUI_Widget_Cancel_Click(Widget *w)
 	VARIABLE_NOT_USED(w);
 
 	if (g_structureActiveType != 0xFFFF) {
-		Structure *s  = Structure_Get_ByPackedTile(g_structureActivePosition);
-		Structure *s2 = g_structureActive;
+		const Structure *s = Structure_Get_ByPackedTile(g_structureActivePosition);
+		const Object *o = (s != NULL) ? &s->o : NULL;
 
-		assert(s2 != NULL);
-
-		if (s != NULL) {
-			s->o.linkedID = s2->o.index & 0xFF;
-		} else {
-			Structure_Free(s2);
-		}
-
-		g_structureActive = NULL;
-		g_structureActiveType = 0xFFFF;
-
-		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
-
-		g_selectionState = 0; /* Invalid. */
+		Client_Send_LeavePlacementMode(o);
 	}
 
 	if (g_unitActive == NULL) return true;
@@ -224,8 +211,9 @@ GUI_Widget_Picture_Click(Widget *w)
 	if (s == NULL)
 		return false;
 
-	if ((s->o.type == STRUCTURE_CONSTRUCTION_YARD) && (g_productionStringID == STR_PLACE_IT)) {
-		ActionPanel_BeginPlacementMode(s);
+	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		if (g_productionStringID == STR_PLACE_IT)
+			Client_Send_EnterPlacementMode(&s->o);
 	}
 	else if ((s->o.type == STRUCTURE_PALACE) && (s->countDown == 0)) {
 		Structure_ActivateSpecial(s);

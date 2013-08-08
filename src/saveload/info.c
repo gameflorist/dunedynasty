@@ -16,6 +16,7 @@
 
 /* These were originally global variables. */
 static uint16 s_playerCreditsNoSilo;
+static uint16 s_structureActiveID;
 static uint16 s_houseMissileCountdown;
 static uint16 s_houseMissileID;
 static uint16 s_starportID;
@@ -30,26 +31,6 @@ static uint32 SaveLoad_SelectionType(void *object, uint32 value, bool loading)
 	}
 
 	return g_selectionType;
-}
-
-static uint32 SaveLoad_StructureActive(void *object, uint32 value, bool loading)
-{
-	VARIABLE_NOT_USED(object);
-
-	if (loading) {
-		if ((uint16)value != 0xFFFF) {
-			g_structureActive = Structure_Get_ByIndex((uint16)value);
-		} else {
-			g_structureActive = NULL;
-		}
-		return 0;
-	}
-
-	if (g_structureActiveType != 0xFFFF) {
-		return g_structureActive->o.index;
-	} else {
-		return 0xFFFF;
-	}
 }
 
 #if 0
@@ -115,7 +96,7 @@ static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GCALLB (SLDT_INT8,   g_selectionType, &SaveLoad_SelectionType),
 	SLD_GENTRY2(SLDT_INT8,   g_structureActiveType, SLDT_UINT16),
 	SLD_GENTRY (SLDT_UINT16, g_structureActivePosition),
-	SLD_GCALLB (SLDT_UINT16, g_structureActive, &SaveLoad_StructureActive),
+	SLD_GENTRY (SLDT_UINT16, s_structureActiveID),
 	SLD_EMPTY  (SLDT_UINT16), /* was SaveLoad_UnitSelected. */
 	SLD_GCALLB (SLDT_UINT16, g_unitActive, &SaveLoad_UnitActive),
 	SLD_GENTRY (SLDT_UINT16, g_activeAction),
@@ -185,9 +166,14 @@ void
 Info_Load_PlayerHouseGlobals(House *h)
 {
 	h->creditsStorageNoSilo  = s_playerCreditsNoSilo;
+	h->structureActiveID     = s_structureActiveID;
 	h->houseMissileCountdown = s_houseMissileCountdown;
 	h->houseMissileID        = s_houseMissileID;
 	h->starportID            = s_starportID;
+
+	g_structureActive
+		= (s_structureActiveID != STRUCTURE_INDEX_INVALID)
+		? Structure_Get_ByIndex(s_structureActiveID) : NULL;
 }
 
 /**
@@ -201,12 +187,14 @@ bool Info_Save(FILE *fp)
 
 	if (g_playerHouse != NULL) {
 		s_playerCreditsNoSilo   = g_playerHouse->creditsStorageNoSilo;
+		s_structureActiveID     = g_playerHouse->structureActiveID;
 		s_houseMissileCountdown = g_playerHouse->houseMissileCountdown;
 		s_houseMissileID        = g_playerHouse->houseMissileID;
 		s_starportID            = g_playerHouse->starportID;
 	}
 	else {
 		s_playerCreditsNoSilo   = 0;
+		s_structureActiveID     = STRUCTURE_INDEX_INVALID;
 		s_houseMissileCountdown = 0;
 		s_houseMissileID        = UNIT_INDEX_INVALID;
 		s_starportID            = STRUCTURE_INDEX_INVALID;

@@ -7,6 +7,7 @@
 #include "house.h"
 
 #include "pool.h"
+#include "structure.h"
 #include "unit.h"
 #include "../house.h"
 
@@ -79,6 +80,7 @@ House* House_Allocate(uint8 index)
 	h->index            = index;
 	h->flags.used       = true;
 	h->starportLinkedID = UNIT_INDEX_INVALID;
+	h->structureActiveID= STRUCTURE_INDEX_INVALID;
 	h->houseMissileID   = UNIT_INDEX_INVALID;
 
 	g_houseFindArray[g_houseFindCount++] = h;

@@ -259,7 +259,7 @@ void GameLoop_Structure(void)
 
 							Structure_SetState(s, STRUCTURE_STATE_READY);
 
-							if (s->o.houseID == g_playerHouseID) {
+							if (House_IsHuman(s->o.houseID)) {
 								if (s->o.type != STRUCTURE_BARRACKS && s->o.type != STRUCTURE_WOR_TROOPER) {
 									const uint16 stringID
 										= (s->o.type == STRUCTURE_HIGH_TECH) ? STR_IS_COMPLETE
@@ -320,8 +320,7 @@ void GameLoop_Structure(void)
 					bool start_next = false;
 
 					if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-						if ((s->o.linkedID == 0xFF) && (g_selectionType != SELECTIONTYPE_PLACE))
-							start_next = true;
+						start_next = (s->o.linkedID == 0xFF) && (h->structureActiveID == STRUCTURE_INDEX_INVALID);
 					}
 					else if (s->o.type == STRUCTURE_STARPORT) {
 						start_next = false;
@@ -534,7 +533,6 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 	const StructureInfo *si;
 	int16 validBuildLocation;
 
-	if (s == NULL) return false;
 	if (position == 0xFFFF) return false;
 
 	si = &g_table_structureInfo[s->o.type];
@@ -562,7 +560,8 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 		case STRUCTURE_WALL: {
 			Tile *t;
 
-			if (Structure_IsValidBuildLocation(position, STRUCTURE_WALL) == 0) return false;
+			if (Structure_IsValidBuildLocation(houseID, position, STRUCTURE_WALL) == 0)
+				return false;
 
 			t = &g_map[position];
 			t->groundSpriteID = g_wallSpriteID + 1;
@@ -589,7 +588,8 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 				uint16 curPos = position + g_table_structure_layoutTiles[si->layout][i];
 				Tile *t = &g_map[curPos];
 
-				if (Structure_IsValidBuildLocation(curPos, STRUCTURE_SLAB_1x1) == 0) continue;
+				if (Structure_IsValidBuildLocation(houseID, curPos, STRUCTURE_SLAB_1x1) == 0)
+					continue;
 
 				t->groundSpriteID = g_builtSlabSpriteID;
 				t->overlaySpriteID = 0;
@@ -610,7 +610,8 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 					uint16 curPos = position + g_table_structure_layoutTiles[si->layout][i];
 					Tile *t = &g_map[curPos];
 
-					if (Structure_IsValidBuildLocation(curPos, STRUCTURE_SLAB_1x1) == 0) continue;
+					if (Structure_IsValidBuildLocation(houseID, curPos, STRUCTURE_SLAB_1x1) == 0)
+						continue;
 
 					t->groundSpriteID = g_builtSlabSpriteID;
 					t->overlaySpriteID = 0;
@@ -642,7 +643,7 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 		validBuildLocation = Structure_IsValidBuildLandscape(position, s->o.type);
 	}
 	else {
-		validBuildLocation = Structure_IsValidBuildLocation(position, s->o.type);
+		validBuildLocation = Structure_IsValidBuildLocation(houseID, position, s->o.type);
 	}
 
 	if (validBuildLocation == 0 && !g_debugScenario && g_validateStrictIfZero == 0) return false;
@@ -891,26 +892,17 @@ uint32 Structure_GetStructuresBuilt(House *h)
  * @return 0 if the position is not valid, 1 if the position is valid and have enough slabs, <0 if the position is valid but miss some slabs.
  */
 int16
-Structure_IsValidBuildLandscape(uint16 position, enum StructureType type)
+Structure_IsValidBuildLandscape(uint16 packed, enum StructureType type)
 {
-	const StructureInfo *si;
-	const uint16 *layoutTile;
-	uint8 i;
-	uint16 neededSlabs;
-	bool isValid;
-	uint16 curPos;
+	const StructureInfo *si = &g_table_structureInfo[type];
+	const uint16 *layoutTile = g_table_structure_layoutTiles[si->layout];
 
-	si = &g_table_structureInfo[type];
-	layoutTile = g_table_structure_layoutTiles[si->layout];
+	bool isValid = true;
+	uint16 neededSlabs = 0;
 
-	isValid = true;
-	neededSlabs = 0;
-	for (i = 0; i < g_table_structure_layoutTileCount[si->layout]; i++) {
-		uint16 lst;
-
-		curPos = position + layoutTile[i];
-
-		lst = Map_GetLandscapeType(curPos);
+	for (int i = 0; i < g_table_structure_layoutTileCount[si->layout]; i++) {
+		uint16 curPos = packed + layoutTile[i];
+		enum LandscapeType lst = Map_GetLandscapeType(curPos);
 
 		if (g_debugScenario) {
 			if (!g_table_landscapeInfo[lst].isValidForStructure2) {
@@ -924,12 +916,14 @@ Structure_IsValidBuildLandscape(uint16 position, enum StructureType type)
 			}
 
 			if (si->o.flags.notOnConcrete) {
-				if (!g_table_landscapeInfo[lst].isValidForStructure2 && g_validateStrictIfZero == 0) {
+				if (g_validateStrictIfZero == 0
+						&& !g_table_landscapeInfo[lst].isValidForStructure2) {
 					isValid = false;
 					break;
 				}
 			} else {
-				if (!g_table_landscapeInfo[lst].isValidForStructure && g_validateStrictIfZero == 0) {
+				if (g_validateStrictIfZero == 0
+						&& !g_table_landscapeInfo[lst].isValidForStructure) {
 					isValid = false;
 					break;
 				}
@@ -949,41 +943,36 @@ Structure_IsValidBuildLandscape(uint16 position, enum StructureType type)
 }
 
 int16
-Structure_IsValidBuildLocation(uint16 position, enum StructureType type)
+Structure_IsValidBuildLocation(enum HouseType houseID,
+		uint16 packed, enum StructureType type)
 {
-	const StructureInfo *si;
-	uint8 i;
-	int16 retSlabs;
-	bool isValid;
-	uint16 curPos;
+	const StructureInfo *si = &g_table_structureInfo[type];
+	int16 retSlabs = Structure_IsValidBuildLandscape(packed, type);
+	bool isValid = (retSlabs != 0);
 
-	si = &g_table_structureInfo[type];
-	retSlabs = Structure_IsValidBuildLandscape(position, type);
-	isValid = (retSlabs != 0);
-
-	if (g_validateStrictIfZero == 0 && isValid && type != STRUCTURE_CONSTRUCTION_YARD && !g_debugScenario) {
+	if (g_validateStrictIfZero == 0
+			&& isValid
+			&& type != STRUCTURE_CONSTRUCTION_YARD
+			&& !g_debugScenario) {
 		isValid = false;
-		for (i = 0; i < 16; i++) {
-			uint16 offset, lst;
-			Structure *s;
 
-			offset = g_table_structure_layoutTilesAround[si->layout][i];
+		for (int i = 0; i < 16; i++) {
+			uint16 offset = g_table_structure_layoutTilesAround[si->layout][i];
 			if (offset == 0) break;
 
-			curPos = position + offset;
-			s = Structure_Get_ByPackedTile(curPos);
-			if (s != NULL) {
-				if (s->o.houseID != g_playerHouseID) continue;
+			uint16 curPos = packed + offset;
+			const Structure *s = Structure_Get_ByPackedTile(curPos);
+			if (s != NULL && s->o.houseID == houseID) {
 				isValid = true;
 				break;
 			}
 
-			lst = Map_GetLandscapeType(curPos);
-			if (lst != LST_CONCRETE_SLAB && lst != LST_WALL) continue;
-			if (g_map[curPos].houseID != g_playerHouseID) continue;
-
-			isValid = true;
-			break;
+			enum LandscapeType lst = Map_GetLandscapeType(curPos);
+			if (g_map[curPos].houseID == houseID
+					&& (lst == LST_CONCRETE_SLAB || lst == LST_WALL)) {
+				isValid = true;
+				break;
+			}
 		}
 	}
 

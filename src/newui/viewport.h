@@ -1,8 +1,12 @@
 #ifndef NEWUI_VIEWPORT_H
 #define NEWUI_VIEWPORT_H
 
+#include "types.h"
 #include "../gui/widget.h"
 #include "../unit.h"
+
+struct House;
+struct Structure;
 
 extern void Viewport_Init(void);
 extern void Viewport_Hotkey(enum SquadID squad);
@@ -17,6 +21,7 @@ extern void Viewport_DrawSelectionHealthBars(void);
 extern void Viewport_DrawSelectionBox(void);
 extern void Viewport_DrawPanCursor(void);
 extern void Viewport_RenderBrush(int x, int y, int blurx);
+extern void Viewport_Server_Place(struct House *h, struct Structure *s, uint16 packed);
 extern bool Viewport_Click(Widget *w);
 
 #endif

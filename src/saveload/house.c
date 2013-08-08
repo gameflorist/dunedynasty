@@ -73,6 +73,7 @@ bool House_Load(FILE *fp, uint32 length)
 
 		/* Extra data. */
 		h->starportLinkedID = UNIT_INDEX_INVALID;
+		h->structureActiveID= STRUCTURE_INDEX_INVALID;
 		h->houseMissileID   = UNIT_INDEX_INVALID;
 
 		/* See if it is a human house */

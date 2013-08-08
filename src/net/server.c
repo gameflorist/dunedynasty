@@ -11,8 +11,12 @@
 #include "../enhancement.h"
 #include "../gui/gui.h"
 #include "../house.h"
+#include "../newui/viewport.h"
+#include "../opendune.h"
+#include "../pool/house.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
+#include "../shape.h"
 #include "../string.h"
 #include "../structure.h"
 #include "../tools/coord.h"
@@ -139,6 +143,64 @@ Server_Recv_SetRallyPoint(enum HouseType houseID, const unsigned char *buf)
 	else {
 		s->rallyPoint = packed;
 	}
+}
+
+static void
+Server_Recv_EnterLeavePlacementMode(enum HouseType houseID, const unsigned char *buf)
+{
+	House *h = House_Get_ByIndex(houseID);
+	const uint16 objectID = Net_Decode_ObjectIndex(&buf);
+
+	SERVER_LOG("objectID=%d", objectID);
+
+	/* If the construction yard was destroyed during placement mode,
+	 * and the placement was aborted, then destroy the structure.
+	 */
+	if (objectID == STRUCTURE_INDEX_INVALID) {
+		if (h->structureActiveID == STRUCTURE_INDEX_INVALID)
+			return;
+
+		Structure *s = Structure_Get_ByIndex(h->structureActiveID);
+		if (s != NULL)
+			Structure_Free(s);
+
+		h->structureActiveID = STRUCTURE_INDEX_INVALID;
+	}
+	else if (objectID < STRUCTURE_INDEX_MAX_SOFT) {
+		Structure *s = Structure_Get_ByIndex(objectID);
+		if ((s->o.type != STRUCTURE_CONSTRUCTION_YARD)
+				|| !Server_PlayerCanControlStructure(houseID, s))
+			return;
+
+		if (s->countDown == 0
+				&& s->o.linkedID != STRUCTURE_INVALID
+				&& h->structureActiveID == STRUCTURE_INDEX_INVALID) {
+			h->structureActiveID = s->o.linkedID;
+			s->o.linkedID = STRUCTURE_INVALID;
+		}
+		else if (s->o.linkedID == STRUCTURE_INVALID
+				&& h->structureActiveID != STRUCTURE_INDEX_INVALID) {
+			s->o.linkedID = h->structureActiveID;
+			h->structureActiveID = STRUCTURE_INDEX_INVALID;
+		}
+	}
+}
+
+static void
+Server_Recv_PlaceStructure(enum HouseType houseID, const unsigned char *buf)
+{
+	House *h = House_Get_ByIndex(houseID);
+	const uint16 objectID = h->structureActiveID;
+	const uint16 packed = Net_Decode_uint16(&buf);
+
+	SERVER_LOG("objectID=%d, packed=%d", objectID, packed);
+
+	if ((h->structureActiveID == STRUCTURE_INDEX_INVALID)
+			|| Tile_IsOutOfMap(packed))
+		return;
+
+	Structure *s = Structure_Get_ByIndex(objectID);
+	Viewport_Server_Place(h, s, packed);
 }
 
 /*--------------------------------------------------------------*/
@@ -310,6 +372,14 @@ Server_ProcessMessages(void)
 
 			case CSMSG_SET_RALLY_POINT:
 				Server_Recv_SetRallyPoint(houseID, buf);
+				break;
+
+			case CSMSG_ENTER_LEAVE_PLACEMENT_MODE:
+				Server_Recv_EnterLeavePlacementMode(houseID, buf);
+				break;
+
+			case CSMSG_PLACE_STRUCTURE:
+				Server_Recv_PlaceStructure(houseID, buf);
 				break;
 
 			case CSMSG_ISSUE_UNIT_ACTION:

@@ -6,7 +6,13 @@
 #include "client.h"
 
 #include "message.h"
+#include "../gui/gui.h"
+#include "../house.h"
+#include "../newui/actionpanel.h"
 #include "../object.h"
+#include "../opendune.h"
+#include "../pool/structure.h"
+#include "../structure.h"
 
 #if 0
 #define CLIENT_LOG(FORMAT,...)	\
@@ -63,6 +69,37 @@ Client_Send_SetRallyPoint(const Object *o, uint16 packed)
 }
 
 void
+Client_Send_EnterPlacementMode(const Object *o)
+{
+	Client_Send_ObjectIndex(CSMSG_ENTER_LEAVE_PLACEMENT_MODE, o);
+}
+
+void
+Client_Send_LeavePlacementMode(const Object *o)
+{
+	unsigned char *buf = Client_GetBuffer(CSMSG_ENTER_LEAVE_PLACEMENT_MODE);
+	if (buf == NULL)
+		return;
+
+	if (o != NULL) {
+		Net_Encode_ObjectIndex(&buf, o);
+	}
+	else {
+		Net_Encode_uint16(&buf, STRUCTURE_INDEX_INVALID);
+	}
+}
+
+void
+Client_Send_PlaceStructure(uint16 packed)
+{
+	unsigned char *buf = Client_GetBuffer(CSMSG_PLACE_STRUCTURE);
+	if (buf == NULL)
+		return;
+
+	Net_Encode_uint16(&buf, packed);
+}
+
+void
 Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
 {
 	unsigned char *buf = Client_GetBuffer(CSMSG_ISSUE_UNIT_ACTION);
@@ -72,4 +109,25 @@ Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
 	Net_Encode_uint8 (&buf, actionID);
 	Net_Encode_uint16(&buf, encoded);
 	Net_Encode_ObjectIndex(&buf, o);
+}
+
+/*--------------------------------------------------------------*/
+
+void
+Client_ChangeSelectionMode(void)
+{
+	if ((g_playerHouse->structureActiveID != STRUCTURE_INDEX_INVALID)
+			&& (g_structureActive == NULL)) {
+		ActionPanel_BeginPlacementMode();
+		return;
+	}
+	else if ((g_playerHouse->structureActiveID == STRUCTURE_INDEX_INVALID)
+			&& (g_selectionType == SELECTIONTYPE_PLACE)) {
+		g_structureActive = NULL;
+		g_structureActiveType = 0xFFFF;
+
+		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+		g_selectionState = 0; /* Invalid. */
+		return;
+	}
 }

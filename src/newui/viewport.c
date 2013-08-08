@@ -272,25 +272,25 @@ Viewport_Target(const Unit *u, enum UnitActionType action, uint16 packed)
 	}
 }
 
-static void
-Viewport_Place(void)
+void
+Viewport_Server_Place(House *h, Structure *s, uint16 packed)
 {
-	const StructureInfo *si = &g_table_structureInfo[g_structureActiveType];
+	const StructureInfo *si = &g_table_structureInfo[s->o.type];
+	const enum HouseType houseID = h->index;
 
-	Structure *s = g_structureActive;
-	House *h = g_playerHouse;
+	if (Structure_Place(s, packed, houseID)) {
+		h->structureActiveID = STRUCTURE_INDEX_INVALID;
 
-	if (Structure_Place(s, g_selectionPosition, g_playerHouseID)) {
-		Audio_PlaySound(SOUND_PLACEMENT);
+		Server_Send_PlaySound(1 << houseID, SOUND_PLACEMENT);
 
 		if (s->o.type == STRUCTURE_PALACE)
-			House_Get_ByIndex(s->o.houseID)->palacePosition = s->o.position;
+			h->palacePosition = s->o.position;
 
-		if (g_structureActiveType == STRUCTURE_REFINERY && g_validateStrictIfZero == 0) {
+		if (g_validateStrictIfZero == 0 && s->o.type == STRUCTURE_REFINERY) {
 			Unit *u;
 
 			g_validateStrictIfZero++;
-			u = Unit_CreateWrapper(g_playerHouseID, UNIT_HARVESTER, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
+			u = Unit_CreateWrapper(houseID, UNIT_HARVESTER, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
 			g_validateStrictIfZero--;
 
 			if (u == NULL) {
@@ -301,39 +301,33 @@ Viewport_Place(void)
 			}
 		}
 
-		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
-
 		Structure_BuildObject(s, 0xFFFE);
-
-		g_structureActiveType = 0xFFFF;
-		g_structureActive = NULL;
-		g_selectionState = 0; /* Invalid. */
-
-		GUI_DisplayHint(s->o.houseID, si->o.hintStringID, si->o.spriteID);
 
 		House_UpdateRadarState(h);
 
 		if ((h->powerProduction < h->powerUsage)
 				&& (h->structuresBuilt & FLAG_STRUCTURE_OUTPOST)) {
-			Server_Send_StatusMessage1(1 << h->index, 3,
+			Server_Send_StatusMessage1(1 << houseID, 3,
 					STR_NOT_ENOUGH_POWER_FOR_RADAR_BUILD_WINDTRAPS);
 		}
 
-		return;
-	}
-
-	Audio_PlaySound(EFFECT_ERROR_OCCURRED);
-
-	if (g_structureActiveType == STRUCTURE_SLAB_1x1 || g_structureActiveType == STRUCTURE_SLAB_2x2) {
-		Server_Send_StatusMessage1(1 << h->index, 2,
-				STR_CAN_NOT_PLACE_FOUNDATION_HERE);
+		GUI_DisplayHint(houseID, si->o.hintStringID, si->o.spriteID);
 	}
 	else {
-		GUI_DisplayHint(s->o.houseID,
-				STR_HINT_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE,
-				SHAPE_INVALID);
-		Server_Send_StatusMessage2(1 << h->index, 2,
-				STR_CAN_NOT_PLACE_S_HERE, si->o.stringID_abbrev);
+		Server_Send_PlaySound(1 << houseID, EFFECT_ERROR_OCCURRED);
+
+		if (s->o.type == STRUCTURE_SLAB_1x1
+		 || s->o.type == STRUCTURE_SLAB_2x2) {
+			Server_Send_StatusMessage1(1 << houseID, 2,
+					STR_CAN_NOT_PLACE_FOUNDATION_HERE);
+		}
+		else {
+			GUI_DisplayHint(houseID,
+					STR_HINT_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE,
+					SHAPE_INVALID);
+			Server_Send_StatusMessage2(1 << houseID, 2,
+					STR_CAN_NOT_PLACE_S_HERE, si->o.stringID_abbrev);
+		}
 	}
 }
 
@@ -627,7 +621,7 @@ Viewport_Click(Widget *w)
 
 		/* Clicking LMB places structure. */
 		else if ((g_selectionType == SELECTIONTYPE_PLACE) && !mouse_in_scroll_widget) {
-			Viewport_Place();
+			Client_Send_PlaceStructure(g_selectionPosition);
 			return true;
 		}
 

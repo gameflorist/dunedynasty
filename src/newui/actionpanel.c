@@ -21,6 +21,7 @@
 #include "../gui/widget.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
+#include "../net/client.h"
 #include "../net/server.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -425,15 +426,14 @@ ActionPanel_ScrollFactory(const Widget *widget, Structure *s)
 }
 
 void
-ActionPanel_BeginPlacementMode(Structure *construction_yard)
+ActionPanel_BeginPlacementMode(void)
 {
-	Structure *ns = Structure_Get_ByIndex(construction_yard->o.linkedID);
+	Structure *ns = Structure_Get_ByIndex(g_playerHouse->structureActiveID);
 
 	g_structureActive = ns;
-	g_structureActiveType = construction_yard->objectType;
-	g_selectionState = Structure_IsValidBuildLocation(g_selectionRectanglePosition, g_structureActiveType);
+	g_structureActiveType = ns->o.type;
+	g_selectionState = Structure_IsValidBuildLocation(g_playerHouseID, g_selectionRectanglePosition, g_structureActiveType);
 	g_structureActivePosition = g_selectionPosition;
-	construction_yard->o.linkedID = STRUCTURE_INVALID;
 
 	GUI_ChangeSelectionType(SELECTIONTYPE_PLACE);
 }
@@ -446,7 +446,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 
 	if (widget->state.keySelected) {
 		if (g_productionStringID == STR_PLACE_IT)
-			ActionPanel_BeginPlacementMode(s);
+			Client_Send_EnterPlacementMode(&s->o);
 		return true;
 	}
 
@@ -493,7 +493,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			case STR_PLACE_IT:
 			case STR_ON_HOLD:
 				if (lmb && (g_productionStringID == STR_PLACE_IT)) {
-					ActionPanel_BeginPlacementMode(s);
+					Client_Send_EnterPlacementMode(&s->o);
 				}
 				else if (lmb && (g_productionStringID == STR_ON_HOLD)) {
 					s->o.flags.s.repairing = false;

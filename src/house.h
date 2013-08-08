@@ -66,6 +66,7 @@ typedef struct House {
 	uint16 ai_structureRebuild[5][2];                       /*!< An array for the AI which stores the type and position of a destroyed structure, for rebuilding. */
 
 	uint16 creditsStorageNoSilo;
+	uint16 structureActiveID;
 	uint16 starportID;
 	uint16 houseMissileID;
 	uint8  houseMissileCountdown;

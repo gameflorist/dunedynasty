@@ -355,16 +355,14 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 			GUI_UpdateProductionStringID();
 		} break;
 
-		case 7: { /* Placement */
+		case 7: /* Placement */
+			h  = g_playerHouse;
 			si = &g_table_structureInfo[g_structureActiveType];
-
-			o = NULL;
+			o  = NULL;
 			oi = &si->o;
 
 			isNotPlayerOwned = false;
-
-			h = House_Get_ByIndex(g_playerHouseID);
-		} break;
+			break;
 
 		case 8: { /* House Missile */
 			u  = Unit_Get_ByIndex(g_playerHouse->houseMissileID);
