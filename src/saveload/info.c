@@ -17,6 +17,7 @@
 /* These were originally global variables. */
 static uint16 s_houseMissileCountdown;
 static uint16 s_houseMissileID;
+static uint16 s_starportID;
 
 static uint32 SaveLoad_SelectionType(void *object, uint32 value, bool loading)
 {
@@ -127,7 +128,7 @@ static const SaveLoadDesc s_saveInfo[] = {
 	SLD_GARRAY (SLDT_INT16,  g_starportAvailable, UNIT_MAX),
 	SLD_GENTRY (SLDT_UINT16, s_houseMissileCountdown),
 	SLD_GENTRY (SLDT_UINT16, s_houseMissileID),
-	SLD_GENTRY (SLDT_UINT16, g_structureIndex),
+	SLD_GENTRY (SLDT_UINT16, s_starportID),
 	SLD_END
 };
 
@@ -182,8 +183,9 @@ bool Info_LoadOld(FILE *fp, uint32 length)
 void
 Info_Load_PlayerHouseGlobals(House *h)
 {
-	h->houseMissileCountdown= s_houseMissileCountdown;
-	h->houseMissileID       = s_houseMissileID;
+	h->houseMissileCountdown = s_houseMissileCountdown;
+	h->houseMissileID        = s_houseMissileID;
+	h->starportID            = s_starportID;
 }
 
 /**
@@ -198,10 +200,12 @@ bool Info_Save(FILE *fp)
 	if (g_playerHouse != NULL) {
 		s_houseMissileCountdown = g_playerHouse->houseMissileCountdown;
 		s_houseMissileID        = g_playerHouse->houseMissileID;
+		s_starportID            = g_playerHouse->starportID;
 	}
 	else {
 		s_houseMissileCountdown = 0;
 		s_houseMissileID        = UNIT_INDEX_INVALID;
+		s_starportID            = STRUCTURE_INDEX_INVALID;
 	}
 
 	if (!fwrite_le_uint16(savegameVersion, fp)) return false;

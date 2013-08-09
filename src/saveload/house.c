@@ -40,6 +40,7 @@ static const SaveLoadDesc s_saveHouse2[] = {
 	SLD_ENTRY2(House, SLDT_UINT16, index,           SLDT_UINT8),
 	SLD_ENTRY (House, SLDT_UINT16, houseMissileCountdown),
 	SLD_ENTRY (House, SLDT_UINT16, houseMissileID),
+	SLD_ENTRY (House, SLDT_UINT16, starportID),
 	SLD_END
 };
 
@@ -70,6 +71,7 @@ bool House_Load(FILE *fp, uint32 length)
 		*h = hl;
 
 		/* Extra data. */
+		h->starportLinkedID = UNIT_INDEX_INVALID;
 		h->houseMissileID   = UNIT_INDEX_INVALID;
 
 		/* See if it is a human house */

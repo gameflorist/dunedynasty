@@ -48,8 +48,6 @@ uint16 g_structureActiveType = 0;
 
 static bool s_debugInstantBuild = false; /*!< When non-zero, constructions are almost instant. */
 
-uint16 g_structureIndex;
-
 static bool Structure_SkipUpgradeLevel(const Structure *s, int level);
 
 /**

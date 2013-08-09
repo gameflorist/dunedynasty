@@ -603,7 +603,7 @@ ActionPanel_ClickStarportOrder(Structure *s)
 			continue;
 		}
 
-		g_structureIndex = s->o.index;
+		h->starportID = s->o.index;
 
 		if (h->starportTimeLeft == 0) h->starportTimeLeft = g_table_houseInfo[h->index].starportDeliveryTime;
 

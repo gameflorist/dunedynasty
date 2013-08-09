@@ -243,9 +243,7 @@ void GameLoop_House(void)
 			if ((int16)h->starportTimeLeft < 0) h->starportTimeLeft = 0;
 
 			if (h->starportTimeLeft == 0) {
-				Structure *s;
-
-				s = Structure_Get_ByIndex(g_structureIndex);
+				Structure *s = Structure_Get_ByIndex(h->starportID);
 				if (s->o.type == STRUCTURE_STARPORT && s->o.houseID == h->index) {
 					u = Unit_CreateWrapper((uint8)h->index, UNIT_FRIGATE, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
 				} else {

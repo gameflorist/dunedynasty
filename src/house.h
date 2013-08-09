@@ -65,6 +65,7 @@ typedef struct House {
 	uint16 starportLinkedID;                                /*!< If there is a starport delivery, this indicates the first unit of the linked list. Otherwise it is 0xFFFF. */
 	uint16 ai_structureRebuild[5][2];                       /*!< An array for the AI which stores the type and position of a destroyed structure, for rebuilding. */
 
+	uint16 starportID;
 	uint16 houseMissileID;
 	uint8  houseMissileCountdown;
 	BuildQueue starportQueue;
