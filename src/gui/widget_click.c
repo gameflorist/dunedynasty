@@ -222,8 +222,9 @@ GUI_Widget_Picture_Click(Widget *w)
 	else if ((s->o.type == STRUCTURE_STARPORT) && (!BuildQueue_IsEmpty(&g_playerHouse->starportQueue))) {
 		ActionPanel_ClickStarportOrder(s);
 	}
-	else if ((s->o.type == STRUCTURE_REPAIR) && (s->o.linkedID != 0xFF)) {
-		Structure_SetState(s, STRUCTURE_STATE_READY);
+	else if (s->o.type == STRUCTURE_REPAIR) {
+		if (s->o.linkedID != 0xFF)
+			Client_Send_EjectRepairFacility(&s->o);
 	}
 
 	return false;

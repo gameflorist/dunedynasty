@@ -2616,7 +2616,10 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 	Unit_Hide(unit);
 
 	if (House_AreAllied(s->o.houseID, Unit_GetHouseID(unit))) {
-		Structure_SetState(s, si->o.flags.busyStateIsIncoming ? STRUCTURE_STATE_READY : STRUCTURE_STATE_BUSY);
+		const enum StructureState state
+			= si->o.flags.busyStateIsIncoming
+			? STRUCTURE_STATE_READY : STRUCTURE_STATE_BUSY;
+		Structure_Server_SetState(s, state);
 
 		if (s->o.type == STRUCTURE_REPAIR) {
 			uint16 countDown;

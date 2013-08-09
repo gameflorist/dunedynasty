@@ -771,7 +771,7 @@ void Game_Prepare(void)
 				s->o.linkedID = 0xFF;
 				s->countDown = 0;
 			} else {
-				Structure_SetState(s, STRUCTURE_STATE_READY);
+				Structure_Server_SetState(s, STRUCTURE_STATE_READY);
 			}
 		}
 

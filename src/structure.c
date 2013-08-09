@@ -257,7 +257,7 @@ void GameLoop_Structure(void)
 							s->countDown = 0;
 							s->buildCostRemainder = 0;
 
-							Structure_SetState(s, STRUCTURE_STATE_READY);
+							Structure_Server_SetState(s, STRUCTURE_STATE_READY);
 
 							if (House_IsHuman(s->o.houseID)) {
 								if (s->o.type != STRUCTURE_BARRACKS && s->o.type != STRUCTURE_WOR_TROOPER) {
@@ -281,7 +281,7 @@ void GameLoop_Structure(void)
 								s->o.linkedID = 0xFF;
 
 								/* The AI places structures which are operational immediately */
-								Structure_SetState(s, STRUCTURE_STATE_IDLE);
+								Structure_Server_SetState(s, STRUCTURE_STATE_IDLE);
 
 								/* Find the position to place the structure */
 								for (i = 0; i < 5; i++) {
@@ -388,7 +388,7 @@ void GameLoop_Structure(void)
 							} else {
 								s->countDown = 0;
 
-								Structure_SetState(s, STRUCTURE_STATE_READY);
+								Structure_Server_SetState(s, STRUCTURE_STATE_READY);
 
 								Server_Send_PlayVoice(1 << s->o.houseID,
 										VOICE_HARKONNEN_VEHICLE_REPAIRED + s->o.houseID);
@@ -792,7 +792,8 @@ void Structure_CalculateHitpointsMax(House *h)
  * @param s The structure to set the state of.
  * @param state The new sate value.
  */
-void Structure_SetState(Structure *s, int16 state)
+void
+Structure_Server_SetState(Structure *s, enum StructureState state)
 {
 	if (s == NULL) return;
 	s->state = state;
@@ -1827,7 +1828,7 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 		s->objectType = objectType;
 		s->countDown = oi->buildTime << 8;
 
-		Structure_SetState(s, STRUCTURE_STATE_BUSY);
+		Structure_Server_SetState(s, STRUCTURE_STATE_BUSY);
 
 		Server_Send_StatusMessage2(1 << s->o.houseID, 2,
 				STR_PRODUCTION_OF_S_HAS_STARTED, oi->stringID_full);

@@ -221,6 +221,10 @@ Server_Recv_ActivateStructureAbility(enum HouseType houseID, const unsigned char
 		if (s->countDown == 0)
 			Structure_Server_ActivateSpecial(s);
 	}
+	else if (s->o.type == STRUCTURE_REPAIR) {
+		if (s->o.linkedID != 0xFF)
+			Structure_Server_SetState(s, STRUCTURE_STATE_READY);
+	}
 }
 
 static void

@@ -163,7 +163,7 @@ uint16 Script_Unit_TransportDeliver(ScriptEngine *script)
 				Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
 						SOUND_DROP_LOAD, u->o.position);
 
-				Structure_SetState(s, STRUCTURE_STATE_READY);
+				Structure_Server_SetState(s, STRUCTURE_STATE_READY);
 
 				ret = 1;
 			}
@@ -269,7 +269,8 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 			s->o.linkedID = u2->o.linkedID;
 			u2->o.linkedID = 0xFF;
 
-			if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
+			if (s->o.linkedID == 0xFF)
+				Structure_Server_SetState(s, STRUCTURE_STATE_IDLE);
 
 			/* ENHANCEMENT -- Units can be ejected from the repair bay. */
 			if (s->o.type == STRUCTURE_REPAIR) {

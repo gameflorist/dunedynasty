@@ -79,7 +79,7 @@ uint16 Script_Structure_SetState(ScriptEngine *script)
 		}
 	}
 
-	Structure_SetState(s, state);
+	Structure_Server_SetState(s, state);
 
 	return 0;
 }
@@ -123,7 +123,7 @@ uint16 Script_Structure_RefineSpice(ScriptEngine *script)
 	s = g_scriptCurrentStructure;
 
 	if (s->o.linkedID == 0xFF) {
-		Structure_SetState(s, STRUCTURE_STATE_IDLE);
+		Structure_Server_SetState(s, STRUCTURE_STATE_IDLE);
 		return 0;
 	}
 
@@ -267,7 +267,8 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 		s->o.linkedID = u->o.linkedID;
 		u->o.linkedID = 0xFF;
 
-		if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
+		if (s->o.linkedID == 0xFF)
+			Structure_Server_SetState(s, STRUCTURE_STATE_IDLE);
 		Object_Script_Variable4_Clear(&s->o);
 
 		Server_Send_PlayVoice(1 << s->o.houseID,
@@ -320,7 +321,8 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 				0x6A);
 	}
 
-	if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
+	if (s->o.linkedID == 0xFF)
+		Structure_Server_SetState(s, STRUCTURE_STATE_IDLE);
 	Object_Script_Variable4_Clear(&s->o);
 
 	if (s->o.type == STRUCTURE_REPAIR) {

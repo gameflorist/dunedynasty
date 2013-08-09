@@ -117,6 +117,12 @@ Client_Send_LaunchDeathhand(uint16 packed)
 }
 
 void
+Client_Send_EjectRepairFacility(const Object *o)
+{
+	Client_Send_ObjectIndex(CSMSG_ACTIVATE_STRUCTURE_ABILITY, o);
+}
+
+void
 Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
 {
 	unsigned char *buf = Client_GetBuffer(CSMSG_ISSUE_UNIT_ACTION);

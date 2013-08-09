@@ -12,6 +12,7 @@ extern void Client_Send_LeavePlacementMode(const struct Object *o);
 extern void Client_Send_PlaceStructure(uint16 packed);
 extern void Client_Send_ActivateSuperweapon(const struct Object *o);
 extern void Client_Send_LaunchDeathhand(uint16 packed);
+extern void Client_Send_EjectRepairFacility(const struct Object *o);
 extern void Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const struct Object *o);
 
 extern void Client_ChangeSelectionMode(void);
