@@ -15,6 +15,8 @@ static const struct {
 	{ 'g', 4 }, /* CSMSG_SET_RALLY_POINT */
 	{ 'b', 2 }, /* CSMSG_ENTER_LEAVE_PLACEMENT_MODE */
 	{ 'p', 2 }, /* CSMSG_PLACE_STRUCTURE */
+	{ 's', 2 }, /* CSMSG_ACTIVATE_STRUCTURE_ABILITY */
+	{ 'w', 2 }, /* CSMSG_LAUNCH_DEATHHAND */
 	{ 'u', 5 }, /* CSMSG_ISSUE_UNIT_ACTION */
 };
 

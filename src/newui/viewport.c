@@ -596,16 +596,7 @@ Viewport_Click(Widget *w)
 			GUI_DisplayText(NULL, -1);
 
 			if (g_playerHouse->houseMissileID != UNIT_INDEX_INVALID) {
-				/* ENHANCEMENT -- In Dune 2 you only hear "Missile launched" if you let the timer run out.
-				 * Note: you actually get one second to choose a target after the narrator says "Missile launched".
-				 */
-				if (enhancement_play_additional_voices
-						&& g_playerHouse->houseMissileCountdown > 1) {
-					Audio_PlayVoice(VOICE_MISSILE_LAUNCHED);
-				}
-
-				Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
-				Unit_LaunchHouseMissile(s, packed);
+				Client_Send_LaunchDeathhand(packed);
 				return true;
 			}
 

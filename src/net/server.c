@@ -203,6 +203,40 @@ Server_Recv_PlaceStructure(enum HouseType houseID, const unsigned char *buf)
 	Viewport_Server_Place(h, s, packed);
 }
 
+static void
+Server_Recv_ActivateStructureAbility(enum HouseType houseID, const unsigned char *buf)
+{
+	const uint16 objectID = Net_Decode_ObjectIndex(&buf);
+
+	SERVER_LOG("objectID=%d", objectID);
+
+	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+		return;
+
+	Structure *s = Structure_Get_ByIndex(objectID);
+	if (!Server_PlayerCanControlStructure(houseID, s))
+		return;
+
+	if (s->o.type == STRUCTURE_PALACE) {
+		if (s->countDown == 0)
+			Structure_Server_ActivateSpecial(s);
+	}
+}
+
+static void
+Server_Recv_LaunchDeathhand(enum HouseType houseID, const unsigned char *buf)
+{
+	House *h = House_Get_ByIndex(houseID);
+	const uint16 packed = Net_Decode_uint16(&buf);
+
+	SERVER_LOG("packed=%d", packed);
+
+	if (h->houseMissileID == UNIT_INDEX_INVALID)
+		return;
+
+	Unit_Server_LaunchHouseMissile(h, packed);
+}
+
 /*--------------------------------------------------------------*/
 
 static bool
@@ -380,6 +414,14 @@ Server_ProcessMessages(void)
 
 			case CSMSG_PLACE_STRUCTURE:
 				Server_Recv_PlaceStructure(houseID, buf);
+				break;
+
+			case CSMSG_ACTIVATE_STRUCTURE_ABILITY:
+				Server_Recv_ActivateStructureAbility(houseID, buf);
+				break;
+
+			case CSMSG_LAUNCH_DEATHHAND:
+				Server_Recv_LaunchDeathhand(houseID, buf);
 				break;
 
 			case CSMSG_ISSUE_UNIT_ACTION:

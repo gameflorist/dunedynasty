@@ -715,7 +715,7 @@ ActionPanel_ClickPalace(const Widget *widget, Structure *s)
 
 	ActionPanel_ProductionButtonDimensions(widget, s, 0, NULL, &y1, NULL, &y2, &w, NULL);
 	if (lmb && Mouse_InRegion_Div(widget->div, xcentre - w/2, y1, xcentre + w/2, y2)) {
-		Structure_ActivateSpecial(s);
+		Client_Send_ActivateSuperweapon(&s->o);
 		return true;
 	}
 

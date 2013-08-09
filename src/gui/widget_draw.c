@@ -364,17 +364,15 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 			isNotPlayerOwned = false;
 			break;
 
-		case 8: { /* House Missile */
-			u  = Unit_Get_ByIndex(g_playerHouse->houseMissileID);
+		case 8: /* House Missile */
+			h  = g_playerHouse;
+			u  = Unit_Get_ByIndex(h->houseMissileID);
 			ui = &g_table_unitInfo[u->o.type];
-
 			o  = &u->o;
 			oi = &ui->o;
 
-			isNotPlayerOwned = (g_playerHouseID == Unit_GetHouseID(u)) ? false : true;
-
-			h = House_Get_ByIndex(g_playerHouseID);
-		} break;
+			isNotPlayerOwned = false;
+			break;
 
 		case 4: /* Attack */
 		case 5: /* Movement */

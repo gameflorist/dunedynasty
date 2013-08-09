@@ -112,8 +112,9 @@ typedef struct ActionInfo {
 	uint16 soundID;                                         /*!< The sound played when unit is a Foot unit. */
 } ActionInfo;
 
-struct Team;
+struct House;
 struct Structure;
+struct Team;
 
 extern const char * const g_table_movementTypeName[MOVEMENT_MAX];
 
@@ -181,7 +182,7 @@ extern void Unit_RemovePlayer(Unit *unit);
 extern void Unit_UpdateMap(uint16 type, Unit *unit);
 extern void Unit_RemoveFromTile(Unit *unit, uint16 packed);
 extern void Unit_AddToTile(Unit *unit, uint16 packed);
-extern void Unit_LaunchHouseMissile(const struct Structure *s, uint16 packed);
+extern void Unit_Server_LaunchHouseMissile(struct House *h, uint16 packed);
 extern void Unit_HouseUnitCount_Remove(Unit *unit);
 extern void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID);
 

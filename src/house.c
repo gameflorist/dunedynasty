@@ -119,8 +119,7 @@ void GameLoop_House(void)
 		}
 
 		if (h->houseMissileCountdown == 0) {
-			Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
-			Unit_LaunchHouseMissile(s, Map_FindLocationTile(4, h->index));
+			Unit_Server_LaunchHouseMissile(h, Map_FindLocationTile(4, h->index));
 		}
 	}
 

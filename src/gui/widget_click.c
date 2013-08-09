@@ -215,8 +215,9 @@ GUI_Widget_Picture_Click(Widget *w)
 		if (g_productionStringID == STR_PLACE_IT)
 			Client_Send_EnterPlacementMode(&s->o);
 	}
-	else if ((s->o.type == STRUCTURE_PALACE) && (s->countDown == 0)) {
-		Structure_ActivateSpecial(s);
+	else if (s->o.type == STRUCTURE_PALACE) {
+		if (s->countDown == 0)
+			Client_Send_ActivateSuperweapon(&s->o);
 	}
 	else if ((s->o.type == STRUCTURE_STARPORT) && (!BuildQueue_IsEmpty(&g_playerHouse->starportQueue))) {
 		ActionPanel_ClickStarportOrder(s);

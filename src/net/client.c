@@ -12,6 +12,7 @@
 #include "../object.h"
 #include "../opendune.h"
 #include "../pool/structure.h"
+#include "../pool/unit.h"
 #include "../structure.h"
 
 #if 0
@@ -100,6 +101,22 @@ Client_Send_PlaceStructure(uint16 packed)
 }
 
 void
+Client_Send_ActivateSuperweapon(const struct Object *o)
+{
+	Client_Send_ObjectIndex(CSMSG_ACTIVATE_STRUCTURE_ABILITY, o);
+}
+
+void
+Client_Send_LaunchDeathhand(uint16 packed)
+{
+	unsigned char *buf = Client_GetBuffer(CSMSG_LAUNCH_DEATHHAND);
+	if (buf == NULL)
+		return;
+
+	Net_Encode_uint16(&buf, packed);
+}
+
+void
 Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
 {
 	unsigned char *buf = Client_GetBuffer(CSMSG_ISSUE_UNIT_ACTION);
@@ -116,6 +133,8 @@ Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
 void
 Client_ChangeSelectionMode(void)
 {
+	static bool l_houseMissileWasActive; /* XXX */
+
 	if ((g_playerHouse->structureActiveID != STRUCTURE_INDEX_INVALID)
 			&& (g_structureActive == NULL)) {
 		ActionPanel_BeginPlacementMode();
@@ -128,6 +147,19 @@ Client_ChangeSelectionMode(void)
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 		g_selectionState = 0; /* Invalid. */
+		return;
+	}
+
+	if ((g_playerHouse->houseMissileID != UNIT_INDEX_INVALID)
+			&& (g_selectionType != SELECTIONTYPE_TARGET)) {
+		l_houseMissileWasActive = true;
+		GUI_ChangeSelectionType(SELECTIONTYPE_TARGET);
+		return;
+	}
+	else if ((g_playerHouse->houseMissileID == UNIT_INDEX_INVALID)
+			&& (l_houseMissileWasActive)) {
+		l_houseMissileWasActive = false;
+		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 		return;
 	}
 }

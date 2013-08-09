@@ -3035,35 +3035,21 @@ uint16 Unit_GetTargetStructurePriority(Unit *unit, Structure *target)
 	return min(priority, 32000);
 }
 
-void Unit_LaunchHouseMissile(const Structure *s, uint16 packed)
+void
+Unit_Server_LaunchHouseMissile(House *h, uint16 packed)
 {
-	House *h = House_Get_ByIndex(s->o.houseID);
 	Unit *u = Unit_Get_ByIndex(h->houseMissileID);
 	const enum UnitType type = u->o.type;
 	tile32 tile;
 
 	tile = Tile_UnpackTile(packed);
 	tile = Tile_MoveByRandom(tile, 160, false);
-
 	packed = Tile_PackTile(tile);
+	uint16 encoded = Tools_Index_Encode(packed, IT_TILE);
 
 	Unit_Free(u);
 
-	/* ENHANCEMENT -- In Dune II, you always launch missiles from the
-	 * top-left of the last palace placed, even if it has been destroyed!
-	 */
-	tile32 origin;
-	if (enhancement_fix_firing_logic && s != NULL && s->o.type == STRUCTURE_PALACE) {
-		const enum StructureLayout layout = g_table_structureInfo[s->o.type].layout;
-		origin = s->o.position;
-		origin.x += g_table_structure_layoutTileDiff[layout].x;
-		origin.y += g_table_structure_layoutTileDiff[layout].y;
-	}
-	else {
-		origin = h->palacePosition;
-	}
-
-	Unit_CreateBullet(origin, type, h->index, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
+	Unit_CreateBullet(h->palacePosition, type, h->index, 500, encoded);
 
 	/* ENHANCEMENT -- In Dune II, you only hear "Missile launched" if
 	 * you let the timer run out.  Note: you actually get one second
@@ -3093,9 +3079,6 @@ void Unit_LaunchHouseMissile(const Structure *s, uint16 packed)
 
 	h->houseMissileID = UNIT_INDEX_INVALID;
 	h->houseMissileCountdown = 0;
-
-	if (h == g_playerHouse)
-		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 }
 
 /**

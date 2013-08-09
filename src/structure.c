@@ -117,7 +117,7 @@ void GameLoop_Structure(void)
 
 			/* Check if we have to fire the weapon for the AI immediately */
 			if (s->countDown == 0 && !h->flags.human && h->flags.isAIActive) {
-				Structure_ActivateSpecial(s);
+				Structure_Server_ActivateSpecial(s);
 			}
 		}
 
@@ -985,17 +985,12 @@ Structure_IsValidBuildLocation(enum HouseType houseID,
  *
  * @param s The structure which launches the weapon. Has to be the Palace.
  */
-void Structure_ActivateSpecial(Structure *s)
+void
+Structure_Server_ActivateSpecial(Structure *s)
 {
-	House *h;
-
-	if (s == NULL) return;
-	if (s->o.type != STRUCTURE_PALACE) return;
-
-	h = House_Get_ByIndex(s->o.houseID);
-	if (!h->flags.used) return;
-
+	House *h = House_Get_ByIndex(s->o.houseID);
 	const HouseInfo *hi = &g_table_houseInfo[s->o.houseID];
+
 	switch (hi->specialWeapon) {
 		case HOUSE_WEAPON_MISSILE: {
 			Unit *u;
@@ -1009,6 +1004,17 @@ void Structure_ActivateSpecial(Structure *s)
 			g_validateStrictIfZero--;
 
 			if (u == NULL) break;
+
+			/* ENHANCEMENT -- In Dune II, you always launch missiles from the
+			 * top-left of the last palace placed, even if it has been destroyed!
+			 */
+			if (enhancement_fix_firing_logic) {
+				const enum StructureLayout layout = g_table_structureInfo[s->o.type].layout;
+
+				h->palacePosition = s->o.position;
+				h->palacePosition.x += g_table_structure_layoutTileDiff[layout].x;
+				h->palacePosition.y += g_table_structure_layoutTileDiff[layout].y;
+			}
 
 			h->houseMissileID = u->o.index;
 			s->countDown = g_table_houseInfo[s->o.houseID].specialCountDown;
@@ -1030,7 +1036,7 @@ void Structure_ActivateSpecial(Structure *s)
 
 					if (House_AreAllied(s->o.houseID, sf->o.houseID)) continue;
 
-					Unit_LaunchHouseMissile(s, Tile_PackTile(sf->o.position));
+					Unit_Server_LaunchHouseMissile(h, Tile_PackTile(sf->o.position));
 
 					return;
 				}
@@ -1044,8 +1050,6 @@ void Structure_ActivateSpecial(Structure *s)
 
 			/* Give the user 7 seconds to select their target */
 			h->houseMissileCountdown = 7;
-
-			GUI_ChangeSelectionType(SELECTIONTYPE_TARGET);
 		} break;
 
 		case HOUSE_WEAPON_FREMEN: {
