@@ -335,7 +335,24 @@ void GameLoop_Structure(void)
 
 						object_type = BuildQueue_RemoveHead(&s->queue);
 						while (object_type != 0xFFFF) {
-							if (Structure_GetAvailable(s, object_type)) {
+							bool can_build = false;
+
+							if (s->o.type == STRUCTURE_STARPORT) {
+								can_build = false;
+							}
+							else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+								can_build = Structure_GetAvailable_ConstructionYard(s, object_type);
+							}
+							else {
+								for (int i = 0; i < 8; i++) {
+									if (si->buildableUnits[i] == object_type) {
+										can_build = Structure_GetAvailable_Factory(s, i);
+										break;
+									}
+								}
+							}
+
+							if (can_build) {
 								if (Structure_BuildObject(s, object_type))
 									break;
 							}
@@ -1718,9 +1735,12 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 		 * clobber the availability table, and we don't have the
 		 * factory window (objectType == 0xFFFF).
 		 */
-		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-			for (int i = STRUCTURE_SLAB_1x1; i < STRUCTURE_MAX; i++) {
-				if (Structure_GetAvailable(s, i) > 0) {
+		if (s->o.type == STRUCTURE_STARPORT) {
+			s->objectType = objectType;
+		}
+		else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+			for (enum StructureType i = STRUCTURE_SLAB_1x1; i < STRUCTURE_MAX; i++) {
+				if (Structure_GetAvailable_ConstructionYard(s, i) > 0) {
 					s->objectType = i;
 					break;
 				}
@@ -1728,19 +1748,15 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 
 			return false;
 		}
-		else if (s->o.type != STRUCTURE_STARPORT) {
+		else {
 			for (int i = 0; i < 8; i++) {
-				const int u = si->buildableUnits[i];
-
-				if (Structure_GetAvailable(s, u)) {
-					s->objectType = u;
+				if (Structure_GetAvailable_Factory(s, i)) {
+					s->objectType = si->buildableUnits[i];
 					break;
 				}
 			}
 
 			return false;
-		} else {
-			s->objectType = objectType;
 		}
 	}
 
@@ -1969,100 +1985,101 @@ Structure_GetPrerequisites(const StructureInfo *si, enum HouseType houseID)
 }
 
 int
-Structure_GetAvailable(const Structure *s, int i)
+Structure_GetAvailable_Starport(enum UnitType type)
 {
-	if (s->o.type == STRUCTURE_STARPORT) {
-		assert(UNIT_CARRYALL <= i && i <= UNIT_MAX);
-		return (g_starportAvailable[i] == 0) ? 0 : 1;
-	}
+	return (g_starportAvailable[type] == 0) ? 0 : 1;
+}
 
+int
+Structure_GetAvailable_ConstructionYard(const Structure *s, enum StructureType type)
+{
+	const StructureInfo *si = &g_table_structureInfo[type];
+	const uint16 availableCampaign = si->o.availableCampaign[s->o.houseID];
 	const uint32 structuresBuilt = House_Get_ByIndex(s->o.houseID)->structuresBuilt;
+	const uint32 structuresRequired = Structure_GetPrerequisites(si, s->o.houseID);
 
-	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-		assert(STRUCTURE_SLAB_1x1 <= i && i < STRUCTURE_MAX);
+	/* Use per-house tech levels: Harkonnen WOR three levels earlier. */
+	/* if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {} */
 
-		const StructureInfo *si = &g_table_structureInfo[i];
-		uint16 availableCampaign = si->o.availableCampaign[s->o.houseID];
-		uint32 structuresRequired = Structure_GetPrerequisites(si, s->o.houseID);
+	/* Use per-house tech levels: non-Harkonnen light factory one level earlier. */
+	/* if ((s->o.houseID != HOUSE_HARKONNEN) && (i == STRUCTURE_LIGHT_VEHICLE)) {} */
 
-		/* Use per-house tech levels: Harkonnen WOR three levels earlier. */
-		/* if (i == STRUCTURE_WOR_TROOPER && s->o.houseID == HOUSE_HARKONNEN && g_campaignID >= 1) {} */
+	if (((structuresBuilt & structuresRequired) == structuresRequired)
+			|| !House_IsHuman(s->o.houseID)) {
 
-		/* Use per-house tech levels: non-Harkonnen light factory one level earlier. */
-		/* if ((s->o.houseID != HOUSE_HARKONNEN) && (i == STRUCTURE_LIGHT_VEHICLE)) {} */
+		if ((g_campaignID >= availableCampaign - 1)
+				&& (si->o.availableHouse & (1 << s->o.houseID))) {
 
-		if (((structuresBuilt & structuresRequired) == structuresRequired)
-				|| !House_IsHuman(s->o.houseID)) {
-
-			if ((g_campaignID >= availableCampaign - 1)
-					&& (si->o.availableHouse & (1 << s->o.houseID))) {
-
-				if ((s->upgradeLevel >= si->o.upgradeLevelRequired[s->o.houseID])
-						|| !House_IsHuman(s->o.houseID)) {
-					return 1;
-				}
-				else if ((s->upgradeTimeLeft != 0)
-						&& (s->upgradeLevel + 1 >= si->o.upgradeLevelRequired[s->o.houseID])) {
-					return -1;
-				}
+			if ((s->upgradeLevel >= si->o.upgradeLevelRequired[s->o.houseID])
+					|| !House_IsHuman(s->o.houseID)) {
+				return 1;
+			}
+			else if ((s->upgradeTimeLeft != 0)
+					&& (s->upgradeLevel + 1 >= si->o.upgradeLevelRequired[s->o.houseID])) {
+				return -1;
 			}
 		}
+	}
 
+	/* If the prerequisites were destroyed, allow the current
+	 * building to complete but do not allow new ones.
+	 */
+	if (s->objectType == type && s->o.linkedID != 0xFF)
+		return -2;
+
+	return 0;
+}
+
+int
+Structure_GetAvailable_Factory(const Structure *s, int i)
+{
+	const StructureInfo *si = &g_table_structureInfo[s->o.type];
+	const enum UnitType type = si->buildableUnits[i];
+
+	if (type == UNIT_INVALID)
+		return 0;
+
+	/* Note: Raider trike's availableHouse should be Ordos only. */
+	/* if (type == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) type = UNIT_RAIDER_TRIKE; */
+
+	const UnitInfo *ui = &g_table_unitInfo[type];
+	const uint32 structuresBuilt = House_Get_ByIndex(s->o.houseID)->structuresBuilt;
+	const uint32 structuresRequired = ui->o.structuresRequired;
+	const uint16 upgradeLevelRequired = ui->o.upgradeLevelRequired[s->creatorHouseID];
+	uint16 nextUpgradeLevel = s->upgradeLevel + 1;
+
+	/* Desired behaviour: Ordos siege tank upgrade shown one upgrade level earlier. */
+	/* if (type == UNIT_SIEGE_TANK && s->creatorHouseID == HOUSE_ORDOS) {} */
+
+	/* Generalised behaviour: skip upgrade levels that do not unlock units. */
+	while (nextUpgradeLevel < 3) {
+		if (Structure_UpgradeUnlocksNewUnit(s, nextUpgradeLevel))
+			break;
+
+		nextUpgradeLevel++;
+	}
+
+	if ((structuresBuilt & structuresRequired) != structuresRequired) {
 		/* If the prerequisites were destroyed, allow the current
 		 * building to complete but do not allow new ones.
 		 */
-		if (i == s->objectType && s->o.linkedID != 0xFF)
+		if (s->objectType == type && s->o.linkedID != 0xFF)
 			return -2;
 
 		return 0;
 	}
 
-	else {
-		uint16 unitType = i;
-
-		if (unitType > UNIT_MCV)
-			return 0;
-
-		/* Note: Raider trike's availableHouse should be Ordos only. */
-		/* if (unitType == UNIT_TRIKE && s->creatorHouseID == HOUSE_ORDOS) unitType = UNIT_RAIDER_TRIKE; */
-
-		const UnitInfo *ui = &g_table_unitInfo[unitType];
-		uint16 upgradeLevelRequired = ui->o.upgradeLevelRequired[s->creatorHouseID];
-		uint16 next_upgrade_level = s->upgradeLevel + 1;
-
-		/* Desired behaviour: Ordos siege tank upgrade shown one upgrade level earlier. */
-		/* if (unitType == UNIT_SIEGE_TANK && s->creatorHouseID == HOUSE_ORDOS) {} */
-
-		/* Generalised behaviour: skip upgrade levels that do not unlock units. */
-		while (next_upgrade_level < 3) {
-			if (Structure_UpgradeUnlocksNewUnit(s, next_upgrade_level))
-				break;
-
-			next_upgrade_level++;
-		}
-
-		if ((structuresBuilt & ui->o.structuresRequired) != ui->o.structuresRequired) {
-			/* If the prerequisites were destroyed, allow the current
-			 * building to complete but do not allow new ones.
-			 */
-			if (unitType == s->objectType && s->o.linkedID != 0xFF)
-				return -2;
-
-			return 0;
-		}
-
-		if ((ui->o.availableHouse & (1 << s->creatorHouseID)) == 0)
-			return 0;
-
-		if (s->upgradeLevel >= upgradeLevelRequired) {
-			return 1;
-		}
-		else if (s->upgradeTimeLeft != 0 && next_upgrade_level >= upgradeLevelRequired) {
-			return -1;
-		}
-
+	if ((ui->o.availableHouse & (1 << s->creatorHouseID)) == 0)
 		return 0;
+
+	if (s->upgradeLevel >= upgradeLevelRequired) {
+		return 1;
 	}
+	else if (s->upgradeTimeLeft != 0 && nextUpgradeLevel >= upgradeLevelRequired) {
+		return -1;
+	}
+
+	return 0;
 }
 
 /**
@@ -2147,10 +2164,10 @@ void Structure_InitFactoryItems(const Structure *s)
 			int available;
 
 			if (s->o.type == STRUCTURE_STARPORT) {
-				available = Structure_GetAvailable(s, i);
+				available = Structure_GetAvailable_Starport(i);
 			}
 			else {
-				available = Structure_GetAvailable(s, si->buildableUnits[i]);
+				available = Structure_GetAvailable_Factory(s, i);
 			}
 
 			if (available == 0)
@@ -2175,9 +2192,9 @@ void Structure_InitFactoryItems(const Structure *s)
 		}
 	}
 	else {
-		for (enum StructureType i = 0; i < STRUCTURE_MAX; i++) {
+		for (enum StructureType i = STRUCTURE_SLAB_1x1; i < STRUCTURE_MAX; i++) {
 			const ObjectInfo *oi = &g_table_structureInfo[i].o;
-			const int available = Structure_GetAvailable(s, i);
+			const int available = Structure_GetAvailable_ConstructionYard(s, i);
 
 			if (available == 0)
 				continue;

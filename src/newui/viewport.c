@@ -352,11 +352,7 @@ Viewport_Place(void)
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 
-		s = Structure_Get_ByPackedTile(g_structureActivePosition);
-		if (s != NULL) {
-			if (Structure_GetAvailable(s, s->objectType) <= 0)
-				Structure_BuildObject(s, 0xFFFE);
-		}
+		Structure_BuildObject(s, 0xFFFE);
 
 		g_structureActiveType = 0xFFFF;
 		g_structureActive = NULL;
