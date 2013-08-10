@@ -131,7 +131,7 @@ void GameLoop_House(void)
 		 * bug; that's just how the game is.
 		 */
 		const enum UnitType type = Tools_RandomLCG_Range(0, UNIT_MAX - 1);
-		Structure_Starport_Restock(type);
+		Structure_Server_RestockStarport(type);
 		g_factoryWindowTotal = -1;
 	}
 
@@ -233,11 +233,17 @@ void GameLoop_House(void)
 
 		if (tickHouse) House_EnsureHarvesterAvailable(h->index);
 
-		/* ENHANCEMENT -- If no starports remaining, create a
+		/* If h->starportLinkedID != UNIT_INDEX_INVALID and the queue
+		 * is empty, that means we are waiting for the countdown
+		 * before creating a frigate and delivering the units.
+		 *
+		 * ENHANCEMENT -- If no starports remaining, create a
 		 * reinforcement carryall to reliably drop off the ordered
 		 * units (at the home base).
 		 */
-		if (tickStarport && h->starportLinkedID != UNIT_INDEX_INVALID) {
+		if (tickStarport
+				&& h->starportLinkedID != UNIT_INDEX_INVALID
+				&& BuildQueue_IsEmpty(&h->starportQueue)) {
 
 			h->starportTimeLeft--;
 			if ((int16)h->starportTimeLeft < 0) h->starportTimeLeft = 0;
@@ -534,6 +540,17 @@ void House_CalculatePowerAndCredit(House *h)
 		if (g_scenario.structuresLost[h->index] > 0)
 			h->creditsStorageNoSilo = 0;
 	}
+}
+
+bool
+House_StarportQueueEmpty(const House *h)
+{
+	for (enum UnitType u = UNIT_CARRYALL; u < UNIT_MAX; u++) {
+		if (h->starportCount[u] > 0)
+			return false;
+	}
+
+	return true;
 }
 
 const char *House_GetWSAHouseFilename(uint8 houseID)

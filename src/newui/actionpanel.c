@@ -547,67 +547,13 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	return false;
 }
 
-void
-ActionPanel_ClickStarportOrder(Structure *s)
-{
-	House *h = g_playerHouse;
-
-	while (!BuildQueue_IsEmpty(&h->starportQueue)) {
-		int credits = h->starportQueue.first->credits;
-		uint16 objectType = BuildQueue_RemoveHead(&h->starportQueue);
-		Unit *u;
-
-		g_validateStrictIfZero++;
-		{
-			tile32 tile;
-			tile.x = 0xFFFF;
-			tile.y = 0xFFFF;
-			u = Unit_Create(UNIT_INDEX_INVALID, (uint8)objectType, s->o.houseID, tile, 0);
-		}
-		g_validateStrictIfZero--;
-
-		if (u == NULL) {
-			/* Originally the starport only allowed you to purchase a
-			 * unit if there was an empty index.  However, that only
-			 * really worked with the factory window interface.
-			 */
-			h->credits += credits;
-			Structure_Starport_Restock(objectType);
-
-			Server_Send_StatusMessage1(1 << s->o.houseID, 2,
-					STR_UNABLE_TO_CREATE_MORE);
-
-			continue;
-		}
-
-		h->starportID = s->o.index;
-
-		if (h->starportTimeLeft == 0) h->starportTimeLeft = g_table_houseInfo[h->index].starportDeliveryTime;
-
-		u->o.linkedID = h->starportLinkedID & 0xFF;
-		h->starportLinkedID = u->o.index;
-	}
-}
-
 static void
 ActionPanel_ClickStarportPlus(const Structure *s, int entry)
 {
 	const FactoryWindowItem *item = &g_factoryWindowItems[entry];
-	const uint16 type = item->objectType;
 
-	House *h = House_Get_ByIndex(s->o.houseID);
-
-	if ((g_starportAvailable[type] > 0) && (item->credits <= h->credits)) {
-		BuildQueue_Add(&h->starportQueue, item->objectType, item->credits);
-
-		if (g_starportAvailable[type] == 1) {
-			g_starportAvailable[type] = -1;
-		}
-		else {
-			g_starportAvailable[type]--;
-		}
-
-		h->credits -= item->credits;
+	if ((g_starportAvailable[item->objectType] > 0) && (item->credits <= g_playerHouse->credits)) {
+		Client_Send_PurchaseResumeItem(&s->o, item->objectType);
 	}
 	else {
 		Audio_PlaySound(EFFECT_ERROR_OCCURRED);
@@ -618,15 +564,9 @@ static void
 ActionPanel_ClickStarportMinus(const Structure *s, int entry)
 {
 	const FactoryWindowItem *item = &g_factoryWindowItems[entry];
-	const uint16 type = item->objectType;
 
-	House *h = House_Get_ByIndex(s->o.houseID);
-	int credits;
-
-	if (BuildQueue_RemoveTail(&h->starportQueue, type, &credits)) {
-		Structure_Starport_Restock(type);
-		h->credits += credits;
-	}
+	if (g_playerHouse->starportCount[item->objectType] > 0)
+		Client_Send_PauseCancelItem(&s->o, item->objectType);
 }
 
 bool
@@ -647,7 +587,8 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 	if (s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) {
 		ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
 		if (lmb && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
-			ActionPanel_ClickStarportOrder(s);
+			if (!House_StarportQueueEmpty(g_playerHouse))
+				Client_Send_SendStarportOrder(&s->o);
 			return true;
 		}
 	}
@@ -765,7 +706,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget)
 
 	ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, &w, &h);
 
-	if (BuildQueue_IsEmpty(&g_playerHouse->starportQueue)) {
+	if (House_StarportQueueEmpty(g_playerHouse)) {
 		Prim_FillRect_RGBA(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8, 0XFF);
 		Prim_DrawBorder(x1, y1, w, h, 1, true, false, 1);
 		fg = 0xE;
@@ -1034,7 +975,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		/* Draw build queue count. */
 		int count;
 		if (s->o.type == STRUCTURE_STARPORT) {
-			count = BuildQueue_Count(&g_playerHouse->starportQueue, object_type);
+			count = g_playerHouse->starportCount[object_type];
 		}
 		else {
 			count = BuildQueue_Count(&s->queue, object_type);

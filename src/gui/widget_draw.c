@@ -443,19 +443,13 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 
 		switch (actionType) {
 			case 3: /* Structure */
-#if 0
-				if (oi->flags.factory && !isNotPlayerOwned) {
-					GUI_Widget_MakeVisible(widget28);
-				}
-#else
 				if (!isNotPlayerOwned &&
 						((g_productionStringID == STR_PLACE_IT) ||
 						 (s->o.type == STRUCTURE_PALACE && s->countDown == 0) ||
-						 (s->o.type == STRUCTURE_STARPORT && !BuildQueue_IsEmpty(&h->starportQueue)) ||
+						 (s->o.type == STRUCTURE_STARPORT && !House_StarportQueueEmpty(h)) ||
 						 (s->o.type == STRUCTURE_REPAIR && s->o.linkedID != 0xFF))) {
 					GUI_Widget_MakeVisible(widget28);
 				}
-#endif
 				/* Fall through */
 			case 7: /* Placement */
 			case 2: /* Unit */
@@ -550,9 +544,10 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 						/* GUI_Widget_MakeNormal(widget24, false); */
 					}
 
-					if ((oi->flags.factory && o->type != STRUCTURE_STARPORT) ||
-					    (o->type == STRUCTURE_STARPORT && (h->starportLinkedID == 0xFFFF)) ||
-					    (o->type == STRUCTURE_PALACE && s->countDown == 0)) {
+					if ((o->type == STRUCTURE_PALACE && s->countDown == 0)
+					 || (o->type != STRUCTURE_STARPORT && oi->flags.factory)
+					 || (o->type == STRUCTURE_STARPORT
+						 && (h->starportLinkedID == UNIT_INDEX_INVALID || !House_StarportQueueEmpty(h)))) {
 						GUI_Widget_MakeVisible(widget2C);
 					}
 

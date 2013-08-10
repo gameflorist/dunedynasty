@@ -1179,6 +1179,7 @@ static void Structure_Destroy(Structure *s)
 			}
 
 			h->starportLinkedID = UNIT_INDEX_INVALID;
+			memset(h->starportCount, 0, sizeof(h->starportCount));
 		}
 	}
 
@@ -2217,7 +2218,7 @@ void Structure_InitFactoryItems(const Structure *s)
 }
 
 void
-Structure_Starport_Restock(enum UnitType type)
+Structure_Server_RestockStarport(enum UnitType type)
 {
 	if (g_starportAvailable[type] != 0 && g_starportAvailable[type] < 10) {
 		if (g_starportAvailable[type] == -1) {

@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 #include "enum_string.h"
 
 #include "server.h"
@@ -9,6 +10,7 @@
 #include "message.h"
 #include "../audio/audio.h"
 #include "../enhancement.h"
+#include "../newui/actionpanel.h"
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../newui/viewport.h"
@@ -21,6 +23,7 @@
 #include "../structure.h"
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"
+#include "../tools/random_starport.h"
 #include "../unit.h"
 
 #if 0
@@ -159,6 +162,104 @@ Server_Recv_CancelItem(Structure *s)
 }
 
 static void
+Server_Recv_PurchaseItemStarport(Structure *s, uint8 objectType)
+{
+	if (objectType >= UNIT_MAX || g_starportAvailable[objectType] <= 0)
+		return;
+
+	const int credits = Random_Starport_CalculateUnitPrice(objectType);
+	House *h = House_Get_ByIndex(s->o.houseID);
+	if (h->credits <= credits)
+		return;
+
+	/* Attempt to create a unit. */
+	Unit *u;
+	g_validateStrictIfZero++;
+	{
+		tile32 tile;
+		tile.x = 0xFFFF;
+		tile.y = 0xFFFF;
+		u = Unit_Create(UNIT_INDEX_INVALID, objectType, s->o.houseID, tile, 0);
+	}
+	g_validateStrictIfZero--;
+
+	if (u == NULL) {
+		Server_Send_StatusMessage1(1 << h->index, 2,
+				STR_UNABLE_TO_CREATE_MORE);
+		Server_Send_PlaySound(1 << h->index, EFFECT_ERROR_OCCURRED);
+	}
+	else {
+		h->credits -= credits;
+		u->o.linkedID = h->starportLinkedID & 0xFF;
+		h->starportLinkedID = u->o.index;
+
+		h->starportCount[objectType]++;
+		BuildQueue_Add(&h->starportQueue, objectType, credits);
+
+		g_starportAvailable[objectType]--;
+		if (g_starportAvailable[objectType] <= 0)
+			g_starportAvailable[objectType] = -1;
+	}
+}
+
+static void
+Server_Recv_CancelItemStarport(Structure *s, uint8 objectType)
+{
+	if (g_starportAvailable[objectType] == 0)
+		return;
+
+	House *h = House_Get_ByIndex(s->o.houseID);
+
+	int credits;
+	if (BuildQueue_RemoveTail(&h->starportQueue, objectType, &credits)) {
+		h->credits += credits;
+		h->starportCount[objectType]--;
+		Structure_Server_RestockStarport(objectType);
+
+		/* We create units as soon as they are purchased (due to unit limits),
+		 * so we need to free them too!
+		 */
+		uint8 *prev = NULL;
+		uint16 unitID = h->starportLinkedID;
+		while (unitID != 0xFF) {
+			Unit *u = Unit_Get_ByIndex(unitID);
+
+			if (u->o.type == objectType) {
+				if (prev == NULL) {
+					h->starportLinkedID
+						= (u->o.linkedID == 0xFF)
+						? UNIT_INDEX_INVALID : u->o.linkedID;
+				}
+				else {
+					*prev = u->o.linkedID;
+				}
+
+				Unit_Free(u);
+				break;
+			}
+
+			prev = &u->o.linkedID;
+			unitID = u->o.linkedID;
+		}
+	}
+}
+
+static void
+Server_Recv_SendStarportOrder(Structure *s)
+{
+	House *h = House_Get_ByIndex(s->o.houseID);
+
+	if (BuildQueue_IsEmpty(&h->starportQueue))
+		return;
+
+	if (h->starportTimeLeft == 0) {
+		h->starportTimeLeft = g_table_houseInfo[h->index].starportDeliveryTime;
+		memset(h->starportCount, 0, sizeof(h->starportCount));
+		BuildQueue_Free(&h->starportQueue);
+	}
+}
+
+static void
 Server_Recv_PurchaseResumeItem(enum HouseType houseID, const unsigned char *buf)
 {
 	const uint16 objectID   = Net_Decode_ObjectIndex(&buf);
@@ -172,6 +273,11 @@ Server_Recv_PurchaseResumeItem(enum HouseType houseID, const unsigned char *buf)
 	Structure *s = Structure_Get_ByIndex(objectID);
 	if (!Server_PlayerCanControlStructure(houseID, s))
 		return;
+
+	if (s->o.type == STRUCTURE_STARPORT) {
+		Server_Recv_PurchaseItemStarport(s, objectType);
+		return;
+	}
 
 	if (objectType == 0xFF) {
 		Server_Recv_CancelItem(s);
@@ -221,11 +327,13 @@ Server_Recv_PauseCancelItem(enum HouseType houseID, const unsigned char *buf)
 		return;
 
 	Structure *s = Structure_Get_ByIndex(objectID);
-	if (!Server_PlayerCanControlStructure(houseID, s)
-			|| s->o.linkedID == 0xFF)
+	if (!Server_PlayerCanControlStructure(houseID, s))
 		return;
 
-	if (s->objectType == objectType) {
+	if (s->o.type == STRUCTURE_STARPORT) {
+		Server_Recv_CancelItemStarport(s, objectType);
+	}
+	else if (s->objectType == objectType && s->o.linkedID != 0xFF) {
 		if (s->o.flags.s.onHold) {
 			Server_Recv_CancelItem(s);
 		}
@@ -310,6 +418,9 @@ Server_Recv_ActivateStructureAbility(enum HouseType houseID, const unsigned char
 	if (s->o.type == STRUCTURE_PALACE) {
 		if (s->countDown == 0)
 			Structure_Server_ActivateSpecial(s);
+	}
+	else if (s->o.type == STRUCTURE_STARPORT) {
+		Server_Recv_SendStarportOrder(s);
 	}
 	else if (s->o.type == STRUCTURE_REPAIR) {
 		if (s->o.linkedID != 0xFF)

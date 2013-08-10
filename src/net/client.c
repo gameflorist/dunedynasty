@@ -124,6 +124,12 @@ Client_Send_PlaceStructure(uint16 packed)
 }
 
 void
+Client_Send_SendStarportOrder(const struct Object *o)
+{
+	Client_Send_ObjectIndex(CSMSG_ACTIVATE_STRUCTURE_ABILITY, o);
+}
+
+void
 Client_Send_ActivateSuperweapon(const struct Object *o)
 {
 	Client_Send_ObjectIndex(CSMSG_ACTIVATE_STRUCTURE_ABILITY, o);

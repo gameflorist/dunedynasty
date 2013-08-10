@@ -70,6 +70,7 @@ typedef struct House {
 	uint16 starportID;
 	uint16 houseMissileID;
 	uint8  houseMissileCountdown;
+	uint8  starportCount[UNIT_MAX];
 	BuildQueue starportQueue;
 } House;
 
@@ -126,6 +127,7 @@ extern bool House_AreAllied(uint8 houseID1, uint8 houseID2);
 extern bool House_UpdateRadarState(House *h);
 extern void House_UpdateCreditsStorage(uint8 houseID);
 extern void House_CalculatePowerAndCredit(struct House *h);
+extern bool House_StarportQueueEmpty(const House *h);
 extern const char *House_GetWSAHouseFilename(uint8 houseID);
 
 extern enum UnitType House_GetInfantrySquad(enum HouseType houseID);

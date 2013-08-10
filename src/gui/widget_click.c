@@ -46,14 +46,7 @@ bool GUI_Widget_SpriteTextButton_Click(Widget *w)
 		return false;
 
 	if (s->o.type == STRUCTURE_STARPORT) {
-		const House *h = House_Get_ByIndex(s->o.houseID);
-
-		if (h->starportLinkedID == 0xFFFF) {
-			return ActionPanel_ClickStarport(w, s);
-		}
-		else {
-			return false;
-		}
+		return ActionPanel_ClickStarport(w, s);
 	}
 
 	switch (g_productionStringID) {
@@ -207,7 +200,7 @@ GUI_Widget_Picture_Click(Widget *w)
 {
 	VARIABLE_NOT_USED(w);
 
-	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+	const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 	if (s == NULL)
 		return false;
 
@@ -219,8 +212,9 @@ GUI_Widget_Picture_Click(Widget *w)
 		if (s->countDown == 0)
 			Client_Send_ActivateSuperweapon(&s->o);
 	}
-	else if ((s->o.type == STRUCTURE_STARPORT) && (!BuildQueue_IsEmpty(&g_playerHouse->starportQueue))) {
-		ActionPanel_ClickStarportOrder(s);
+	else if (s->o.type == STRUCTURE_STARPORT) {
+		if (!House_StarportQueueEmpty(g_playerHouse))
+			Client_Send_SendStarportOrder(&s->o);
 	}
 	else if (s->o.type == STRUCTURE_REPAIR) {
 		if (s->o.linkedID != 0xFF)

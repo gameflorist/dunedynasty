@@ -4,10 +4,13 @@
 
 #include "saveload.h"
 #include "../house.h"
+#include "../opendune.h"
 #include "../pool/house.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
+#include "../pool/unit.h"
 #include "../structure.h"
+#include "../unit.h"
 
 static uint32 SaveLoad_Structure_BuildQueue(void *object, uint32 value, bool loading);
 
@@ -152,6 +155,10 @@ Structure_Load2(FILE *fp, uint32 length)
 				h->starportQueue.last->next = sl.queue.first;
 				h->starportQueue.last = sl.queue.last;
 			}
+
+			for (enum UnitType u = UNIT_CARRYALL; u < UNIT_MAX; u++) {
+				h->starportCount[u] = BuildQueue_Count(&h->starportQueue, u);
+			}
 		}
 		else {
 			s->queue = sl.queue;
@@ -209,6 +216,15 @@ SaveLoad_Structure_BuildQueue(void *object, uint32 value, bool loading)
 
 		size += sizeof(count);
 
+		/* Saved games from older versions of Dune Dynasty do not have
+		 * purchased units created.
+		 */
+		const Structure *s2 = Structure_Get_ByIndex(s->o.index);
+		House *h = House_Get_ByIndex(s2->o.houseID);
+		const bool create_starport_units
+			= (s2->o.type == STRUCTURE_STARPORT)
+			&& (h->starportLinkedID == UNIT_INDEX_INVALID);
+
 		BuildQueue_Init(&s->queue);
 		while (count > 0) {
 			BuildQueueItem item;
@@ -216,7 +232,35 @@ SaveLoad_Structure_BuildQueue(void *object, uint32 value, bool loading)
 				return 0;
 
 			size += elem_size;
-			BuildQueue_Add(&s->queue, item.objectType, item.credits);
+
+			bool insert_item = true;
+
+			if (create_starport_units) {
+				tile32 tile;
+				Unit *u;
+
+				g_validateStrictIfZero++;
+				tile.x = 0xFFFF;
+				tile.y = 0xFFFF;
+				u = Unit_Create(UNIT_INDEX_INVALID, item.objectType, h->index, tile, 0);
+				g_validateStrictIfZero--;
+
+				if (u == NULL) {
+					h->credits += item.credits;
+					insert_item = false;
+				}
+				else {
+					u->o.linkedID = h->starportLinkedID & 0xFF;
+					h->starportLinkedID = u->o.index;
+					h->starportTimeLeft = 0;
+					insert_item = true;
+				}
+			}
+
+			if (insert_item) {
+				BuildQueue_Add(&s->queue, item.objectType, item.credits);
+			}
+
 			count--;
 		}
 	}
