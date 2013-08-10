@@ -367,6 +367,7 @@ GameLoop_ProcessGameTimer(void)
 			}
 		}
 
+		Client_SendMessages();
 		GameLoop_Server_Logic();
 	}
 

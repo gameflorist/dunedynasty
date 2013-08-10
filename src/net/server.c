@@ -146,6 +146,96 @@ Server_Recv_SetRallyPoint(enum HouseType houseID, const unsigned char *buf)
 }
 
 static void
+Server_Recv_CancelItem(Structure *s)
+{
+	Structure_Server_CancelBuild(s);
+	s->state = STRUCTURE_STATE_IDLE;
+
+	/* Reset high-tech factory animation in case we have the
+	 * open/close roof animations.
+	 */
+	if (s->o.type == STRUCTURE_HIGH_TECH)
+		Structure_UpdateMap(s);
+}
+
+static void
+Server_Recv_PurchaseResumeItem(enum HouseType houseID, const unsigned char *buf)
+{
+	const uint16 objectID   = Net_Decode_ObjectIndex(&buf);
+	const uint8  objectType = Net_Decode_uint8(&buf);
+
+	SERVER_LOG("objectID=%d, objectType=%d", objectID, objectType);
+
+	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+		return;
+
+	Structure *s = Structure_Get_ByIndex(objectID);
+	if (!Server_PlayerCanControlStructure(houseID, s))
+		return;
+
+	if (objectType == 0xFF) {
+		Server_Recv_CancelItem(s);
+	}
+	else if ((s->objectType == objectType) && s->o.flags.s.onHold) {
+		s->o.flags.s.repairing = false;
+		s->o.flags.s.onHold    = false;
+		s->o.flags.s.upgrading = false;
+	}
+	else {
+		bool can_build = false;
+
+		if (s->o.type == STRUCTURE_STARPORT) {
+			can_build = false;
+		}
+		else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+			can_build
+				= (objectType < STRUCTURE_MAX)
+				&& Structure_GetAvailable_ConstructionYard(s, objectType);
+		}
+		else if (objectType < UNIT_MAX) {
+			const StructureInfo *si = &g_table_structureInfo[s->o.type];
+
+			for (int i = 0; i < 8; i++) {
+				if (si->buildableUnits[i] == objectType) {
+					can_build = Structure_GetAvailable_Factory(s, i);
+					break;
+				}
+			}
+		}
+
+		if (can_build) {
+			Structure_Server_BuildObject(s, objectType);
+		}
+	}
+}
+
+static void
+Server_Recv_PauseCancelItem(enum HouseType houseID, const unsigned char *buf)
+{
+	const uint16 objectID   = Net_Decode_ObjectIndex(&buf);
+	const uint8  objectType = Net_Decode_uint8(&buf);
+
+	SERVER_LOG("objectID=%d, objectType=%d", objectID, objectType);
+
+	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+		return;
+
+	Structure *s = Structure_Get_ByIndex(objectID);
+	if (!Server_PlayerCanControlStructure(houseID, s)
+			|| s->o.linkedID == 0xFF)
+		return;
+
+	if (s->objectType == objectType) {
+		if (s->o.flags.s.onHold) {
+			Server_Recv_CancelItem(s);
+		}
+		else {
+			s->o.flags.s.onHold = true;
+		}
+	}
+}
+
+static void
 Server_Recv_EnterLeavePlacementMode(enum HouseType houseID, const unsigned char *buf)
 {
 	House *h = House_Get_ByIndex(houseID);
@@ -410,6 +500,14 @@ Server_ProcessMessages(void)
 
 			case CSMSG_SET_RALLY_POINT:
 				Server_Recv_SetRallyPoint(houseID, buf);
+				break;
+
+			case CSMSG_PURCHASE_RESUME_ITEM:
+				Server_Recv_PurchaseResumeItem(houseID, buf);
+				break;
+
+			case CSMSG_PAUSE_CANCEL_ITEM:
+				Server_Recv_PauseCancelItem(houseID, buf);
 				break;
 
 			case CSMSG_ENTER_LEAVE_PLACEMENT_MODE:

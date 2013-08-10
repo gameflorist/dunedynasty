@@ -488,61 +488,33 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	const uint16 clicked_type = g_factoryWindowItems[item].objectType;
 	bool action_successful = true;
 
-	if ((s->objectType == clicked_type) || (g_productionStringID == STR_BUILD_IT)) {
+	if (lmb) {
 		switch (g_productionStringID) {
 			case STR_PLACE_IT:
-			case STR_ON_HOLD:
-				if (lmb && (g_productionStringID == STR_PLACE_IT)) {
+				if ((s->objectType == clicked_type) && (s->o.linkedID != 0xFF) && (s->countDown == 0)) {
 					Client_Send_EnterPlacementMode(&s->o);
+					break;
 				}
-				else if (lmb && (g_productionStringID == STR_ON_HOLD)) {
-					s->o.flags.s.repairing = false;
-					s->o.flags.s.onHold    = false;
-					s->o.flags.s.upgrading = false;
+				/* Fall through. */
+			case STR_ON_HOLD:
+				if ((s->objectType == clicked_type) && (s->o.linkedID != 0xFF) && s->o.flags.s.onHold) {
+					Client_Send_PurchaseResumeItem(&s->o, clicked_type);
+					break;
 				}
-				else if (rmb) {
-					const uint16 next_type = BuildQueue_RemoveHead(&s->queue);
-
-					if (next_type == 0xFFFF) {
-						Structure_CancelBuild(s);
-						s->state = STRUCTURE_STATE_IDLE;
-
-						/* Only update high-tech factory to avoid resetting animations. */
-						if (s->o.type == STRUCTURE_HIGH_TECH)
-							Structure_UpdateMap(s);
-					}
-					else if (s->objectType != next_type) {
-						Structure_BuildObject(s, next_type);
-						s->o.flags.s.onHold = false;
-					}
-				}
-				break;
-
+				/* Fall through */
 			case STR_BUILD_IT:
-				if (lmb) {
-					s->objectType = g_factoryWindowItems[item].objectType;
-
-					if (g_factoryWindowItems[item].available > 0) {
-						action_successful = Structure_BuildObject(s, s->objectType);
-					}
-					else {
-						action_successful = false;
-					}
-				}
-				break;
-
 			case STR_COMPLETED:
 			case STR_D_DONE:
-				if (lmb) {
-					if (g_factoryWindowItems[item].available > 0) {
-						BuildQueue_Add(&s->queue, clicked_type, 0);
+				if (g_factoryWindowItems[item].available > 0) {
+					if ((s->o.linkedID == 0xFF) && BuildQueue_IsEmpty(&s->queue)) {
+						Client_Send_PurchaseResumeItem(&s->o, clicked_type);
 					}
 					else {
-						action_successful = false;
+						BuildQueue_Add(&s->queue, clicked_type, 0);
 					}
 				}
-				else if (rmb && (g_productionStringID == STR_D_DONE)) {
-					s->o.flags.s.onHold = true;
+				else {
+					action_successful = false;
 				}
 				break;
 
@@ -550,16 +522,20 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 				break;
 		}
 	}
-	else {
-		if (lmb) {
-			if (g_factoryWindowItems[item].available > 0) {
-				BuildQueue_Add(&s->queue, clicked_type, 0);
+	else if (rmb) {
+		if ((s->objectType == clicked_type) && (s->o.linkedID != 0xFF)) {
+			if (s->o.flags.s.onHold) {
+				const uint16 nextType = BuildQueue_RemoveHead(&s->queue);
+
+				if (nextType != s->objectType) {
+					Client_Send_PurchaseResumeItem(&s->o, nextType);
+				}
 			}
 			else {
-				action_successful = false;
+				Client_Send_PauseCancelItem(&s->o, clicked_type);
 			}
 		}
-		else if (rmb) {
+		else {
 			BuildQueue_RemoveTail(&s->queue, clicked_type, NULL);
 		}
 	}
@@ -1065,7 +1041,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		}
 
 		if (count > 0) {
-			if (s->objectType == object_type)
+			if ((s->objectType == object_type) && (s->o.linkedID != 0xFF))
 				count++;
 
 			if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {

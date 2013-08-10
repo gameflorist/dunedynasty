@@ -46,9 +46,9 @@ typedef struct Structure {
 	uint16 hitpointsMax;                                    /*!< Max amount of hitpoints. */
 
 	enum SquadID squadID;
-	BuildQueue queue;
 	uint16 rallyPoint;
 	int factoryOffsetY;
+	BuildQueue queue;
 } Structure;
 
 /**
@@ -109,8 +109,8 @@ extern struct Unit *Structure_GetLinkedUnit(Structure *s);
 extern void Structure_UntargetMe(Structure *s);
 extern uint16 Structure_FindFreePosition(Structure *s, bool checkForSpice);
 extern void Structure_Remove(Structure *s);
-extern void Structure_CancelBuild(Structure *s);
-extern bool Structure_BuildObject(Structure *s, uint16 objectType);
+extern void Structure_Server_CancelBuild(Structure *s);
+extern bool Structure_Server_BuildObject(Structure *s, uint16 objectType);
 extern bool Structure_Server_SetUpgradingState(Structure *s, int state);
 extern bool Structure_Server_SetRepairingState(Structure *s, int state);
 extern void Structure_UpdateMap(Structure *s);

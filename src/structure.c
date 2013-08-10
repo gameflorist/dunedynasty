@@ -330,37 +330,9 @@ void GameLoop_Structure(void)
 					}
 
 					if (start_next) {
-						uint16 object_type;
-
-						object_type = BuildQueue_RemoveHead(&s->queue);
-						while (object_type != 0xFFFF) {
-							bool can_build = false;
-
-							if (s->o.type == STRUCTURE_STARPORT) {
-								can_build = false;
-							}
-							else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-								can_build = Structure_GetAvailable_ConstructionYard(s, object_type);
-							}
-							else {
-								for (int i = 0; i < 8; i++) {
-									if (si->buildableUnits[i] == object_type) {
-										can_build = Structure_GetAvailable_Factory(s, i);
-										break;
-									}
-								}
-							}
-
-							if (can_build) {
-								if (Structure_BuildObject(s, object_type))
-									break;
-							}
-
-							object_type = BuildQueue_RemoveHead(&s->queue);
-						}
-
-						if (object_type == 0xFFFF)
-							s->state = STRUCTURE_STATE_IDLE;
+						s->objectType = 0xFFFF;
+						s->o.linkedID = 0xFF;
+						s->state = STRUCTURE_STATE_IDLE;
 					}
 				}
 
@@ -414,7 +386,8 @@ void GameLoop_Structure(void)
 					if (si->o.flags.factory && s->countDown == 0 && s->o.linkedID == 0xFF) {
 						uint16 type = StructureAI_PickNextToBuild(s);
 
-						if (type != 0xFFFF) Structure_BuildObject(s, type);
+						if (type != 0xFFFF)
+							Structure_Server_BuildObject(s, type);
 					}
 				}
 			}
@@ -508,8 +481,6 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 	}
 
 	s->objectType = 0xFFFF;
-
-	Structure_BuildObject(s, 0xFFFE);
 
 	s->countDown = 0;
 
@@ -1702,7 +1673,7 @@ static bool Structure_CheckAvailableConcrete(uint16 structureType, uint8 houseID
  *
  * @param s The Structure.
  */
-void Structure_CancelBuild(Structure *s)
+void Structure_Server_CancelBuild(Structure *s)
 {
 	ObjectInfo *oi;
 
@@ -1735,7 +1706,7 @@ void Structure_CancelBuild(Structure *s)
  *        0xFFFF: open factory window.
  * @return ??.
  */
-bool Structure_BuildObject(Structure *s, uint16 objectType)
+bool Structure_Server_BuildObject(Structure *s, uint16 objectType)
 {
 	const StructureInfo *si;
 	Object *o;
@@ -1787,7 +1758,8 @@ bool Structure_BuildObject(Structure *s, uint16 objectType)
 
 	if (s->o.type == STRUCTURE_STARPORT) return true;
 
-	if (s->objectType != objectType) Structure_CancelBuild(s);
+	if (s->objectType != objectType)
+		Structure_Server_CancelBuild(s);
 
 	if (s->o.linkedID != 0xFF || objectType == 0xFFFF) return false;
 

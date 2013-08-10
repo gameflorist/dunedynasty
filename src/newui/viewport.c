@@ -301,7 +301,7 @@ Viewport_Server_Place(House *h, Structure *s, uint16 packed)
 			}
 		}
 
-		Structure_BuildObject(s, 0xFFFE);
+		Structure_Server_BuildObject(s, 0xFFFE);
 
 		House_UpdateRadarState(h);
 

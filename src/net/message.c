@@ -13,6 +13,8 @@ static const struct {
 	{ 'x', 0 }, /* CSMSG_DISCONNECT */
 	{ 'r', 2 }, /* CSMSG_REPAIR_UPGRADE_STRUCTURE */
 	{ 'g', 4 }, /* CSMSG_SET_RALLY_POINT */
+	{ '+', 3 }, /* CSMSG_PURCHASE_RESUME_ITEM */
+	{ '-', 3 }, /* CSMSG_PAUSE_CANCEL_ITEM */
 	{ 'b', 2 }, /* CSMSG_ENTER_LEAVE_PLACEMENT_MODE */
 	{ 'p', 2 }, /* CSMSG_PLACE_STRUCTURE */
 	{ 's', 2 }, /* CSMSG_ACTIVATE_STRUCTURE_ABILITY */
