@@ -233,16 +233,22 @@ void GameLoop_House(void)
 
 		if (tickHouse) House_EnsureHarvesterAvailable((uint8)h->index);
 
+		/* ENHANCEMENT -- If no starports remaining, create a
+		 * reinforcement carryall to reliably drop off the ordered
+		 * units (at the home base).
+		 */
 		if (tickStarport && h->starportLinkedID != UNIT_INDEX_INVALID) {
-			Unit *u = NULL;
 
 			h->starportTimeLeft--;
 			if ((int16)h->starportTimeLeft < 0) h->starportTimeLeft = 0;
 
 			if (h->starportTimeLeft == 0) {
 				Structure *s = Structure_Get_ByIndex(h->starportID);
+				Unit *u = NULL;
+
 				if (s->o.type == STRUCTURE_STARPORT && s->o.houseID == h->index) {
-					u = Unit_CreateWrapper((uint8)h->index, UNIT_FRIGATE, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
+					u = Unit_CreateWrapper(h->index, UNIT_FRIGATE,
+							Tools_Index_Encode(s->o.index, IT_STRUCTURE));
 				} else {
 					PoolFindStruct find2;
 
@@ -255,8 +261,22 @@ void GameLoop_House(void)
 						if (s == NULL) break;
 						if (s->o.linkedID != 0xFF) continue;
 
-						u = Unit_CreateWrapper((uint8)h->index, UNIT_FRIGATE, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
+						u = Unit_CreateWrapper(h->index, UNIT_FRIGATE,
+								Tools_Index_Encode(s->o.index, IT_STRUCTURE));
 						break;
+					}
+				}
+
+				if (g_dune2_enhanced && u == NULL) {
+					tile32 tile = Tile_UnpackTile(Map_FindLocationTile(Tools_Random_256() & 3, h->index));
+
+					u = Unit_Create(UNIT_INDEX_INVALID, UNIT_CARRYALL, h->index, tile, 100);
+					if (u != NULL) {
+						uint16 locationID = 7; /* Home Base. */
+						uint16 packed = Map_FindLocationTile(locationID, h->index);
+
+						u->o.flags.s.byScenario = true;
+						Unit_SetDestination(u, Tools_Index_Encode(packed, IT_TILE));
 					}
 				}
 
