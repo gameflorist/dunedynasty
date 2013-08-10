@@ -1164,7 +1164,6 @@ static void Structure_Destroy(Structure *s)
 {
 	const StructureInfo *si;
 	uint8 linkedID;
-	House *h;
 
 	if (s == NULL) return;
 
@@ -1172,6 +1171,8 @@ static void Structure_Destroy(Structure *s)
 		Structure_Remove(s);
 		return;
 	}
+
+	House *h = House_Get_ByIndex(s->o.houseID);
 
 	s->o.script.variables[0] = 1;
 	s->o.flags.s.allocated = false;
@@ -1183,6 +1184,40 @@ static void Structure_Destroy(Structure *s)
 
 	Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
 			SOUND_STRUCTURE_DESTROYED, s->o.position);
+
+	/* If the final starport is destroyed, free and refund the units
+	 * in the build queue (i.e. paid but have not yet sent the order).
+	 */
+	if (s->o.type == STRUCTURE_STARPORT
+			&& h->starportLinkedID != UNIT_INDEX_INVALID
+			&& !BuildQueue_IsEmpty(&h->starportQueue)) {
+		PoolFindStruct find;
+
+		find.houseID = h->index;
+		find.type    = STRUCTURE_STARPORT;
+		find.index   = 0xFFFF;
+
+		Structure_Find(&find);
+		if (Structure_Find(&find) == NULL) {
+			linkedID = h->starportLinkedID & 0xFF;
+
+			while (linkedID != 0xFF) {
+				Unit *u = Unit_Get_ByIndex(linkedID);
+				int credits;
+
+				const bool found_unit
+					= BuildQueue_RemoveTail(&h->starportQueue, u->o.type, &credits);
+				assert(found_unit);
+
+				h->credits += credits;
+
+				linkedID = u->o.linkedID;
+				Unit_Remove(u);
+			}
+
+			h->starportLinkedID = UNIT_INDEX_INVALID;
+		}
+	}
 
 	linkedID = s->o.linkedID;
 
@@ -1201,7 +1236,6 @@ static void Structure_Destroy(Structure *s)
 		}
 	}
 
-	h = House_Get_ByIndex(s->o.houseID);
 	si = &g_table_structureInfo[s->o.type];
 
 	h->credits -= (h->creditsStorage == 0) ? h->credits : min(h->credits, (h->credits * 256 / h->creditsStorage) * si->creditsStorage / 256);
