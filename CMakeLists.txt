@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
+
 project(dunedynasty)
 set(DUNE_DYNASTY_VERSION 1.5)
 
@@ -12,6 +15,7 @@ else()
 endif()
 
 option(WITH_AUD "AUD music (Dune 2000)" ON)
+option(WITH_ENET "ENet (multiplayer)" ON)
 option(WITH_FLUIDSYNTH "FluidSynth MIDI music" ON)
 option(WITH_MAD "MP3 music" ON)
 option(PANDORA "Set to ON if targeting an OpenPandora device")
@@ -35,6 +39,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wmissing-prototypes -Wstrict-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wno-unused-parameter")
 
 include(FindPkgConfig)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 set(ALLEGRO_VERSION 5)
 pkg_check_modules(ALLEGRO5 allegro-${ALLEGRO_VERSION})
@@ -87,6 +92,16 @@ elseif(WITH_ALSA_MIDI)
 	set(WITH_ALSA_MIDI OFF)
     endif(ALSA_FOUND)
 endif()
+
+if(WITH_ENET)
+    find_package(ENet)
+    if(ENET_FOUND)
+	include_directories(SYSTEM ${ENet_INCLUDE_DIRS})
+	list(APPEND OPTIONAL_LIBRARIES ${ENet_LIBRARIES})
+    else(ENET_FOUND)
+	message("ENet not found")
+    endif(ENET_FOUND)
+endif(WITH_ENET)
 
 if(WITH_FLUIDSYNTH)
     pkg_check_modules(FLUIDSYNTH fluidsynth)
