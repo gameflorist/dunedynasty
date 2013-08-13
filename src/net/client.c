@@ -2,10 +2,12 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "client.h"
 
 #include "message.h"
+#include "net.h"
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../newui/actionpanel.h"
@@ -22,6 +24,15 @@
 #else
 #define CLIENT_LOG(...)
 #endif
+
+/*--------------------------------------------------------------*/
+
+void
+Client_ResetCache(void)
+{
+	memset(g_client2server_message_buf, 0, MAX_CLIENT_MESSAGE_LEN);
+	g_client2server_message_len = 0;
+}
 
 /*--------------------------------------------------------------*/
 
@@ -163,11 +174,12 @@ Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
 	Net_Encode_ObjectIndex(&buf, o);
 }
 
-/*--------------------------------------------------------------*/
-
 void
-Client_SendMessages(void)
+Client_Send_BuildQueue(void)
 {
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER)
+		return;
+
 	PoolFindStruct find;
 
 	/* For each structure, find any with non-empty build queues */

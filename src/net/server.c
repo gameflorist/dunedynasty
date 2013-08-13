@@ -36,6 +36,19 @@
 /*--------------------------------------------------------------*/
 
 void
+Server_ResetCache(void)
+{
+	memset(g_server_broadcast_message_buf, 0, MAX_SERVER_BROADCAST_MESSAGE_LEN);
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		memset(g_server2client_message_buf[h], 0, MAX_SERVER_TO_CLIENT_MESSAGE_LEN);
+		g_server2client_message_len[h] = 0;
+	}
+}
+
+/*--------------------------------------------------------------*/
+
+void
 Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority,
 		uint16 str)
 {
@@ -581,13 +594,9 @@ Server_Recv_IssueUnitAction(enum HouseType houseID, const unsigned char *buf)
 }
 
 void
-Server_ProcessMessages(void)
+Server_ProcessMessage(enum HouseType houseID,
+		const unsigned char *buf, int count)
 {
-	const unsigned char *buf = g_client2server_message_buf;
-	int count = g_client2server_message_len;
-
-	enum HouseType houseID = g_playerHouseID;
-
 	while (count > 0) {
 		const enum ClientServerMsg msg = Net_Decode_ClientServerMsg(buf[0]);
 		const int len = Net_GetLength_ClientServerMsg(msg);
@@ -650,6 +659,4 @@ Server_ProcessMessages(void)
 		buf += len;
 		count -= len;
 	}
-
-	g_client2server_message_len = 0;
 }

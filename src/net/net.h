@@ -23,4 +23,9 @@ extern void Net_Synchronise(void);
 extern bool Net_CreateServer(int port);
 extern bool Net_ConnectToServer(const char *hostname, int port);
 
+extern void Server_SendMessages(void);
+extern void Server_RecvMessages(void);
+extern void Client_SendMessages(void);
+extern void Client_RecvMessages(void);
+
 #endif

@@ -7,6 +7,7 @@
 #include "net.h"
 
 #include "client.h"
+#include "message.h"
 #include "server.h"
 #include "../house.h"
 #include "../opendune.h"
@@ -84,6 +85,8 @@ Server_Synchronise(void)
 	}
 
 	enet_host_service(s_host, NULL, 0); /* XXX */
+
+	Server_ResetCache();
 }
 
 static void
@@ -98,7 +101,7 @@ Client_Synchronise(void)
 
 	enet_peer_send(s_peer, 0, packet);
 
-	enet_host_service(s_host, NULL, 0); /* XXX */
+	Client_ResetCache();
 }
 
 void
@@ -189,4 +192,93 @@ Net_ConnectToServer(const char *hostname, int port)
 	}
 
 	return false;
+}
+
+/*--------------------------------------------------------------*/
+
+void
+Server_SendMessages(void)
+{
+	if (g_host_type != HOSTTYPE_DEDICATED_SERVER
+	 && g_host_type != HOSTTYPE_CLIENT_SERVER)
+		return;
+}
+
+void
+Server_RecvMessages(void)
+{
+	if (g_host_type == HOSTTYPE_DEDICATED_CLIENT)
+		return;
+
+	/* Process the local player's commands. */
+	if (g_host_type == HOSTTYPE_NONE
+	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		Server_ProcessMessage(g_playerHouseID,
+				g_client2server_message_buf, g_client2server_message_len);
+		g_client2server_message_len = 0;
+
+		if (g_host_type == HOSTTYPE_NONE)
+			return;
+	}
+
+	ENetEvent event;
+	while (enet_host_service(s_host, &event, 0) > 0) {
+		switch (event.type) {
+			case ENET_EVENT_TYPE_RECEIVE:
+				{
+					ENetPacket *packet = event.packet;
+					enum HouseType houseID = (enum HouseType)event.peer->data;
+					Server_ProcessMessage(houseID,
+							packet->data, packet->dataLength);
+					enet_packet_destroy(packet);
+				}
+				break;
+
+			case ENET_EVENT_TYPE_DISCONNECT:
+			case ENET_EVENT_TYPE_CONNECT:
+			case ENET_EVENT_TYPE_NONE:
+			default:
+				break;
+		}
+	}
+}
+
+void
+Client_SendMessages(void)
+{
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER)
+		return;
+
+	Client_Send_BuildQueue();
+}
+
+void
+Client_RecvMessages(void)
+{
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER) {
+		return;
+	}
+	else if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
+		Client_ChangeSelectionMode();
+		return;
+	}
+
+	ENetEvent event;
+	while (enet_host_service(s_host, &event, 0) > 0) {
+		switch (event.type) {
+			case ENET_EVENT_TYPE_RECEIVE:
+				break;
+
+			case ENET_EVENT_TYPE_DISCONNECT:
+				g_gameMode = GM_QUITGAME;
+				break;
+
+			case ENET_EVENT_TYPE_CONNECT:
+			case ENET_EVENT_TYPE_NONE:
+			default:
+				break;
+		}
+	}
+
+	Client_ChangeSelectionMode(); /* XXX */
 }

@@ -38,9 +38,6 @@
 static void
 GameLoop_Server_Logic(void)
 {
-	Server_ProcessMessages();
-	Client_ChangeSelectionMode();
-
 	UnitAI_SquadLoop();
 	GameLoop_Team();
 	GameLoop_Unit();
@@ -368,8 +365,14 @@ GameLoop_ProcessGameTimer(void)
 			}
 		}
 
-		Client_SendMessages();
-		GameLoop_Server_Logic();
+		if (g_host_type != HOSTTYPE_DEDICATED_SERVER) {
+			Client_SendMessages();
+		}
+
+		if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
+			Server_RecvMessages();
+			GameLoop_Server_Logic();
+		}
 	}
 
 	GameLoop_LevelEnd();
@@ -382,6 +385,7 @@ GameLoop_Loop(void)
 
 	while (g_gameMode == GM_NORMAL) {
 		const enum TimerType source = Timer_WaitForEvent();
+		Client_RecvMessages();
 
 		if (source == TIMER_GUI) {
 			redraw = true;
@@ -390,6 +394,8 @@ GameLoop_Loop(void)
 		else {
 			GameLoop_ProcessGameTimer();
 		}
+
+		Server_SendMessages();
 
 		if (redraw && Timer_QueueIsEmpty()) {
 			redraw = false;
