@@ -32,6 +32,7 @@
 #include "../input/mouse.h"
 #include "../load.h"
 #include "../map.h"
+#include "../net/net.h"
 #include "../newui/actionpanel.h"
 #include "../newui/halloffame.h"
 #include "../newui/menu.h"
@@ -1289,7 +1290,8 @@ GUI_DisplayHint(enum HouseType houseID, uint16 stringID, uint16 spriteID)
 			|| stringID == STR_NULL
 			|| !g_gameConfig.hints
 			|| houseID != g_playerHouseID
-			|| g_selectionType == SELECTIONTYPE_MENTAT)
+			|| g_selectionType == SELECTIONTYPE_MENTAT
+			|| g_host_type != HOSTTYPE_NONE)
 		return;
 
 	const uint16 hint
