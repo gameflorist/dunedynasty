@@ -18,6 +18,7 @@
 #include "input/mouse.h"
 #include "map.h"
 #include "net/client.h"
+#include "net/net.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
 #include "newui/menubar.h"

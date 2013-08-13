@@ -53,6 +53,7 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "input/input.h"
 #include "input/mouse.h"
 #include "map.h"
+#include "net/net.h"
 #include "newui/actionpanel.h"
 #include "newui/menu.h"
 #include "newui/menubar.h"
@@ -543,7 +544,6 @@ void GameLoop_Main(bool new_game)
 	}
 
 	Timer_ResetScriptTimers();
-	Timer_SetTimer(TIMER_GAME, true);
 
 	/* Note: original game chose only MUSIC_IDLE1 .. MUSIC_IDLE6. */
 	Audio_PlayMusic(MUSIC_STOP);
@@ -551,6 +551,9 @@ void GameLoop_Main(bool new_game)
 
 	g_gameMode = GM_NORMAL;
 	g_gameOverlay = GAMEOVERLAY_NONE;
+
+	Net_Synchronise();
+	Timer_SetTimer(TIMER_GAME, true);
 	Timer_RegisterSource();
 
 	GameLoop_Loop();
@@ -619,8 +622,18 @@ static bool Unknown_25C4_000E(void)
 
 int main(int argc, char **argv)
 {
-	VARIABLE_NOT_USED(argc);
-	VARIABLE_NOT_USED(argv);
+	if (argc > 1) {
+		Net_Initialise();
+
+		if (strcmp(argv[1], "server") == 0) {
+			if (!Net_CreateServer(DEFAULT_PORT))
+				return 0;
+		}
+		else {
+			if (!Net_ConnectToServer(argv[1], DEFAULT_PORT))
+				return 0;
+		}
+	}
 
 	CrashLog_Init();
 	FileHash_Init();
