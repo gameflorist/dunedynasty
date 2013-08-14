@@ -35,6 +35,8 @@
 #define SERVER_LOG(...)
 #endif
 
+static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
+
 /*--------------------------------------------------------------*/
 
 void
@@ -46,6 +48,8 @@ Server_ResetCache(void)
 		memset(g_server2client_message_buf[h], 0, MAX_SERVER_TO_CLIENT_MESSAGE_LEN);
 		g_server2client_message_len[h] = 0;
 	}
+
+	memset(s_mapCopy, 0, sizeof(s_mapCopy));
 }
 
 /*--------------------------------------------------------------*/
@@ -56,15 +60,48 @@ Server_Send_UpdateLandscape(unsigned char **buf)
 	const unsigned char * const end
 		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
 
-	const int len = 1 + sizeof(g_map);
+	const int header_len  = 1 + 2;
+	const int element_len = 2 + sizeof(Tile);
 
-	if (*buf + len >= end)
+	if (*buf + header_len + element_len >= end)
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_LANDSCAPE);
 
-	memcpy(*buf, g_map, sizeof(g_map));
-	(*buf) += sizeof(g_map);
+	unsigned char *buf_count = *buf;
+	uint16 count = 0;
+
+	(*buf) += 2; /* count */
+
+	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
+		if (*buf + element_len >= end)
+			break;
+
+		Tile d = g_map[packed];
+		d.hasAnimation = 0;
+		d.hasExplosion = 0;
+
+		if (memcmp(&s_mapCopy[packed], &d, sizeof(Tile)) == 0)
+			continue;
+
+		s_mapCopy[packed] = d;
+
+		Net_Encode_uint16(buf, packed);
+		memcpy(*buf, &d, sizeof(Tile));
+		(*buf) += sizeof(Tile);
+
+		count++;
+	}
+
+	if (count == 0) {
+		*buf = buf_count - 1;
+	}
+	else {
+		SERVER_LOG("tiles changed=%d, %lu bytes",
+				count, *buf - buf_count + 1);
+
+		Net_Encode_uint16(&buf_count, count);
+	}
 }
 
 void

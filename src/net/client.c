@@ -219,7 +219,10 @@ Client_Send_BuildQueue(void)
 static void
 Client_Recv_UpdateLandscape(const unsigned char **buf)
 {
-	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
+	const int count = Net_Decode_uint16(buf);
+
+	for (int i = 0; i < count; i++) {
+		const uint16 packed = Net_Decode_uint16(buf);
 		const Tile *s = (const Tile *)(*buf);
 		Tile *t = &g_map[packed];
 
