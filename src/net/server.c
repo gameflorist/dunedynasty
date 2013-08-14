@@ -8,11 +8,13 @@
 #include "server.h"
 
 #include "message.h"
+#include "net.h"
 #include "../audio/audio.h"
 #include "../enhancement.h"
 #include "../newui/actionpanel.h"
 #include "../gui/gui.h"
 #include "../house.h"
+#include "../map.h"
 #include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -47,6 +49,23 @@ Server_ResetCache(void)
 }
 
 /*--------------------------------------------------------------*/
+
+void
+Server_Send_UpdateLandscape(unsigned char **buf)
+{
+	const unsigned char * const end
+		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+
+	const int len = 1 + sizeof(g_map);
+
+	if (*buf + len >= end)
+		return;
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_LANDSCAPE);
+
+	memcpy(*buf, g_map, sizeof(g_map));
+	(*buf) += sizeof(g_map);
+}
 
 void
 Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority,

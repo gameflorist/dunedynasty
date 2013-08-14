@@ -10,6 +10,7 @@
 #include "net.h"
 #include "../gui/gui.h"
 #include "../house.h"
+#include "../map.h"
 #include "../newui/actionpanel.h"
 #include "../object.h"
 #include "../opendune.h"
@@ -215,6 +216,27 @@ Client_Send_BuildQueue(void)
 
 /*--------------------------------------------------------------*/
 
+static void
+Client_Recv_UpdateLandscape(const unsigned char **buf)
+{
+	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
+		const Tile *s = (const Tile *)(*buf);
+		Tile *t = &g_map[packed];
+
+		t->groundSpriteID   = s->groundSpriteID;
+		t->overlaySpriteID  = s->overlaySpriteID;
+		t->houseID          = s->houseID;
+		t->hasUnit          = s->hasUnit;
+		t->hasStructure     = s->hasStructure;
+		t->index            = s->index;
+
+		if (!t->isUnveiled && s->isUnveiled)
+			Map_UnveilTile(packed, g_playerHouseID);
+
+		(*buf) += sizeof(Tile);
+	}
+}
+
 void
 Client_ChangeSelectionMode(void)
 {
@@ -246,5 +268,33 @@ Client_ChangeSelectionMode(void)
 		l_houseMissileWasActive = false;
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 		return;
+	}
+}
+
+void
+Client_ProcessMessage(const unsigned char *buf, int count)
+{
+	while (count > 0) {
+		const enum ServerClientMsg msg = Net_Decode_ServerClientMsg(buf[0]);
+		const unsigned char * const buf0 = buf+1;
+
+		buf++;
+		count--;
+
+		switch (msg) {
+			case SCMSG_DISCONNECT:
+				break;
+
+			case SCMSG_UPDATE_LANDSCAPE:
+				Client_Recv_UpdateLandscape(&buf);
+				break;
+
+			case SCMSG_MAX:
+			case SCMSG_INVALID:
+			default:
+				break;
+		}
+
+		count -= (buf - buf0);
 	}
 }

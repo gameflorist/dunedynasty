@@ -30,6 +30,8 @@ enum ClientServerMsg {
 enum ServerClientMsg {
 	SCMSG_DISCONNECT,
 
+	SCMSG_UPDATE_LANDSCAPE,
+
 	SCMSG_MAX,
 	SCMSG_INVALID
 };

@@ -22,5 +22,6 @@ extern void Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const st
 extern void Client_Send_BuildQueue(void);
 
 extern void Client_ChangeSelectionMode(void);
+extern void Client_ProcessMessage(const unsigned char *buf, int count);
 
 #endif

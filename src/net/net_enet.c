@@ -202,6 +202,20 @@ Server_SendMessages(void)
 	if (g_host_type != HOSTTYPE_DEDICATED_SERVER
 	 && g_host_type != HOSTTYPE_CLIENT_SERVER)
 		return;
+
+	unsigned char *buf = g_server_broadcast_message_buf;
+
+	Server_Send_UpdateLandscape(&buf);
+
+	const int len = buf - g_server_broadcast_message_buf;
+
+	NET_LOG("packet size=%d, num outgoing packets=%lu",
+			len, enet_list_size(&s_host->peers[0].outgoingReliableCommands));
+
+	ENetPacket *packet
+		= enet_packet_create(g_server_broadcast_message_buf, len,
+				ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(s_host, 0, packet);
 }
 
 void
@@ -267,6 +281,11 @@ Client_RecvMessages(void)
 	while (enet_host_service(s_host, &event, 0) > 0) {
 		switch (event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
+				{
+					ENetPacket *packet = event.packet;
+					Client_ProcessMessage(packet->data, packet->dataLength);
+					enet_packet_destroy(packet);
+				}
 				break;
 
 			case ENET_EVENT_TYPE_DISCONNECT:
