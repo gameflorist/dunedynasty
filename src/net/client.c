@@ -240,6 +240,34 @@ Client_Recv_UpdateLandscape(const unsigned char **buf)
 	}
 }
 
+static void
+Client_Recv_UpdateStructures(const unsigned char **buf)
+{
+	for (int i = 0; i < STRUCTURE_INDEX_MAX_HARD; i++) {
+		Structure *s = Structure_Get_ByIndex(i);
+		Object *o = &s->o;
+
+		o->index        = i;
+		o->type         = Net_Decode_uint8 (buf);
+		o->linkedID     = Net_Decode_uint8 (buf);
+		o->flags.all    = Net_Decode_uint32(buf);
+		o->houseID      = Net_Decode_uint8 (buf);
+		o->position.x   = Net_Decode_uint16(buf);
+		o->position.y   = Net_Decode_uint16(buf);
+		o->hitpoints    = Net_Decode_uint16(buf);
+
+		s->creatorHouseID       = Net_Decode_uint8 (buf);
+		s->rotationSpriteDiff   = Net_Decode_uint16(buf);
+		s->objectType           = Net_Decode_uint16(buf);
+		s->upgradeLevel         = Net_Decode_uint8 (buf);
+		s->upgradeTimeLeft      = Net_Decode_uint8 (buf);
+		s->countDown            = Net_Decode_uint16(buf);
+		s->rallyPoint           = Net_Decode_uint16(buf);
+	}
+
+	Structure_Recount();
+}
+
 void
 Client_ChangeSelectionMode(void)
 {
@@ -290,6 +318,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_UPDATE_LANDSCAPE:
 				Client_Recv_UpdateLandscape(&buf);
+				break;
+
+			case SCMSG_UPDATE_STRUCTURES:
+				Client_Recv_UpdateStructures(&buf);
 				break;
 
 			case SCMSG_MAX:

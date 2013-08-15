@@ -8,6 +8,7 @@
 extern void Server_ResetCache(void);
 
 extern void Server_Send_UpdateLandscape(unsigned char **buf);
+extern void Server_Send_UpdateStructures(unsigned char **buf);
 extern void Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority, uint16 str1);
 extern void Server_Send_StatusMessage2(enum HouseFlag houses, uint8 priority, uint16 str1, uint16 str2);
 extern void Server_Send_StatusMessage3(enum HouseFlag houses, uint8 priority, uint16 str1, uint16 str2, uint16 str3);

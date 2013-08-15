@@ -105,6 +105,43 @@ Server_Send_UpdateLandscape(unsigned char **buf)
 }
 
 void
+Server_Send_UpdateStructures(unsigned char **buf)
+{
+	const unsigned char * const end
+		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+
+	const int len = 1 + STRUCTURE_INDEX_MAX_HARD * (13 + 11);
+
+	if (*buf + len >= end)
+		return;
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_STRUCTURES);
+
+	for (int i = 0; i < STRUCTURE_INDEX_MAX_HARD; i++) {
+		const Structure *s = Structure_Get_ByIndex(i);
+		const Object *o = &s->o;
+
+		/* 13 bytes. */
+		Net_Encode_uint8 (buf, o->type);
+		Net_Encode_uint8 (buf, o->linkedID);
+		Net_Encode_uint32(buf, o->flags.all);
+		Net_Encode_uint8 (buf, o->houseID);
+		Net_Encode_uint16(buf, o->position.x);
+		Net_Encode_uint16(buf, o->position.y);
+		Net_Encode_uint16(buf, o->hitpoints);
+
+		/* 11 bytes. */
+		Net_Encode_uint8 (buf, s->creatorHouseID);
+		Net_Encode_uint16(buf, s->rotationSpriteDiff);
+		Net_Encode_uint16(buf, s->objectType);
+		Net_Encode_uint8 (buf, s->upgradeLevel);
+		Net_Encode_uint8 (buf, s->upgradeTimeLeft);
+		Net_Encode_uint16(buf, s->countDown);
+		Net_Encode_uint16(buf, s->rallyPoint);
+	}
+}
+
+void
 Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority,
 		uint16 str)
 {

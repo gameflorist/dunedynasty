@@ -206,6 +206,7 @@ Server_SendMessages(void)
 	unsigned char *buf = g_server_broadcast_message_buf;
 
 	Server_Send_UpdateLandscape(&buf);
+	Server_Send_UpdateStructures(&buf);
 
 	const int len = buf - g_server_broadcast_message_buf;
 
