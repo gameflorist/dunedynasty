@@ -35,9 +35,50 @@
 #define SERVER_LOG(...)
 #endif
 
+typedef struct StructureDelta {
+	uint8       type;
+	uint8       linkedID;
+	ObjectFlags flags;
+	uint8       houseID;
+	tile32      position;
+	uint16      hitpoints;
+
+	uint8       creatorHouse;
+	uint16      rotationSprite;
+	uint8       objectType;
+	uint8       upgradeLevel;
+	uint8       upgradeTime;
+	uint16      countDown;
+	uint16      rallyPoint;
+} StructureDelta;
+
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
+static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
 
 /*--------------------------------------------------------------*/
+
+static void
+Server_InitStructureDelta(const Structure *s, StructureDelta *d)
+{
+	const Object *o = &s->o;
+
+	memset(d, 0, sizeof(StructureDelta));
+
+	d->type         = o->type;
+	d->linkedID     = o->linkedID;
+	d->flags        = o->flags;
+	d->houseID      = o->houseID;
+	d->position     = o->position;
+	d->hitpoints    = o->hitpoints;
+
+	d->creatorHouse     = s->creatorHouseID;
+	d->rotationSprite   = s->rotationSpriteDiff;
+	d->objectType       = s->objectType;
+	d->upgradeLevel     = s->upgradeLevel;
+	d->upgradeTime      = s->upgradeTimeLeft;
+	d->countDown        = s->countDown;
+	d->rallyPoint       = s->rallyPoint;
+}
 
 void
 Server_ResetCache(void)
@@ -50,6 +91,7 @@ Server_ResetCache(void)
 	}
 
 	memset(s_mapCopy, 0, sizeof(s_mapCopy));
+	memset(s_structureCopy, 0, sizeof(s_structureCopy));
 }
 
 /*--------------------------------------------------------------*/
@@ -110,34 +152,63 @@ Server_Send_UpdateStructures(unsigned char **buf)
 	const unsigned char * const end
 		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
 
-	const int len = 1 + STRUCTURE_INDEX_MAX_HARD * (13 + 11);
+	const int header_len  = 1 + 1;
+	const int element_len = 2 + 13 + 10;
 
-	if (*buf + len >= end)
+	if (*buf + header_len + element_len >= end)
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_STRUCTURES);
 
+	unsigned char *buf_count = *buf;
+	uint8 count = 0;
+
+	(*buf) += 1; /* count */
+
 	for (int i = 0; i < STRUCTURE_INDEX_MAX_HARD; i++) {
+		if (*buf + element_len >= end)
+			break;
+
 		const Structure *s = Structure_Get_ByIndex(i);
-		const Object *o = &s->o;
+		StructureDelta d;
+
+		Server_InitStructureDelta(s, &d);
+		if (memcmp(&s_structureCopy[i], &d, sizeof(StructureDelta)) == 0)
+			continue;
+
+		memcpy(&s_structureCopy[i], &d, sizeof(StructureDelta));
+
+		Net_Encode_ObjectIndex(buf, &s->o);
 
 		/* 13 bytes. */
-		Net_Encode_uint8 (buf, o->type);
-		Net_Encode_uint8 (buf, o->linkedID);
-		Net_Encode_uint32(buf, o->flags.all);
-		Net_Encode_uint8 (buf, o->houseID);
-		Net_Encode_uint16(buf, o->position.x);
-		Net_Encode_uint16(buf, o->position.y);
-		Net_Encode_uint16(buf, o->hitpoints);
+		Net_Encode_uint8 (buf, d.type);
+		Net_Encode_uint8 (buf, d.linkedID);
+		Net_Encode_uint32(buf, d.flags.all);
+		Net_Encode_uint8 (buf, d.houseID);
+		Net_Encode_uint16(buf, d.position.x);
+		Net_Encode_uint16(buf, d.position.y);
+		Net_Encode_uint16(buf, d.hitpoints);
 
-		/* 11 bytes. */
-		Net_Encode_uint8 (buf, s->creatorHouseID);
-		Net_Encode_uint16(buf, s->rotationSpriteDiff);
-		Net_Encode_uint16(buf, s->objectType);
-		Net_Encode_uint8 (buf, s->upgradeLevel);
-		Net_Encode_uint8 (buf, s->upgradeTimeLeft);
-		Net_Encode_uint16(buf, s->countDown);
-		Net_Encode_uint16(buf, s->rallyPoint);
+		/* 10 bytes. */
+		Net_Encode_uint8 (buf, d.creatorHouse);
+		Net_Encode_uint16(buf, d.rotationSprite);
+		Net_Encode_uint8 (buf, d.objectType);
+		Net_Encode_uint8 (buf, d.upgradeLevel);
+		Net_Encode_uint8 (buf, d.upgradeTime);
+		Net_Encode_uint16(buf, d.countDown);
+		Net_Encode_uint16(buf, d.rallyPoint);
+
+		count++;
+	}
+
+	if (count == 0) {
+		*buf = buf_count - 1;
+	}
+	else {
+		SERVER_LOG("structures changed=%d, %lu bytes",
+				count, *buf - buf_count + 1);
+
+		Net_Encode_uint8(&buf_count, count);
 	}
 }
 

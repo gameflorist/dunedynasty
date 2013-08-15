@@ -243,11 +243,14 @@ Client_Recv_UpdateLandscape(const unsigned char **buf)
 static void
 Client_Recv_UpdateStructures(const unsigned char **buf)
 {
-	for (int i = 0; i < STRUCTURE_INDEX_MAX_HARD; i++) {
-		Structure *s = Structure_Get_ByIndex(i);
+	const int count = Net_Decode_uint8(buf);
+
+	for (int i = 0; i < count; i++) {
+		const uint16 index = Net_Decode_ObjectIndex(buf);
+		Structure *s = Structure_Get_ByIndex(index);
 		Object *o = &s->o;
 
-		o->index        = i;
+		o->index        = index;
 		o->type         = Net_Decode_uint8 (buf);
 		o->linkedID     = Net_Decode_uint8 (buf);
 		o->flags.all    = Net_Decode_uint32(buf);
@@ -258,11 +261,14 @@ Client_Recv_UpdateStructures(const unsigned char **buf)
 
 		s->creatorHouseID       = Net_Decode_uint8 (buf);
 		s->rotationSpriteDiff   = Net_Decode_uint16(buf);
-		s->objectType           = Net_Decode_uint16(buf);
+		s->objectType           = Net_Decode_uint8 (buf);
 		s->upgradeLevel         = Net_Decode_uint8 (buf);
 		s->upgradeTimeLeft      = Net_Decode_uint8 (buf);
 		s->countDown            = Net_Decode_uint16(buf);
 		s->rallyPoint           = Net_Decode_uint16(buf);
+
+		if (s->objectType == 0xFF)
+			s->objectType = 0xFFFF;
 	}
 
 	Structure_Recount();
