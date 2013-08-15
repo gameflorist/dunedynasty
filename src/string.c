@@ -139,49 +139,45 @@ String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int
 	buf = File_ReadWholeFile_Ex(dir, String_GenerateFilename(filename));
 	count = READ_LE_UINT16(buf) / 2;
 
-	if (end >= 0)
-		count = min(count, end - start + 1);
+	if (end < 0)
+		end = start + count - 1;
 
-	if (start + count > s_stringsCount) {
-		s_strings = (char **)realloc(s_strings, (start + count) * sizeof(s_strings[0]));
+	if (s_stringsCount < end + 1) {
+		s_strings = (char **)realloc(s_strings, (end + 1) * sizeof(char *));
+		assert(s_strings != NULL);
 
-		for (i = s_stringsCount; i < start + count; i++)
+		for (i = s_stringsCount; i <= end; i++)
 			s_strings[i] = NULL;
 
 		if (s_strings[0] == NULL)
 			s_strings[0] = strdup("");
 
-		s_stringsCount = start + count;
+		s_stringsCount = end + 1;
 	}
 
-	for (i = 0, j = 0; j < count; i++, j++) {
-		const char *src = (const char *)buf + READ_LE_UINT16(buf + i * 2);
-		char *dst = NULL;
-
-		if (strlen(src) == 0) {
-			j--;
+	for (i = 0, j = start; i < count && j <= end; i++) {
+		if ((s_strings[j] != NULL) && !String_IsOverridable(j))
 			continue;
-		}
 
+		const char *src = (const char *)buf + READ_LE_UINT16(buf + i * 2);
+		char *dst;
 		if (compressed) {
 			dst = (char *)calloc(strlen(src) * 2 + 1, sizeof(char));
 			String_Decompress(src, dst);
 			String_TranslateSpecial(dst, dst);
 		}
-
-		if (s_strings[start + j] != NULL) {
-			if (String_IsOverridable(start + j)) {
-				free(s_strings[start + j]);
-			}
-			else {
-				continue;
-			}
+		else {
+			dst = strdup(src);
 		}
 
-		if (dst == NULL)
-			dst = strdup(src);
+		String_Trim(dst);
+		if (strlen(dst) == 0) {
+			free(dst);
+			continue;
+		}
 
-		s_strings[start + j] = dst;
+		free(s_strings[j]);
+		s_strings[j++] = dst;
 	}
 
 	free(buf);
