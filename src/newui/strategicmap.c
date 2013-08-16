@@ -122,10 +122,12 @@ StrategicMap_DrawEmblem(unsigned char emblemID)
 static void
 StrategicMap_DrawBackground(enum HouseType houseID)
 {
-	const enum CPSID conquest =
-		(g_gameConfig.language == LANGUAGE_FRENCH) ? CPS_CONQUEST_FR :
-		(g_gameConfig.language == LANGUAGE_GERMAN) ? CPS_CONQUEST_DE :
-		CPS_CONQUEST_EN;
+	const enum CPSID conquest
+		= (g_gameConfig.language == LANGUAGE_FRENCH) ? CPS_CONQUEST_FR
+		: (g_gameConfig.language == LANGUAGE_GERMAN) ? CPS_CONQUEST_DE
+		: (g_gameConfig.language == LANGUAGE_ITALIAN) ? CPS_CONQUEST_FR
+		: (g_gameConfig.language == LANGUAGE_SPANISH) ? CPS_CONQUEST_DE
+		: CPS_CONQUEST_EN;
 
 	Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, "MAPMACH.CPS");
 	StrategicMap_DrawEmblem(g_campaign_list[g_campaign_selected].mapmach_cps[houseID]);

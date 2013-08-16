@@ -67,19 +67,19 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 		centred = true;
 	}
 
-	if (centred) {
-		GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(w->stringID), positionX + (width / 2), positionY + 2, colour, 0, 0x122);
-	} else {
-		GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(w->stringID), positionX + 3, positionY + 2, colour, 0, 0x22);
-	}
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+	const int x = centred ? (positionX + width / 2) : (positionX + 3);
+	const int flags = centred ? 0x122 : 0x22;
 
-#if 0
-	if (oldScreenID == SCREEN_0) {
-		GUI_Mouse_Hide_InRegion(positionX, positionY, positionX + width, positionY + height);
-		GUI_Screen_Copy(positionX >> 3, positionY, positionX >> 3, positionY, width >> 3, height, SCREEN_1, SCREEN_0);
-		GUI_Mouse_Show_InRegion();
-	}
-#endif
+	Video_SetClippingArea(div->scalex * positionX + div->x,
+			div->scaley * positionY + div->y,
+			div->scalex * width,
+			div->scaley * height);
+
+	GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(w->stringID),
+			x, positionY + 2, colour, 0, flags);
+
+	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
 	GFX_Screen_SetActive(oldScreenID);
 }
@@ -869,7 +869,8 @@ GUI_Widget_DrawWindow(const WindowDesc *desc)
 	for (int i = 0; i < desc->widgetCount; i++) {
 		const Widget *w = &g_table_windowWidgets[i];
 
-		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+		if (g_gameConfig.language == LANGUAGE_FRENCH
+		 || g_gameConfig.language == LANGUAGE_ITALIAN) {
 			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), wi->xBase + 40 - 24, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
 		}
 		else {

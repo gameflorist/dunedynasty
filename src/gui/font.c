@@ -129,7 +129,8 @@ bool Font_Init(void)
 {
 	g_fontIntro = Font_LoadFile("INTRO.FNT");
 
-	if (g_gameConfig.language == LANGUAGE_GERMAN)
+	if (g_gameConfig.language == LANGUAGE_GERMAN
+	 || g_gameConfig.language == LANGUAGE_SPANISH)
 		g_fontNew6p = Font_LoadFile("NEW6PG.FNT");
 
 	if (g_fontNew6p == NULL)
