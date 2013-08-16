@@ -52,8 +52,27 @@ typedef struct StructureDelta {
 	uint16      rallyPoint;
 } StructureDelta;
 
+typedef struct UnitDelta {
+	uint8   type;
+	ObjectFlags flags;
+	uint8   houseID;
+	tile32  position;
+	uint16  hitpoints;
+
+	uint8   actionID;
+	uint8   nextActionID;
+	uint8   amount;
+	uint8   deviated;
+	uint8   deviatedHouse;
+	int8    orientation0_current;
+	int8    orientation1_current;
+	uint8   wobbleIndex;
+	uint8   spriteOffset;
+} UnitDelta;
+
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
+static UnitDelta s_unitCopy[UNIT_INDEX_MAX];
 
 /*--------------------------------------------------------------*/
 
@@ -80,6 +99,30 @@ Server_InitStructureDelta(const Structure *s, StructureDelta *d)
 	d->rallyPoint       = s->rallyPoint;
 }
 
+static void
+Server_InitUnitDelta(const Unit *u, UnitDelta *d)
+{
+	const Object *o = &u->o;
+
+	memset(d, 0, sizeof(UnitDelta));
+
+	d->type         = o->type;
+	d->flags.all    = o->flags.all;
+	d->houseID      = o->houseID;
+	d->position     = o->position;
+	d->hitpoints    = o->hitpoints;
+
+	d->actionID             = u->actionID;
+	d->nextActionID         = u->nextActionID;
+	d->amount               = u->amount;
+	d->deviated             = u->deviated;
+	d->deviatedHouse        = u->deviatedHouse;
+	d->orientation0_current = u->orientation[0].current;
+	d->orientation1_current = u->orientation[1].current;
+	d->wobbleIndex          = u->wobbleIndex;
+	d->spriteOffset         = u->spriteOffset;
+}
+
 void
 Server_ResetCache(void)
 {
@@ -92,6 +135,7 @@ Server_ResetCache(void)
 
 	memset(s_mapCopy, 0, sizeof(s_mapCopy));
 	memset(s_structureCopy, 0, sizeof(s_structureCopy));
+	memset(s_unitCopy, 0, sizeof(s_unitCopy));
 }
 
 /*--------------------------------------------------------------*/
@@ -218,35 +262,64 @@ Server_Send_UpdateUnits(unsigned char **buf)
 	const unsigned char * const end
 		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
 
-	const int len = 1 + UNIT_INDEX_MAX * (12 + 9);
+	const int header_len  = 1 + 1;
+	const int element_len = 2 + 12 + 9;
 
-	if (*buf + len >= end)
+	if (*buf + header_len + element_len >= end)
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_UNITS);
 
+	unsigned char *buf_count = *buf;
+	uint8 count = 0;
+
+	(*buf) += 1; /* count */
+
 	for (int i = 0; i < UNIT_INDEX_MAX; i++) {
+		if (*buf + element_len >= end)
+			break;
+
 		const Unit *u = Unit_Get_ByIndex(i);
-		const Object *o = &u->o;
+		UnitDelta d;
+
+		Server_InitUnitDelta(u, &d);
+		if (memcmp(&s_unitCopy[i], &d, sizeof(UnitDelta)) == 0)
+			continue;
+
+		memcpy(&s_unitCopy[i], &d, sizeof(UnitDelta));
+
+		Net_Encode_ObjectIndex(buf, &u->o);
 
 		/* 12 bytes. */
-		Net_Encode_uint8 (buf, o->type);
-		Net_Encode_uint32(buf, o->flags.all);
-		Net_Encode_uint8 (buf, o->houseID);
-		Net_Encode_uint16(buf, o->position.x);
-		Net_Encode_uint16(buf, o->position.y);
-		Net_Encode_uint16(buf, o->hitpoints);
+		Net_Encode_uint8 (buf, d.type);
+		Net_Encode_uint32(buf, d.flags.all);
+		Net_Encode_uint8 (buf, d.houseID);
+		Net_Encode_uint16(buf, d.position.x);
+		Net_Encode_uint16(buf, d.position.y);
+		Net_Encode_uint16(buf, d.hitpoints);
 
 		/* 9 bytes. */
-		Net_Encode_uint8 (buf, u->actionID);
-		Net_Encode_uint8 (buf, u->nextActionID);
-		Net_Encode_uint8 (buf, u->amount);
-		Net_Encode_uint8 (buf, u->deviated);
-		Net_Encode_uint8 (buf, u->deviatedHouse);
-		Net_Encode_uint8 (buf, u->orientation[0].current);
-		Net_Encode_uint8 (buf, u->orientation[1].current);
-		Net_Encode_uint8 (buf, u->wobbleIndex);
-		Net_Encode_uint8 (buf, u->spriteOffset);
+		Net_Encode_uint8 (buf, d.actionID);
+		Net_Encode_uint8 (buf, d.nextActionID);
+		Net_Encode_uint8 (buf, d.amount);
+		Net_Encode_uint8 (buf, d.deviated);
+		Net_Encode_uint8 (buf, d.deviatedHouse);
+		Net_Encode_uint8 (buf, d.orientation0_current);
+		Net_Encode_uint8 (buf, d.orientation1_current);
+		Net_Encode_uint8 (buf, d.wobbleIndex);
+		Net_Encode_uint8 (buf, d.spriteOffset);
+
+		count++;
+	}
+
+	if (count == 0) {
+		*buf = buf_count - 1;
+	}
+	else {
+		SERVER_LOG("units changed=%d, %lu bytes",
+				count, *buf - buf_count + 1);
+
+		Net_Encode_uint8(&buf_count, count);
 	}
 }
 

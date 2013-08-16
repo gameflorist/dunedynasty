@@ -277,14 +277,16 @@ Client_Recv_UpdateStructures(const unsigned char **buf)
 static void
 Client_Recv_UpdateUnits(const unsigned char **buf)
 {
+	const int count = Net_Decode_uint8(buf);
 	bool recount = false;
 
-	for (int i = 0; i < UNIT_INDEX_MAX; i++) {
-		Unit *u = Unit_Get_ByIndex(i);
+	for (int i = 0; i < count; i++) {
+		const uint16 index = Net_Decode_ObjectIndex(buf);
+		Unit *u = Unit_Get_ByIndex(index);
 		Object *o = &u->o;
 		const bool was_used = o->flags.s.used;
 
-		o->index        = i;
+		o->index        = index;
 		o->type         = Net_Decode_uint8 (buf);
 		o->flags.all    = Net_Decode_uint32(buf);
 		o->houseID      = Net_Decode_uint8 (buf);
