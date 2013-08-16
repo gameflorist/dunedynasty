@@ -45,6 +45,12 @@ GameLoop_Server_Logic(void)
 	GameLoop_House();
 }
 
+static void
+GameLoop_Client_Logic(void)
+{
+	Unit_Sort();
+}
+
 /*--------------------------------------------------------------*/
 
 /* Process input not caught by widgets, including keypad scrolling,
@@ -372,6 +378,9 @@ GameLoop_ProcessGameTimer(void)
 		if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
 			Server_RecvMessages();
 			GameLoop_Server_Logic();
+		}
+		else {
+			GameLoop_Client_Logic();
 		}
 	}
 

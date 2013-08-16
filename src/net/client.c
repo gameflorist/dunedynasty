@@ -274,6 +274,44 @@ Client_Recv_UpdateStructures(const unsigned char **buf)
 	Structure_Recount();
 }
 
+static void
+Client_Recv_UpdateUnits(const unsigned char **buf)
+{
+	bool recount = false;
+
+	for (int i = 0; i < UNIT_INDEX_MAX; i++) {
+		Unit *u = Unit_Get_ByIndex(i);
+		Object *o = &u->o;
+		const bool was_used = o->flags.s.used;
+
+		o->index        = i;
+		o->type         = Net_Decode_uint8 (buf);
+		o->flags.all    = Net_Decode_uint32(buf);
+		o->houseID      = Net_Decode_uint8 (buf);
+		o->position.x   = Net_Decode_uint16(buf);
+		o->position.y   = Net_Decode_uint16(buf);
+		o->hitpoints    = Net_Decode_uint16(buf);
+
+		u->actionID     = Net_Decode_uint8(buf);
+		u->nextActionID = Net_Decode_uint8(buf);
+		u->amount       = Net_Decode_uint8(buf);
+		u->deviated     = Net_Decode_uint8(buf);
+		u->deviatedHouse= Net_Decode_uint8(buf);
+		u->orientation[0].current   = Net_Decode_uint8(buf);
+		u->orientation[1].current   = Net_Decode_uint8(buf);
+		u->wobbleIndex  = Net_Decode_uint8(buf);
+		u->spriteOffset = Net_Decode_uint8(buf);
+
+		/* XXX -- Smooth animation not yet implemented. */
+		u->lastPosition = o->position;
+
+		recount = recount || (was_used != o->flags.s.used);
+	}
+
+	if (recount)
+		Unit_Recount();
+}
+
 void
 Client_ChangeSelectionMode(void)
 {
@@ -328,6 +366,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_UPDATE_STRUCTURES:
 				Client_Recv_UpdateStructures(&buf);
+				break;
+
+			case SCMSG_UPDATE_UNITS:
+				Client_Recv_UpdateUnits(&buf);
 				break;
 
 			case SCMSG_MAX:

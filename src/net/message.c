@@ -26,6 +26,7 @@ static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'X', /* SCMSG_DISCONNECT */
 	'L', /* SCMSG_UPDATE_LANDSCAPE */
 	'S', /* SCMSG_UPDATE_STRUCTURES */
+	'U', /* SCMSG_UPDATE_UNITS */
 };
 
 unsigned char g_server_broadcast_message_buf[MAX_SERVER_BROADCAST_MESSAGE_LEN];

@@ -213,6 +213,44 @@ Server_Send_UpdateStructures(unsigned char **buf)
 }
 
 void
+Server_Send_UpdateUnits(unsigned char **buf)
+{
+	const unsigned char * const end
+		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+
+	const int len = 1 + UNIT_INDEX_MAX * (12 + 9);
+
+	if (*buf + len >= end)
+		return;
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_UNITS);
+
+	for (int i = 0; i < UNIT_INDEX_MAX; i++) {
+		const Unit *u = Unit_Get_ByIndex(i);
+		const Object *o = &u->o;
+
+		/* 12 bytes. */
+		Net_Encode_uint8 (buf, o->type);
+		Net_Encode_uint32(buf, o->flags.all);
+		Net_Encode_uint8 (buf, o->houseID);
+		Net_Encode_uint16(buf, o->position.x);
+		Net_Encode_uint16(buf, o->position.y);
+		Net_Encode_uint16(buf, o->hitpoints);
+
+		/* 9 bytes. */
+		Net_Encode_uint8 (buf, u->actionID);
+		Net_Encode_uint8 (buf, u->nextActionID);
+		Net_Encode_uint8 (buf, u->amount);
+		Net_Encode_uint8 (buf, u->deviated);
+		Net_Encode_uint8 (buf, u->deviatedHouse);
+		Net_Encode_uint8 (buf, u->orientation[0].current);
+		Net_Encode_uint8 (buf, u->orientation[1].current);
+		Net_Encode_uint8 (buf, u->wobbleIndex);
+		Net_Encode_uint8 (buf, u->spriteOffset);
+	}
+}
+
+void
 Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority,
 		uint16 str)
 {
