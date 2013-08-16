@@ -20,6 +20,7 @@
 #include "../scenario.h"
 #include "../sprites.h"
 #include "../string.h"
+#include "../table/locale.h"
 #include "../table/sound.h"
 #include "../timer/timer.h"
 #include "../video/video.h"
@@ -286,7 +287,9 @@ StrategicMap_ReadProgression(enum HouseType houseID, int campaignID, StrategicMa
 			const int region = atoi(s);
 
 			if (region != 0) {
-				snprintf(key, sizeof(key), "%sTXT%d", g_languageSuffixes[g_gameConfig.language], region);
+				snprintf(key, sizeof(key), "%sTXT%d",
+						g_table_languageInfo[g_gameConfig.language].suffix,
+						region);
 				Ini_GetString(category, key, NULL, map->progression[count].text, sizeof(map->progression[count].text), g_fileRegionINI);
 
 				/* Attempt non-language-specific TXT. */

@@ -1,0 +1,15 @@
+#ifndef ENUM_LANGUAGE_H
+#define ENUM_LANGUAGE_H
+
+enum Language {
+	LANGUAGE_ENGLISH    = 0,
+	LANGUAGE_FRENCH     = 1,
+	LANGUAGE_GERMAN     = 2,
+	LANGUAGE_ITALIAN    = 3,
+	LANGUAGE_SPANISH    = 4,
+
+	LANGUAGE_MAX        = 5,
+	LANGUAGE_INVALID    = 0xFF
+};
+
+#endif

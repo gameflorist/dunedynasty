@@ -6,21 +6,6 @@
 #include <stdbool.h>
 #include "enumeration.h"
 
-/**
- * Types of Language available in the game.
- */
-enum Language {
-	LANGUAGE_ENGLISH     = 0,
-	LANGUAGE_FRENCH      = 1,
-	LANGUAGE_GERMAN      = 2,
-	LANGUAGE_ITALIAN     = 3,
-	LANGUAGE_SPANISH     = 4,
-
-	LANGUAGE_MAX         = 5,
-	LANGUAGE_INVALID     = 0xFF
-};
-
-extern const char * const g_languageSuffixes[LANGUAGE_MAX];
 extern const char * const g_gameSubtitle[3];
 
 extern uint16 String_Decompress(const char *source, char *dest);

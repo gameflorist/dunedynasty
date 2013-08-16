@@ -81,6 +81,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/table/houseanimation.c
 	src/table/houseinfo.c
 	src/table/landscapeinfo.c
+	src/table/locale.c
 	src/table/movementtype.c
 	src/table/selectiontype.c
 	src/table/sound.c

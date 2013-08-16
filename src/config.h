@@ -3,6 +3,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "enum_language.h"
+
 enum WindowMode {
 	WM_WINDOWED,
 	WM_FULLSCREEN,
@@ -11,7 +13,7 @@ enum WindowMode {
 
 typedef struct GameCfg {
 	enum WindowMode windowMode;
-	unsigned int language;
+	enum Language language;
 	int gameSpeed;
 	bool hints;
 	bool autoScroll;

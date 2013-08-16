@@ -22,12 +22,12 @@
 #include "house.h"
 #include "opendune.h"
 #include "scenario.h"
+#include "table/locale.h"
 
 static char **s_strings = NULL;
 static uint16 s_stringsCount = 0;
 static char *s_strings_mentat[HOUSE_MAX][40];
 
-const char * const g_languageSuffixes[LANGUAGE_MAX] = { "ENG", "FRE", "GER", "ITA", "SPA" };
 const char * const g_gameSubtitle[] = {
 	"The Battle for Arrakis",
 	"The Building of A Dynasty",
@@ -73,9 +73,8 @@ const char *String_GenerateFilename(const char *name)
 {
 	static char filename[14];
 
-	assert(g_gameConfig.language < lengthof(g_languageSuffixes));
-
-	snprintf(filename, sizeof(filename), "%s.%s", name, g_languageSuffixes[g_gameConfig.language]);
+	snprintf(filename, sizeof(filename), "%s.%s",
+			name, g_table_languageInfo[g_gameConfig.language].suffix);
 	return filename;
 }
 
@@ -212,7 +211,9 @@ String_ReloadCampaignStrings(void)
 			continue;
 
 		char filename[10];
-		snprintf(filename, sizeof(filename), "TEXT%c.%s", g_table_houseInfo[houseID].name[0], g_languageSuffixes[g_gameConfig.language]);
+		snprintf(filename, sizeof(filename), "TEXT%c.%s",
+				g_table_houseInfo[houseID].name[0],
+				g_table_languageInfo[g_gameConfig.language].suffix);
 
 		if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, filename))
 			continue;

@@ -17,6 +17,7 @@
 #include "opendune.h"
 #include "scenario.h"
 #include "string.h"
+#include "table/locale.h"
 #include "video/video.h"
 
 #define CONFIG_FILENAME "dunedynasty.cfg"
@@ -356,11 +357,10 @@ Config_SetInt(ALLEGRO_CONFIG *config, const char *section, const char *key, int 
 static void
 Config_GetLanguage(const char *str, enum Language *value)
 {
-	for (enum Language lang = LANGUAGE_ENGLISH; lang < LANGUAGE_MAX; lang++) {
-		const char c_upper = g_languageSuffixes[lang][0];
-		const char c_lower = c_upper - 'A' + 'a';
+	const char c = toupper(str[0]);
 
-		if (str[0] == c_upper || str[0] == c_lower) {
+	for (enum Language lang = LANGUAGE_ENGLISH; lang < LANGUAGE_MAX; lang++) {
+		if (c == g_table_languageInfo[lang].name[0]) {
 			*value = lang;
 			return;
 		}
@@ -373,7 +373,7 @@ Config_SetLanguage(ALLEGRO_CONFIG *config, const char *section, const char *key,
 	if (value >= LANGUAGE_MAX)
 		value = LANGUAGE_ENGLISH;
 
-	al_set_config_value(config, section, key, g_languageSuffixes[value]);
+	al_set_config_value(config, section, key, g_table_languageInfo[value].name);
 }
 
 static void
