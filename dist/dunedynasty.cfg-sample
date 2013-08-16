@@ -5,6 +5,7 @@
 # C:\users\nobody\Application Data\Dune Dynasty\data
 
 [game]
+# language is one of: ENG, FRE, GER, ITA, SPA
 language=ENG
 game_speed=2
 hints=1
