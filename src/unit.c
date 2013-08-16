@@ -32,6 +32,7 @@
 #include "sprites.h"
 #include "string.h"
 #include "structure.h"
+#include "table/locale.h"
 #include "table/sound.h"
 #include "team.h"
 #include "tile.h"
@@ -2394,7 +2395,7 @@ void Unit_DisplayStatusText(const Unit *unit)
 		snprintf(buffer, sizeof(buffer), "%s", String_Get_ByIndex(ui->o.stringID_abbrev));
 	} else {
 		const char *houseName = g_table_houseInfo[Unit_GetHouseID(unit)].name;
-		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+		if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
 			snprintf(buffer, sizeof(buffer), "%s %s", String_Get_ByIndex(ui->o.stringID_abbrev), houseName);
 		} else {
 			snprintf(buffer, sizeof(buffer), "%s %s", houseName, String_Get_ByIndex(ui->o.stringID_abbrev));

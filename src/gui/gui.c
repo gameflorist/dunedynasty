@@ -46,6 +46,7 @@
 #include "../sprites.h"
 #include "../string.h"
 #include "../structure.h"
+#include "../table/locale.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
 #include "../tools/random_lcg.h"
@@ -2208,7 +2209,7 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 		if (data[i].rank >= MAX_RANKS) break;
 		if (data[i].houseID >= HOUSE_MAX) break;
 
-		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+		if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
 			p1 = HallOfFame_GetRankString(data[i].rank);
 			p2 = g_table_houseInfo[data[i].houseID].name;
 		} else {

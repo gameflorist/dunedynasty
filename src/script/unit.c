@@ -26,6 +26,7 @@
 #include "../pool/structure.h"
 #include "../scenario.h"
 #include "../structure.h"
+#include "../table/locale.h"
 #include "../timer/timer.h"
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"
@@ -1718,7 +1719,7 @@ uint16 Script_Unit_DisplayDestroyedText(ScriptEngine *script)
 	u = g_scriptCurrentUnit;
 	ui = &g_table_unitInfo[u->o.type];
 
-	if (g_gameConfig.language == LANGUAGE_FRENCH) {
+	if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
 		GUI_DisplayText(String_Get_ByIndex(STR_S_S_DESTROYED), 0, String_Get_ByIndex(ui->o.stringID_abbrev), g_table_houseInfo[Unit_GetHouseID(u)].name);
 	} else {
 		GUI_DisplayText(String_Get_ByIndex(STR_S_S_DESTROYED), 0, g_table_houseInfo[Unit_GetHouseID(u)].name, String_Get_ByIndex(ui->o.stringID_abbrev));
