@@ -1,6 +1,14 @@
 Dune Dynasty
 ============
 
+Version 1.5.7, 2013-08-18
+-------------------------
+
+  - Fix crash on startup when by using Spanish data files.
+  - Put nouns before adjectives for Italian and Spanish.
+  - Use English audio for Italian and Spanish.
+
+
 Version 1.5.6, 2013-07-28
 -------------------------
 
