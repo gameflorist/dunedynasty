@@ -11,6 +11,7 @@
 #include "net.h"
 #include "../audio/audio.h"
 #include "../enhancement.h"
+#include "../explosion.h"
 #include "../newui/actionpanel.h"
 #include "../gui/gui.h"
 #include "../house.h"
@@ -73,6 +74,7 @@ typedef struct UnitDelta {
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
 static UnitDelta s_unitCopy[UNIT_INDEX_MAX];
+static int s_explosionLastCount;
 
 /*--------------------------------------------------------------*/
 
@@ -136,6 +138,7 @@ Server_ResetCache(void)
 	memset(s_mapCopy, 0, sizeof(s_mapCopy));
 	memset(s_structureCopy, 0, sizeof(s_structureCopy));
 	memset(s_unitCopy, 0, sizeof(s_unitCopy));
+	s_explosionLastCount = 0;
 }
 
 /*--------------------------------------------------------------*/
@@ -321,6 +324,34 @@ Server_Send_UpdateUnits(unsigned char **buf)
 
 		Net_Encode_uint8(&buf_count, count);
 	}
+}
+
+void
+Server_Send_UpdateExplosions(unsigned char **buf)
+{
+	const int num = Explosion_Get_NumActive();
+	if (num <= 1 && num == s_explosionLastCount)
+		return;
+
+	const unsigned char * const end
+		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+
+	const int len = 2 + (num - 1) * 6;
+	if (*buf + len >= end)
+		return;
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_EXPLOSIONS);
+	Net_Encode_uint8(buf, num);
+
+	for (int i = 1; i < num; i++) {
+		const Explosion *e = Explosion_Get_ByIndex(i);
+
+		Net_Encode_uint16(buf, e->spriteID);
+		Net_Encode_uint16(buf, e->position.x);
+		Net_Encode_uint16(buf, e->position.y);
+	}
+
+	s_explosionLastCount = num;
 }
 
 void

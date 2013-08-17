@@ -208,6 +208,7 @@ Server_SendMessages(void)
 	Server_Send_UpdateLandscape(&buf);
 	Server_Send_UpdateStructures(&buf);
 	Server_Send_UpdateUnits(&buf);
+	Server_Send_UpdateExplosions(&buf);
 
 	const int len = buf - g_server_broadcast_message_buf;
 

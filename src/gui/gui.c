@@ -2322,10 +2322,6 @@ void GUI_DrawScreen(Screen screenID)
 
 	oldScreenID = GFX_Screen_SetActive(screenID);
 
-	Explosion_Tick();
-	Animation_Tick();
-	Unit_Sort();
-
 	Map_UpdateFogOfWar();
 
 	g_selectionRectanglePosition = g_selectionPosition;
@@ -2333,12 +2329,6 @@ void GUI_DrawScreen(Screen screenID)
 	if (g_viewportMessageCounter != 0 && s_timerViewportMessage < Timer_GetTicks()) {
 		g_viewportMessageCounter--;
 		s_timerViewportMessage = Timer_GetTicks() + 60;
-
-#if 0
-		for (int xpos = 0; xpos < 14; xpos++) {
-			Map_Update(g_viewportPosition + xpos + 6 * 64, 0, true);
-		}
-#endif
 	}
 
 	A5_UseTransform(SCREENDIV_VIEWPORT);

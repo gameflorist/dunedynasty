@@ -9,9 +9,11 @@
 #include "gameloop.h"
 
 #include "ai.h"
+#include "animation.h"
 #include "audio/audio.h"
 #include "common_a5.h"
 #include "config.h"
+#include "explosion.h"
 #include "gui/gui.h"
 #include "house.h"
 #include "input/input.h"
@@ -43,6 +45,9 @@ GameLoop_Server_Logic(void)
 	GameLoop_Unit();
 	GameLoop_Structure();
 	GameLoop_House();
+	Explosion_Tick();
+	Animation_Tick();
+	Unit_Sort();
 }
 
 static void

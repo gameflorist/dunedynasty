@@ -8,6 +8,7 @@
 
 #include "message.h"
 #include "net.h"
+#include "../explosion.h"
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
@@ -314,6 +315,21 @@ Client_Recv_UpdateUnits(const unsigned char **buf)
 		Unit_Recount();
 }
 
+static void
+Client_Recv_UpdateExplosions(const unsigned char **buf)
+{
+	const int count = Net_Decode_uint8(buf);
+	Explosion_Set_NumActive(count);
+
+	for (int i = 1; i < count; i++) {
+		Explosion *e = Explosion_Get_ByIndex(i);
+
+		e->spriteID     = Net_Decode_uint16(buf);
+		e->position.x   = Net_Decode_uint16(buf);
+		e->position.y   = Net_Decode_uint16(buf);
+	}
+}
+
 void
 Client_ChangeSelectionMode(void)
 {
@@ -372,6 +388,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_UPDATE_UNITS:
 				Client_Recv_UpdateUnits(&buf);
+				break;
+
+			case SCMSG_UPDATE_EXPLOSIONS:
+				Client_Recv_UpdateExplosions(&buf);
 				break;
 
 			case SCMSG_MAX:

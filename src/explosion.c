@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "types.h"
+#include "os/math.h"
 
 #include "explosion.h"
 
@@ -13,7 +13,6 @@
 #include "house.h"
 #include "map.h"
 #include "net/server.h"
-#include "shape.h"
 #include "sprites.h"
 #include "structure.h"
 #include "tile.h"
@@ -21,16 +20,6 @@
 #include "tools/coord.h"
 #include "tools/random_general.h"
 #include "tools/random_lcg.h"
-
-typedef struct Explosion {
-	/* Heap key. */
-	int64_t timeOut;                        /*!< Time out for the next command. */
-
-	uint8 current;                          /*!< Index in #commands pointing to the next command. */
-	enum ShapeID spriteID;                  /*!< SpriteID. */
-	const ExplosionCommandStruct *commands; /*!< Commands being executed. */
-	tile32 position;                        /*!< Position where this explosion acts. */
-} Explosion;
 
 static BinHeap s_explosions;
 
@@ -335,9 +324,8 @@ void
 Explosion_Draw(void)
 {
 	for (int i = 1; i < s_explosions.num_elem; i++) {
-		Explosion *e = (Explosion *)BinHeap_GetElem(&s_explosions, i);
+		const Explosion *e = (const Explosion *)BinHeap_GetElem(&s_explosions, i);
 
-		if (e->commands == NULL) continue;
 		if (e->spriteID == 0) continue;
 
 		const uint16 packed = Tile_PackTile(e->position);
@@ -348,10 +336,30 @@ Explosion_Draw(void)
 		if (!Map_IsPositionInViewport(e->position, &x, &y))
 			continue;
 
-#if 0
-		GUI_DrawSprite(g_screenActiveID, GUI_Widget_Viewport_Draw_GetSprite(e->spriteID, e->houseID), x, y, 2, s_spriteFlags, s_paletteHouse);
-#else
 		Shape_Draw(e->spriteID, x, y, 2, 0xC000);
-#endif
 	}
+}
+
+uint8
+Explosion_Get_NumActive(void)
+{
+	return min(s_explosions.num_elem, 0xFF);
+}
+
+void
+Explosion_Set_NumActive(int num)
+{
+	if (s_explosions.max_elem < num) {
+		BinHeap_Resize(&s_explosions, num);
+	}
+
+	s_explosions.num_elem = num;
+}
+
+Explosion *
+Explosion_Get_ByIndex(int i)
+{
+	assert(1 <= i && i < s_explosions.num_elem);
+
+	return (Explosion *)BinHeap_GetElem(&s_explosions, i);
 }

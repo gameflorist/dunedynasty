@@ -3,6 +3,10 @@
 #ifndef EXPLOSION_H
 #define EXPLOSION_H
 
+#include <inttypes.h>
+#include "shape.h"
+#include "types.h"
+
 /**
  * Types of Explosions available in the game.
  */
@@ -56,10 +60,24 @@ typedef struct ExplosionCommandStruct {
 	uint16 parameter;                                       /*!< The parameter of the Explosion. */
 } ExplosionCommandStruct;
 
+typedef struct Explosion {
+	/* Heap key. */
+	int64_t timeOut;                        /*!< Time out for the next command. */
+
+	uint8 current;                          /*!< Index in #commands pointing to the next command. */
+	enum ShapeID spriteID;                  /*!< SpriteID. */
+	const ExplosionCommandStruct *commands; /*!< Commands being executed. */
+	tile32 position;                        /*!< Position where this explosion acts. */
+} Explosion;
+
 extern void Explosion_Init(void);
 extern void Explosion_Uninit(void);
 extern void Explosion_Start(uint16 explosionType, tile32 position);
 extern void Explosion_Tick(void);
 extern void Explosion_Draw(void);
+
+extern uint8 Explosion_Get_NumActive(void);
+extern void Explosion_Set_NumActive(int num);
+extern Explosion *Explosion_Get_ByIndex(int i);
 
 #endif /* EXPLOSION_H */
