@@ -17,6 +17,7 @@
 #include "../opendune.h"
 #include "../sprites.h"
 #include "../string.h"
+#include "../table/locale.h"
 #include "../table/widgetinfo.h"
 #include "../tile.h"
 #include "../timer/timer.h"
@@ -365,16 +366,8 @@ Audio_PlayEffect(enum SoundID effectID)
 static char
 Audio_GetSamplePrefix(enum SampleSet setID)
 {
-	switch (g_gameConfig.language) {
-		case LANGUAGE_FRENCH:
-			return 'F';
-
-		case LANGUAGE_GERMAN:
-			return 'G';
-
-		default:
-			break;
-	}
+	if (g_table_languageInfo[g_gameConfig.language].sample_prefix != '\0')
+		return g_table_languageInfo[g_gameConfig.language].sample_prefix;
 
 	switch (setID) {
 		case SAMPLESET_HARKONNEN:
@@ -624,7 +617,7 @@ Audio_PlayVoice(enum VoiceID voiceID)
 	if (g_enable_voices) {
 		for (int i = 0; i < NUM_SPEECH_PARTS; i++) {
 			const enum SampleID sampleID
-				= (g_gameConfig.language == LANGUAGE_FRENCH || g_gameConfig.language == LANGUAGE_GERMAN)
+				= (g_table_languageInfo[g_gameConfig.language].sample_prefix != '\0')
 				? g_translatedVoice[voiceID][i] : s->voiceId[i];
 
 			if (sampleID == SAMPLE_INVALID)

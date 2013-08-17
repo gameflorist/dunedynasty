@@ -7,6 +7,7 @@
 typedef struct {
 	char name[4];
 	char suffix[4];
+	char sample_prefix;
 	bool noun_before_adj;
 } LanguageInfo;
 
