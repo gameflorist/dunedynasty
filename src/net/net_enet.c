@@ -210,15 +210,26 @@ Server_SendMessages(void)
 	Server_Send_UpdateUnits(&buf);
 	Server_Send_UpdateExplosions(&buf);
 
-	const int len = buf - g_server_broadcast_message_buf;
+	unsigned char * const buf_start_client_specific = buf;
 
-	NET_LOG("packet size=%d, num outgoing packets=%lu",
-			len, enet_list_size(&s_host->peers[0].outgoingReliableCommands));
+	for (size_t i = 0; i < s_host->peerCount; i++) {
+		ENetPeer *peer = &s_host->peers[i];
+		enum HouseType houseID = (enum HouseType)peer->data;
 
-	ENetPacket *packet
-		= enet_packet_create(g_server_broadcast_message_buf, len,
-				ENET_PACKET_FLAG_RELIABLE);
-	enet_host_broadcast(s_host, 0, packet);
+		buf = buf_start_client_specific;
+
+		Server_Send_UpdateHouse(houseID, &buf);
+
+		const int len = buf - g_server_broadcast_message_buf;
+
+		NET_LOG("packet size=%d, num outgoing packets=%lu",
+				len, enet_list_size(&s_host->peers[0].outgoingReliableCommands));
+
+		ENetPacket *packet
+			= enet_packet_create(g_server_broadcast_message_buf, len,
+					ENET_PACKET_FLAG_RELIABLE);
+		enet_peer_send(peer, 0, packet);
+	}
 }
 
 void
@@ -301,6 +312,4 @@ Client_RecvMessages(void)
 				break;
 		}
 	}
-
-	Client_ChangeSelectionMode(); /* XXX */
 }

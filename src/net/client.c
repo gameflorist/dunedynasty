@@ -242,6 +242,28 @@ Client_Recv_UpdateLandscape(const unsigned char **buf)
 }
 
 static void
+Client_Recv_UpdateHouse(const unsigned char **buf)
+{
+	House *h = g_playerHouse;
+
+	h->structuresBuilt      = Net_Decode_uint32(buf);
+	h->credits              = Net_Decode_uint16(buf);
+	h->creditsStorage       = Net_Decode_uint16(buf);
+	h->powerProduction      = Net_Decode_uint16(buf);
+	h->powerUsage           = Net_Decode_uint16(buf);
+	h->windtrapCount        = Net_Decode_uint16(buf);
+	h->starportTimeLeft     = Net_Decode_uint16(buf);
+	h->starportLinkedID     = Net_Decode_uint16(buf);
+	h->structureActiveID    = Net_Decode_uint16(buf);
+	h->houseMissileID       = Net_Decode_uint16(buf);
+	h->houseMissileCountdown= Net_Decode_uint8 (buf);
+
+	for (enum UnitType u = UNIT_CARRYALL; u <= UNIT_MCV; u++) {
+		h->starportCount[u] = Net_Decode_uint8(buf);
+	}
+}
+
+static void
 Client_Recv_UpdateStructures(const unsigned char **buf)
 {
 	const int count = Net_Decode_uint8(buf);
@@ -380,6 +402,11 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_UPDATE_LANDSCAPE:
 				Client_Recv_UpdateLandscape(&buf);
+				break;
+
+			case SCMSG_UPDATE_HOUSE:
+				Client_Recv_UpdateHouse(&buf);
+				Client_ChangeSelectionMode();
 				break;
 
 			case SCMSG_UPDATE_STRUCTURES:

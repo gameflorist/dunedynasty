@@ -194,6 +194,38 @@ Server_Send_UpdateLandscape(unsigned char **buf)
 }
 
 void
+Server_Send_UpdateHouse(enum HouseType houseID, unsigned char **buf)
+{
+	const unsigned char * const end
+		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+
+	const int len = 1 + 23 + (UNIT_MCV - UNIT_CARRYALL + 1) * 1;
+	if (*buf + len >= end)
+		return;
+
+	const House *h = House_Get_ByIndex(houseID);
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_HOUSE);
+
+	/* 23 bytes. */
+	Net_Encode_uint32(buf, h->structuresBuilt);     /* XXX - client. */
+	Net_Encode_uint16(buf, h->credits);
+	Net_Encode_uint16(buf, h->creditsStorage);      /* XXX - client. */
+	Net_Encode_uint16(buf, h->powerProduction);     /* XXX - client. */
+	Net_Encode_uint16(buf, h->powerUsage);          /* XXX - client. */
+	Net_Encode_uint16(buf, h->windtrapCount);       /* XXX - client. */
+	Net_Encode_uint16(buf, h->starportTimeLeft);
+	Net_Encode_uint16(buf, h->starportLinkedID);
+	Net_Encode_uint16(buf, h->structureActiveID);
+	Net_Encode_uint16(buf, h->houseMissileID);
+	Net_Encode_uint8 (buf, h->houseMissileCountdown);
+
+	for (enum UnitType u = UNIT_CARRYALL; u <= UNIT_MCV; u++) {
+		Net_Encode_uint8(buf, h->starportCount[u]);
+	}
+}
+
+void
 Server_Send_UpdateStructures(unsigned char **buf)
 {
 	const unsigned char * const end
