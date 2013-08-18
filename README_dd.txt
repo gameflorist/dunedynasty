@@ -268,7 +268,8 @@ Peter, for help on various bits of the code, the music code, and AUDlib.
 Nyerguds, for his Dune II editor.
 
 Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
-Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine.
+Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine,
+Wesker.
 
 Westwood Studios, for an amazing game!
 
