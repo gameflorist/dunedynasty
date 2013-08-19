@@ -188,9 +188,17 @@ StrategicMap_DrawArrow(enum HouseType houseID, int scenario, const StrategicMapD
 	if ((map->state == STRATEGIC_MAP_SELECT_REGION) && (frame & 0x31) == 0x21) {
 		const Campaign *camp = &g_campaign_list[g_campaign_selected];
 
+		int nth = scenario;
+		for (int i = 0; i < STRATEGIC_MAP_MAX_ARROWS; i++) {
+			if (map->arrow[i].index == map->arrow[scenario].index) {
+				nth = i;
+				break;
+			}
+		}
+
 		for (unsigned int h = 0; h < 3; h++) {
 			if (camp->house[h] == houseID) {
-				const uint16 scenarioID = StrategicMap_CampaignChoiceToScenarioID(g_campaignID, scenario);
+				const uint16 scenarioID = StrategicMap_CampaignChoiceToScenarioID(g_campaignID, nth);
 
 				if (!(camp->completion[h] & (1 << (scenarioID - 1))))
 					return;
