@@ -8,6 +8,7 @@
 
 #include "message.h"
 #include "net.h"
+#include "../audio/audio.h"
 #include "../explosion.h"
 #include "../gui/gui.h"
 #include "../house.h"
@@ -352,6 +353,34 @@ Client_Recv_UpdateExplosions(const unsigned char **buf)
 	}
 }
 
+static void
+Client_Recv_PlaySound(const unsigned char **buf)
+{
+	const uint8 soundID = Net_Decode_uint8(buf);
+
+	Audio_PlaySound(soundID);
+}
+
+static void
+Client_Recv_PlaySoundAtTile(const unsigned char **buf)
+{
+	const uint8 soundID = Net_Decode_uint8(buf);
+	tile32 position;
+
+	position.x = Net_Decode_uint16(buf);
+	position.y = Net_Decode_uint16(buf);
+
+	Audio_PlaySoundAtTile(soundID, position);
+}
+
+static void
+Client_Recv_PlayVoice(const unsigned char **buf)
+{
+	const uint8 voiceID = Net_Decode_uint8(buf);
+
+	Audio_PlayVoice(voiceID);
+}
+
 void
 Client_ChangeSelectionMode(void)
 {
@@ -419,6 +448,18 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_UPDATE_EXPLOSIONS:
 				Client_Recv_UpdateExplosions(&buf);
+				break;
+
+			case SCMSG_PLAY_SOUND:
+				Client_Recv_PlaySound(&buf);
+				break;
+
+			case SCMSG_PLAY_SOUND_AT_TILE:
+				Client_Recv_PlaySoundAtTile(&buf);
+				break;
+
+			case SCMSG_PLAY_VOICE:
+				Client_Recv_PlayVoice(&buf);
 				break;
 
 			case SCMSG_MAX:

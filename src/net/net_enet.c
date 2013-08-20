@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <enet/enet.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "net.h"
 
@@ -219,6 +220,14 @@ Server_SendMessages(void)
 		buf = buf_start_client_specific;
 
 		Server_Send_UpdateHouse(houseID, &buf);
+
+		if (buf + g_server2client_message_len[houseID]
+				< g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN) {
+			memcpy(buf, g_server2client_message_buf[houseID],
+					g_server2client_message_len[houseID]);
+			buf += g_server2client_message_len[houseID];
+			g_server2client_message_len[houseID] = 0;
+		}
 
 		const int len = buf - g_server_broadcast_message_buf;
 

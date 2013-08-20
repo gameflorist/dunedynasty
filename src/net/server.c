@@ -386,6 +386,23 @@ Server_Send_UpdateExplosions(unsigned char **buf)
 	s_explosionLastCount = num;
 }
 
+static void
+Server_BufferGameEvent(enum HouseFlag houses, int len, const unsigned char *src)
+{
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		if (!(houses & (1 << houseID)))
+			continue;
+
+		if (g_server2client_message_len[houseID] + len >= MAX_SERVER_TO_CLIENT_MESSAGE_LEN)
+			continue;
+
+		memcpy(g_server2client_message_buf[houseID] + g_server2client_message_len[houseID],
+				src, len);
+
+		g_server2client_message_len[houseID] += len;
+	}
+}
+
 void
 Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority,
 		uint16 str)
@@ -422,6 +439,17 @@ Server_Send_PlaySound(enum HouseFlag houses, enum SoundID soundID)
 	if (houses & (1 << g_playerHouseID)) {
 		Audio_PlaySound(soundID);
 	}
+
+	houses &= g_human_houses;
+	if (houses) {
+		unsigned char src[2];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_PLAY_SOUND);
+		Net_Encode_uint8(&buf, soundID);
+
+		Server_BufferGameEvent(houses, sizeof(src), src);
+	}
 }
 
 void
@@ -434,6 +462,19 @@ Server_Send_PlaySoundAtTile(enum HouseFlag houses,
 	if (houses & (1 << g_playerHouseID)) {
 		Audio_PlaySoundAtTile(soundID, position);
 	}
+
+	houses &= g_human_houses;
+	if (houses) {
+		unsigned char src[6];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_PLAY_SOUND_AT_TILE);
+		Net_Encode_uint8 (&buf, soundID);
+		Net_Encode_uint16(&buf, position.x);
+		Net_Encode_uint16(&buf, position.y);
+
+		Server_BufferGameEvent(houses, sizeof(src), src);
+	}
 }
 
 void
@@ -444,6 +485,17 @@ Server_Send_PlayVoice(enum HouseFlag houses, enum VoiceID voiceID)
 
 	if (houses & (1 << g_playerHouseID)) {
 		Audio_PlayVoice(voiceID);
+	}
+
+	houses &= g_human_houses;
+	if (houses) {
+		unsigned char src[2];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_PLAY_VOICE);
+		Net_Encode_uint8(&buf, voiceID);
+
+		Server_BufferGameEvent(houses, sizeof(src), src);
 	}
 }
 
