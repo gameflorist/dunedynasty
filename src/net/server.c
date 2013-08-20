@@ -410,6 +410,20 @@ Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority,
 	if (houses & (1 << g_playerHouseID)) {
 		GUI_DrawStatusBarTextWrapper(priority, str, STR_NULL, STR_NULL);
 	}
+
+	houses &= g_human_houses;
+	if (houses) {
+		unsigned char src[8];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_STATUS_MESSAGE);
+		Net_Encode_uint8 (&buf, priority);
+		Net_Encode_uint16(&buf, str);
+		Net_Encode_uint16(&buf, STR_NULL);
+		Net_Encode_uint16(&buf, STR_NULL);
+
+		Server_BufferGameEvent(houses, sizeof(src), src);
+	}
 }
 
 void
@@ -419,6 +433,20 @@ Server_Send_StatusMessage2(enum HouseFlag houses, uint8 priority,
 	if (houses & (1 << g_playerHouseID)) {
 		GUI_DrawStatusBarTextWrapper(priority, str1, str2, STR_NULL);
 	}
+
+	houses &= g_human_houses;
+	if (houses) {
+		unsigned char src[8];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_STATUS_MESSAGE);
+		Net_Encode_uint8 (&buf, priority);
+		Net_Encode_uint16(&buf, str1);
+		Net_Encode_uint16(&buf, str2);
+		Net_Encode_uint16(&buf, STR_NULL);
+
+		Server_BufferGameEvent(houses, sizeof(src), src);
+	}
 }
 
 void
@@ -427,6 +455,20 @@ Server_Send_StatusMessage3(enum HouseFlag houses, uint8 priority,
 {
 	if (houses & (1 << g_playerHouseID)) {
 		GUI_DrawStatusBarTextWrapper(priority, str1, str2, str3);
+	}
+
+	houses &= g_human_houses;
+	if (houses) {
+		unsigned char src[8];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_STATUS_MESSAGE);
+		Net_Encode_uint8 (&buf, priority);
+		Net_Encode_uint16(&buf, str1);
+		Net_Encode_uint16(&buf, str2);
+		Net_Encode_uint16(&buf, str3);
+
+		Server_BufferGameEvent(houses, sizeof(src), src);
 	}
 }
 

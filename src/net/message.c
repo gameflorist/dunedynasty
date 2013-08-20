@@ -29,6 +29,7 @@ static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'S', /* SCMSG_UPDATE_STRUCTURES */
 	'U', /* SCMSG_UPDATE_UNITS */
 	'E', /* SCMSG_UPDATE_EXPLOSIONS */
+	'M', /* SCMSG_STATUS_MESSAGE */
 	'<', /* SCMSG_PLAY_SOUND */
 	'>', /* SCMSG_PLAY_SOUND_AT_TILE */
 	'V', /* SCMSG_PLAY_VOICE */

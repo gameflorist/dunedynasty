@@ -354,6 +354,17 @@ Client_Recv_UpdateExplosions(const unsigned char **buf)
 }
 
 static void
+Client_Recv_StatusMessage(const unsigned char **buf)
+{
+	const uint8  priority   = Net_Decode_uint8 (buf);
+	const uint16 str1       = Net_Decode_uint16(buf);
+	const uint16 str2       = Net_Decode_uint16(buf);
+	const uint16 str3       = Net_Decode_uint16(buf);
+
+	GUI_DrawStatusBarTextWrapper(priority, str1, str2, str3);
+}
+
+static void
 Client_Recv_PlaySound(const unsigned char **buf)
 {
 	const uint8 soundID = Net_Decode_uint8(buf);
@@ -448,6 +459,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_UPDATE_EXPLOSIONS:
 				Client_Recv_UpdateExplosions(&buf);
+				break;
+
+			case SCMSG_STATUS_MESSAGE:
+				Client_Recv_StatusMessage(&buf);
 				break;
 
 			case SCMSG_PLAY_SOUND:
