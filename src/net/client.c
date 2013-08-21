@@ -477,6 +477,11 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 				Client_Recv_PlayVoice(&buf);
 				break;
 
+			case SCMSG_PLAY_BATTLE_MUSIC:
+				if (g_musicInBattle == 0)
+					g_musicInBattle = 1;
+				break;
+
 			case SCMSG_MAX:
 			case SCMSG_INVALID:
 			default:

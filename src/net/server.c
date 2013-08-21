@@ -541,6 +541,25 @@ Server_Send_PlayVoice(enum HouseFlag houses, enum VoiceID voiceID)
 	}
 }
 
+void
+Server_Send_PlayBattleMusic(enum HouseFlag houses)
+{
+	if (houses & (1 << g_playerHouseID)) {
+		if (g_musicInBattle == 0)
+			g_musicInBattle = 1;
+	}
+
+	houses &= g_human_houses;
+	if (houses) {
+		unsigned char src[1];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_PLAY_BATTLE_MUSIC);
+
+		Server_BufferGameEvent(houses, sizeof(src), src);
+	}
+}
+
 /*--------------------------------------------------------------*/
 
 static bool

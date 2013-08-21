@@ -3172,7 +3172,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 	if (houseID == g_playerHouseID && g_selectionType != SELECTIONTYPE_MENTAT) {
 		if (unit->o.type == UNIT_SANDWORM) {
 			if (h->timerSandwormAttack == 0) {
-				if (g_musicInBattle == 0) g_musicInBattle = 1;
+				Server_Send_PlayBattleMusic(1 << houseID);
 
 				/* XXX -- Dodgy.  When a hint is drawn, it renders the
 				 * screen again.  Presently it comes back here, which
@@ -3207,7 +3207,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 			Team *t;
 
 			if (h->timerUnitAttack == 0) {
-				if (g_musicInBattle == 0) g_musicInBattle = 1;
+				Server_Send_PlayBattleMusic(1 << houseID);
 
 				if (unit->o.type == UNIT_SABOTEUR) {
 					Server_Send_PlayVoice(1 << houseID,

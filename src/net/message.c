@@ -33,6 +33,7 @@ static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'<', /* SCMSG_PLAY_SOUND */
 	'>', /* SCMSG_PLAY_SOUND_AT_TILE */
 	'V', /* SCMSG_PLAY_VOICE */
+	'!', /* SCMSG_PLAY_BATTLE_MUSIC */
 };
 
 unsigned char g_server_broadcast_message_buf[MAX_SERVER_BROADCAST_MESSAGE_LEN];
