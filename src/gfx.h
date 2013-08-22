@@ -68,7 +68,7 @@ extern void GFX_ClearScreen(void);
 extern void GFX_ClearBlock(Screen index);
 extern void GFX_SetPalette(uint8 *palette);
 
-extern void GFX_ScreenShake_Start(int num_ticks);
+extern void GFX_ScreenShake_Start(uint16 packed, int num_ticks);
 extern bool GFX_ScreenShake_Tick(void);
 extern int GFX_ScreenShake_Offset(void);
 

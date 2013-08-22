@@ -107,19 +107,7 @@ static void Explosion_Func_ScreenShake(Explosion *e, uint16 parameter)
 {
 	VARIABLE_NOT_USED(parameter);
 
-	/* ENHANCEMENT -- Screenshake even if explosion is only partially unveiled. */
-	if (g_dune2_enhanced) {
-		const Tile *t = &g_map[Tile_PackTile(e->position)];
-
-		if (!t->isUnveiled)
-			return;
-	}
-	else {
-		if (!Map_IsPositionUnveiled(Tile_PackTile(e->position)))
-			return;
-	}
-
-	GFX_ScreenShake_Start(1);
+	Server_Send_ScreenShake(Tile_PackTile(e->position));
 }
 
 /**

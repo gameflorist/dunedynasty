@@ -9,6 +9,7 @@
 #include "enhancement.h"
 #include "gui/widget.h"
 #include "house.h"
+#include "map.h"
 #include "opendune.h"
 #include "sprites.h"
 #include "video/video.h"
@@ -443,9 +444,19 @@ extern void GFX_CopyToBuffer(int16 left, int16 top, uint16 width, uint16 height,
 static int s_screen_shake_ticks = 0;
 
 void
-GFX_ScreenShake_Start(int num_ticks)
+GFX_ScreenShake_Start(uint16 packed, int num_ticks)
 {
-	s_screen_shake_ticks = 2 * num_ticks;
+	/* ENHANCEMENT -- Screenshake even if tile is partially veiled. */
+	bool visible;
+	if (g_dune2_enhanced) {
+		visible = g_map[packed].isUnveiled;
+	}
+	else {
+		visible = Map_IsPositionUnveiled(packed);
+	}
+
+	if (visible)
+		s_screen_shake_ticks = 2 * num_ticks;
 }
 
 bool

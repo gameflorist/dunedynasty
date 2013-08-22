@@ -10,6 +10,7 @@
 #include "net.h"
 #include "../audio/audio.h"
 #include "../explosion.h"
+#include "../gfx.h"
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
@@ -354,6 +355,14 @@ Client_Recv_UpdateExplosions(const unsigned char **buf)
 }
 
 static void
+Client_Recv_ScreenShake(const unsigned char **buf)
+{
+	const uint16 packed = Net_Decode_uint16(buf);
+
+	GFX_ScreenShake_Start(packed, 1);
+}
+
+static void
 Client_Recv_StatusMessage(const unsigned char **buf)
 {
 	const uint8  priority   = Net_Decode_uint8 (buf);
@@ -459,6 +468,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_UPDATE_EXPLOSIONS:
 				Client_Recv_UpdateExplosions(&buf);
+				break;
+
+			case SCMSG_SCREEN_SHAKE:
+				Client_Recv_ScreenShake(&buf);
 				break;
 
 			case SCMSG_STATUS_MESSAGE:

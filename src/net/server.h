@@ -12,6 +12,7 @@ extern void Server_Send_UpdateHouse(enum HouseType houseID, unsigned char **buf)
 extern void Server_Send_UpdateStructures(unsigned char **buf);
 extern void Server_Send_UpdateUnits(unsigned char **buf);
 extern void Server_Send_UpdateExplosions(unsigned char **buf);
+extern void Server_Send_ScreenShake(uint16 packed);
 extern void Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority, uint16 str1);
 extern void Server_Send_StatusMessage2(enum HouseFlag houses, uint8 priority, uint16 str1, uint16 str2);
 extern void Server_Send_StatusMessage3(enum HouseFlag houses, uint8 priority, uint16 str1, uint16 str2, uint16 str3);

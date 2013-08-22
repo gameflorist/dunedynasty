@@ -404,6 +404,22 @@ Server_BufferGameEvent(enum HouseFlag houses, int len, const unsigned char *src)
 }
 
 void
+Server_Send_ScreenShake(uint16 packed)
+{
+	GFX_ScreenShake_Start(packed, 1);
+
+	if (g_human_houses != 0) {
+		unsigned char src[3];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_SCREEN_SHAKE);
+		Net_Encode_uint16(&buf, packed);
+
+		Server_BufferGameEvent(g_human_houses, sizeof(src), src);
+	}
+}
+
+void
 Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority,
 		uint16 str)
 {
