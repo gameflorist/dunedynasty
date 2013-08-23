@@ -287,6 +287,24 @@ Client_SendMessages(void)
 		return;
 
 	Client_Send_BuildQueue();
+
+	if (g_host_type != HOSTTYPE_DEDICATED_CLIENT)
+		return;
+
+	if (g_client2server_message_len <= 0)
+		return;
+
+	NET_LOG("packet size=%d, num outgoing packets=%lu",
+			g_client2server_message_len,
+			enet_list_size(&s_host->peers[0].outgoingReliableCommands));
+
+	ENetPacket *packet
+		= enet_packet_create(
+				g_client2server_message_buf, g_client2server_message_len,
+				ENET_PACKET_FLAG_RELIABLE);
+
+	enet_peer_send(s_peer, 0, packet);
+	g_client2server_message_len = 0;
 }
 
 void
