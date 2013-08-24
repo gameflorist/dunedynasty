@@ -345,7 +345,6 @@ static bool Map_UpdateWall(uint16 packed)
 	if (Map_IsPositionUnveiled(packed)) t->overlaySpriteID = g_wallSpriteID;
 
 	Structure_ConnectWall(packed, true);
-	Map_Update(packed, 0, false);
 
 	/* ENHANCEMENT -- stop targetting the wall after it has been destroyed. */
 	if (enhancement_fix_firing_logic) {
@@ -555,41 +554,6 @@ Map_GetLandscapeTypeOriginal(uint16 packed)
 	return Map_GetLandscapeType_BySpriteID(g_mapSpriteID[packed] & 0x7FFF, false);
 }
 
-#if 0
-/**
- * Checks wether a packed tile is visible in the viewport.
- *
- * @param packed The packed tile.
- * @return True if the tile is visible.
- */
-static bool Map_IsTileVisible(uint16 packed)
-{
-	uint8 x, y;
-	uint8 x2, y2;
-
-	x = Tile_GetPackedX(packed);
-	y = Tile_GetPackedY(packed);
-	x2 = Tile_GetPackedX(g_minimapPosition);
-	y2 = Tile_GetPackedY(g_minimapPosition);
-
-	return x >= x2 && x < x2 + 15 && y >= y2 && y < y2 + 10;
-}
-#endif
-
-/**
- * Updates ??.
- *
- * @param packed The packed tile.
- * @param type The type of update.
- * @param ignoreInvisible Wether to ignore tile visibility check.
- */
-void Map_Update(uint16 packed, uint16 type, bool ignoreInvisible)
-{
-	VARIABLE_NOT_USED(packed);
-	VARIABLE_NOT_USED(type);
-	VARIABLE_NOT_USED(ignoreInvisible);
-}
-
 /**
  * Make a deviator missile explosion on the given position, of a certain type. All units in the
  *  given radius may become deviated.
@@ -720,8 +684,6 @@ static void Map_FixupSpiceEdges(uint16 packed)
 		g_mapSpriteID[packed] = 0x8000 | spriteID;
 		g_map[packed].groundSpriteID = spriteID;
 	}
-
-	Map_Update(packed, 0, false);
 }
 
 /**
@@ -779,8 +741,6 @@ void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID)
 
 	g_map[packed].groundSpriteID = g_landscapeSpriteID;
 	g_mapSpriteID[packed] = 0x8000 | g_landscapeSpriteID;
-
-	Map_Update(packed, 0, false);
 
 	enemyHouseID = houseID;
 
@@ -977,7 +937,8 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 	tile32 diff;
 	uint16 lastPacked;
 
-	if (radius == 0 || (position.x == 0 && position.y == 0)) return;
+	if (radius == 0 || function < 2 || (position.x == 0 && position.y == 0))
+		return;
 
 	radius--;
 
@@ -995,8 +956,6 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 				curPacked = Tile_PackXY(x + i, y + j);
 
 				switch (function) {
-					case 0: Map_Update(curPacked, 0, false); break;
-					case 1: Map_Update(curPacked, 3, false); break;
 					case 2: Unit_RemoveFromTile(unit, curPacked); break;
 					case 3: Unit_AddToTile(unit, curPacked); break;
 					default: break;
@@ -1023,8 +982,6 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
 
 			if (curPacked != lastPacked) {
 				switch (function) {
-					case 0: Map_Update(curPacked, 0, false); break;
-					case 1: Map_Update(curPacked, 3, false); break;
 					case 2: Unit_RemoveFromTile(unit, curPacked); break;
 					case 3: Unit_AddToTile(unit, curPacked); break;
 					default: break;
@@ -1159,8 +1116,6 @@ static void Map_UnveilTile_Neighbour(uint16 packed)
 	}
 
 	f->fogSpriteID = spriteID;
-
-	Map_Update(packed, 0, false);
 }
 
 /**

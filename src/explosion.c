@@ -56,7 +56,6 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
 
 	if (type == LST_CONCRETE_SLAB) {
 		t->groundSpriteID = g_mapSpriteID[packed];
-		Map_Update(packed, 0, false);
 	}
 
 	if (g_table_landscapeInfo[type].craterType == 0) return;
@@ -85,7 +84,6 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
 
 	/* Update the tile with the crater */
 	t->overlaySpriteID = overlaySpriteID + iconMap[0];
-	Map_Update(packed, 0, false);
 }
 
 /**

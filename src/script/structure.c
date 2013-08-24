@@ -480,8 +480,6 @@ uint16 Script_Structure_RotateTurret(ScriptEngine *script)
 	tile->groundSpriteID = baseSpriteID + rotation;
 	s->rotationSpriteDiff = rotation;
 
-	Map_Update(Tile_PackTile(s->o.position), 0, false);
-
 	return 1;
 }
 

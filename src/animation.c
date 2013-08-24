@@ -56,8 +56,6 @@ static void Animation_Func_Stop(Animation *animation, int16 parameter)
 		if (Map_IsPositionUnveiled(position)) {
 			t->overlaySpriteID = 0;
 		}
-
-		Map_Update(position, 0, false);
 	}
 }
 
@@ -74,8 +72,6 @@ static void Animation_Func_Abort(Animation *animation, int16 parameter)
 
 	g_map[packed].hasAnimation = false;
 	animation->commands = NULL;
-
-	Map_Update(packed, 0, false);
 }
 
 /**
@@ -104,8 +100,6 @@ static void Animation_Func_SetOverlaySprite(Animation *animation, int16 paramete
 	Tile *t = &g_map[packed];
 	t->overlaySpriteID = g_iconMap[g_iconMap[animation->iconGroup] + parameter];
 	t->houseID = animation->houseID;
-
-	Map_Update(packed, 0, false);
 }
 
 /**
@@ -160,8 +154,6 @@ static void Animation_Func_SetGroundSprite(Animation *animation, int16 parameter
 		if (Map_IsPositionUnveiled(position)) {
 			t->overlaySpriteID = 0;
 		}
-
-		Map_Update(position, 0, false);
 	}
 }
 

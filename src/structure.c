@@ -570,8 +570,6 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 
 				if (s->o.houseID == g_playerHouseID) Tile_RemoveFogInRadius(Tile_UnpackTile(curPos), 1);
 
-				Map_Update(curPos, 0, false);
-
 				result = 1;
 			}
 
@@ -593,8 +591,6 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 					if (s->o.houseID == g_playerHouseID) {
 						Tile_RemoveFogInRadius(Tile_UnpackTile(curPos), 1);
 					}
-
-					Map_Update(curPos, 0, false);
 
 					result = 1;
 				}
@@ -1448,7 +1444,6 @@ bool Structure_ConnectWall(uint16 position, bool recurse)
 
 	tile->groundSpriteID = spriteID;
 	g_mapSpriteID[position] |= 0x8000;
-	Map_Update(position, 0, false);
 
 	return true;
 }
@@ -1930,8 +1925,6 @@ void Structure_UpdateMap(Structure *s)
 
 		t->groundSpriteID = iconMap[i] + s->rotationSpriteDiff;
 		t->overlaySpriteID = 0;
-
-		Map_Update(position, 0, false);
 	}
 
 	if (s->state >= STRUCTURE_STATE_IDLE) {

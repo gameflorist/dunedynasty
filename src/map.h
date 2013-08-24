@@ -115,7 +115,6 @@ extern void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, ui
 extern uint16 Map_GetLandscapeType(uint16 packed);
 extern enum LandscapeType Map_GetLandscapeTypeVisible(uint16 packed);
 extern enum LandscapeType Map_GetLandscapeTypeOriginal(uint16 packed);
-extern void Map_Update(uint16 packed, uint16 type, bool ignoreInvisible);
 extern void Map_DeviateArea(uint16 type, tile32 position, uint16 radius, uint8 houseID);
 extern void Map_Bloom_ExplodeSpice(uint16 packed, enum HouseFlag houses);
 extern void Map_FillCircleWithSpice(uint16 packed, uint16 radius);

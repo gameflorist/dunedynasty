@@ -3001,14 +3001,11 @@ void Unit_RemoveFromTile(Unit *unit, uint16 packed)
 		t->index = 0;
 		t->hasUnit = false;
 	}
-
-	Map_Update(packed, 0, false);
 }
 
 void Unit_AddToTile(Unit *unit, uint16 packed)
 {
 	Map_UnveilTile(packed, Unit_GetHouseID(unit));
-	Map_Update(packed, 1, false);
 }
 
 /**
