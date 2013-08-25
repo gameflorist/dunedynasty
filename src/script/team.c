@@ -232,7 +232,7 @@ uint16 Script_Team_Unknown0543(ScriptEngine *script)
 		}
 
 		if ((distanceUnitDest < distanceTeamDest && (distance + 2) < distanceUnitTeam) || (distanceUnitDest >= distanceTeamDest && distanceUnitTeam > distance)) {
-			Unit_SetAction(u, ACTION_MOVE);
+			Unit_Server_SetAction(u, ACTION_MOVE);
 
 			tile = Tile_MoveByRandom(t->position, distance << 4, true);
 
@@ -241,7 +241,7 @@ uint16 Script_Team_Unknown0543(ScriptEngine *script)
 			continue;
 		}
 
-		Unit_SetAction(u, ACTION_GUARD);
+		Unit_Server_SetAction(u, ACTION_GUARD);
 	}
 
 	return count;
@@ -376,7 +376,7 @@ uint16 Script_Team_Unknown0788(ScriptEngine *script)
 		if (u == NULL) break;
 		if (u->team - 1 != t->index) continue;
 		if (t->target == 0) {
-			Unit_SetAction(u, ACTION_GUARD);
+			Unit_Server_SetAction(u, ACTION_GUARD);
 			continue;
 		}
 
@@ -386,7 +386,8 @@ uint16 Script_Team_Unknown0788(ScriptEngine *script)
 			if (Tile_GetDistance(u->o.position, tile) >= distance) continue;
 		}
 
-		if (u->actionID != ACTION_ATTACK) Unit_SetAction(u, ACTION_ATTACK);
+		if (u->actionID != ACTION_ATTACK)
+			Unit_Server_SetAction(u, ACTION_ATTACK);
 
 		orientation = (Tile_GetDirection(tile, u->o.position) & 0xC0) + Tools_RandomLCG_Range(0, 127);
 		if (orientation < 0) orientation += 256;

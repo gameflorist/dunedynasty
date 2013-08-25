@@ -965,7 +965,7 @@ Server_Recv_IssueUnitActionUntargetted(Unit *u, enum UnitActionType actionID)
 	u->targetMove = 0;
 	u->route[0] = 0xFF;
 
-	Unit_SetAction(u, actionID);
+	Unit_Server_SetAction(u, actionID);
 }
 
 static void
@@ -1006,7 +1006,7 @@ Server_Recv_IssueUnitActionTargetted(Unit *u,
 	u->route[0] = 0xFF;
 	u->detonateAtTarget = detonateAtTarget;
 
-	Unit_SetAction(u, actionID);
+	Unit_Server_SetAction(u, actionID);
 
 	Unit *target = NULL;
 	if (actionID == ACTION_MOVE) {

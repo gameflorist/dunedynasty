@@ -1047,7 +1047,7 @@ Structure_Server_ActivateSpecial(Structure *s)
 
 				if (u == NULL) continue;
 
-				Unit_SetAction(u, ACTION_HUNT);
+				Unit_Server_SetAction(u, ACTION_HUNT);
 			}
 
 			s->countDown = g_table_houseInfo[s->o.houseID].specialCountDown;
@@ -1073,7 +1073,7 @@ Structure_Server_ActivateSpecial(Structure *s)
 
 			if (u != NULL) {
 				s->countDown = g_table_houseInfo[s->o.houseID].specialCountDown;
-				Unit_SetAction(u, ACTION_SABOTAGE);
+				Unit_Server_SetAction(u, ACTION_SABOTAGE);
 			}
 			else if (enhancement_play_additional_voices) {
 				/* ENHANCEMENT -- Feedback if we cannot create a saboteur. */
@@ -2107,7 +2107,8 @@ void Structure_HouseUnderAttack(uint8 houseID)
 		if (ui->bulletType == UNIT_INVALID) continue;
 
 		/* XXX -- Dune2 does something odd here. What was their intention? */
-		if ((u->actionID == ACTION_GUARD && u->actionID == ACTION_AMBUSH) || u->actionID == ACTION_AREA_GUARD) Unit_SetAction(u, ACTION_HUNT);
+		if ((u->actionID == ACTION_GUARD && u->actionID == ACTION_AMBUSH) || u->actionID == ACTION_AREA_GUARD)
+			Unit_Server_SetAction(u, ACTION_HUNT);
 	}
 }
 

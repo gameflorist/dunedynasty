@@ -307,7 +307,7 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 			}
 		}
 
-		Unit_SetAction(u, action);
+		Unit_Server_SetAction(u, action);
 		Unit_SetDestination(u, encoded);
 	}
 
@@ -679,15 +679,15 @@ uint16 Script_Structure_Destroy(ScriptEngine *script)
 			 * so the soldier will move and we can rebuild here later.
 			 */
 			if (enhancement_ai_respects_structure_placement || AI_IsBrutalAI(s->o.houseID)) {
-				Unit_SetAction(u, ACTION_HUNT);
+				Unit_Server_SetAction(u, ACTION_HUNT);
 			}
 			else {
-				Unit_SetAction(u, ACTION_ATTACK);
+				Unit_Server_SetAction(u, ACTION_ATTACK);
 			}
 			continue;
 		}
 
-		Unit_SetAction(u, ACTION_MOVE);
+		Unit_Server_SetAction(u, ACTION_MOVE);
 
 		tile = Tile_MoveByRandom(u->o.position, 32, true);
 

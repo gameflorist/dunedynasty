@@ -73,7 +73,7 @@ uint16 Script_Unit_RandomSoldier(ScriptEngine *script)
 
 	nu->deviated = u->deviated;
 
-	Unit_SetAction(nu, STACK_PEEK(1));
+	Unit_Server_SetAction(nu, STACK_PEEK(1));
 
 	return 1;
 }
@@ -672,7 +672,8 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 			script->delay = 12;
 
-			if ((int8)u->amount < 1) Unit_SetAction(u, ACTION_DIE);
+			if ((int8)u->amount < 1)
+				Unit_Server_SetAction(u, ACTION_DIE);
 		} break;
 
 		case UNIT_MISSILE_TROOPER:
@@ -905,7 +906,7 @@ uint16 Script_Unit_SetTarget(ScriptEngine *script)
 uint16 Script_Unit_SetAction(ScriptEngine *script)
 {
 	Unit *u;
-	ActionType action;
+	enum UnitActionType action;
 
 	u = g_scriptCurrentUnit;
 
@@ -916,7 +917,7 @@ uint16 Script_Unit_SetAction(ScriptEngine *script)
 			&& u->nextActionID != ACTION_INVALID)
 		return 0;
 
-	Unit_SetAction(u, action);
+	Unit_Server_SetAction(u, action);
 
 	return 0;
 }
@@ -939,7 +940,7 @@ uint16 Script_Unit_SetActionDefault(ScriptEngine *script)
 
 	/* ENHANCEMENT -- Follow mode similar to Sega Mega Drive version of Dune II. */
 	if (!(u->actionID == ACTION_MOVE && u->permanentFollow) || (Tools_Index_GetUnit(u->targetMove) == NULL))
-		Unit_SetAction(u, g_table_unitInfo[u->o.type].o.actionsPlayer[3]);
+		Unit_Server_SetAction(u, g_table_unitInfo[u->o.type].o.actionsPlayer[3]);
 
 	return 0;
 }
@@ -1951,7 +1952,7 @@ uint16 Script_Unit_GoToClosestStructure(ScriptEngine *script)
 
 	if (s == NULL) return 0;
 
-	Unit_SetAction(u, ACTION_MOVE);
+	Unit_Server_SetAction(u, ACTION_MOVE);
 	Unit_SetDestination(u, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
 
 	return 1;

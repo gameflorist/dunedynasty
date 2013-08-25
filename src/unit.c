@@ -505,7 +505,7 @@ void GameLoop_Unit(void)
 		if (u->nextActionID == ACTION_INVALID) continue;
 		if (u->currentDestination.x != 0 || u->currentDestination.y != 0) continue;
 
-		Unit_SetAction(u, u->nextActionID);
+		Unit_Server_SetAction(u, u->nextActionID);
 		u->nextActionID = ACTION_INVALID;
 	}
 }
@@ -673,7 +673,8 @@ Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, in
 
 	Unit_UpdateMap(1, u);
 
-	Unit_SetAction(u, House_IsHuman(houseID) ? ui->o.actionsPlayer[3] : ui->actionAI);
+	Unit_Server_SetAction(u,
+			House_IsHuman(houseID) ? ui->o.actionsPlayer[3] : ui->actionAI);
 
 	return u;
 }
@@ -708,7 +709,8 @@ bool Unit_IsTypeOnMap(uint8 houseID, uint8 typeID)
  * @param u The Unit to set the action for.
  * @param action The action.
  */
-void Unit_SetAction(Unit *u, ActionType action)
+void
+Unit_Server_SetAction(Unit *u, enum UnitActionType action)
 {
 	const ActionInfo *ai;
 
@@ -1129,9 +1131,9 @@ bool Unit_SetPosition(Unit *u, tile32 position)
 	if (!House_IsHuman(u->o.houseID)
 			|| u->o.type == UNIT_HARVESTER
 			|| u->o.type == UNIT_SABOTEUR) {
-		Unit_SetAction(u, ui->actionAI);
+		Unit_Server_SetAction(u, ui->actionAI);
 	} else {
-		Unit_SetAction(u, ui->o.actionsPlayer[3]);
+		Unit_Server_SetAction(u, ui->o.actionsPlayer[3]);
 	}
 
 	u->spriteOffset = 0;
@@ -1450,9 +1452,9 @@ bool Unit_Deviation_Decrease(Unit *unit, uint16 amount)
 	unit->o.flags.s.bulletIsBig = false;
 
 	if (House_IsHuman(unit->o.houseID)) {
-		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
+		Unit_Server_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
-		Unit_SetAction(unit, ui->actionAI);
+		Unit_Server_SetAction(unit, ui->actionAI);
 	}
 
 	Unit_UntargetMe(unit);
@@ -1533,15 +1535,15 @@ bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 			unit->o.seenByHouses = 0xFF;
 		}
 
-		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
+		Unit_Server_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
 		/* Make brutal AI destruct devastators if outcome is desirable. */
 		if (AI_IsBrutalAI(houseID)
 				&& UnitAI_ShouldDestructDevastator(unit)) {
-			Unit_SetAction(unit, ACTION_DESTRUCT);
+			Unit_Server_SetAction(unit, ACTION_DESTRUCT);
 		}
 		else {
-			Unit_SetAction(unit, ui->actionAI);
+			Unit_Server_SetAction(unit, ui->actionAI);
 		}
 	}
 
@@ -1639,7 +1641,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 			Unit_Unselect(u);
 			Unit_UntargetMe(u);
 			u->o.script.variables[1] = 1;
-			Unit_SetAction(u, ACTION_DIE);
+			Unit_Server_SetAction(u, ACTION_DIE);
 		} else {
 			uint16 type = Map_GetLandscapeType(packed);
 			/* Produce tracks in the sand */
@@ -1901,7 +1903,7 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 			}
 		}
 
-		Unit_SetAction(unit, ACTION_DIE);
+		Unit_Server_SetAction(unit, ACTION_DIE);
 		return true;
 	}
 
@@ -1912,7 +1914,7 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 	if (!House_IsHuman(houseID)
 			&& unit->actionID == ACTION_AMBUSH
 			&& unit->o.type != UNIT_HARVESTER) {
-		Unit_SetAction(unit, ACTION_ATTACK);
+		Unit_Server_SetAction(unit, ACTION_ATTACK);
 	}
 
 	/* For brutal AI, give up sneak attack if we are attacked. */
@@ -1921,7 +1923,7 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 	if (unit->o.hitpoints >= ui->o.hitpoints / 2) return false;
 
 	if (unit->o.type == UNIT_SANDWORM) {
-		Unit_SetAction(unit, ACTION_DIE);
+		Unit_Server_SetAction(unit, ACTION_DIE);
 	}
 
 	if (unit->o.type == UNIT_TROOPERS || unit->o.type == UNIT_INFANTRY) {
@@ -1932,7 +1934,7 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 		Unit_UpdateMap(2, unit);
 
 		if (Tools_Random_256() < g_table_houseInfo[unit->o.houseID].toughness) {
-			Unit_SetAction(unit, ACTION_RETREAT);
+			Unit_Server_SetAction(unit, ACTION_RETREAT);
 		}
 
 		if (enhancement_infantry_squad_death_animations) {
@@ -3252,7 +3254,8 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 		}
 	}
 
-	if (!House_AreAllied(houseID, unit->o.houseID) && unit->actionID == ACTION_AMBUSH) Unit_SetAction(unit, ACTION_HUNT);
+	if (!House_AreAllied(houseID, unit->o.houseID) && unit->actionID == ACTION_AMBUSH)
+		Unit_Server_SetAction(unit, ACTION_HUNT);
 
 	if (House_AreAllied(unit->o.houseID, g_playerHouseID)) {
 		unit->o.seenByHouses = 0xFF;

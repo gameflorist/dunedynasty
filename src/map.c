@@ -409,7 +409,7 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 
 				if (t->action == TEAM_ACTION_STAGING) {
 					Unit_RemoveFromTeam(u);
-					Unit_SetAction(u, ACTION_HUNT);
+					Unit_Server_SetAction(u, ACTION_HUNT);
 					continue;
 				}
 
@@ -425,7 +425,8 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 				const UnitInfo *uis = &g_table_unitInfo[us->o.type];
 
 				if (uis->movementType == MOVEMENT_FOOT && u->targetMove == 0) {
-					if (u->actionID != ACTION_MOVE) Unit_SetAction(u, ACTION_MOVE);
+					if (u->actionID != ACTION_MOVE)
+						Unit_Server_SetAction(u, ACTION_MOVE);
 					u->targetMove = unitOriginEncoded;
 					continue;
 				}
@@ -434,7 +435,7 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 			if (ui->bulletType == UNIT_INVALID) continue;
 
 			if (u->actionID == ACTION_GUARD && u->o.flags.s.byScenario) {
-				Unit_SetAction(u, ACTION_HUNT);
+				Unit_Server_SetAction(u, ACTION_HUNT);
 			}
 
 			if (u->targetAttack != 0 && u->actionID != ACTION_HUNT) continue;
@@ -785,7 +786,8 @@ void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID)
 			/* ENHANCEMENT -- Dune2 inverted houseID and typeID arguments. */
 			u = Unit_Create(UNIT_INDEX_INVALID, UNIT_TRIKE, enemyHouseID, position, Tools_Random_256());
 
-			if (u != NULL) Unit_SetAction(u, ACTION_HUNT);
+			if (u != NULL)
+				Unit_Server_SetAction(u, ACTION_HUNT);
 			break;
 		}
 
@@ -798,7 +800,8 @@ void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID)
 			/* ENHANCEMENT -- Dune2 inverted houseID and typeID arguments. */
 			u = Unit_Create(UNIT_INDEX_INVALID, UNIT_INFANTRY, enemyHouseID, position, Tools_Random_256());
 
-			if (u != NULL) Unit_SetAction(u, ACTION_HUNT);
+			if (u != NULL)
+				Unit_Server_SetAction(u, ACTION_HUNT);
 			break;
 		}
 

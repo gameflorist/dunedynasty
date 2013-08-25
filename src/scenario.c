@@ -1236,7 +1236,8 @@ Scenario_Create_Unit(enum HouseType houseType, enum UnitType unitType,
 	}
 
 	/* XXX -- There is no way this is ever possible, as the beingBuilt flag is unset by Unit_Allocate() */
-	if (!u->o.flags.s.isNotOnMap) Unit_SetAction(u, u->actionID);
+	if (!u->o.flags.s.isNotOnMap)
+		Unit_Server_SetAction(u, u->actionID);
 
 	u->o.seenByHouses = 0x00;
 

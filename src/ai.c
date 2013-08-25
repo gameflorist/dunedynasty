@@ -733,7 +733,7 @@ UnitAI_SquadCharge(AISquad *squad)
 
 	Unit *u = UnitAI_SquadFind(squad, &find);
 	while (u != NULL) {
-		Unit_SetAction(u, ACTION_HUNT);
+		Unit_Server_SetAction(u, ACTION_HUNT);
 		u->targetAttack = squad->target;
 
 		u = UnitAI_SquadFind(squad, &find);
@@ -747,7 +747,7 @@ UnitAI_DetachFromSquad(Unit *unit)
 		return;
 
 	if (unit->actionID != ACTION_HUNT)
-		Unit_SetAction(unit, ACTION_HUNT);
+		Unit_Server_SetAction(unit, ACTION_HUNT);
 
 	unit->aiSquad = SQUADID_INVALID;
 	s_aisquad[unit->aiSquad].num_members--;
@@ -920,7 +920,7 @@ UnitAI_ArrangeBattleFormation(AISquad *squad)
 		u->targetMove = Tools_Index_Encode(Tile_PackXY(ux, uy), IT_TILE);
 
 		/* We need the destination to be precise! */
-		Unit_SetAction(u, ACTION_MOVE);
+		Unit_Server_SetAction(u, ACTION_MOVE);
 
 		ux += sign * rank * dx[tangent8];
 		uy += sign * rank * dy[tangent8];

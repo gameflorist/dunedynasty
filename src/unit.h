@@ -144,7 +144,7 @@ extern uint8 Unit_ActionStringToType(const char *name);
 extern uint8 Unit_MovementStringToType(const char *name);
 extern struct Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, int8 orientation);
 extern bool Unit_IsTypeOnMap(uint8 houseID, uint8 typeID);
-extern void Unit_SetAction(Unit *u, ActionType action);
+extern void Unit_Server_SetAction(Unit *u, enum UnitActionType action);
 extern uint16 Unit_AddToTeam(Unit *u, struct Team *t);
 extern uint16 Unit_RemoveFromTeam(Unit *u);
 extern struct Team *Unit_GetTeam(Unit *u);

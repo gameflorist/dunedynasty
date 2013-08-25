@@ -177,8 +177,6 @@ enum UnitActionType {
 	ACTION_INVALID  = 0xFF
 };
 
-typedef enum UnitActionType ActionType;
-
 enum UnitDisplayMode {
 	DISPLAYMODE_SINGLE_FRAME        = 0,
 	DISPLAYMODE_UNIT                = 1, /* Ground: N,NE,E,SE,S.  Air: N,NE,E. */
