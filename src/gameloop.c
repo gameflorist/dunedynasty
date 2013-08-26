@@ -278,6 +278,10 @@ GameLoop_Client_ProcessInput(void)
 		if (g_mousePanning)
 			Video_WarpCursor(TRUE_DISPLAY_WIDTH / 2, TRUE_DISPLAY_HEIGHT / 2);
 	}
+	else if (g_gameOverlay == GAMEOVERLAY_HINT) {
+		Input_Tick(true);
+		MenuBar_TickHintOverlay();
+	}
 	else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
 		Input_Tick(true);
 		MenuBar_TickMentatOverlay();
@@ -295,6 +299,10 @@ GameLoop_Client_Draw(void)
 {
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		GUI_DrawInterfaceAndRadar();
+	}
+	else if (g_gameOverlay == GAMEOVERLAY_HINT) {
+		GUI_DrawInterfaceAndRadar();
+		MenuBar_DrawHintOverlay();
 	}
 	else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
 		MenuBar_DrawMentatOverlay();

@@ -24,6 +24,7 @@
 #include "map.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
+#include "newui/menubar.h"
 #include "opendune.h"
 #include "pool/pool.h"
 #include "pool/house.h"
@@ -3172,27 +3173,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 		if (unit->o.type == UNIT_SANDWORM) {
 			if (h->timerSandwormAttack == 0) {
 				Server_Send_PlayBattleMusic(1 << houseID);
-
-				/* XXX -- Dodgy.  When a hint is drawn, it renders the
-				 * screen again.  Presently it comes back here, which
-				 * plays the warning (a second time).
-				 */
-				{
-					const int hint
-						= STR_HINT_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND
-						- STR_HINT_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
-					assert(hint == 27);
-
-					const int mask = (1 << hint);
-					const int hintsShown = g_hintsShown1;
-
-					if ((g_gameConfig.language == LANGUAGE_ENGLISH) && (g_gameConfig.hints) && ((hintsShown & mask) == 0)) {
-					}
-					else {
-						Server_Send_PlayVoice(1 << houseID,
-								VOICE_WARNING_WORM_SIGN);
-					}
-				}
+				Server_Send_PlayVoice(1 << houseID, VOICE_WARNING_WORM_SIGN);
 
 				if (g_gameConfig.language == LANGUAGE_ENGLISH) {
 					GUI_DisplayHint(houseID,

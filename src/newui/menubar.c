@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "enum_string.h"
 #include "../os/common.h"
 #include "../os/math.h"
@@ -27,6 +28,7 @@
 #include "../gui/widget.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
+#include "../net/net.h"
 #include "../opendune.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
@@ -46,6 +48,8 @@ static enum {
 } radar_animation_state;
 
 static int64_t radar_animation_timer;
+static char s_modal_message_buf[768];
+static enum ShapeID s_modal_message_shapeID;
 static int s_save_entry;
 
 void
@@ -207,6 +211,133 @@ MenuBar_StartRadarAnimation(bool activate)
 
 		Timer_SetTimer(TIMER_GAME, true);
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+MenuBar_PrepareModalMessage(enum ShapeID shapeID)
+{
+	WidgetProperties *w = &g_widgetProperties[WINDOWID_MODAL_MESSAGE];
+
+	s_modal_message_shapeID = shapeID;
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
+
+	const int padding = (shapeID == SHAPE_INVALID) ? 2*8 : 7*8;
+	const int lines
+		= GUI_SplitText(s_modal_message_buf, w->width - padding - 6, '\r');
+
+	w->height = g_fontCurrent->height * max(lines, 3) + 18;
+
+	/* Stop panning mode and show the regular cursor. */
+	Viewport_Init();
+	Video_ShowCursor();
+	Input_History_Clear();
+}
+
+static bool
+MenuBar_TickModalMessage(void)
+{
+	const bool narrator_speaking = Audio_Poll();
+
+	if (Input_IsInputAvailable()) {
+		const int key = Input_GetNextKey();
+
+		if (narrator_speaking)
+			return false;
+
+		if (key == MOUSE_LMB
+		 || key == MOUSE_RMB
+		 || key == SCANCODE_ESCAPE
+		 || key == SCANCODE_SPACE) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static void
+MenuBar_DrawModalMessage(void)
+{
+	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+
+	WidgetProperties *w = &g_widgetProperties[WINDOWID_MODAL_MESSAGE];
+	const int old_x = w->xBase;
+	w->xBase = ((viewport->scalex * viewport->width) / div->scalex - w->width) / 2;
+
+	GUI_Widget_DrawBorder(WINDOWID_MODAL_MESSAGE, 1, 1);
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
+
+	if (s_modal_message_shapeID != SHAPE_INVALID) {
+		Shape_Draw(s_modal_message_shapeID, 7, 8, WINDOWID_MODAL_MESSAGE, 0x4000);
+		GUI_DrawText(s_modal_message_buf, w->xBase + 5*8, w->yBase + 8,
+				w->fgColourBlink, 0);
+	}
+	else {
+		GUI_DrawText(s_modal_message_buf, w->xBase + 1*8, w->yBase + 8,
+				w->fgColourBlink, 0);
+	}
+
+	w->xBase = old_x;
+}
+
+/*--------------------------------------------------------------*/
+
+void
+GUI_DisplayHint(enum HouseType houseID,
+		enum StringID stringID, enum ShapeID shapeID)
+{
+	if (g_debugGame
+			|| stringID == STR_NULL
+			|| !g_gameConfig.hints
+			|| houseID != g_playerHouseID
+			|| g_selectionType == SELECTIONTYPE_MENTAT
+			|| g_host_type != HOSTTYPE_NONE)
+		return;
+
+	const int hint
+		= stringID
+		- STR_HINT_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
+	assert(hint < 64);
+
+	const uint32 mask = (1 << (hint % 32));
+	uint32 *hintsShown = (hint < 32) ? &g_hintsShown1 : &g_hintsShown2;
+
+	if (!(*hintsShown & mask)) {
+		*hintsShown |= mask;
+
+		g_gameOverlay = GAMEOVERLAY_HINT;
+
+		strncpy(s_modal_message_buf, String_Get_ByIndex(stringID),
+				sizeof(s_modal_message_buf));
+		s_modal_message_buf[sizeof(s_modal_message_buf) - 1] = '\0';
+
+		MenuBar_PrepareModalMessage(shapeID);
+	}
+}
+
+void
+MenuBar_TickHintOverlay(void)
+{
+	if (MenuBar_TickModalMessage())
+		g_gameOverlay = GAMEOVERLAY_NONE;
+}
+
+void
+MenuBar_DrawHintOverlay(void)
+{
+	const enum ScreenDivID divID = A5_SaveTransform();
+
+	Video_ShadeScreen(128);
+
+	A5_UseTransform(SCREENDIV_MENU);
+
+	MenuBar_DrawModalMessage();
+
+	A5_UseTransform(divID);
 }
 
 /*--------------------------------------------------------------*/
@@ -865,28 +996,15 @@ MenuBar_DrawOptionsOverlay(void)
 uint16
 GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 {
-	const ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
-	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
-	const enum ScreenDivID prev_div = A5_SaveTransform();
-
-	WidgetProperties *w = &g_widgetProperties[WINDOWID_MODAL_MESSAGE];
-	char textBuffer[768];
+	const enum ScreenDivID divID = A5_SaveTransform();
 
 	va_list ap;
 
 	va_start(ap, shapeID);
-	vsnprintf(textBuffer, sizeof(textBuffer), str, ap);
+	vsnprintf(s_modal_message_buf, sizeof(s_modal_message_buf), str, ap);
 	va_end(ap);
 
-	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
-
-	const int lines = GUI_SplitText(textBuffer, (w->width - ((shapeID == SHAPE_INVALID) ? 2*8 : 7*8)) - 6, '\r');
-	w->height = g_fontCurrent->height * max(lines, 3) + 18;
-
-	/* Stop panning mode and show the cursor for this blocking dialog. */
-	Viewport_Init();
-	Video_ShowCursor();
-	Input_History_Clear();
+	MenuBar_PrepareModalMessage(shapeID);
 
 	bool redraw = true;
 	while (true) {
@@ -900,45 +1018,21 @@ GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...)
 
 			A5_UseTransform(SCREENDIV_MENU);
 
-			/* Centre the dialog box to the viewport. */
-			const int old_x = w->xBase;
-			w->xBase = ((viewport->scalex * viewport->width) / div->scalex - w->width) / 2;
-
-			GUI_Widget_DrawBorder(WINDOWID_MODAL_MESSAGE, 1, 1);
-			GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
-
-			if (shapeID != SHAPE_INVALID) {
-				Shape_Draw(shapeID, 7, 8, WINDOWID_MODAL_MESSAGE, 0x4000);
-				GUI_DrawText(textBuffer, w->xBase + 5*8, w->yBase + 8, w->fgColourBlink, 0);
-			}
-			else {
-				GUI_DrawText(textBuffer, w->xBase + 1*8, w->yBase + 8, w->fgColourBlink, 0);
-			}
-
-			w->xBase = old_x;
+			MenuBar_DrawModalMessage();
 
 			Video_Tick();
 		}
 
-		const bool narrator_speaking = Audio_Poll();
-
 		if (Input_Tick(true))
 			redraw = true;
 
-		if (Input_IsInputAvailable()) {
-			const int key = Input_GetNextKey();
-
-			if (narrator_speaking)
-				continue;
-
-			if ((key == MOUSE_LMB) || (key == MOUSE_RMB) || (key == SCANCODE_ESCAPE) || (key == SCANCODE_SPACE))
-				break;
-		}
+		if (MenuBar_TickModalMessage())
+			break;
 
 		sleepIdle();
 	}
 
-	A5_UseTransform(prev_div);
+	A5_UseTransform(divID);
 
 	/* Not sure. */
 	return 0;

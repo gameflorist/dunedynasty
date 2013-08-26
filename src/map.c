@@ -19,6 +19,7 @@
 #include "house.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
+#include "newui/menubar.h"
 #include "opendune.h"
 #include "pool/pool.h"
 #include "pool/unit.h"

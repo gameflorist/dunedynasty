@@ -32,7 +32,6 @@
 #include "../input/mouse.h"
 #include "../load.h"
 #include "../map.h"
-#include "../net/net.h"
 #include "../newui/actionpanel.h"
 #include "../newui/halloffame.h"
 #include "../newui/menu.h"
@@ -681,11 +680,6 @@ void GUI_UpdateProductionStringID(void)
 	g_productionStringID = STR_COMPLETED;
 }
 
-#if 0
-static void GUI_Widget_SetProperties(uint16 index, uint16 xpos, uint16 ypos, uint16 width, uint16 height);
-extern uint16 GUI_DisplayModalMessage(const char *str, uint16 spriteID, ...);
-#endif
-
 /**
  * Splits the given text in lines of maxwidth width using the given delimiter.
  * @param str The text to split.
@@ -1271,46 +1265,6 @@ void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colours, uint8 reference, 
 		colours[index] = colour;
 	}
 }
-
-#if 0
-extern void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height, uint16 colourSchemaIndex, bool fill);
-#endif
-
-/**
- * Display a hint to the user. Only show each hint exactly once.
- *
- * @param stringID The string of the hint to show.
- * @param spriteID The sprite to show with the hint.
- * @return Zero or the return value of GUI_DisplayModalMessage.
- */
-void
-GUI_DisplayHint(enum HouseType houseID, uint16 stringID, uint16 spriteID)
-{
-	if (g_debugGame
-			|| stringID == STR_NULL
-			|| !g_gameConfig.hints
-			|| houseID != g_playerHouseID
-			|| g_selectionType == SELECTIONTYPE_MENTAT
-			|| g_host_type != HOSTTYPE_NONE)
-		return;
-
-	const uint16 hint
-		= stringID
-		- STR_HINT_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
-	assert(hint < 64);
-
-	const uint32 mask = (1 << (hint % 32));
-	uint32 *hintsShown = (hint < 32) ? &g_hintsShown1 : &g_hintsShown2;
-
-	if (!(*hintsShown & mask)) {
-		*hintsShown |= mask;
-		GUI_DisplayModalMessage(String_Get_ByIndex(stringID), spriteID);
-	}
-}
-
-#if 0
-extern void GUI_DrawProgressbar(uint16 current, uint16 max);
-#endif
 
 /**
  * Draw the interface (borders etc etc) and radar on the screen.

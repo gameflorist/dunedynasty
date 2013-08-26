@@ -10,6 +10,7 @@
 #include "../house.h"
 #include "../map.h"
 #include "../net/server.h"
+#include "../newui/menubar.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"

@@ -1,13 +1,19 @@
 #ifndef NEWUI_MENUBAR_H
 #define NEWUI_MENUBAR_H
 
+#include "enum_string.h"
+#include "enumeration.h"
 #include "../gui/widget.h"
-#include "../house.h"
+#include "../shape.h"
 
 extern void MenuBar_DrawCredits(int credits_new, int credits_old, int offset, int x0);
 extern void MenuBar_DrawStatusBar(const char *line1, const char *line2, bool scrollInProgress, int x, int y, int offset);
 extern void MenuBar_Draw(enum HouseType houseID);
 extern void MenuBar_StartRadarAnimation(bool activate);
+
+extern void GUI_DisplayHint(enum HouseType houseID, enum StringID stringID, enum ShapeID shapeID);
+extern void MenuBar_TickHintOverlay(void);
+extern void MenuBar_DrawHintOverlay(void);
 
 extern bool MenuBar_ClickMentat(Widget *w);
 extern void MenuBar_TickMentatOverlay(void);
