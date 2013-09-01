@@ -57,6 +57,10 @@ Tile_PackXY(uint16 x, uint16 y)
 	return (y << 6) | x;
 }
 
+/**
+ * @brief   f__0F3F_0360_0038_97C0.
+ * @details Simplified logic.
+ */
 uint16
 Tile_GetDistancePacked(uint16 a, uint16 b)
 {
@@ -129,6 +133,10 @@ Tile_Center(tile32 tile)
 	return tile;
 }
 
+/**
+ * @brief   f__0F3F_00B4_002A_89B2.
+ * @details Simplified logic.
+ */
 int16
 Tile_GetDistance(tile32 a, tile32 b)
 {
@@ -143,6 +151,10 @@ Tile_GetDistance(tile32 a, tile32 b)
 	}
 }
 
+/**
+ * @brief   f__0F3F_0104_0013_C3B8.
+ * @details Exact.
+ */
 uint16
 Tile_GetDistanceRoundedUp(tile32 a, tile32 b)
 {
