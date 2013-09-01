@@ -11,6 +11,8 @@
  * x and y is therefore (MAP_SIZE_MAX * 16 * 16 - 1).
  */
 
+#include <stdlib.h>
+
 #include "coord.h"
 
 /**
@@ -53,6 +55,20 @@ uint16
 Tile_PackXY(uint16 x, uint16 y)
 {
 	return (y << 6) | x;
+}
+
+uint16
+Tile_GetDistancePacked(uint16 a, uint16 b)
+{
+	const uint16 dx = abs(Tile_GetPackedX(a) - Tile_GetPackedX(b));
+	const uint16 dy = abs(Tile_GetPackedY(a) - Tile_GetPackedY(b));
+
+	if (dx > dy) {
+		return dx + (dy / 2);
+	}
+	else {
+		return dy + (dx / 2);
+	}
 }
 
 /**
@@ -111,6 +127,26 @@ Tile_Center(tile32 tile)
 	tile.y = (tile.y & 0xFF00) | 0x80;
 
 	return tile;
+}
+
+int16
+Tile_GetDistance(tile32 a, tile32 b)
+{
+	const uint16 dx = abs(a.x - b.x);
+	const uint16 dy = abs(a.y - b.y);
+
+	if (dx > dy) {
+		return dx + (dy / 2);
+	}
+	else {
+		return dy + (dx / 2);
+	}
+}
+
+uint16
+Tile_GetDistanceRoundedUp(tile32 a, tile32 b)
+{
+	return (Tile_GetDistance(a, b) + 0x80) >> 8;
 }
 
 /**

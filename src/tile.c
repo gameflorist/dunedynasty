@@ -15,22 +15,6 @@
 #include "tools/random_general.h"
 
 /**
- * Calculates the distance between the two given tiles.
- *
- * @param from The origin.
- * @param to The destination.
- * @return The longest distance between the X or Y coordinates, plus half the shortest.
- */
-uint16 Tile_GetDistance(tile32 from, tile32 to)
-{
-	uint16 distance_x = abs(from.x - to.x);
-	uint16 distance_y = abs(from.y - to.y);
-
-	if (distance_x > distance_y) return distance_x + (distance_y / 2);
-	return distance_y + (distance_x / 2);
-}
-
-/**
  * Adds two tiles together.
  *
  * @param from The origin.
@@ -45,33 +29,6 @@ tile32 Tile_AddTileDiff(tile32 from, tile32 diff)
 	result.y = from.y + diff.y;
 
 	return result;
-}
-
-/**
- * Calculates the distance between the two given packed tiles.
- *
- * @param packed_from The origin.
- * @param packed_to The destination.
- * @return The longest distance between the X or Y coordinates, plus half the shortest.
- */
-uint16 Tile_GetDistancePacked(uint16 packed_from, uint16 packed_to)
-{
-	tile32 from = Tile_UnpackTile(packed_from);
-	tile32 to = Tile_UnpackTile(packed_to);
-
-	return Tile_GetDistance(from, to) >> 8;
-}
-
-/**
- * Calculates the rounded up distance between the two given packed tiles.
- *
- * @param from The origin.
- * @param to The destination.
- * @return The longest distance between the X or Y coordinates, plus half the shortest.
- */
-uint16 Tile_GetDistanceRoundedUp(tile32 from, tile32 to)
-{
-	return (Tile_GetDistance(from, to) + 0x80) >> 8;
 }
 
 /**

@@ -3,9 +3,6 @@
 #ifndef TILE_H
 #define TILE_H
 
-extern uint16 Tile_GetDistance(tile32 from, tile32 to);
-extern uint16 Tile_GetDistancePacked(uint16 packed_from, uint16 packed_to);
-extern uint16 Tile_GetDistanceRoundedUp(tile32 from, tile32 to);
 extern tile32 Tile_AddTileDiff(tile32 from, tile32 diff);
 extern void Tile_RefreshFogInRadius(tile32 tile, uint16 radius, bool unveil);
 extern void Tile_RemoveFogInRadius(tile32 tile, uint16 radius);
