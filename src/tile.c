@@ -11,25 +11,7 @@
 #include "house.h"
 #include "map.h"
 #include "tools/coord.h"
-#include "tools/orientation.h"
 #include "tools/random_general.h"
-
-/**
- * Adds two tiles together.
- *
- * @param from The origin.
- * @param diff The difference.
- * @return The new coordinates.
- */
-tile32 Tile_AddTileDiff(tile32 from, tile32 diff)
-{
-	tile32 result;
-
-	result.x = from.x + diff.x;
-	result.y = from.y + diff.y;
-
-	return result;
-}
 
 /**
  * Remove fog in the radius around the given tile.
@@ -162,117 +144,6 @@ uint8 Tile_GetDirectionPacked(uint16 packed_from, uint16 packed_to)
 	return returnValues[index];
 }
 
-static const int8 _stepX[256] = {
-	   0,    3,    6,    9,   12,   15,   18,   21,   24,   27,   30,   33,   36,   39,   42,   45,
-	  48,   51,   54,   57,   59,   62,   65,   67,   70,   73,   75,   78,   80,   82,   85,   87,
-	  89,   91,   94,   96,   98,  100,  101,  103,  105,  107,  108,  110,  111,  113,  114,  116,
-	 117,  118,  119,  120,  121,  122,  123,  123,  124,  125,  125,  126,  126,  126,  126,  126,
-	 127,  126,  126,  126,  126,  126,  125,  125,  124,  123,  123,  122,  121,  120,  119,  118,
-	 117,  116,  114,  113,  112,  110,  108,  107,  105,  103,  102,  100,   98,   96,   94,   91,
-	  89,   87,   85,   82,   80,   78,   75,   73,   70,   67,   65,   62,   59,   57,   54,   51,
-	  48,   45,   42,   39,   36,   33,   30,   27,   24,   21,   18,   15,   12,    9,    6,    3,
-	   0,   -3,   -6,   -9,  -12,  -15,  -18,  -21,  -24,  -27,  -30,  -33,  -36,  -39,  -42,  -45,
-	 -48,  -51,  -54,  -57,  -59,  -62,  -65,  -67,  -70,  -73,  -75,  -78,  -80,  -82,  -85,  -87,
-	 -89,  -91,  -94,  -96,  -98, -100, -102, -103, -105, -107, -108, -110, -111, -113, -114, -116,
-	-117, -118, -119, -120, -121, -122, -123, -123, -124, -125, -125, -126, -126, -126, -126, -126,
-	-126, -126, -126, -126, -126, -126, -125, -125, -124, -123, -123, -122, -121, -120, -119, -118,
-	-117, -116, -114, -113, -112, -110, -108, -107, -105, -103, -102, -100,  -98,  -96,  -94,  -91,
-	 -89,  -87,  -85,  -82,  -80,  -78,  -75,  -73,  -70,  -67,  -65,  -62,  -59,  -57,  -54,  -51,
-	 -48,  -45,  -42,  -39,  -36,  -33,  -30,  -27,  -24,  -21,  -18,  -15,  -12,   -9,   -6,   -3
-};
-
-static const int8 _stepY[256] = {
-	 127,  126,  126,  126,  126,  126,  125,  125,  124,  123,  123,  122,  121,  120,  119,  118,
-	 117,  116,  114,  113,  112,  110,  108,  107,  105,  103,  102,  100,   98,   96,   94,   91,
-	  89,   87,   85,   82,   80,   78,   75,   73,   70,   67,   65,   62,   59,   57,   54,   51,
-	  48,   45,   42,   39,   36,   33,   30,   27,   24,   21,   18,   15,   12,    9,    6,    3,
-	   0,   -3,   -6,   -9,  -12,  -15,  -18,  -21,  -24,  -27,  -30,  -33,  -36,  -39,  -42,  -45,
-	 -48,  -51,  -54,  -57,  -59,  -62,  -65,  -67,  -70,  -73,  -75,  -78,  -80,  -82,  -85,  -87,
-	 -89,  -91,  -94,  -96,  -98, -100, -102, -103, -105, -107, -108, -110, -111, -113, -114, -116,
-	-117, -118, -119, -120, -121, -122, -123, -123, -124, -125, -125, -126, -126, -126, -126, -126,
-	-126, -126, -126, -126, -126, -126, -125, -125, -124, -123, -123, -122, -121, -120, -119, -118,
-	-117, -116, -114, -113, -112, -110, -108, -107, -105, -103, -102, -100,  -98,  -96,  -94,  -91,
-	 -89,  -87,  -85,  -82,  -80,  -78,  -75,  -73,  -70,  -67,  -65,  -62,  -59,  -57,  -54,  -51,
-	 -48,  -45,  -42,  -39,  -36,  -33,  -30,  -27,  -24,  -21,  -18,  -15,  -12,   -9,   -6,   -3,
-	   0,    3,    6,    9,   12,   15,   18,   21,   24,   27,   30,   33,   36,   39,   42,   45,
-	  48,   51,   54,   57,   59,   62,   65,   67,   70,   73,   75,   78,   80,   82,   85,   87,
-	  89,   91,   94,   96,   98,  100,  101,  103,  105,  107,  108,  110,  111,  113,  114,  116,
-	 117,  118,  119,  120,  121,  122,  123,  123,  124,  125,  125,  126,  126,  126,  126,  126
-};
-
-/**
- * Get the tile from given tile at given distance in given direction.
- *
- * @param tile The origin.
- * @param orientation The direction to follow.
- * @param distance The distance.
- * @return The tile.
- */
-tile32 Tile_MoveByDirection(tile32 tile, int16 orientation, uint16 distance)
-{
-	distance = min(distance, 0xFF);
-
-	return Tile_MoveByDirectionUnlimited(tile, orientation, distance);
-}
-
-tile32
-Tile_MoveByDirectionUnlimited(tile32 tile, int16 orientation, uint16 distance)
-{
-	int diffX, diffY;
-	int roundingOffsetX, roundingOffsetY;
-
-	if (distance == 0) return tile;
-
-	diffX = _stepX[orientation & 0xFF];
-	diffY = _stepY[orientation & 0xFF];
-
-	/* Always round away from zero */
-	roundingOffsetX = diffX < 0 ? -64 : 64;
-	roundingOffsetY = diffY < 0 ? -64 : 64;
-
-	tile.x += (diffX * distance + roundingOffsetX) / 128;
-	tile.y -= (diffY * distance + roundingOffsetY) / 128;
-
-	return tile;
-}
-
-/**
- * Get the tile from given tile at given maximum distance in random direction.
- *
- * @param tile The origin.
- * @param distance The distance maximum.
- * @param center Wether to center the offset of the tile.
- * @return The tile.
- */
-tile32 Tile_MoveByRandom(tile32 tile, uint16 distance, bool center)
-{
-	uint16 x;
-	uint16 y;
-	tile32 ret;
-	uint8 orientation;
-	uint16 newDistance;
-
-	if (distance == 0) return tile;
-
-	x = tile.x;
-	y = tile.y;
-
-	newDistance = Tools_Random_256();
-	while (newDistance > distance) newDistance /= 2;
-	distance = newDistance;
-
-	orientation = Tools_Random_256();
-	x += ((_stepX[orientation] * distance) / 128) * 16;
-	y -= ((_stepY[orientation] * distance) / 128) * 16;
-
-	if (x > 16384 || y > 16384) return tile;
-
-	ret.x = x;
-	ret.y = y;
-
-	return center ? Tile_Center(ret) : ret;
-}
-
 /**
  * Get to direction to follow to go from \a from to \a to.
  *
@@ -334,35 +205,4 @@ int8 Tile_GetDirection(tile32 from, tile32 to)
 	if (quadrant == 0 || quadrant == 3) return (baseOrientation + 64 - i) & 0xFF;
 
 	return (baseOrientation + i) & 0xFF;
-}
-
-/**
- * Move to the given orientation looking from the current position.
- * @note returns input position when going out-of-bounds.
- * @param position The position to move from.
- * @param orientation The orientation to move in.
- * @return The new position, or the old in case of out-of-bounds.
- */
-tile32 Tile_MoveByOrientation(tile32 position, uint8 orientation)
-{
-	static const uint16 xOffsets[8] = {0, 256, 256, 256, 0, -256, -256, -256};
-	static const uint16 yOffsets[8] = {-256, -256, 0, 256, 256, 256, 0, -256};
-
-	uint16 x;
-	uint16 y;
-
-	x = position.x;
-	y = position.y;
-
-	orientation = Orientation_256To8(orientation);
-
-	x += xOffsets[orientation];
-	y += yOffsets[orientation];
-
-	if (x > 16384 || y > 16384) return position;
-
-	position.x = x;
-	position.y = y;
-
-	return position;
 }

@@ -238,7 +238,7 @@ Unit_GetNextDestination(const Unit *u)
 		(u->speedRemainder + Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false) > 0xFF)) {
 		const int dist = min(u->speed * 16, Tile_GetDistance(u->o.position, u->currentDestination) + 16);
 
-		return Tile_MoveByDirectionUnlimited(u->o.position, u->orientation[0].current, dist);
+		return Tile_MoveByDirectionUnbounded(u->o.position, u->orientation[0].current, dist);
 	}
 	else {
 		return u->o.position;
@@ -2030,11 +2030,11 @@ void Unit_SetOrientation(Unit *unit, int8 orientation, bool rotateInstantly, uin
 		const int turning_radius = 32 + 10281 * (unit->speed * 16) / (2 * 128 * (g_table_unitInfo[unit->o.type].turningSpeed * 4));
 		tile32 circle;
 
-		circle = Tile_MoveByDirectionUnlimited(unit->o.position, unit->orientation[0].current + 64, turning_radius);
+		circle = Tile_MoveByDirectionUnbounded(unit->o.position, unit->orientation[0].current + 64, turning_radius);
 		if (Tile_GetDistance(circle, unit->currentDestination) < turning_radius)
 			return;
 
-		circle = Tile_MoveByDirectionUnlimited(unit->o.position, unit->orientation[0].current - 64, turning_radius);
+		circle = Tile_MoveByDirectionUnbounded(unit->o.position, unit->orientation[0].current - 64, turning_radius);
 		if (Tile_GetDistance(circle, unit->currentDestination) < turning_radius)
 			return;
 	}

@@ -16,6 +16,11 @@ extern uint8  Tile_GetPosX(tile32 tile);
 extern uint8  Tile_GetPosY(tile32 tile);
 extern tile32 Tile_MakeXY(uint16 x, uint16 y);
 extern tile32 Tile_Center(tile32 tile);
+extern tile32 Tile_AddTileDiff(tile32 a, tile32 b);
+extern tile32 Tile_MoveByDirection(tile32 tile, uint8 orient256, uint16 distance);
+extern tile32 Tile_MoveByDirectionUnbounded(tile32 tile, uint8 orient256, uint16 distance);
+extern tile32 Tile_MoveByRandom(tile32 tile, uint16 distance, bool centre);
+extern tile32 Tile_MoveByOrientation(tile32 position, uint8 orient256);
 extern int16  Tile_GetDistance(tile32 a, tile32 b);
 extern uint16 Tile_GetDistanceRoundedUp(tile32 a, tile32 b);
 
