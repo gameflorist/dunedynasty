@@ -20,14 +20,17 @@
 #include "random_general.h"
 #include "../enhancement.h"
 
+/** variable_2484: 0x0003A4F4. */
 static const int16 s_xOffsets[8] = {
 	0, 256, 256, 256, 0, -256, -256, -256
 };
 
+/** variable_2474: 0x0003A504. */
 static const int16 s_yOffsets[8] = {
 	-256, -256, 0, 256, 256, 256, 0, -256
 };
 
+/** variable_3C4C: 0x0003BCCC. */
 static const int8 s_stepX[256] = {
 	   0,    3,    6,    9,   12,   15,   18,   21,   24,   27,   30,   33,   36,   39,   42,   45,
 	  48,   51,   54,   57,   59,   62,   65,   67,   70,   73,   75,   78,   80,   82,   85,   87,
@@ -47,6 +50,7 @@ static const int8 s_stepX[256] = {
 	 -48,  -45,  -42,  -39,  -36,  -33,  -30,  -27,  -24,  -21,  -18,  -15,  -12,   -9,   -6,   -3
 };
 
+/** variable_3D4C: 0x0003BDCC. */
 static const int8 s_stepY[256] = {
 	 127,  126,  126,  126,  126,  126,  125,  125,  124,  123,  123,  122,  121,  120,  119,  118,
 	 117,  116,  114,  113,  112,  110,  108,  107,  105,  103,  102,  100,   98,   96,   94,   91,
@@ -184,6 +188,10 @@ Tile_Center(tile32 tile)
 	return tile;
 }
 
+/**
+ * @brief   f__0F3F_00F3_0011_5E67.
+ * @details Exact.
+ */
 tile32
 Tile_AddTileDiff(tile32 a, tile32 b)
 {
@@ -193,12 +201,20 @@ Tile_AddTileDiff(tile32 a, tile32 b)
 	return b;
 }
 
+/**
+ * @brief   f__0F3F_028E_0015_1153.
+ * @details Refactored into bounded and unbounded displacements.
+ */
 tile32
 Tile_MoveByDirection(tile32 tile, uint8 orient256, uint16 distance)
 {
 	return Tile_MoveByDirectionUnbounded(tile, orient256, min(distance, 0xFF));
 }
 
+/**
+ * @brief   Displaces tile by the given distance and orientation, unbounded.
+ * @details f__0F3F_028E_0015_1153 between labels (l__02A6, l__031C).
+ */
 tile32
 Tile_MoveByDirectionUnbounded(tile32 tile, uint8 orient256, uint16 distance)
 {
@@ -224,6 +240,10 @@ Tile_MoveByDirectionUnbounded(tile32 tile, uint8 orient256, uint16 distance)
 	return tile;
 }
 
+/**
+ * @brief   f__0F3F_01A1_0018_9631.
+ * @details Simplified logic.
+ */
 tile32
 Tile_MoveByRandom(tile32 tile, uint16 distance, bool centre)
 {
@@ -250,6 +270,10 @@ Tile_MoveByRandom(tile32 tile, uint16 distance, bool centre)
 	return centre ? Tile_Center(tile) : tile;
 }
 
+/**
+ * @brief   f__B4CD_00A5_0016_24FA.
+ * @details Simplified logic.
+ */
 tile32
 Tile_MoveByOrientation(tile32 tile, uint8 orient256)
 {
