@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include "../os/common.h"
 #include "../os/math.h"
 
 #include "coord.h"
@@ -19,6 +20,7 @@
 #include "orientation.h"
 #include "random_general.h"
 #include "../enhancement.h"
+#include "../map.h"
 
 /** variable_2484: 0x0003A4F4. */
 static const int16 s_xOffsets[8] = {
@@ -28,6 +30,17 @@ static const int16 s_xOffsets[8] = {
 /** variable_2474: 0x0003A504. */
 static const int16 s_yOffsets[8] = {
 	-256, -256, 0, 256, 256, 256, 0, -256
+};
+
+static const uint16 s_orientationOffsets[4] = {
+	0x40, 0x80, 0x00, 0xC0
+};
+
+static const int32 s_gradients[32] = {
+	0x3FFF, 0x28BC, 0x145A, 0x0D8E, 0x0A27, 0x081B, 0x06BD, 0x05C3,
+	0x0506, 0x0474, 0x03FE, 0x039D, 0x034B, 0x0306, 0x02CB, 0x0297,
+	0x026A, 0x0241, 0x021D, 0x01FC, 0x01DE, 0x01C3, 0x01AB, 0x0194,
+	0x017F, 0x016B, 0x0159, 0x0148, 0x0137, 0x0128, 0x011A, 0x010C
 };
 
 /** variable_3C4C: 0x0003BCCC. */
@@ -128,6 +141,85 @@ Tile_GetDistancePacked(uint16 a, uint16 b)
 	else {
 		return dy + (dx / 2);
 	}
+}
+
+static uint8
+Tile_GetBearing(int16 x1, int16 y1, int16 x2, int16 y2)
+{
+	static const uint8 orient256[16] = {
+		0x20, 0x40, 0x20, 0x00, /* NE, E, NE, N. */
+		0xE0, 0xC0, 0xE0, 0x00, /* NW, W, NW, N. */
+		0x60, 0x40, 0x60, 0x80, /* SE, E, SE, S. */
+		0xA0, 0xC0, 0xA0, 0x80  /* SW, W, SW, S. */
+	};
+
+	uint16 index = 0;
+
+	int16 dy = y1 - y2;
+	if (dy < 0) {
+		index |= 0x8;
+		dy = -dy;
+	}
+
+	int16 dx = x2 - x1;
+	if (dx < 0) {
+		index |= 0x4;
+		dx = -dx;
+	}
+
+	if (dx >= dy) {
+		if (((dx + 1) / 2) > dy)
+			index |= 0x1;
+	}
+	else {
+		index |= 0x2;
+		if (((dy + 1) / 2) > dx)
+			index |= 0x1;
+	}
+
+	return orient256[index];
+}
+
+uint8
+Tile_GetDirectionPacked(uint16 packed_from, uint16 packed_to)
+{
+	return Tile_GetBearing(
+			Tile_GetPackedX(packed_from), Tile_GetPackedY(packed_from),
+			Tile_GetPackedX(packed_to),   Tile_GetPackedY(packed_to));
+}
+
+/**
+ * @brief   f__B4CD_1C1A_001A_9C1B.
+ * @details Simplified logic.
+ */
+uint16
+Tile_GetTileInDirectionOf(uint16 packed_from, uint16 packed_to)
+{
+	if (packed_from == 0 || packed_to == 0)
+		return 0;
+
+	uint16 distance = Tile_GetDistancePacked(packed_from, packed_to);
+	uint8 orient256 = Tile_GetDirectionPacked(packed_to, packed_from);
+
+	if (distance > 10) {
+		distance = min(distance, 20) * 256;
+
+		while (true) {
+			int16 dir = 31 + (Tools_Random_256() & 0x3F);
+			if (Tools_Random_256() & 1)
+				dir = -dir;
+
+			const tile32 tile
+				= Tile_MoveByDirection(Tile_UnpackTile(packed_to),
+						orient256 + dir, distance);
+
+			const uint16 packed = Tile_PackTile(tile);
+			if (Map_IsValidPosition(packed))
+				return packed;
+		}
+	}
+
+	return 0;
 }
 
 /**
@@ -317,6 +409,53 @@ uint16
 Tile_GetDistanceRoundedUp(tile32 a, tile32 b)
 {
 	return (Tile_GetDistance(a, b) + 0x80) >> 8;
+}
+
+uint8
+Tile_GetDirection(tile32 from, tile32 to)
+{
+	int quadrant = 0;   /* SE, SW, NE, NW. */
+	int16 dx = to.x - from.x;
+	int16 dy = to.y - from.y;
+	int32 gradient;
+	unsigned int i;
+
+	if (abs(dx) + abs(dy) > 8000) {
+		dx /= 2;
+		dy /= 2;
+	}
+
+	if (dy <= 0) {
+		quadrant |= 0x2;
+		dy = -dy;
+	}
+
+	if (dx < 0) {
+		quadrant |= 0x1;
+		dx = -dx;
+	}
+
+	if (dx >= dy) {
+		gradient = (dy != 0) ? ((dx << 8) / dy) : 0x7FFF;
+	}
+	else {
+		gradient = (dx != 0) ? ((dy << 8) / dx) : 0x7FFF;
+	}
+
+	for (i = 0; i < lengthof(s_gradients); i++) {
+		if (s_gradients[i] <= gradient)
+			break;
+	}
+
+	if (dx >= dy)
+		i = 64 - i;
+
+	if (quadrant == 0 || quadrant == 3) {
+		return s_orientationOffsets[quadrant] + 64 - i;
+	}
+	else {
+		return s_orientationOffsets[quadrant] + i;
+	}
 }
 
 /**
