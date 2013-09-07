@@ -32,10 +32,12 @@ static const int16 s_yOffsets[8] = {
 	-256, -256, 0, 256, 256, 256, 0, -256
 };
 
+/** variable_23DA: 0x0003A45A. */
 static const uint16 s_orientationOffsets[4] = {
 	0x40, 0x80, 0x00, 0xC0
 };
 
+/** variable_23E2: 0x0003A462. */
 static const int32 s_gradients[32] = {
 	0x3FFF, 0x28BC, 0x145A, 0x0D8E, 0x0A27, 0x081B, 0x06BD, 0x05C3,
 	0x0506, 0x0474, 0x03FE, 0x039D, 0x034B, 0x0306, 0x02CB, 0x0297,
@@ -143,6 +145,10 @@ Tile_GetDistancePacked(uint16 a, uint16 b)
 	}
 }
 
+/**
+ * @brief   f__07C4_001A_0045_DCB4.
+ * @details Likely to have been hand-written assembly.
+ */
 static uint8
 Tile_GetBearing(int16 x1, int16 y1, int16 x2, int16 y2)
 {
@@ -180,6 +186,10 @@ Tile_GetBearing(int16 x1, int16 y1, int16 x2, int16 y2)
 	return orient256[index];
 }
 
+/**
+ * @brief   f__0F3F_0168_0010_C9EF.
+ * @details Exact.
+ */
 uint8
 Tile_GetDirectionPacked(uint16 packed_from, uint16 packed_to)
 {
@@ -411,6 +421,10 @@ Tile_GetDistanceRoundedUp(tile32 a, tile32 b)
 	return (Tile_GetDistance(a, b) + 0x80) >> 8;
 }
 
+/**
+ * @brief   f__B4C1_0000_0022_1807.
+ * @details Simplified logic.
+ */
 uint8
 Tile_GetDirection(tile32 from, tile32 to)
 {
