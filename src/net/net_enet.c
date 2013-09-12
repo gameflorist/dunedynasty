@@ -21,7 +21,7 @@
 #define NET_LOG(...)
 #endif
 
-enum HouseFlag g_human_houses;
+enum HouseFlag g_client_houses;
 enum NetHostType g_host_type;
 static ENetHost *s_host;
 static ENetPeer *s_peer;
@@ -40,7 +40,7 @@ Server_Synchronise(void)
 {
 	int clients_connected = 0;
 
-	g_human_houses = 0;
+	g_client_houses = 0;
 
 	while (clients_connected == 0) {
 		ENetEvent event;
@@ -56,10 +56,10 @@ Server_Synchronise(void)
 					if (packet->dataLength == 2 && packet->data[0] == '=') {
 						enum HouseType houseID = packet->data[1];
 						if (HOUSE_HARKONNEN <= houseID && houseID < HOUSE_MAX
-								&& !(g_human_houses & (1 << houseID))) {
+								&& !(g_client_houses & (1 << houseID))) {
 							event.peer->data = (void *)houseID;
 
-							g_human_houses |= (1 << houseID);
+							g_client_houses |= (1 << houseID);
 							House_Get_ByIndex(houseID)->flags.human = true;
 
 							success = true;

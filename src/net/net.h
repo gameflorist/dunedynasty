@@ -15,7 +15,7 @@ enum NetHostType {
 	HOSTTYPE_DEDICATED_CLIENT,
 };
 
-extern enum HouseFlag g_human_houses;
+extern enum HouseFlag g_client_houses;
 extern enum NetHostType g_host_type;
 
 extern void Net_Initialise(void);

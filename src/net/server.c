@@ -408,14 +408,14 @@ Server_Send_ScreenShake(uint16 packed)
 {
 	GFX_ScreenShake_Start(packed, 1);
 
-	if (g_human_houses != 0) {
+	if (g_client_houses != 0) {
 		unsigned char src[3];
 		unsigned char *buf = src;
 
 		Net_Encode_ServerClientMsg(&buf, SCMSG_SCREEN_SHAKE);
 		Net_Encode_uint16(&buf, packed);
 
-		Server_BufferGameEvent(g_human_houses, sizeof(src), src);
+		Server_BufferGameEvent(g_client_houses, sizeof(src), src);
 	}
 }
 
@@ -427,7 +427,7 @@ Server_Send_StatusMessage1(enum HouseFlag houses, uint8 priority,
 		GUI_DrawStatusBarTextWrapper(priority, str, STR_NULL, STR_NULL);
 	}
 
-	houses &= g_human_houses;
+	houses &= g_client_houses;
 	if (houses) {
 		unsigned char src[8];
 		unsigned char *buf = src;
@@ -450,7 +450,7 @@ Server_Send_StatusMessage2(enum HouseFlag houses, uint8 priority,
 		GUI_DrawStatusBarTextWrapper(priority, str1, str2, STR_NULL);
 	}
 
-	houses &= g_human_houses;
+	houses &= g_client_houses;
 	if (houses) {
 		unsigned char src[8];
 		unsigned char *buf = src;
@@ -473,7 +473,7 @@ Server_Send_StatusMessage3(enum HouseFlag houses, uint8 priority,
 		GUI_DrawStatusBarTextWrapper(priority, str1, str2, str3);
 	}
 
-	houses &= g_human_houses;
+	houses &= g_client_houses;
 	if (houses) {
 		unsigned char src[8];
 		unsigned char *buf = src;
@@ -498,7 +498,7 @@ Server_Send_PlaySound(enum HouseFlag houses, enum SoundID soundID)
 		Audio_PlaySound(soundID);
 	}
 
-	houses &= g_human_houses;
+	houses &= g_client_houses;
 	if (houses) {
 		unsigned char src[2];
 		unsigned char *buf = src;
@@ -521,7 +521,7 @@ Server_Send_PlaySoundAtTile(enum HouseFlag houses,
 		Audio_PlaySoundAtTile(soundID, position);
 	}
 
-	houses &= g_human_houses;
+	houses &= g_client_houses;
 	if (houses) {
 		unsigned char src[6];
 		unsigned char *buf = src;
@@ -545,7 +545,7 @@ Server_Send_PlayVoice(enum HouseFlag houses, enum VoiceID voiceID)
 		Audio_PlayVoice(voiceID);
 	}
 
-	houses &= g_human_houses;
+	houses &= g_client_houses;
 	if (houses) {
 		unsigned char src[2];
 		unsigned char *buf = src;
@@ -565,7 +565,7 @@ Server_Send_PlayBattleMusic(enum HouseFlag houses)
 			g_musicInBattle = 1;
 	}
 
-	houses &= g_human_houses;
+	houses &= g_client_houses;
 	if (houses) {
 		unsigned char src[1];
 		unsigned char *buf = src;
