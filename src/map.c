@@ -293,23 +293,18 @@ bool Map_IsValidPosition(uint16 position)
 	return (mapInfo->minX <= x && x < (mapInfo->minX + mapInfo->sizeX) && mapInfo->minY <= y && y < (mapInfo->minY + mapInfo->sizeY));
 }
 
-/**
- * Check if a position is unveiled (the fog is removed).
- *
- * @param position For which position to check.
- * @return True if and only if the position is unveiled.
- */
-bool Map_IsPositionUnveiled(uint16 position)
+bool
+Map_IsPositionUnveiled(uint16 packed)
 {
-	if (g_debugScenario) return true;
+	if (g_debugScenario)
+		return true;
 
-	if (!g_map[position].isUnveiled)
-		return false;
-
-	if (!Sprite_IsUnveiled(g_mapVisible[position].fogSpriteID))
-		return false;
-
-	return true;
+	return (65 <= packed && packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65)
+		&& (g_map[packed].isUnveiled)
+		&& (g_map[packed - 1].isUnveiled)
+		&& (g_map[packed + 1].isUnveiled)
+		&& (g_map[packed - MAP_SIZE_MAX].isUnveiled)
+		&& (g_map[packed + MAP_SIZE_MAX].isUnveiled);
 }
 
 /**
@@ -1136,7 +1131,9 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 
 	f->timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
 
-	if (t->isUnveiled && Sprite_IsUnveiled(f->fogSpriteID)) return false;
+	if (t->isUnveiled && Map_IsPositionUnveiled(packed))
+		return false;
+
 	t->isUnveiled = true;
 
 	u = Unit_Get_ByPackedTile(packed);

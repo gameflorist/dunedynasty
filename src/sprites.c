@@ -357,19 +357,6 @@ void Sprites_CPS_LoadRegionClick(void)
 	InitRegions();
 }
 
-/**
- * Check if a spriteID is part of the veiling sprites.
- * @param spriteID The sprite to check for.
- * @return True if and only if the spriteID is part of the veiling sprites.
- */
-bool Sprite_IsUnveiled(uint16 spriteID)
-{
-	if (spriteID > g_veiledSpriteID) return true;
-	if (spriteID < g_veiledSpriteID - 15) return true;
-
-	return false;
-}
-
 void Sprites_Init(void)
 {
 	g_spriteBuffer = calloc(1, 20000);

@@ -82,7 +82,5 @@ extern void Sprites_LoadTiles(void);
 extern void Sprites_UnloadTiles(void);
 extern uint16 Sprites_LoadImage(enum SearchDirectory dir, const char *filename, Screen screenID, uint8 *palette);
 extern void Sprites_CPS_LoadRegionClick(void);
-extern bool Sprite_IsUnveiled(uint16 spriteID);
-
 
 #endif /* SPRITES_H */
