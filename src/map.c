@@ -1092,9 +1092,6 @@ static void Map_UnveilTile_Neighbour(uint16 packed)
 	if (g_map[packed].isUnveiled) {
 		int i;
 
-		if (g_validateStrictIfZero == 0 && Sprite_IsUnveiled(f->fogSpriteID))
-			return;
-
 		spriteID = 0;
 
 		for (i = 0; i < 4; i++) {
