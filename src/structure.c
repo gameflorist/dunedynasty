@@ -723,8 +723,6 @@ void Structure_CalculateHitpointsMax(House *h)
 
 	if (h == NULL) return;
 
-	if (h->index == g_playerHouseID) House_UpdateRadarState(h);
-
 	if (h->powerUsage == 0) {
 		power = 256;
 	} else {
@@ -1610,17 +1608,8 @@ void Structure_Remove(Structure *s)
 
 	if (g_debugScenario) return;
 
-	switch (s->o.type) {
-		case STRUCTURE_WINDTRAP:
-			House_CalculatePowerAndCredit(h);
-			break;
-
-		case STRUCTURE_OUTPOST:
-			House_UpdateRadarState(h);
-			break;
-
-		default: break;
-	}
+	if (s->o.type == STRUCTURE_WINDTRAP)
+		House_CalculatePowerAndCredit(h);
 }
 
 /**

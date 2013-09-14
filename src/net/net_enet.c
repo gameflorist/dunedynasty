@@ -314,6 +314,7 @@ Client_RecvMessages(void)
 		return;
 	}
 	else if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
+		House_Client_UpdateRadarState();
 		Client_ChangeSelectionMode();
 		return;
 	}

@@ -263,6 +263,8 @@ Client_Recv_UpdateHouse(const unsigned char **buf)
 	for (enum UnitType u = UNIT_CARRYALL; u <= UNIT_MCV; u++) {
 		h->starportCount[u] = Net_Decode_uint8(buf);
 	}
+
+	House_Client_UpdateRadarState();
 }
 
 static void

@@ -303,8 +303,6 @@ Viewport_Server_Place(House *h, Structure *s, uint16 packed)
 
 		Structure_Server_BuildObject(s, 0xFFFE);
 
-		House_UpdateRadarState(h);
-
 		if ((h->powerProduction < h->powerUsage)
 				&& (h->structuresBuilt & FLAG_STRUCTURE_OUTPOST)) {
 			Server_Send_StatusMessage1(1 << houseID, 3,

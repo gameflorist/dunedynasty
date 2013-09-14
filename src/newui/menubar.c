@@ -192,7 +192,8 @@ MenuBar_Draw(enum HouseType houseID)
 void
 MenuBar_StartRadarAnimation(bool activate)
 {
-	if (enhancement_nonblocking_radar_animation) {
+	if (enhancement_nonblocking_radar_animation
+			|| (g_host_type != HOSTTYPE_NONE)) {
 		radar_animation_state = activate ? RADAR_ANIMATION_ACTIVATE : RADAR_ANIMATION_DEACTIVATE;
 		radar_animation_timer = Timer_GetTicks();
 	}

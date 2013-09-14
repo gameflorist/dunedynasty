@@ -418,24 +418,22 @@ bool House_AreAllied(uint8 houseID1, uint8 houseID2)
 	return (h1_brain == h2_brain);
 }
 
-/**
- * Updates the radar state for the given house.
- * @param h The house.
- * @return True if and only if the radar has been activated.
- */
-bool House_UpdateRadarState(House *h)
+void
+House_Client_UpdateRadarState(void)
 {
-	if (h == NULL || h->index != g_playerHouseID) return false;
+	House *h = g_playerHouse;
 
-	const bool activate = ((h->structuresBuilt & FLAG_STRUCTURE_OUTPOST) && (h->powerProduction >= h->powerUsage));
-	if (h->flags.radarActivated == activate) return false;
+	const bool activate
+		= (h->structuresBuilt & FLAG_STRUCTURE_OUTPOST)
+		&& (h->powerProduction >= h->powerUsage);
+
+	if (h->flags.radarActivated == activate)
+		return;
 
 	Audio_PlaySound(SOUND_RADAR_STATIC);
 	Audio_PlayVoice(activate ? VOICE_RADAR_ACTIVATED : VOICE_RADAR_DEACTIVATED);
 	MenuBar_StartRadarAnimation(activate);
 	h->flags.radarActivated = activate;
-
-	return activate;
 }
 
 /**
