@@ -247,6 +247,7 @@ static void
 Client_Recv_UpdateHouse(const unsigned char **buf)
 {
 	House *h = g_playerHouse;
+	const uint8 oldMissileCountdown = h->houseMissileCountdown;
 
 	h->structuresBuilt      = Net_Decode_uint32(buf);
 	h->credits              = Net_Decode_uint16(buf);
@@ -265,6 +266,11 @@ Client_Recv_UpdateHouse(const unsigned char **buf)
 	}
 
 	House_Client_UpdateRadarState();
+
+	if ((h->houseMissileCountdown != oldMissileCountdown)
+	 && (h->houseMissileCountdown > 0)) {
+		House_Client_TickMissileCountdown();
+	}
 }
 
 static void

@@ -40,6 +40,7 @@ enum HouseType g_playerHouseID = HOUSE_INVALID;
 uint16 g_playerCredits = 0; /*!< Credits shown to player as 'current'. */
 
 static void House_EnsureHarvesterAvailable(uint8 houseID);
+static void House_Server_TickMissileCountdown(House *h);
 
 /**
  * Loop over all houses, preforming various of tasks.
@@ -96,30 +97,13 @@ void GameLoop_House(void)
 		g_factoryWindowTotal = -1;
 	}
 
-	if (tickMissileCountdown && g_playerHouse->houseMissileCountdown != 0) {
-		h = g_playerHouse;
-		h->houseMissileCountdown--;
+	if (tickMissileCountdown) {
+		find.houseID = HOUSE_INVALID;
+		find.index   = 0xFFFF;
+		find.type    = 0xFFFF;
 
-		const enum VoiceID voiceID
-			= VOICE_MISSILE_LAUNCHED + h->houseMissileCountdown - 1;
-
-		/* Don't queue up the countdown numbers. */
-		if (voiceID >= VOICE_ONE) {
-			const bool narrator_speaking = Audio_Poll();
-
-			if (!narrator_speaking) {
-				Server_Send_PlayVoice(1 << h->index, voiceID);
-			}
-			else if (voiceID == VOICE_FIVE) {
-				Server_Send_PlaySound(1 << h->index, EFFECT_COUNT_DOWN_TICK);
-			}
-		}
-		else if (voiceID >= VOICE_MISSILE_LAUNCHED) {
-			Server_Send_PlayVoice(1 << h->index, voiceID);
-		}
-
-		if (h->houseMissileCountdown == 0) {
-			Unit_Server_LaunchHouseMissile(h, Map_Server_FindLocationTile(4, h->index));
+		while ((h = House_Find(&find)) != NULL) {
+			House_Server_TickMissileCountdown(h);
 		}
 	}
 
@@ -317,6 +301,49 @@ void GameLoop_House(void)
 			uint16 powerMaintenanceCost = (h->powerUsage / 32) + 1;
 			h->credits -= min(h->credits, powerMaintenanceCost);
 		}
+	}
+}
+
+static void
+House_Server_TickMissileCountdown(House *h)
+{
+	if (!h->flags.human || h->houseMissileCountdown == 0)
+		return;
+
+	h->houseMissileCountdown--;
+
+	/* Count down is performed by client. */
+	const enum VoiceID voiceID
+		= VOICE_MISSILE_LAUNCHED + h->houseMissileCountdown - 1;
+
+	if (voiceID == VOICE_MISSILE_LAUNCHED) {
+		Server_Send_PlayVoice(1 << h->index, voiceID);
+	}
+
+	if (h->houseMissileCountdown == 0) {
+		const uint16 packed = Map_Server_FindLocationTile(4, h->index);
+		Unit_Server_LaunchHouseMissile(h, packed);
+	}
+
+	if (h == g_playerHouse) {
+		House_Client_TickMissileCountdown();
+	}
+}
+
+void
+House_Client_TickMissileCountdown(void)
+{
+	const bool narrator_speaking = Audio_Poll();
+
+	const enum VoiceID voiceID
+		= VOICE_MISSILE_LAUNCHED + g_playerHouse->houseMissileCountdown - 1;
+
+	if (!narrator_speaking
+			&& (VOICE_ONE <= voiceID && voiceID <= VOICE_FIVE)) {
+		Audio_PlayVoice(voiceID);
+	}
+	else if (voiceID == VOICE_FIVE) {
+		Audio_PlaySound(EFFECT_COUNT_DOWN_TICK);
 	}
 }
 

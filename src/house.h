@@ -121,6 +121,7 @@ extern enum HouseType g_playerHouseID;
 extern uint16 g_playerCredits;
 
 extern void GameLoop_House(void);
+extern void House_Client_TickMissileCountdown(void);
 extern uint8 House_StringToType(const char *name);
 extern bool House_IsHuman(enum HouseType houseID);
 extern bool House_AreAllied(uint8 houseID1, uint8 houseID2);
