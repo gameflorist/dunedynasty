@@ -293,14 +293,14 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 		const int encoded = Tools_Index_Encode(s->rallyPoint, IT_TILE);
 		enum UnitActionType action = ACTION_MOVE;
 
-		/* Harvesters should NOT harvest if we can see that the
-		 * destination is not sand.
+		/* Harvesters should NOT harvest if it knows the destination
+		 * is not sand.  Note: sand tiles can't become non-sand tiles.
 		 */
 		if (u->o.type == UNIT_HARVESTER) {
 			action = ACTION_HARVEST;
 
 			if (g_map[s->rallyPoint].isUnveiled) {
-				const enum LandscapeType lst = Map_GetLandscapeTypeVisible(s->rallyPoint);
+				const enum LandscapeType lst = Map_GetLandscapeType(s->rallyPoint);
 
 				if (!g_table_landscapeInfo[lst].isSand)
 					action = ACTION_MOVE;
