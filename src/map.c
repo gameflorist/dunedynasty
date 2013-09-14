@@ -1147,12 +1147,8 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	if (u != NULL) Unit_HouseUnitCount_Add(u, houseID);
 
 	s = Structure_Get_ByPackedTile(packed);
-	if (s != NULL) {
-		for (enum HouseType ally = HOUSE_HARKONNEN; ally < HOUSE_MAX; ally++) {
-			if (House_AreAllied(houseID, ally))
-				s->o.seenByHouses |= (1 << ally);
-		}
-	}
+	if (s != NULL)
+		s->o.seenByHouses |= House_GetAllies(houseID);
 
 	Map_UnveilTile_Neighbour(packed);
 	Map_UnveilTile_Neighbour(packed + 1);

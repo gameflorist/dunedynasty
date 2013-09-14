@@ -3060,22 +3060,11 @@ Unit_Server_LaunchHouseMissile(House *h, uint16 packed)
 	 *
 	 * ENHANCEMENT -- allied AI can launch deathhand missiles.
 	 */
-	enum HouseFlag allies = 0;
-	enum HouseFlag enemies = 0;
+	enum HouseFlag allies = House_GetAllies(h->index);
+	enum HouseFlag enemies = FLAG_HOUSE_ALL & (~allies);
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		if (h->index == houseID) {
-			if (enhancement_play_additional_voices
-					&& h->houseMissileCountdown > 1)
-				allies |= 1 << houseID;
-		}
-		else if (House_AreAllied(h->index, houseID)) {
-			allies |= 1 << houseID;
-		}
-		else {
-			enemies |= 1 << houseID;
-		}
-	}
+	if (!(enhancement_play_additional_voices && h->houseMissileCountdown > 1))
+		allies &= ~(1 << h->index);
 
 	Server_Send_PlayVoice(allies, VOICE_MISSILE_LAUNCHED);
 	Server_Send_PlayVoice(enemies, VOICE_WARNING_MISSILE_APPROACHING);
@@ -3136,13 +3125,12 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 
 	ui = &g_table_unitInfo[unit->o.type];
 	h = House_Get_ByIndex(houseID);
-	houseIDBit = (1 << houseID);
 
 	if (unit->o.type != UNIT_SANDWORM) {
-		for (enum HouseType ally = HOUSE_HARKONNEN; ally < HOUSE_MAX; ally++) {
-			if (House_AreAllied(houseID, ally))
-				houseIDBit |= (1 << ally);
-		}
+		houseIDBit = House_GetAllies(houseID);
+	}
+	else {
+		houseIDBit = (1 << houseID);
 	}
 
 	if ((unit->o.seenByHouses & houseIDBit) != 0 && h->flags.isAIActive) {

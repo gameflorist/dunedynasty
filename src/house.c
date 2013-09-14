@@ -445,6 +445,19 @@ bool House_AreAllied(uint8 houseID1, uint8 houseID2)
 	return (h1_brain == h2_brain);
 }
 
+enum HouseFlag
+House_GetAllies(enum HouseType houseID)
+{
+	enum HouseFlag allies = 0;
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (House_AreAllied(houseID, h))
+			allies |= (1 << h);
+	}
+
+	return allies;
+}
+
 void
 House_Client_UpdateRadarState(void)
 {

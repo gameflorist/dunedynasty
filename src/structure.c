@@ -1235,20 +1235,13 @@ bool Structure_Damage(Structure *s, uint16 damage, uint16 range)
 
 		Structure_Destroy(s);
 
-		enum HouseFlag allies = 0;
-		enum HouseFlag enemies = 0;
+		const enum HouseFlag allies = House_GetAllies(s->o.houseID);
 
-		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-			if (House_AreAllied(s->o.houseID, houseID)) {
-				allies |= 1 << houseID;
-			}
-			else {
-				enemies |= 1 << houseID;
-			}
-		}
+		Server_Send_PlayVoice(allies,
+				VOICE_HARKONNEN_STRUCTURE_DESTROYED + s->o.houseID);
 
-		Server_Send_PlayVoice(allies, VOICE_HARKONNEN_STRUCTURE_DESTROYED + s->o.houseID);
-		Server_Send_PlayVoice(enemies, VOICE_ENEMY_STRUCTURE_DESTROYED);
+		Server_Send_PlayVoice(FLAG_HOUSE_ALL & (~allies),
+				VOICE_ENEMY_STRUCTURE_DESTROYED);
 
 		Structure_UntargetMe(s);
 		return true;
