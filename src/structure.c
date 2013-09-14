@@ -1021,11 +1021,10 @@ Structure_Server_ActivateSpecial(Structure *s)
 		} break;
 
 		case HOUSE_WEAPON_FREMEN: {
-			uint16 location;
 			uint16 i;
 
 			/* Find a random location to appear */
-			location = Map_FindLocationTile(4, HOUSE_INVALID);
+			const uint16 packed = Map_Server_FindLocationTile(4, HOUSE_INVALID);
 
 			for (i = 0; i < 5; i++) {
 				Unit *u;
@@ -1035,7 +1034,7 @@ Structure_Server_ActivateSpecial(Structure *s)
 
 				Tools_Random_256();
 
-				position = Tile_UnpackTile(location);
+				position = Tile_UnpackTile(packed);
 				position = Tile_MoveByRandom(position, 32, true);
 
 				orientation = Tools_RandomLCG_Range(0, 3);

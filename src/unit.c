@@ -2147,13 +2147,13 @@ void Unit_Select(Unit *unit)
 Unit *
 Unit_CreateWrapper(uint8 houseID, enum UnitType typeID, uint16 destination)
 {
-	tile32 tile;
 	House *h;
 	int8 orientation;
 	Unit *unit;
 	Unit *carryall;
 
-	tile = Tile_UnpackTile(Map_FindLocationTile(Tools_Random_256() & 3, houseID));
+	const uint16 packed = Map_Server_FindLocationTile(Tools_Random_256() & 3, houseID);
+	tile32 tile = Tile_UnpackTile(packed);
 
 	h = House_Get_ByIndex(houseID);
 

@@ -119,7 +119,7 @@ void GameLoop_House(void)
 		}
 
 		if (h->houseMissileCountdown == 0) {
-			Unit_Server_LaunchHouseMissile(h, Map_FindLocationTile(4, h->index));
+			Unit_Server_LaunchHouseMissile(h, Map_Server_FindLocationTile(4, h->index));
 		}
 	}
 
@@ -155,11 +155,11 @@ void GameLoop_House(void)
 
 			if (locationID >= 4) {
 				if (nu == NULL) {
-					nu = Unit_Create(UNIT_INDEX_INVALID, UNIT_CARRYALL, u->o.houseID, Tile_UnpackTile(Map_FindLocationTile(Tools_Random_256() & 3, u->o.houseID)), 100);
+					nu = Unit_Create(UNIT_INDEX_INVALID, UNIT_CARRYALL, u->o.houseID, Tile_UnpackTile(Map_Server_FindLocationTile(Tools_Random_256() & 3, u->o.houseID)), 100);
 
 					if (nu != NULL) {
 						nu->o.flags.s.byScenario = true;
-						Unit_SetDestination(nu, Tools_Index_Encode(Map_FindLocationTile(locationID, u->o.houseID), IT_TILE));
+						Unit_SetDestination(nu, Tools_Index_Encode(Map_Server_FindLocationTile(locationID, u->o.houseID), IT_TILE));
 					}
 				}
 
@@ -174,7 +174,7 @@ void GameLoop_House(void)
 					g_scenario.reinforcement[i].timeLeft = 1;
 				}
 			} else {
-				deployed = Unit_SetPosition(u, Tile_UnpackTile(Map_FindLocationTile(locationID, u->o.houseID)));
+				deployed = Unit_SetPosition(u, Tile_UnpackTile(Map_Server_FindLocationTile(locationID, u->o.houseID)));
 			}
 
 			if (deployed && g_scenario.reinforcement[i].repeat != 0) {
@@ -274,12 +274,12 @@ void GameLoop_House(void)
 				}
 
 				if (g_dune2_enhanced && u == NULL) {
-					tile32 tile = Tile_UnpackTile(Map_FindLocationTile(Tools_Random_256() & 3, h->index));
+					const tile32 tile = Tile_UnpackTile(Map_Server_FindLocationTile(Tools_Random_256() & 3, h->index));
 
 					u = Unit_Create(UNIT_INDEX_INVALID, UNIT_CARRYALL, h->index, tile, 100);
 					if (u != NULL) {
 						uint16 locationID = 7; /* Home Base. */
-						uint16 packed = Map_FindLocationTile(locationID, h->index);
+						const uint16 packed = Map_Server_FindLocationTile(locationID, h->index);
 
 						u->o.flags.s.byScenario = true;
 						Unit_SetDestination(u, Tools_Index_Encode(packed, IT_TILE));

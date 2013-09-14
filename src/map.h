@@ -120,7 +120,7 @@ extern void Map_Bloom_ExplodeSpice(uint16 packed, enum HouseFlag houses);
 extern void Map_FillCircleWithSpice(uint16 packed, uint16 radius);
 extern void Map_ChangeSpiceAmount(uint16 packed, int16 dir);
 extern void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID);
-extern uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID);
+extern uint16 Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID);
 extern void Map_UpdateAround(uint16 radius, tile32 position, struct Unit *unit, uint8 function);
 extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
 extern bool Map_UnveilTile(uint16 packed, uint8 houseID);

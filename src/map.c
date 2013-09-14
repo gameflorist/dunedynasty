@@ -817,7 +817,8 @@ void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID)
  * @param houseID The HouseID looking for a tile (to get an idea of Enemy Base).
  * @return The tile requested.
  */
-uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID)
+uint16
+Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID)
 {
 	static const int16 mapBase[3] = {1, -2, -2};
 	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
@@ -865,13 +866,8 @@ uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID)
 				break;
 
 			case 4: /* Air */
+			case 5: /* Visible -- Dune II scenarios don't use this. */
 				ret = Tile_PackXY(mapInfo->minX + Tools_RandomLCG_Range(0, mapInfo->sizeX), mapInfo->minY + Tools_RandomLCG_Range(0, mapInfo->sizeY));
-				if (houseID == g_playerHouseID && !Map_IsValidPosition(ret)) ret = 0;
-				break;
-
-			case 5: /* Visible */
-				ret = Tile_PackXY(Tile_GetPackedX(g_viewportPosition) + Tools_RandomLCG_Range(0, 14), Tile_GetPackedY(g_viewportPosition) + Tools_RandomLCG_Range(0, 9));
-				if (houseID == g_playerHouseID && !Map_IsValidPosition(ret)) ret = 0;
 				break;
 
 			case 6: /* Enemy Base */
@@ -902,12 +898,15 @@ uint16 Map_FindLocationTile(uint16 locationID, uint8 houseID)
 						ret = Tile_PackXY(mapInfo->minX + Tools_RandomLCG_Range(0, mapInfo->sizeX), mapInfo->minY + Tools_RandomLCG_Range(0, mapInfo->sizeY));
 					}
 				}
-
-				if (houseID == g_playerHouseID && !Map_IsValidPosition(ret)) ret = 0;
 				break;
 			}
 
 			default: return 0;
+		}
+
+		if (locationID >= 4 && houseID != HOUSE_INVALID) {
+			if (House_IsHuman(houseID) && !Map_IsValidPosition(ret))
+				ret = 0;
 		}
 
 		ret &= 0xFFF;
