@@ -342,8 +342,7 @@ static bool Map_UpdateWall(uint16 packed)
 	t = &g_map[packed];
 
 	t->groundSpriteID = g_mapSpriteID[packed] & 0x1FF;
-
-	if (Map_IsPositionUnveiled(packed)) t->overlaySpriteID = g_wallSpriteID;
+	t->overlaySpriteID = g_wallSpriteID;
 
 	Structure_ConnectWall(packed, true);
 

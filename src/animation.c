@@ -53,9 +53,7 @@ static void Animation_Func_Stop(Animation *animation, int16 parameter)
 			t->groundSpriteID = g_mapSpriteID[position];
 		}
 
-		if (Map_IsPositionUnveiled(position)) {
-			t->overlaySpriteID = 0;
-		}
+		t->overlaySpriteID = 0;
 	}
 }
 
@@ -149,11 +147,8 @@ static void Animation_Func_SetGroundSprite(Animation *animation, int16 parameter
 
 		if (t->groundSpriteID == spriteID) continue;
 		t->groundSpriteID = spriteID;
+		t->overlaySpriteID = 0;
 		t->houseID = animation->houseID;
-
-		if (Map_IsPositionUnveiled(position)) {
-			t->overlaySpriteID = 0;
-		}
 	}
 }
 
