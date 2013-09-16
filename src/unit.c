@@ -2383,9 +2383,9 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 				bullet->fireDelay <<= 1;
 			}
 
-			if (type == UNIT_MISSILE_HOUSE || (bullet->o.seenByHouses & (1 << g_playerHouseID)) != 0) return bullet;
-
-			Tile_RemoveFogInRadius(bullet->o.position, 2);
+			if (type != UNIT_MISSILE_HOUSE) {
+				Tile_RemoveFogInRadius(bullet->o.position, 2);
+			}
 
 			return bullet;
 		}
@@ -2411,8 +2411,6 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 			bullet->o.hitpoints = damage;
 
 			if (damage > 15) bullet->o.flags.s.bulletIsBig = true;
-
-			if ((bullet->o.seenByHouses & (1 << g_playerHouseID)) != 0) return bullet;
 
 			Tile_RemoveFogInRadius(bullet->o.position, 2);
 
