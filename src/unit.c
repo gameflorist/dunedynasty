@@ -3071,40 +3071,16 @@ Unit_Server_LaunchHouseMissile(House *h, uint16 packed)
 	h->houseMissileCountdown = 0;
 }
 
-/**
- * This unit is about to disapear from the map. So remove it from the house
- *  statistics about allies/enemies.
- * @param unit The unit to remove.
- */
-void Unit_HouseUnitCount_Remove(Unit *unit)
+void
+Unit_HouseUnitCount_Remove(Unit *u)
 {
-	PoolFindStruct find;
+	assert(u != NULL);
 
-	if (unit == NULL) return;
-	if (unit->o.seenByHouses == 0) return;
-
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		House *h;
-
-		h = House_Find(&find);
-		if (h == NULL) break;
-
-		if ((unit->o.seenByHouses & (1 << h->index)) == 0) continue;
-
-		if (!House_AreAllied((uint8)h->index, Unit_GetHouseID(unit))) {
-			h->unitCountEnemy--;
-		} else {
-			h->unitCountAllied--;
-		}
-
-		unit->o.seenByHouses &= ~(1 << h->index);
-	}
-
-	if (g_dune2_enhanced) unit->o.seenByHouses = 0;
+	/* ENHANCEMENT -- In the original game, seenByHouses was only
+	 * cleared for houses in the find array, potentially allowing
+	 * Fremen to target hidden units.
+	 */
+	u->o.seenByHouses = 0;
 }
 
 /**
@@ -3138,14 +3114,6 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 
 	if (!ui->flags.isNormalUnit && unit->o.type != UNIT_SANDWORM) {
 		return;
-	}
-
-	if ((unit->o.seenByHouses & houseIDBit) == 0) {
-		if (House_AreAllied(houseID, Unit_GetHouseID(unit))) {
-			h->unitCountAllied++;
-		} else {
-			h->unitCountEnemy++;
-		}
 	}
 
 	if (ui->movementType != MOVEMENT_WINGER) {
