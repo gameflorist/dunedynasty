@@ -275,7 +275,9 @@ static uint16 GUI_Widget_ActionPanel_GetActionType(bool forceDraw)
 		} else {
 			actionType = 2; /* Unit */
 		}
-	} else if (!Tile_IsOutOfMap(g_selectionPosition) && (g_map[g_selectionPosition].isUnveiled || g_debugScenario)) {
+	}
+	else if (!Tile_IsOutOfMap(g_selectionPosition)
+			&& (g_debugScenario || Map_IsUnveiledToHouse(g_playerHouseID, g_selectionPosition))) {
 		if (Map_GetLandscapeType(g_selectionPosition) == LST_STRUCTURE) {
 			Structure *s;
 

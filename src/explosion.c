@@ -315,7 +315,7 @@ Explosion_Draw(void)
 		if (e->spriteID == 0) continue;
 
 		const uint16 packed = Tile_PackTile(e->position);
-		if (!g_map[packed].isUnveiled)
+		if (!Map_IsUnveiledToHouse(g_playerHouseID, packed))
 			continue;
 
 		int x, y;

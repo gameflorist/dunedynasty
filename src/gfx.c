@@ -449,7 +449,7 @@ GFX_ScreenShake_Start(uint16 packed, int num_ticks)
 	/* ENHANCEMENT -- Screenshake even if tile is partially veiled. */
 	bool visible;
 	if (g_dune2_enhanced) {
-		visible = g_map[packed].isUnveiled;
+		visible = Map_IsUnveiledToHouse(g_playerHouseID, packed);
 	}
 	else {
 		visible = Map_IsPositionUnveiled(g_playerHouseID, packed);

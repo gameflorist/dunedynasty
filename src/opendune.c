@@ -712,8 +712,6 @@ void Game_Prepare(void)
 {
 	PoolFindStruct find;
 	uint16 oldSelectionType;
-	Tile *t;
-	int i;
 
 	g_validateStrictIfZero++;
 
@@ -724,27 +722,25 @@ void Game_Prepare(void)
 	Unit_Recount();
 	Team_Recount();
 
-	t = &g_map[0];
-	for (i = 0; i < 64 * 64; i++, t++) {
-		Structure *s;
-		Unit *u;
-
-		u = Unit_Get_ByPackedTile(i);
-		s = Structure_Get_ByPackedTile(i);
+	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
+		const Structure *s = Structure_Get_ByPackedTile(packed);
+		const Unit *u = Unit_Get_ByPackedTile(packed);
+		Tile *t = &g_map[packed];
+		FogOfWarTile *f = &g_mapVisible[packed];
 
 		if (u == NULL || !u->o.flags.s.used) t->hasUnit = false;
 		if (s == NULL || !s->o.flags.s.used) t->hasStructure = false;
 
-		if (t->isUnveiled) {
-			const int64_t backup = g_mapVisible[i].timeout;
+		if (Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
+			const int64_t backup = f->timeout;
 
-			Map_UnveilTile(i, g_playerHouseID);
+			Map_UnveilTile(packed, g_playerHouseID);
 
-			g_mapVisible[i].timeout = backup;
+			f->timeout = backup;
 		}
 	}
 
-	Map_UpdateFogOfWar();
+	Map_Client_UpdateFogOfWar();
 
 	find.houseID = HOUSE_INVALID;
 	find.index   = 0xFFFF;

@@ -294,6 +294,12 @@ bool Map_IsValidPosition(uint16 position)
 }
 
 bool
+Map_IsUnveiledToHouse(enum HouseType houseID, uint16 packed)
+{
+	return (houseID == g_playerHouseID) && g_map[packed].isUnveiled;
+}
+
+bool
 Map_IsPositionUnveiled(enum HouseType houseID, uint16 packed)
 {
 	if (g_debugScenario)
@@ -1160,7 +1166,7 @@ Map_RefreshTile(uint16 packed, int duration)
 {
 	if (Tile_IsOutOfMap(packed)) return;
 
-	if (g_map[packed].isUnveiled) {
+	if (Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
 		const int64_t timeout = g_timerGame + Tools_AdjustToGameSpeed(duration * 60, 0x0000, 0xFFFF, true);
 		FogOfWarTile *f = &g_mapVisible[packed];
 
@@ -1183,17 +1189,19 @@ Map_ResetFogOfWar(void)
 }
 
 void
-Map_UpdateFogOfWar(void)
+Map_Client_UpdateFogOfWar(void)
 {
 	if (enhancement_fog_of_war) {
 		for (uint16 packed = 65; packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65; packed++) {
-			const Tile *t = &g_map[packed];
 			FogOfWarTile *f = &g_mapVisible[packed];
 
-			if (!t->isUnveiled || f->timeout <= g_timerGame) {
+			if (!Map_IsUnveiledToHouse(g_playerHouseID, packed)
+					|| (f->timeout <= g_timerGame)) {
 				f->fogOverlayBits = 0xF;
 			}
 			else {
+				const Tile *t = &g_map[packed];
+
 				f->groundSpriteID = t->groundSpriteID;
 				f->overlaySpriteID = t->overlaySpriteID;
 				f->houseID = t->houseID;
@@ -1216,7 +1224,7 @@ Map_UpdateFogOfWar(void)
 			f->overlaySpriteID = t->overlaySpriteID;
 			f->houseID = t->houseID;
 			f->hasStructure = t->hasStructure;
-			f->fogOverlayBits = (t->isUnveiled ? 0x0 : 0xF);
+			f->fogOverlayBits = Map_IsUnveiledToHouse(g_playerHouseID, packed) ? 0x0 : 0xF;
 		}
 	}
 }

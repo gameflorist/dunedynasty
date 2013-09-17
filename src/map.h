@@ -109,6 +109,7 @@ extern void Map_SetSelectionSize(uint16 layout);
 extern uint16 Map_SetSelectionObjectPosition(uint16 packed);
 extern void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate);
 extern bool Map_IsValidPosition(uint16 position);
+extern bool Map_IsUnveiledToHouse(enum HouseType houseID, uint16 packed);
 extern bool Map_IsPositionUnveiled(enum HouseType houseID, uint16 packed);
 extern bool Map_IsPositionInViewport(tile32 position, int *retX, int *retY);
 extern void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 unitOriginEncoded);
@@ -126,7 +127,7 @@ extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
 extern bool Map_UnveilTile(uint16 packed, uint8 houseID);
 extern void Map_RefreshTile(uint16 packed, int duration);
 extern void Map_ResetFogOfWar(void);
-extern void Map_UpdateFogOfWar(void);
+extern void Map_Client_UpdateFogOfWar(void);
 extern void Map_CreateLandscape(uint32 seed);
 
 #endif /* MAP_H */

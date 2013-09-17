@@ -2693,7 +2693,8 @@ Video_DrawMinimap(int left, int top, int map_scale, int mode)
 				uint16 type = Map_GetLandscapeTypeOriginal(packed);
 				colour = g_table_landscapeInfo[type].radarColour;
 			}
-			else if (t->isUnveiled && g_playerHouse->flags.radarActivated) {
+			else if (g_playerHouse->flags.radarActivated
+				&& Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
 				Unit *u;
 
 				if (enhancement_fog_of_war && g_mapVisible[packed].timeout <= g_timerGame) {

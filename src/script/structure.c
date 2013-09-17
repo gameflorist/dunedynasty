@@ -299,7 +299,7 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 		if (u->o.type == UNIT_HARVESTER) {
 			action = ACTION_HARVEST;
 
-			if (g_map[s->rallyPoint].isUnveiled) {
+			if (Map_IsUnveiledToHouse(Unit_GetHouseID(u), s->rallyPoint)) {
 				const enum LandscapeType lst = Map_GetLandscapeType(s->rallyPoint);
 
 				if (!g_table_landscapeInfo[lst].isSand)

@@ -2276,7 +2276,7 @@ void GUI_DrawScreen(Screen screenID)
 
 	oldScreenID = GFX_Screen_SetActive(screenID);
 
-	Map_UpdateFogOfWar();
+	Map_Client_UpdateFogOfWar();
 
 	g_selectionRectanglePosition = g_selectionPosition;
 

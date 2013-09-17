@@ -475,7 +475,7 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 {
 	const enum LandscapeType lst = Map_GetLandscapeTypeVisible(packed);
 	const bool visible = (g_mapVisible[packed].fogOverlayBits != 0xF);
-	const bool scouted = g_map[packed].isUnveiled;
+	const bool scouted = Map_IsUnveiledToHouse(g_playerHouseID, packed);
 	const bool attack = Viewport_GenericCommandCanAttack(packed, lst, visible, scouted);
 	const bool sabotage = Viewport_GenericCommandCanSabotageAlly(packed);
 
@@ -1341,7 +1341,6 @@ Viewport_DrawSelectedUnit(int x, int y)
 void
 Viewport_DrawSandworm(const Unit *u)
 {
-	/* if (!g_map[Tile_PackTile(u->o.position)].isUnveiled && !g_debugScenario) return; */
 	if (g_mapVisible[Tile_PackTile(u->o.position)].fogOverlayBits == 0xF)
 		return;
 
@@ -1435,7 +1434,6 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 
 	uint16 packed = Tile_PackTile(u->o.position);
 
-	/* if (!g_map[packed].isUnveiled && !g_debugScenario) return; */
 	if (g_mapVisible[packed].fogOverlayBits == 0xF)
 		return;
 
@@ -1564,10 +1562,10 @@ Viewport_DrawAirUnit(const Unit *u)
 	uint16 curPos = Tile_PackTile(u->o.position);
 
 	/* Allied air units don't get concealed by fog of war. */
-	/* if (!g_map[curPos].isUnveiled && !g_debugScenario) return; */
-	if ((!g_map[curPos].isUnveiled) ||
-	    ((g_mapVisible[curPos].fogOverlayBits == 0xF) && !House_AreAllied(u->o.houseID, g_playerHouseID)))
+	if (!Map_IsUnveiledToHouse(g_playerHouseID, curPos)
+			|| ((g_mapVisible[curPos].fogOverlayBits == 0xF) && !House_AreAllied(u->o.houseID, g_playerHouseID))) {
 		return;
+	}
 
 	int x, y;
 	if (!Viewport_InterpolateMovement(u, &x, &y))

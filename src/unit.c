@@ -1134,7 +1134,7 @@ bool Unit_SetPosition(Unit *u, tile32 position)
 	u->targetMove = 0;
 	u->targetAttack = 0;
 
-	if (g_map[Tile_PackTile(u->o.position)].isUnveiled) {
+	if (Map_IsUnveiledToHouse(g_playerHouseID, Tile_PackTile(u->o.position))) {
 		/* A new unit being delivered fresh from the factory; force a seenByHouses
 		 *  update and add it to the statistics etc. */
 		u->o.seenByHouses &= ~(1 << u->o.houseID);
@@ -2979,7 +2979,6 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 	packed = Tile_PackTile(position);
 	t = &g_map[packed];
 
-	/* if (t->isUnveiled || unit->o.houseID == g_playerHouseID) {} */
 	if ((g_mapVisible[packed].fogOverlayBits != 0xF) || (unit->o.houseID == g_playerHouseID)) {
 		Unit_HouseUnitCount_Add(unit, g_playerHouseID);
 	} else {
