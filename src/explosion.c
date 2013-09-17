@@ -255,7 +255,7 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 		/* Do not unveil for explosion types 13 (sandworm eat) and 19 (spice bloom). */
 		if (enhancement_fog_of_war &&
 				!(explosionType == EXPLOSION_SANDWORM_SWALLOW || explosionType == EXPLOSION_SPICE_BLOOM_TREMOR)) {
-			Tile_RefreshFogInRadius(position, 1, false);
+			Tile_RefreshFogInRadius(FLAG_HOUSE_ALL, position, 1, false);
 		}
 	}
 }

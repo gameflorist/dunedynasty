@@ -1479,13 +1479,12 @@ Unit_RefreshFog(Unit *unit, bool unveil)
 	if (unit->o.flags.s.isNotOnMap) return;
 	if (unit->o.flags.s.inTransport) return;
 	if ((unit->o.position.x == 0xFFFF && unit->o.position.y == 0xFFFF) || (unit->o.position.x == 0 && unit->o.position.y == 0)) return;
-	if (!House_AreAllied(Unit_GetHouseID(unit), g_playerHouseID)) return;
 
 	fogUncoverRadius = g_table_unitInfo[unit->o.type].o.fogUncoverRadius;
-
 	if (fogUncoverRadius == 0) return;
 
-	Tile_RefreshFogInRadius(unit->o.position, fogUncoverRadius, unveil);
+	Tile_RefreshFogInRadius(House_GetAllies(Unit_GetHouseID(unit)),
+			unit->o.position, fogUncoverRadius, unveil);
 }
 
 void
@@ -2384,7 +2383,7 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 			}
 
 			if (type != UNIT_MISSILE_HOUSE) {
-				Tile_RemoveFogInRadius(bullet->o.position, 2);
+				Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, bullet->o.position, 2);
 			}
 
 			return bullet;
@@ -2412,7 +2411,7 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 
 			if (damage > 15) bullet->o.flags.s.bulletIsBig = true;
 
-			Tile_RemoveFogInRadius(bullet->o.position, 2);
+			Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, bullet->o.position, 2);
 
 			return bullet;
 		}
@@ -2965,8 +2964,9 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 	}
 
 	if (type == 1) {
-		if (House_AreAllied(Unit_GetHouseID(unit), g_playerHouseID) && !Map_IsPositionUnveiled(packed) && unit->o.type != UNIT_SANDWORM) {
-			Tile_RemoveFogInRadius(position, 1);
+		if (unit->o.type != UNIT_SANDWORM) {
+			Tile_RemoveFogInRadius(House_GetAllies(Unit_GetHouseID(unit)),
+					position, 1);
 		}
 
 		if (Object_GetByPackedTile(packed) == NULL) {

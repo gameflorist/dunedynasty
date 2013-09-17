@@ -13,11 +13,15 @@
  * @param radius The radius to remove fog around.
  */
 void
-Tile_RefreshFogInRadius(tile32 tile, uint16 radius, bool unveil)
+Tile_RefreshFogInRadius(enum HouseFlag houses,
+		tile32 tile, uint16 radius, bool unveil)
 {
 	uint16 packed;
 	uint16 x, y;
 	int16 i, j;
+
+	if (!(houses & (1 << g_playerHouseID)))
+		return;
 
 	packed = Tile_PackTile(tile);
 
@@ -50,7 +54,7 @@ Tile_RefreshFogInRadius(tile32 tile, uint16 radius, bool unveil)
 }
 
 void
-Tile_RemoveFogInRadius(tile32 tile, uint16 radius)
+Tile_RemoveFogInRadius(enum HouseFlag houses, tile32 tile, uint16 radius)
 {
-	Tile_RefreshFogInRadius(tile, radius, true);
+	Tile_RefreshFogInRadius(houses, tile, radius, true);
 }
