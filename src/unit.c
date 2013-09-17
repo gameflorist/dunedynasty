@@ -22,6 +22,7 @@
 #include "gui/widget.h"
 #include "house.h"
 #include "map.h"
+#include "net/net.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
 #include "newui/menubar.h"
@@ -999,7 +1000,18 @@ uint16 Unit_GetTargetUnitPriority(Unit *unit, Unit *target)
 
 	if (targetInfo->movementType == MOVEMENT_WINGER) {
 		if (!unitInfo->o.flags.targetAir) return 0;
-		if (target->o.houseID == g_playerHouseID && !Map_IsPositionUnveiled(Tile_PackTile(target->o.position))) return 0;
+
+		/* SINGLE PLAYER -- Do not fire at the player's flying units
+		 * that are currently in unscouted territory.  Presumably,
+		 * this is so that the player won't lose flying units without
+		 * knowing about it.
+		 */
+		if (g_host_type == HOSTTYPE_NONE) {
+			if (target->o.houseID == g_playerHouseID
+					&& !Map_IsPositionUnveiled(g_playerHouseID, Tile_PackTile(target->o.position))) {
+				return 0;
+			}
+		}
 	}
 
 	if (!Map_IsValidPosition(Tile_PackTile(target->o.position))) return 0;
@@ -1246,8 +1258,19 @@ static uint16 Unit_Sandworm_GetTargetPriority(Unit *unit, Unit *target)
 	uint16 distance;
 
 	if (unit == NULL || target == NULL) return 0;
-	if (!Map_IsPositionUnveiled(Tile_PackTile(target->o.position))) return 0;
-	if (!g_table_landscapeInfo[Map_GetLandscapeType(Tile_PackTile(target->o.position))].isSand) return 0;
+
+	const uint16 packed = Tile_PackTile(target->o.position);
+	if (!g_table_landscapeInfo[Map_GetLandscapeType(packed)].isSand)
+		return 0;
+
+	/* SINGLE PLAYER -- Sandworms will only target units in scouted
+	 * territory.  Presumably this was done to prevent sandworms
+	 * attacking stationary CPU units, and out-of-sight worm attacks.
+	 */
+	if (g_host_type == HOSTTYPE_NONE) {
+		if (!Map_IsPositionUnveiled(g_playerHouseID, packed))
+			return 0;
+	}
 
 	switch(g_table_unitInfo[target->o.type].movementType) {
 		case MOVEMENT_FOOT:      res = 0x64;   break;

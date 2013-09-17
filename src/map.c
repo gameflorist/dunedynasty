@@ -294,9 +294,12 @@ bool Map_IsValidPosition(uint16 position)
 }
 
 bool
-Map_IsPositionUnveiled(uint16 packed)
+Map_IsPositionUnveiled(enum HouseType houseID, uint16 packed)
 {
 	if (g_debugScenario)
+		return true;
+
+	if (!House_IsHuman(houseID))
 		return true;
 
 	return (65 <= packed && packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65)
@@ -1131,7 +1134,7 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 
 	f->timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
 
-	if (t->isUnveiled && Map_IsPositionUnveiled(packed))
+	if (t->isUnveiled && Map_IsPositionUnveiled(houseID, packed))
 		return false;
 
 	t->isUnveiled = true;

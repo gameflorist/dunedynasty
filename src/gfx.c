@@ -452,7 +452,7 @@ GFX_ScreenShake_Start(uint16 packed, int num_ticks)
 		visible = g_map[packed].isUnveiled;
 	}
 	else {
-		visible = Map_IsPositionUnveiled(packed);
+		visible = Map_IsPositionUnveiled(g_playerHouseID, packed);
 	}
 
 	if (visible)
