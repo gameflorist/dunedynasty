@@ -41,7 +41,7 @@ typedef struct Tile {
 	/* 0000 01FF */ PACK uint32 groundSpriteID:9;           /*!< The Sprite which is drawn on this Tile. */
 	/* 0000 FE00 */ PACK uint32 overlaySpriteID:7;          /*!< The Overlay which is drawn over this Tile. */
 	/* 0007 0000 */ PACK uint32 houseID:3;                  /*!< Which House owns this Tile. */
-	/* 0008 0000 */ PACK uint32 isUnveiled:1;               /*!< There is no fog on the Tile. */
+	/* 0008 0000 */ PACK uint32 isUnveiled_:1;              /*!< Unused. */
 	/* 0010 0000 */ PACK uint32 hasUnit:1;                  /*!< There is a Unit on the Tile. */
 	/* 0020 0000 */ PACK uint32 hasStructure:1;             /*!< There is a Structure on the Tile. */
 	/* 0040 0000 */ PACK uint32 hasAnimation:1;             /*!< There is animation going on the Tile. */
@@ -57,6 +57,8 @@ typedef struct FogOfWarTile {
 	uint8 overlaySpriteID;
 	enum HouseType houseID;
 	bool hasStructure;
+
+	enum HouseFlag isUnveiled;
 
 	uint8 fogSpriteID;      /* Opaque fog.  Used to be shared with craters in overlaySpriteID. */
 	uint8 fogOverlayBits;   /* 1,2,4,8 for up, right, down, left. */
@@ -125,7 +127,7 @@ extern uint16 Map_Server_FindLocationTile(uint16 locationID, enum HouseType hous
 extern void Map_UpdateAround(uint16 radius, tile32 position, struct Unit *unit, uint8 function);
 extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
 extern bool Map_UnveilTile(uint16 packed, uint8 houseID);
-extern void Map_RefreshTile(uint16 packed, int duration);
+extern void Map_Client_RefreshTile(uint16 packed, int duration);
 extern void Map_ResetFogOfWar(void);
 extern void Map_Client_UpdateFogOfWar(void);
 extern void Map_CreateLandscape(uint32 seed);

@@ -296,7 +296,7 @@ bool Map_IsValidPosition(uint16 position)
 bool
 Map_IsUnveiledToHouse(enum HouseType houseID, uint16 packed)
 {
-	return (houseID == g_playerHouseID) && g_map[packed].isUnveiled;
+	return (g_mapVisible[packed].isUnveiled & (1 << houseID));
 }
 
 bool
@@ -308,12 +308,14 @@ Map_IsPositionUnveiled(enum HouseType houseID, uint16 packed)
 	if (!House_IsHuman(houseID))
 		return true;
 
+	const enum HouseFlag houseIDBit = (1 << houseID);
+
 	return (65 <= packed && packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65)
-		&& (g_map[packed].isUnveiled)
-		&& (g_map[packed - 1].isUnveiled)
-		&& (g_map[packed + 1].isUnveiled)
-		&& (g_map[packed - MAP_SIZE_MAX].isUnveiled)
-		&& (g_map[packed + MAP_SIZE_MAX].isUnveiled);
+		&& (g_mapVisible[packed].isUnveiled & houseIDBit)
+		&& (g_mapVisible[packed - 1].isUnveiled & houseIDBit)
+		&& (g_mapVisible[packed + 1].isUnveiled & houseIDBit)
+		&& (g_mapVisible[packed - MAP_SIZE_MAX].isUnveiled & houseIDBit)
+		&& (g_mapVisible[packed + MAP_SIZE_MAX].isUnveiled & houseIDBit);
 }
 
 /**
@@ -1083,42 +1085,41 @@ extern void Map_SelectNext(bool getNext);
  * After unveiling, check neighbour tiles. This function handles one neighbour.
  * @param packed The neighbour tile of an unveiled tile.
  */
-static void Map_UnveilTile_Neighbour(uint16 packed)
+static void
+Map_UnveilTile_Neighbour(enum HouseType houseID, uint16 packed)
 {
-	uint16 spriteID;
-
 	if (!Map_InRangePacked(packed)) return;
 
-	FogOfWarTile *f = &g_mapVisible[packed];
+	int bits;
 
-	spriteID = 15;
-	if (g_map[packed].isUnveiled) {
-		int i;
+	if (Map_IsUnveiledToHouse(houseID, packed)) {
+		bits = 0;
 
-		spriteID = 0;
-
-		for (i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			const uint16 neighbour = packed + g_table_mapDiff[i];
 
-			if (Tile_IsOutOfMap(neighbour)) {
-				spriteID |= 1 << i;
-				continue;
+			if (Tile_IsOutOfMap(neighbour)
+					|| !Map_IsUnveiledToHouse(houseID, neighbour)) {
+				bits |= (1 << i);
 			}
-
-			if (!g_map[neighbour].isUnveiled) spriteID |= 1 << i;
 		}
-	}
 
-	if (spriteID != 0) {
-		if (spriteID != 15) {
+		if (bits != 0xF) {
 			Unit *u = Unit_Get_ByPackedTile(packed);
-			if (u != NULL) Unit_HouseUnitCount_Add(u, g_playerHouseID);
-		}
 
-		spriteID = g_iconMap[g_iconMap[ICM_ICONGROUP_FOG_OF_WAR] + spriteID];
+			if (u != NULL)
+				Unit_HouseUnitCount_Add(u, houseID);
+		}
+	}
+	else {
+		bits = 0xF;
 	}
 
-	f->fogSpriteID = spriteID;
+	if (houseID == g_playerHouseID) {
+		g_mapVisible[packed].fogSpriteID
+			= (bits != 0)
+			? g_iconMap[g_iconMap[ICM_ICONGROUP_FOG_OF_WAR] + bits] : 0;
+	}
 }
 
 /**
@@ -1132,18 +1133,21 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	Structure *s;
 	Unit *u;
 
-	if (houseID != g_playerHouseID) return false;
 	if (Tile_IsOutOfMap(packed)) return false;
 
-	Tile *t = &g_map[packed];
 	FogOfWarTile *f = &g_mapVisible[packed];
 
-	f->timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
+	if (houseID == g_playerHouseID) {
+		const uint16 duration
+			= Tools_AdjustToGameSpeed(10 * 60, 0, 0xFFFF, true);
 
-	if (t->isUnveiled && Map_IsPositionUnveiled(houseID, packed))
+		f->timeout = g_timerGame + duration;
+	}
+
+	if (Map_IsPositionUnveiled(houseID, packed))
 		return false;
 
-	t->isUnveiled = true;
+	f->isUnveiled |= (1 << houseID);
 
 	u = Unit_Get_ByPackedTile(packed);
 	if (u != NULL) Unit_HouseUnitCount_Add(u, houseID);
@@ -1152,17 +1156,17 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	if (s != NULL)
 		s->o.seenByHouses |= House_GetAllies(houseID);
 
-	Map_UnveilTile_Neighbour(packed);
-	Map_UnveilTile_Neighbour(packed + 1);
-	Map_UnveilTile_Neighbour(packed - 1);
-	Map_UnveilTile_Neighbour(packed - 64);
-	Map_UnveilTile_Neighbour(packed + 64);
+	Map_UnveilTile_Neighbour(houseID, packed);
+	Map_UnveilTile_Neighbour(houseID, packed + 1);
+	Map_UnveilTile_Neighbour(houseID, packed - 1);
+	Map_UnveilTile_Neighbour(houseID, packed - MAP_SIZE_MAX);
+	Map_UnveilTile_Neighbour(houseID, packed + MAP_SIZE_MAX);
 
 	return true;
 }
 
 void
-Map_RefreshTile(uint16 packed, int duration)
+Map_Client_RefreshTile(uint16 packed, int duration)
 {
 	if (Tile_IsOutOfMap(packed)) return;
 
@@ -1522,7 +1526,7 @@ void Map_CreateLandscape(uint32 seed)
 		t->groundSpriteID  = iconMap[t->groundSpriteID];
 		t->overlaySpriteID = 0;
 		t->houseID         = HOUSE_HARKONNEN;
-		t->isUnveiled      = false;
+		t->isUnveiled_     = false;
 		t->hasUnit         = false;
 		t->hasStructure    = false;
 		t->hasAnimation    = false;

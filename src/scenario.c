@@ -1362,11 +1362,13 @@ static void Scenario_Load_Map(const char *key, char *settings)
 
 	packed = Tile_PackXY(atoi(posY), atoi(key + 6)) & 0xFFF;
 	t = &g_map[packed];
+	FogOfWarTile *f = &g_mapVisible[packed];
 
 	s = strtok(settings, ",\r\n");
 	value = atoi(s);
 	t->houseID        = value & 0x07;
-	t->isUnveiled     = (value & 0x08) != 0 ? true : false;
+	bool isUnveiled   = (value & 0x08) != 0 ? true : false;
+	t->isUnveiled_    = false;
 	t->hasUnit        = (value & 0x10) != 0 ? true : false;
 	t->hasStructure   = (value & 0x20) != 0 ? true : false;
 	t->hasAnimation   = (value & 0x40) != 0 ? true : false;
@@ -1376,7 +1378,13 @@ static void Scenario_Load_Map(const char *key, char *settings)
 	t->groundSpriteID = atoi(s) & 0x01FF;
 	if (g_mapSpriteID[packed] != t->groundSpriteID) g_mapSpriteID[packed] |= 0x8000;
 
-	if (!t->isUnveiled) g_mapVisible[packed].fogSpriteID = g_veiledSpriteID;
+	if (isUnveiled) {
+		f->isUnveiled = (1 << g_playerHouseID);
+		f->fogSpriteID = 0;
+	}
+	else {
+		f->fogSpriteID = g_veiledSpriteID;
+	}
 }
 
 void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)

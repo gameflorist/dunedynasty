@@ -46,8 +46,8 @@ Tile_RefreshFogInRadius(enum HouseFlag houses,
 			if (unveil) {
 				Map_UnveilTile(packed, g_playerHouseID);
 			}
-			else {
-				Map_RefreshTile(packed, 2);
+			else if (houses & (1 << g_playerHouseID)) {
+				Map_Client_RefreshTile(packed, 2);
 			}
 		}
 	}

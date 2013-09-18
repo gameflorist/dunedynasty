@@ -155,7 +155,7 @@ SaveFile(const char *filename, const char *description)
 		/* Add fog of war for all tiles on the map */
 		for (i = 0; i < 0x1000; i++) {
 			Tile *tile = &g_map[i];
-			tile->isUnveiled = false;
+			tile->isUnveiled_ = false;
 			tile->overlaySpriteID = g_veiledSpriteID;
 		}
 

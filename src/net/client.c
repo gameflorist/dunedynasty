@@ -236,9 +236,6 @@ Client_Recv_UpdateLandscape(const unsigned char **buf)
 		t->hasStructure     = s->hasStructure;
 		t->index            = s->index;
 
-		if (!t->isUnveiled && s->isUnveiled)
-			Map_UnveilTile(packed, g_playerHouseID);
-
 		(*buf) += sizeof(Tile);
 	}
 }

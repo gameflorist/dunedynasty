@@ -18,9 +18,9 @@ static bool fread_tile(Tile *t, FILE *fp)
 	if (fread(buffer, 1, 4, fp) != 4) return false;
 	t->groundSpriteID = buffer[0] | ((buffer[1] & 1) << 8);
 	t->overlaySpriteID = buffer[1] >> 1;
-	t->houseID = buffer[2] & 0x07;
-	t->isUnveiled = (buffer[2] & 0x08) ? true : false;
-	t->hasUnit =  (buffer[2] & 0x10) ? true : false;
+	t->houseID      = (buffer[2] & 0x07);
+	t->isUnveiled_  = (buffer[2] & 0x08) ? true : false;
+	t->hasUnit      = (buffer[2] & 0x10) ? true : false;
 	t->hasStructure = (buffer[2] & 0x20) ? true : false;
 	t->hasAnimation = (buffer[2] & 0x40) ? true : false;
 	t->hasExplosion = (buffer[2] & 0x80) ? true : false;
@@ -39,9 +39,16 @@ static bool fwrite_tile(const Tile *t, const FogOfWarTile *f, FILE *fp)
 {
 	uint8 buffer[4];
 	uint8 overlaySpriteID = f->fogSpriteID ? f->fogSpriteID : t->overlaySpriteID;
+	const bool isUnveiled = f->isUnveiled & (1 << g_playerHouseID);
+
 	buffer[0] = t->groundSpriteID & 0xff;
 	buffer[1] = (t->groundSpriteID >> 8) | (overlaySpriteID << 1);
-	buffer[2] = t->houseID | (t->isUnveiled << 3) | (t->hasUnit << 4) | (t->hasStructure << 5) | (t->hasAnimation << 6) | (t->hasExplosion << 7);
+	buffer[2] = (t->houseID)
+	          | (isUnveiled ? 0x08 : 0x00)
+	          | (t->hasUnit << 4)
+	          | (t->hasStructure << 5)
+	          | (t->hasAnimation << 6)
+	          | (t->hasExplosion << 7);
 	buffer[3] = t->index;
 	if (fwrite(buffer, 1, 4, fp) != 4) return false;
 	return true;
@@ -60,7 +67,7 @@ bool Map_Load(FILE *fp, uint32 length)
 	for (i = 0; i < 0x1000; i++) {
 		Tile *t = &g_map[i];
 
-		t->isUnveiled = false;
+		t->isUnveiled_ = false;
 		t->overlaySpriteID = g_veiledSpriteID;
 	}
 
@@ -97,7 +104,14 @@ bool Map_Save(FILE *fp)
 		Tile *tile = &g_map[i];
 
 		/* If there is nothing on the tile, not unveiled, and it is equal to the mapseed generated tile, don't store it */
-		if (!tile->isUnveiled && !tile->hasStructure && !tile->hasUnit && !tile->hasAnimation && !tile->hasExplosion && (g_mapSpriteID[i] & 0x8000) == 0 && g_mapSpriteID[i] == tile->groundSpriteID) continue;
+		if (!tile->isUnveiled_
+		 && !tile->hasStructure
+		 && !tile->hasUnit
+		 && !tile->hasAnimation
+		 && !tile->hasExplosion
+		 && (g_mapSpriteID[i] & 0x8000) == 0
+		 && (g_mapSpriteID[i] == tile->groundSpriteID))
+			continue;
 
 		/* Store the index, then the tile itself */
 		if (!fwrite_le_uint16(i, fp)) return false;
@@ -121,6 +135,7 @@ Map_Load2Fallback(void)
 		f->groundSpriteID   = t->groundSpriteID;
 		f->houseID          = t->houseID;
 		f->hasStructure     = t->hasStructure;
+		f->isUnveiled       = t->isUnveiled_ ? (1 << g_playerHouseID) : 0;
 		f->fogOverlayBits   = 0;
 
 		if (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID) {
@@ -184,7 +199,8 @@ Map_Save2(FILE *fp)
 		uint8 hasStructure  = f->hasStructure;
 
 		/* Only store interesting tiles. */
-		if (!g_map[packed].isUnveiled || spriteID == 0) continue;
+		if (!g_map[packed].isUnveiled_ || spriteID == 0)
+			continue;
 
 		if ((timeout == 0) &&
 				(f->groundSpriteID == t->groundSpriteID) &&
