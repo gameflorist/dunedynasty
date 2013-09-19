@@ -220,6 +220,7 @@ Server_SendMessages(void)
 		buf = buf_start_client_specific;
 
 		Server_Send_UpdateHouse(houseID, &buf);
+		Server_Send_UpdateFogOfWar(houseID, &buf);
 
 		if (buf + g_server2client_message_len[houseID]
 				< g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN) {

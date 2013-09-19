@@ -194,6 +194,30 @@ Server_Send_UpdateLandscape(unsigned char **buf)
 }
 
 void
+Server_Send_UpdateFogOfWar(enum HouseType houseID, unsigned char **buf)
+{
+	if (!enhancement_fog_of_war)
+		return;
+
+	const unsigned char * const end
+		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+
+	const int len = 1 + MAP_SIZE_MAX * MAP_SIZE_MAX;
+	if (*buf + len >= end)
+		return;
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_FOG_OF_WAR);
+
+	for (uint16 packed = 65; packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65; packed++) {
+		FogOfWarTile *f = &g_mapVisible[packed];
+
+		Net_Encode_uint8(buf, f->cause[houseID]);
+
+		f->cause[houseID] = UNVEILCAUSE_UNCHANGED;
+	}
+}
+
+void
 Server_Send_UpdateHouse(enum HouseType houseID, unsigned char **buf)
 {
 	const unsigned char * const end

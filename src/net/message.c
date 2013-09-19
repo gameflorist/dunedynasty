@@ -25,6 +25,7 @@ static const struct {
 static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'X', /* SCMSG_DISCONNECT */
 	'L', /* SCMSG_UPDATE_LANDSCAPE */
+	'F', /* SCMSG_UPDATE_FOG_OF_WAR */
 	'H', /* SCMSG_UPDATE_HOUSE */
 	'S', /* SCMSG_UPDATE_STRUCTURES */
 	'U', /* SCMSG_UPDATE_UNITS */

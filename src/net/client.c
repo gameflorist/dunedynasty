@@ -241,6 +241,19 @@ Client_Recv_UpdateLandscape(const unsigned char **buf)
 }
 
 static void
+Client_Recv_UpdateFogOfWar(const unsigned char **buf)
+{
+	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
+		const uint8 cause = Net_Decode_uint8(buf);
+
+		if (cause == UNVEILCAUSE_UNCHANGED)
+			continue;
+
+		Map_UnveilTile(g_playerHouseID, cause, packed);
+	}
+}
+
+static void
 Client_Recv_UpdateHouse(const unsigned char **buf)
 {
 	House *h = g_playerHouse;
@@ -456,6 +469,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_UPDATE_LANDSCAPE:
 				Client_Recv_UpdateLandscape(&buf);
+				break;
+
+			case SCMSG_UPDATE_FOG_OF_WAR:
+				Client_Recv_UpdateFogOfWar(&buf);
 				break;
 
 			case SCMSG_UPDATE_HOUSE:

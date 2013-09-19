@@ -8,6 +8,7 @@
 extern void Server_ResetCache(void);
 
 extern void Server_Send_UpdateLandscape(unsigned char **buf);
+extern void Server_Send_UpdateFogOfWar(enum HouseType houseID, unsigned char **buf);
 extern void Server_Send_UpdateHouse(enum HouseType houseID, unsigned char **buf);
 extern void Server_Send_UpdateStructures(unsigned char **buf);
 extern void Server_Send_UpdateUnits(unsigned char **buf);
