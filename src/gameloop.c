@@ -13,6 +13,7 @@
 #include "audio/audio.h"
 #include "common_a5.h"
 #include "config.h"
+#include "enhancement.h"
 #include "explosion.h"
 #include "gui/gui.h"
 #include "house.h"
@@ -26,6 +27,9 @@
 #include "newui/menubar.h"
 #include "newui/viewport.h"
 #include "opendune.h"
+#include "pool/pool.h"
+#include "pool/structure.h"
+#include "pool/unit.h"
 #include "sprites.h"
 #include "structure.h"
 #include "team.h"
@@ -36,6 +40,44 @@
 #include "video/video.h"
 
 /*--------------------------------------------------------------*/
+
+static void
+GameLoop_Client_Structure(void)
+{
+	if (!enhancement_fog_of_war)
+		return;
+
+	PoolFindStruct find;
+	Structure *s;
+
+	find.houseID = HOUSE_INVALID;
+	find.index   = 0xFFFF;
+	find.type    = 0xFFFF;
+
+	while ((s = Structure_Find(&find)) != NULL) {
+		Structure_RemoveFog(UNVEILCAUSE_STRUCTURE_VISION, s);
+	}
+}
+
+static void
+GameLoop_Client_Unit(void)
+{
+	if (!enhancement_fog_of_war)
+		return;
+
+	PoolFindStruct find;
+	Unit *u;
+
+	find.houseID = HOUSE_INVALID;
+	find.index   = 0xFFFF;
+	find.type    = 0xFFFF;
+
+	while ((u = Unit_Find(&find)) != NULL) {
+		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+
+		Unit_RefreshFog(UNVEILCAUSE_UNIT_VISION, u, ui->flags.isGroundUnit);
+	}
+}
 
 static void
 GameLoop_Server_Logic(void)
@@ -53,6 +95,8 @@ GameLoop_Server_Logic(void)
 static void
 GameLoop_Client_Logic(void)
 {
+	GameLoop_Client_Unit();
+	GameLoop_Client_Structure();
 	Unit_Sort();
 }
 
