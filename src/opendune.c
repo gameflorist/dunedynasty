@@ -734,7 +734,8 @@ void Game_Prepare(void)
 		if (Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
 			const int64_t backup = f->timeout;
 
-			Map_UnveilTile(packed, g_playerHouseID);
+			Map_UnveilTile(g_playerHouseID, UNVEILCAUSE_INITIALISATION,
+					packed);
 
 			f->timeout = backup;
 		}
@@ -754,7 +755,7 @@ void Game_Prepare(void)
 
 		if (u->o.flags.s.isNotOnMap) continue;
 
-		Unit_RemoveFog(u);
+		Unit_RemoveFog(UNVEILCAUSE_INITIALISATION, u);
 		Unit_UpdateMap(1, u);
 	}
 
@@ -771,7 +772,7 @@ void Game_Prepare(void)
 
 		if (s->o.flags.s.isNotOnMap) continue;
 
-		Structure_RemoveFog(s);
+		Structure_RemoveFog(UNVEILCAUSE_INITIALISATION, s);
 
 		if (s->o.type == STRUCTURE_STARPORT && s->o.linkedID != 0xFF) {
 			Unit *u = Unit_Get_ByIndex(s->o.linkedID);

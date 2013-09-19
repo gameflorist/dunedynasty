@@ -378,7 +378,7 @@ void GameLoop_Unit(void)
 		 * allow them to refresh previously scouted tiles for vision.
 		 */
 		if (enhancement_fog_of_war)
-			Unit_RefreshFog(u, ui->flags.isGroundUnit);
+			Unit_RefreshFog(UNVEILCAUSE_UNIT_VISION, u, ui->flags.isGroundUnit);
 
 		if (tickUnknown4 && u->targetAttack != 0 && ui->o.flags.hasTurret) {
 			tile32 tile;
@@ -1494,7 +1494,7 @@ bool Unit_Deviation_Decrease(Unit *unit, uint16 amount)
  * @param unit The Unit to remove fog around.
  */
 void
-Unit_RefreshFog(Unit *unit, bool unveil)
+Unit_RefreshFog(enum TileUnveilCause cause, Unit *unit, bool unveil)
 {
 	uint16 fogUncoverRadius;
 
@@ -1506,14 +1506,14 @@ Unit_RefreshFog(Unit *unit, bool unveil)
 	fogUncoverRadius = g_table_unitInfo[unit->o.type].o.fogUncoverRadius;
 	if (fogUncoverRadius == 0) return;
 
-	Tile_RefreshFogInRadius(House_GetAllies(Unit_GetHouseID(unit)),
+	Tile_RefreshFogInRadius(House_GetAllies(Unit_GetHouseID(unit)), cause,
 			unit->o.position, fogUncoverRadius, unveil);
 }
 
 void
-Unit_RemoveFog(Unit *unit)
+Unit_RemoveFog(enum TileUnveilCause cause, Unit *unit)
 {
-	Unit_RefreshFog(unit, true);
+	Unit_RefreshFog(cause, unit, true);
 }
 
 /**
@@ -2406,7 +2406,8 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 			}
 
 			if (type != UNIT_MISSILE_HOUSE) {
-				Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, bullet->o.position, 2);
+				Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, UNVEILCAUSE_BULLET_FIRED,
+						bullet->o.position, 2);
 			}
 
 			return bullet;
@@ -2434,7 +2435,8 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 
 			if (damage > 15) bullet->o.flags.s.bulletIsBig = true;
 
-			Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, bullet->o.position, 2);
+			Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, UNVEILCAUSE_BULLET_FIRED,
+					bullet->o.position, 2);
 
 			return bullet;
 		}
@@ -2706,7 +2708,8 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 		if (enhancement_fix_firing_logic) Structure_UntargetMe(s);
 
 		/* ENHANCEMENT -- When taking over a structure, unveil the fog around the structure. */
-		if (g_dune2_enhanced) Structure_RemoveFog(s);
+		if (g_dune2_enhanced)
+			Structure_RemoveFog(UNVEILCAUSE_STRUCTURE_PLACED, s);
 	} else {
 		uint16 damage;
 
@@ -2988,7 +2991,7 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 	if (type == 1) {
 		if (unit->o.type != UNIT_SANDWORM) {
 			Tile_RemoveFogInRadius(House_GetAllies(Unit_GetHouseID(unit)),
-					position, 1);
+					UNVEILCAUSE_UNIT_UPDATE, position, 1);
 		}
 
 		if (Object_GetByPackedTile(packed) == NULL) {
@@ -3028,7 +3031,7 @@ void Unit_RemoveFromTile(Unit *unit, uint16 packed)
 
 void Unit_AddToTile(Unit *unit, uint16 packed)
 {
-	Map_UnveilTile(packed, Unit_GetHouseID(unit));
+	Map_UnveilTile(Unit_GetHouseID(unit), UNVEILCAUSE_UNIT_UPDATE, packed);
 }
 
 /**

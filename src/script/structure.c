@@ -97,7 +97,7 @@ uint16 Script_Structure_RemoveFogAroundTile(ScriptEngine *script)
 {
 	VARIABLE_NOT_USED(script);
 
-	Structure_RemoveFog(g_scriptCurrentStructure);
+	Structure_RemoveFog(UNVEILCAUSE_STRUCTURE_SCRIPT, g_scriptCurrentStructure);
 
 	return 0;
 }

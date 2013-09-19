@@ -248,7 +248,7 @@ GameLoop_Client_ProcessUnhandledInput(bool init_transform, uint16 key)
 #if 0
 		/* Debugging. */
 		case SCANCODE_F9:
-			Tile_RemoveFogInRadius(FLAG_HOUSE_ALL,
+			Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, UNVEILCAUSE_LONG,
 					Tile_UnpackTile(Tile_PackXY(32, 32)), 64);
 			break;
 

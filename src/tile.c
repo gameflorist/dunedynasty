@@ -7,16 +7,17 @@
 #include "tools/coord.h"
 
 static void
-Map_UnveilTileForHouses(enum HouseFlag houses, uint16 packed)
+Map_UnveilTileForHouses(enum HouseFlag houses, enum TileUnveilCause cause,
+		uint16 packed)
 {
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		if (houses & (1 << h))
-			Map_UnveilTile(packed, h);
+			Map_UnveilTile(h, cause, packed);
 	}
 }
 
 void
-Tile_RefreshFogInRadius(enum HouseFlag houses,
+Tile_RefreshFogInRadius(enum HouseFlag houses, enum TileUnveilCause cause,
 		tile32 tile, uint16 radius, bool unveil)
 {
 	uint16 packed = Tile_PackTile(tile);
@@ -49,17 +50,18 @@ Tile_RefreshFogInRadius(enum HouseFlag houses,
 
 			packed = Tile_PackXY(x + i, y + j);
 			if (unveil) {
-				Map_UnveilTileForHouses(houses, packed);
+				Map_UnveilTileForHouses(houses, cause, packed);
 			}
 			else if (houses & (1 << g_playerHouseID)) {
-				Map_Client_RefreshTile(packed, 2);
+				Map_Client_RefreshTile(cause, packed);
 			}
 		}
 	}
 }
 
 void
-Tile_RemoveFogInRadius(enum HouseFlag houses, tile32 tile, uint16 radius)
+Tile_RemoveFogInRadius(enum HouseFlag houses, enum TileUnveilCause cause,
+		tile32 tile, uint16 radius)
 {
-	Tile_RefreshFogInRadius(houses, tile, radius, true);
+	Tile_RefreshFogInRadius(houses, cause, tile, radius, true);
 }

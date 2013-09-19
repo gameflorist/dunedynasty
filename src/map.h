@@ -52,7 +52,9 @@ MSVC_PACKED_END
 assert_compile(sizeof(Tile) == 0x04);
 
 typedef struct FogOfWarTile {
+	enum TileUnveilCause cause[HOUSE_MAX];
 	int64_t timeout;
+
 	uint16 groundSpriteID;
 	uint8 overlaySpriteID;
 	enum HouseType houseID;
@@ -126,8 +128,8 @@ extern void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID);
 extern uint16 Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID);
 extern void Map_UpdateAround(uint16 radius, tile32 position, struct Unit *unit, uint8 function);
 extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
-extern bool Map_UnveilTile(uint16 packed, uint8 houseID);
-extern void Map_Client_RefreshTile(uint16 packed, int duration);
+extern void Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause, uint16 packed);
+extern void Map_Client_RefreshTile(enum TileUnveilCause cause, uint16 packed);
 extern void Map_ResetFogOfWar(void);
 extern void Map_Client_UpdateFogOfWar(void);
 extern void Map_CreateLandscape(uint32 seed);

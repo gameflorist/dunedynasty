@@ -101,7 +101,7 @@ extern uint32 Structure_GetStructuresBuilt(struct House *h);
 extern int16 Structure_IsValidBuildLandscape(uint16 packed, enum StructureType type);
 extern int16 Structure_IsValidBuildLocation(enum HouseType houseID, uint16 packed, enum StructureType type);
 extern void Structure_Server_ActivateSpecial(Structure *s);
-extern void Structure_RemoveFog(Structure *s);
+extern void Structure_RemoveFog(enum TileUnveilCause cause, const Structure *s);
 extern bool Structure_Damage(Structure *s, uint16 damage, uint16 range);
 extern bool Structure_IsUpgradable(Structure *s);
 extern bool Structure_ConnectWall(uint16 position, bool recurse);

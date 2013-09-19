@@ -108,7 +108,7 @@ void GameLoop_Structure(void)
 		g_scriptCurrentTeam      = NULL;
 
 		if (enhancement_fog_of_war)
-			Structure_RemoveFog(s);
+			Structure_RemoveFog(UNVEILCAUSE_STRUCTURE_VISION, s);
 
 		if (tickPalace && s->o.type == STRUCTURE_PALACE) {
 			if (s->countDown != 0) {
@@ -542,7 +542,8 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 
 			g_mapSpriteID[position] |= 0x8000;
 
-			Tile_RemoveFogInRadius(1 << s->o.houseID, Tile_UnpackTile(position), 1);
+			Tile_RemoveFogInRadius(1 << s->o.houseID, UNVEILCAUSE_STRUCTURE_PLACED,
+					Tile_UnpackTile(position), 1);
 
 			Structure_ConnectWall(position, true);
 			Structure_Free(s);
@@ -568,7 +569,8 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 
 				g_mapSpriteID[curPos] |= 0x8000;
 
-				Tile_RemoveFogInRadius(1 << s->o.houseID, Tile_UnpackTile(curPos), 1);
+				Tile_RemoveFogInRadius(1 << s->o.houseID, UNVEILCAUSE_STRUCTURE_PLACED,
+						Tile_UnpackTile(curPos), 1);
 
 				result = 1;
 			}
@@ -588,7 +590,8 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 
 					g_mapSpriteID[curPos] |= 0x8000;
 
-					Tile_RemoveFogInRadius(1 << s->o.houseID, Tile_UnpackTile(curPos), 1);
+					Tile_RemoveFogInRadius(1 << s->o.houseID, UNVEILCAUSE_STRUCTURE_PLACED,
+							Tile_UnpackTile(curPos), 1);
 
 					result = 1;
 				}
@@ -614,8 +617,10 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 	if (validBuildLocation == 0 && !g_debugScenario && g_validateStrictIfZero == 0) return false;
 
 	/* ENHACEMENT -- In Dune2, it only removes the fog around the top-left tile of a structure, leaving for big structures the right in the fog. */
-	if (!g_dune2_enhanced)
-		Tile_RemoveFogInRadius(1 << s->o.houseID, Tile_UnpackTile(position), 2);
+	if (!g_dune2_enhanced) {
+		Tile_RemoveFogInRadius(1 << s->o.houseID, UNVEILCAUSE_STRUCTURE_PLACED,
+				Tile_UnpackTile(position), 2);
+	}
 
 	s->o.seenByHouses |= 1 << s->o.houseID;
 	if (House_AreAllied(s->o.houseID, g_playerHouseID)) s->o.seenByHouses |= 0xFF;
@@ -668,8 +673,10 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 			Unit_Remove(u);
 
 			/* ENHANCEMENT -- In Dune2, it only removes the fog around the top-left tile of a structure, leaving for big structures the right in the fog. */
-			if (g_dune2_enhanced)
-				Tile_RemoveFogInRadius(1 << s->o.houseID, Tile_UnpackTile(curPos), 2);
+			if (g_dune2_enhanced) {
+				Tile_RemoveFogInRadius(1 << s->o.houseID, UNVEILCAUSE_STRUCTURE_PLACED,
+						Tile_UnpackTile(curPos), 2);
+			}
 		}
 	}
 
@@ -1086,7 +1093,8 @@ Structure_Server_ActivateSpecial(Structure *s)
  *
  * @param s The Structure.
  */
-void Structure_RemoveFog(Structure *s)
+void
+Structure_RemoveFog(enum TileUnveilCause cause, const Structure *s)
 {
 	const StructureInfo *si;
 	tile32 position;
@@ -1103,7 +1111,7 @@ void Structure_RemoveFog(Structure *s)
 		position.y += 256 * (g_table_structure_layoutSize[si->layout].height - 1) / 2;
 	}
 
-	Tile_RemoveFogInRadius(House_GetAllies(s->o.houseID),
+	Tile_RemoveFogInRadius(House_GetAllies(s->o.houseID), cause,
 			position, si->o.fogUncoverRadius);
 }
 

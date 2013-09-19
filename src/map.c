@@ -1081,6 +1081,16 @@ uint16 Map_SearchSpice(uint16 packed, uint16 radius)
 extern void Map_SelectNext(bool getNext);
 #endif
 
+static int64_t
+Map_GetUnveilTimeout(enum TileUnveilCause cause)
+{
+	const int duration
+		= (cause == UNVEILCAUSE_EXPLOSION || cause == UNVEILCAUSE_SHORT)
+		? 2 : 10;
+
+	return g_timerGame + Tools_AdjustToGameSpeed(duration * 60, 0, 0xFFFF, true);
+}
+
 /**
  * After unveiling, check neighbour tiles. This function handles one neighbour.
  * @param packed The neighbour tile of an unveiled tile.
@@ -1122,30 +1132,26 @@ Map_UnveilTile_Neighbour(enum HouseType houseID, uint16 packed)
 	}
 }
 
-/**
- * Unveil a tile for a House.
- * @param packed The tile to unveil.
- * @param houseID The house to unveil for.
- * @return True if tile was freshly unveiled.
- */
-bool Map_UnveilTile(uint16 packed, uint8 houseID)
+void
+Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause,
+		uint16 packed)
 {
 	Structure *s;
 	Unit *u;
 
-	if (Tile_IsOutOfMap(packed)) return false;
+	if (Tile_IsOutOfMap(packed))
+		return;
 
 	FogOfWarTile *f = &g_mapVisible[packed];
 
-	if (houseID == g_playerHouseID) {
-		const uint16 duration
-			= Tools_AdjustToGameSpeed(10 * 60, 0, 0xFFFF, true);
+	f->cause[houseID] = max(f->cause[houseID], cause);
 
-		f->timeout = g_timerGame + duration;
+	if (houseID == g_playerHouseID) {
+		f->timeout = Map_GetUnveilTimeout(cause);
 	}
 
 	if (Map_IsPositionUnveiled(houseID, packed))
-		return false;
+		return;
 
 	f->isUnveiled |= (1 << houseID);
 
@@ -1161,21 +1167,22 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 	Map_UnveilTile_Neighbour(houseID, packed - 1);
 	Map_UnveilTile_Neighbour(houseID, packed - MAP_SIZE_MAX);
 	Map_UnveilTile_Neighbour(houseID, packed + MAP_SIZE_MAX);
-
-	return true;
 }
 
 void
-Map_Client_RefreshTile(uint16 packed, int duration)
+Map_Client_RefreshTile(enum TileUnveilCause cause, uint16 packed)
 {
-	if (Tile_IsOutOfMap(packed)) return;
+	if (Tile_IsOutOfMap(packed))
+		return;
 
 	if (Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
-		const int64_t timeout = g_timerGame + Tools_AdjustToGameSpeed(duration * 60, 0x0000, 0xFFFF, true);
+		const int64_t timeout = Map_GetUnveilTimeout(cause);
 		FogOfWarTile *f = &g_mapVisible[packed];
 
-		if (f->timeout < timeout)
+		if (f->timeout < timeout) {
+			f->cause[g_playerHouseID] = max(f->cause[g_playerHouseID], cause);
 			f->timeout = timeout;
+		}
 	}
 }
 

@@ -170,7 +170,7 @@ SaveFile(const char *filename, const char *description)
 			u = Unit_Find(&find);
 			if (u == NULL) break;
 
-			Unit_RemoveFog(u);
+			Unit_RemoveFog(UNVEILCAUSE_INITIALISATION, u);
 		}
 
 		find.houseID = HOUSE_INVALID;
@@ -185,7 +185,7 @@ SaveFile(const char *filename, const char *description)
 			if (s == NULL) break;
 			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
-			Structure_RemoveFog(s);
+			Structure_RemoveFog(UNVEILCAUSE_INITIALISATION, s);
 		}
 	}
 

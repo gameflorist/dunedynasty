@@ -1752,7 +1752,7 @@ uint16 Script_Unit_RemoveFog(ScriptEngine *script)
 	VARIABLE_NOT_USED(script);
 
 	u = g_scriptCurrentUnit;
-	Unit_RemoveFog(u);
+	Unit_RemoveFog(UNVEILCAUSE_UNIT_SCRIPT, u);
 	return 0;
 }
 
