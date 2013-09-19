@@ -202,18 +202,51 @@ Server_Send_UpdateFogOfWar(enum HouseType houseID, unsigned char **buf)
 	const unsigned char * const end
 		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
 
-	const int len = 1 + MAP_SIZE_MAX * MAP_SIZE_MAX;
-	if (*buf + len >= end)
+	const int header_len  = 1 + 2;
+	const int element_len = 2;
+
+	if (*buf + header_len >= end)
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_FOG_OF_WAR);
 
+	unsigned char *buf_count = *buf;
+	uint16 count = 0;
+
+	(*buf) += 2; /* count */
+
 	for (uint16 packed = 65; packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65; packed++) {
+		if (*buf + element_len >= end)
+			break;
+
 		FogOfWarTile *f = &g_mapVisible[packed];
 
-		Net_Encode_uint8(buf, f->cause[houseID]);
+		if (f->cause[houseID] == UNVEILCAUSE_UNCHANGED)
+			continue;
+
+		if (f->cause[houseID] < UNVEILCAUSE_STRUCTURE_VISION) {
+			uint16 encoded = packed;
+
+			/* Short unveil. */
+			if (f->cause[houseID] == UNVEILCAUSE_EXPLOSION)
+				encoded |= 0x8000;
+
+			Net_Encode_uint16(buf, encoded);
+
+			count++;
+		}
 
 		f->cause[houseID] = UNVEILCAUSE_UNCHANGED;
+	}
+
+	if (count == 0) {
+		*buf = buf_count - 1;
+	}
+	else {
+		SERVER_LOG("unveiled tiles=%d, %lu bytes",
+				count, *buf - buf_count + 1);
+
+		Net_Encode_uint16(&buf_count, count);
 	}
 }
 

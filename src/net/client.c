@@ -243,11 +243,14 @@ Client_Recv_UpdateLandscape(const unsigned char **buf)
 static void
 Client_Recv_UpdateFogOfWar(const unsigned char **buf)
 {
-	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
-		const uint8 cause = Net_Decode_uint8(buf);
+	const int count = Net_Decode_uint16(buf);
 
-		if (cause == UNVEILCAUSE_UNCHANGED)
-			continue;
+	for (int i = 0; i < count; i++) {
+		const uint16 encoded = Net_Decode_uint16(buf);
+		const uint16 packed  = encoded & 0x3FFF;
+
+		const enum TileUnveilCause cause
+			= (encoded & 0x8000) ? UNVEILCAUSE_SHORT : UNVEILCAUSE_LONG;
 
 		Map_UnveilTile(g_playerHouseID, cause, packed);
 	}
