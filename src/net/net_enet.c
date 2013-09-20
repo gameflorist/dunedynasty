@@ -35,6 +35,43 @@ Net_Initialise(void)
 	atexit(enet_deinitialize);
 }
 
+static bool
+Server_ConnectClient(ENetPacket *packet, ENetPeer *peer)
+{
+	bool success = false;
+
+	if (packet->dataLength == 2 && packet->data[0] == '=') {
+		const enum HouseType houseID = packet->data[1];
+
+		if ((HOUSE_HARKONNEN <= houseID && houseID < HOUSE_MAX)
+				&& !(g_client_houses & (1 << houseID))) {
+			House *h = House_Get_ByIndex(houseID);
+
+			peer->data = (void *)houseID;
+
+			g_client_houses |= (1 << houseID);
+			h->flags.human = true;
+
+			success = true;
+		}
+	}
+
+	return success;
+}
+
+static void
+Server_DisconnectClient(ENetPeer *peer)
+{
+	const enum HouseType houseID = (enum HouseType)peer->data;
+	House *h = House_Get_ByIndex(houseID);
+
+	g_client_houses &= ~(1 << houseID);
+	h->flags.human = false;
+	h->flags.isAIActive = true;
+
+	enet_peer_disconnect(peer, 0);
+}
+
 static void
 Server_Synchronise(void)
 {
@@ -50,28 +87,15 @@ Server_Synchronise(void)
 		switch (event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
 				{
-					bool success = false;
-					ENetPacket *packet = event.packet;
-
-					if (packet->dataLength == 2 && packet->data[0] == '=') {
-						enum HouseType houseID = packet->data[1];
-						if (HOUSE_HARKONNEN <= houseID && houseID < HOUSE_MAX
-								&& !(g_client_houses & (1 << houseID))) {
-							event.peer->data = (void *)houseID;
-
-							g_client_houses |= (1 << houseID);
-							House_Get_ByIndex(houseID)->flags.human = true;
-
-							success = true;
-						}
-					}
+					const bool success
+						= Server_ConnectClient(event.packet, event.peer);
 
 					if (success) {
 						clients_connected++;
-						enet_peer_send(event.peer, 0, packet);
+						enet_peer_send(event.peer, 0, event.packet);
 					}
 					else {
-						enet_packet_destroy(packet);
+						enet_packet_destroy(event.packet);
 						enet_peer_disconnect(event.peer, 0);
 					}
 				}
@@ -274,6 +298,9 @@ Server_RecvMessages(void)
 				break;
 
 			case ENET_EVENT_TYPE_DISCONNECT:
+				Server_DisconnectClient(event.peer);
+				break;
+
 			case ENET_EVENT_TYPE_CONNECT:
 			case ENET_EVENT_TYPE_NONE:
 			default:
