@@ -27,6 +27,7 @@ static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'L', /* SCMSG_UPDATE_LANDSCAPE */
 	'F', /* SCMSG_UPDATE_FOG_OF_WAR */
 	'H', /* SCMSG_UPDATE_HOUSE */
+	'C', /* SCMSG_UPDATE_CHOAM */
 	'S', /* SCMSG_UPDATE_STRUCTURES */
 	'U', /* SCMSG_UPDATE_UNITS */
 	'E', /* SCMSG_UPDATE_EXPLOSIONS */

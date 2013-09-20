@@ -5,11 +5,14 @@
 #include "types.h"
 #include "../table/sound.h"
 
+extern void Server_RestockStarport(enum UnitType type);
+
 extern void Server_ResetCache(void);
 
 extern void Server_Send_UpdateLandscape(unsigned char **buf);
 extern void Server_Send_UpdateFogOfWar(enum HouseType houseID, unsigned char **buf);
 extern void Server_Send_UpdateHouse(enum HouseType houseID, unsigned char **buf);
+extern void Server_Send_UpdateCHOAM(unsigned char **buf);
 extern void Server_Send_UpdateStructures(unsigned char **buf);
 extern void Server_Send_UpdateUnits(unsigned char **buf);
 extern void Server_Send_UpdateExplosions(unsigned char **buf);

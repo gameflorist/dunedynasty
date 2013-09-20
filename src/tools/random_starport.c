@@ -39,6 +39,16 @@ Random_Starport_GetSeed(uint16 scenarioID, enum HouseType houseID)
 }
 
 /**
+ * @brief   Returns the initial starport seed.
+ * @details @see s_initialSeed.
+ */
+uint16
+Random_Starport_GetInitialSeed(void)
+{
+	return s_initialSeed;
+}
+
+/**
  * @brief   Restores the starport LCG to the initial state.
  * @details @see Tools_RandomLCG_Seed.
  */

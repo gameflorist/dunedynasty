@@ -118,7 +118,6 @@ extern int Structure_GetAvailable_Starport(enum UnitType type);
 extern int Structure_GetAvailable_ConstructionYard(const Structure *s, enum StructureType type);
 extern int Structure_GetAvailable_Factory(const Structure *s, int i);
 extern void Structure_InitFactoryItems(const Structure *s);
-extern void Structure_Server_RestockStarport(enum UnitType type);
 extern void Structure_HouseUnderAttack(uint8 houseID);
 
 #endif /* STRUCTURE_H */

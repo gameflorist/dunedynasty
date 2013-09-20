@@ -24,6 +24,7 @@
 #include "../shape.h"
 #include "../string.h"
 #include "../structure.h"
+#include "../timer/timer.h"
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"
 #include "../tools/random_starport.h"
@@ -72,9 +73,38 @@ typedef struct UnitDelta {
 } UnitDelta;
 
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
+static int64_t s_choamLastUpdate;
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
 static UnitDelta s_unitCopy[UNIT_INDEX_MAX];
 static int s_explosionLastCount;
+
+/*--------------------------------------------------------------*/
+
+void
+Server_RestockStarport(enum UnitType unitType)
+{
+	if (g_starportAvailable[unitType] != 0 && g_starportAvailable[unitType] < 10) {
+		if (g_starportAvailable[unitType] == -1) {
+			g_starportAvailable[unitType] = 1;
+		}
+		else {
+			g_starportAvailable[unitType]++;
+		}
+
+		s_choamLastUpdate = 0;
+	}
+}
+
+static void
+Server_DepleteStarport(enum UnitType unitType)
+{
+	g_starportAvailable[unitType]--;
+
+	if (g_starportAvailable[unitType] <= 0)
+		g_starportAvailable[unitType] = -1;
+
+	s_choamLastUpdate = 0;
+}
 
 /*--------------------------------------------------------------*/
 
@@ -162,6 +192,7 @@ Server_ResetCache(void)
 	memset(s_mapCopy, 0, sizeof(s_mapCopy));
 	memset(s_structureCopy, 0, sizeof(s_structureCopy));
 	memset(s_unitCopy, 0, sizeof(s_unitCopy));
+	s_choamLastUpdate = 0;
 	s_explosionLastCount = 0;
 }
 
@@ -281,6 +312,28 @@ Server_Send_UpdateHouse(enum HouseType houseID, unsigned char **buf)
 	for (enum UnitType u = UNIT_CARRYALL; u <= UNIT_MCV; u++) {
 		Net_Encode_uint8(buf, h->starportCount[u]);
 	}
+}
+
+void
+Server_Send_UpdateCHOAM(unsigned char **buf)
+{
+	if (s_choamLastUpdate == g_tickHouseStarportRecalculatePrices)
+		return;
+
+	const size_t len = 1 + 2 + (UNIT_MCV - UNIT_CARRYALL + 1) * 1;
+	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
+		return;
+
+	const uint16 seed = Random_Starport_GetInitialSeed();
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_CHOAM);
+	Net_Encode_uint16(buf, seed);
+
+	for (enum UnitType u = UNIT_CARRYALL; u <= UNIT_MCV; u++) {
+		Net_Encode_uint8(buf, g_starportAvailable[u]);
+	}
+
+	s_choamLastUpdate = g_tickHouseStarportRecalculatePrices;
 }
 
 void
@@ -711,9 +764,7 @@ Server_Recv_PurchaseItemStarport(Structure *s, uint8 objectType)
 		h->starportCount[objectType]++;
 		BuildQueue_Add(&h->starportQueue, objectType, credits);
 
-		g_starportAvailable[objectType]--;
-		if (g_starportAvailable[objectType] <= 0)
-			g_starportAvailable[objectType] = -1;
+		Server_DepleteStarport(objectType);
 	}
 }
 
@@ -729,7 +780,7 @@ Server_Recv_CancelItemStarport(Structure *s, uint8 objectType)
 	if (BuildQueue_RemoveTail(&h->starportQueue, objectType, &credits)) {
 		h->credits += credits;
 		h->starportCount[objectType]--;
-		Structure_Server_RestockStarport(objectType);
+		Server_RestockStarport(objectType);
 
 		/* We create units as soon as they are purchased (due to unit limits),
 		 * so we need to free them too!

@@ -2195,16 +2195,3 @@ void Structure_InitFactoryItems(const Structure *s)
 	if (g_factoryWindowTotal > 0)
 		qsort(g_factoryWindowItems, g_factoryWindowTotal, sizeof(FactoryWindowItem), GUI_FactoryWindow_Sorter);
 }
-
-void
-Structure_Server_RestockStarport(enum UnitType type)
-{
-	if (g_starportAvailable[type] != 0 && g_starportAvailable[type] < 10) {
-		if (g_starportAvailable[type] == -1) {
-			g_starportAvailable[type] = 1;
-		}
-		else {
-			g_starportAvailable[type]++;
-		}
-	}
-}

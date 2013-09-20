@@ -21,6 +21,7 @@
 #include "../pool/structure.h"
 #include "../pool/unit.h"
 #include "../structure.h"
+#include "../tools/random_starport.h"
 
 #if 0
 #define CLIENT_LOG(FORMAT,...)	\
@@ -287,6 +288,19 @@ Client_Recv_UpdateHouse(const unsigned char **buf)
 }
 
 static void
+Client_Recv_UpdateCHOAM(const unsigned char **buf)
+{
+	const uint16 seed = Net_Decode_uint16(buf);
+
+	for (enum UnitType u = UNIT_CARRYALL; u <= UNIT_MCV; u++) {
+		g_starportAvailable[u] = (int8)Net_Decode_uint8(buf);
+	}
+
+	Random_Starport_Seed(seed);
+	g_factoryWindowTotal = -1;
+}
+
+static void
 Client_Recv_UpdateStructures(const unsigned char **buf)
 {
 	const int count = Net_Decode_uint8(buf);
@@ -481,6 +495,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 			case SCMSG_UPDATE_HOUSE:
 				Client_Recv_UpdateHouse(&buf);
 				Client_ChangeSelectionMode();
+				break;
+
+			case SCMSG_UPDATE_CHOAM:
+				Client_Recv_UpdateCHOAM(&buf);
 				break;
 
 			case SCMSG_UPDATE_STRUCTURES:

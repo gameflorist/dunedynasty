@@ -115,7 +115,7 @@ void GameLoop_House(void)
 		 * bug; that's just how the game is.
 		 */
 		const enum UnitType type = Tools_RandomLCG_Range(0, UNIT_MAX - 1);
-		Structure_Server_RestockStarport(type);
+		Server_RestockStarport(type);
 		g_factoryWindowTotal = -1;
 	}
 
