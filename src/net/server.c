@@ -78,6 +78,30 @@ static int s_explosionLastCount;
 
 /*--------------------------------------------------------------*/
 
+static bool
+Server_CanEncodeFixedWidthBuffer(unsigned char **buf, size_t len)
+{
+	const unsigned char * const end
+		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+
+	return (*buf + len <= end);
+}
+
+static int
+Server_MaxElementsToEncode(unsigned char **buf,
+		size_t header_len, size_t element_len)
+{
+	const unsigned char * const end
+		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+
+	if (*buf + header_len + element_len <= end) {
+		return (end - *buf - header_len) / element_len;
+	}
+	else {
+		return 0;
+	}
+}
+
 static void
 Server_InitStructureDelta(const Structure *s, StructureDelta *d)
 {
@@ -146,26 +170,21 @@ Server_ResetCache(void)
 void
 Server_Send_UpdateLandscape(unsigned char **buf)
 {
-	const unsigned char * const end
-		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+	const size_t header_len  = 1 + 2;
+	const size_t element_len = 2 + sizeof(Tile);
+	const int max = Server_MaxElementsToEncode(buf, header_len, element_len);
 
-	const int header_len  = 1 + 2;
-	const int element_len = 2 + sizeof(Tile);
-
-	if (*buf + header_len + element_len >= end)
+	if (max <= 0)
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_LANDSCAPE);
 
-	unsigned char *buf_count = *buf;
+	unsigned char *buf_count = *buf; (*buf) += 2;
 	uint16 count = 0;
 
-	(*buf) += 2; /* count */
-
-	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
-		if (*buf + element_len >= end)
-			break;
-
+	for (uint16 packed = 65;
+			packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65 && count < max;
+			packed++) {
 		Tile d = g_map[packed];
 		d.hasAnimation = 0;
 		d.hasExplosion = 0;
@@ -182,15 +201,10 @@ Server_Send_UpdateLandscape(unsigned char **buf)
 		count++;
 	}
 
-	if (count == 0) {
-		*buf = buf_count - 1;
-	}
-	else {
-		SERVER_LOG("tiles changed=%d, %lu bytes",
-				count, *buf - buf_count + 1);
+	SERVER_LOG("tiles changed=%d, %lu bytes",
+			count, *buf - buf_count + 1);
 
-		Net_Encode_uint16(&buf_count, count);
-	}
+	Net_Encode_uint16(&buf_count, count);
 }
 
 void
@@ -199,26 +213,21 @@ Server_Send_UpdateFogOfWar(enum HouseType houseID, unsigned char **buf)
 	if (!enhancement_fog_of_war)
 		return;
 
-	const unsigned char * const end
-		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+	const size_t header_len  = 1 + 2;
+	const size_t element_len = 2;
+	const int max = Server_MaxElementsToEncode(buf, header_len, element_len);
 
-	const int header_len  = 1 + 2;
-	const int element_len = 2;
-
-	if (*buf + header_len >= end)
+	if (max <= 0)
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_FOG_OF_WAR);
 
-	unsigned char *buf_count = *buf;
+	unsigned char *buf_count = *buf; (*buf) += 2;
 	uint16 count = 0;
 
-	(*buf) += 2; /* count */
-
-	for (uint16 packed = 65; packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65; packed++) {
-		if (*buf + element_len >= end)
-			break;
-
+	for (uint16 packed = 65;
+			packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65 && count < max;
+			packed++) {
 		FogOfWarTile *f = &g_mapVisible[packed];
 
 		if (f->cause[houseID] == UNVEILCAUSE_UNCHANGED)
@@ -239,25 +248,17 @@ Server_Send_UpdateFogOfWar(enum HouseType houseID, unsigned char **buf)
 		f->cause[houseID] = UNVEILCAUSE_UNCHANGED;
 	}
 
-	if (count == 0) {
-		*buf = buf_count - 1;
-	}
-	else {
-		SERVER_LOG("unveiled tiles=%d, %lu bytes",
-				count, *buf - buf_count + 1);
+	SERVER_LOG("unveiled tiles=%d, %lu bytes",
+			count, *buf - buf_count + 1);
 
-		Net_Encode_uint16(&buf_count, count);
-	}
+	Net_Encode_uint16(&buf_count, count);
 }
 
 void
 Server_Send_UpdateHouse(enum HouseType houseID, unsigned char **buf)
 {
-	const unsigned char * const end
-		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
-
-	const int len = 1 + 23 + (UNIT_MCV - UNIT_CARRYALL + 1) * 1;
-	if (*buf + len >= end)
+	const size_t len = 1 + 23 + (UNIT_MCV - UNIT_CARRYALL + 1) * 1;
+	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
 		return;
 
 	const House *h = House_Get_ByIndex(houseID);
@@ -285,26 +286,21 @@ Server_Send_UpdateHouse(enum HouseType houseID, unsigned char **buf)
 void
 Server_Send_UpdateStructures(unsigned char **buf)
 {
-	const unsigned char * const end
-		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+	const size_t header_len  = 1 + 1;
+	const size_t element_len = 2 + 13 + 10;
+	const int max = Server_MaxElementsToEncode(buf, header_len, element_len);
 
-	const int header_len  = 1 + 1;
-	const int element_len = 2 + 13 + 10;
-
-	if (*buf + header_len + element_len >= end)
+	if (max <= 0)
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_STRUCTURES);
 
-	unsigned char *buf_count = *buf;
+	unsigned char *buf_count = *buf; (*buf) += 1;
 	uint8 count = 0;
 
-	(*buf) += 1; /* count */
-
-	for (int i = 0; i < STRUCTURE_INDEX_MAX_HARD; i++) {
-		if (*buf + element_len >= end)
-			break;
-
+	for (int i = 0;
+			i < STRUCTURE_INDEX_MAX_HARD && count < max;
+			i++) {
 		const Structure *s = Structure_Get_ByIndex(i);
 		StructureDelta d;
 
@@ -337,40 +333,30 @@ Server_Send_UpdateStructures(unsigned char **buf)
 		count++;
 	}
 
-	if (count == 0) {
-		*buf = buf_count - 1;
-	}
-	else {
-		SERVER_LOG("structures changed=%d, %lu bytes",
-				count, *buf - buf_count + 1);
+	SERVER_LOG("structures changed=%d, %lu bytes",
+			count, *buf - buf_count + 1);
 
-		Net_Encode_uint8(&buf_count, count);
-	}
+	Net_Encode_uint8(&buf_count, count);
 }
 
 void
 Server_Send_UpdateUnits(unsigned char **buf)
 {
-	const unsigned char * const end
-		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
+	const size_t header_len  = 1 + 1;
+	const size_t element_len = 2 + 12 + 9;
+	const int max = Server_MaxElementsToEncode(buf, header_len, element_len);
 
-	const int header_len  = 1 + 1;
-	const int element_len = 2 + 12 + 9;
-
-	if (*buf + header_len + element_len >= end)
+	if (max <= 0)
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_UNITS);
 
-	unsigned char *buf_count = *buf;
+	unsigned char *buf_count = *buf; (*buf) += 1;
 	uint8 count = 0;
 
-	(*buf) += 1; /* count */
-
-	for (int i = 0; i < UNIT_INDEX_MAX; i++) {
-		if (*buf + element_len >= end)
-			break;
-
+	for (int i = 0;
+			i < UNIT_INDEX_MAX && count < max;
+			i++) {
 		const Unit *u = Unit_Get_ByIndex(i);
 		UnitDelta d;
 
@@ -404,15 +390,10 @@ Server_Send_UpdateUnits(unsigned char **buf)
 		count++;
 	}
 
-	if (count == 0) {
-		*buf = buf_count - 1;
-	}
-	else {
-		SERVER_LOG("units changed=%d, %lu bytes",
-				count, *buf - buf_count + 1);
+	SERVER_LOG("units changed=%d, %lu bytes",
+			count, *buf - buf_count + 1);
 
-		Net_Encode_uint8(&buf_count, count);
-	}
+	Net_Encode_uint8(&buf_count, count);
 }
 
 void
@@ -422,11 +403,8 @@ Server_Send_UpdateExplosions(unsigned char **buf)
 	if (num <= 1 && num == s_explosionLastCount)
 		return;
 
-	const unsigned char * const end
-		= g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN;
-
-	const int len = 2 + (num - 1) * 6;
-	if (*buf + len >= end)
+	const size_t len = 2 + (num - 1) * 6;
+	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_UPDATE_EXPLOSIONS);
