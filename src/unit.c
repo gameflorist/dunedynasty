@@ -2211,9 +2211,7 @@ Unit_CreateWrapper(uint8 houseID, enum UnitType typeID, uint16 destination)
 		return NULL;
 	}
 
-	if (House_AreAllied(houseID, g_playerHouseID) || Unit_IsTypeOnMap(houseID, UNIT_CARRYALL)) {
-		carryall->o.flags.s.byScenario = true;
-	}
+	carryall->o.flags.s.byScenario = true;
 
 	tile.x = 0xFFFF;
 	tile.y = 0xFFFF;
