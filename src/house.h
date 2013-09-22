@@ -124,7 +124,7 @@ extern void GameLoop_House(void);
 extern void House_Client_TickMissileCountdown(void);
 extern uint8 House_StringToType(const char *name);
 extern bool House_IsHuman(enum HouseType houseID);
-extern bool House_AreAllied(uint8 houseID1, uint8 houseID2);
+extern bool House_AreAllied(enum HouseType houseID1, enum HouseType houseID2);
 extern enum HouseFlag House_GetAllies(enum HouseType houseID);
 extern void House_Client_UpdateRadarState(void);
 extern void House_UpdateCreditsStorage(uint8 houseID);

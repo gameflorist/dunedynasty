@@ -1,5 +1,6 @@
 /** @file src/house.c %House management routines. */
 
+#include <assert.h>
 #include <stdio.h>
 #include "enum_string.h"
 #include "os/math.h"
@@ -13,6 +14,7 @@
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "map.h"
+#include "net/net.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
 #include "newui/menubar.h"
@@ -428,9 +430,11 @@ House_IsHuman(enum HouseType houseID)
  * @param houseID2 The index of the second house.
  * @return True if and only if the two houses are allies of eachother.
  */
-bool House_AreAllied(uint8 houseID1, uint8 houseID2)
+bool
+House_AreAllied(enum HouseType houseID1, enum HouseType houseID2)
 {
-	if (houseID1 == HOUSE_INVALID || houseID2 == HOUSE_INVALID) return false;
+	assert(houseID1 < HOUSE_MAX);
+	assert(houseID2 < HOUSE_MAX);
 
 	if (g_table_houseAlliance[houseID1][houseID2] == HOUSEALLIANCE_ALLIES)
 		return true;
@@ -438,11 +442,21 @@ bool House_AreAllied(uint8 houseID1, uint8 houseID2)
 	if (g_table_houseAlliance[houseID1][houseID2] == HOUSEALLIANCE_ENEMIES)
 		return false;
 
-	/* Check if Houses are allies of the player. */
-	const bool h1_brain = (g_table_houseAlliance[houseID1][g_playerHouseID] == HOUSEALLIANCE_ALLIES);
-	const bool h2_brain = (g_table_houseAlliance[houseID2][g_playerHouseID] == HOUSEALLIANCE_ALLIES);
+	/* SINGLE PLAYER -- Alliances are set for the entire campaign, so
+	 * need to check against the human player.  e.g. if playing
+	 * Harkonnen, Atreides and Ordos allied.
+	 */
+	if (g_host_type == HOSTTYPE_NONE) {
+		const bool h1_allied_to_player
+			= (g_table_houseAlliance[houseID1][g_playerHouseID] == HOUSEALLIANCE_ALLIES);
 
-	return (h1_brain == h2_brain);
+		const bool h2_allied_to_player
+			= (g_table_houseAlliance[houseID2][g_playerHouseID] == HOUSEALLIANCE_ALLIES);
+
+		return (h1_allied_to_player == h2_allied_to_player);
+	}
+
+	return false;
 }
 
 enum HouseFlag
