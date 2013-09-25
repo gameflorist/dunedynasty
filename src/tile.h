@@ -13,7 +13,7 @@ extern uint16 Tile_GetTileInDirectionOf(uint16 packed_from, uint16 packed_to);
 extern uint8 Tile_GetDirectionPacked(uint16 packed_from, uint16 packed_to);
 extern tile32 Tile_MoveByDirection(tile32 tile, int16 orientation, uint16 distance);
 extern tile32 Tile_MoveByDirectionUnlimited(tile32 tile, int16 orientation, uint16 distance);
-extern tile32 Tile_MoveByRandom(tile32 tile, uint16 distance, bool arg0C);
+extern tile32 Tile_MoveByRandom(tile32 tile, uint16 distance, bool center);
 extern int8 Tile_GetDirection(tile32 from, tile32 to);
 extern tile32 Tile_MoveByOrientation(tile32 position, uint8 orientation);
 

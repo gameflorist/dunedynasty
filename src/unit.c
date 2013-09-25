@@ -1702,8 +1702,8 @@ bool Unit_Move(Unit *unit, uint16 distance)
 						uint8 i;
 
 						for (i = 0; i < 17; i++) {
-							static int16 offsetX[17] = { 0, 0, 200, 256, 200, 0, -200, -256, -200, 0, 400, 512, 400, 0, -400, -512, -400 };
-							static int16 offsetY[17] = { 0, -256, -200, 0, 200, 256, 200, 0, -200, -512, -400, 0, 400, 512, 400, 0, -400 };
+							static const int16 offsetX[17] = { 0, 0, 200, 256, 200, 0, -200, -256, -200, 0, 400, 512, 400, 0, -400, -512, -400 };
+							static const int16 offsetY[17] = { 0, -256, -200, 0, 200, 256, 200, 0, -200, -512, -400, 0, 400, 512, 400, 0, -400 };
 							tile32 p = newPosition;
 							p.y += offsetY[i];
 							p.x += offsetX[i];
@@ -2635,6 +2635,9 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 
 		/* ENHANCEMENT -- When taking over a structure, untarget it. Else you will destroy the structure you just have taken over very easily */
 		if (enhancement_fix_firing_logic) Structure_UntargetMe(s);
+
+		/* ENHANCEMENT -- When taking over a structure, unveil the fog around the structure. */
+		if (g_dune2_enhanced) Structure_RemoveFog(s);
 	} else {
 		uint16 damage;
 
@@ -2754,7 +2757,7 @@ static Structure *Unit_FindBestTargetStructure(Unit *unit, uint16 mode)
  * @return 256 if tile is not accessable, -1 when it is an accessable structure,
  *   or a score to enter the tile otherwise.
  */
-int16 Unit_GetTileEnterScore(Unit *unit, uint16 packed, uint16 direction)
+int16 Unit_GetTileEnterScore(Unit *unit, uint16 packed, uint16 orient8)
 {
 	const UnitInfo *ui;
 	Unit *u;
@@ -2785,18 +2788,25 @@ int16 Unit_GetTileEnterScore(Unit *unit, uint16 packed, uint16 direction)
 
 	type = Map_GetLandscapeType(packed);
 
-	res = g_table_landscapeInfo[type].movementSpeed[ui->movementType];
+	if (g_dune2_enhanced) {
+		res = g_table_landscapeInfo[type].movementSpeed[ui->movementType] * ui->movingSpeedFactor / 256;
+	} else {
+		res = g_table_landscapeInfo[type].movementSpeed[ui->movementType];
+	}
 
 	if (unit->o.type == UNIT_SABOTEUR && type == LST_WALL) {
 		if (!House_AreAllied(g_map[packed].houseID, Unit_GetHouseID(unit))) res = 255;
 	}
 
 	if (res == 0) return 256;
-	res ^= 0xFF;
 
-	if ((direction & 1) != 0) {
+	/* Check if the unit is travelling diagonally. */
+	if ((orient8 & 1) != 0) {
 		res -= res / 4 + res / 8;
 	}
+
+	/* 'Invert' the speed to get a rough estimate of the time taken. */
+	res ^= 0xFF;
 
 	return (int16)res;
 }
@@ -3068,6 +3078,8 @@ void Unit_HouseUnitCount_Remove(Unit *unit)
 
 		unit->o.seenByHouses &= ~(1 << h->index);
 	}
+
+	if (g_dune2_enhanced) unit->o.seenByHouses = 0;
 }
 
 /**

@@ -519,7 +519,7 @@ uint16 GUI_Widget_HandleEvents(Widget *w)
  */
 uint8 GUI_Widget_GetShortcut(uint8 c)
 {
-	const enum Scancode shortcuts[26] = {
+	static const enum Scancode shortcuts[26] = {
 		SCANCODE_A, SCANCODE_B, SCANCODE_C, SCANCODE_D, SCANCODE_E,
 		SCANCODE_F, SCANCODE_G, SCANCODE_H, SCANCODE_I, SCANCODE_J,
 		SCANCODE_K, SCANCODE_L, SCANCODE_M, SCANCODE_N, SCANCODE_O,
