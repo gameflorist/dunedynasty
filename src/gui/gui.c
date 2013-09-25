@@ -684,8 +684,7 @@ uint16 GUI_SplitText(char *str, uint16 maxwidth, char delimiter)
  */
 void GUI_DrawSprite_(Screen screenID, uint8 *sprite, int16 posX, int16 posY, uint16 windowID, uint16 flags, ...)
 {
-	const uint16 s_variable_60[8]   = {1, 3, 2, 5, 4, 3, 2, 1};
-
+	static const uint16 s_variable_60[8] = {1, 3, 2, 5, 4, 3, 2, 1};
 	static uint16 s_variable_5E     = 0;
 	static uint16 s_variable_70     = 1;
 	static uint16 s_variable_72     = 0x8B55;
