@@ -22,6 +22,7 @@
 #include "gui/widget.h"
 #include "house.h"
 #include "map.h"
+#include "net/server.h"
 #include "newui/actionpanel.h"
 #include "opendune.h"
 #include "pool/pool.h"
@@ -44,7 +45,6 @@
 
 
 Unit *g_unitActive = NULL;
-Unit *g_unitHouseMissile = NULL;
 static Unit *g_unitSelected[MAX_SELECTABLE_UNITS];
 
 /**
@@ -454,18 +454,22 @@ void GameLoop_Unit(void)
 		if (tickScript) {
 			if (u->o.script.delay == 0) {
 				if (Script_IsLoaded(&u->o.script)) {
-					int opcodesLeft = SCRIPT_UNIT_OPCODES_PER_TICK + 2;
+					/* The scripts compare
+					 *
+					 *  u->o.script.variables[3] == g_playerHouseID to
+					 *  Script_Unit_GetInfo(14) == Unit_GetHouseID(u)
+					 *
+					 * to determine if a unit is human controllable.
+					 */
+					const enum HouseType houseID = Unit_GetHouseID(u);
+					u->o.script.variables[3]
+						= House_IsHuman(houseID) ? houseID : HOUSE_INVALID;
 
-#if 0
-					if (!ui->o.flags.scriptNoSlowdown && !Map_IsPositionInViewport(u->o.position, NULL, NULL)) {
-						opcodesLeft = 3;
-					}
-#endif
-
-					u->o.script.variables[3] = g_playerHouseID;
-
-					for (; opcodesLeft > 0 && u->o.script.delay == 0; opcodesLeft--) {
-						if (!Script_Run(&u->o.script)) break;
+					for (int opcodesLeft = SCRIPT_UNIT_OPCODES_PER_TICK + 2;
+							opcodesLeft > 0 && u->o.script.delay == 0;
+							opcodesLeft--) {
+						if (!Script_Run(&u->o.script))
+							break;
 					}
 				}
 			} else {
@@ -644,7 +648,7 @@ Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, in
 
 	Unit_UpdateMap(1, u);
 
-	Unit_SetAction(u, (houseID == g_playerHouseID) ? ui->o.actionsPlayer[3] : ui->actionAI);
+	Unit_SetAction(u, House_IsHuman(houseID) ? ui->o.actionsPlayer[3] : ui->actionAI);
 
 	return u;
 }
@@ -1097,7 +1101,9 @@ bool Unit_SetPosition(Unit *u, tile32 position)
 		Unit_HouseUnitCount_Add(u, g_playerHouseID);
 	}
 
-	if (u->o.houseID != g_playerHouseID || u->o.type == UNIT_HARVESTER || u->o.type == UNIT_SABOTEUR) {
+	if (!House_IsHuman(u->o.houseID)
+			|| u->o.type == UNIT_HARVESTER
+			|| u->o.type == UNIT_SABOTEUR) {
 		Unit_SetAction(u, ui->actionAI);
 	} else {
 		Unit_SetAction(u, ui->o.actionsPlayer[3]);
@@ -1418,7 +1424,7 @@ bool Unit_Deviation_Decrease(Unit *unit, uint16 amount)
 	Unit_UpdateMap(2, unit);
 	unit->o.flags.s.bulletIsBig = false;
 
-	if (unit->o.houseID == g_playerHouseID) {
+	if (House_IsHuman(unit->o.houseID)) {
 		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
 		Unit_SetAction(unit, ui->actionAI);
@@ -1482,7 +1488,7 @@ bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 
 	if (probability == 0) probability = g_table_houseInfo[unit->o.houseID].toughness;
 
-	if (unit->o.houseID != g_playerHouseID) {
+	if (!House_IsHuman(unit->o.houseID)) {
 		probability -= probability / 8;
 	}
 
@@ -1496,7 +1502,7 @@ bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 
 	Unit_UpdateMap(2, unit);
 
-	if (g_playerHouseID == houseID) {
+	if (House_IsHuman(houseID)) {
 		/* Make brutal AI know about its own deviated units. */
 		if (AI_IsBrutalAI(unit->o.houseID)) {
 			unit->o.seenByHouses = 0xFF;
@@ -1504,14 +1510,10 @@ bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 
 		Unit_SetAction(unit, ui->o.actionsPlayer[3]);
 	} else {
-		if (AI_IsBrutalAI(houseID)) {
-			/* Make brutal AI destruct devastators if outcome is desirable. */
-			if (UnitAI_ShouldDestructDevastator(unit)) {
-				Unit_SetAction(unit, ACTION_DESTRUCT);
-			}
-			else {
-				Unit_SetAction(unit, ui->actionAI);
-			}
+		/* Make brutal AI destruct devastators if outcome is desirable. */
+		if (AI_IsBrutalAI(houseID)
+				&& UnitAI_ShouldDestructDevastator(unit)) {
+			Unit_SetAction(unit, ACTION_DESTRUCT);
 		}
 		else {
 			Unit_SetAction(unit, ui->actionAI);
@@ -1655,7 +1657,9 @@ bool Unit_Move(Unit *unit, uint16 distance)
 			if (s != NULL) {
 				/* ENHANCEMENT -- make sonic blast trigger counter attack, but
 				 * do not warn about base under attack (original behaviour). */
-				if (g_dune2_enhanced && s->o.houseID != g_playerHouseID && !House_AreAllied(unit->o.houseID, s->o.houseID)) {
+				if (g_dune2_enhanced
+						&& !House_IsHuman(s->o.houseID)
+						&& !House_AreAllied(s->o.houseID, unit->o.houseID)) {
 					Structure_HouseUnderAttack(s->o.houseID);
 				}
 
@@ -1810,8 +1814,11 @@ bool Unit_Move(Unit *unit, uint16 distance)
 
 	Unit_UpdateMap(1, unit);
 
-	if (isSpecialBloom) Map_Bloom_ExplodeSpecial(packed, Unit_GetHouseID(unit));
-	if (isSpiceBloom) Map_Bloom_ExplodeSpice(packed, Unit_GetHouseID(unit));
+	if (isSpecialBloom)
+		Map_Bloom_ExplodeSpecial(packed, Unit_GetHouseID(unit));
+
+	if (isSpiceBloom)
+		Map_Bloom_ExplodeSpice(packed, 1 << Unit_GetHouseID(unit));
 
 	return ret;
 }
@@ -1854,10 +1861,18 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 		if (unit->o.type == UNIT_HARVESTER) Map_FillCircleWithSpice(Tile_PackTile(unit->o.position), unit->amount / 32);
 
 		if (unit->o.type == UNIT_SABOTEUR) {
-			Audio_PlayVoice(VOICE_SABOTEUR_DESTROYED);
-		} else {
-			if (!ui->o.flags.noMessageOnDeath && alive) {
-				Audio_PlayVoice((houseID == g_playerHouseID || g_campaignID > 3) ? VOICE_HARKONNEN_UNIT_DESTROYED + houseID : VOICE_ENEMY_UNIT_DESTROYED);
+			Server_Send_PlayVoice(FLAG_HOUSE_ALL, VOICE_SABOTEUR_DESTROYED);
+		}
+		else if (!ui->o.flags.noMessageOnDeath && alive) {
+			if (g_campaignID > 3) {
+				Server_Send_PlayVoice(FLAG_HOUSE_ALL,
+						VOICE_HARKONNEN_UNIT_DESTROYED + houseID);
+			}
+			else {
+				Server_Send_PlayVoice(1 << houseID,
+						VOICE_HARKONNEN_UNIT_DESTROYED + houseID);
+				Server_Send_PlayVoice(FLAG_HOUSE_ALL & ~(1 << houseID),
+						VOICE_ENEMY_UNIT_DESTROYED);
 			}
 		}
 
@@ -1869,7 +1884,9 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 		Map_MakeExplosion((damage < 25) ? EXPLOSION_IMPACT_SMALL : EXPLOSION_IMPACT_MEDIUM, unit->o.position, 0, 0);
 	}
 
-	if (houseID != g_playerHouseID && unit->actionID == ACTION_AMBUSH && unit->o.type != UNIT_HARVESTER) {
+	if (!House_IsHuman(houseID)
+			&& unit->actionID == ACTION_AMBUSH
+			&& unit->o.type != UNIT_HARVESTER) {
 		Unit_SetAction(unit, ACTION_ATTACK);
 	}
 
@@ -2073,7 +2090,7 @@ void Unit_Select(Unit *unit)
 		/* Plays the 'reporting' sound file. */
 		Audio_PlaySample(ui->movementType == MOVEMENT_FOOT ? SAMPLE_YES_SIR : SAMPLE_REPORTING, 255, 0.0);
 
-		GUI_DisplayHint(ui->o.hintStringID, ui->o.spriteID);
+		GUI_DisplayHint(g_playerHouseID, ui->o.hintStringID, ui->o.spriteID);
 	}
 
 	for (int i = 0; i < MAX_SELECTABLE_UNITS; i++) {
@@ -2320,7 +2337,8 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 			bullet = Unit_Create(UNIT_INDEX_INVALID, type, houseID, position, orientation);
 			if (bullet == NULL) return NULL;
 
-			Audio_PlaySoundAtTile(ui->bulletSound, position);
+			Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
+					ui->bulletSound, position);
 
 			bullet->targetAttack = target;
 			bullet->o.hitpoints = damage;
@@ -2603,19 +2621,19 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 
 	/* Take over the building when low on hitpoints */
 	if (s->o.hitpoints < si->o.hitpoints / 4) {
+		enum HouseType capturer = Unit_GetHouseID(unit);
 		House *h;
 
+		/* ENHANCEMENT -- play structure captured voice. */
 		if (enhancement_play_additional_voices) {
-			if (g_playerHouseID == s->o.houseID) {
-				Audio_PlayVoice(VOICE_HARKONNEN_STRUCTURE_CAPTURED + g_playerHouseID);
-			}
-			else {
-				Audio_PlayVoice(VOICE_ENEMY_STRUCTURE_CAPTURED);
-			}
+			Server_Send_PlayVoice(1 << capturer,
+					VOICE_ENEMY_STRUCTURE_CAPTURED);
+			Server_Send_PlayVoice(FLAG_HOUSE_ALL & ~(1 << capturer),
+					VOICE_HARKONNEN_STRUCTURE_CAPTURED + s->o.houseID);
 		}
 
 		h = House_Get_ByIndex(s->o.houseID);
-		s->o.houseID = Unit_GetHouseID(unit);
+		s->o.houseID = capturer;
 		h->structuresBuilt = Structure_GetStructuresBuilt(h);
 
 		/* ENHANCEMENT -- recalculate the power and credits for the house losing the structure. */
@@ -2630,7 +2648,7 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 			if (u != NULL) u->o.houseID = Unit_GetHouseID(unit);
 		}
 
-		House_CalculatePowerAndCredit(House_Get_ByIndex(s->o.houseID));
+		House_CalculatePowerAndCredit(h);
 		Structure_UpdateMap(s);
 
 		/* ENHANCEMENT -- When taking over a structure, untarget it. Else you will destroy the structure you just have taken over very easily */
@@ -2865,7 +2883,6 @@ uint16 Unit_FindBestTargetEncoded(Unit *unit, uint16 mode)
 void Unit_RemovePlayer(Unit *unit)
 {
 	if (unit == NULL) return;
-	if (Unit_GetHouseID(unit) != g_playerHouseID) return;
 	if (!unit->o.flags.s.allocated) return;
 
 	unit->o.flags.s.allocated = false;
@@ -2995,22 +3012,17 @@ uint16 Unit_GetTargetStructurePriority(Unit *unit, Structure *target)
 
 void Unit_LaunchHouseMissile(const Structure *s, uint16 packed)
 {
+	House *h = House_Get_ByIndex(s->o.houseID);
+	Unit *u = Unit_Get_ByIndex(h->houseMissileID);
+	const enum UnitType type = u->o.type;
 	tile32 tile;
-	enum HouseType houseID;
-	House *h;
-
-	if (g_unitHouseMissile == NULL) return;
-
-	h = House_Get_ByIndex(g_unitHouseMissile->o.houseID);
 
 	tile = Tile_UnpackTile(packed);
 	tile = Tile_MoveByRandom(tile, 160, false);
 
 	packed = Tile_PackTile(tile);
 
-	houseID = g_unitHouseMissile->o.houseID;
-
-	Unit_Free(g_unitHouseMissile);
+	Unit_Free(u);
 
 	/* ENHANCEMENT -- In Dune II, you always launch missiles from the
 	 * top-left of the last palace placed, even if it has been destroyed!
@@ -3026,24 +3038,39 @@ void Unit_LaunchHouseMissile(const Structure *s, uint16 packed)
 		origin = h->palacePosition;
 	}
 
-	Unit_CreateBullet(origin, g_unitHouseMissile->o.type, g_unitHouseMissile->o.houseID, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
+	Unit_CreateBullet(origin, type, h->index, 0x1F4, Tools_Index_Encode(packed, IT_TILE));
 
-	g_houseMissileCountdown = 0;
-	g_unitHouseMissile = NULL;
+	/* ENHANCEMENT -- In Dune II, you only hear "Missile launched" if
+	 * you let the timer run out.  Note: you actually get one second
+	 * to choose a target after the narrator says "Missile launched".
+	 *
+	 * ENHANCEMENT -- allied AI can launch deathhand missiles.
+	 */
+	enum HouseFlag allies = 0;
+	enum HouseFlag enemies = 0;
 
-	if (houseID != g_playerHouseID) {
-		/* ENHANCEMENT -- allied AI can launch deathhand missiles. */
-		if (House_AreAllied(g_playerHouseID, houseID)) {
-			Audio_PlayVoice(VOICE_MISSILE_LAUNCHED);
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		if (h->index == houseID) {
+			if (enhancement_play_additional_voices
+					&& h->houseMissileCountdown > 1)
+				allies |= 1 << houseID;
+		}
+		else if (House_AreAllied(h->index, houseID)) {
+			allies |= 1 << houseID;
 		}
 		else {
-			Audio_PlayVoice(VOICE_WARNING_MISSILE_APPROACHING);
+			enemies |= 1 << houseID;
 		}
-
-		return;
 	}
 
-	GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+	Server_Send_PlayVoice(allies, VOICE_MISSILE_LAUNCHED);
+	Server_Send_PlayVoice(enemies, VOICE_WARNING_MISSILE_APPROACHING);
+
+	h->houseMissileID = UNIT_INDEX_INVALID;
+	h->houseMissileCountdown = 0;
+
+	if (h == g_playerHouse)
+		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 }
 
 /**
@@ -3092,12 +3119,10 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 {
 	const UnitInfo *ui;
 	uint16 houseIDBit;
-	House *hp;
 	House *h;
 
 	if (unit == NULL) return;
 
-	hp = House_Get_ByIndex(g_playerHouseID);
 	ui = &g_table_unitInfo[unit->o.type];
 	h = House_Get_ByIndex(houseID);
 	houseIDBit = (1 << houseID);
@@ -3135,7 +3160,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 
 	if (houseID == g_playerHouseID && g_selectionType != SELECTIONTYPE_MENTAT) {
 		if (unit->o.type == UNIT_SANDWORM) {
-			if (hp->timerSandwormAttack == 0) {
+			if (h->timerSandwormAttack == 0) {
 				if (g_musicInBattle == 0) g_musicInBattle = 1;
 
 				/* XXX -- Dodgy.  When a hint is drawn, it renders the
@@ -3154,29 +3179,34 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 					if ((g_gameConfig.language == LANGUAGE_ENGLISH) && (g_gameConfig.hints) && ((hintsShown & mask) == 0)) {
 					}
 					else {
-						Audio_PlayVoice(VOICE_WARNING_WORM_SIGN);
+						Server_Send_PlayVoice(1 << houseID,
+								VOICE_WARNING_WORM_SIGN);
 					}
 				}
 
 				if (g_gameConfig.language == LANGUAGE_ENGLISH) {
-					GUI_DisplayHint(STR_HINT_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND, 105);
+					GUI_DisplayHint(houseID,
+							STR_HINT_WARNING_SANDWORMS_SHAIHULUD_ROAM_DUNE_DEVOURING_ANYTHING_ON_THE_SAND,
+							SHAPE_SANDWORM);
 				}
 
-				hp->timerSandwormAttack = 8;
+				h->timerSandwormAttack = 8;
 			}
-		} else if (!House_AreAllied(g_playerHouseID, Unit_GetHouseID(unit))) {
+		} else if (!House_AreAllied(houseID, Unit_GetHouseID(unit))) {
 			Team *t;
 
-			if (hp->timerUnitAttack == 0) {
+			if (h->timerUnitAttack == 0) {
 				if (g_musicInBattle == 0) g_musicInBattle = 1;
 
 				if (unit->o.type == UNIT_SABOTEUR) {
-					Audio_PlayVoice(VOICE_WARNING_SABOTEUR_APPROACHING);
+					Server_Send_PlayVoice(1 << houseID,
+							VOICE_WARNING_SABOTEUR_APPROACHING);
 				} else {
+					enum VoiceID feedbackID;
+
 					if (g_scenarioID < 3) {
 						PoolFindStruct find;
 						Structure *s;
-						enum VoiceID feedbackID;
 
 						find.houseID = g_playerHouseID;
 						find.index   = 0xFFFF;
@@ -3199,14 +3229,14 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 						} else {
 							feedbackID = VOICE_WARNING_ENEMY_UNIT_APPROACHING;
 						}
-
-						Audio_PlayVoice(feedbackID);
 					} else {
-						Audio_PlayVoice(VOICE_WARNING_HARKONNEN_UNIT_APPROACHING + unit->o.houseID);
+						feedbackID = VOICE_WARNING_HARKONNEN_UNIT_APPROACHING + unit->o.houseID;
 					}
+
+					Server_Send_PlayVoice(1 << houseID, feedbackID);
 				}
 
-				hp->timerUnitAttack = 8;
+				h->timerUnitAttack = 8;
 			}
 
 			t = Team_Get_ByIndex(unit->team);

@@ -6,10 +6,10 @@
 
 #include "script.h"
 
-#include "../audio/audio.h"
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
+#include "../net/server.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
@@ -313,7 +313,7 @@ uint16 Script_General_VoicePlay(ScriptEngine *script)
 
 	position = g_scriptCurrentObject->position;
 
-	Audio_PlaySoundAtTile(STACK_PEEK(1), position);
+	Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL, STACK_PEEK(1), position);
 
 	return 0;
 }

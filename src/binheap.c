@@ -36,6 +36,20 @@ BinHeap_Free(BinHeap *heap)
 	heap->elem = NULL;
 }
 
+bool
+BinHeap_Resize(BinHeap *heap, int new_size)
+{
+	void *ptr = realloc(heap->elem, new_size * heap->elem_size);
+
+	if (ptr == NULL)
+		return false;
+
+	heap->max_elem = new_size;
+	heap->elem = ptr;
+
+	return true;
+}
+
 BinHeapElem *
 BinHeap_GetElem(BinHeap *heap, int i)
 {
@@ -46,13 +60,8 @@ void *
 BinHeap_Push(BinHeap *heap, int64_t key)
 {
 	if (heap->num_elem >= heap->max_elem) {
-		void *ptr = realloc(heap->elem, 2 * heap->max_elem * heap->elem_size);
-
-		if (ptr == NULL)
+		if (!BinHeap_Resize(heap, 2 * heap->max_elem))
 			return NULL;
-
-		heap->max_elem *= 2;
-		heap->elem = ptr;
 	}
 
 	int idx = heap->num_elem;

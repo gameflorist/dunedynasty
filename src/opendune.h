@@ -44,7 +44,6 @@ extern bool   g_debugSkipDialogs;
 extern uint16 g_validateStrictIfZero;
 extern uint16 g_selectionType;
 extern uint16 g_selectionTypeNew;
-extern bool g_viewport_forceRedraw;
 extern bool g_viewport_fadein;
 
 extern int16 g_musicInBattle;
@@ -52,6 +51,7 @@ extern int16 g_musicInBattle;
 extern void *g_readBuffer;
 extern uint32 g_readBufferSize;
 
+extern void GameLoop_LevelEnd(void);
 extern void GameLoop_TweakWidgetDimensions(void);
 extern void GameLoop_Main(bool new_game);
 extern void Game_Prepare(void);

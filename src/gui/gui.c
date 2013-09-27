@@ -49,7 +49,7 @@
 #include "../table/locale.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
-#include "../tools/random_lcg.h"
+#include "../tools/random_xorshift.h"
 #include "../unit.h"
 #include "../video/video.h"
 #include "../wsa.h"
@@ -261,6 +261,59 @@ GUI_DrawStatusBarText(int x, int y)
 {
 	MenuBar_DrawStatusBar(displayLine1, displayLine2, scrollInProgress, x, y, textOffset);
 	GUI_DisplayText(NULL, 0);
+}
+
+void
+GUI_DrawStatusBarTextWrapper(uint8 priority,
+		uint16 str1, uint16 str2, uint16 str3)
+{
+	const char *format_str = NULL;
+	const char *arg1 = NULL;
+	const char *arg2 = NULL;
+	const char *arg3 = NULL;
+
+	if (str1 == STR_S_S_DESTROYED) {
+		format_str = String_Get_ByIndex(str1);
+
+		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+			arg1 = String_Get_ByIndex(str3); /* <Unit> */
+			arg2 = String_Get_ByIndex(str2); /* <House> */
+		}
+		else {
+			arg1 = String_Get_ByIndex(str2); /* <House> */
+			arg2 = String_Get_ByIndex(str3); /* <Unit> */
+		}
+	}
+	else if (str1 == STR_IS_COMPLETE
+	      || str1 == STR_IS_COMPLETED_AND_READY_TO_PLACE
+	      || str1 == STR_IS_COMPLETED_AND_AWAITING_ORDERS) {
+		format_str = "%s %s";
+		arg1 = String_Get_ByIndex(str2); /* <Object> */
+		arg2 = String_Get_ByIndex(str1); /* is complete. */
+	}
+	else if (str1 == STR_IS_DESTROYED) {
+		format_str = "%s %s %s";
+
+		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+			arg1 = String_Get_ByIndex(str3); /* <Structure> */
+			arg2 = String_Get_ByIndex(str2); /* <House> */
+			arg3 = String_Get_ByIndex(str1); /* is destroyed. */
+		}
+		else {
+			arg1 = String_Get_ByIndex(str2); /* <House> */
+			arg2 = String_Get_ByIndex(str3); /* <Structure> */
+			arg3 = String_Get_ByIndex(str1); /* is destroyed. */
+		}
+	}
+	else {
+		format_str = String_Get_ByIndex(str1);
+		arg1 = String_Get_ByIndex(str2);
+		arg2 = String_Get_ByIndex(str3);
+	}
+
+	if (format_str != NULL) {
+		GUI_DisplayText(format_str, priority, arg1, arg2, arg3);
+	}
 }
 
 /**
@@ -1229,30 +1282,28 @@ extern void GUI_DrawBorder(uint16 left, uint16 top, uint16 width, uint16 height,
  * @param spriteID The sprite to show with the hint.
  * @return Zero or the return value of GUI_DisplayModalMessage.
  */
-uint16 GUI_DisplayHint(uint16 stringID, uint16 spriteID)
+void
+GUI_DisplayHint(enum HouseType houseID, uint16 stringID, uint16 spriteID)
 {
-	uint32 *hintsShown;
-	uint32 mask;
-	uint16 hint;
+	if (g_debugGame
+			|| stringID == STR_NULL
+			|| !g_gameConfig.hints
+			|| houseID != g_playerHouseID
+			|| g_selectionType == SELECTIONTYPE_MENTAT)
+		return;
 
-	if (g_debugGame || stringID == STR_NULL || !g_gameConfig.hints || g_selectionType == SELECTIONTYPE_MENTAT) return 0;
-
-	hint = stringID - STR_HINT_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
-
+	const uint16 hint
+		= stringID
+		- STR_HINT_YOU_MUST_BUILD_A_WINDTRAP_TO_PROVIDE_POWER_TO_YOUR_BASE_WITHOUT_POWER_YOUR_STRUCTURES_WILL_DECAY;
 	assert(hint < 64);
 
-	if (hint < 32) {
-		mask = (1 << hint);
-		hintsShown = &g_hintsShown1;
-	} else {
-		mask = (1 << (hint - 32));
-		hintsShown = &g_hintsShown2;
+	const uint32 mask = (1 << (hint % 32));
+	uint32 *hintsShown = (hint < 32) ? &g_hintsShown1 : &g_hintsShown2;
+
+	if (!(*hintsShown & mask)) {
+		*hintsShown |= mask;
+		GUI_DisplayModalMessage(String_Get_ByIndex(stringID), spriteID);
 	}
-
-	if ((*hintsShown & mask) != 0) return 0;
-	*hintsShown |= mask;
-
-	return GUI_DisplayModalMessage(String_Get_ByIndex(stringID), spriteID);
 }
 
 #if 0
@@ -1270,8 +1321,6 @@ void GUI_DrawInterfaceAndRadar(void)
 	Screen oldScreenID;
 
 	oldScreenID = GFX_Screen_SetActive((screenID == SCREEN_0) ? SCREEN_1 : screenID);
-
-	g_viewport_forceRedraw = true;
 
 	MenuBar_Draw(g_playerHouseID);
 
@@ -1482,7 +1531,6 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 		}
 
 		if (g_table_selectionType[oldSelectionType].variable_04 && g_table_selectionType[selectionType].variable_06) {
-			g_viewport_forceRedraw = true;
 			g_viewport_fadein = true;
 		}
 
@@ -1769,7 +1817,7 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		uint16 index;
 		uint16 temp;
 
-		index = Tools_RandomLCG_Range(0, width - 1);
+		index = Random_Xorshift_Range(0, width - 1);
 
 		temp = offsetsX[index];
 		offsetsX[index] = offsetsX[x];
@@ -1780,7 +1828,7 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		uint16 index;
 		uint16 temp;
 
-		index = Tools_RandomLCG_Range(0, height - 1);
+		index = Random_Xorshift_Range(0, height - 1);
 
 		temp = offsetsY[index];
 		offsetsY[index] = offsetsY[y];
@@ -2269,20 +2317,14 @@ void GUI_Palette_CreateRemap(uint8 houseID)
 void GUI_DrawScreen(Screen screenID)
 {
 	static uint32 s_timerViewportMessage = 0;
-	bool loc10;
 	Screen oldScreenID;
-	uint16 xpos;
 
 	if (g_selectionType == SELECTIONTYPE_MENTAT) return;
 	if (g_selectionType == SELECTIONTYPE_DEBUG) return;
 	if (g_selectionType == SELECTIONTYPE_UNKNOWN6) return;
 	if (g_selectionType == SELECTIONTYPE_INTRO) return;
 
-	loc10 = false;
-
 	oldScreenID = GFX_Screen_SetActive(screenID);
-
-	if (screenID != SCREEN_0) g_viewport_forceRedraw = true;
 
 	Explosion_Tick();
 	Animation_Tick();
@@ -2290,67 +2332,22 @@ void GUI_DrawScreen(Screen screenID)
 
 	Map_UpdateFogOfWar();
 
-#if 0
-	if (!g_viewport_forceRedraw && g_viewportPosition != g_minimapPosition) {
-		uint16 viewportX = Tile_GetPackedX(g_viewportPosition);
-		uint16 viewportY = Tile_GetPackedY(g_viewportPosition);
-		int16 xOffset = Tile_GetPackedX(g_minimapPosition) - viewportX; /* Horizontal offset between viewport and minimap. */
-		int16 yOffset = Tile_GetPackedY(g_minimapPosition) - viewportY; /* Vertical offset between viewport and minmap. */
-
-		/* Overlap remaining in tiles. */
-		int16 xOverlap = 15 - abs(xOffset);
-		int16 yOverlap = 10 - abs(yOffset);
-
-		int16 x, y;
-
-		if (xOverlap < 1 || yOverlap < 1) g_viewport_forceRedraw = true;
-
-		if (!g_viewport_forceRedraw && (xOverlap != 15 || yOverlap != 10)) {
-			Map_SetSelectionObjectPosition(0xFFFF);
-			loc10 = true;
-
-			GUI_Mouse_Hide_InWidget(2);
-
-			GUI_Screen_Copy(max(-xOffset << 1, 0), 40 + max(-yOffset << 4, 0), max(0, xOffset << 1), 40 + max(0, yOffset << 4), xOverlap << 1, yOverlap << 4, SCREEN_0, SCREEN_1);
-		} else {
-			g_viewport_forceRedraw = true;
-		}
-
-		xOffset = max(0, xOffset);
-		yOffset = max(0, yOffset);
-
-		for (y = 0; y < 10; y++) {
-			uint16 mapYBase = (y + viewportY) << 6;
-
-			for (x = 0; x < 15; x++) {
-				if (x >= xOffset && (xOffset + xOverlap) > x && y >= yOffset && (yOffset + yOverlap) > y && !g_viewport_forceRedraw) continue;
-
-				Map_Update(x + viewportX + mapYBase, 0, true);
-			}
-		}
-	}
-#endif
-
-	if (loc10) {
-		Map_SetSelectionObjectPosition(0xFFFF);
-	}
-
 	g_selectionRectanglePosition = g_selectionPosition;
 
 	if (g_viewportMessageCounter != 0 && s_timerViewportMessage < Timer_GetTicks()) {
 		g_viewportMessageCounter--;
 		s_timerViewportMessage = Timer_GetTicks() + 60;
 
-		for (xpos = 0; xpos < 14; xpos++) {
+#if 0
+		for (int xpos = 0; xpos < 14; xpos++) {
 			Map_Update(g_viewportPosition + xpos + 6 * 64, 0, true);
 		}
+#endif
 	}
 
 	A5_UseTransform(SCREENDIV_VIEWPORT);
-	GUI_Widget_Viewport_Draw(g_viewport_forceRedraw, loc10, screenID != SCREEN_0);
+	GUI_Widget_Viewport_Draw();
 	A5_UseTransform(SCREENDIV_MAIN);
-
-	g_viewport_forceRedraw = false;
 
 	GFX_Screen_SetActive(oldScreenID);
 

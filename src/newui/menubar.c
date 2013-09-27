@@ -35,7 +35,7 @@
 #include "../string.h"
 #include "../table/widgetinfo.h"
 #include "../timer/timer.h"
-#include "../tools/random_lcg.h"
+#include "../tools/random_xorshift.h"
 #include "../video/video.h"
 #include "../wsa.h"
 
@@ -390,7 +390,7 @@ static bool
 MenuBar_ClickSoundVolumeSlider(Widget *w)
 {
 	if (Slider_Click(w) || w->state.buttonState & 0x01) {
-		const enum SampleID sampleID = Tools_RandomLCG_Range(SAMPLE_AFFIRMATIVE, SAMPLE_MOVING_OUT);
+		const enum SampleID sampleID = Random_Xorshift_Range(SAMPLE_AFFIRMATIVE, SAMPLE_MOVING_OUT);
 		const SliderData *data = w->data;
 
 		sound_volume = (float)data->curr / (data->max - data->min);

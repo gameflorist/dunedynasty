@@ -8,13 +8,13 @@
 #include "script.h"
 
 #include "../ai.h"
-#include "../audio/audio.h"
 #include "../config.h"
 #include "../enhancement.h"
 #include "../explosion.h"
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
+#include "../net/server.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 #include "../pool/pool.h"
@@ -136,20 +136,19 @@ uint16 Script_Structure_RefineSpice(ScriptEngine *script)
 	if (u->amount != 0 && harvesterStep < 1) harvesterStep = 1;
 	if (harvesterStep == 0) return 0;
 
+	/* Humans' harvesters give 7 credits for each percent in the harvester.
+	 * CPUs' harvesters (may be deviated) give 6 to 9 credits.
+	 */
 	creditsStep = 7;
-	if (u->o.houseID != g_playerHouseID) {
+	if (!House_IsHuman(u->o.houseID)) {
 		creditsStep += (Tools_Random_256() % 4) - 1;
 	}
 
 	creditsStep *= harvesterStep;
 
-	if (House_AreAllied(g_playerHouseID, s->o.houseID)) {
-		g_scenario.harvestedAllied += creditsStep;
-		if (g_scenario.harvestedAllied > 65000) g_scenario.harvestedAllied = 65000;
-	} else {
-		g_scenario.harvestedEnemy += creditsStep;
-		if (g_scenario.harvestedEnemy > 65000) g_scenario.harvestedEnemy = 65000;
-	}
+	g_scenario.spiceHarvested[s->o.houseID] += creditsStep;
+	if (g_scenario.spiceHarvested[s->o.houseID] > 65000)
+		g_scenario.spiceHarvested[s->o.houseID] = 65000;
 
 	h = House_Get_ByIndex(s->o.houseID);
 	h->credits += creditsStep;
@@ -220,7 +219,14 @@ uint16 Script_Structure_FindUnitByType(ScriptEngine *script)
 
 	u = Unit_Get_ByIndex(s->o.linkedID);
 
-	if (g_playerHouseID == s->o.houseID && u->o.type == UNIT_HARVESTER && (u->targetLast.x == 0 && u->targetLast.y == 0) && position != 0) {
+	/* Humans' harvesters will not call for a carryall if the last
+	 * position is invalid and there is a free tile around the
+	 * structure.
+	 */
+	if (House_IsHuman(s->o.houseID)
+			&& (u->o.type == UNIT_HARVESTER)
+			&& (u->targetLast.x == 0 && u->targetLast.y == 0)
+			&& (position != 0)) {
 		return IT_NONE;
 	}
 
@@ -264,8 +270,8 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 		if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
 		Object_Script_Variable4_Clear(&s->o);
 
-		if (s->o.houseID == g_playerHouseID)
-			Audio_PlayVoice(VOICE_HARKONNEN_UNIT_LAUNCHED + g_playerHouseID);
+		Server_Send_PlayVoice(1 << s->o.houseID,
+				VOICE_HARKONNEN_UNIT_LAUNCHED + s->o.houseID);
 
 		return 1;
 	}
@@ -307,14 +313,16 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 	Unit_SetOrientation(u, Tile_GetDirection(s->o.position, u->o.position) & 0xE0, true, 0);
 	Unit_SetOrientation(u, u->orientation[0].current, true, 1);
 
-	if (u->o.houseID == g_playerHouseID && u->o.type == UNIT_HARVESTER) {
-		GUI_DisplayHint(STR_HINT_SEARCH_FOR_SPICE_FIELDS_TO_HARVEST, 0x6A);
+	/* ENHANCEMENT -- Only display the hint for harvesters. */
+	if (u->o.type == UNIT_HARVESTER) {
+		GUI_DisplayHint(u->o.houseID,
+				STR_HINT_SEARCH_FOR_SPICE_FIELDS_TO_HARVEST,
+				0x6A);
 	}
 
 	if (s->o.linkedID == 0xFF) Structure_SetState(s, STRUCTURE_STATE_IDLE);
 	Object_Script_Variable4_Clear(&s->o);
 
-	if (s->o.houseID != g_playerHouseID) return 1;
 	if (s->o.type == STRUCTURE_REPAIR) {
 		/* ENHANCEMENT -- Units can be ejected from the repair bay.
 		 *
@@ -330,7 +338,11 @@ uint16 Script_Structure_Unknown0C5A(ScriptEngine *script)
 		return 1;
 	}
 
-	Audio_PlayVoice(g_playerHouseID + ((u->o.type == UNIT_HARVESTER) ? VOICE_HARKONNEN_HARVESTER_DEPLOYED : VOICE_HARKONNEN_UNIT_DEPLOYED));
+	const enum VoiceID voiceID
+		= (u->o.type == UNIT_HARVESTER)
+		? VOICE_HARKONNEN_HARVESTER_DEPLOYED
+		: VOICE_HARKONNEN_UNIT_DEPLOYED;
+	Server_Send_PlayVoice(1 << s->o.houseID, voiceID + s->o.houseID);
 
 	return 1;
 }
@@ -538,9 +550,8 @@ uint16 Script_Structure_VoicePlay(ScriptEngine *script)
 
 	s = g_scriptCurrentStructure;
 
-	if (s->o.houseID != g_playerHouseID) return 0;
-
-	Audio_PlaySoundAtTile(STACK_PEEK(1), s->o.position);
+	Server_Send_PlaySoundAtTile(1 << s->o.houseID,
+			STACK_PEEK(1), s->o.position);
 
 	return 0;
 }
@@ -578,10 +589,10 @@ uint16 Script_Structure_Fire(ScriptEngine *script)
 		damage    = 20;
 		fireDelay = Tools_AdjustToGameSpeed(g_table_unitInfo[UNIT_TANK].fireDelay, 1, 0xFFFF, true);
 
-		/* Cannon turrets and rocket turrets at close range were silent. */
-		if (enhancement_play_additional_voices) {
-			Audio_PlaySoundAtTile(SOUND_TANK, s->o.position);
-		}
+		/* ENHANCEMENT -- Cannon turrets and rocket turrets at close
+		 * range were silent.
+		 */
+		Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL, SOUND_TANK, s->o.position);
 	}
 
 	position.x = s->o.position.x + 0x80;
@@ -663,7 +674,7 @@ uint16 Script_Structure_Destroy(ScriptEngine *script)
 
 		u->o.hitpoints = g_table_unitInfo[UNIT_SOLDIER].o.hitpoints * (Tools_Random_256() & 3) / 256;
 
-		if (s->o.houseID != g_playerHouseID) {
+		if (!House_IsHuman(s->o.houseID)) {
 			/* AI units shouldn't use ACTION_ATTACK.  Use ACTION_HUNT
 			 * so the soldier will move and we can rebuild here later.
 			 */
@@ -684,13 +695,11 @@ uint16 Script_Structure_Destroy(ScriptEngine *script)
 	}
 
 	if (g_debugScenario) return 0;
-	if (s->o.houseID != g_playerHouseID) return 0;
 
-	if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
-		GUI_DisplayText("%s %s %s", 0, String_Get_ByIndex(g_table_structureInfo[s->o.type].o.stringID_full), g_table_houseInfo[s->o.houseID].name, String_Get_ByIndex(STR_IS_DESTROYED));
-	} else {
-		GUI_DisplayText("%s %s %s", 0, g_table_houseInfo[s->o.houseID].name, String_Get_ByIndex(g_table_structureInfo[s->o.type].o.stringID_full), String_Get_ByIndex(STR_IS_DESTROYED));
-	}
+	Server_Send_StatusMessage3(1 << s->o.houseID, 0,
+			STR_IS_DESTROYED,
+			STR_HOUSE_HARKONNEN + s->o.houseID,
+			g_table_structureInfo[s->o.type].o.stringID_full);
 
 	return 0;
 }

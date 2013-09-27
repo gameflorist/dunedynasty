@@ -7,9 +7,9 @@
 
 #include "animation.h"
 
-#include "audio/audio.h"
 #include "binheap.h"
 #include "map.h"
+#include "net/server.h"
 #include "sprites.h"
 #include "structure.h"
 #include "timer/timer.h"
@@ -100,8 +100,6 @@ static void Animation_Func_SetOverlaySprite(Animation *animation, int16 paramete
 {
 	uint16 packed = Tile_PackTile(animation->tile);
 	assert(parameter >= 0);
-
-	if (!Map_IsPositionUnveiled(packed)) return;
 
 	Tile *t = &g_map[packed];
 	t->overlaySpriteID = g_iconMap[g_iconMap[animation->iconGroup] + parameter];
@@ -197,7 +195,7 @@ static void Animation_Func_SetIconGroup(Animation *animation, int16 parameter)
  */
 static void Animation_Func_PlayVoice(Animation *animation, int16 parameter)
 {
-	Audio_PlaySoundAtTile(parameter, animation->tile);
+	Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL, parameter, animation->tile);
 }
 
 void

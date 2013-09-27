@@ -115,7 +115,9 @@ Save_Main(FILE *fp, const char *description)
 		if (!Save_Chunk(fp, "DDS2", &Scenario_Save2)) return false;
 	}
 
+	if (!Save_Chunk(fp, "DDS3", &Scenario_Save3)) return false;
 	if (!Save_Chunk(fp, "DDI2", &Info_Save2)) return false;
+	if (!Save_Chunk(fp, "DDH2", &House_Save2)) return false;
 	if (!Save_Chunk(fp, "DDM2", &Map_Save2)) return false;
 	if (!Save_Chunk(fp, "DDB2", &Structure_Save2)) return false;
 	if (!Save_Chunk(fp, "DDU2", &Unit_Save2)) return false;

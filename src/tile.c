@@ -111,7 +111,7 @@ Tile_RefreshFogInRadius(tile32 tile, uint16 radius, bool unveil)
 				Map_UnveilTile(packed, g_playerHouseID);
 			}
 			else {
-				Map_RefreshTile(packed);
+				Map_RefreshTile(packed, 2);
 			}
 		}
 	}

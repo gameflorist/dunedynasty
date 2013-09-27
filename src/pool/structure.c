@@ -91,6 +91,10 @@ void Structure_Init(void)
 	memset(g_structureFindArray, 0, sizeof(g_structureFindArray));
 	g_structureFindCount = 0;
 
+	for (int i = 0; i < STRUCTURE_INDEX_MAX_HARD; i++) {
+		g_structureArray[i].o.index = i;
+	}
+
 	Structure_Allocate(0, STRUCTURE_SLAB_1x1);
 	Structure_Allocate(0, STRUCTURE_SLAB_2x2);
 	Structure_Allocate(0, STRUCTURE_WALL);

@@ -116,13 +116,10 @@ Random_Starport_CalculatePrice(uint16 credits)
 uint16
 Random_Starport_CalculateUnitPrice(enum UnitType unitType)
 {
-	Structure s;
-	s.o.type = STRUCTURE_STARPORT;
-
 	Random_Starport_Reseed();
 
 	for (enum UnitType u = UNIT_CARRYALL; u < UNIT_MAX; u++) {
-		if (Structure_GetAvailable(&s, u) == 0)
+		if (Structure_GetAvailable_Starport(u) == 0)
 			continue;
 
 		if (u == unitType) {

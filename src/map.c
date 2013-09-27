@@ -11,13 +11,13 @@
 #include "map.h"
 
 #include "animation.h"
-#include "audio/audio.h"
 #include "enhancement.h"
 #include "explosion.h"
 #include "gfx.h"
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "house.h"
+#include "net/server.h"
 #include "newui/actionpanel.h"
 #include "opendune.h"
 #include "pool/pool.h"
@@ -161,23 +161,18 @@ void Map_SetSelection(uint16 packed)
 		return;
 	}
 
-	if ((packed != 0xFFFF && g_map[packed].overlaySpriteID != g_veiledSpriteID) || g_debugScenario) {
+	if ((packed != 0xFFFF && g_mapVisible[packed].fogSpriteID != g_veiledSpriteID) || g_debugScenario) {
 		Structure *s;
 
 		s = Structure_Get_ByPackedTile(packed);
 		if (s != NULL) {
-			const StructureInfo *si;
+			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
-			si = &g_table_structureInfo[s->o.type];
-			if (s->o.houseID == g_playerHouseID && g_selectionType != SELECTIONTYPE_MENTAT) {
-				GUI_DisplayHint(si->o.hintStringID, si->o.spriteID);
-			}
+			GUI_DisplayHint(s->o.houseID, si->o.hintStringID, si->o.spriteID);
 
 			packed = Tile_PackTile(s->o.position);
 
 			Map_SetSelectionSize(si->layout);
-
-			Structure_UpdateMap(s);
 
 			g_factoryWindowTotal = -1;
 		} else {
@@ -254,84 +249,6 @@ uint16 Map_SetSelectionObjectPosition(uint16 packed)
  */
 void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 {
-#if 0
-	/* Border tiles of the viewport relative to the top-left. */
-	static const uint16 viewportBorder[] = {
-		0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E,
-		0x0040, 0x004E,
-		0x0080, 0x008E,
-		0x00C0, 0x00CE,
-		0x0100, 0x010E,
-		0x0140, 0x014E,
-		0x0180, 0x018E,
-		0x01C0, 0x01CE,
-		0x0200, 0x020E,
-		0x0240, 0x0241, 0x0242, 0x0243, 0x0244, 0x0245, 0x0246, 0x0247, 0x0248, 0x0249, 0x024A, 0x024B, 0x024C, 0x024D, 0x024E,
-		0xFFFF
-	};
-
-	static uint16 minimapPreviousPosition = 0;
-
-	bool cleared;
-	Screen oldScreenID;
-
-	if (packed != 0xFFFF && packed == minimapPreviousPosition && !forceUpdate) return;
-	if (g_selectionType == SELECTIONTYPE_MENTAT) return;
-
-	oldScreenID = GFX_Screen_SetActive(SCREEN_1);
-
-	cleared = false;
-
-	if (minimapPreviousPosition != 0xFFFF && minimapPreviousPosition != packed) {
-		const uint16 *m;
-
-		cleared = true;
-
-		for (m = viewportBorder; *m != 0xFFFF; m++) {
-			uint16 curPacked;
-
-			curPacked = minimapPreviousPosition + *m;
-			BitArray_Clear(g_displayedMinimap, curPacked);
-
-			GUI_Widget_Viewport_DrawTile(curPacked);
-		}
-	}
-
-	if (packed != 0xFFFF && (packed != minimapPreviousPosition || forceUpdate)) {
-		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
-		const uint16 *m;
-		uint16 mapScale;
-		const MapInfo *mapInfo;
-		uint16 left, top, right, bottom;
-
-		mapScale = g_scenario.mapScale;
-		mapInfo = &g_mapInfos[mapScale];
-
-		left   = (Tile_GetPackedX(packed) - mapInfo->minX) * (mapScale + 1) + wi->offsetX;
-		right  = left + mapScale * 15 + 14;
-		top    = (Tile_GetPackedY(packed) - mapInfo->minY) * (mapScale + 1) + wi->offsetY;
-		bottom = top + mapScale * 10 + 9;
-
-		GUI_DrawWiredRectangle(left, top, right, bottom, 15);
-
-		for (m = viewportBorder; *m != 0xFFFF; m++) {
-			uint16 curPacked;
-
-			curPacked = packed + *m;
-			BitArray_Set(g_displayedMinimap, curPacked);
-		}
-	}
-
-	if (cleared && oldScreenID == SCREEN_0) {
-		GUI_Mouse_Hide_Safe();
-		GUI_Screen_Copy(32, 136, 32, 136, 8, 64, SCREEN_1, SCREEN_0);
-		GUI_Mouse_Show_Safe();
-	}
-
-	GFX_Screen_SetActive(oldScreenID);
-
-	minimapPreviousPosition = packed;
-#else
 	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
 	const WidgetInfo *minimap = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
 	const WidgetInfo *viewport = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
@@ -352,7 +269,6 @@ void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate)
 	y2 = clamp(minimap->offsetY, y2, minimap->offsetY + minimap->height - 1);
 
 	Prim_Rect_i(x1, y1, x2, y2, 15);
-#endif
 }
 
 /**
@@ -384,14 +300,13 @@ bool Map_IsValidPosition(uint16 position)
  */
 bool Map_IsPositionUnveiled(uint16 position)
 {
-	Tile *t;
-
 	if (g_debugScenario) return true;
 
-	t = &g_map[position];
+	if (!g_map[position].isUnveiled)
+		return false;
 
-	if (!t->isUnveiled) return false;
-	if (!Sprite_IsUnveiled(t->overlaySpriteID)) return false;
+	if (!Sprite_IsUnveiled(g_mapVisible[position].fogSpriteID))
+		return false;
 
 	return true;
 }
@@ -710,7 +625,7 @@ void Map_DeviateArea(uint16 type, tile32 position, uint16 radius, uint8 houseID)
  * @param packed Center position.
  * @param houseID %House causing the explosion.
  */
-void Map_Bloom_ExplodeSpice(uint16 packed, uint8 houseID)
+void Map_Bloom_ExplodeSpice(uint16 packed, enum HouseFlag houses)
 {
 	if (g_validateStrictIfZero == 0) {
 		Unit_Remove(Unit_Get_ByPackedTile(packed));
@@ -718,8 +633,7 @@ void Map_Bloom_ExplodeSpice(uint16 packed, uint8 houseID)
 		Map_MakeExplosion(EXPLOSION_SPICE_BLOOM_TREMOR, Tile_UnpackTile(packed), 0, 0);
 	}
 
-	if (houseID == g_playerHouseID)
-		Audio_PlayVoice(VOICE_SPICE_BLOOM_LOCATED);
+	Server_Send_PlayVoice(houses, VOICE_SPICE_BLOOM_LOCATED);
 
 	Map_FillCircleWithSpice(packed, 5);
 
@@ -1199,110 +1113,7 @@ uint16 Map_SearchSpice(uint16 packed, uint16 radius)
 }
 
 #if 0
-void Map_SelectNext(bool getNext)
-{
-	PoolFindStruct find;
-	Object *selected = NULL;
-	Object *previous = NULL;
-	Object *next = NULL;
-	Object *first = NULL;
-	Object *last = NULL;
-	bool hasPrevious = false;
-	bool hasNext = false;
-
-	if (g_unitSelected != NULL) {
-		if (Map_IsTileVisible(Tile_PackTile(g_unitSelected->o.position))) selected = &g_unitSelected->o;
-	} else {
-		Structure *s;
-
-		s = Structure_Get_ByPackedTile(g_selectionPosition);
-
-		if (s != NULL && Map_IsTileVisible(Tile_PackTile(s->o.position))) selected = &s->o;
-	}
-
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
-		if (!g_table_unitInfo[u->o.type].o.flags.tabSelectable) continue;
-
-		if (!Map_IsTileVisible(Tile_PackTile(u->o.position))) continue;
-
-		if ((u->o.seenByHouses & (1 << g_playerHouseID)) == 0) continue;
-
-		if (first == NULL) first = &u->o;
-		last = &u->o;
-		if (selected == NULL) selected = &u->o;
-
-		if (selected == &u->o) {
-			hasPrevious = true;
-			continue;
-		}
-
-		if (!hasPrevious) {
-			previous = &u->o;
-			continue;
-		}
-
-		if (!hasNext) {
-			next = &u->o;
-			hasNext = true;
-		}
-	}
-
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Structure *s;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
-
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
-
-		if (!Map_IsTileVisible(Tile_PackTile(s->o.position))) continue;
-
-		if ((s->o.seenByHouses & (1 << g_playerHouseID)) == 0) continue;
-
-		if (first == NULL) first = &s->o;
-		last = &s->o;
-		if (selected == NULL) selected = &s->o;
-
-		if (selected == &s->o) {
-			hasPrevious = true;
-			continue;
-		}
-
-		if (!hasPrevious) {
-			previous = &s->o;
-			continue;
-		}
-
-		if (!hasNext) {
-			next = &s->o;
-			hasNext = true;
-		}
-	}
-
-	if (previous == NULL) previous = last;
-	if (next == NULL) next = first;
-	if (previous == NULL) previous = next;
-	if (next == NULL) next = previous;
-
-	selected = getNext ? next : previous;
-
-	if (selected == NULL) return;
-
-	Map_SetSelection(Tile_PackTile(selected->position));
-}
+extern void Map_SelectNext(bool getNext);
 #endif
 
 /**
@@ -1312,17 +1123,17 @@ void Map_SelectNext(bool getNext)
 static void Map_UnveilTile_Neighbour(uint16 packed)
 {
 	uint16 spriteID;
-	Tile *t;
 
 	if (!Map_InRangePacked(packed)) return;
 
-	t = &g_map[packed];
+	FogOfWarTile *f = &g_mapVisible[packed];
 
 	spriteID = 15;
-	if (t->isUnveiled) {
+	if (g_map[packed].isUnveiled) {
 		int i;
 
-		if (g_validateStrictIfZero == 0 && Sprite_IsUnveiled(t->overlaySpriteID)) return;
+		if (g_validateStrictIfZero == 0 && Sprite_IsUnveiled(f->fogSpriteID))
+			return;
 
 		spriteID = 0;
 
@@ -1347,7 +1158,7 @@ static void Map_UnveilTile_Neighbour(uint16 packed)
 		spriteID = g_iconMap[g_iconMap[ICM_ICONGROUP_FOG_OF_WAR] + spriteID];
 	}
 
-	t->overlaySpriteID = spriteID;
+	f->fogSpriteID = spriteID;
 
 	Map_Update(packed, 0, false);
 }
@@ -1362,15 +1173,16 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 {
 	Structure *s;
 	Unit *u;
-	Tile *t;
 
 	if (houseID != g_playerHouseID) return false;
 	if (Tile_IsOutOfMap(packed)) return false;
 
-	t = &g_map[packed];
-	g_mapVisible[packed].timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
+	Tile *t = &g_map[packed];
+	FogOfWarTile *f = &g_mapVisible[packed];
 
-	if (t->isUnveiled && Sprite_IsUnveiled(t->overlaySpriteID)) return false;
+	f->timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
+
+	if (t->isUnveiled && Sprite_IsUnveiled(f->fogSpriteID)) return false;
 	t->isUnveiled = true;
 
 	u = Unit_Get_ByPackedTile(packed);
@@ -1394,14 +1206,17 @@ bool Map_UnveilTile(uint16 packed, uint8 houseID)
 }
 
 void
-Map_RefreshTile(uint16 packed)
+Map_RefreshTile(uint16 packed, int duration)
 {
 	if (Tile_IsOutOfMap(packed)) return;
 
-	Tile *t = &g_map[packed];
+	if (g_map[packed].isUnveiled) {
+		const int64_t timeout = g_timerGame + Tools_AdjustToGameSpeed(duration * 60, 0x0000, 0xFFFF, true);
+		FogOfWarTile *f = &g_mapVisible[packed];
 
-	if (t->isUnveiled)
-		g_mapVisible[packed].timeout = g_timerGame + Tools_AdjustToGameSpeed(10 * 60, 0x0000, 0xFFFF, true);
+		if (f->timeout < timeout)
+			f->timeout = timeout;
+	}
 }
 
 void
@@ -1410,7 +1225,10 @@ Map_ResetFogOfWar(void)
 	memset(g_mapVisible, 0, sizeof(g_mapVisible));
 
 	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
-		g_mapVisible[packed].fogOverlayBits = 0xF;
+		FogOfWarTile *f = &g_mapVisible[packed];
+
+		f->fogSpriteID = g_veiledSpriteID;
+		f->fogOverlayBits = 0xF;
 	}
 }
 
@@ -1427,10 +1245,7 @@ Map_UpdateFogOfWar(void)
 			}
 			else {
 				f->groundSpriteID = t->groundSpriteID;
-
-				if (!(g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID))
-					f->overlaySpriteID = t->overlaySpriteID;
-
+				f->overlaySpriteID = t->overlaySpriteID;
 				f->houseID = t->houseID;
 				f->hasStructure = t->hasStructure;
 				f->fogOverlayBits = 0;
@@ -1448,10 +1263,7 @@ Map_UpdateFogOfWar(void)
 			FogOfWarTile *f = &g_mapVisible[packed];
 
 			f->groundSpriteID = t->groundSpriteID;
-
-			if (!(g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID))
-				f->overlaySpriteID = t->overlaySpriteID;
-
+			f->overlaySpriteID = t->overlaySpriteID;
 			f->houseID = t->houseID;
 			f->hasStructure = t->hasStructure;
 			f->fogOverlayBits = (t->isUnveiled ? 0x0 : 0xF);
@@ -1750,13 +1562,13 @@ void Map_CreateLandscape(uint32 seed)
 		Tile *t = &g_map[i];
 
 		t->groundSpriteID  = iconMap[t->groundSpriteID];
-		t->overlaySpriteID = g_veiledSpriteID;
+		t->overlaySpriteID = 0;
 		t->houseID         = HOUSE_HARKONNEN;
 		t->isUnveiled      = false;
 		t->hasUnit         = false;
 		t->hasStructure    = false;
 		t->hasAnimation    = false;
-		t->hasExplosion  = false;
+		t->hasExplosion    = false;
 		t->index           = 0;
 	}
 

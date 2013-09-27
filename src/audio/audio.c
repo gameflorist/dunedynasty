@@ -22,8 +22,7 @@
 #include "../tile.h"
 #include "../timer/timer.h"
 #include "../tools/coord.h"
-#include "../tools/random_general.h"
-#include "../tools/random_lcg.h"
+#include "../tools/random_xorshift.h"
 
 bool g_enable_audio;
 
@@ -183,17 +182,17 @@ Audio_PlayMusicGroup(enum MusicID musicID, bool respect_want_setting)
 		if (respect_want_setting)
 			check_flags = MUSIC_ENABLE;
 
-		r = Tools_RandomLCG_Range(0, num_songs - 1);
+		r = Random_Xorshift_Range(0, num_songs - 1);
 	}
 	else if (num_songs_default > 0) {
 		check_music_pack = default_music_pack;
-		r = Tools_RandomLCG_Range(0, num_songs_default - 1);
+		r = Random_Xorshift_Range(0, num_songs_default - 1);
 	}
 	else {
 		check_music_pack = MUSICSET_DUNE2_ADLIB;
 
-		if (musicID == MUSIC_RANDOM_IDLE) r = Tools_RandomLCG_Range(0, 9 - 1);
-		else if (musicID == MUSIC_RANDOM_ATTACK) r = Tools_RandomLCG_Range(0, 6 - 1);
+		if (musicID == MUSIC_RANDOM_IDLE) r = Random_Xorshift_Range(0, 9 - 1);
+		else if (musicID == MUSIC_RANDOM_ATTACK) r = Random_Xorshift_Range(0, 6 - 1);
 		else r = 0;
 	}
 
@@ -525,7 +524,7 @@ Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position)
 
 		case SOUNDEFFECTS_SYNTH_AND_SAMPLES:
 			if (!play_synth) {
-				if (Tools_Random_256() & 0x1)
+				if (Random_Xorshift_256() & 0x1)
 					play_synth = true;
 			}
 			break;

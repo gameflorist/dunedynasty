@@ -315,20 +315,20 @@ StructureAI_GetBuildable(const Structure *s)
 {
 	uint32 ret = 0;
 
-	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
-		for (int i = STRUCTURE_PALACE; i < STRUCTURE_MAX; i++) {
-			if (Structure_GetAvailable(s, i) > 0)
+	if (s->o.type == STRUCTURE_STARPORT) {
+	}
+	else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		for (enum StructureType i = STRUCTURE_PALACE; i < STRUCTURE_MAX; i++) {
+			if (Structure_GetAvailable_ConstructionYard(s, i) > 0)
 				ret |= (1 << i);
 		}
 	}
-	else if (s->o.type != STRUCTURE_STARPORT) {
+	else {
 		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
 		for (int i = 0; i < 8; i++) {
-			const int u = si->buildableUnits[i];
-
-			if (Structure_GetAvailable(s, u))
-				ret |= (1 << u);
+			if (Structure_GetAvailable_Factory(s, i))
+				ret |= (1 << si->buildableUnits[i]);
 		}
 	}
 
@@ -519,8 +519,14 @@ UnitAI_CountUnits(enum HouseType houseID, enum UnitType unit_type)
 bool
 UnitAI_ShouldDestructDevastator(const Unit *devastator)
 {
-	if (devastator->o.type != UNIT_DEVASTATOR)
+	const UnitInfo *ui = &g_table_unitInfo[devastator->o.type];
+
+	if (ui->o.actionsPlayer[0] != ACTION_DESTRUCT
+	 && ui->o.actionsPlayer[1] != ACTION_DESTRUCT
+	 && ui->o.actionsPlayer[2] != ACTION_DESTRUCT
+	 && ui->o.actionsPlayer[3] != ACTION_DESTRUCT) {
 		return false;
+	}
 
 	int x = Tile_GetPosX(devastator->o.position);
 	int y = Tile_GetPosY(devastator->o.position);

@@ -8,14 +8,15 @@
 #include "explosion.h"
 
 #include "animation.h"
-#include "audio/audio.h"
 #include "binheap.h"
 #include "enhancement.h"
 #include "house.h"
 #include "map.h"
+#include "net/server.h"
 #include "shape.h"
 #include "sprites.h"
 #include "structure.h"
+#include "tile.h"
 #include "timer/timer.h"
 #include "tools/coord.h"
 #include "tools/random_general.h"
@@ -25,7 +26,6 @@ typedef struct Explosion {
 	/* Heap key. */
 	int64_t timeOut;                        /*!< Time out for the next command. */
 
-	bool isDirty;                           /*!< Does the Explosion require a redraw next round. */
 	uint8 current;                          /*!< Index in #commands pointing to the next command. */
 	enum ShapeID spriteID;                  /*!< SpriteID. */
 	const ExplosionCommandStruct *commands; /*!< Commands being executed. */
@@ -36,20 +36,10 @@ static BinHeap s_explosions;
 
 extern const ExplosionCommandStruct * const g_table_explosion[EXPLOSIONTYPE_MAX];
 
-/**
- * Update the tile a Explosion is on.
- * @param type Are we introducing (0) or updating (2) the tile.
- * @param e The Explosion in question.
- */
-static void Explosion_Update(uint16 type, Explosion *e)
+static void
+Explosion_Update(const Explosion *e)
 {
-	if (e == NULL) return;
-
-	if (type == 1 && e->isDirty) return;
-
-	e->isDirty = (type != 0);
-
-	Map_UpdateAround(24, e->position, NULL, g_functions[2][type]);
+	Map_UpdateAround(24, e->position, NULL, 0);
 }
 
 /**
@@ -69,8 +59,6 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
 	uint16 *iconMap;
 	VARIABLE_NOT_USED(parameter);
 
-	if (!Map_IsPositionUnveiled(packed)) return;
-
 	type = Map_GetLandscapeType(packed);
 
 	if (type == LST_STRUCTURE || type == LST_DESTROYED_WALL) return;
@@ -84,10 +72,7 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
 
 	if (g_table_landscapeInfo[type].craterType == 0) return;
 
-	/* You cannot damage veiled tiles */
 	overlaySpriteID = t->overlaySpriteID;
-	if (!Sprite_IsUnveiled(overlaySpriteID)) return;
-
 	iconMapIndex = craterIconMapIndex[g_table_landscapeInfo[type].craterType];
 	iconMap = &g_iconMap[g_iconMap[iconMapIndex]];
 
@@ -105,7 +90,7 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
 
 	/* Boom a bloom if there is one */
 	if (t->groundSpriteID == g_bloomSpriteID) {
-		Map_Bloom_ExplodeSpice(packed, g_playerHouseID);
+		Map_Bloom_ExplodeSpice(packed, FLAG_HOUSE_ALL);
 		return;
 	}
 
@@ -121,7 +106,7 @@ static void Explosion_Func_TileDamage(Explosion *e, uint16 parameter)
  */
 static void Explosion_Func_PlayVoice(Explosion *e, uint16 voiceID)
 {
-	Audio_PlaySoundAtTile(voiceID, e->position);
+	Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL, voiceID, e->position);
 }
 
 /**
@@ -160,7 +145,7 @@ static void Explosion_Func_BloomExplosion(Explosion *e, uint16 parameter)
 
 	if (g_map[packed].groundSpriteID != g_bloomSpriteID) return;
 
-	Map_Bloom_ExplodeSpice(packed, g_playerHouseID);
+	Map_Bloom_ExplodeSpice(packed, FLAG_HOUSE_ALL);
 }
 
 /**
@@ -203,7 +188,7 @@ static void Explosion_Func_Stop(Explosion *e, uint16 parameter)
 
 	g_map[packed].hasExplosion = false;
 
-	Explosion_Update(0, e);
+	Explosion_Update(e);
 
 	e->commands = NULL;
 }
@@ -237,7 +222,7 @@ static void Explosion_Func_SetSpriteID(Explosion *e, uint16 spriteID)
 {
 	e->spriteID = spriteID;
 
-	Explosion_Update(2, e);
+	Explosion_Update(e);
 }
 
 /**
@@ -289,18 +274,13 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 		e->current  = 0;
 		e->spriteID = 0;
 		e->position = position;
-		e->isDirty  = false;
 
 		g_map[packed].hasExplosion = true;
 
 		/* Do not unveil for explosion types 13 (sandworm eat) and 19 (spice bloom). */
-		if (enhancement_fog_of_war && g_map[packed].isUnveiled &&
+		if (enhancement_fog_of_war &&
 				!(explosionType == EXPLOSION_SANDWORM_SWALLOW || explosionType == EXPLOSION_SPICE_BLOOM_TREMOR)) {
-			FogOfWarTile *f = &g_mapVisible[packed];
-			int64_t timeout = g_timerGame + Tools_AdjustToGameSpeed(2 * 60, 0x0000, 0xFFFF, true);
-
-			if (f->timeout < timeout)
-				f->timeout = timeout;
+			Tile_RefreshFogInRadius(position, 1, false);
 		}
 	}
 }

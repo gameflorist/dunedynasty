@@ -88,8 +88,6 @@ extern Structure *g_structureActive;
 extern uint16 g_structureActivePosition;
 extern uint16 g_structureActiveType;
 
-extern uint16 g_structureIndex;
-
 extern void GameLoop_Structure(void);
 extern uint8 Structure_StringToType(const char *name);
 extern Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 position);
@@ -116,7 +114,9 @@ extern bool Structure_BuildObject(Structure *s, uint16 objectType);
 extern bool Structure_SetUpgradingState(Structure *s, int8 value, struct Widget *w);
 extern bool Structure_SetRepairingState(Structure *s, int8 value, struct Widget *w);
 extern void Structure_UpdateMap(Structure *s);
-extern int Structure_GetAvailable(const Structure *s, int i);
+extern int Structure_GetAvailable_Starport(enum UnitType type);
+extern int Structure_GetAvailable_ConstructionYard(const Structure *s, enum StructureType type);
+extern int Structure_GetAvailable_Factory(const Structure *s, int i);
 extern void Structure_InitFactoryItems(const Structure *s);
 extern void Structure_Starport_Restock(enum UnitType type);
 extern void Structure_HouseUnderAttack(uint8 houseID);

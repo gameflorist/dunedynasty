@@ -14,6 +14,7 @@
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "map.h"
+#include "net/server.h"
 #include "newui/actionpanel.h"
 #include "newui/menubar.h"
 #include "opendune.h"
@@ -37,8 +38,6 @@
 
 House *g_playerHouse = NULL;
 enum HouseType g_playerHouseID = HOUSE_INVALID;
-uint16 g_houseMissileCountdown = 0;
-uint16 g_playerCreditsNoSilo = 0;
 uint16 g_playerCredits = 0; /*!< Credits shown to player as 'current'. */
 
 static void House_EnsureHarvesterAvailable(uint8 houseID);
@@ -98,29 +97,31 @@ void GameLoop_House(void)
 		g_factoryWindowTotal = -1;
 	}
 
-	if (tickMissileCountdown && g_houseMissileCountdown != 0) {
-		g_houseMissileCountdown--;
+	if (tickMissileCountdown && g_playerHouse->houseMissileCountdown != 0) {
+		h = g_playerHouse;
+		h->houseMissileCountdown--;
 
-		const enum VoiceID voiceID = VOICE_MISSILE_LAUNCHED + g_houseMissileCountdown - 1;
+		const enum VoiceID voiceID
+			= VOICE_MISSILE_LAUNCHED + h->houseMissileCountdown - 1;
 
 		/* Don't queue up the countdown numbers. */
 		if (voiceID >= VOICE_ONE) {
 			const bool narrator_speaking = Audio_Poll();
 
 			if (!narrator_speaking) {
-				Audio_PlayVoice(voiceID);
+				Server_Send_PlayVoice(1 << h->index, voiceID);
 			}
 			else if (voiceID == VOICE_FIVE) {
-				Audio_PlayEffect(EFFECT_COUNT_DOWN_TICK);
+				Server_Send_PlaySound(1 << h->index, EFFECT_COUNT_DOWN_TICK);
 			}
 		}
 		else if (voiceID >= VOICE_MISSILE_LAUNCHED) {
-			Audio_PlayVoice(voiceID);
+			Server_Send_PlayVoice(1 << h->index, voiceID);
 		}
 
-		if (g_houseMissileCountdown == 0) {
+		if (h->houseMissileCountdown == 0) {
 			Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
-			Unit_LaunchHouseMissile(s, Map_FindLocationTile(4, g_playerHouseID));
+			Unit_LaunchHouseMissile(s, Map_FindLocationTile(4, h->index));
 		}
 	}
 
@@ -206,50 +207,50 @@ void GameLoop_House(void)
 		if (tickHouse) {
 			/* ENHANCEMENT -- Originally this code was outside the house loop, which seems very odd.
 			 *  This problem is considered to be so bad, that the original code has been removed. */
-			if (h->index != g_playerHouseID) {
-				if (h->creditsStorage < h->credits) {
-					h->credits = h->creditsStorage;
-				}
-			} else {
-				uint16 maxCredits = max(h->creditsStorage, g_playerCreditsNoSilo);
-				if (h->credits > maxCredits) {
-					h->credits = maxCredits;
+			uint16 maxCredits = max(h->creditsStorage, h->creditsStorageNoSilo);
+			if (h->credits > maxCredits) {
+				h->credits = maxCredits;
 
-					GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_SPICE_STORAGE_AVAILABLE_SPICE_IS_LOST), 1);
-				}
+				Server_Send_StatusMessage1(1 << h->index, 1,
+						STR_INSUFFICIENT_SPICE_STORAGE_AVAILABLE_SPICE_IS_LOST);
 			}
 
-			if (h->index == g_playerHouseID) {
-				if (h->creditsStorage > g_playerCreditsNoSilo) {
-					g_playerCreditsNoSilo = 0;
-				}
+			if (h->creditsStorage > h->creditsStorageNoSilo) {
+				h->creditsStorageNoSilo = 0;
+			}
 
-				if (g_playerCreditsNoSilo == 0 && g_campaignID > 1 && h->credits != 0) {
-					if (h->creditsStorage != 0 && ((h->credits * 256 / h->creditsStorage) > 200)) {
-						GUI_DisplayText(String_Get_ByIndex(STR_SPICE_STORAGE_CAPACITY_LOW_BUILD_SILOS), 0);
-					}
-				}
+			if (g_campaignID > 1
+					&& h->creditsStorageNoSilo == 0
+					&& h->credits != 0 && h->creditsStorage != 0
+					&& (h->credits * 256 / h->creditsStorage) > 200) {
+				Server_Send_StatusMessage1(1 << h->index, 0,
+						STR_SPICE_STORAGE_CAPACITY_LOW_BUILD_SILOS);
+			}
 
-				if (h->credits < 100 && g_playerCreditsNoSilo != 0) {
-					GUI_DisplayText(String_Get_ByIndex(STR_CREDITS_ARE_LOW_HARVEST_SPICE_FOR_MORE_CREDITS), 0);
-				}
+			if (h->credits < 100 && h->creditsStorageNoSilo != 0) {
+				Server_Send_StatusMessage1(1 << h->index, 0,
+						STR_CREDITS_ARE_LOW_HARVEST_SPICE_FOR_MORE_CREDITS);
 			}
 		}
 
 		if (tickHouse) House_EnsureHarvesterAvailable(h->index);
 
+		/* ENHANCEMENT -- If no starports remaining, create a
+		 * reinforcement carryall to reliably drop off the ordered
+		 * units (at the home base).
+		 */
 		if (tickStarport && h->starportLinkedID != UNIT_INDEX_INVALID) {
-			Unit *u = NULL;
 
 			h->starportTimeLeft--;
 			if ((int16)h->starportTimeLeft < 0) h->starportTimeLeft = 0;
 
 			if (h->starportTimeLeft == 0) {
-				Structure *s;
+				Structure *s = Structure_Get_ByIndex(h->starportID);
+				Unit *u = NULL;
 
-				s = Structure_Get_ByIndex(g_structureIndex);
 				if (s->o.type == STRUCTURE_STARPORT && s->o.houseID == h->index) {
-					u = Unit_CreateWrapper((uint8)h->index, UNIT_FRIGATE, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
+					u = Unit_CreateWrapper(h->index, UNIT_FRIGATE,
+							Tools_Index_Encode(s->o.index, IT_STRUCTURE));
 				} else {
 					PoolFindStruct find2;
 
@@ -262,8 +263,22 @@ void GameLoop_House(void)
 						if (s == NULL) break;
 						if (s->o.linkedID != 0xFF) continue;
 
-						u = Unit_CreateWrapper((uint8)h->index, UNIT_FRIGATE, Tools_Index_Encode(s->o.index, IT_STRUCTURE));
+						u = Unit_CreateWrapper(h->index, UNIT_FRIGATE,
+								Tools_Index_Encode(s->o.index, IT_STRUCTURE));
 						break;
+					}
+				}
+
+				if (g_dune2_enhanced && u == NULL) {
+					tile32 tile = Tile_UnpackTile(Map_FindLocationTile(Tools_Random_256() & 3, h->index));
+
+					u = Unit_Create(UNIT_INDEX_INVALID, UNIT_CARRYALL, h->index, tile, 100);
+					if (u != NULL) {
+						uint16 locationID = 7; /* Home Base. */
+						uint16 packed = Map_FindLocationTile(locationID, h->index);
+
+						u->o.flags.s.byScenario = true;
+						Unit_SetDestination(u, Tools_Index_Encode(packed, IT_TILE));
 					}
 				}
 
@@ -272,10 +287,15 @@ void GameLoop_House(void)
 					h->starportLinkedID = UNIT_INDEX_INVALID;
 					u->o.flags.s.inTransport = true;
 
-					Audio_PlayVoice(VOICE_FRIGATE_HAS_ARRIVED);
-				}
+					Server_Send_PlayVoice(1 << h->index,
+							VOICE_FRIGATE_HAS_ARRIVED);
 
-				h->starportTimeLeft = (u != NULL) ? g_table_houseInfo[h->index].starportDeliveryTime : 1;
+					h->starportTimeLeft
+						= g_table_houseInfo[h->index].starportDeliveryTime;
+				}
+				else {
+					h->starportTimeLeft = 1;
+				}
 			}
 		}
 
@@ -360,9 +380,14 @@ static void House_EnsureHarvesterAvailable(uint8 houseID)
 
 	if (Unit_CreateWrapper(houseID, UNIT_HARVESTER, Tools_Index_Encode(s->o.index, IT_STRUCTURE)) == NULL) return;
 
-	if (houseID != g_playerHouseID) return;
+	Server_Send_StatusMessage1(1 << houseID, 0,
+			STR_HARVESTER_IS_HEADING_TO_REFINERY);
+}
 
-	GUI_DisplayText(String_Get_ByIndex(STR_HARVESTER_IS_HEADING_TO_REFINERY), 0);
+bool
+House_IsHuman(enum HouseType houseID)
+{
+	return House_Get_ByIndex(houseID)->flags.human;
 }
 
 /**
@@ -499,16 +524,17 @@ void House_CalculatePowerAndCredit(House *h)
 	}
 
 	/* Check if we are low on power */
-	if (h->index == g_playerHouseID && h->powerUsage > h->powerProduction) {
-		GUI_DisplayText(String_Get_ByIndex(STR_INSUFFICIENT_POWER_WINDTRAP_IS_NEEDED), 1);
+	if (h->powerUsage > h->powerProduction) {
+		Server_Send_StatusMessage1(1 << h->index, 1,
+				STR_INSUFFICIENT_POWER_WINDTRAP_IS_NEEDED);
 	}
 
 	/* If there are no buildings left, you lose your right on 'credits without storage'
 	 * ENHANCEMENT -- check if we actually lost a structure, or if it was an MCV start.
 	 */
-	if (h->index == g_playerHouseID && h->structuresBuilt == 0 && g_validateStrictIfZero == 0) {
-		if (g_scenario.destroyedAllied > 0)
-			g_playerCreditsNoSilo = 0;
+	if (g_validateStrictIfZero == 0 && h->structuresBuilt == 0) {
+		if (g_scenario.structuresLost[h->index] > 0)
+			h->creditsStorageNoSilo = 0;
 	}
 }
 

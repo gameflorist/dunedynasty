@@ -18,6 +18,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../map.h"
+#include "../net/server.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 #include "../pool/pool.h"
@@ -33,7 +34,7 @@
 #include "../tools/coord.h"
 #include "../tools/encoded_index.h"
 #include "../tools/orientation.h"
-#include "../tools/random_general.h"
+#include "../tools/random_xorshift.h"
 #include "../unit.h"
 #include "../video/video.h"
 
@@ -314,7 +315,7 @@ Viewport_Target(Unit *u, enum UnitActionType action, bool command_button, uint16
 		Audio_PlaySample(g_table_actionInfo[action].soundID, 255, 0.0);
 	}
 	else {
-		const enum SampleID sampleID = (((Tools_Random_256() & 0x1) == 0) ? SAMPLE_ACKNOWLEDGED : SAMPLE_AFFIRMATIVE);
+		const enum SampleID sampleID = (((Random_Xorshift_256() & 0x1) == 0) ? SAMPLE_ACKNOWLEDGED : SAMPLE_AFFIRMATIVE);
 
 		Audio_PlaySample(sampleID, 255, 0.0);
 	}
@@ -351,24 +352,20 @@ Viewport_Place(void)
 
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 
-		s = Structure_Get_ByPackedTile(g_structureActivePosition);
-		if (s != NULL) {
-			if (Structure_GetAvailable(s, s->objectType) <= 0)
-				Structure_BuildObject(s, 0xFFFE);
-		}
+		Structure_BuildObject(s, 0xFFFE);
 
 		g_structureActiveType = 0xFFFF;
 		g_structureActive = NULL;
 		g_selectionState = 0; /* Invalid. */
 
-		GUI_DisplayHint(si->o.hintStringID, si->o.spriteID);
+		GUI_DisplayHint(s->o.houseID, si->o.hintStringID, si->o.spriteID);
 
 		House_UpdateRadarState(h);
 
-		if (h->powerProduction < h->powerUsage) {
-			if ((h->structuresBuilt & FLAG_STRUCTURE_OUTPOST) != 0) {
-				GUI_DisplayText(String_Get_ByIndex(STR_NOT_ENOUGH_POWER_FOR_RADAR_BUILD_WINDTRAPS), 3);
-			}
+		if ((h->powerProduction < h->powerUsage)
+				&& (h->structuresBuilt & FLAG_STRUCTURE_OUTPOST)) {
+			Server_Send_StatusMessage1(1 << h->index, 3,
+					STR_NOT_ENOUGH_POWER_FOR_RADAR_BUILD_WINDTRAPS);
 		}
 
 		return;
@@ -377,11 +374,15 @@ Viewport_Place(void)
 	Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 
 	if (g_structureActiveType == STRUCTURE_SLAB_1x1 || g_structureActiveType == STRUCTURE_SLAB_2x2) {
-		GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_FOUNDATION_HERE), 2);
+		Server_Send_StatusMessage1(1 << h->index, 2,
+				STR_CAN_NOT_PLACE_FOUNDATION_HERE);
 	}
 	else {
-		GUI_DisplayHint(STR_HINT_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE, 0xFFFF);
-		GUI_DisplayText(String_Get_ByIndex(STR_CAN_NOT_PLACE_S_HERE), 2, String_Get_ByIndex(si->o.stringID_abbrev));
+		GUI_DisplayHint(s->o.houseID,
+				STR_HINT_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE,
+				SHAPE_INVALID);
+		Server_Send_StatusMessage2(1 << h->index, 2,
+				STR_CAN_NOT_PLACE_S_HERE, si->o.stringID_abbrev);
 	}
 }
 
@@ -649,11 +650,12 @@ Viewport_Click(Widget *w)
 		if ((g_selectionType == SELECTIONTYPE_TARGET) && !mouse_in_scroll_widget) {
 			GUI_DisplayText(NULL, -1);
 
-			if (g_unitHouseMissile != NULL) {
+			if (g_playerHouse->houseMissileID != UNIT_INDEX_INVALID) {
 				/* ENHANCEMENT -- In Dune 2 you only hear "Missile launched" if you let the timer run out.
 				 * Note: you actually get one second to choose a target after the narrator says "Missile launched".
 				 */
-				if (enhancement_play_additional_voices && g_houseMissileCountdown > 1) {
+				if (enhancement_play_additional_voices
+						&& g_playerHouse->houseMissileCountdown > 1) {
 					Audio_PlayVoice(VOICE_MISSILE_LAUNCHED);
 				}
 
@@ -1130,7 +1132,7 @@ Viewport_DrawTilesInRange(int x0, int y0,
 		const FogOfWarTile *f = &g_mapVisible[curPos];
 
 		for (left = viewportX1; left < viewportX2; left += TILE_SIZE, curPos++, t++, f++) {
-			if (draw_tile && (t->overlaySpriteID != g_veiledSpriteID)) {
+			if (draw_tile && (f->fogSpriteID != g_veiledSpriteID - 1) && (f->fogSpriteID != g_veiledSpriteID)) {
 				if (Viewport_TileIsDebris(f->groundSpriteID)) {
 					const uint16 iconID = g_mapSpriteID[curPos] & ~0x8000;
 
@@ -1153,17 +1155,11 @@ Viewport_DrawTilesInRange(int x0, int y0,
 				}
 			}
 
-			if (draw_fog) {
-				const bool overlay_is_fog = (g_veiledSpriteID - 16 <= t->overlaySpriteID && t->overlaySpriteID <= g_veiledSpriteID);
-
-				if (overlay_is_fog) {
-					uint16 iconID = t->overlaySpriteID;
-
-					if (t->overlaySpriteID == g_veiledSpriteID)
-						iconID = g_veiledSpriteID - 1;
-
-					Video_DrawIcon(iconID, t->houseID, left, top);
-				}
+			if (draw_fog && (f->fogSpriteID != 0)) {
+				const uint16 iconID
+					= (f->fogSpriteID == g_veiledSpriteID)
+					? (g_veiledSpriteID - 1) : f->fogSpriteID;
+				Video_DrawIcon(iconID, f->houseID, left, top);
 			}
 		}
 	}

@@ -1086,7 +1086,7 @@ Scenario_Create_House(enum HouseType houseID, enum Brain brain,
 
 	g_playerHouseID       = houseID;
 	g_playerHouse         = h;
-	g_playerCreditsNoSilo = h->credits;
+	h->creditsStorageNoSilo = h->credits;
 
 	return h;
 }
@@ -1375,7 +1375,7 @@ static void Scenario_Load_Map(const char *key, char *settings)
 	t->groundSpriteID = atoi(s) & 0x01FF;
 	if (g_mapSpriteID[packed] != t->groundSpriteID) g_mapSpriteID[packed] |= 0x8000;
 
-	if (!t->isUnveiled) t->overlaySpriteID = g_veiledSpriteID;
+	if (!t->isUnveiled) g_mapVisible[packed].fogSpriteID = g_veiledSpriteID;
 }
 
 void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)
@@ -1394,7 +1394,7 @@ void Scenario_Load_Map_Bloom(uint16 packed, Tile *t)
 
 void Scenario_Load_Map_Field(uint16 packed, Tile *t)
 {
-	Map_Bloom_ExplodeSpice(packed, HOUSE_INVALID);
+	Map_Bloom_ExplodeSpice(packed, 0);
 
 	/* Show where a field started in the preview mode by making it an odd looking sprite */
 	if (g_debugScenario) {
@@ -1667,4 +1667,33 @@ bool Scenario_Load(uint16 scenarioID, uint8 houseID)
 
 	free(s_scenarioBuffer); s_scenarioBuffer = NULL;
 	return true;
+}
+
+/*--------------------------------------------------------------*/
+
+void
+Scenario_GetOldStats(enum HouseType houseID, OldScenarioStats *stats)
+{
+	stats->score = 0;
+	stats->killedAllied     = 0;
+	stats->killedEnemy      = 0;
+	stats->destroyedAllied  = 0;
+	stats->destroyedEnemy   = 0;
+	stats->harvestedAllied  = 0;
+	stats->harvestedEnemy   = 0;
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (House_AreAllied(houseID, h)) {
+			stats->score += g_scenario.score[h];
+			stats->killedAllied += g_scenario.unitsLost[h];
+			stats->destroyedAllied += g_scenario.structuresLost[h];
+			stats->harvestedAllied = min(65000, stats->harvestedAllied + g_scenario.spiceHarvested[h]);
+		}
+		else {
+			stats->score -= g_scenario.score[h];
+			stats->killedEnemy += g_scenario.unitsLost[h];
+			stats->destroyedEnemy += g_scenario.structuresLost[h];
+			stats->harvestedEnemy = min(65000, stats->harvestedEnemy + g_scenario.spiceHarvested[h]);
+		}
+	}
 }

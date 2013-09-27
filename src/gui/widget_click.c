@@ -4,17 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 #include "enum_string.h"
-#include "multichar.h"
 #include "types.h"
-#include "../os/sleep.h"
 
 #include "gui.h"
 #include "widget.h"
 #include "../audio/audio.h"
 #include "../config.h"
 #include "../enhancement.h"
-#include "../gfx.h"
-#include "../house.h"
 #include "../map.h"
 #include "../newui/actionpanel.h"
 #include "../opendune.h"
@@ -24,7 +20,6 @@
 #include "../shape.h"
 #include "../sprites.h"
 #include "../structure.h"
-#include "../timer/timer.h"
 #include "../unit.h"
 #include "../video/video.h"
 
@@ -275,33 +270,6 @@ bool GUI_Widget_Cancel_Click(Widget *w)
 	return true;
 }
 
-#if 0
-/**
- * Handles Click event for current selection picture.
- *
- * @return False, always.
- */
-bool GUI_Widget_Picture_Click(Widget *w)
-{
-	Structure *s;
-
-	VARIABLE_NOT_USED(w);
-
-	if (Unit_AnySelected()) {
-		/* Unit_DisplayStatusText(g_unitSelected); */
-
-		return false;
-	}
-
-	s = Structure_Get_ByPackedTile(g_selectionPosition);
-
-	if (s == NULL || !g_table_structureInfo[s->o.type].o.flags.factory) return false;
-
-	Structure_BuildObject(s, 0xFFFF);
-
-	return false;
-}
-#else
 bool
 GUI_Widget_Picture_Click(Widget *w)
 {
@@ -317,7 +285,7 @@ GUI_Widget_Picture_Click(Widget *w)
 	else if ((s->o.type == STRUCTURE_PALACE) && (s->countDown == 0)) {
 		Structure_ActivateSpecial(s);
 	}
-	else if ((s->o.type == STRUCTURE_STARPORT) && (!BuildQueue_IsEmpty(&s->queue))) {
+	else if ((s->o.type == STRUCTURE_STARPORT) && (!BuildQueue_IsEmpty(&g_playerHouse->starportQueue))) {
 		ActionPanel_ClickStarportOrder(s);
 	}
 	else if ((s->o.type == STRUCTURE_REPAIR) && (s->o.linkedID != 0xFF)) {
@@ -326,7 +294,6 @@ GUI_Widget_Picture_Click(Widget *w)
 
 	return false;
 }
-#endif
 
 /**
  * Handles Click event for "Repair/Upgrade" button.

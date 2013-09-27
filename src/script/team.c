@@ -421,7 +421,8 @@ uint16 Script_Team_DisplayText(ScriptEngine *script)
 	uint16 offset;
 
 	t = g_scriptCurrentTeam;
-	if (t->houseID == g_playerHouseID) return 0;
+	if (House_IsHuman(t->houseID))
+		return 0;
 
 	offset = BETOH16(*(script->scriptInfo->text + STACK_PEEK(1)));
 	text = (char *)script->scriptInfo->text + offset;

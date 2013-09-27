@@ -143,6 +143,8 @@ typedef struct SaveLoad_CustomCallbackData {
 	void *object;
 } SaveLoad_CustomCallbackData;
 
+struct House;
+
 extern const SaveLoadDesc g_saveObject[];
 extern const SaveLoadDesc g_saveScriptEngine[];
 extern const SaveLoadDesc g_saveScenario[];
@@ -154,8 +156,11 @@ extern bool SaveLoad_Save(const SaveLoadDesc *sld, FILE *fp, void *object);
 extern bool House_Load(FILE *fp, uint32 length);
 extern bool House_LoadOld(FILE *fp, uint32 length);
 extern bool House_Save(FILE *fp);
+extern bool House_Load2(FILE *fp, uint32 length);
+extern bool House_Save2(FILE *fp);
 extern bool Info_Load(FILE *fp, uint32 length);
 extern bool Info_LoadOld(FILE *fp, uint32 length);
+extern void Info_Load_PlayerHouseGlobals(struct House *h);
 extern bool Info_Save(FILE *fp);
 extern bool Info_Load2(FILE *fp, uint32 length);
 extern bool Info_Save2(FILE *fp);
@@ -164,8 +169,12 @@ extern bool Map_Save(FILE *fp);
 extern void Map_Load2Fallback(void);
 extern bool Map_Load2(FILE *fp, uint32 length);
 extern bool Map_Save2(FILE *fp);
+extern void Scenario_Load_OldStats(void);
+extern void Scenario_Save_OldStats(void);
 extern bool Scenario_Load2(FILE *fp, uint32 length);
 extern bool Scenario_Save2(FILE *fp);
+extern bool Scenario_Load3(FILE *fp, uint32 length);
+extern bool Scenario_Save3(FILE *fp);
 extern bool Structure_Load(FILE *fp, uint32 length);
 extern bool Structure_Save(FILE *fp);
 extern bool Structure_Load2(FILE *fp, uint32 length);

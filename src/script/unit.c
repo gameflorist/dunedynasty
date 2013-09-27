@@ -20,10 +20,12 @@
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
+#include "../net/server.h"
 #include "../opendune.h"
-#include "../pool/unit.h"
+#include "../pool/house.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
+#include "../pool/unit.h"
 #include "../scenario.h"
 #include "../structure.h"
 #include "../table/locale.h"
@@ -158,7 +160,8 @@ uint16 Script_Unit_TransportDeliver(ScriptEngine *script)
 
 				Unit_UpdateMap(2, u);
 
-				Audio_PlaySoundAtTile(SOUND_DROP_LOAD, u->o.position);
+				Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
+						SOUND_DROP_LOAD, u->o.position);
 
 				Structure_SetState(s, STRUCTURE_STATE_READY);
 
@@ -172,7 +175,8 @@ uint16 Script_Unit_TransportDeliver(ScriptEngine *script)
 		}
 
 		if ((s->state == STRUCTURE_STATE_IDLE || (si->o.flags.busyStateIsIncoming && s->state == STRUCTURE_STATE_BUSY)) && s->o.linkedID == 0xFF) {
-			Audio_PlaySoundAtTile(SOUND_DROP_LOAD, u->o.position);
+			Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
+					SOUND_DROP_LOAD, u->o.position);
 
 			Unit_EnterStructure(Unit_Get_ByIndex(u->o.linkedID), s);
 
@@ -200,9 +204,8 @@ uint16 Script_Unit_TransportDeliver(ScriptEngine *script)
 
 	if (!Unit_SetPosition(u2, Tile_Center(u->o.position))) return 0;
 
-	if (u2->o.houseID == g_playerHouseID) {
-		Audio_PlaySoundAtTile(SOUND_DROP_LOAD, u->o.position);
-	}
+	Server_Send_PlaySoundAtTile(1 << u2->o.houseID,
+			SOUND_DROP_LOAD, u->o.position);
 
 	Unit_SetOrientation(u2, u->orientation[0].current, true, 0);
 	Unit_SetOrientation(u2, u->orientation[0].current, true, 1);
@@ -282,7 +285,9 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 			/* Check if the unit has a return-to position or try to find spice in case of a harvester */
 			if (u2->targetLast.x != 0 || u2->targetLast.y != 0) {
 				u->targetMove = Tools_Index_Encode(Tile_PackTile(u2->targetLast), IT_TILE);
-			} else if (u2->o.type == UNIT_HARVESTER && Unit_GetHouseID(u2) != g_playerHouseID) {
+			}
+			else if (u2->o.type == UNIT_HARVESTER
+					&& !House_IsHuman(Unit_GetHouseID(u2))) {
 				u->targetMove = Tools_Index_Encode(Map_SearchSpice(Tile_PackTile(u->o.position), 20), IT_TILE);
 			}
 
@@ -510,35 +515,23 @@ uint16 Script_Unit_MoveToTarget(ScriptEngine *script)
  */
 uint16 Script_Unit_Die(ScriptEngine *script)
 {
-	const UnitInfo *ui;
-	Unit *u;
-
+	Unit *u = g_scriptCurrentUnit;
+	const enum UnitType type = u->o.type;
+	const tile32 position = u->o.position;
+	const UnitInfo *ui = &g_table_unitInfo[type];
 	VARIABLE_NOT_USED(script);
 
-	u = g_scriptCurrentUnit;
-	ui = &g_table_unitInfo[u->o.type];
-
-	Unit_Remove(u);
-
 	if (ui->movementType != MOVEMENT_WINGER) {
-		uint16 credits;
-
-		credits = max(ui->o.buildCredits / 100, 1);
-
-		if (House_AreAllied(u->o.houseID, g_playerHouseID)) {
-			g_scenario.killedAllied++;
-			g_scenario.score -= credits;
-		} else {
-			g_scenario.killedEnemy++;
-			g_scenario.score += credits;
-		}
+		g_scenario.unitsLost[u->o.houseID]++;
+		g_scenario.score[u->o.houseID] -= max(ui->o.buildCredits / 100, 1);
 	}
 
+	Unit_Remove(u);
 	Unit_HouseUnitCount_Remove(u);
 
-	if (u->o.type != UNIT_SABOTEUR) return 0;
+	if (type == UNIT_SABOTEUR)
+		Map_MakeExplosion(EXPLOSION_SABOTEUR_DEATH, position, 300, 0);
 
-	Map_MakeExplosion(EXPLOSION_SABOTEUR_DEATH, u->o.position, 300, 0);
 	return 0;
 }
 
@@ -668,7 +661,8 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 			Map_MakeExplosion(ui->explosionType, u->o.position, 0, 0);
 
-			Audio_PlaySoundAtTile(SOUND_SANDWORM, u->o.position);
+			Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
+					SOUND_SANDWORM, u->o.position);
 
 			Unit_UpdateMap(1, u);
 
@@ -699,10 +693,12 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 			/* Play trooper missile sound. */
 			if ((u->o.type == UNIT_TROOPERS || u->o.type == UNIT_TROOPER) && (typeID == UNIT_MISSILE_TROOPER)) {
-				Audio_PlaySoundAtTile(SOUND_MINI_ROCKET, u->o.position);
+				Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
+						SOUND_MINI_ROCKET, u->o.position);
 			}
 			else {
-				Audio_PlaySoundAtTile(ui->bulletSound, u->o.position);
+				Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
+						ui->bulletSound, u->o.position);
 			}
 
 			Unit_Deviation_Decrease(u, 20);
@@ -914,7 +910,10 @@ uint16 Script_Unit_SetAction(ScriptEngine *script)
 
 	action = STACK_PEEK(1);
 
-	if (u->o.houseID == g_playerHouseID && action == ACTION_HARVEST && u->nextActionID != ACTION_INVALID) return 0;
+	if (House_IsHuman(u->o.houseID)
+			&& action == ACTION_HARVEST
+			&& u->nextActionID != ACTION_INVALID)
+		return 0;
 
 	Unit_SetAction(u, action);
 
@@ -1011,7 +1010,16 @@ uint16 Script_Unit_GetInfo(ScriptEngine *script)
 		case 0x10: return u->orientation[ui->o.flags.hasTurret ? 1 : 0].current;
 		case 0x11: return abs(u->orientation[ui->o.flags.hasTurret ? 1 : 0].target - u->orientation[ui->o.flags.hasTurret ? 1 : 0].current);
 		case 0x12: return (ui->movementType & 0x40) == 0 ? 0 : 1;
-		case 0x13: return (u->o.seenByHouses & (1 << g_playerHouseID)) == 0 ? 0 : 1;
+		case 0x13:
+			/* This function is used (by the AI) to transition a unit
+			 * scouted by the human from ACTION_AMBUSH to ACTION_HUNT.
+			 */
+			for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+				if (House_IsHuman(h) && (u->o.seenByHouses & (1 << h)))
+					return 1;
+			}
+			return 0;
+
 		default:   return 0;
 	}
 }
@@ -1715,19 +1723,14 @@ uint16 Script_Unit_FindStructure(ScriptEngine *script)
  */
 uint16 Script_Unit_DisplayDestroyedText(ScriptEngine *script)
 {
-	const UnitInfo *ui;
-	Unit *u;
-
+	const Unit *u = g_scriptCurrentUnit;
+	const enum HouseType houseID = Unit_GetHouseID(u);
 	VARIABLE_NOT_USED(script);
 
-	u = g_scriptCurrentUnit;
-	ui = &g_table_unitInfo[u->o.type];
-
-	if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
-		GUI_DisplayText(String_Get_ByIndex(STR_S_S_DESTROYED), 0, String_Get_ByIndex(ui->o.stringID_abbrev), g_table_houseInfo[Unit_GetHouseID(u)].name);
-	} else {
-		GUI_DisplayText(String_Get_ByIndex(STR_S_S_DESTROYED), 0, g_table_houseInfo[Unit_GetHouseID(u)].name, String_Get_ByIndex(ui->o.stringID_abbrev));
-	}
+	Server_Send_StatusMessage3((1 << houseID) | u->o.seenByHouses, 0,
+			STR_S_S_DESTROYED,
+			STR_HOUSE_HARKONNEN + houseID,
+			g_table_unitInfo[u->o.type].o.stringID_abbrev);
 
 	return 0;
 }
@@ -1973,10 +1976,11 @@ uint16 Script_Unit_MCVDeploy(ScriptEngine *script)
 
 	Unit_UpdateMap(0, u);
 
+	const enum HouseType houseID = Unit_GetHouseID(u);
 	for (i = 0; i < 4; i++) {
 		static const int8 offsets[4] = { 0, -1, -64, -65 };
 
-		s = Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_CONSTRUCTION_YARD, Unit_GetHouseID(u), Tile_PackTile(u->o.position) + offsets[i]);
+		s = Structure_Create(STRUCTURE_INDEX_INVALID, STRUCTURE_CONSTRUCTION_YARD, houseID, Tile_PackTile(u->o.position) + offsets[i]);
 
 		if (s != NULL) {
 			const bool unit_was_selected = Unit_IsSelected(u);
@@ -1996,9 +2000,8 @@ uint16 Script_Unit_MCVDeploy(ScriptEngine *script)
 			break;
 	}
 
-	if (Unit_GetHouseID(u) == g_playerHouseID) {
-		GUI_DisplayText(String_Get_ByIndex(STR_UNIT_IS_UNABLE_TO_DEPLOY_HERE), 0);
-	}
+	Server_Send_StatusMessage1(1 << houseID, 0,
+			STR_UNIT_IS_UNABLE_TO_DEPLOY_HERE);
 
 	Unit_UpdateMap(1, u);
 
