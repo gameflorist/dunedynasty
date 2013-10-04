@@ -76,7 +76,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/sprites.c
 	src/string.c
 	src/structure.c
-	src/table/actioninfo.c
 	src/table/animation.c
 	src/table/explosion.c
 	src/table/fileinfo.c
@@ -84,7 +83,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/table/houseinfo.c
 	src/table/landscapeinfo.c
 	src/table/locale.c
-	src/table/movementtype.c
 	src/table/selectiontype.c
 	src/table/sound.c
 	src/table/structureinfo.c
