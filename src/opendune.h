@@ -3,7 +3,6 @@
 #ifndef OPENDUNE_H
 #define OPENDUNE_H
 
-#include <inttypes.h>
 #include "types.h"
 
 enum GameMode {
@@ -36,15 +35,12 @@ extern enum GameOverlay g_gameOverlay;
 extern uint16 g_campaignID;
 extern uint16 g_scenarioID;
 extern uint16 g_activeAction;
-extern int64_t g_tickScenarioStart;
 extern bool   g_debugGame;
 extern bool   g_debugScenario;
-extern bool   g_debugSkipDialogs;
 
 extern uint16 g_validateStrictIfZero;
 extern uint16 g_selectionType;
 extern uint16 g_selectionTypeNew;
-extern bool g_viewport_fadein;
 
 extern int16 g_musicInBattle;
 

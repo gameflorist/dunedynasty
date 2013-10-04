@@ -29,7 +29,6 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "os/error.h"
 #include "os/math.h"
 #include "os/strings.h"
-#include "os/sleep.h"
 
 #include "opendune.h"
 
@@ -89,21 +88,15 @@ uint16 g_activeAction = 0xFFFF;      /*!< Action the controlled unit will do. */
 
 bool   g_debugGame = false;        /*!< When true, you can control the AI. */
 bool   g_debugScenario = false;    /*!< When true, you can review the scenario. There is no fog. The game is not running (no unit-movement, no structure-building, etc). You can click on individual tiles. */
-bool   g_debugSkipDialogs = false; /*!< When non-zero, you immediately go to house selection, and skip all intros. */
 
 void *g_readBuffer = NULL;
 uint32 g_readBufferSize = 0;
 
 static bool  s_debugForceWin = false; /*!< When true, you immediately win the level. */
 
-#if 0
-static uint8 s_enableLog = 0; /*!< 0 = off, 1 = record game, 2 = playback game (stored in 'dune.log'). */
-#endif
-
 uint16 g_validateStrictIfZero = 0; /*!< 0 = strict validation, basically: no-cheat-mode. */
 uint16 g_selectionType = 0;
 uint16 g_selectionTypeNew = 0;
-bool g_viewport_fadein = false; /*!< Fade in the screen. */
 
 int16 g_musicInBattle = 0; /*!< 0 = no battle, 1 = fight is going on, -1 = music of fight is going on is active. */
 

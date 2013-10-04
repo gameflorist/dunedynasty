@@ -1530,10 +1530,6 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 				break;
 		}
 
-		if (g_table_selectionType[oldSelectionType].variable_04 && g_table_selectionType[selectionType].variable_06) {
-			g_viewport_fadein = true;
-		}
-
 		Widget_SetCurrentWidget(g_table_selectionType[selectionType].defaultWidget);
 
 		if (g_curWidgetIndex != 0) {
@@ -1785,7 +1781,6 @@ extern void GUI_FactoryWindow_DrawDetails(void);
 extern void GUI_FactoryWindow_DrawCaption(const char *caption);
 extern void GUI_FactoryWindow_UpdateDetails(void);
 extern void GUI_FactoryWindow_UpdateSelection(bool selectionChanged);
-#endif
 
 /**
  * Fade in parts of the screen from one screenbuffer to the other screenbuffer.
@@ -1860,7 +1855,6 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 	}
 }
 
-#if 0
 extern void GUI_FactoryWindow_PrepareScrollList(void);
 extern void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, Screen screenSrc, Screen screenDst, uint16 delay, bool skipNull);
 extern void GUI_Mouse_Show(void);

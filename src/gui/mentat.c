@@ -7,7 +7,6 @@
 #include "multichar.h"
 #include "types.h"
 #include "../os/endian.h"
-#include "../os/sleep.h"
 #include "../os/strings.h"
 
 #include "mentat.h"

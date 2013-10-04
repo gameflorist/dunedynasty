@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include "types.h"
-#include "../os/sleep.h"
 
 #include "font.h"
 #include "gui.h"

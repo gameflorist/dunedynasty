@@ -8,7 +8,6 @@
 #include "types.h"
 #include "../os/common.h"
 #include "../os/math.h"
-#include "../os/sleep.h"
 #include "../os/strings.h"
 
 #include "menu.h"
