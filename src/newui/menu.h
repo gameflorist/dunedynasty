@@ -48,6 +48,7 @@ extern bool skirmish_regenerate_map;
 
 extern void Menu_FreeWidgets(struct Widget *w);
 extern void Menu_LoadPalette(void);
+extern void MainMenu_SelectCampaign(int campaignID, int delta);
 extern void Menu_Run(void);
 
 extern void Extras_InitWidgets(void);

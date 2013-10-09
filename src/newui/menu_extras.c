@@ -35,9 +35,10 @@ enum ExtrasMenu {
 	EXTRASMENU_CUTSCENE,
 	EXTRASMENU_GALLERY,
 	EXTRASMENU_JUKEBOX,
-	EXTRASMENU_SKIRMISH,
+	EXTRASMENU_CAMPAIGN,
 	EXTRASMENU_OPTIONS,
 
+	EXTRASMENU_SKIRMISH,
 	EXTRASMENU_MAX
 };
 
@@ -513,6 +514,58 @@ PickMusic_Loop(MentatState *mentat, int widgetID)
 /*--------------------------------------------------------------*/
 
 static void
+PickCampaign_Initialise(void)
+{
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
+	WidgetScrollbar *ws = w->data;
+	ScrollbarItem *si;
+
+	w->offsetY = 19;
+	ws->itemHeight = 8;
+	ws->scrollMax = 0;
+
+	for (int i = 0; i < g_campaign_total; i++) {
+		if (i == CAMPAIGNID_SKIRMISH || i == CAMPAIGNID_MULTIPLAYER)
+			continue;
+
+		si = Scrollbar_AllocItem(w, SCROLLBAR_ITEM);
+		si->d.offset = i;
+
+		const char *name
+			= (i == CAMPAIGNID_DUNE_II) ? "Dune II"
+			: g_campaign_list[i].name;
+
+		snprintf(si->text, sizeof(si->text), "%s", name);
+	}
+
+	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 11, 0);
+}
+
+static enum MenuAction
+PickCampaign_Loop(int widgetID)
+{
+	Widget *scrollbar = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	ScrollbarItem *si;
+
+	switch (widgetID) {
+		case 0x8000 | 1: /* exit. */
+			return MENU_MAIN_MENU;
+
+		case 0x8000 | 3: /* list entry. */
+		case SCANCODE_ENTER:
+		case SCANCODE_KEYPAD_5:
+		case SCANCODE_SPACE:
+			si = Scrollbar_GetSelectedItem(scrollbar);
+			MainMenu_SelectCampaign(si->d.offset, 0);
+			return MENU_HALL_OF_FAME;
+	}
+
+	return MENU_EXTRAS;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
 Skirmish_RequestRegeneration(bool force)
 {
 	/* If radar animation is still going, do not restart it. */
@@ -759,7 +812,7 @@ Extras_DrawRadioButton(Widget *w)
 {
 	const enum ExtrasMenu page = w->index - 20;
 	const enum ShapeID shapeID[EXTRASMENU_MAX] = {
-		SHAPE_TROOPERS, SHAPE_ORNITHOPTER, SHAPE_SONIC_TANK, SHAPE_SARDAUKAR, SHAPE_MCV
+		SHAPE_TROOPERS, SHAPE_ORNITHOPTER, SHAPE_SONIC_TANK, SHAPE_PALACE, SHAPE_MCV
 	};
 	assert(page <= EXTRASMENU_MAX);
 
@@ -780,8 +833,7 @@ Extras_Draw(MentatState *mentat)
 	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS");
 	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS", 56, 104, 56, 136, 64, 64);
 
-	if (extras_page != EXTRASMENU_SKIRMISH)
-		Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS", 90, 32, 150, 168, 140, 32);
+	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS", 90, 32, 150, 168, 140, 32);
 
 	/* Credits label may need to be replaced for other languages. */
 	Shape_Draw(SHAPE_CREDITS_LABEL, SCREEN_WIDTH - 128, 0, 0, 0);
@@ -815,6 +867,10 @@ Extras_Draw(MentatState *mentat)
 			else {
 				GUI_DrawText_Wrapper("MUSIC IS OFF", 220, 99, 6, 0, 0x132);
 			}
+			break;
+
+		case EXTRASMENU_CAMPAIGN:
+			headline = String_Get_ByIndex(STR_HALL_OF_FAME);
 			break;
 
 		case EXTRASMENU_SKIRMISH:
@@ -876,6 +932,10 @@ Extras_ClickRadioButton(Widget *w)
 			PickMusic_Initialise();
 			break;
 
+		case EXTRASMENU_CAMPAIGN:
+			PickCampaign_Initialise();
+			break;
+
 		case EXTRASMENU_SKIRMISH:
 			Skirmish_Initialise();
 			break;
@@ -924,6 +984,10 @@ Extras_Loop(MentatState *mentat)
 
 		case EXTRASMENU_JUKEBOX:
 			res = PickMusic_Loop(mentat, widgetID);
+			break;
+
+		case EXTRASMENU_CAMPAIGN:
+			res = PickCampaign_Loop(widgetID);
 			break;
 
 		case EXTRASMENU_SKIRMISH:

@@ -292,6 +292,15 @@ Menu_AddCampaign(ALLEGRO_PATH *path)
 	free(source);
 }
 
+static int
+Menu_SortCampaigns(const void *a, const void *b)
+{
+	const Campaign *da = a;
+	const Campaign *db = b;
+
+	return strcasecmp(da->name, db->name);
+}
+
 static void
 Menu_ScanCampaigns(void)
 {
@@ -325,6 +334,14 @@ Menu_ScanCampaigns(void)
 
 	al_close_directory(e);
 	al_destroy_fs_entry(e);
+
+	/* Sort campaigns. */
+	if (g_campaign_total > CAMPAIGNID_MULTIPLAYER + 1) {
+		qsort(g_campaign_list + CAMPAIGNID_MULTIPLAYER + 1,
+				g_campaign_total - (CAMPAIGNID_MULTIPLAYER + 1),
+				sizeof(g_campaign_list[0]),
+				Menu_SortCampaigns);
+	}
 }
 
 static void
@@ -501,7 +518,7 @@ MainMenu_IsDirty(Widget *w)
 	return false;
 }
 
-static void
+void
 MainMenu_SelectCampaign(int campaignID, int delta)
 {
 	if (delta > 0) {
@@ -546,7 +563,6 @@ MainMenu_Loop(void)
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
 
 		case 0x8000 | MENU_EXTRAS:
-			main_menu_campaign_selected = g_campaign_selected;
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_EXTRAS;
 
@@ -1452,7 +1468,7 @@ Menu_Run(void)
 
 			case MENU_HALL_OF_FAME:
 				GUI_HallOfFame_Show(HOUSE_INVALID, 0xFFFF);
-				res = MENU_MAIN_MENU;
+				res = MENU_EXTRAS;
 				break;
 
 			case MENU_EXTRAS:

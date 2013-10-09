@@ -2009,14 +2009,14 @@ VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
 		int sx, dx;
 		size_t w;
 	} cmd[] = {
-		{ 544 +  4,   4 +  2,  8 }, /* S  from SEND ORDER. */
-		{   4 + 26,   4 + 10,  6 }, /* S  from RESUME GAME. */
-		{ 256 + 41,   4 + 16, 16 }, /* TA from MENTAT. */
-		{   4 + 87,   4 + 32,  8 }, /* A  from RESUME GAME. */
-		{ 544 +101,   4 + 40,  9 }, /* R  from SEND ORDER. */
-		{ 128 + 33,   4 + 49,  2 }, /*    from BUILD THIS */
-		{ 256 + 64,   4 + 51, 12 }, /* T  from MENTAT. */
-		{   4 + 68,   4 + 63, 49 }, /* GAME */
+	//	{ 544 +  4,   4 +  2,  8 }, /* S  from SEND ORDER. */
+	//	{   4 + 26,   4 + 10,  6 }, /* S  from RESUME GAME. */
+	//	{ 256 + 41,   4 + 16, 16 }, /* TA from MENTAT. */
+	//	{   4 + 87,   4 + 32,  8 }, /* A  from RESUME GAME. */
+	//	{ 544 +101,   4 + 40,  9 }, /* R  from SEND ORDER. */
+	//	{ 128 + 33,   4 + 49,  2 }, /*    from BUILD THIS */
+	//	{ 256 + 64,   4 + 51, 12 }, /* T  from MENTAT. */
+	//	{   4 + 68,   4 + 63, 49 }, /* GAME */
 
 		{ 128 + 96, 128 + 90, 15 }, /* S  from BUILD THIS */
 		{ 128 + 23, 128 + 80, 10 }, /* U  from BUILD THIS */
@@ -2028,7 +2028,7 @@ VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
 		{ 352 + 42, 128 + 70,  4 }, /* IO from OPTIONS */
 		{ 448 + 41, 128 + 74,  6 }, /* O  from INVOICE */
 
-		{ 128 +  2,   4 +112,  5 }, /* Fill right of START GAME */
+	//	{ 128 +  2,   4 +112,  5 }, /* Fill right of START GAME */
 		{ 128 +100, 128 + 12,  9 }, /* Fill left of PREVIOUS */
 	};
 
@@ -2067,10 +2067,12 @@ VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
 		row2 += WINDOW_W;
 	}
 
+#if 0
 	s_shape[SHAPE_SEND_ORDER + 0][HOUSE_HARKONNEN] = al_create_sub_bitmap(shape_texture, 4, y1, 120, 16);
 	s_shape[SHAPE_SEND_ORDER + 1][HOUSE_HARKONNEN] = al_create_sub_bitmap(shape_texture, 4, y2, 120, 16);
 	assert(s_shape[SHAPE_SEND_ORDER + 0][HOUSE_HARKONNEN] != NULL);
 	assert(s_shape[SHAPE_SEND_ORDER + 1][HOUSE_HARKONNEN] != NULL);
+#endif
 
 	s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN] = al_create_sub_bitmap(shape_texture, 128, y1, 120, 16);
 	s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN] = al_create_sub_bitmap(shape_texture, 128, y2, 120, 16);
@@ -2078,8 +2080,8 @@ VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
 	assert(s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN] != NULL);
 
 	for (enum HouseType houseID = HOUSE_HARKONNEN + 1; houseID < HOUSE_MAX; houseID++) {
-		s_shape[SHAPE_SEND_ORDER  + 0][houseID] = s_shape[SHAPE_SEND_ORDER  + 0][HOUSE_HARKONNEN];
-		s_shape[SHAPE_SEND_ORDER  + 1][houseID] = s_shape[SHAPE_SEND_ORDER  + 1][HOUSE_HARKONNEN];
+	//	s_shape[SHAPE_SEND_ORDER  + 0][houseID] = s_shape[SHAPE_SEND_ORDER  + 0][HOUSE_HARKONNEN];
+	//	s_shape[SHAPE_SEND_ORDER  + 1][houseID] = s_shape[SHAPE_SEND_ORDER  + 1][HOUSE_HARKONNEN];
 		s_shape[SHAPE_RESUME_GAME + 0][houseID] = s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN];
 		s_shape[SHAPE_RESUME_GAME + 1][houseID] = s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN];
 	}
