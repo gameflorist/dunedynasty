@@ -311,7 +311,9 @@ Extras_InitWidgets(void)
 static void
 Menu_AddCampaign(ALLEGRO_PATH *path)
 {
-	if (strcasecmp("skirmish", al_get_path_tail(path)) == 0)
+	/* Don't add CAMPAIGNID_SKIRMISH nor CAMPAIGNID_MULTIPLAYER again. */
+	if ((strcasecmp(al_get_path_tail(path), "skirmish") == 0)
+	 || (strcasecmp(al_get_path_tail(path), "multiplayer") == 0))
 		return;
 
 	al_set_path_filename(path, "META.INI");
@@ -444,7 +446,10 @@ Menu_Init(void)
 
 	Widget *w = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
 
-	if (g_campaign_total <= 2) { /* Dune II and skirmish campaigns only. */
+	if (g_campaign_total <= CAMPAIGNID_MULTIPLAYER + 1) {
+		/* No additional campaigns installed.  Only
+		 * CAMPAIGNID_DUNE_II, CAMPAIGNID_SKIRMISH, CAMPAIGNID_MULTIPLAYER.
+		 */
 		GUI_Widget_MakeInvisible(w);
 	}
 	else {
@@ -601,6 +606,34 @@ MainMenu_IsDirty(Widget *w)
 	return false;
 }
 
+static void
+MainMenu_SelectCampaign(int campaignID, int delta)
+{
+	if (delta > 0) {
+		if (campaignID <= CAMPAIGNID_MULTIPLAYER)
+			campaignID = CAMPAIGNID_MULTIPLAYER;
+
+		campaignID++;
+
+		if (campaignID >= g_campaign_total)
+			campaignID = CAMPAIGNID_DUNE_II;
+	}
+	else if (delta < 0) {
+		campaignID--;
+
+		if (campaignID < 0)
+			campaignID = g_campaign_total - 1;
+
+		if (campaignID <= CAMPAIGNID_MULTIPLAYER)
+			campaignID = CAMPAIGNID_DUNE_II;
+	}
+
+	Widget *subtitle = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
+	subtitle->drawParameterNormal.text = g_campaign_list[campaignID].name;
+
+	g_campaign_selected = campaignID;
+}
+
 static enum MenuAction
 MainMenu_Loop(void)
 {
@@ -644,26 +677,8 @@ MainMenu_Loop(void)
 			Widget *subtitle = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
 			subtitle->drawParameterDown.text = subtitle->drawParameterNormal.text;
 
-			if (subtitle->state.buttonState & 0x04) {
-				g_campaign_selected++;
-
-				if (g_campaign_selected == CAMPAIGNID_SKIRMISH)
-					g_campaign_selected++;
-
-				if (g_campaign_selected >= g_campaign_total)
-					g_campaign_selected = CAMPAIGNID_DUNE_II;
-			}
-			else {
-				g_campaign_selected--;
-
-				if (g_campaign_selected == CAMPAIGNID_SKIRMISH)
-					g_campaign_selected--;
-
-				if (g_campaign_selected < 0)
-					g_campaign_selected = g_campaign_total - 1;
-			}
-
-			subtitle->drawParameterNormal.text = g_campaign_list[g_campaign_selected].name;
+			const int delta = (subtitle->state.buttonState & 0x04) ? 1 : -1;
+			MainMenu_SelectCampaign(g_campaign_selected, delta);
 
 			subtitle_timer = Timer_GetTicks();
 			break;

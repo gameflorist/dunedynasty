@@ -229,7 +229,8 @@ Config_GetCampaign(void)
 		}
 	}
 
-	if (g_campaign_selected == CAMPAIGNID_SKIRMISH)
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH
+	 || g_campaign_selected == CAMPAIGNID_MULTIPLAYER)
 		g_campaign_selected = CAMPAIGNID_DUNE_II;
 }
 
@@ -239,6 +240,10 @@ Config_GetCampaign(void)
 void
 Config_SaveCampaignCompletion(void)
 {
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH
+	 || g_campaign_selected == CAMPAIGNID_MULTIPLAYER)
+		return;
+
 	const Campaign *camp = &g_campaign_list[g_campaign_selected];
 	char filename[1024];
 

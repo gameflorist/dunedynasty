@@ -679,7 +679,7 @@ int main(int argc, char **argv)
 
 	Campaign *camp;
 
-	/* Create the Dune 2 campaign. */
+	/* Create the Dune 2 campaign: CAMPAIGNID_DUNE_II. */
 	camp = Campaign_Alloc(NULL);
 	camp->house[0] = HOUSE_ATREIDES;
 	camp->house[1] = HOUSE_ORDOS;
@@ -687,9 +687,13 @@ int main(int argc, char **argv)
 	camp->intermission = true;
 	snprintf(camp->name, sizeof(camp->name), "%s", String_Get_ByIndex(STR_THE_BATTLE_FOR_ARRAKIS));
 
-	/* Create the skirmish campaign. */
+	/* Create the skirmish campaign: CAMPAIGNID_SKIRMISH. */
 	camp = Campaign_Alloc("skirmish");
 	snprintf(camp->name, sizeof(camp->name), "Skirmish");
+
+	/* Create the multiplayer campaign: CAMPAIGNID_MULTIPLAYER. */
+	camp = Campaign_Alloc("multiplayer");
+	snprintf(camp->name, sizeof(camp->name), "Multiplayer");
 
 	Sprites_Init();
 	Sprites_LoadTiles();

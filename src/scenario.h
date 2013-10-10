@@ -9,6 +9,7 @@
 enum {
 	CAMPAIGNID_DUNE_II = 0,
 	CAMPAIGNID_SKIRMISH = 1,
+	CAMPAIGNID_MULTIPLAYER = 2,
 };
 
 typedef struct Campaign {
