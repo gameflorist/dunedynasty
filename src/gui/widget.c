@@ -71,7 +71,6 @@ static bool s_widgetReset; /*!< If true, the widgets will be redrawn. */
 
 Widget *GUI_Widget_GetNext(Widget *w)
 {
-	if (w->next == NULL) return NULL;
 	return w->next;
 }
 
@@ -178,10 +177,6 @@ void GUI_Widget_Draw(Widget *w)
 	positionBottom = positionTop + w->height - 1;
 
 	assert(drawMode < DRAW_MODE_MAX);
-	if (drawMode != DRAW_MODE_NONE && drawMode != DRAW_MODE_CUSTOM_PROC && g_screenActiveID == SCREEN_0) {
-		GUI_Mouse_Hide_InRegion(positionLeft, positionTop, positionRight, positionBottom);
-	}
-
 	switch (drawMode) {
 		case DRAW_MODE_NONE: break;
 
@@ -197,10 +192,6 @@ void GUI_Widget_Draw(Widget *w)
 			GUI_DrawText(drawParam.text, positionLeft, positionTop, fgColour, bgColour);
 		} break;
 
-		case DRAW_MODE_UNKNOWN3:
-			Video_DrawIcon(drawParam.unknown, HOUSE_HARKONNEN, positionLeft, positionTop);
-			break;
-
 		case DRAW_MODE_CUSTOM_PROC: {
 			if (drawParam.proc == NULL) return;
 			drawParam.proc(w);
@@ -209,16 +200,6 @@ void GUI_Widget_Draw(Widget *w)
 		case DRAW_MODE_WIRED_RECTANGLE: {
 			Prim_Rect_i(positionLeft, positionTop, positionRight, positionBottom, fgColour);
 		} break;
-
-		case DRAW_MODE_XORFILLED_RECTANGLE: {
-#if 0
-			GUI_DrawXorFilledRectangle(positionLeft, positionTop, positionRight, positionBottom, fgColour);
-#endif
-		} break;
-	}
-
-	if (drawMode != DRAW_MODE_NONE && drawMode != DRAW_MODE_CUSTOM_PROC && g_screenActiveID == SCREEN_0) {
-		GUI_Mouse_Show_InRegion();
 	}
 }
 
@@ -644,9 +625,7 @@ Widget *GUI_Widget_Allocate(uint16 index, uint16 shortcut, uint16 offsetX, uint1
 			break;
 
 		case 3:
-			drawMode           = DRAW_MODE_NONE;
-			drawParam1.unknown = 0;
-			drawParam2.unknown = 0;
+			drawMode        = DRAW_MODE_NONE;
 			break;
 
 		default:

@@ -67,14 +67,4 @@ extern void Video_DrawMinimap(int left, int top, int map_scale, int mode);
 #define Video_DrawWSA           VideoA5_DrawWSA
 #define Video_DrawWSAStatic     VideoA5_DrawWSAStatic
 
-#define GUI_Mouse_Show()
-#define GUI_Mouse_Hide()
-#define GUI_Mouse_Show_Safe()
-#define GUI_Mouse_Hide_Safe()
-#define GUI_Mouse_Show_InRegion()
-#define GUI_Mouse_Hide_InRegion(l,t,r,b)
-#define GUI_Mouse_Show_InWidget()   \
-	do {} while (false)
-#define GUI_Mouse_Hide_InWidget(w)
-
 #endif

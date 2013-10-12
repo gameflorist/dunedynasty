@@ -13,10 +13,10 @@ enum DrawMode {
 	DRAW_MODE_NONE                = 0,                      /*!< Draw nothing. */
 	DRAW_MODE_SPRITE              = 1,                      /*!< Draw a sprite. */
 	DRAW_MODE_TEXT                = 2,                      /*!< Draw text. */
-	DRAW_MODE_UNKNOWN3            = 3,
+/*	DRAW_MODE_ICON                = 3, */
 	DRAW_MODE_CUSTOM_PROC         = 4,                      /*!< Draw via a custom defined function. */
 	DRAW_MODE_WIRED_RECTANGLE     = 5,                      /*!< Draw a wired rectangle. */
-	DRAW_MODE_XORFILLED_RECTANGLE = 6,                      /*!< Draw a filled rectangle using xor. */
+/*	DRAW_MODE_XORFILLED_RECTANGLE = 6, */
 
 	DRAW_MODE_MAX             = 7
 };
@@ -43,7 +43,6 @@ struct Widget;
  * The parameter for a given DrawMode.
  */
 typedef union WidgetDrawParameter {
-	uint16 unknown;                                         /*!< Parameter for DRAW_MODE_UNKNOWN3. */
 	uint16 sprite;                                          /*!< Parameter for Shape_DrawRemap. */
 	const char *text;                                       /*!< Parameter for DRAW_MODE_TEXT. */
 	void (*proc)(struct Widget *);                          /*!< Parameter for DRAW_MODE_CUSTOM_PROC. */

@@ -29,7 +29,6 @@
 #include "../house.h"
 #include "../ini.h"
 #include "../input/input.h"
-#include "../input/mouse.h"
 #include "../load.h"
 #include "../map.h"
 #include "../newui/actionpanel.h"
@@ -185,8 +184,6 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 			GFX_Screen_SetActive(oldScreenID);
 		}
 
-		GUI_Mouse_Hide_InWidget(7);
-
 		if (textOffset + g_curWidgetHeight > 24) {
 			height = 24 - textOffset;
 		} else {
@@ -194,7 +191,6 @@ void GUI_DisplayText(const char *str, int16 importance, ...)
 		}
 
 		GUI_Screen_Copy(g_curWidgetXBase/8, textOffset, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, height, SCREEN_1, SCREEN_0);
-		GUI_Mouse_Show_InWidget();
 
 		Widget_SetCurrentWidget(oldValue_07AE_0000);
 #endif
@@ -1414,9 +1410,7 @@ GUI_DrawCredits(int credits, uint16 mode, int x)
 	}
 
 	if (oldScreenID != g_screenActiveID) {
-		GUI_Mouse_Hide_InWidget(5);
 		GUI_Screen_Copy(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase - 40, g_curWidgetWidth/8, g_curWidgetHeight, g_screenActiveID, oldScreenID);
-		GUI_Mouse_Show_InWidget();
 	}
 
 	GFX_Screen_SetActive(oldScreenID);
@@ -1570,16 +1564,6 @@ void GUI_InitColors(const uint8 *colours, uint8 first, uint8 last)
 
 	for (i = first; i < last + 1; i++) g_colours[i] = *colours++;
 }
-
-#if 0
-static uint16 GetNeededClipping(int16 x, int16 y);
-static void ClipTop(int16 *x1, int16 *y1, int16 x2, int16 y2);
-static void ClipBottom(int16 *x1, int16 *y1, int16 x2, int16 y2);
-static void ClipLeft(int16 *x1, int16 *y1, int16 x2, int16 y2);
-static void ClipRight(int16 *x1, int16 *y1, int16 x2, int16 y2);
-extern void GUI_DrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 colour);
-extern void GUI_SetClippingArea(uint16 left, uint16 top, uint16 right, uint16 bottom);
-#endif
 
 /**
  * Wrapper around GFX_Screen_Copy. Protects against wrong input values.
@@ -1755,10 +1739,6 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 	uint16 offsetsX[40];
 	int x, y;
 
-	if (screenDst == SCREEN_0) {
-		GUI_Mouse_Hide_InRegion(xDst << 3, yDst, (xDst + width) << 3, yDst + height);
-	}
-
 	height /= 2;
 
 	for (x = 0; x < width;  x++) offsetsX[x] = x;
@@ -1805,24 +1785,10 @@ void GUI_Screen_FadeIn(uint16 xSrc, uint16 ySrc, uint16 xDst, uint16 yDst, uint1
 		 */
 		/* if ((y % 4) == 0) Timer_Sleep(1); */
 	}
-
-	if (screenDst == SCREEN_0) {
-		GUI_Mouse_Show_InRegion();
-	}
 }
 
 extern void GUI_FactoryWindow_PrepareScrollList(void);
 extern void GUI_Screen_FadeIn2(int16 x, int16 y, int16 width, int16 height, Screen screenSrc, Screen screenDst, uint16 delay, bool skipNull);
-extern void GUI_Mouse_Show(void);
-extern void GUI_Mouse_Hide(void);
-extern void GUI_Mouse_Hide_Safe(void);
-extern void GUI_Mouse_Show_Safe(void);
-extern void GUI_Mouse_Show_InRegion(void);
-extern void GUI_Mouse_Hide_InRegion(uint16 left, uint16 top, uint16 right, uint16 bottom);
-extern void GUI_Mouse_Show_InWidget(void);
-extern void GUI_Mouse_Hide_InWidget(uint16 widgetIndex);
-extern void GUI_DrawBlockedRectangle(int16 left, int16 top, int16 width, int16 height, uint8 colour);
-extern void GUI_Mouse_SetPosition(uint16 x, uint16 y);
 #endif
 
 /**
@@ -1877,7 +1843,6 @@ static Widget *GUI_HallOfFame_CreateButtons(HallOfFameStruct *data)
 	wClear->flags.requiresClick = true;
 	wClear->flags.clickAsHover = true;
 	wClear->flags.loseSelect = true;
-	wClear->flags.notused2 = true;
 	wClear->flags.buttonFilterLeft = 4;
 	wClear->flags.buttonFilterRight = 4;
 	wClear->data      = data;
@@ -1890,7 +1855,6 @@ static Widget *GUI_HallOfFame_CreateButtons(HallOfFameStruct *data)
 	wResume->flags.requiresClick = true;
 	wResume->flags.clickAsHover = true;
 	wResume->flags.loseSelect = true;
-	wResume->flags.notused2 = true;
 	wResume->flags.buttonFilterLeft = 4;
 	wResume->flags.buttonFilterRight = 4;
 	wResume->data      = data;
@@ -2232,10 +2196,6 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 	return width;
 }
 
-#if 0
-extern void GUI_DrawXorFilledRectangle(int16 left, int16 top, int16 right, int16 bottom, uint8 colour);
-#endif
-
 /**
  * Create the remap palette for the givern house.
  * @param houseID The house ID.
@@ -2292,8 +2252,6 @@ void GUI_DrawScreen(Screen screenID)
 	GFX_Screen_SetActive(oldScreenID);
 
 	Map_SetSelectionObjectPosition(g_selectionRectanglePosition);
-
-	GUI_Mouse_Show_InWidget();
 }
 
 #if 0

@@ -155,7 +155,6 @@ endif(WIN32)
 set(OPENDUNE_UNUSED_SRC_FILES
 	src/audio/driver.c
 	src/audio/sound.c
-	src/config.c
 	src/crashlog/crashlog.c
 	src/crashlog/crashlog_win32.c
 	src/os/thread_sdl.c
