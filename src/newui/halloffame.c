@@ -67,7 +67,7 @@ HallOfFame_DrawEmblem(unsigned char emblemL, unsigned char emblemR)
 }
 
 void
-HallOfFame_DrawBackground(enum HouseType houseID, bool hallOfFame)
+HallOfFame_DrawBackground(enum HouseType houseID, enum HallOfFameStyle style)
 {
 	Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS");
 
@@ -80,9 +80,25 @@ HallOfFame_DrawBackground(enum HouseType houseID, bool hallOfFame)
 		HallOfFame_DrawEmblem(0, 1);
 	}
 
-	if (hallOfFame) {
+	if (style == HALLOFFAMESTYLE_CLEAR_BACKGROUND) {
 		Prim_FillRect_i(8, 80, 311, 191, 116);
+		return;
 	}
+
+	/* Units destroyed. */
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS",
+			8, 80, 8, 116, 304, 36);
+
+	if (style == HALLOFFAMESTYLE_TWO_METERS) {
+		Prim_FillRect_i(8, 152, 8 + 304 - 1, 191, 116);
+		return;
+	}
+
+	/* Buildings destroyed. */
+	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS",
+			8, 80, 8, 152, 304, 36);
+
+	Prim_FillRect_i(8, 152 + 36, 8 + 304 - 1, 191, 116);
 }
 
 /*--------------------------------------------------------------*/
@@ -227,7 +243,6 @@ HallOfFame_DrawUnitsDestroyed(enum HouseType houseID, const HallOfFameData *fame
 {
 	const int y = 92 + 36 * 1;
 
-	Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", 8, 80, 8, 116, 304, 36);
 	GUI_DrawTextOnFilledRectangle(String_Get_ByIndex(STR_UNITS_DESTROYED_BY), 119);
 	HallOfFame_DrawYouEnemyLabel(y);
 
@@ -236,19 +251,13 @@ HallOfFame_DrawUnitsDestroyed(enum HouseType houseID, const HallOfFameData *fame
 }
 
 void
-HallOfFame_DrawBuildingsDestroyed(enum HouseType houseID, int scenarioID, const HallOfFameData *fame)
+HallOfFame_DrawBuildingsDestroyed(enum HouseType houseID, const HallOfFameData *fame)
 {
 	const int y = 92 + 36 * 2;
 
-	if (scenarioID == 1) {
-		Prim_FillRect_i(8, 152, 8 + 304 - 1, 191, 116);
-	}
-	else {
-		Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, "FAME.CPS", 8, 80, 8, 152, 304, 36);
-		GUI_DrawTextOnFilledRectangle(String_Get_ByIndex(STR_BUILDINGS_DESTROYED_BY), 155);
-		HallOfFame_DrawYouEnemyLabel(y);
+	GUI_DrawTextOnFilledRectangle(String_Get_ByIndex(STR_BUILDINGS_DESTROYED_BY), 155);
+	HallOfFame_DrawYouEnemyLabel(y);
 
-		HallOfFame_DrawMeter(houseID, fame, 4);
-		HallOfFame_DrawMeter(houseID, fame, 5);
-	}
+	HallOfFame_DrawMeter(houseID, fame, 4);
+	HallOfFame_DrawMeter(houseID, fame, 5);
 }

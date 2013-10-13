@@ -1213,7 +1213,11 @@ BattleSummary_Initialise(enum HouseType houseID, HallOfFameData *fame)
 static void
 BattleSummary_Draw(enum HouseType houseID, int scenarioID, HallOfFameData *fame)
 {
-	HallOfFame_DrawBackground(houseID, false);
+	const enum HallOfFameStyle style
+		= (scenarioID == 1) ? HALLOFFAMESTYLE_TWO_METERS
+		: HALLOFFAMESTYLE_THREE_METERS;
+
+	HallOfFame_DrawBackground(houseID, style);
 	HallOfFame_DrawScoreTime(fame->score, fame->time);
 
 	if (fame->state >= HALLOFFAME_SHOW_RANK)
@@ -1221,7 +1225,9 @@ BattleSummary_Draw(enum HouseType houseID, int scenarioID, HallOfFameData *fame)
 
 	HallOfFame_DrawSpiceHarvested(houseID, fame);
 	HallOfFame_DrawUnitsDestroyed(houseID, fame);
-	HallOfFame_DrawBuildingsDestroyed(houseID, scenarioID, fame);
+
+	if (style == HALLOFFAMESTYLE_THREE_METERS)
+		HallOfFame_DrawBuildingsDestroyed(houseID, fame);
 }
 
 static enum MenuAction

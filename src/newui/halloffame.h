@@ -17,6 +17,12 @@ enum HallOfFameState {
 	HALLOFFAME_WAIT_FOR_INPUT,
 };
 
+enum HallOfFameStyle {
+	HALLOFFAMESTYLE_CLEAR_BACKGROUND,
+	HALLOFFAMESTYLE_TWO_METERS,
+	HALLOFFAMESTYLE_THREE_METERS
+};
+
 struct FadeInAux;
 
 typedef struct HallOfFameData {
@@ -56,11 +62,11 @@ extern HallOfFameData g_hall_of_fame_state;
 extern int HallOfFame_GetRank(int score);
 extern const char *HallOfFame_GetRankString(int rank);
 extern void HallOfFame_InitRank(int score, HallOfFameData *fame);
-extern void HallOfFame_DrawBackground(enum HouseType houseID, bool halloffame);
+extern void HallOfFame_DrawBackground(enum HouseType houseID, enum HallOfFameStyle style);
 extern void HallOfFame_DrawScoreTime(int score, int64_t ticks_played);
 extern void HallOfFame_DrawRank(const HallOfFameData *fame);
 extern void HallOfFame_DrawSpiceHarvested(enum HouseType houseID, const HallOfFameData *fame);
 extern void HallOfFame_DrawUnitsDestroyed(enum HouseType houseID, const HallOfFameData *fame);
-extern void HallOfFame_DrawBuildingsDestroyed(enum HouseType houseID, int scenarioID, const HallOfFameData *fame);
+extern void HallOfFame_DrawBuildingsDestroyed(enum HouseType houseID, const HallOfFameData *fame);
 
 #endif

@@ -1987,7 +1987,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 			Widget_SetAndPaintCurrentWidget(19);
 			GFX_Screen_SetActive(oldScreenID);
 
-			HallOfFame_DrawBackground(houseID, true);
+			HallOfFame_DrawBackground(houseID, HALLOFFAMESTYLE_CLEAR_BACKGROUND);
 			HallOfFame_DrawScoreTime(fame->score, fame->time);
 			HallOfFame_DrawRank(fame);
 
@@ -2096,7 +2096,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 		}
 
 		redraw = false;
-		HallOfFame_DrawBackground(houseID, true);
+		HallOfFame_DrawBackground(houseID, HALLOFFAMESTYLE_CLEAR_BACKGROUND);
 		if (score == 0xFFFF) {
 			GUI_DrawText_Wrapper(String_Get_ByIndex(STR_HALL_OF_FAME2), SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
 
