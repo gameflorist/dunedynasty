@@ -23,6 +23,7 @@ enum MenuAction {
 	MENU_BRIEFING_LOSE,
 	MENU_PLAY_A_GAME,
 	MENU_LOAD_GAME,
+	MENU_SKIRMISH_LOBBY,
 	MENU_PLAY_SKIRMISH,
 	MENU_BATTLE_SUMMARY,
 	MENU_SKIRMISH_SUMMARY,
@@ -50,6 +51,12 @@ extern void Menu_FreeWidgets(struct Widget *w);
 extern void Menu_LoadPalette(void);
 extern void MainMenu_SelectCampaign(int campaignID, int delta);
 extern void Menu_Run(void);
+
+extern void Lobby_InitWidgets(void);
+extern void Lobby_FreeWidgets(void);
+extern void SkirmishLobby_Initialise(void);
+extern void SkirmishLobby_Draw(void);
+extern enum MenuAction SkirmishLobby_Loop(void);
 
 extern void Extras_InitWidgets(void);
 extern void Extras_FreeWidgets(void);

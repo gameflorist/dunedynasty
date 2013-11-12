@@ -133,14 +133,8 @@ void GUI_Widget_Draw(Widget *w)
 
 	if (w == NULL) return;
 
-	if (w->flags.invisible) {
-		if (!w->flags.greyWhenInvisible) return;
-
-#if 0
-		GUI_Widget_DrawBlocked(w, 12);
-#endif
+	if (w->flags.invisible && !w->flags.greyWhenInvisible)
 		return;
-	}
 
 	if (!w->state.hover2) {
 		if (!w->state.selected) {

@@ -1819,6 +1819,18 @@ void GUI_Palette_RemapScreen(uint16 left, uint16 top, uint16 width, uint16 heigh
 extern uint16 GUI_HallOfFame_Tick(void);
 #endif
 
+void
+GUI_HallOfFame_SetColourScheme(bool enter)
+{
+	if (enter) {
+		memcpy(s_temporaryColourBorderSchema, s_colourBorderSchema, sizeof(s_colourBorderSchema));
+		memcpy(s_colourBorderSchema, s_HOF_ColourBorderSchema, sizeof(s_colourBorderSchema));
+	}
+	else {
+		memcpy(s_colourBorderSchema, s_temporaryColourBorderSchema, sizeof(s_temporaryColourBorderSchema));
+	}
+}
+
 static Widget *GUI_HallOfFame_CreateButtons(HallOfFameStruct *data)
 {
 	const char *resumeString;
@@ -1827,9 +1839,7 @@ static Widget *GUI_HallOfFame_CreateButtons(HallOfFameStruct *data)
 	Widget *wResume;
 	uint16 width;
 
-	memcpy(s_temporaryColourBorderSchema, s_colourBorderSchema, sizeof(s_colourBorderSchema));
-	memcpy(s_colourBorderSchema, s_HOF_ColourBorderSchema, sizeof(s_colourBorderSchema));
-
+	GUI_HallOfFame_SetColourScheme(true);
 	resumeString = String_Get_ByIndex(STR_RESUME_GAME2);
 	clearString  = String_Get_ByIndex(STR_CLEAR_LIST);
 
@@ -1872,7 +1882,7 @@ static void GUI_HallOfFame_DeleteButtons(Widget *w)
 		w = next;
 	}
 
-	memcpy(s_colourBorderSchema, s_temporaryColourBorderSchema, sizeof(s_temporaryColourBorderSchema));
+	GUI_HallOfFame_SetColourScheme(false);
 }
 
 static void GUI_HallOfFame_Encode(HallOfFameStruct *data)

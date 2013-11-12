@@ -86,13 +86,20 @@ const char *String_GenerateFilename(const char *name)
  */
 char *String_Get_ByIndex(uint16 stringID)
 {
-	if (STR_HOUSE_HARKONNEN <= stringID && stringID <= STR_HOUSE_MERCENARY) {
+	if (stringID < 0x8000) {
+		assert(stringID < s_stringsCount);
+		return s_strings[stringID];
+	}
+	else if (stringID == STR_START_GAME) {
+		return (char *)"Start Game";
+	}
+	else if (STR_HOUSE_HARKONNEN <= stringID && stringID <= STR_HOUSE_MERCENARY) {
 		const enum HouseType houseID = stringID - STR_HOUSE_HARKONNEN;
 		return (char *)g_table_houseInfo[houseID].name;
 	}
 	else {
-		assert(stringID < s_stringsCount);
-		return s_strings[stringID];
+		assert(false);
+		return NULL;
 	}
 }
 

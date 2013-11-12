@@ -108,6 +108,7 @@ extern void GUI_ChangeSelectionType(uint16 selectionType);
 extern void GUI_InitColors(const uint8 *colors, uint8 first, uint8 last);
 extern const char *GUI_String_Get_ByIndex(int16 stringID);
 extern uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvestedEnemy, uint8 houseID);
+extern void GUI_HallOfFame_SetColourScheme(bool enter);
 extern void GUI_HallOfFame_Show(enum HouseType houseID, uint16 score);
 extern uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show);
 

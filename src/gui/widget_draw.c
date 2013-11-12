@@ -162,7 +162,9 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 	Prim_DrawBorder(positionX, positionY, width, height, 1, true, true, buttonDown ? 0 : 1);
 
 	colour = 0xF;
-	if (buttonSelected) {
+	if (w->flags.invisible) {
+		colour = 0xE;
+	} else if (buttonSelected) {
 		colour = 0x6;
 	} else if (buttonDown) {
 		colour = 0xE;

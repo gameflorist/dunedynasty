@@ -91,9 +91,9 @@ MainMenu_InitWidgets(void)
 		int shortcut2;
 	} menuitem[] = {
 		{ MENU_PLAY_A_GAME,  NULL, STR_PLAY_A_GAME, -1 },
-		{ MENU_LOAD_GAME,    NULL, STR_LOAD_GAME, -1, },
+		{ MENU_LOAD_GAME,    NULL, STR_LOAD_GAME, -1 },
+		{ MENU_SKIRMISH_LOBBY, "Skirmish", STR_NULL, SCANCODE_S },
 		{ MENU_EXTRAS,       "Options and Extras", STR_NULL, SCANCODE_O },
-		{ MENU_HALL_OF_FAME, NULL, STR_HALL_OF_FAME, -1 },
 		{ MENU_EXIT_GAME,    NULL, STR_EXIT_GAME, -1 },
 	};
 
@@ -351,6 +351,7 @@ Menu_Init(void)
 
 	MainMenu_InitWidgets();
 	PickHouse_InitWidgets();
+	Lobby_InitWidgets();
 	Briefing_InitWidgets();
 	Extras_InitWidgets();
 	StrategicMap_Init();
@@ -394,6 +395,7 @@ Menu_Uninit(void)
 	Menu_FreeWidgets(briefing_yes_no_widgets);
 	Menu_FreeWidgets(briefing_proceed_repeat_widgets);
 
+	Lobby_FreeWidgets();
 	Extras_FreeWidgets();
 }
 
@@ -572,10 +574,10 @@ MainMenu_Loop(void)
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
 
-		case 0x8000 | MENU_HALL_OF_FAME:
-			Campaign_Load();
+		case 0x8000 | MENU_SKIRMISH_LOBBY:
+			main_menu_campaign_selected = g_campaign_selected;
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
-			return MENU_BLINK_CONFIRM | MENU_HALL_OF_FAME;
+			return MENU_BLINK_CONFIRM | MENU_SKIRMISH_LOBBY;
 
 		case 0x8000 | MENU_EXIT_GAME:
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
@@ -1076,8 +1078,7 @@ PlaySkirmish_Loop(void)
 		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
 	}
 	else {
-		Audio_PlayMusic(MUSIC_MAIN_MENU);
-		return MENU_EXTRAS;
+		return MENU_SKIRMISH_LOBBY;
 	}
 }
 
@@ -1217,7 +1218,7 @@ BattleSummary_InputLoop(int curr_menu, HallOfFameData *fame)
 			if (Input_IsInputAvailable()) {
 				if (curr_menu == MENU_SKIRMISH_SUMMARY) {
 					Audio_PlayMusic(MUSIC_MAIN_MENU);
-					return MENU_EXTRAS;
+					return MENU_NO_TRANSITION | MENU_SKIRMISH_LOBBY;
 				}
 
 				GUI_HallOfFame_Show(g_playerHouseID, fame->score);
@@ -1329,6 +1330,10 @@ Menu_Run(void)
 					Briefing_Initialise(curr_menu & 0xFF, &g_mentat_state);
 					break;
 
+				case MENU_SKIRMISH_LOBBY:
+					SkirmishLobby_Initialise();
+					break;
+
 				case MENU_BATTLE_SUMMARY:
 				case MENU_SKIRMISH_SUMMARY:
 					BattleSummary_Initialise(g_playerHouseID, &g_hall_of_fame_state);
@@ -1371,6 +1376,10 @@ Menu_Run(void)
 
 				case MENU_LOAD_GAME:
 					LoadGame_Draw();
+					break;
+
+				case MENU_SKIRMISH_LOBBY:
+					SkirmishLobby_Draw();
 					break;
 
 				case MENU_BATTLE_SUMMARY:
@@ -1450,6 +1459,10 @@ Menu_Run(void)
 
 			case MENU_LOAD_GAME:
 				res = LoadGame_Loop();
+				break;
+
+			case MENU_SKIRMISH_LOBBY:
+				res = SkirmishLobby_Loop();
 				break;
 
 			case MENU_PLAY_SKIRMISH:
@@ -1540,7 +1553,7 @@ Menu_Run(void)
 		if ((curr_menu & 0xFF) != (res & 0xFF)) {
 			redraw = true;
 
-			if (((curr_menu & 0xFF) == MENU_EXTRAS)
+			if (((curr_menu & 0xFF) == MENU_SKIRMISH_LOBBY)
 					&& (res & 0xFF) == MENU_MAIN_MENU) {
 				g_campaign_selected = main_menu_campaign_selected;
 			}

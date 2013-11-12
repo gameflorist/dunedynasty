@@ -38,15 +38,12 @@ enum ExtrasMenu {
 	EXTRASMENU_CAMPAIGN,
 	EXTRASMENU_OPTIONS,
 
-	EXTRASMENU_SKIRMISH,
 	EXTRASMENU_MAX
 };
 
 static Widget *extras_widgets;
 static enum ExtrasMenu extras_page;
 static int extras_credits;
-static int64_t skirmish_radar_timer;
-bool skirmish_regenerate_map;
 
 static void Extras_DrawRadioButton(Widget *w);
 static bool Extras_ClickRadioButton(Widget *w);
@@ -79,16 +76,8 @@ Extras_InitWidgets(void)
 {
 	Widget *w;
 
-	w = GUI_Widget_Allocate(2, SCANCODE_S, 160, 168, SHAPE_SEND_ORDER, STR_NULL); /* Start game. */
-	extras_widgets = GUI_Widget_Link(extras_widgets, w);
-
 	w = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 160, 168 + 8, SHAPE_RESUME_GAME, STR_NULL);
 	w->shortcut = SCANCODE_P;
-	extras_widgets = GUI_Widget_Link(extras_widgets, w);
-
-	w = GUI_Widget_Allocate(9, 0, 241, 81, SHAPE_INVALID, STR_NULL); /* Regenerate map. */
-	w->width = 62;
-	w->height = 62;
 	extras_widgets = GUI_Widget_Link(extras_widgets, w);
 
 	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 20, SCANCODE_F1, 72, 24);
@@ -566,160 +555,6 @@ PickCampaign_Loop(int widgetID)
 /*--------------------------------------------------------------*/
 
 static void
-Skirmish_RequestRegeneration(bool force)
-{
-	/* If radar animation is still going, do not restart it. */
-	if (Timer_GetTicks() - skirmish_radar_timer
-			< RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
-		if (force)
-			skirmish_regenerate_map = true;
-	}
-	else {
-		skirmish_regenerate_map = true;
-		skirmish_radar_timer = Timer_GetTicks();
-		Audio_PlaySound(SOUND_RADAR_STATIC);
-	}
-}
-
-static void
-Skirmish_Initialise(void)
-{
-	Widget *w;
-
-	g_campaign_selected = CAMPAIGNID_SKIRMISH;
-	Campaign_Load();
-
-	Skirmish_GenerateMap(false);
-	skirmish_regenerate_map = false;
-
-	w = GUI_Widget_Get_ByIndex(extras_widgets, 1);
-	w->offsetY = 184;
-
-	w = GUI_Widget_Get_ByIndex(extras_widgets, 2);
-	GUI_Widget_MakeVisible(w);
-
-	w = GUI_Widget_Get_ByIndex(extras_widgets, 9);
-	GUI_Widget_MakeVisible(w);
-
-	w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
-	w->width = 92;
-
-	WidgetScrollbar *ws = w->data;
-	ScrollbarItem *si;
-
-	w->offsetY = 22;
-	ws->itemHeight = 14;
-	ws->scrollMax = 0;
-
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		si = Scrollbar_AllocItem(w, SCROLLBAR_BRAIN);
-		si->d.brain = &g_skirmish.brain[h];
-		snprintf(si->text, sizeof(si->text), "%s", g_table_houseInfo[h].name);
-	}
-
-	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
-}
-
-static void
-Skirmish_Draw(void)
-{
-	const int x1 = 240;
-	const int y1 = 80;
-	const int x2 = x1 + 63;
-	const int y2 = y1 + 63;
-
-	Prim_FillRect_i(x1, y1, x2, y2, 12);
-
-	if (Timer_GetTicks() - skirmish_radar_timer < RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
-		const int frame = max(0, (Timer_GetTicks() - skirmish_radar_timer) / RADAR_ANIMATION_DELAY);
-
-		GUI_DrawText_Wrapper("Generating", x1 + 32, y1 - 8, 31, 0, 0x111);
-		VideoA5_DrawWSAStatic(RADAR_ANIMATION_FRAME_COUNT - frame - 1, x1, y1);
-	}
-	else if (skirmish_regenerate_map) {
-		GUI_DrawText_Wrapper("Generating", x1 + 32, y1 - 8, 31, 0, 0x111);
-		VideoA5_DrawWSAStatic(0, x1, y1);
-	}
-	else {
-		GUI_DrawText_Wrapper("Map %u", x1 + 32, y1 - 8, 31, 0, 0x111, g_skirmish.seed);
-		Video_DrawMinimap(x1 + 1, y1 + 1, 0, 1);
-	}
-}
-
-static enum MenuAction
-Skirmish_Loop(int widgetID)
-{
-	switch (widgetID) {
-		case 0x8000 | 1: /* exit. */
-			return MENU_MAIN_MENU;
-
-		case 0x8000 | 2: /* start game. */
-			if (Skirmish_IsPlayable()) {
-				g_playerHouseID = HOUSE_INVALID;
-
-				for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-					if (g_skirmish.brain[h] == BRAIN_HUMAN) {
-						g_playerHouseID = h;
-						break;
-					}
-				}
-
-				assert(g_playerHouseID != HOUSE_INVALID);
-				return MENU_PLAY_SKIRMISH;
-			}
-			break;
-
-		case 0x8000 | 3: /* list entry. */
-		case SCANCODE_ENTER:
-		case SCANCODE_KEYPAD_4:
-		case SCANCODE_KEYPAD_5:
-		case SCANCODE_KEYPAD_6:
-		case SCANCODE_SPACE:
-			{
-				Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
-				ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
-				enum Brain new_brain = *(si->d.brain);
-
-				if (Input_Test(MOUSE_RMB)) {
-					new_brain = BRAIN_NONE;
-				}
-				else {
-					const int change_player = (widgetID == SCANCODE_KEYPAD_4) ? -1 : 1;
-
-					new_brain = ((new_brain + change_player) % (BRAIN_CPU_ALLY + 1));
-
-					/* Skip over human player if one is already selected. */
-					for (enum HouseType h = HOUSE_HARKONNEN; (new_brain == BRAIN_HUMAN) && (h < HOUSE_MAX); h++) {
-						if (g_skirmish.brain[h] == BRAIN_HUMAN)
-							new_brain = ((new_brain + change_player) % (BRAIN_CPU_ALLY + 1));
-					}
-				}
-
-				if (*(si->d.brain) != new_brain) {
-					*(si->d.brain) = new_brain;
-
-					if (!Skirmish_GenerateMap(false))
-						Skirmish_RequestRegeneration(true);
-				}
-			}
-			break;
-
-		case 0x8000 | 9:
-			Skirmish_RequestRegeneration(false);
-			break;
-	}
-
-	if (skirmish_regenerate_map) {
-		if (Skirmish_GenerateMap(true))
-			skirmish_regenerate_map = false;
-	}
-
-	return MENU_EXTRAS;
-}
-
-/*--------------------------------------------------------------*/
-
-static void
 Options_Initialise(void)
 {
 	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
@@ -832,7 +667,6 @@ Extras_Draw(MentatState *mentat)
 {
 	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS");
 	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "CHOAM.CPS", 56, 104, 56, 136, 64, 64);
-
 	Video_DrawCPSRegion(SEARCHDIR_GLOBAL_DATA_DIR, "FAME.CPS", 90, 32, 150, 168, 140, 32);
 
 	/* Credits label may need to be replaced for other languages. */
@@ -873,11 +707,6 @@ Extras_Draw(MentatState *mentat)
 			headline = String_Get_ByIndex(STR_HALL_OF_FAME);
 			break;
 
-		case EXTRASMENU_SKIRMISH:
-			headline = "Skirmish:";
-			Skirmish_Draw();
-			break;
-
 		case EXTRASMENU_OPTIONS:
 			headline = "Enhancement Options:";
 			break;
@@ -908,11 +737,8 @@ Extras_ClickRadioButton(Widget *w)
 
 	extras_page = new_extras_page;
 
-	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 2));
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 4));
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 9));
-	GUI_Widget_Get_ByIndex(extras_widgets, 1)->offsetY = 168 + 8;
-	GUI_Widget_Get_ByIndex(extras_widgets, 3)->width = 0x88;
 
 	switch (extras_page) {
 		case EXTRASMENU_CUTSCENE:
@@ -934,10 +760,6 @@ Extras_ClickRadioButton(Widget *w)
 
 		case EXTRASMENU_CAMPAIGN:
 			PickCampaign_Initialise();
-			break;
-
-		case EXTRASMENU_SKIRMISH:
-			Skirmish_Initialise();
 			break;
 
 		case EXTRASMENU_OPTIONS:
@@ -970,7 +792,7 @@ Extras_Loop(MentatState *mentat)
 		return MENU_REDRAW | MENU_EXTRAS;
 
 	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 15);
-	if ((widgetID & 0x8000) == 0 && !(extras_page == EXTRASMENU_GALLERY && mentat->wsa != NULL))
+	if ((widgetID & 0x8000) == 0 && !w->flags.invisible)
 		Scrollbar_HandleEvent(w, widgetID);
 
 	switch (extras_page) {
@@ -988,10 +810,6 @@ Extras_Loop(MentatState *mentat)
 
 		case EXTRASMENU_CAMPAIGN:
 			res = PickCampaign_Loop(widgetID);
-			break;
-
-		case EXTRASMENU_SKIRMISH:
-			res = Skirmish_Loop(widgetID);
 			break;
 
 		case EXTRASMENU_OPTIONS:

@@ -572,16 +572,19 @@ ScrollListArea_Draw(Widget *w)
 
 			case SCROLLBAR_BRAIN:
 				colour = (n == s_selectedHelpSubject) ? 8 : 31;
-				Prim_Rect_i(x - 2, y, x + 31, y + 8, colour);
 
+				const int width = 6 * 5;
 				const char *str = NULL;
 
 				     if (*(si->d.brain) == BRAIN_HUMAN)     str = "You";
 				else if (*(si->d.brain) == BRAIN_CPU_ENEMY) str = "Enemy";
 				else if (*(si->d.brain) == BRAIN_CPU_ALLY)  str = "Ally";
 
-				GUI_DrawText_Wrapper(str, x + 15, y + 1, colour, 0, 0x111);
-				GUI_DrawText_Wrapper(si->text, x + 37, y, colour, 0, 0x12);
+				Prim_Rect_i(x - 2, y, x + width + 2, y + 8, colour);
+				GUI_DrawText_Wrapper(str, x + width / 2, y + 1, colour, 0, 0x111);
+
+				colour = (n == s_selectedHelpSubject) ? 8 : 15;
+				GUI_DrawText_Wrapper(si->text, x + width + 8, y, colour, 0, 0x22);
 				break;
 		}
 	}
