@@ -156,11 +156,10 @@ SaveMenu_FreeScrollbar(void)
 int
 SaveMenu_Savegame_Click(uint16 key)
 {
-	const uint16 loc08 = 1;
 	char *saveDesc = g_savegameDesc[key];
 	Widget *w = g_widgetLinkedListTail;
 	Widget *scrollbar = s_scrollbar;
-	int loc0A = GUI_EditBox(saveDesc, 50, 15, g_widgetLinkedListTail, NULL, loc08);
+	int loc0A = GUI_EditBox(saveDesc, 50, g_widgetLinkedListTail);
 
 	if ((loc0A & 0x8000) == 0)
 		return 0;

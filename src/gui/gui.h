@@ -112,7 +112,7 @@ extern void GUI_HallOfFame_Show(enum HouseType houseID, uint16 score);
 extern uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show);
 
 /* editbox.c */
-extern int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, struct Widget *w, uint16 (*tickProc)(void), uint16 unknown4);
+extern int GUI_EditBox(char *text, uint16 maxLength, struct Widget *w);
 extern void GUI_EditBox_Draw(const char *text);
 
 #endif /* GUI_GUI_H */

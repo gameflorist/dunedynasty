@@ -1994,7 +1994,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 			GUI_HallOfFame_DrawData(data, false);
 
 			Input_Tick(true);
-			int ret = GUI_EditBox(name, 8, 19, NULL, NULL, 0);
+			int ret = GUI_EditBox(name, 8, NULL);
 			GUI_EditBox_Draw(name);
 			if (ret == SCANCODE_ENTER) {
 				if (*name == '\0')

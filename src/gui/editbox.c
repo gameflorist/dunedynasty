@@ -71,25 +71,19 @@ static void GUI_EditBox_BlinkCursor(uint16 positionX, bool resetBlink)
  * Show an EditBox and handles the input.
  * @param text The text to edit. Uses the pointer to make the modifications.
  * @param maxLength The maximum length of the text.
- * @param unknown1 Unknown.
  * @param w The widget this editbox is attached to.
- * @param tickProc The function to call every tick, for animation etc.
- * @param unknown4 Unknown.
  *
  * Return:
  * -1: cancel
  *  0: continue editting
  * 1+: other events (key/widgetID)
  */
-int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16 (*tickProc)(void), uint16 unknown4)
+int GUI_EditBox(char *text, uint16 maxLength, Widget *w)
 {
-	VARIABLE_NOT_USED(unknown1);
-
 	uint16 positionX;
 	uint16 maxWidth;
 	uint16 textWidth;
 	uint16 textLength;
-	uint16 returnValue = 0x0;
 	char *t;
 
 	positionX = g_curWidgetXBase;
@@ -108,26 +102,9 @@ int GUI_EditBox(char *text, uint16 maxLength, uint16 unknown1, Widget *w, uint16
 	}
 	*t = '\0';
 
-	if ((unknown4 & 0x1) != 0) {
-		unknown4 |= 0x4;
-	}
-
-#if 0
-	if ((unknown4 & 0x4) != 0) Widget_PaintCurrentWidget();
-
-	GUI_DrawText_Wrapper(text, positionX, g_curWidgetYBase, g_curWidgetFGColourBlink, g_curWidgetFGColourNormal, 0);
-	GUI_EditBox_BlinkCursor(positionX + textWidth, false);
-#endif
-
 	while (Input_IsInputAvailable()) {
 		uint16 keyWidth;
 		uint16 key;
-
-		if (tickProc != NULL) {
-			returnValue = tickProc();
-			if (returnValue != 0)
-				return returnValue;
-		}
 
 		key = GUI_Widget_HandleEvents(w);
 

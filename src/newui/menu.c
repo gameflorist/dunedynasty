@@ -829,7 +829,7 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 {
 	bool redraw = Input_IsInputAvailable();
 
-	const int res = GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, 9, NULL, NULL, 0);
+	const int res = GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, NULL);
 
 	if (res == SCANCODE_ENTER) {
 		const char *answer = String_Get_ByIndex(mentat->security_question + 2);
