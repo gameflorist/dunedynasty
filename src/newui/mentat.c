@@ -12,6 +12,7 @@
 
 #include "mentat.h"
 
+#include "editbox.h"
 #include "scrollbar.h"
 #include "../config.h"
 #include "../enhancement.h"

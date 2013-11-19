@@ -12,6 +12,7 @@
 
 #include "menu.h"
 
+#include "editbox.h"
 #include "halloffame.h"
 #include "mentat.h"
 #include "menubar.h"
@@ -759,7 +760,9 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 
 	Widget_SetCurrentWidget(WINDOWID_MENTAT_EDIT_BOX);
 
-	const int res = GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, NULL);
+	const int res
+		= GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt),
+				NULL, EDITBOX_WIDTH_LIMITED);
 
 	if (res == SCANCODE_ENTER) {
 		const char *answer = String_Get_ByIndex(mentat->security_question + 2);

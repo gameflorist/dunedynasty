@@ -21,7 +21,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/file.c
 	src/gameloop.c
 	src/gfx.c
-	src/gui/editbox.c
 	src/gui/font.c
 	src/gui/gui.c
 	src/gui/mentat.c
@@ -42,6 +41,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/net/net_enet.c
 	src/net/server.c
 	src/newui/actionpanel.c
+	src/newui/editbox.c
 	src/newui/halloffame.c
 	src/newui/mentat.c
 	src/newui/menu.c

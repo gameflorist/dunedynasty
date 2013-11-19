@@ -32,6 +32,7 @@
 #include "../load.h"
 #include "../map.h"
 #include "../newui/actionpanel.h"
+#include "../newui/editbox.h"
 #include "../newui/halloffame.h"
 #include "../newui/menu.h"
 #include "../newui/menubar.h"
@@ -2004,7 +2005,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 			GUI_HallOfFame_DrawData(data, false);
 
 			Input_Tick(true);
-			int ret = GUI_EditBox(name, 8, NULL);
+			int ret = GUI_EditBox(name, sizeof(name), NULL, EDITBOX_WIDTH_LIMITED);
 			GUI_EditBox_Draw(name);
 			if (ret == SCANCODE_ENTER) {
 				if (*name == '\0')

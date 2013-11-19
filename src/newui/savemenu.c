@@ -12,6 +12,7 @@
 
 #include "savemenu.h"
 
+#include "editbox.h"
 #include "scrollbar.h"
 #include "../audio/audio.h"
 #include "../file.h"
@@ -159,7 +160,9 @@ SaveMenu_Savegame_Click(uint16 key)
 	char *saveDesc = g_savegameDesc[key];
 	Widget *w = g_widgetLinkedListTail;
 	Widget *scrollbar = s_scrollbar;
-	int loc0A = GUI_EditBox(saveDesc, 50, g_widgetLinkedListTail);
+	int loc0A
+		= GUI_EditBox(saveDesc, sizeof(g_savegameDesc[0]),
+				g_widgetLinkedListTail, EDITBOX_WIDTH_LIMITED);
 
 	if ((loc0A & 0x8000) == 0)
 		return 0;
