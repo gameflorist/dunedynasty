@@ -144,7 +144,8 @@ Campaign_ResetEnhancements(void)
 		enhancement_read_scenario_structure_health = true;
 	}
 
-	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH
+	 || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
 		enhancement_undelay_ordos_siege_tank_tech = true;
 	}
 	else {

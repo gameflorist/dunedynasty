@@ -208,7 +208,7 @@ bool enhancement_fix_scenario_typos;
 bool enhancement_read_scenario_structure_health;
 
 /**
- * [Skirmish only] The original game delays Ordos siege tanks by one
+ * [Skirmish / MP] The original game delays Ordos siege tanks by one
  * level, leading to unfairness in skirmish mode.
  */
 bool enhancement_undelay_ordos_siege_tank_tech;
