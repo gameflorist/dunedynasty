@@ -401,7 +401,7 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 				Unit_Damage(u, hitpoints >> (distance >> 2), 0);
 			}
 
-			if (u->o.houseID == g_playerHouseID) continue;
+			if (House_IsHuman(u->o.houseID)) continue;
 
 			us = Tools_Index_GetUnit(unitOriginEncoded);
 			if (us == NULL) continue;
