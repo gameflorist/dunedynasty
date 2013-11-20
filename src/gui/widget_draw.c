@@ -688,6 +688,8 @@ GUI_Widget_Savegame_Draw(uint16 key)
 	char *saveDesc = g_savegameDesc[key];
 
 	Widget_SetCurrentWidget(15);
+	Prim_DrawBorder(g_curWidgetXBase - 1, g_curWidgetYBase - 1,
+			g_curWidgetWidth + 2, g_curWidgetHeight + 2, 1, false, false, 4);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 232, 235, 0x22);
 	GUI_EditBox_Draw(saveDesc);
 }
