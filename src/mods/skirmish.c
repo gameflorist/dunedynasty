@@ -113,6 +113,8 @@ static const SkirmishBuildOrder buildorder[] = {
 	{ STRUCTURE_INVALID,            99, false, 0    },
 };
 
+Skirmish g_skirmish;
+
 /*--------------------------------------------------------------*/
 
 bool

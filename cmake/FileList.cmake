@@ -36,7 +36,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/input/mouse_dd.c
 	src/load.c
 	src/map.c
-	src/mapgenerator/skirmish.c
+	src/mods/skirmish.c
 	src/net/client.c
 	src/net/message.c
 	src/net/net_enet.c

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "saveload.h"
 #include "../house.h"
+#include "../mods/skirmish.h"
 #include "../scenario.h"
 
 static OldScenarioStats s_oldStats;

@@ -31,7 +31,7 @@
 #include "../ini.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
-#include "../mapgenerator/skirmish.h"
+#include "../mods/skirmish.h"
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../sprites.h"

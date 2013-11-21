@@ -15,7 +15,7 @@
 #include "audio/audio.h"
 #include "file.h"
 #include "map.h"
-#include "mapgenerator/skirmish.h"
+#include "mods/skirmish.h"
 #include "newui/menubar.h"
 #include "opendune.h"
 #include "saveload/saveload.h"

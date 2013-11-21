@@ -14,7 +14,7 @@
 #include "../gui/gui.h"
 #include "../gui/widget.h"
 #include "../input/input.h"
-#include "../mapgenerator/skirmish.h"
+#include "../mods/skirmish.h"
 #include "../scenario.h"
 #include "../shape.h"
 #include "../string.h"

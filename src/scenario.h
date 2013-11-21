@@ -68,11 +68,6 @@ typedef struct OldScenarioStats {
 	uint16 harvestedEnemy;                                  /*!< Total amount of spice harvested by "Enemy". */
 } OldScenarioStats;
 
-typedef struct Skirmish {
-	uint32 seed;
-	enum Brain brain[HOUSE_MAX];
-} Skirmish;
-
 struct House;
 struct Tile;
 
@@ -81,7 +76,6 @@ extern int g_campaign_total;
 extern int g_campaign_selected;
 
 extern Scenario g_scenario;
-extern Skirmish g_skirmish;
 
 extern Campaign *Campaign_Alloc(const char *dir_name);
 extern void Campaign_Load(void);

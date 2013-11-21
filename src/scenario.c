@@ -41,7 +41,6 @@ Campaign *g_campaign_list;
 int g_campaign_total;
 int g_campaign_selected;
 Scenario g_scenario;
-Skirmish g_skirmish;
 
 static void *s_scenarioBuffer = NULL;
 
