@@ -93,6 +93,18 @@ char *String_Get_ByIndex(uint16 stringID)
 	else if (stringID == STR_START_GAME) {
 		return (char *)"Start Game";
 	}
+	else if (stringID == STR_START) {
+		return (char *)"Start";
+	}
+	else if (stringID == STR_MAIN_MENU) {
+		return (char *)"Main Menu";
+	}
+	else if (stringID == STR_HOST) {
+		return (char *)"Host";
+	}
+	else if (stringID == STR_JOIN) {
+		return (char *)"Join";
+	}
 	else if (STR_HOUSE_HARKONNEN <= stringID && stringID <= STR_HOUSE_MERCENARY) {
 		const enum HouseType houseID = stringID - STR_HOUSE_HARKONNEN;
 		return (char *)g_table_houseInfo[houseID].name;

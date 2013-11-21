@@ -429,6 +429,10 @@ enum StringID {
 	STR_SECURITY_QUESTIONS      = 535,
 
 	STR_START_GAME      = 0x8000,
+	STR_START           = 0x8001,
+	STR_MAIN_MENU       = 0x8002,
+	STR_HOST            = 0x8003,
+	STR_JOIN            = 0x8004,
 
 	STR_HOUSE_HARKONNEN = 0x8FFA,
 	STR_HOUSE_ATREIDES  = 0x8FFB,

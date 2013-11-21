@@ -5,8 +5,12 @@
 #include "enumeration.h"
 
 enum {
-	DEFAULT_PORT = 1234
+	MAX_ADDR_LEN = 1023,
+	MAX_PORT_LEN = 5,
+	DEFAULT_PORT = 10700
 };
+
+#define DEFAULT_PORT_STR "10700"
 
 enum NetHostType {
 	HOSTTYPE_NONE,

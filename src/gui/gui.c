@@ -94,8 +94,8 @@ static const uint8 s_HOF_ColourBorderSchema[5][4] = {
 	{226, 228, 228, 228},
 	{116, 226, 105, 116},
 	{116, 105, 226, 116},
-	{233, 235, 232, 233},
-	{233, 232, 235, 233}
+	{116, 228, 105, 116},   /* was {233, 235, 232, 233}, but unused. */
+	{226, 105, 228, 116}    /* was {233, 232, 235, 233}, but unused. */
 };
 
 assert_compile(lengthof(s_colourBorderSchema) == lengthof(s_temporaryColourBorderSchema));

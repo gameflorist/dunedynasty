@@ -33,6 +33,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../mods/skirmish.h"
+#include "../net/net.h"
 #include "../opendune.h"
 #include "../scenario.h"
 #include "../sprites.h"
@@ -93,7 +94,7 @@ MainMenu_InitWidgets(void)
 	} menuitem[] = {
 		{ MENU_PLAY_A_GAME,  NULL, STR_PLAY_A_GAME, -1 },
 		{ MENU_LOAD_GAME,    NULL, STR_LOAD_GAME, -1 },
-		{ MENU_SKIRMISH_LOBBY, "Skirmish", STR_NULL, SCANCODE_S },
+		{ MENU_PICK_LOBBY,   "Skirmish", STR_NULL, SCANCODE_S },
 		{ MENU_EXTRAS,       "Options and Extras", STR_NULL, SCANCODE_O },
 		{ MENU_EXIT_GAME,    NULL, STR_EXIT_GAME, -1 },
 	};
@@ -575,10 +576,10 @@ MainMenu_Loop(void)
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_LOAD_GAME;
 
-		case 0x8000 | MENU_SKIRMISH_LOBBY:
+		case 0x8000 | MENU_PICK_LOBBY:
 			main_menu_campaign_selected = g_campaign_selected;
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
-			return MENU_BLINK_CONFIRM | MENU_SKIRMISH_LOBBY;
+			return MENU_BLINK_CONFIRM | MENU_PICK_LOBBY;
 
 		case 0x8000 | MENU_EXIT_GAME:
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
@@ -1381,6 +1382,10 @@ Menu_Run(void)
 					LoadGame_Draw();
 					break;
 
+				case MENU_PICK_LOBBY:
+					PickLobby_Draw();
+					break;
+
 				case MENU_SKIRMISH_LOBBY:
 					SkirmishLobby_Draw();
 					break;
@@ -1462,6 +1467,10 @@ Menu_Run(void)
 
 			case MENU_LOAD_GAME:
 				res = LoadGame_Loop();
+				break;
+
+			case MENU_PICK_LOBBY:
+				res = PickLobby_Loop();
 				break;
 
 			case MENU_SKIRMISH_LOBBY:
@@ -1556,7 +1565,7 @@ Menu_Run(void)
 		if ((curr_menu & 0xFF) != (res & 0xFF)) {
 			redraw = true;
 
-			if (((curr_menu & 0xFF) == MENU_SKIRMISH_LOBBY)
+			if (((curr_menu & 0xFF) == MENU_PICK_LOBBY)
 					&& (res & 0xFF) == MENU_MAIN_MENU) {
 				g_campaign_selected = main_menu_campaign_selected;
 			}
