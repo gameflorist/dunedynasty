@@ -49,7 +49,6 @@
 #include "../input/input_a5.h"
 #include "../input/mouse.h"
 #include "../map.h"
-#include "../net/net.h"
 #include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../scenario.h"
@@ -371,12 +370,7 @@ VideoA5_Init(void)
 		return false;
 	}
 
-	if (g_host_type == HOSTTYPE_DEDICATED_CLIENT) {
-		al_set_window_title(display, "Dune Dynasty (client)");
-	}
-	else {
-		al_set_window_title(display, "Dune Dynasty");
-	}
+	al_set_window_title(display, "Dune Dynasty");
 
 	/* al_set_new_bitmap_flags(ALLEGRO_MAG_LINEAR); */
 	TRUE_DISPLAY_WIDTH = al_get_display_width(display);

@@ -148,37 +148,27 @@ Net_Synchronise(void)
 }
 
 bool
-Net_CreateServer(int port)
+Net_CreateServer(const char *addr, int port)
 {
 	const int max_clients = HOUSE_MAX;
 
 	if (g_host_type == HOSTTYPE_NONE && s_host == NULL && s_peer == NULL) {
 		ENetAddress address;
-		address.host = ENET_HOST_ANY;
+		enet_address_set_host(&address, addr);
 		address.port = port;
 
 		s_host = enet_host_create(&address, max_clients, 2, 0, 0);
-		if (s_host != NULL) {
-			ENetEvent event;
+		if (s_host == NULL)
+			goto ERROR_HOST_CREATE;
 
-			NET_LOG("%s", "Created server.");
+		NET_LOG("%s", "Created server.");
 
-			if (enet_host_service(s_host, &event, 10000) > 0) {
-				if (event.type == ENET_EVENT_TYPE_CONNECT) {
-					NET_LOG("A new client connected from %x:%u.",
-							event.peer->address.host, event.peer->address.port);
+		g_host_type = HOSTTYPE_CLIENT_SERVER;
 
-					g_host_type = HOSTTYPE_CLIENT_SERVER;
-					return true;
-				}
-			}
-
-			/* Timeout. */
-			enet_host_destroy(s_host);
-			s_host = NULL;
-		}
+		return true;
 	}
 
+ERROR_HOST_CREATE:
 	return false;
 }
 

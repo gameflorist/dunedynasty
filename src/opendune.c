@@ -622,18 +622,8 @@ static bool Unknown_25C4_000E(void)
 
 int main(int argc, char **argv)
 {
-	if (argc > 1) {
-		Net_Initialise();
-
-		if (strcmp(argv[1], "server") == 0) {
-			if (!Net_CreateServer(DEFAULT_PORT))
-				return 0;
-		}
-		else {
-			if (!Net_ConnectToServer(argv[1], DEFAULT_PORT))
-				return 0;
-		}
-	}
+	VARIABLE_NOT_USED(argc);
+	VARIABLE_NOT_USED(argv);
 
 	CrashLog_Init();
 	FileHash_Init();
@@ -700,6 +690,9 @@ int main(int argc, char **argv)
 	VideoA5_InitSprites();
 	GameLoop_TweakWidgetDimensions();
 	Audio_PlayVoice(VOICE_STOP);
+
+	Net_Initialise();
+
 	GameLoop_GameIntroAnimationMenu();
 
 	printf("%s\n", String_Get_ByIndex(STR_THANK_YOU_FOR_PLAYING_DUNE_II));

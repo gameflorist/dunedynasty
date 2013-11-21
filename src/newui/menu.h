@@ -25,6 +25,7 @@ enum MenuAction {
 	MENU_LOAD_GAME,
 	MENU_PICK_LOBBY,
 	MENU_SKIRMISH_LOBBY,
+	MENU_MULTIPLAYER_LOBBY,
 	MENU_PLAY_SKIRMISH,
 	MENU_BATTLE_SUMMARY,
 	MENU_SKIRMISH_SUMMARY,
@@ -46,7 +47,7 @@ struct MentatState;
 struct Widget;
 
 extern struct Widget *main_menu_widgets;
-extern bool skirmish_regenerate_map;
+extern bool lobby_regenerate_map;
 
 extern void Menu_FreeWidgets(struct Widget *w);
 extern void Menu_LoadPalette(void);
@@ -60,6 +61,9 @@ extern enum MenuAction PickLobby_Loop(void);
 extern void SkirmishLobby_Initialise(void);
 extern void SkirmishLobby_Draw(void);
 extern enum MenuAction SkirmishLobby_Loop(void);
+extern void MultiplayerLobby_Initialise(void);
+extern void MultiplayerLobby_Draw(void);
+extern enum MenuAction MultiplayerLobby_Loop(void);
 
 extern void Extras_InitWidgets(void);
 extern void Extras_FreeWidgets(void);

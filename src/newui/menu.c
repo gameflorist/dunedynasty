@@ -1064,13 +1064,13 @@ static enum MenuAction
 PlaySkirmish_Loop(void)
 {
 	do {
-		if (skirmish_regenerate_map) {
+		if (lobby_regenerate_map) {
 			if (!Skirmish_GenerateMap(false))
 				return MENU_EXTRAS;
 		}
 
 		PlayAGame_StartGame(false);
-		skirmish_regenerate_map = true;
+		lobby_regenerate_map = true;
 	} while (g_gameMode == GM_RESTART);
 
 	if (g_gameMode == GM_WIN) {
@@ -1338,6 +1338,10 @@ Menu_Run(void)
 					SkirmishLobby_Initialise();
 					break;
 
+				case MENU_MULTIPLAYER_LOBBY:
+					MultiplayerLobby_Initialise();
+					break;
+
 				case MENU_BATTLE_SUMMARY:
 				case MENU_SKIRMISH_SUMMARY:
 					BattleSummary_Initialise(g_playerHouseID, &g_hall_of_fame_state);
@@ -1388,6 +1392,10 @@ Menu_Run(void)
 
 				case MENU_SKIRMISH_LOBBY:
 					SkirmishLobby_Draw();
+					break;
+
+				case MENU_MULTIPLAYER_LOBBY:
+					MultiplayerLobby_Draw();
 					break;
 
 				case MENU_BATTLE_SUMMARY:
@@ -1475,6 +1483,10 @@ Menu_Run(void)
 
 			case MENU_SKIRMISH_LOBBY:
 				res = SkirmishLobby_Loop();
+				break;
+
+			case MENU_MULTIPLAYER_LOBBY:
+				res = MultiplayerLobby_Loop();
 				break;
 
 			case MENU_PLAY_SKIRMISH:

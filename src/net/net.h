@@ -5,6 +5,7 @@
 #include "enumeration.h"
 
 enum {
+	MAX_NAME_LEN = 14,
 	MAX_ADDR_LEN = 1023,
 	MAX_PORT_LEN = 5,
 	DEFAULT_PORT = 10700
@@ -24,7 +25,7 @@ extern enum NetHostType g_host_type;
 
 extern void Net_Initialise(void);
 extern void Net_Synchronise(void);
-extern bool Net_CreateServer(int port);
+extern bool Net_CreateServer(const char *addr, int port);
 extern bool Net_ConnectToServer(const char *hostname, int port);
 
 extern void Server_SendMessages(void);
