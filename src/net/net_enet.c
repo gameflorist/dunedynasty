@@ -25,6 +25,12 @@
 #define NET_LOG(...)
 #endif
 
+char g_net_name[MAX_NAME_LEN + 1] = "Name";
+char g_host_addr[MAX_ADDR_LEN + 1] = "0.0.0.0";
+char g_host_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
+char g_join_addr[MAX_ADDR_LEN + 1] = "localhost";
+char g_join_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
+
 enum HouseFlag g_client_houses;
 enum NetHostType g_host_type;
 static ENetHost *s_host;

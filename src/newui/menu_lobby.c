@@ -29,11 +29,6 @@
 #include "../video/video.h"
 #include "../wsa.h"
 
-static char s_net_name[MAX_NAME_LEN + 1] = "Name";
-static char s_host_addr[MAX_ADDR_LEN + 1] = "0.0.0.0";
-static char s_host_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
-static char s_join_addr[MAX_ADDR_LEN + 1] = "localhost";
-static char s_join_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
 static char s_chat_buf[MAX_CHAT_LEN + 1];
 
 static Widget *pick_lobby_widgets;
@@ -100,7 +95,7 @@ PickLobby_InitWidgets(void)
 	w->drawParameterNormal.proc = EditBox_DrawWithBorder;
 	w->drawParameterSelected.proc = EditBox_DrawWithBorder;
 	w->drawParameterDown.proc = EditBox_DrawWithBorder;
-	w->data = s_host_addr;
+	w->data = g_host_addr;
 	pick_lobby_widgets = GUI_Widget_Link(pick_lobby_widgets, w);
 
 	w = GUI_Widget_Allocate(22, 0, 217, 128, 0xFFFE, STR_NULL);
@@ -115,7 +110,7 @@ PickLobby_InitWidgets(void)
 	w->drawParameterNormal.proc = EditBox_DrawWithBorder;
 	w->drawParameterSelected.proc = EditBox_DrawWithBorder;
 	w->drawParameterDown.proc = EditBox_DrawWithBorder;
-	w->data = s_host_port;
+	w->data = g_host_port;
 	pick_lobby_widgets = GUI_Widget_Link(pick_lobby_widgets, w);
 
 	/* Join. */
@@ -142,7 +137,7 @@ PickLobby_InitWidgets(void)
 	w->drawParameterNormal.proc = EditBox_DrawWithBorder;
 	w->drawParameterSelected.proc = EditBox_DrawWithBorder;
 	w->drawParameterDown.proc = EditBox_DrawWithBorder;
-	w->data = s_join_addr;
+	w->data = g_join_addr;
 	pick_lobby_widgets = GUI_Widget_Link(pick_lobby_widgets, w);
 
 	w = GUI_Widget_Allocate(32, 0, 217, 148, 0xFFFE, STR_NULL);
@@ -157,7 +152,7 @@ PickLobby_InitWidgets(void)
 	w->drawParameterNormal.proc = EditBox_DrawWithBorder;
 	w->drawParameterSelected.proc = EditBox_DrawWithBorder;
 	w->drawParameterDown.proc = EditBox_DrawWithBorder;
-	w->data = s_join_port;
+	w->data = g_join_port;
 	pick_lobby_widgets = GUI_Widget_Link(pick_lobby_widgets, w);
 }
 
@@ -259,7 +254,7 @@ MultiplayerLobby_InitWidgets(void)
 	w->drawParameterNormal.proc = EditBox_DrawCentred;
 	w->drawParameterSelected.proc = EditBox_DrawCentred;
 	w->drawParameterDown.proc = EditBox_DrawCentred;
-	w->data = s_net_name;
+	w->data = g_net_name;
 	multiplayer_lobby_widgets = GUI_Widget_Link(multiplayer_lobby_widgets, w);
 
 	/* Regenerate map. */
@@ -351,22 +346,22 @@ PickLobby_Loop(void)
 	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
 
 	if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 21))->state.selected) {
-		editbox = GUI_EditBox(s_host_addr, sizeof(s_host_addr), w, EDITBOX_ADDRESS);
+		editbox = GUI_EditBox(g_host_addr, sizeof(g_host_addr), w, EDITBOX_ADDRESS);
 
 		if (editbox == SCANCODE_ENTER)
 			GUI_Widget_MakeSelected(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 22), false);
 	}
 	else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 22))->state.selected) {
-		editbox = GUI_EditBox(s_host_port, sizeof(s_host_port), w, EDITBOX_PORT);
+		editbox = GUI_EditBox(g_host_port, sizeof(g_host_port), w, EDITBOX_PORT);
 	}
 	else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 31))->state.selected) {
-		editbox = GUI_EditBox(s_join_addr, sizeof(s_join_addr), w, EDITBOX_ADDRESS);
+		editbox = GUI_EditBox(g_join_addr, sizeof(g_join_addr), w, EDITBOX_ADDRESS);
 
 		if (editbox == SCANCODE_ENTER)
 			GUI_Widget_MakeSelected(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 32), false);
 	}
 	else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 32))->state.selected) {
-		editbox = GUI_EditBox(s_join_port, sizeof(s_join_port), w, EDITBOX_PORT);
+		editbox = GUI_EditBox(g_join_port, sizeof(g_join_port), w, EDITBOX_PORT);
 	}
 	else {
 		widgetID = GUI_Widget_HandleEvents(pick_lobby_widgets);
@@ -386,13 +381,13 @@ PickLobby_Loop(void)
 
 		case 0x8000 | 20: /* host */
 			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 20), false);
-			if (Net_CreateServer(s_host_addr, atoi(s_host_port), s_net_name))
+			if (Net_CreateServer(g_host_addr, atoi(g_host_port), g_net_name))
 				return MENU_NO_TRANSITION | MENU_MULTIPLAYER_LOBBY;
 			break;
 
 		case 0x8000 | 30: /* join */
 			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 30), false);
-			if (Net_ConnectToServer(s_join_addr, atoi(s_join_port), s_net_name))
+			if (Net_ConnectToServer(g_join_addr, atoi(g_join_port), g_net_name))
 				return MENU_NO_TRANSITION | MENU_MULTIPLAYER_LOBBY;
 			break;
 
@@ -684,10 +679,10 @@ MultiplayerLobby_Loop(void)
 	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
 
 	if ((w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 8))->state.selected) {
-		int editbox = GUI_EditBox(s_net_name, sizeof(s_net_name), w, EDITBOX_FREEFORM);
+		int editbox = GUI_EditBox(g_net_name, sizeof(g_net_name), w, EDITBOX_FREEFORM);
 
 		if (editbox == SCANCODE_ENTER || editbox == SCANCODE_ESCAPE || !w->state.selected) {
-			if (Client_Send_PrefName(s_net_name)) {
+			if (Client_Send_PrefName(g_net_name)) {
 				GUI_Widget_MakeNormal(w, false);
 			}
 			else {

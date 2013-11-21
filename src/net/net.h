@@ -34,6 +34,12 @@ typedef struct PeerData {
 	char name[MAX_NAME_LEN + 1];
 } PeerData;
 
+extern char g_net_name[MAX_NAME_LEN + 1];
+extern char g_host_addr[MAX_ADDR_LEN + 1];
+extern char g_host_port[MAX_PORT_LEN + 1];
+extern char g_join_addr[MAX_ADDR_LEN + 1];
+extern char g_join_port[MAX_PORT_LEN + 1];
+
 extern enum HouseFlag g_client_houses;
 extern enum NetHostType g_host_type;
 extern int g_local_client_id;

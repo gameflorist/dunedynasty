@@ -14,6 +14,7 @@
 #include "enhancement.h"
 #include "file.h"
 #include "gfx.h"
+#include "net/net.h"
 #include "opendune.h"
 #include "scenario.h"
 #include "string.h"
@@ -41,6 +42,8 @@ typedef struct GameOption {
 		CONFIG_SMOOTH_ANIM,
 		CONFIG_SOUND_EFFECTS,
 		CONFIG_STRING,
+		CONFIG_STRING_NAME,
+		CONFIG_STRING_PORT,
 		CONFIG_LANGUAGE,
 		CONFIG_MUSIC_PACK,
 		CONFIG_SUBTITLE,
@@ -156,6 +159,12 @@ static const GameOption s_game_option[] = {
 	{ "enhancement",    "repeat_reinforcements",    CONFIG_BOOL,.d._bool = &enhancement_repeat_reinforcements },
 	{ "enhancement",    "smooth_unit_animation",    CONFIG_SMOOTH_ANIM, .d._smooth_anim = &enhancement_smooth_unit_animation },
 	{ "enhancement",    "subtitle_override",        CONFIG_SUBTITLE,.d._subtitle = &enhancement_subtitle_override },
+
+	{ "multiplayer",    "name",         CONFIG_STRING_NAME, .d._string = g_net_name },
+	{ "multiplayer",    "host_address", CONFIG_STRING,      .d._string = g_host_addr },
+	{ "multiplayer",    "host_port",    CONFIG_STRING_PORT, .d._string = g_host_port },
+	{ "multiplayer",    "join_address", CONFIG_STRING,      .d._string = g_join_addr },
+	{ "multiplayer",    "join_port",    CONFIG_STRING_PORT, .d._string = g_join_port },
 
 	{ NULL, NULL, CONFIG_BOOL, .d._bool = NULL }
 };
@@ -635,7 +644,17 @@ GameOptions_Load(void)
 				break;
 
 			case CONFIG_STRING:
-				snprintf(opt->d._string, 1024, "%s", str);
+			case CONFIG_STRING_NAME:
+				if (str != NULL && str[0] != '\0') {
+					const int len
+						= (opt->type == CONFIG_STRING_NAME) ? 16 : 1024;
+					snprintf(opt->d._string, len, "%s", str);
+				}
+				break;
+
+			case CONFIG_STRING_PORT:
+				snprintf(opt->d._string, 6, "%s",
+						(atoi(str) > 0) ? str : DEFAULT_PORT_STR);
 				break;
 
 			case CONFIG_LANGUAGE:
@@ -775,6 +794,8 @@ GameOptions_Save(void)
 				break;
 
 			case CONFIG_STRING:
+			case CONFIG_STRING_NAME:
+			case CONFIG_STRING_PORT:
 				al_set_config_value(s_configFile, opt->section, opt->key, opt->d._string);
 				break;
 
