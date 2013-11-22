@@ -452,7 +452,11 @@ GameLoop_Loop(void)
 
 	while (g_gameMode == GM_NORMAL) {
 		const enum TimerType source = Timer_WaitForEvent();
-		Client_RecvMessages();
+		const enum NetEvent e = Client_RecvMessages();
+		if (e == NETEVENT_DISCONNECT) {
+			g_gameMode = GM_QUITGAME;
+			break;
+		}
 
 		if (source == TIMER_GUI) {
 			redraw = true;

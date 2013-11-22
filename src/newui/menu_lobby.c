@@ -16,6 +16,7 @@
 #include "../gui/gui.h"
 #include "../gui/widget.h"
 #include "../input/input.h"
+#include "../mods/multiplayer.h"
 #include "../mods/skirmish.h"
 #include "../net/net.h"
 #include "../scenario.h"
@@ -385,6 +386,12 @@ PickLobby_Loop(void)
 				return MENU_NO_TRANSITION | MENU_MULTIPLAYER_LOBBY;
 			break;
 
+		case 0x8000 | 30: /* join */
+			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 30), false);
+			if (Net_ConnectToServer(s_join_addr, atoi(s_join_port)))
+				return MENU_NO_TRANSITION | MENU_MULTIPLAYER_LOBBY;
+			break;
+
 		default:
 			break;
 	}
@@ -649,6 +656,17 @@ MultiplayerLobby_Draw(void)
 enum MenuAction
 MultiplayerLobby_Loop(void)
 {
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		Server_RecvMessages();
+	}
+	else {
+		enum NetEvent e = Client_RecvMessages();
+		if (e == NETEVENT_DISCONNECT) {
+			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
+		}
+	}
+
 	int widgetID = 0;
 	Widget *w;
 
@@ -662,6 +680,7 @@ MultiplayerLobby_Loop(void)
 
 	switch (widgetID) {
 		case 0x8000 | 1: /* exit. */
+			Net_Disconnect();
 			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
 
 		default:

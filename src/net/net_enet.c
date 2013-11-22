@@ -11,6 +11,7 @@
 #include "message.h"
 #include "server.h"
 #include "../house.h"
+#include "../mods/multiplayer.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 
@@ -26,6 +27,53 @@ enum NetHostType g_host_type;
 static ENetHost *s_host;
 static ENetPeer *s_peer;
 
+int g_local_client_id;
+static PeerData s_peer_data[MAX_CLIENTS];
+
+/*--------------------------------------------------------------*/
+
+static PeerData *
+Net_NewPeerData(int peerID)
+{
+	for (int i = 0; i < MAX_CLIENTS; i++) {
+		PeerData *data = &s_peer_data[i];
+
+		if (data->id == 0) {
+			data->id = peerID;
+			return data;
+		}
+	}
+
+	return NULL;
+}
+
+static PeerData *
+Server_NewClient(void)
+{
+	static int l_peerID = 0;
+
+	l_peerID = (l_peerID + 1) & 0xFF;
+
+	if (l_peerID == 0)
+		l_peerID = 1;
+
+	return Net_NewPeerData(l_peerID);
+}
+
+static enum HouseType
+Net_GetClientHouse(int peerID)
+{
+	if (peerID == 0)
+		return HOUSE_INVALID;
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_multiplayer.client[h] == peerID)
+			return h;
+	}
+
+	return HOUSE_INVALID;
+}
+
 /*--------------------------------------------------------------*/
 
 void
@@ -35,124 +83,13 @@ Net_Initialise(void)
 	atexit(enet_deinitialize);
 }
 
-static bool
-Server_ConnectClient(ENetPacket *packet, ENetPeer *peer)
-{
-	bool success = false;
-
-	if (packet->dataLength == 2 && packet->data[0] == '=') {
-		const enum HouseType houseID = packet->data[1];
-
-		if ((HOUSE_HARKONNEN <= houseID && houseID < HOUSE_MAX)
-				&& !(g_client_houses & (1 << houseID))) {
-			House *h = House_Get_ByIndex(houseID);
-
-			peer->data = (void *)houseID;
-
-			g_client_houses |= (1 << houseID);
-			h->flags.human = true;
-
-			success = true;
-		}
-	}
-
-	return success;
-}
-
-static void
-Server_DisconnectClient(ENetPeer *peer)
-{
-	const enum HouseType houseID = (enum HouseType)peer->data;
-	House *h = House_Get_ByIndex(houseID);
-
-	g_client_houses &= ~(1 << houseID);
-	h->flags.human = false;
-	h->flags.isAIActive = true;
-
-	enet_peer_disconnect(peer, 0);
-}
-
-static void
-Server_Synchronise(void)
-{
-	int clients_connected = 0;
-
-	g_client_houses = 0;
-
-	while (clients_connected == 0) {
-		ENetEvent event;
-		if (enet_host_service(s_host, &event, 1000) == 0)
-			continue;
-
-		switch (event.type) {
-			case ENET_EVENT_TYPE_RECEIVE:
-				{
-					const bool success
-						= Server_ConnectClient(event.packet, event.peer);
-
-					if (success) {
-						clients_connected++;
-						enet_peer_send(event.peer, 0, event.packet);
-					}
-					else {
-						enet_packet_destroy(event.packet);
-						enet_peer_disconnect(event.peer, 0);
-					}
-				}
-				break;
-
-			case ENET_EVENT_TYPE_DISCONNECT:
-			case ENET_EVENT_TYPE_CONNECT:
-			case ENET_EVENT_TYPE_NONE:
-			default:
-				break;
-		}
-	}
-
-	enet_host_service(s_host, NULL, 0); /* XXX */
-
-	Server_ResetCache();
-}
-
-static void
-Client_Synchronise(void)
-{
-	unsigned char buf[2];
-	buf[0] = '=';
-	buf[1] = g_playerHouseID;
-
-	ENetPacket *packet
-		= enet_packet_create(&buf, 2, ENET_PACKET_FLAG_RELIABLE);
-
-	enet_peer_send(s_peer, 0, packet);
-
-	Client_ResetCache();
-}
-
-void
-Net_Synchronise(void)
-{
-	switch (g_host_type) {
-		case HOSTTYPE_DEDICATED_SERVER:
-		case HOSTTYPE_CLIENT_SERVER:
-			Server_Synchronise();
-			break;
-
-		case HOSTTYPE_DEDICATED_CLIENT:
-			Client_Synchronise();
-			break;
-
-		default:
-			return;
-	}
-}
-
 bool
 Net_CreateServer(const char *addr, int port)
 {
-	const int max_clients = HOUSE_MAX;
-
 	if (g_host_type == HOSTTYPE_NONE && s_host == NULL && s_peer == NULL) {
+		/* Currently at most MAX_HOUSE players, or 5 remote clients. */
+		const int max_clients = MAX_CLIENTS - 1;
+
 		ENetAddress address;
 		enet_address_set_host(&address, addr);
 		address.port = port;
@@ -163,7 +100,15 @@ Net_CreateServer(const char *addr, int port)
 
 		NET_LOG("%s", "Created server.");
 
+		g_client_houses = 0;
+		memset(s_peer_data, 0, sizeof(s_peer_data));
+		memset(&g_multiplayer, 0, sizeof(g_multiplayer));
+
 		g_host_type = HOSTTYPE_CLIENT_SERVER;
+		PeerData *data = Server_NewClient();
+		assert(data != NULL);
+
+		g_local_client_id = data->id;
 
 		return true;
 	}
@@ -181,32 +126,72 @@ Net_ConnectToServer(const char *hostname, int port)
 		address.port = port;
 
 		s_host = enet_host_create(NULL, 1, 2, 57600/8, 14400/8);
-		if (s_host != NULL) {
-			s_peer = enet_host_connect(s_host, &address, 2, 0);
-			if (s_peer != NULL) {
-				ENetEvent event;
+		if (s_host == NULL)
+			goto ERROR_HOST_CREATE;
 
-				if (enet_host_service(s_host, &event, 5000) > 0
-						&& event.type == ENET_EVENT_TYPE_CONNECT) {
-					NET_LOG("Connected to server %s:%d\n", hostname, port);
-					enet_host_service(s_host, &event, 0);
+		s_peer = enet_host_connect(s_host, &address, 2, 0);
+		if (s_peer == NULL)
+			goto ERROR_HOST_CONNECT;
 
-					g_host_type = HOSTTYPE_DEDICATED_CLIENT;
-					return true;
-				}
+		ENetEvent event;
+		if (enet_host_service(s_host, &event, 1000) <= 0
+				|| event.type != ENET_EVENT_TYPE_CONNECT)
+			goto ERROR_TIMEOUT;
 
-				/* Timeout. */
-				enet_peer_reset(s_peer);
-				s_peer = NULL;
-			}
+		NET_LOG("Connected to server %s:%d\n", hostname, port);
 
-			/* Error creating peer. */
-			enet_host_destroy(s_host);
-			s_host = NULL;
-		}
+		memset(s_peer_data, 0, sizeof(s_peer_data));
+		memset(&g_multiplayer, 0, sizeof(g_multiplayer));
+
+		g_host_type = HOSTTYPE_DEDICATED_CLIENT;
+		g_local_client_id = 0;
+		return true;
 	}
 
+	goto ERROR_HOST_CREATE;
+
+ERROR_TIMEOUT:
+	enet_peer_reset(s_peer);
+	s_peer = NULL;
+
+ERROR_HOST_CONNECT:
+	enet_host_destroy(s_host);
+	s_host = NULL;
+
+ERROR_HOST_CREATE:
 	return false;
+}
+
+void
+Net_Disconnect(void)
+{
+	if (s_host != NULL) {
+		int connected_peers = s_host->connectedPeers;
+
+		for (size_t i = 0; i < s_host->connectedPeers; i++) {
+			enet_peer_disconnect(&s_host->peers[i], 0);
+		}
+
+		for (int attempts = 30; attempts > 0 && connected_peers > 0; attempts--) {
+			ENetEvent event;
+			if (enet_host_service(s_host, &event, 100) == 0)
+				continue;
+
+			if (event.type == ENET_EVENT_TYPE_DISCONNECT)
+				connected_peers--;
+		}
+
+		enet_host_destroy(s_host);
+		s_host = NULL;
+	}
+
+	s_peer = NULL;
+	g_host_type = HOSTTYPE_NONE;
+}
+
+void
+Net_Synchronise(void)
+{
 }
 
 /*--------------------------------------------------------------*/
@@ -228,9 +213,9 @@ Server_SendMessages(void)
 
 	unsigned char * const buf_start_client_specific = buf;
 
-	for (size_t i = 0; i < s_host->peerCount; i++) {
-		ENetPeer *peer = &s_host->peers[i];
-		enum HouseType houseID = (enum HouseType)peer->data;
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		if (g_multiplayer.client[houseID] == 0)
+			continue;
 
 		buf = buf_start_client_specific;
 
@@ -247,14 +232,63 @@ Server_SendMessages(void)
 
 		const int len = buf - g_server_broadcast_message_buf;
 
-		NET_LOG("packet size=%d, num outgoing packets=%lu",
-				len, enet_list_size(&s_host->peers[0].outgoingReliableCommands));
-
 		ENetPacket *packet
 			= enet_packet_create(g_server_broadcast_message_buf, len,
 					ENET_PACKET_FLAG_RELIABLE);
-		enet_peer_send(peer, 0, packet);
+
+		for (int i = 0; i < MAX_CLIENTS; i++) {
+			const PeerData *data = &s_peer_data[i];
+			ENetPeer *peer = data->peer;
+
+			if (peer == NULL || Net_GetClientHouse(data->id) != houseID)
+				continue;
+
+			NET_LOG("packet size=%d, num outgoing packets=%lu",
+					len, enet_list_size(&peer->outgoingReliableCommands));
+
+			enet_peer_send(peer, 0, packet);
+		}
 	}
+}
+
+static void
+Server_Recv_ConnectClient(ENetEvent *event)
+{
+	NET_LOG("A new client connected from %x:%u.",
+			event->peer->address.host, event->peer->address.port);
+
+	PeerData *data = Server_NewClient();
+	if (data != NULL) {
+		event->peer->data = data;
+		data->peer = event->peer;
+	}
+	else {
+		enet_peer_disconnect(event->peer, 0);
+	}
+}
+
+static void
+Server_Recv_DisconnectClient(ENetEvent *event)
+{
+	NET_LOG("Disconnect client from %x:%u.",
+			event->peer->address.host, event->peer->address.port);
+
+	PeerData *data = event->peer->data;
+
+	const enum HouseType houseID = Net_GetClientHouse(data->id);
+	if (houseID != HOUSE_INVALID) {
+		House *h = House_Get_ByIndex(houseID);
+		g_multiplayer.client[houseID] = 0;
+
+		g_client_houses &= ~(1 << houseID);
+		h->flags.human = false;
+		h->flags.isAIActive = true;
+	}
+
+	data->id = 0;
+	data->peer = NULL;
+
+	enet_peer_disconnect(event->peer, 0);
 }
 
 void
@@ -280,18 +314,22 @@ Server_RecvMessages(void)
 			case ENET_EVENT_TYPE_RECEIVE:
 				{
 					ENetPacket *packet = event.packet;
-					enum HouseType houseID = (enum HouseType)event.peer->data;
+					const PeerData *data = event.peer->data;
+					const enum HouseType houseID = Net_GetClientHouse(data->id);
 					Server_ProcessMessage(houseID,
 							packet->data, packet->dataLength);
 					enet_packet_destroy(packet);
 				}
 				break;
 
-			case ENET_EVENT_TYPE_DISCONNECT:
-				Server_DisconnectClient(event.peer);
+			case ENET_EVENT_TYPE_CONNECT:
+				Server_Recv_ConnectClient(&event);
 				break;
 
-			case ENET_EVENT_TYPE_CONNECT:
+			case ENET_EVENT_TYPE_DISCONNECT:
+				Server_Recv_DisconnectClient(&event);
+				break;
+
 			case ENET_EVENT_TYPE_NONE:
 			default:
 				break;
@@ -326,16 +364,16 @@ Client_SendMessages(void)
 	g_client2server_message_len = 0;
 }
 
-void
+enum NetEvent
 Client_RecvMessages(void)
 {
 	if (g_host_type == HOSTTYPE_DEDICATED_SERVER) {
-		return;
+		return NETEVENT_NORMAL;
 	}
 	else if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
 		House_Client_UpdateRadarState();
 		Client_ChangeSelectionMode();
-		return;
+		return NETEVENT_NORMAL;
 	}
 
 	ENetEvent event;
@@ -350,8 +388,8 @@ Client_RecvMessages(void)
 				break;
 
 			case ENET_EVENT_TYPE_DISCONNECT:
-				g_gameMode = GM_QUITGAME;
-				break;
+				Net_Disconnect();
+				return NETEVENT_DISCONNECT;
 
 			case ENET_EVENT_TYPE_CONNECT:
 			case ENET_EVENT_TYPE_NONE:
@@ -359,4 +397,6 @@ Client_RecvMessages(void)
 				break;
 		}
 	}
+
+	return NETEVENT_NORMAL;
 }
