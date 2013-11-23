@@ -33,6 +33,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../mods/skirmish.h"
+#include "../net/client.h"
 #include "../net/net.h"
 #include "../opendune.h"
 #include "../scenario.h"

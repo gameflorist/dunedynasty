@@ -30,15 +30,18 @@ enum NetHostType {
 typedef struct PeerData {
 	int id;
 	void *peer;
+	char name[MAX_NAME_LEN + 1];
 } PeerData;
 
 extern enum HouseFlag g_client_houses;
 extern enum NetHostType g_host_type;
 extern int g_local_client_id;
 
+extern PeerData *Net_GetPeerData(int peerID);
+
 extern void Net_Initialise(void);
-extern bool Net_CreateServer(const char *addr, int port);
-extern bool Net_ConnectToServer(const char *hostname, int port);
+extern bool Net_CreateServer(const char *addr, int port, const char *name);
+extern bool Net_ConnectToServer(const char *hostname, int port, const char *name);
 extern void Net_Disconnect(void);
 extern void Net_Synchronise(void);
 

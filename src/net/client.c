@@ -1,6 +1,7 @@
 /* client.c */
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -216,6 +217,31 @@ Client_Send_BuildQueue(void)
 		if (objectType != 0xFFFF)
 			Client_Send_PurchaseResumeItem(&s->o, objectType);
 	}
+}
+
+bool
+Client_Send_PrefName(const char *name)
+{
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER)
+		return false;
+
+	size_t len = MAX_NAME_LEN;
+	while (isspace(*name)) {
+		name++;
+		len--;
+	}
+
+	if (*name == '\0')
+		return false;
+
+	unsigned char *buf = Client_GetBuffer(CSMSG_PREFERRED_NAME);
+	if (buf == NULL)
+		return false;
+
+	memcpy(buf, name, len);
+	memset(buf + len, 0, MAX_NAME_LEN + 1 - len);
+
+	return true;
 }
 
 /*--------------------------------------------------------------*/

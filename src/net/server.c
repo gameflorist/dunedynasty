@@ -1,6 +1,7 @@
 /* server.c */
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include "enum_string.h"
@@ -1150,7 +1151,25 @@ Server_Recv_IssueUnitAction(enum HouseType houseID, const unsigned char *buf)
 }
 
 void
-Server_ProcessMessage(enum HouseType houseID,
+Server_Recv_PrefName(int peerID, const char *name)
+{
+	PeerData *data = Net_GetPeerData(peerID);
+	int len = MAX_NAME_LEN;
+
+	while ((len > 0) && (*name != '\0')) {
+		if (!isspace(*name))
+			break;
+		name++;
+		len--;
+	}
+
+	if ((len > 0) && (*name != '\0')) {
+		snprintf(data->name, len + 1, "%s", name);
+	}
+}
+
+void
+Server_ProcessMessage(int peerID, enum HouseType houseID,
 		const unsigned char *buf, int count)
 {
 	while (count > 0) {
@@ -1204,6 +1223,10 @@ Server_ProcessMessage(enum HouseType houseID,
 
 			case CSMSG_ISSUE_UNIT_ACTION:
 				Server_Recv_IssueUnitAction(houseID, buf);
+				break;
+
+			case CSMSG_PREFERRED_NAME:
+				Server_Recv_PrefName(peerID, (const char *)buf);
 				break;
 
 			case CSMSG_MAX:

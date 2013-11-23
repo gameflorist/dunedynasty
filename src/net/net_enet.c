@@ -41,6 +41,7 @@ Net_NewPeerData(int peerID)
 
 		if (data->id == 0) {
 			data->id = peerID;
+			data->name[0] = '\0';
 			return data;
 		}
 	}
@@ -59,6 +60,20 @@ Server_NewClient(void)
 		l_peerID = 1;
 
 	return Net_NewPeerData(l_peerID);
+}
+
+PeerData *
+Net_GetPeerData(int peerID)
+{
+	if (peerID == 0)
+		return NULL;
+
+	for (int i = 0; i < MAX_CLIENTS; i++) {
+		if (s_peer_data[i].id == peerID)
+			return &s_peer_data[i];
+	}
+
+	return NULL;
 }
 
 static enum HouseType
@@ -103,7 +118,7 @@ Net_WaitForEvent(enum _ENetEventType type, enet_uint32 duration)
 }
 
 bool
-Net_CreateServer(const char *addr, int port)
+Net_CreateServer(const char *addr, int port, const char *name)
 {
 	if (g_host_type == HOSTTYPE_NONE && s_host == NULL && s_peer == NULL) {
 		/* Currently at most MAX_HOUSE players, or 5 remote clients. */
@@ -128,6 +143,7 @@ Net_CreateServer(const char *addr, int port)
 		assert(data != NULL);
 
 		g_local_client_id = data->id;
+		Server_Recv_PrefName(g_local_client_id, name);
 
 		return true;
 	}
@@ -137,7 +153,7 @@ ERROR_HOST_CREATE:
 }
 
 bool
-Net_ConnectToServer(const char *hostname, int port)
+Net_ConnectToServer(const char *hostname, int port, const char *name)
 {
 	if (g_host_type == HOSTTYPE_NONE && s_host == NULL && s_peer == NULL) {
 		ENetAddress address;
@@ -162,6 +178,8 @@ Net_ConnectToServer(const char *hostname, int port)
 
 		g_host_type = HOSTTYPE_DEDICATED_CLIENT;
 		g_local_client_id = 0;
+
+		Client_Send_PrefName(name);
 		return true;
 	}
 
@@ -332,7 +350,7 @@ Server_RecvMessages(void)
 	/* Process the local player's commands. */
 	if (g_host_type == HOSTTYPE_NONE
 	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
-		Server_ProcessMessage(g_playerHouseID,
+		Server_ProcessMessage(g_local_client_id, g_playerHouseID,
 				g_client2server_message_buf, g_client2server_message_len);
 		g_client2server_message_len = 0;
 
@@ -348,7 +366,7 @@ Server_RecvMessages(void)
 					ENetPacket *packet = event.packet;
 					const PeerData *data = event.peer->data;
 					const enum HouseType houseID = Net_GetClientHouse(data->id);
-					Server_ProcessMessage(houseID,
+					Server_ProcessMessage(data->id, houseID,
 							packet->data, packet->dataLength);
 					enet_packet_destroy(packet);
 				}

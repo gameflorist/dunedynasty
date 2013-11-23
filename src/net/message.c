@@ -4,6 +4,7 @@
 
 #include "message.h"
 
+#include "net.h"
 #include "../object.h"
 
 static const struct {
@@ -20,6 +21,7 @@ static const struct {
 	{ 's', 2 }, /* CSMSG_ACTIVATE_STRUCTURE_ABILITY */
 	{ 'w', 2 }, /* CSMSG_LAUNCH_DEATHHAND */
 	{ 'u', 5 }, /* CSMSG_ISSUE_UNIT_ACTION */
+	{ 'n', MAX_NAME_LEN }, /* CSMSG_PREFERRED_NAME */
 };
 
 static unsigned char s_table_scmsg[SCMSG_MAX] = {

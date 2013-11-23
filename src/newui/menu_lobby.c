@@ -16,8 +16,10 @@
 #include "../gui/gui.h"
 #include "../gui/widget.h"
 #include "../input/input.h"
+#include "../input/mouse.h"
 #include "../mods/multiplayer.h"
 #include "../mods/skirmish.h"
+#include "../net/client.h"
 #include "../net/net.h"
 #include "../scenario.h"
 #include "../shape.h"
@@ -26,7 +28,7 @@
 #include "../video/video.h"
 #include "../wsa.h"
 
-static unsigned char s_net_name[MAX_NAME_LEN + 1] = "Name";
+static char s_net_name[MAX_NAME_LEN + 1] = "Name";
 static char s_host_addr[MAX_ADDR_LEN + 1] = "0.0.0.0";
 static char s_host_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
 static char s_join_addr[MAX_ADDR_LEN + 1] = "localhost";
@@ -382,13 +384,13 @@ PickLobby_Loop(void)
 
 		case 0x8000 | 20: /* host */
 			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 20), false);
-			if (Net_CreateServer(s_host_addr, atoi(s_host_port)))
+			if (Net_CreateServer(s_host_addr, atoi(s_host_port), s_net_name))
 				return MENU_NO_TRANSITION | MENU_MULTIPLAYER_LOBBY;
 			break;
 
 		case 0x8000 | 30: /* join */
 			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 30), false);
-			if (Net_ConnectToServer(s_join_addr, atoi(s_join_port)))
+			if (Net_ConnectToServer(s_join_addr, atoi(s_join_port), s_net_name))
 				return MENU_NO_TRANSITION | MENU_MULTIPLAYER_LOBBY;
 			break;
 
@@ -661,6 +663,7 @@ MultiplayerLobby_Loop(void)
 		Server_RecvMessages();
 	}
 	else {
+		Client_SendMessages();
 		enum NetEvent e = Client_RecvMessages();
 		if (e == NETEVENT_DISCONNECT) {
 			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
@@ -672,11 +675,25 @@ MultiplayerLobby_Loop(void)
 
 	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
 
-	widgetID = GUI_Widget_HandleEvents(multiplayer_lobby_widgets);
+	if ((w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 8))->state.selected) {
+		int editbox = GUI_EditBox(s_net_name, sizeof(s_net_name), w, EDITBOX_FREEFORM);
 
-	w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 15);
-	if ((widgetID & 0x8000) == 0)
-		Scrollbar_HandleEvent(w, widgetID);
+		if (editbox == SCANCODE_ENTER || editbox == SCANCODE_ESCAPE || !w->state.selected) {
+			if (Client_Send_PrefName(s_net_name)) {
+				GUI_Widget_MakeNormal(w, false);
+			}
+			else {
+				GUI_Widget_MakeSelected(w, false);
+			}
+		}
+	}
+	else {
+		widgetID = GUI_Widget_HandleEvents(multiplayer_lobby_widgets);
+
+		w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 15);
+		if ((widgetID & 0x8000) == 0)
+			Scrollbar_HandleEvent(w, widgetID);
+	}
 
 	switch (widgetID) {
 		case 0x8000 | 1: /* exit. */
