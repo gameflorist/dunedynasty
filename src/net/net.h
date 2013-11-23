@@ -13,6 +13,7 @@ enum NetEvent {
 enum {
 	MAX_CLIENTS = HOUSE_MAX,
 	MAX_NAME_LEN = 14,
+	MAX_CHAT_LEN = 60,
 	MAX_ADDR_LEN = 1023,
 	MAX_PORT_LEN = 5,
 	DEFAULT_PORT = 10700
@@ -47,6 +48,8 @@ extern bool Net_ConnectToServer(const char *hostname, int port, const char *name
 extern void Net_Disconnect(void);
 extern void Net_Synchronise(void);
 
+extern void Net_Send_Chat(const char *buf);
+extern void Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf);
 extern void Server_SendMessages(void);
 extern void Server_RecvMessages(void);
 extern void Client_SendMessages(void);

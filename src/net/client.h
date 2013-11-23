@@ -22,6 +22,7 @@ extern void Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const st
 extern void Client_Send_BuildQueue(void);
 
 extern bool Client_Send_PrefName(const char *name);
+extern void Client_Send_Chat(const char *msg);
 
 extern void Client_ChangeSelectionMode(void);
 extern void Client_ProcessMessage(const unsigned char *buf, int count);

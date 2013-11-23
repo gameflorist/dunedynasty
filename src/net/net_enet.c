@@ -13,6 +13,8 @@
 #include "../audio/audio.h"
 #include "../house.h"
 #include "../mods/multiplayer.h"
+#include "../newui/chatbox.h"
+#include "../newui/menu.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 
@@ -132,7 +134,8 @@ Net_CreateServer(const char *addr, int port, const char *name)
 		if (s_host == NULL)
 			goto ERROR_HOST_CREATE;
 
-		NET_LOG("%s", "Created server.");
+		ChatBox_ClearHistory();
+		ChatBox_AddEntry(NULL, "Server created");
 
 		g_client_houses = 0;
 		memset(g_peer_data, 0, sizeof(g_peer_data));
@@ -171,6 +174,7 @@ Net_ConnectToServer(const char *hostname, int port, const char *name)
 		if (!Net_WaitForEvent(ENET_EVENT_TYPE_CONNECT, 1000))
 			goto ERROR_TIMEOUT;
 
+		ChatBox_ClearHistory();
 		NET_LOG("Connected to server %s:%d\n", hostname, port);
 
 		memset(g_peer_data, 0, sizeof(g_peer_data));
@@ -228,6 +232,62 @@ Net_Synchronise(void)
 }
 
 /*--------------------------------------------------------------*/
+
+void
+Net_Send_Chat(const char *msg)
+{
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		Server_Recv_Chat(g_local_client_id, FLAG_HOUSE_ALL, msg);
+	}
+	else {
+		Client_Send_Chat(msg);
+	}
+}
+
+void
+Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf)
+{
+	const char *name = NULL;
+	char msg[2 + MAX_CHAT_LEN + 1];
+
+	msg[0] = '"';
+	msg[1] = peerID;
+	const int msg_len = snprintf(msg + 2, sizeof(msg) - 2, "%s", buf);
+
+	if (msg_len <= 0)
+		return;
+
+	const PeerData *data = Net_GetPeerData(peerID);
+	if (data != NULL)
+		name = data->name;
+
+	ENetPacket *packet
+		= enet_packet_create(msg, 3 + msg_len, ENET_PACKET_FLAG_RELIABLE);
+
+	if (houses == FLAG_HOUSE_ALL) {
+		ChatBox_AddEntry(name, msg + 2);
+		enet_host_broadcast(s_host, 0, packet);
+	}
+	else {
+		for (int i = 0; i < MAX_CLIENTS; i++) {
+			data = &g_peer_data[i];
+			if (data->id == 0)
+				continue;
+
+			const enum HouseType houseID = Net_GetClientHouse(data->id);
+			if ((houseID == HOUSE_INVALID) || ((houses & (1 << houseID)) != 0))
+				continue;
+
+			if (data->id == g_local_client_id) {
+				ChatBox_AddEntry(name, msg + 2);
+			}
+			else if (data->peer != NULL) {
+				enet_peer_send(data->peer, 0, packet);
+			}
+		}
+	}
+}
 
 void
 Server_SendMessages(void)

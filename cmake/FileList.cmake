@@ -42,6 +42,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/net/net_enet.c
 	src/net/server.c
 	src/newui/actionpanel.c
+	src/newui/chatbox.c
 	src/newui/editbox.c
 	src/newui/halloffame.c
 	src/newui/mentat.c

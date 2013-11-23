@@ -17,6 +17,7 @@
 #include "../house.h"
 #include "../map.h"
 #include "../newui/actionpanel.h"
+#include "../newui/chatbox.h"
 #include "../object.h"
 #include "../opendune.h"
 #include "../pool/pool.h"
@@ -243,6 +244,20 @@ Client_Send_PrefName(const char *name)
 	memset(buf + len, 0, MAX_NAME_LEN + 1 - len);
 
 	return true;
+}
+
+void
+Client_Send_Chat(const char *msg)
+{
+	const size_t len = strlen(msg) + 1;
+
+	if (len <= 0 || len >= MAX_CHAT_LEN)
+		return;
+
+	unsigned char *buf = Client_GetBuffer(CSMSG_CHAT);
+
+	Net_Encode_uint8(&buf, FLAG_HOUSE_ALL);
+	memcpy(buf, msg, len);
 }
 
 /*--------------------------------------------------------------*/
@@ -492,6 +507,23 @@ Client_Recv_ClientList(const unsigned char **buf)
 	}
 }
 
+static void
+Client_Recv_Chat(const unsigned char **buf)
+{
+	const char *name = NULL;
+	char msg[MAX_CHAT_LEN + 1];
+
+	const uint8 peerID = Net_Decode_uint8(buf);
+	const int msg_len = snprintf(msg, sizeof(msg), "%s", *buf);
+	(*buf) += msg_len;
+
+	const PeerData *data = Net_GetPeerData(peerID);
+	if (data != NULL)
+		name = data->name;
+
+	ChatBox_AddEntry(name, msg);
+}
+
 void
 Client_ChangeSelectionMode(void)
 {
@@ -600,6 +632,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_CLIENT_LIST:
 				Client_Recv_ClientList(&buf);
+				break;
+
+			case SCMSG_CHAT:
+				Client_Recv_Chat(&buf);
 				break;
 
 			case SCMSG_MAX:

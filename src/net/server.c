@@ -17,6 +17,7 @@
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
+#include "../newui/chatbox.h"
 #include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -1264,6 +1265,10 @@ Server_ProcessMessage(int peerID, enum HouseType houseID,
 
 			case CSMSG_PREFERRED_NAME:
 				Server_Recv_PrefName(peerID, (const char *)buf);
+				break;
+
+			case CSMSG_CHAT:
+				Server_Recv_Chat(peerID, buf[0], (const char *)buf + 1);
 				break;
 
 			case CSMSG_MAX:

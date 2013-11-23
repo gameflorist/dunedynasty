@@ -8,6 +8,7 @@
 
 #include "menu.h"
 
+#include "chatbox.h"
 #include "editbox.h"
 #include "halloffame.h"
 #include "scrollbar.h"
@@ -33,6 +34,7 @@ static char s_host_addr[MAX_ADDR_LEN + 1] = "0.0.0.0";
 static char s_host_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
 static char s_join_addr[MAX_ADDR_LEN + 1] = "localhost";
 static char s_join_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
+static char s_chat_buf[MAX_CHAT_LEN + 1];
 
 static Widget *pick_lobby_widgets;
 static Widget *skirmish_lobby_widgets;
@@ -637,6 +639,8 @@ MultiplayerLobby_Initialise(void)
 
 	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 1), false);
 	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 2), false);
+
+	s_chat_buf[0] = '\0';
 }
 
 void
@@ -651,6 +655,9 @@ MultiplayerLobby_Draw(void)
 	Lobby_Draw("Multiplayer",
 			0,
 			multiplayer_lobby_widgets);
+
+	ChatBox_Draw(s_chat_buf,
+			!GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 8)->state.selected);
 
 	GUI_HallOfFame_SetColourScheme(false);
 }
@@ -701,7 +708,16 @@ MultiplayerLobby_Loop(void)
 			Net_Disconnect();
 			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
 
+		case SCANCODE_ENTER:
+			Net_Send_Chat(s_chat_buf);
+			s_chat_buf[0] = '\0';
+			break;
+
 		default:
+			EditBox_Input(s_chat_buf, sizeof(s_chat_buf), EDITBOX_FREEFORM, widgetID);
+			break;
+
+		case 0:
 			break;
 	}
 
