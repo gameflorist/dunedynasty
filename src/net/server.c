@@ -73,6 +73,7 @@ typedef struct UnitDelta {
 	uint8   spriteOffset;
 } UnitDelta;
 
+static bool s_sendClientList;
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
 static int64_t s_choamLastUpdate;
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
@@ -665,6 +666,41 @@ Server_Send_PlayBattleMusic(enum HouseFlag houses)
 	}
 }
 
+void
+Server_Send_ClientList(unsigned char **buf)
+{
+	if (!s_sendClientList)
+		return;
+
+	const size_t len = 1 + 1 + MAX_CLIENTS * 16;
+	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
+		return;
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_CLIENT_LIST);
+
+	unsigned char *buf_count = *buf; (*buf) += 1;
+	uint8 count = 0;
+
+	for (int i = 0; i < MAX_CLIENTS; i++) {
+		const PeerData *data = &g_peer_data[i];
+		if (data->id == 0)
+			continue;
+
+		const size_t name_len = strlen(data->name);
+
+		Net_Encode_uint8(buf, data->id);
+		Net_Encode_uint8(buf, name_len);
+		memcpy(*buf, data->name, name_len);
+		(*buf) += name_len;
+
+		count++;
+	}
+
+	*buf_count = count;
+
+	s_sendClientList = false;
+}
+
 /*--------------------------------------------------------------*/
 
 static bool
@@ -1165,6 +1201,7 @@ Server_Recv_PrefName(int peerID, const char *name)
 
 	if ((len > 0) && (*name != '\0')) {
 		snprintf(data->name, len + 1, "%s", name);
+		s_sendClientList = true;
 	}
 }
 

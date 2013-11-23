@@ -36,7 +36,9 @@ typedef struct PeerData {
 extern enum HouseFlag g_client_houses;
 extern enum NetHostType g_host_type;
 extern int g_local_client_id;
+extern PeerData g_peer_data[MAX_CLIENTS];
 
+extern PeerData *Net_NewPeerData(int peerID);
 extern PeerData *Net_GetPeerData(int peerID);
 
 extern void Net_Initialise(void);

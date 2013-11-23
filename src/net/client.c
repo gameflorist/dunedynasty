@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include "../os/math.h"
 
 #include "client.h"
 
@@ -471,6 +472,26 @@ Client_Recv_Identity(const unsigned char **buf)
 		g_local_client_id = clientID;
 }
 
+static void
+Client_Recv_ClientList(const unsigned char **buf)
+{
+	const uint8 count = Net_Decode_uint8(buf);
+
+	for (size_t i = 0; i < count; i++) {
+		const uint8 peerID = Net_Decode_uint8(buf);
+		const size_t len = Net_Decode_uint8(buf);
+
+		PeerData *data = Net_GetPeerData(peerID);
+		if (data == NULL) {
+			data = Net_NewPeerData(peerID);
+			assert(data != NULL);
+		}
+
+		snprintf(data->name, min(sizeof(data->name), len + 1), "%s", *buf);
+		(*buf) += len;
+	}
+}
+
 void
 Client_ChangeSelectionMode(void)
 {
@@ -575,6 +596,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_IDENTITY:
 				Client_Recv_Identity(&buf);
+				break;
+
+			case SCMSG_CLIENT_LIST:
+				Client_Recv_ClientList(&buf);
 				break;
 
 			case SCMSG_MAX:

@@ -29,15 +29,15 @@ static ENetHost *s_host;
 static ENetPeer *s_peer;
 
 int g_local_client_id;
-static PeerData s_peer_data[MAX_CLIENTS];
+PeerData g_peer_data[MAX_CLIENTS];
 
 /*--------------------------------------------------------------*/
 
-static PeerData *
+PeerData *
 Net_NewPeerData(int peerID)
 {
 	for (int i = 0; i < MAX_CLIENTS; i++) {
-		PeerData *data = &s_peer_data[i];
+		PeerData *data = &g_peer_data[i];
 
 		if (data->id == 0) {
 			data->id = peerID;
@@ -69,8 +69,8 @@ Net_GetPeerData(int peerID)
 		return NULL;
 
 	for (int i = 0; i < MAX_CLIENTS; i++) {
-		if (s_peer_data[i].id == peerID)
-			return &s_peer_data[i];
+		if (g_peer_data[i].id == peerID)
+			return &g_peer_data[i];
 	}
 
 	return NULL;
@@ -135,7 +135,7 @@ Net_CreateServer(const char *addr, int port, const char *name)
 		NET_LOG("%s", "Created server.");
 
 		g_client_houses = 0;
-		memset(s_peer_data, 0, sizeof(s_peer_data));
+		memset(g_peer_data, 0, sizeof(g_peer_data));
 		memset(&g_multiplayer, 0, sizeof(g_multiplayer));
 
 		g_host_type = HOSTTYPE_CLIENT_SERVER;
@@ -173,7 +173,7 @@ Net_ConnectToServer(const char *hostname, int port, const char *name)
 
 		NET_LOG("Connected to server %s:%d\n", hostname, port);
 
-		memset(s_peer_data, 0, sizeof(s_peer_data));
+		memset(g_peer_data, 0, sizeof(g_peer_data));
 		memset(&g_multiplayer, 0, sizeof(g_multiplayer));
 
 		g_host_type = HOSTTYPE_DEDICATED_CLIENT;
@@ -238,6 +238,24 @@ Server_SendMessages(void)
 
 	unsigned char *buf = g_server_broadcast_message_buf;
 
+	Server_Send_ClientList(&buf);
+
+	if (true) {
+		const size_t len = buf - g_server_broadcast_message_buf;
+		if (len <= 0)
+			return;
+
+		ENetPacket *packet
+			= enet_packet_create(g_server_broadcast_message_buf, len,
+					ENET_PACKET_FLAG_RELIABLE);
+
+		NET_LOG("packet size=%zd", len);
+
+		enet_host_broadcast(s_host, 0, packet);
+
+		return;
+	}
+
 	Server_Send_UpdateCHOAM(&buf);
 	Server_Send_UpdateLandscape(&buf);
 	Server_Send_UpdateStructures(&buf);
@@ -264,13 +282,15 @@ Server_SendMessages(void)
 		}
 
 		const int len = buf - g_server_broadcast_message_buf;
+		if (len <= 0)
+			continue;
 
 		ENetPacket *packet
 			= enet_packet_create(g_server_broadcast_message_buf, len,
 					ENET_PACKET_FLAG_RELIABLE);
 
 		for (int i = 0; i < MAX_CLIENTS; i++) {
-			const PeerData *data = &s_peer_data[i];
+			const PeerData *data = &g_peer_data[i];
 			ENetPeer *peer = data->peer;
 
 			if (peer == NULL || Net_GetClientHouse(data->id) != houseID)

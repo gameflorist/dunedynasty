@@ -40,6 +40,7 @@ static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'V', /* SCMSG_PLAY_VOICE */
 	'!', /* SCMSG_PLAY_BATTLE_MUSIC */
 	'I', /* SCMSG_IDENTITY */
+	'N', /* SCMSG_CLIENT_LIST */
 };
 
 unsigned char g_server_broadcast_message_buf[MAX_SERVER_BROADCAST_MESSAGE_LEN];

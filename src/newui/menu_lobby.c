@@ -660,6 +660,7 @@ MultiplayerLobby_Loop(void)
 {
 	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
 	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		Server_SendMessages();
 		Server_RecvMessages();
 	}
 	else {
