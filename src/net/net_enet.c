@@ -267,6 +267,21 @@ Server_SendMessages(void)
 }
 
 static void
+Server_Send_ClientID(ENetPeer *peer)
+{
+	unsigned char buf[2];
+	unsigned char *p = buf;
+
+	Net_Encode_ServerClientMsg(&p, SCMSG_IDENTITY);
+	Net_Encode_uint8(&p, ((const PeerData *) peer->data)->id);
+	assert(p - buf == sizeof(buf));
+
+	ENetPacket *packet
+		= enet_packet_create(buf, sizeof(buf), ENET_PACKET_FLAG_RELIABLE);
+	enet_peer_send(peer, 0, packet);
+}
+
+static void
 Server_Recv_ConnectClient(ENetEvent *event)
 {
 	NET_LOG("A new client connected from %x:%u.",
@@ -276,6 +291,8 @@ Server_Recv_ConnectClient(ENetEvent *event)
 	if (data != NULL) {
 		event->peer->data = data;
 		data->peer = event->peer;
+
+		Server_Send_ClientID(event->peer);
 	}
 	else {
 		enet_peer_disconnect(event->peer, 0);

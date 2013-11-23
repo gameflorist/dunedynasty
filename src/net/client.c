@@ -436,6 +436,15 @@ Client_Recv_PlayVoice(const unsigned char **buf)
 	Audio_PlayVoice(voiceID);
 }
 
+static void
+Client_Recv_Identity(const unsigned char **buf)
+{
+	const uint8 clientID = Net_Decode_uint8(buf);
+
+	if (g_local_client_id == 0 && clientID > 0)
+		g_local_client_id = clientID;
+}
+
 void
 Client_ChangeSelectionMode(void)
 {
@@ -536,6 +545,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 			case SCMSG_PLAY_BATTLE_MUSIC:
 				if (g_musicInBattle == 0)
 					g_musicInBattle = 1;
+				break;
+
+			case SCMSG_IDENTITY:
+				Client_Recv_Identity(&buf);
 				break;
 
 			case SCMSG_MAX:
