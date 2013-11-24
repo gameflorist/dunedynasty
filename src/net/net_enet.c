@@ -326,11 +326,10 @@ Server_SendMessages(void)
 	unsigned char *buf = g_server_broadcast_message_buf;
 
 	Server_Send_ClientList(&buf);
+	Server_Send_Scenario(&buf);
 
-	if (true) {
+	if (buf - g_server_broadcast_message_buf > 0) {
 		const size_t len = buf - g_server_broadcast_message_buf;
-		if (len <= 0)
-			return;
 
 		ENetPacket *packet
 			= enet_packet_create(g_server_broadcast_message_buf, len,

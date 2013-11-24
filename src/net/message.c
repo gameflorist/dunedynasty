@@ -43,6 +43,7 @@ static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'!', /* SCMSG_PLAY_BATTLE_MUSIC */
 	'I', /* SCMSG_IDENTITY */
 	'N', /* SCMSG_CLIENT_LIST */
+	'Z', /* SCMSG_SCENARIO */
 	'"', /* SCMSG_CHAT */
 };
 

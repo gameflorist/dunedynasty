@@ -79,6 +79,7 @@ typedef struct UnitDelta {
 } UnitDelta;
 
 static bool s_sendClientList;
+static bool s_sendScenario;
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
 static int64_t s_choamLastUpdate;
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
@@ -706,6 +707,26 @@ Server_Send_ClientList(unsigned char **buf)
 	s_sendClientList = false;
 }
 
+void
+Server_Send_Scenario(unsigned char **buf)
+{
+	if (!s_sendScenario)
+		return;
+
+	const size_t len = 1 + 4 + MAX_CLIENTS;
+	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
+		return;
+
+	Net_Encode_ServerClientMsg(buf, SCMSG_SCENARIO);
+	Net_Encode_uint32(buf, g_multiplayer.seed);
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		Net_Encode_uint8(buf, g_multiplayer.client[h]);
+	}
+
+	s_sendScenario = false;
+}
+
 /*--------------------------------------------------------------*/
 
 static bool
@@ -1286,6 +1307,8 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 	if (old_house != HOUSE_INVALID) {
 		g_multiplayer.client[old_house] = 0;
 	}
+
+	s_sendScenario = true;
 }
 
 static void

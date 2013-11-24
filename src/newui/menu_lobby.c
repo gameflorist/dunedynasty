@@ -648,7 +648,7 @@ MultiplayerLobby_Draw(void)
 	Lobby_ShowHideStartButton(multiplayer_lobby_widgets, can_issue_start);
 
 	Lobby_Draw("Multiplayer",
-			0,
+			g_multiplayer.seed,
 			multiplayer_lobby_widgets);
 
 	ChatBox_Draw(s_chat_buf,

@@ -16,10 +16,12 @@
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
+#include "../mods/multiplayer.h"
 #include "../newui/actionpanel.h"
 #include "../newui/chatbox.h"
 #include "../object.h"
 #include "../opendune.h"
+#include "../pool/house.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
@@ -523,6 +525,22 @@ Client_Recv_ClientList(const unsigned char **buf)
 }
 
 static void
+Client_Recv_Scenario(const unsigned char **buf)
+{
+	g_multiplayer.seed = Net_Decode_uint32(buf);
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		g_multiplayer.client[h] = Net_Decode_uint8(buf);
+
+		if (g_local_client_id != 0
+		 && g_local_client_id == g_multiplayer.client[h]) {
+			g_playerHouseID = h;
+			g_playerHouse = House_Get_ByIndex(h);
+		}
+	}
+}
+
+static void
 Client_Recv_Chat(const unsigned char **buf)
 {
 	const char *name = NULL;
@@ -647,6 +665,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 			case SCMSG_CLIENT_LIST:
 				Client_Recv_ClientList(&buf);
+				break;
+
+			case SCMSG_SCENARIO:
+				Client_Recv_Scenario(&buf);
 				break;
 
 			case SCMSG_CHAT:

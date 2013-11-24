@@ -25,6 +25,7 @@ extern void Server_Send_PlaySoundAtTile(enum HouseFlag houses, enum SoundID soun
 extern void Server_Send_PlayVoice(enum HouseFlag houses, enum VoiceID voiceID);
 extern void Server_Send_PlayBattleMusic(enum HouseFlag houses);
 extern void Server_Send_ClientList(unsigned char **buf);
+extern void Server_Send_Scenario(unsigned char **buf);
 
 extern void Server_Recv_PrefName(int peerID, const char *name);
 extern void Server_Recv_PrefHouse(int peerID, enum HouseType houseID);

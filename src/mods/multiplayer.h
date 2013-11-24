@@ -6,6 +6,7 @@
 
 typedef struct Multiplayer {
 	int client[HOUSE_MAX];
+	uint32 seed;
 } Multiplayer;
 
 extern Multiplayer g_multiplayer;
