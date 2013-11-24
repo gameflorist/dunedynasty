@@ -8,6 +8,7 @@
 
 #include "skirmish.h"
 #include "../house.h"
+#include "../net/net.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 #include "../scenario.h"

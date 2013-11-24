@@ -44,6 +44,7 @@ static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'I', /* SCMSG_IDENTITY */
 	'N', /* SCMSG_CLIENT_LIST */
 	'Z', /* SCMSG_SCENARIO */
+	'1', /* SCMSG_START_GAME */
 	'"', /* SCMSG_CHAT */
 };
 

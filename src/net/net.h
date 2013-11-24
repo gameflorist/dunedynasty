@@ -8,6 +8,7 @@
 enum NetEvent {
 	NETEVENT_NORMAL,
 	NETEVENT_DISCONNECT,
+	NETEVENT_START_GAME,
 };
 
 enum {
@@ -32,6 +33,7 @@ typedef struct PeerData {
 	int id;
 	void *peer;
 	char name[MAX_NAME_LEN + 1];
+	bool is_ready;
 } PeerData;
 
 extern char g_net_name[MAX_NAME_LEN + 1];
@@ -54,10 +56,12 @@ extern void Net_Initialise(void);
 extern bool Net_CreateServer(const char *addr, int port, const char *name);
 extern bool Net_ConnectToServer(const char *hostname, int port, const char *name);
 extern void Net_Disconnect(void);
+extern bool Net_IsPlayable(void);
 extern void Net_Synchronise(void);
 
 extern void Net_Send_Chat(const char *buf);
 extern void Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf);
+extern bool Server_Send_StartGame(void);
 extern void Server_SendMessages(void);
 extern void Server_RecvMessages(void);
 extern void Client_SendMessages(void);

@@ -1308,6 +1308,12 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 			return;
 
 		g_multiplayer.client[houseID] = data->id;
+
+		if (g_local_client_id != 0
+		 && g_local_client_id == g_multiplayer.client[houseID]) {
+			g_playerHouseID = houseID;
+			g_playerHouse = House_Get_ByIndex(houseID);
+		}
 	}
 
 	if (old_house != HOUSE_INVALID) {
@@ -1320,6 +1326,9 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 static void
 Server_Recv_PrefHouseBuf(int peerID, const unsigned char *buf)
 {
+	if (g_inGame)
+		return;
+
 	enum HouseType houseID = Net_Decode_uint8(&buf);
 
 	Server_Recv_PrefHouse(peerID, houseID);

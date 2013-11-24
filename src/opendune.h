@@ -31,6 +31,7 @@ enum GameOverlay {
 
 extern uint32 g_hintsShown1;
 extern uint32 g_hintsShown2;
+extern bool   g_inGame;
 extern enum GameMode g_gameMode;
 extern enum GameOverlay g_gameOverlay;
 extern uint16 g_campaignID;

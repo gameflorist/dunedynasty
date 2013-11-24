@@ -607,9 +607,11 @@ Client_ChangeSelectionMode(void)
 	}
 }
 
-void
+enum NetEvent
 Client_ProcessMessage(const unsigned char *buf, int count)
 {
+	enum NetEvent ret = NETEVENT_NORMAL;
+
 	while (count > 0) {
 		const enum ServerClientMsg msg = Net_Decode_ServerClientMsg(buf[0]);
 		const unsigned char * const buf0 = buf+1;
@@ -687,6 +689,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 				Client_Recv_Scenario(&buf);
 				break;
 
+			case SCMSG_START_GAME:
+				ret = NETEVENT_START_GAME;
+				break;
+
 			case SCMSG_CHAT:
 				Client_Recv_Chat(&buf);
 				break;
@@ -699,4 +705,6 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 
 		count -= (buf - buf0);
 	}
+
+	return ret;
 }

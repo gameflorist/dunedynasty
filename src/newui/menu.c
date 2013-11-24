@@ -1088,6 +1088,15 @@ PlaySkirmish_Loop(void)
 	}
 }
 
+static enum MenuAction
+PlayMultiplayer_Loop(void)
+{
+	PlayAGame_StartGame(false);
+	lobby_regenerate_map = true;
+
+	return MENU_MULTIPLAYER_LOBBY;
+}
+
 /*--------------------------------------------------------------*/
 
 static void
@@ -1493,6 +1502,10 @@ Menu_Run(void)
 
 			case MENU_PLAY_SKIRMISH:
 				res = PlaySkirmish_Loop();
+				break;
+
+			case MENU_PLAY_MULTIPLAYER:
+				res = PlayMultiplayer_Loop();
 				break;
 
 			case MENU_BATTLE_SUMMARY:

@@ -18,6 +18,7 @@ extern int _al_mangled_main(int argc, char **argv);
 	#include <io.h>
 	#include <windows.h>
 #endif /* _WIN32 */
+#include <assert.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -81,6 +82,7 @@ extern int _al_mangled_main(int argc, char **argv);
 
 uint32 g_hintsShown1 = 0;          /*!< A bit-array to indicate which hints has been show already (0-31). */
 uint32 g_hintsShown2 = 0;          /*!< A bit-array to indicate which hints has been show already (32-63). */
+bool   g_inGame;
 enum GameMode g_gameMode = GM_NORMAL;
 enum GameOverlay g_gameOverlay;
 uint16 g_campaignID = 0;
@@ -529,6 +531,8 @@ static void GameLoop_GameIntroAnimationMenu(void)
  */
 void GameLoop_Main(bool new_game)
 {
+	assert(g_playerHouseID != HOUSE_INVALID);
+
 	Mouse_TransformFromDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 
 	Sprites_UnloadTiles();

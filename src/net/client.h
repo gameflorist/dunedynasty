@@ -3,6 +3,7 @@
 
 #include "enumeration.h"
 #include "types.h"
+#include "net.h"
 
 struct Object;
 
@@ -27,6 +28,6 @@ extern void Client_Send_PrefHouse(enum HouseType houseID);
 extern void Client_Send_Chat(const char *msg);
 
 extern void Client_ChangeSelectionMode(void);
-extern void Client_ProcessMessage(const unsigned char *buf, int count);
+extern enum NetEvent Client_ProcessMessage(const unsigned char *buf, int count);
 
 #endif

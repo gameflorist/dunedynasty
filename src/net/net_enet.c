@@ -136,6 +136,25 @@ Net_WaitForEvent(enum _ENetEventType type, enet_uint32 duration)
 }
 
 bool
+Server_Send_StartGame(void)
+{
+	if (!Net_IsPlayable())
+		return false;
+
+	unsigned char buf[1];
+	buf[0] = '1';
+
+	ENetPacket *packet
+		= enet_packet_create(buf, sizeof(buf), ENET_PACKET_FLAG_RELIABLE);
+
+	enet_host_broadcast(s_host, 0, packet);
+	enet_host_flush(s_host);
+
+	Server_Recv_Chat(0, FLAG_HOUSE_ALL, "Game started");
+	return true;
+}
+
+bool
 Net_CreateServer(const char *addr, int port, const char *name)
 {
 	if (g_host_type == HOSTTYPE_NONE && s_host == NULL && s_peer == NULL) {
@@ -254,9 +273,61 @@ Net_Disconnect(void)
 	g_host_type = HOSTTYPE_NONE;
 }
 
+bool
+Net_IsPlayable(void)
+{
+	int assigned_players = 0;
+	int total_players = 0;
+
+	/* XXX - check alliances. */
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_multiplayer.client[h] != 0)
+			assigned_players++;
+	}
+
+	for (int i = 0; i < MAX_CLIENTS; i++) {
+		if (g_peer_data[i].id != 0)
+			total_players++;
+	}
+
+	if (assigned_players > 1 && assigned_players == total_players) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 void
 Net_Synchronise(void)
 {
+	assert(g_playerHouseID != HOUSE_INVALID);
+	assert(g_playerHouse != NULL);
+
+	if (g_host_type == HOSTTYPE_NONE)
+		return;
+
+	if (g_host_type == HOSTTYPE_CLIENT_SERVER
+	 || g_host_type == HOSTTYPE_DEDICATED_CLIENT) {
+		assert(g_local_client_id != 0);
+	}
+
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		Server_ResetCache();
+
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+			if (g_multiplayer.client[h] != 0
+			 && g_multiplayer.client[h] != g_local_client_id) {
+				g_client_houses |= (1 << h);
+			}
+		}
+	}
+	else {
+		Client_ResetCache();
+	}
+
+	Multiplayer_GenerateMap(false);
 }
 
 /*--------------------------------------------------------------*/
@@ -332,15 +403,22 @@ Server_SendMessages(void)
 	if (buf - g_server_broadcast_message_buf > 0) {
 		const size_t len = buf - g_server_broadcast_message_buf;
 
-		ENetPacket *packet
-			= enet_packet_create(g_server_broadcast_message_buf, len,
-					ENET_PACKET_FLAG_RELIABLE);
+		for (int i = 0; i < MAX_CLIENTS; i++) {
+			const PeerData *data = &g_peer_data[i];
+			ENetPeer *peer = data->peer;
 
-		NET_LOG("packet size=%zd", len);
+			if (peer == NULL || Net_GetClientHouse(data->id) != HOUSE_INVALID)
+				continue;
 
-		enet_host_broadcast(s_host, 0, packet);
+			NET_LOG("packet size=%d, num outgoing packets=%lu",
+					len, enet_list_size(&peer->outgoingReliableCommands));
 
-		return;
+			ENetPacket *packet
+				= enet_packet_create(g_server_broadcast_message_buf, len,
+						ENET_PACKET_FLAG_RELIABLE);
+
+			enet_peer_send(peer, 0, packet);
+		}
 	}
 
 	Server_Send_UpdateCHOAM(&buf);
@@ -360,8 +438,9 @@ Server_SendMessages(void)
 		Server_Send_UpdateHouse(houseID, &buf);
 		Server_Send_UpdateFogOfWar(houseID, &buf);
 
-		if (buf + g_server2client_message_len[houseID]
-				< g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN) {
+		if ((g_server2client_message_len[houseID] > 0)
+				&& (buf + g_server2client_message_len[houseID]
+					< g_server_broadcast_message_buf + MAX_SERVER_BROADCAST_MESSAGE_LEN)) {
 			memcpy(buf, g_server2client_message_buf[houseID],
 					g_server2client_message_len[houseID]);
 			buf += g_server2client_message_len[houseID];
@@ -412,6 +491,9 @@ Server_Recv_ConnectClient(ENetEvent *event)
 	NET_LOG("A new client connected from %x:%u.",
 			event->peer->address.host, event->peer->address.port);
 
+	if (g_inGame)
+		goto ERROR;
+
 	PeerData *data = Server_NewClient();
 	if (data != NULL) {
 		event->peer->data = data;
@@ -419,10 +501,11 @@ Server_Recv_ConnectClient(ENetEvent *event)
 
 		Server_Send_ClientID(event->peer);
 		lobby_regenerate_map = true;
+		return;
 	}
-	else {
-		enet_peer_disconnect(event->peer, 0);
-	}
+
+ERROR:
+	enet_peer_disconnect(event->peer, 0);
 }
 
 static void
@@ -523,13 +606,15 @@ Client_SendMessages(void)
 enum NetEvent
 Client_RecvMessages(void)
 {
+	enum NetEvent ret = NETEVENT_NORMAL;
+
 	if (g_host_type == HOSTTYPE_DEDICATED_SERVER) {
-		return NETEVENT_NORMAL;
+		return ret;
 	}
 	else if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
 		House_Client_UpdateRadarState();
 		Client_ChangeSelectionMode();
-		return NETEVENT_NORMAL;
+		return ret;
 	}
 
 	ENetEvent event;
@@ -538,7 +623,7 @@ Client_RecvMessages(void)
 			case ENET_EVENT_TYPE_RECEIVE:
 				{
 					ENetPacket *packet = event.packet;
-					Client_ProcessMessage(packet->data, packet->dataLength);
+					ret = Client_ProcessMessage(packet->data, packet->dataLength);
 					enet_packet_destroy(packet);
 				}
 				break;
@@ -554,5 +639,5 @@ Client_RecvMessages(void)
 		}
 	}
 
-	return NETEVENT_NORMAL;
+	return ret;
 }

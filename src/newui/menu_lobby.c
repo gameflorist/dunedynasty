@@ -654,9 +654,17 @@ MultiplayerLobby_Initialise(void)
 void
 MultiplayerLobby_Draw(void)
 {
-	bool can_issue_start = false;
+	bool can_issue_start;
 
 	GUI_HallOfFame_SetColourScheme(true);
+
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		can_issue_start = Net_IsPlayable();
+	}
+	else {
+		can_issue_start = false;
+	}
 
 	Lobby_ShowHideStartButton(multiplayer_lobby_widgets, can_issue_start);
 
@@ -683,6 +691,9 @@ MultiplayerLobby_Loop(void)
 		enum NetEvent e = Client_RecvMessages();
 		if (e == NETEVENT_DISCONNECT) {
 			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
+		}
+		else if (e == NETEVENT_START_GAME) {
+			return MENU_PLAY_MULTIPLAYER;
 		}
 	}
 
@@ -715,6 +726,14 @@ MultiplayerLobby_Loop(void)
 		case 0x8000 | 1: /* exit. */
 			Net_Disconnect();
 			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
+
+		case 0x8000 | 2: /* start game. */
+			if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+			 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+				if (Server_Send_StartGame())
+					return MENU_PLAY_MULTIPLAYER;
+			}
+			break;
 
 		case 0x8000 | 3: /* list entry. */
 		case SCANCODE_KEYPAD_4:

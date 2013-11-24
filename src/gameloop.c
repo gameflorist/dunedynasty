@@ -450,6 +450,8 @@ GameLoop_Loop(void)
 {
 	bool redraw = true;
 
+	g_inGame = true;
+
 	while (g_gameMode == GM_NORMAL) {
 		const enum TimerType source = Timer_WaitForEvent();
 		const enum NetEvent e = Client_RecvMessages();
@@ -474,4 +476,6 @@ GameLoop_Loop(void)
 			GameLoop_Client_Draw();
 		}
 	}
+
+	g_inGame = false;
 }
