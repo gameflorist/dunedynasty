@@ -22,6 +22,7 @@ static const struct {
 	{ 'w', 2 }, /* CSMSG_LAUNCH_DEATHHAND */
 	{ 'u', 5 }, /* CSMSG_ISSUE_UNIT_ACTION */
 	{ 'n', MAX_NAME_LEN }, /* CSMSG_PREFERRED_NAME */
+	{ 'h', 1 }, /* CSMSG_PREFERRED_HOUSE */
 	{'\'', MAX_CHAT_LEN + 2 }, /* CSMSG_CHAT */
 };
 

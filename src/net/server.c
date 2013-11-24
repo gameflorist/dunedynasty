@@ -20,6 +20,7 @@
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
+#include "../mods/multiplayer.h"
 #include "../newui/chatbox.h"
 #include "../newui/viewport.h"
 #include "../opendune.h"
@@ -1267,6 +1268,35 @@ Server_Recv_PrefName(int peerID, const char *name)
 }
 
 void
+Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
+{
+	const PeerData *data = Net_GetPeerData(peerID);
+	const enum HouseType old_house = Net_GetClientHouse(peerID);
+
+	if (old_house == houseID)
+		return;
+
+	if (HOUSE_HARKONNEN <= houseID && houseID < HOUSE_MAX) {
+		if (!Multiplayer_IsHouseAvailable(houseID))
+			return;
+
+		g_multiplayer.client[houseID] = data->id;
+	}
+
+	if (old_house != HOUSE_INVALID) {
+		g_multiplayer.client[old_house] = 0;
+	}
+}
+
+static void
+Server_Recv_PrefHouseBuf(int peerID, const unsigned char *buf)
+{
+	enum HouseType houseID = Net_Decode_uint8(&buf);
+
+	Server_Recv_PrefHouse(peerID, houseID);
+}
+
+void
 Server_ProcessMessage(int peerID, enum HouseType houseID,
 		const unsigned char *buf, int count)
 {
@@ -1325,6 +1355,10 @@ Server_ProcessMessage(int peerID, enum HouseType houseID,
 
 			case CSMSG_PREFERRED_NAME:
 				Server_Recv_PrefName(peerID, (const char *)buf);
+				break;
+
+			case CSMSG_PREFERRED_HOUSE:
+				Server_Recv_PrefHouseBuf(peerID, buf);
 				break;
 
 			case CSMSG_CHAT:

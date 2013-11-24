@@ -247,6 +247,17 @@ Client_Send_PrefName(const char *name)
 }
 
 void
+Client_Send_PrefHouse(enum HouseType houseID)
+{
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER)
+		return;
+
+	unsigned char *buf = Client_GetBuffer(CSMSG_PREFERRED_HOUSE);
+
+	Net_Encode_uint8(&buf, houseID);
+}
+
+void
 Client_Send_Chat(const char *msg)
 {
 	const size_t len = strlen(msg) + 1;

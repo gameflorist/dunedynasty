@@ -8,9 +8,11 @@
 
 #include "scrollbar.h"
 
+#include "../gui/font.h"
 #include "../gui/gui.h"
 #include "../input/input.h"
 #include "../input/mouse.h"
+#include "../net/net.h"
 #include "../shape.h"
 #include "../string.h"
 #include "../video/video.h"
@@ -538,6 +540,20 @@ ScrollListArea_Draw(Widget *w)
 	Video_SetClippingArea(div->scalex * wi->xBase + div->x, div->scaley * wi->yBase + div->y,
 			div->scalex * (scrollbar->offsetX + scrollbar->width), div->scaley * wi->height);
 
+	int maxlen = 0;
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
+	for (int i = 0; i < ws->scrollPageSize; i++) {
+		const int n = ws->scrollPosition + i;
+		const ScrollbarItem *si = &s_scrollbar_item[n];
+
+		if (si->type == SCROLLBAR_BRAIN
+		 || si->type == SCROLLBAR_CLIENT) {
+			const int len = Font_GetStringWidth(si->text);
+			if (maxlen < len)
+				maxlen = len;
+		}
+	}
+
 	for (int i = 0; i < ws->scrollPageSize; i++) {
 		const int n = ws->scrollPosition + i;
 
@@ -571,20 +587,40 @@ ScrollListArea_Draw(Widget *w)
 				break;
 
 			case SCROLLBAR_BRAIN:
+			case SCROLLBAR_CLIENT:
 				colour = (n == s_selectedHelpSubject) ? 8 : 31;
 
-				const int width = 6 * 5;
+				const int width = w->width - maxlen - 8;
 				const char *str = NULL;
 
-				     if (*(si->d.brain) == BRAIN_HUMAN)     str = "You";
-				else if (*(si->d.brain) == BRAIN_CPU_ENEMY) str = "Enemy";
-				else if (*(si->d.brain) == BRAIN_CPU_ALLY)  str = "Ally";
+				if (si->type == SCROLLBAR_BRAIN) {
+					     if (*(si->d.brain) == BRAIN_HUMAN)     str = "You";
+					else if (*(si->d.brain) == BRAIN_CPU_ENEMY) str = "Enemy";
+					else if (*(si->d.brain) == BRAIN_CPU_ALLY)  str = "Ally";
+					else str = NULL;
+				}
+				else {
+					str = Net_GetClientName(si->d.offset);
+				}
 
 				Prim_Rect_i(x - 2, y, x + width + 2, y + 8, colour);
-				GUI_DrawText_Wrapper(str, x + width / 2, y + 1, colour, 0, 0x111);
+
+				Video_SetClippingArea(div->scalex * x + div->x, 0,
+						div->scalex * width, TRUE_DISPLAY_HEIGHT);
+
+				GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x11);
+				const int string_width = Font_GetStringWidth(str);
+				if (string_width >= width) {
+					GUI_DrawText_Wrapper(str, x, y + 1, colour, 0, 0x11);
+				}
+				else {
+					GUI_DrawText_Wrapper(str, x + width / 2, y + 1, colour, 0, 0x111);
+				}
+
+				Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
 				colour = (n == s_selectedHelpSubject) ? 8 : 15;
-				GUI_DrawText_Wrapper(si->text, x + width + 8, y, colour, 0, 0x22);
+				GUI_DrawText_Wrapper(si->text, x + w->width - maxlen, y, colour, 0, 0x22);
 				break;
 		}
 	}

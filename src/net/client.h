@@ -1,6 +1,7 @@
 #ifndef NET_CLIENT_H
 #define NET_CLIENT_H
 
+#include "enumeration.h"
 #include "types.h"
 
 struct Object;
@@ -22,6 +23,7 @@ extern void Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const st
 extern void Client_Send_BuildQueue(void);
 
 extern bool Client_Send_PrefName(const char *name);
+extern void Client_Send_PrefHouse(enum HouseType houseID);
 extern void Client_Send_Chat(const char *msg);
 
 extern void Client_ChangeSelectionMode(void);

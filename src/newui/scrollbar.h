@@ -9,6 +9,7 @@ enum ScrollbarItemType {
 	SCROLLBAR_ITEM,
 	SCROLLBAR_CHECKBOX,
 	SCROLLBAR_BRAIN,
+	SCROLLBAR_CLIENT
 };
 
 typedef struct ScrollbarItem {

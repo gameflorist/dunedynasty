@@ -625,8 +625,8 @@ MultiplayerLobby_Initialise(void)
 	ws->scrollMax = 0;
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		si = Scrollbar_AllocItem(w, SCROLLBAR_BRAIN);
-		si->d.brain = &g_skirmish.brain[h];
+		si = Scrollbar_AllocItem(w, SCROLLBAR_CLIENT);
+		si->d.offset = h;
 		snprintf(si->text, sizeof(si->text), "%s", g_table_houseInfo[h].name);
 	}
 
@@ -702,6 +702,24 @@ MultiplayerLobby_Loop(void)
 		case 0x8000 | 1: /* exit. */
 			Net_Disconnect();
 			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
+
+		case 0x8000 | 3: /* list entry. */
+		case SCANCODE_KEYPAD_4:
+		case SCANCODE_KEYPAD_5:
+		case SCANCODE_KEYPAD_6:
+			{
+				w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 3);
+				ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
+
+				if (widgetID == SCANCODE_KEYPAD_4 || Input_Test(MOUSE_RMB)) {
+					if (Net_GetClientHouse(g_local_client_id) == si->d.offset)
+						Client_Send_PrefHouse(HOUSE_INVALID);
+				}
+				else {
+					Client_Send_PrefHouse(si->d.offset);
+				}
+			}
+			break;
 
 		case SCANCODE_ENTER:
 			Net_Send_Chat(s_chat_buf);

@@ -84,7 +84,16 @@ Net_GetPeerData(int peerID)
 	return NULL;
 }
 
-static enum HouseType
+const char *
+Net_GetClientName(enum HouseType houseID)
+{
+	const uint8 id = g_multiplayer.client[houseID];
+	const PeerData *data = Net_GetPeerData(id);
+
+	return (data != NULL) ? data->name : NULL;
+}
+
+enum HouseType
 Net_GetClientHouse(int peerID)
 {
 	if (peerID == 0)
@@ -425,16 +434,7 @@ Server_Recv_DisconnectClient(ENetEvent *event)
 			event->peer->address.host, event->peer->address.port);
 
 	snprintf(chat_log, sizeof(chat_log), "%s left", data->name);
-
-	const enum HouseType houseID = Net_GetClientHouse(data->id);
-	if (houseID != HOUSE_INVALID) {
-		House *h = House_Get_ByIndex(houseID);
-		g_multiplayer.client[houseID] = 0;
-
-		g_client_houses &= ~(1 << houseID);
-		h->flags.human = false;
-		h->flags.isAIActive = true;
-	}
+	Server_Recv_PrefHouse(data->id, HOUSE_INVALID);
 
 	data->id = 0;
 	data->peer = NULL;
