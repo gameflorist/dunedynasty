@@ -22,6 +22,7 @@
 #include "../map.h"
 #include "../mods/multiplayer.h"
 #include "../newui/chatbox.h"
+#include "../newui/menu.h"
 #include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -79,7 +80,6 @@ typedef struct UnitDelta {
 } UnitDelta;
 
 static bool s_sendClientList;
-static bool s_sendScenario;
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
 static int64_t s_choamLastUpdate;
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
@@ -710,8 +710,13 @@ Server_Send_ClientList(unsigned char **buf)
 void
 Server_Send_Scenario(unsigned char **buf)
 {
-	if (!s_sendScenario)
+	if (!lobby_regenerate_map)
 		return;
+
+	if (!Multiplayer_GenerateMap(lobby_new_map_seed)) {
+		Lobby_RequestRegeneration(true, true);
+		return;
+	}
 
 	const size_t len = 1 + 5 + MAX_CLIENTS;
 	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
@@ -725,7 +730,8 @@ Server_Send_Scenario(unsigned char **buf)
 		Net_Encode_uint8(buf, g_multiplayer.client[h]);
 	}
 
-	s_sendScenario = false;
+	lobby_regenerate_map = false;
+	lobby_new_map_seed = false;
 }
 
 /*--------------------------------------------------------------*/
@@ -1309,7 +1315,7 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 		g_multiplayer.client[old_house] = 0;
 	}
 
-	s_sendScenario = true;
+	lobby_regenerate_map = true;
 }
 
 static void

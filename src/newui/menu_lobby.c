@@ -36,6 +36,7 @@ static Widget *skirmish_lobby_widgets;
 static Widget *multiplayer_lobby_widgets;
 static int64_t lobby_radar_timer;
 bool lobby_regenerate_map;
+bool lobby_new_map_seed;
 
 /*--------------------------------------------------------------*/
 
@@ -413,24 +414,33 @@ Lobby_ShowHideStartButton(Widget *w, bool show)
 	}
 }
 
-static void
+void
 Lobby_ResetRadarAnimation(void)
 {
+	const bool radar_animating
+		= (Timer_GetTicks() - lobby_radar_timer)
+		< (RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY);
+
+	if (radar_animating)
+		return;
+
 	lobby_radar_timer = Timer_GetTicks();
 	Audio_PlaySound(SOUND_RADAR_STATIC);
 }
 
-static void
-Lobby_RequestRegeneration(bool force)
+void
+Lobby_RequestRegeneration(bool force, bool new_seed)
 {
-	/* If radar animation is still going, do not restart it. */
-	if (Timer_GetTicks() - lobby_radar_timer < RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
-		if (force)
-			lobby_regenerate_map = true;
-	}
-	else {
+	const bool radar_animating
+		= (Timer_GetTicks() - lobby_radar_timer)
+		< (RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY);
+
+	if (force || !radar_animating) {
 		lobby_regenerate_map = true;
-		Lobby_ResetRadarAnimation();
+		lobby_new_map_seed = new_seed;
+
+		if (new_seed)
+			Lobby_ResetRadarAnimation();
 	}
 }
 
@@ -581,24 +591,26 @@ SkirmishLobby_Loop(void)
 
 				if (*(si->d.brain) != new_brain) {
 					*(si->d.brain) = new_brain;
-					conditions_changed = true;
-
-					if (!Skirmish_GenerateMap(false))
-						Lobby_RequestRegeneration(true);
+					Lobby_RequestRegeneration(true, false);
 				}
 			}
 			break;
 
 		case 0x8000 | 9:
-			Lobby_RequestRegeneration(false);
+			Lobby_RequestRegeneration(false, true);
 			break;
 	}
 
 	if (lobby_regenerate_map) {
 		conditions_changed = true;
 
-		if (Skirmish_GenerateMap(true))
+		if (Skirmish_GenerateMap(lobby_new_map_seed)) {
 			lobby_regenerate_map = false;
+			lobby_new_map_seed = false;
+		}
+		else {
+			Lobby_RequestRegeneration(true, true);
+		}
 	}
 
 	if (conditions_changed) {
@@ -616,6 +628,7 @@ MultiplayerLobby_Initialise(void)
 	g_campaign_selected = CAMPAIGNID_MULTIPLAYER;
 	Campaign_Load();
 
+	Multiplayer_GenerateMap(false);
 	lobby_regenerate_map = false;
 
 	Widget *w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 3);
@@ -662,8 +675,8 @@ MultiplayerLobby_Loop(void)
 {
 	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
 	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
-		Server_SendMessages();
 		Server_RecvMessages();
+		Server_SendMessages();
 	}
 	else {
 		Client_SendMessages();
@@ -724,6 +737,13 @@ MultiplayerLobby_Loop(void)
 		case SCANCODE_ENTER:
 			Net_Send_Chat(s_chat_buf);
 			s_chat_buf[0] = '\0';
+			break;
+
+		case 0x8000 | 9:
+			if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+			 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+				Lobby_RequestRegeneration(false, true);
+			}
 			break;
 
 		default:

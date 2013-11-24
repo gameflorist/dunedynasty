@@ -20,6 +20,7 @@
 #include "../mods/multiplayer.h"
 #include "../newui/actionpanel.h"
 #include "../newui/chatbox.h"
+#include "../newui/menu.h"
 #include "../object.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -528,6 +529,8 @@ Client_Recv_ClientList(const unsigned char **buf)
 static void
 Client_Recv_Scenario(const unsigned char **buf)
 {
+	const uint32 old_seed = g_multiplayer.seed;
+
 	g_multiplayer.seed = Net_Decode_uint32(buf);
 	enhancement_fog_of_war = Net_Decode_uint8(buf);
 
@@ -540,6 +543,11 @@ Client_Recv_Scenario(const unsigned char **buf)
 			g_playerHouse = House_Get_ByIndex(h);
 		}
 	}
+
+	Multiplayer_GenerateMap(false);
+
+	if (g_multiplayer.seed != old_seed)
+		Lobby_ResetRadarAnimation();
 }
 
 static void

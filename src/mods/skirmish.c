@@ -8,6 +8,7 @@
 
 #include "skirmish.h"
 
+#include "multiplayer.h"
 #include "../ai.h"
 #include "../enhancement.h"
 #include "../gui/gui.h"
@@ -35,7 +36,7 @@ typedef struct {
 	bool used;
 } Island;
 
-typedef struct {
+typedef struct SkirmishData {
 	/* List of buildable tiles. */
 	BuildableTile buildable[MAP_SIZE_MAX * MAP_SIZE_MAX];
 
@@ -289,12 +290,12 @@ Skirmish_Prepare(void)
 }
 
 static void
-Skirmish_GenGeneral(void)
+Skirmish_GenGeneral(uint32 seed)
 {
 	memset(&g_scenario, 0, sizeof(Scenario));
 	g_scenario.winFlags = 3;
 	g_scenario.loseFlags = 1;
-	g_scenario.mapSeed = g_skirmish.seed;
+	g_scenario.mapSeed = seed;
 	g_scenario.mapScale = 0;
 	g_scenario.timeOut = 0;
 }
@@ -623,7 +624,7 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 	return false;
 }
 
-static bool
+bool
 Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
 {
 	const int delta[7] = {
@@ -764,6 +765,42 @@ Skirmish_GenUnitsAI(enum HouseType houseID)
 	}
 }
 
+static bool
+Skirmish_GenHouses(SkirmishData *sd)
+{
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		if (g_skirmish.brain[houseID] == BRAIN_NONE)
+			continue;
+
+		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
+			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1500, 0, 25);
+		}
+		else {
+			House *h = Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
+
+			h->flags.isAIActive = true;
+
+			if (!Skirmish_GenStructuresAI(houseID, sd))
+				return false;
+		}
+	}
+
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		if (g_skirmish.brain[houseID] == BRAIN_NONE)
+			continue;
+
+		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
+			if (!Skirmish_GenUnitsHuman(houseID, sd))
+				return false;
+		}
+		else {
+			Skirmish_GenUnitsAI(houseID);
+		}
+	}
+
+	return true;
+}
+
 static void
 Skirmish_GenSandworms(void)
 {
@@ -867,24 +904,21 @@ Skirmish_GenCHOAM(void)
 }
 
 static bool
-Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
+Skirmish_GenerateMap2(bool only_landscape, SkirmishData *sd)
 {
+	const bool is_skirmish = (g_campaign_selected == CAMPAIGNID_SKIRMISH);
 	const MapInfo *mi = &g_mapInfos[0];
-
-	if (generate_houses) {
-		Campaign_Load();
-		Skirmish_Prepare();
-	}
 
 	Game_Init();
 
-	Skirmish_GenGeneral();
+	uint32 seed = (is_skirmish ? g_skirmish.seed : g_multiplayer.seed);
+	Skirmish_GenGeneral(seed);
 	Sprites_UnloadTiles();
 	Sprites_LoadTiles();
-	Tools_RandomLCG_Seed(g_skirmish.seed);
-	Map_CreateLandscape(g_skirmish.seed);
+	Tools_RandomLCG_Seed(seed);
+	Map_CreateLandscape(seed);
 
-	if (!generate_houses)
+	if (only_landscape)
 		return true;
 
 	/* Create initial island. */
@@ -910,40 +944,22 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 	if (sd->nislands_unused == 0)
 		return false;
 
-	/* Spawn players. */
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		if (g_skirmish.brain[houseID] == BRAIN_NONE)
-			continue;
-
-		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
-			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1500, 0, 25);
-		}
-		else {
-			House *h = Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
-
-			h->flags.isAIActive = true;
-
-			if (!Skirmish_GenStructuresAI(houseID, sd))
-				return false;
-		}
+	if (is_skirmish) {
+		if (!Skirmish_GenHouses(sd))
+			return false;
 	}
-
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		if (g_skirmish.brain[houseID] == BRAIN_NONE)
-			continue;
-
-		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
-			if (!Skirmish_GenUnitsHuman(houseID, sd))
-				return false;
-		}
-		else {
-			Skirmish_GenUnitsAI(houseID);
-		}
+	else {
+		if (!Multiplayer_GenHouses(sd))
+			return false;
 	}
 
 	Skirmish_GenSpiceBlooms();
-	Skirmish_GenSandworms();
-	Skirmish_GenReinforcements();
+
+	if (is_skirmish) {
+		Skirmish_GenSandworms();
+		Skirmish_GenReinforcements();
+	}
+
 	Skirmish_GenCHOAM();
 
 #if 0
@@ -959,30 +975,25 @@ Skirmish_GenerateMapInner(bool generate_houses, SkirmishData *sd)
 #endif
 
 	Game_Prepare();
-	GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
-	Scenario_CentreViewport(g_playerHouseID);
+
+	if (g_playerHouseID != HOUSE_INVALID) {
+		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+		Scenario_CentreViewport(g_playerHouseID);
+	}
+
 	g_tickScenarioStart = g_timerGame;
 	return true;
 }
 
 bool
-Skirmish_GenerateMap(bool newseed)
+Skirmish_GenerateMap1(bool is_playable)
 {
-	const bool generate_houses = Skirmish_IsPlayable();
+	SkirmishData sd;
 	assert(g_validateStrictIfZero == 0);
 
-	g_campaignID = 7;
-	g_scenarioID = 20;
 	g_validateStrictIfZero++;
 
-	if (newseed) {
-		/* DuneMaps only supports 15 bit maps seeds, so there. */
-		g_skirmish.seed = rand() & 0x7FFF;
-	}
-
-	SkirmishData sd;
-
-	if (generate_houses) {
+	if (is_playable) {
 		sd.island = malloc(sizeof(sd.island[0]));
 		assert(sd.island != NULL);
 
@@ -996,11 +1007,33 @@ Skirmish_GenerateMap(bool newseed)
 		sd.nislands_unused = 0;
 	}
 
-	const bool ret = Skirmish_GenerateMapInner(generate_houses, &sd);
+	const bool ret = Skirmish_GenerateMap2(!is_playable, &sd);
 
 	free(sd.island);
 	g_validateStrictIfZero--;
 
 	assert(g_validateStrictIfZero == 0);
 	return ret;
+}
+
+bool
+Skirmish_GenerateMap(bool newseed)
+{
+	assert(g_campaign_selected == CAMPAIGNID_SKIRMISH);
+
+	g_campaignID = 7;
+	g_scenarioID = 20;
+
+	if (newseed) {
+		/* DuneMaps only supports 15 bit maps seeds, so there. */
+		g_skirmish.seed = rand() & 0x7FFF;
+	}
+
+	bool is_playable = Skirmish_IsPlayable();
+	if (is_playable) {
+		Campaign_Load();
+		Skirmish_Prepare();
+	}
+
+	return Skirmish_GenerateMap1(is_playable);
 }

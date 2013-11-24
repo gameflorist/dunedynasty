@@ -417,6 +417,7 @@ Server_Recv_ConnectClient(ENetEvent *event)
 		data->peer = event->peer;
 
 		Server_Send_ClientID(event->peer);
+		lobby_regenerate_map = true;
 	}
 	else {
 		enet_peer_disconnect(event->peer, 0);
@@ -439,6 +440,7 @@ Server_Recv_DisconnectClient(ENetEvent *event)
 	data->peer = NULL;
 
 	enet_peer_disconnect(event->peer, 0);
+	lobby_regenerate_map = true;
 
 	Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
 }

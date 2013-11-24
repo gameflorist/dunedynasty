@@ -9,8 +9,13 @@ typedef struct Multiplayer {
 	uint32 seed;
 } Multiplayer;
 
+struct SkirmishData;
+
 extern Multiplayer g_multiplayer;
 
+extern bool Multiplayer_GenHouses(struct SkirmishData *sd);
+
 extern bool Multiplayer_IsHouseAvailable(enum HouseType houseID);
+extern bool Multiplayer_GenerateMap(bool newseed);
 
 #endif
