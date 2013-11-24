@@ -400,10 +400,13 @@ Server_Recv_ConnectClient(ENetEvent *event)
 static void
 Server_Recv_DisconnectClient(ENetEvent *event)
 {
+	char chat_log[MAX_CHAT_LEN + 1];
+	PeerData *data = event->peer->data;
+
 	NET_LOG("Disconnect client from %x:%u.",
 			event->peer->address.host, event->peer->address.port);
 
-	PeerData *data = event->peer->data;
+	snprintf(chat_log, sizeof(chat_log), "%s left", data->name);
 
 	const enum HouseType houseID = Net_GetClientHouse(data->id);
 	if (houseID != HOUSE_INVALID) {
@@ -419,6 +422,8 @@ Server_Recv_DisconnectClient(ENetEvent *event)
 	data->peer = NULL;
 
 	enet_peer_disconnect(event->peer, 0);
+
+	Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
 }
 
 void

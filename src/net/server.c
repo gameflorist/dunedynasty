@@ -1201,8 +1201,24 @@ Server_Recv_PrefName(int peerID, const char *name)
 	}
 
 	if ((len > 0) && (*name != '\0')) {
+		char chat_log[MAX_CHAT_LEN + 1];
+
+		if (strncmp((const char *)name, data->name, sizeof(data->name)) == 0)
+			return;
+
+		if (data->name[0] == '\0') {
+			snprintf(chat_log, sizeof(chat_log), "%s joined",
+					name);
+		}
+		else {
+			snprintf(chat_log, sizeof(chat_log), "%s is now %s",
+					data->name, name);
+		}
+
 		snprintf(data->name, len + 1, "%s", name);
 		s_sendClientList = true;
+
+		Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
 	}
 }
 
