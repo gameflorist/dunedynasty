@@ -844,6 +844,8 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 {
 	bool redraw = Input_IsInputAvailable();
 
+	Widget_SetCurrentWidget(WINDOWID_MENTAT_EDIT_BOX);
+
 	const int res = GUI_EditBox(mentat->security_prompt, sizeof(mentat->security_prompt) - 1, NULL);
 
 	if (res == SCANCODE_ENTER) {
