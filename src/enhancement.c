@@ -151,10 +151,10 @@ bool enhancement_raise_scenario_unit_cap = false;
 bool enhancement_repeat_reinforcements = true;
 
 /**
- * Enable the security question, accept any answer (default), or skip
- * it entirely.
+ * Enable the security question, pre-answer the question (default),
+ * or skip it entirely.
  */
-enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ACCEPT_ALL;
+enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ANSWER_GIVEN;
 
 /**
  * Render units (and bullets) as if they move every frame, and rotate

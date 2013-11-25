@@ -853,8 +853,7 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 
 		houseID = g_table_houseRemap6to3[houseID];
 
-		if ((enhancement_security_question == SECURITY_QUESTION_ACCEPT_ALL) ||
-			(strcasecmp(mentat->security_prompt, answer) == 0)) {
+		if (strcasecmp(mentat->security_prompt, answer) == 0) {
 			mentat->state = MENTAT_SHOW_TEXT;
 			strncpy(mentat->buf, String_Get_ByIndex(STR_SECURITY_CORRECT_HARKONNEN + houseID * 3), sizeof(mentat->buf));
 			mentat->text = mentat->buf;
@@ -867,10 +866,12 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 			strncpy(mentat->buf, String_Get_ByIndex(STR_SECURITY_WRONG_HARKONNEN + houseID * 3), sizeof(mentat->buf));
 			mentat->text = mentat->buf;
 			MentatBriefing_SplitText(mentat);
-			mentat->security_lives--;
 
-			if (mentat->security_lives <= 0) {
-				return MENU_EXIT_GAME;
+			if (enhancement_security_question == SECURITY_QUESTION_ENABLE) {
+				mentat->security_lives--;
+
+				if (mentat->security_lives <= 0)
+					return MENU_EXIT_GAME;
 			}
 		}
 	}

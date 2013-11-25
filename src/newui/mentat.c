@@ -482,7 +482,7 @@ MentatSecurity_PrepareQuestion(bool pick_new_question, MentatState *mentat)
 	/* If we accept any answer, then fill in the real answer so people
 	 * won't go looking up the manual.
 	 */
-	if (enhancement_security_question == SECURITY_QUESTION_ACCEPT_ALL) {
+	if (enhancement_security_question == SECURITY_QUESTION_ANSWER_GIVEN) {
 		snprintf(mentat->security_prompt, sizeof(mentat->security_prompt), "%s", String_Get_ByIndex(mentat->security_question + 2));
 	}
 	else {
