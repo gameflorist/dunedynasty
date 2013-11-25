@@ -37,6 +37,8 @@ int64_t g_tickUnitDeviation = 0;
 void
 Timer_ResetScriptTimers(void)
 {
+	g_timerGame = Timer_GameTicks();
+
 	g_tickHousePowerMaintenance = g_timerGame;
 	g_tickHouseHouse = g_timerGame;
 	g_tickHouseStarport = g_timerGame;
