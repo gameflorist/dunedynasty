@@ -10,6 +10,7 @@
 #include "client.h"
 #include "message.h"
 #include "server.h"
+#include "../audio/audio.h"
 #include "../house.h"
 #include "../mods/multiplayer.h"
 #include "../opendune.h"
@@ -83,6 +84,24 @@ Net_Initialise(void)
 	atexit(enet_deinitialize);
 }
 
+static bool
+Net_WaitForEvent(enum _ENetEventType type, enet_uint32 duration)
+{
+	for (int attempts = duration / 25; attempts > 0; attempts--) {
+		ENetEvent event;
+
+		Audio_PollMusic();
+
+		if (enet_host_service(s_host, &event, 25) <= 0)
+			continue;
+
+		if (event.type == type)
+			return true;
+	}
+
+	return false;
+}
+
 bool
 Net_CreateServer(const char *addr, int port)
 {
@@ -133,9 +152,7 @@ Net_ConnectToServer(const char *hostname, int port)
 		if (s_peer == NULL)
 			goto ERROR_HOST_CONNECT;
 
-		ENetEvent event;
-		if (enet_host_service(s_host, &event, 1000) <= 0
-				|| event.type != ENET_EVENT_TYPE_CONNECT)
+		if (!Net_WaitForEvent(ENET_EVENT_TYPE_CONNECT, 1000))
 			goto ERROR_TIMEOUT;
 
 		NET_LOG("Connected to server %s:%d\n", hostname, port);
@@ -172,13 +189,11 @@ Net_Disconnect(void)
 			enet_peer_disconnect(&s_host->peers[i], 0);
 		}
 
-		for (int attempts = 30; attempts > 0 && connected_peers > 0; attempts--) {
-			ENetEvent event;
-			if (enet_host_service(s_host, &event, 100) == 0)
-				continue;
+		while (connected_peers > 0) {
+			if (!Net_WaitForEvent(ENET_EVENT_TYPE_DISCONNECT, 3000))
+				break;
 
-			if (event.type == ENET_EVENT_TYPE_DISCONNECT)
-				connected_peers--;
+			connected_peers--;
 		}
 
 		enet_host_destroy(s_host);
