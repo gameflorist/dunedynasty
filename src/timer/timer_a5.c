@@ -9,6 +9,7 @@
 #include "../common_a5.h"
 #include "../config.h"
 #include "../enhancement.h"
+#include "../net/net.h"
 
 enum GameSpeed {
 	GAMESPEED_SLOWEST   = 0,
@@ -71,7 +72,8 @@ Timer_SetTimer(enum TimerType timer, bool set)
 		return true;
 	}
 	else {
-		al_stop_timer(s_timer[timer]);
+		if (g_host_type == HOSTTYPE_NONE)
+			al_stop_timer(s_timer[timer]);
 		return false;
 	}
 }

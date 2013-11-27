@@ -530,6 +530,24 @@ Client_Recv_ClientList(const unsigned char **buf)
 		PeerData *data = &g_peer_data[i];
 		data->id = 0;
 	}
+
+	enum HouseFlag houses = 0;
+	for (i = 0; i < count; i++) {
+		if (i >= MAX_CLIENTS)
+			break;
+
+		const PeerData *data = &g_peer_data[i];
+		const enum HouseType houseID = Net_GetClientHouse(data->id);
+		if (houseID != HOUSE_INVALID)
+			houses |= (1 << houseID);
+	}
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (houses & (1 << h))
+			continue;
+
+		g_multiplayer.client[h] = 0;
+	}
 }
 
 static void

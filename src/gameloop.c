@@ -394,7 +394,8 @@ GameLoop_ProcessGameTimer(void)
 	static int64_t l_timerUnitStatus = 0;
 	static int16 l_selectionState = -2;
 
-	if (g_gameOverlay == GAMEOVERLAY_NONE) {
+	if ((g_gameOverlay == GAMEOVERLAY_NONE)
+			|| (g_host_type != HOSTTYPE_NONE)) {
 		const int64_t curr_ticks = Timer_GameTicks();
 
 		if (g_timerGame != curr_ticks) {
@@ -415,8 +416,11 @@ GameLoop_ProcessGameTimer(void)
 		l_selectionState = g_selectionState;
 	}
 
-	if ((g_gameOverlay == GAMEOVERLAY_NONE) &&
-			(g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE || g_selectionType == SELECTIONTYPE_UNIT || g_selectionType == SELECTIONTYPE_STRUCTURE)) {
+	if ((g_gameOverlay == GAMEOVERLAY_NONE)
+			&& (g_selectionType == SELECTIONTYPE_TARGET
+			 || g_selectionType == SELECTIONTYPE_PLACE
+			 || g_selectionType == SELECTIONTYPE_UNIT
+			 || g_selectionType == SELECTIONTYPE_STRUCTURE)) {
 		if (Unit_AnySelected()) {
 			if (l_timerUnitStatus < g_timerGame) {
 				Unit_DisplayGroupStatusText();
@@ -440,6 +444,11 @@ GameLoop_ProcessGameTimer(void)
 		else {
 			GameLoop_Client_Logic();
 		}
+	}
+	else if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+	      || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		Server_RecvMessages();
+		GameLoop_Server_Logic();
 	}
 
 	GameLoop_LevelEnd();

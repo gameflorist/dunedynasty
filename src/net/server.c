@@ -709,7 +709,7 @@ Server_Send_ClientList(unsigned char **buf)
 void
 Server_Send_Scenario(unsigned char **buf)
 {
-	if (!lobby_regenerate_map)
+	if (g_inGame || !lobby_regenerate_map)
 		return;
 
 	if (!Multiplayer_GenerateMap(lobby_new_map_seed)) {
