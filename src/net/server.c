@@ -818,8 +818,11 @@ Server_Recv_SendStarportOrder(Structure *s)
 	if (BuildQueue_IsEmpty(&h->starportQueue))
 		return;
 
-	if (h->starportTimeLeft == 0) {
-		h->starportTimeLeft = g_table_houseInfo[h->index].starportDeliveryTime;
+	const uint16 delivery_time
+		= g_table_houseInfo[h->index].starportDeliveryTime;
+
+	if (h->starportTimeLeft == 0 || h->starportTimeLeft == delivery_time) {
+		h->starportTimeLeft = delivery_time;
 		memset(h->starportCount, 0, sizeof(h->starportCount));
 		BuildQueue_Free(&h->starportQueue);
 	}
