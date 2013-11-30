@@ -1281,16 +1281,26 @@ Viewport_DrawSelectionHealthBars(void)
 	}
 
 	if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS) {
-		find.houseID = g_playerHouseID;
+		find.houseID = HOUSE_INVALID;
 		find.type = 0xFFFF;
 		find.index = 0xFFFF;
 
 		u = Unit_Find(&find);
 	}
 
-	while (u != NULL) {
+	for (Unit *next = NULL; u != NULL; u = next) {
 		const uint16 packed = Tile_PackTile(u->o.position);
 		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+
+		if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS) {
+			next = Unit_Find(&find);
+
+			if ((Unit_GetHouseID(u) != g_playerHouseID) && !Unit_IsSelected(u))
+				continue;
+		}
+		else {
+			next = Unit_NextSelected(&iter);
+		}
 
 		if (ui->o.flags.tabSelectable && Map_IsValidPosition(packed) && (g_mapVisible[packed].fogOverlayBits != 0xF)) {
 			int x, y;
@@ -1308,13 +1318,6 @@ Viewport_DrawSelectionHealthBars(void)
 
 			if ((u->o.type == UNIT_HARVESTER) && (Unit_GetHouseID(u) == g_playerHouseID))
 				Viewport_DrawSpiceBricks(x - 7, y + 2, 7, u->amount, 100);
-		}
-
-		if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS) {
-			u = Unit_Find(&find);
-		}
-		else {
-			u = Unit_NextSelected(&iter);
 		}
 	}
 }
