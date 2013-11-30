@@ -11,6 +11,7 @@
 #include "message.h"
 #include "net.h"
 #include "../audio/audio.h"
+#include "../enhancement.h"
 #include "../explosion.h"
 #include "../gfx.h"
 #include "../gui/gui.h"
@@ -528,6 +529,7 @@ static void
 Client_Recv_Scenario(const unsigned char **buf)
 {
 	g_multiplayer.seed = Net_Decode_uint32(buf);
+	enhancement_fog_of_war = Net_Decode_uint8(buf);
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		g_multiplayer.client[h] = Net_Decode_uint8(buf);

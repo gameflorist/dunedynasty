@@ -713,12 +713,13 @@ Server_Send_Scenario(unsigned char **buf)
 	if (!s_sendScenario)
 		return;
 
-	const size_t len = 1 + 4 + MAX_CLIENTS;
+	const size_t len = 1 + 5 + MAX_CLIENTS;
 	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_SCENARIO);
 	Net_Encode_uint32(buf, g_multiplayer.seed);
+	Net_Encode_uint8 (buf, enhancement_fog_of_war);
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		Net_Encode_uint8(buf, g_multiplayer.client[h]);

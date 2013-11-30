@@ -579,6 +579,7 @@ MainMenu_Loop(void)
 
 		case 0x8000 | MENU_PICK_LOBBY:
 			main_menu_campaign_selected = g_campaign_selected;
+			enhancement_fog_of_war_backup = enhancement_fog_of_war;
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_LOBBY;
 
@@ -1581,6 +1582,7 @@ Menu_Run(void)
 			if (((curr_menu & 0xFF) == MENU_PICK_LOBBY)
 					&& (res & 0xFF) == MENU_MAIN_MENU) {
 				g_campaign_selected = main_menu_campaign_selected;
+				enhancement_fog_of_war = enhancement_fog_of_war_backup;
 			}
 
 			if (res & MENU_NO_TRANSITION) {

@@ -52,6 +52,7 @@ extern bool enhancement_construction_does_not_pause;
 extern enum HealthBarMode enhancement_draw_health_bars;
 extern bool enhancement_fog_covers_units;
 extern bool enhancement_fog_of_war;
+extern bool enhancement_fog_of_war_backup;
 extern bool enhancement_high_res_overlays;
 extern bool enhancement_i_mean_where_i_clicked;
 extern bool enhancement_infantry_squad_death_animations;

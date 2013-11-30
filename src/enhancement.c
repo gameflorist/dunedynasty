@@ -81,6 +81,7 @@ bool enhancement_fog_covers_units = true;
  * Add non-permanent scouting.
  */
 bool enhancement_fog_of_war = false;
+bool enhancement_fog_of_war_backup = false;
 
 /**
  * High-resolution overlays includes a new selection cursor, thinner
