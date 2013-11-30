@@ -263,7 +263,7 @@ Unit_GetNextDestination(const Unit *u)
 {
 	if ((enhancement_true_game_speed_adjustment && u->speedPerTick == 255) ||
 		(u->speedRemainder + Tools_AdjustToGameSpeed(u->speedPerTick, 1, 255, false) > 0xFF)) {
-		const int dist = min(u->speed * 16, Tile_GetDistance(u->o.position, u->currentDestination) + 16);
+		const int dist = min(u->speed, Tile_GetDistance(u->o.position, u->currentDestination) + 16);
 
 		return Tile_MoveByDirectionUnbounded(u->o.position, u->orientation[0].current, dist);
 	}
@@ -289,7 +289,7 @@ static void Unit_MovementTick(Unit *unit)
 	}
 
 	if (speed > 0xFF) {
-		Unit_Move(unit, min(unit->speed * 16, Tile_GetDistance(unit->o.position, unit->currentDestination) + 16));
+		Unit_Move(unit, min(unit->speed, Tile_GetDistance(unit->o.position, unit->currentDestination) + 16));
 	}
 
 	unit->speedRemainder = speed & 0xFF;
@@ -2077,7 +2077,7 @@ void Unit_SetOrientation(Unit *unit, int8 orientation, bool rotateInstantly, uin
 		 * is the translation for turning pi radians, or twice turning radius,
 		 * when moving a distance of 128 per angle.  Add a small fudge factor.
 		 */
-		const int turning_radius = 32 + 10281 * (unit->speed * 16) / (2 * 128 * (g_table_unitInfo[unit->o.type].turningSpeed * 4));
+		const int turning_radius = 32 + 10281 * unit->speed / (2 * 128 * (g_table_unitInfo[unit->o.type].turningSpeed * 4));
 		tile32 circle;
 
 		circle = Tile_MoveByDirectionUnbounded(unit->o.position, unit->orientation[0].current + 64, turning_radius);
@@ -2337,12 +2337,17 @@ void Unit_SetSpeed(Unit *unit, uint16 speed)
 	speed = Tools_AdjustToGameSpeed(speed, 1, 255, false);
 
 	speedPerTick = speed << 4;
-	speed        = speed >> 4;
 
-	if (speed != 0) {
+	if ((speed >> 4) != 0) {
 		speedPerTick = 255;
-	} else {
-		speed = 1;
+
+		if (!enhancement_true_unit_movement_speed) {
+			speed >>= 4;
+			speed <<= 4;
+		}
+	}
+	else {
+		speed = 16;
 	}
 
 	unit->speed = speed & 0xFF;

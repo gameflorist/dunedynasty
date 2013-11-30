@@ -192,6 +192,12 @@ bool enhancement_targetted_sabotage = true;
  */
 bool enhancement_true_game_speed_adjustment = true;
 
+/**
+ * Dune II's unit movement speeds lose precision, meaning that fast
+ * units (e.g. trikes) often cannot out run slower units (e.g. quads).
+ */
+bool enhancement_true_unit_movement_speed = false;
+
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 

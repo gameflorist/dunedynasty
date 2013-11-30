@@ -145,9 +145,11 @@ Campaign_ResetEnhancements(void)
 
 	if (g_campaign_selected == CAMPAIGNID_SKIRMISH
 	 || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
+		enhancement_true_unit_movement_speed = true;
 		enhancement_undelay_ordos_siege_tank_tech = true;
 	}
 	else {
+		enhancement_true_unit_movement_speed = false;
 		enhancement_undelay_ordos_siege_tank_tech = false;
 	}
 
@@ -174,6 +176,9 @@ Campaign_ReadEnhancements(char *source, char *keys)
 		}
 		else if (strcasecmp(key, "special_trooper_portraits") == 0) {
 			String_GetBool(value, &enhancement_special_trooper_portaits);
+		}
+		else if (strcasecmp(key, "true_unit_movement_speed") == 0) {
+			String_GetBool(value, &enhancement_true_unit_movement_speed);
 		}
 	}
 }
