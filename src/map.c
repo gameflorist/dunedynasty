@@ -339,6 +339,49 @@ bool Map_IsPositionInViewport(tile32 position, int *retX, int *retY)
 	        (-TILE_SIZE <= y && y < TILE_SIZE + wi->height));
 }
 
+enum HouseFlag
+Map_FindHousesInRadius(tile32 tile, int radius)
+{
+	const uint16 origin = Tile_PackTile(tile);
+	const uint16 cx = Tile_GetPackedX(origin);
+	const uint16 cy = Tile_GetPackedY(origin);
+	enum HouseFlag houses = 0;
+
+	for (int y = cy - radius; y <= cy + radius; y++) {
+		if (!Map_InRangeY(y))
+			continue;
+
+		for (int x = cx - radius; x <= cx + radius; x++) {
+			if (!Map_InRangeX(x))
+				continue;
+
+			const uint16 packed = Tile_PackXY(x, y);
+			if (Tile_GetDistancePacked(origin, packed) > radius)
+				continue;
+
+			Unit *u;
+			enum HouseType houseID = HOUSE_INVALID;
+			if (g_map[packed].hasStructure) {
+				houseID = g_map[packed].houseID;
+			}
+			else if (g_map[packed].hasUnit && (u = Unit_Get_ByPackedTile(packed)) != NULL) {
+				const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+				if (!ui->flags.isBullet
+						&&  u->o.flags.s.used
+						&&  u->o.flags.s.allocated
+						&& !u->o.flags.s.isNotOnMap
+						&& !u->o.flags.s.inTransport)
+					houseID = Unit_GetHouseID(u);
+			}
+
+			if ((houseID != HOUSE_INVALID) && !(houses & (1 << houseID)))
+				houses |= (1 << houseID);
+		}
+	}
+
+	return houses;
+}
+
 static bool Map_UpdateWall(uint16 packed)
 {
 	Tile *t;
@@ -1146,10 +1189,7 @@ Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause,
 	FogOfWarTile *f = &g_mapVisible[packed];
 
 	f->cause[houseID] = max(f->cause[houseID], cause);
-
-	if (houseID == g_playerHouseID) {
-		f->timeout = Map_GetUnveilTimeout(cause);
-	}
+	f->timeout[houseID] = Map_GetUnveilTimeout(cause);
 
 	if (Map_IsPositionUnveiled(houseID, packed))
 		return;
@@ -1171,18 +1211,18 @@ Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause,
 }
 
 void
-Map_Client_RefreshTile(enum TileUnveilCause cause, uint16 packed)
+Map_RefreshTile(enum HouseType houseID, enum TileUnveilCause cause, uint16 packed)
 {
 	if (Tile_IsOutOfMap(packed))
 		return;
 
-	if (Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
+	if (Map_IsUnveiledToHouse(houseID, packed)) {
 		const int64_t timeout = Map_GetUnveilTimeout(cause);
 		FogOfWarTile *f = &g_mapVisible[packed];
 
-		if (f->timeout < timeout) {
-			f->cause[g_playerHouseID] = max(f->cause[g_playerHouseID], cause);
-			f->timeout = timeout;
+		if (f->timeout[houseID] < timeout) {
+			f->cause[houseID] = max(f->cause[houseID], cause);
+			f->timeout[houseID] = timeout;
 		}
 	}
 }
@@ -1208,7 +1248,7 @@ Map_Client_UpdateFogOfWar(void)
 			FogOfWarTile *f = &g_mapVisible[packed];
 
 			if (!Map_IsUnveiledToHouse(g_playerHouseID, packed)
-					|| (f->timeout <= g_timerGame)) {
+					|| (f->timeout[g_playerHouseID] <= g_timerGame)) {
 				f->fogOverlayBits = 0xF;
 			}
 			else {
@@ -1220,10 +1260,10 @@ Map_Client_UpdateFogOfWar(void)
 				f->hasStructure = t->hasStructure;
 				f->fogOverlayBits = 0;
 
-				if (g_mapVisible[packed - 64].timeout <= g_timerGame) f->fogOverlayBits |= 0x1;
-				if (g_mapVisible[packed +  1].timeout <= g_timerGame) f->fogOverlayBits |= 0x2;
-				if (g_mapVisible[packed + 64].timeout <= g_timerGame) f->fogOverlayBits |= 0x4;
-				if (g_mapVisible[packed -  1].timeout <= g_timerGame) f->fogOverlayBits |= 0x8;
+				if (g_mapVisible[packed - 64].timeout[g_playerHouseID] <= g_timerGame) f->fogOverlayBits |= 0x1;
+				if (g_mapVisible[packed +  1].timeout[g_playerHouseID] <= g_timerGame) f->fogOverlayBits |= 0x2;
+				if (g_mapVisible[packed + 64].timeout[g_playerHouseID] <= g_timerGame) f->fogOverlayBits |= 0x4;
+				if (g_mapVisible[packed -  1].timeout[g_playerHouseID] <= g_timerGame) f->fogOverlayBits |= 0x8;
 			}
 		}
 	}

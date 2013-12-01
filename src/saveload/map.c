@@ -1,5 +1,7 @@
 /** @file src/saveload/map.c Load/save routines for Map. */
 
+#include <string.h>
+
 #include "saveload.h"
 #include "../map.h"
 #include "../sprites.h"
@@ -131,7 +133,7 @@ Map_Load2Fallback(void)
 		Tile *t = &g_map[packed];
 		FogOfWarTile *f = &g_mapVisible[packed];
 
-		f->timeout          = 0;
+		memset(f->timeout, 0, sizeof(f->timeout));
 		f->groundSpriteID   = t->groundSpriteID;
 		f->houseID          = t->houseID;
 		f->hasStructure     = t->hasStructure;
@@ -167,7 +169,10 @@ Map_Load2(FILE *fp, uint32 length)
 		if (fread(&hasStructure,sizeof(uint8),  1, fp) != 1) return false;
 
 		FogOfWarTile *f = &g_mapVisible[packed];
-		f->timeout          = (timeout == 0) ? 0 : (g_timerGame + timeout);
+
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++)
+			f->timeout[h]   = (timeout == 0) ? 0 : (g_timerGame + timeout);
+
 		f->groundSpriteID   = (spriteID & 0x1FF);
 		f->houseID          = houseID;
 		f->hasStructure     = hasStructure;
@@ -192,7 +197,7 @@ Map_Save2(FILE *fp)
 	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
 		const Tile *t = &g_map[packed];
 		const FogOfWarTile *f = &g_mapVisible[packed];
-		uint16 timeout      = (f->timeout <= g_timerGame) ? 0 : (f->timeout - g_timerGame);
+		uint16 timeout      = (f->timeout[g_playerHouseID] <= g_timerGame) ? 0 : (f->timeout[g_playerHouseID] - g_timerGame);
 		uint8  overlay      = f->fogSpriteID ? f->fogSpriteID : f->overlaySpriteID;
 		uint16 spriteID     = ((overlay & 0x7F) << 9) | (f->groundSpriteID & 0x1FF);
 		uint8 houseID       = f->houseID;

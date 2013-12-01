@@ -734,12 +734,12 @@ void Game_Prepare(void)
 		if (s == NULL || !s->o.flags.s.used) t->hasStructure = false;
 
 		if (Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
-			const int64_t backup = f->timeout;
+			const int64_t backup = f->timeout[g_playerHouseID];
 
 			Map_UnveilTile(g_playerHouseID, UNVEILCAUSE_INITIALISATION,
 					packed);
 
-			f->timeout = backup;
+			f->timeout[g_playerHouseID] = backup;
 		}
 	}
 

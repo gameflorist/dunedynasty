@@ -8,11 +8,17 @@
 
 static void
 Map_UnveilTileForHouses(enum HouseFlag houses, enum TileUnveilCause cause,
-		uint16 packed)
+		uint16 packed, bool unveil)
 {
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		if (houses & (1 << h))
-			Map_UnveilTile(h, cause, packed);
+		if (houses & (1 << h)) {
+			if (unveil) {
+				Map_UnveilTile(h, cause, packed);
+			}
+			else {
+				Map_RefreshTile(h, cause, packed);
+			}
+		}
 	}
 }
 
@@ -49,12 +55,7 @@ Tile_RefreshFogInRadius(enum HouseFlag houses, enum TileUnveilCause cause,
 				continue;
 
 			packed = Tile_PackXY(x + i, y + j);
-			if (unveil) {
-				Map_UnveilTileForHouses(houses, cause, packed);
-			}
-			else if (houses & (1 << g_playerHouseID)) {
-				Map_Client_RefreshTile(cause, packed);
-			}
+			Map_UnveilTileForHouses(houses, cause, packed, unveil);
 		}
 	}
 }

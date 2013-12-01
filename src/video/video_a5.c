@@ -2693,7 +2693,7 @@ Video_DrawMinimap(int left, int top, int map_scale, int mode)
 				&& Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
 				Unit *u;
 
-				if (enhancement_fog_of_war && g_mapVisible[packed].timeout <= g_timerGame) {
+				if (enhancement_fog_of_war && g_mapVisible[packed].timeout[g_playerHouseID] <= g_timerGame) {
 				}
 				else if (t->hasUnit && ((u = Unit_Get_ByPackedTile(packed)) != NULL)) {
 					if (u->o.type == UNIT_SANDWORM) {
@@ -2715,7 +2715,7 @@ Video_DrawMinimap(int left, int top, int map_scale, int mode)
 					if (g_table_landscapeInfo[type].radarColour == 0xFFFF) {
 						colour = g_table_houseInfo[t->houseID].minimapColor;
 					}
-					else if (enhancement_fog_of_war && g_mapVisible[packed].timeout <= g_timerGame) {
+					else if (enhancement_fog_of_war && g_mapVisible[packed].timeout[g_playerHouseID] <= g_timerGame) {
 						colour = -g_table_landscapeInfo[type].radarColour;
 					}
 					else {

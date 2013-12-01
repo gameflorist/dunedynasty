@@ -13,6 +13,7 @@
 #include "house.h"
 #include "map.h"
 #include "net/server.h"
+#include "scenario.h"
 #include "sprites.h"
 #include "structure.h"
 #include "tile.h"
@@ -252,11 +253,18 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 
 		g_map[packed].hasExplosion = true;
 
-		/* Do not unveil for sandworm eat and spice bloom explosion types. */
+		/* Do not unveil for sandworm eat and spice bloom explosion types.
+		 * In multiplayer, only reveal nearby explosions.
+		 */
 		if (enhancement_fog_of_war
 				&& explosionType != EXPLOSION_SANDWORM_SWALLOW
 				&& explosionType != EXPLOSION_SPICE_BLOOM_TREMOR) {
-			Tile_RefreshFogInRadius(FLAG_HOUSE_ALL, UNVEILCAUSE_EXPLOSION,
+			const enum HouseFlag houses
+				= (g_campaign_selected == CAMPAIGNID_MULTIPLAYER)
+				? Map_FindHousesInRadius(position, 9)
+				: FLAG_HOUSE_ALL;
+
+			Tile_RefreshFogInRadius(houses, UNVEILCAUSE_EXPLOSION,
 					position, 1, false);
 		}
 	}

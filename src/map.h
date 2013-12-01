@@ -53,7 +53,7 @@ assert_compile(sizeof(Tile) == 0x04);
 
 typedef struct FogOfWarTile {
 	enum TileUnveilCause cause[HOUSE_MAX];
-	int64_t timeout;
+	int64_t timeout[HOUSE_MAX];
 
 	uint16 groundSpriteID;
 	uint8 overlaySpriteID;
@@ -116,6 +116,7 @@ extern bool Map_IsValidPosition(uint16 position);
 extern bool Map_IsUnveiledToHouse(enum HouseType houseID, uint16 packed);
 extern bool Map_IsPositionUnveiled(enum HouseType houseID, uint16 packed);
 extern bool Map_IsPositionInViewport(tile32 position, int *retX, int *retY);
+extern enum HouseFlag Map_FindHousesInRadius(tile32 tile, int radius);
 extern void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 unitOriginEncoded);
 extern uint16 Map_GetLandscapeType(uint16 packed);
 extern enum LandscapeType Map_GetLandscapeTypeVisible(uint16 packed);
@@ -129,7 +130,7 @@ extern uint16 Map_Server_FindLocationTile(uint16 locationID, enum HouseType hous
 extern void Map_UpdateAround(uint16 radius, tile32 position, struct Unit *unit, uint8 function);
 extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
 extern void Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause, uint16 packed);
-extern void Map_Client_RefreshTile(enum TileUnveilCause cause, uint16 packed);
+extern void Map_RefreshTile(enum HouseType houseID, enum TileUnveilCause cause, uint16 packed);
 extern void Map_ResetFogOfWar(void);
 extern void Map_Client_UpdateFogOfWar(void);
 extern void Map_CreateLandscape(uint32 seed);

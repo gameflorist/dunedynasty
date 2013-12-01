@@ -32,6 +32,7 @@
 #include "pool/structure.h"
 #include "pool/unit.h"
 #include "pool/team.h"
+#include "scenario.h"
 #include "sprites.h"
 #include "string.h"
 #include "structure.h"
@@ -2372,6 +2373,11 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 	ui = &g_table_unitInfo[type];
 	tile = Tools_Index_GetTile(target);
 
+	const enum HouseFlag houses
+		= (g_campaign_selected == CAMPAIGNID_MULTIPLAYER)
+		? Map_FindHousesInRadius(position, 9)
+		: FLAG_HOUSE_ALL;
+
 	switch (type) {
 		case UNIT_MISSILE_HOUSE:
 		case UNIT_MISSILE_ROCKET:
@@ -2387,7 +2393,7 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 			bullet = Unit_Create(UNIT_INDEX_INVALID, type, houseID, position, orientation);
 			if (bullet == NULL) return NULL;
 
-			Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
+			Server_Send_PlaySoundAtTile(houses,
 					ui->bulletSound, position);
 
 			bullet->targetAttack = target;
@@ -2406,7 +2412,7 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 			}
 
 			if (type != UNIT_MISSILE_HOUSE) {
-				Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, UNVEILCAUSE_BULLET_FIRED,
+				Tile_RemoveFogInRadius(houses, UNVEILCAUSE_BULLET_FIRED,
 						bullet->o.position, 2);
 			}
 
@@ -2435,7 +2441,7 @@ Unit_CreateBullet(tile32 position, enum UnitType type, uint8 houseID, uint16 dam
 
 			if (damage > 15) bullet->o.flags.s.bulletIsBig = true;
 
-			Tile_RemoveFogInRadius(FLAG_HOUSE_ALL, UNVEILCAUSE_BULLET_FIRED,
+			Tile_RemoveFogInRadius(houses, UNVEILCAUSE_BULLET_FIRED,
 					bullet->o.position, 2);
 
 			return bullet;
