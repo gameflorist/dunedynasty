@@ -576,6 +576,7 @@ void GameLoop_Main(bool new_game)
 	GUI_Screen_FadeIn(g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetXBase/8, g_curWidgetYBase, g_curWidgetWidth/8, g_curWidgetHeight, SCREEN_1, SCREEN_0);
 #endif
 
+	Video_SetCursor(SHAPE_CURSOR_NORMAL);
 	if (g_gameOverlay == GAMEOVERLAY_NONE)
 		Mouse_TransformToDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 }
