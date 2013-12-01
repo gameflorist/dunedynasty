@@ -349,7 +349,7 @@ MenuBar_ClickMentat(Widget *w)
 	MentatState *mentat = &g_mentat_state;
 	VARIABLE_NOT_USED(w);
 
-	if (g_gameOverlay != GAMEOVERLAY_NONE)
+	if (g_host_type != HOSTTYPE_NONE || g_gameOverlay != GAMEOVERLAY_NONE)
 		return false;
 
 	g_gameOverlay = GAMEOVERLAY_MENTAT;
