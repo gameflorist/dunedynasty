@@ -419,6 +419,15 @@ MenuBar_DrawMentatOverlay(void)
 
 /*--------------------------------------------------------------*/
 
+static void
+MenuBar_MakeDisabled(int widgetID)
+{
+	Widget *w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, widgetID);
+
+	GUI_Widget_MakeInvisible(w);
+	w->flags.greyWhenInvisible = true;
+}
+
 bool
 MenuBar_ClickOptions(Widget *w)
 {
@@ -431,6 +440,13 @@ MenuBar_ClickOptions(Widget *w)
 	Video_SetCursor(SHAPE_CURSOR_NORMAL);
 	Timer_SetTimer(TIMER_GAME, false);
 	GUI_Window_Create(&g_optionsWindowDesc);
+
+	if (g_host_type != HOSTTYPE_NONE) {
+		MenuBar_MakeDisabled(30); /* Load a game. */
+		MenuBar_MakeDisabled(31); /* Save this game. */
+		MenuBar_MakeDisabled(33); /* Restart scenario. */
+		MenuBar_MakeDisabled(34); /* Pick another house. */
+	}
 
 	Mouse_TransformToDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 	return true;

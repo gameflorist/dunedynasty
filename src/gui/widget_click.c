@@ -275,6 +275,7 @@ void GUI_Window_Create(WindowDesc *desc)
 		w->shortcut2 = desc->widgets[i].shortcut2;
 
 		w->stringID = desc->widgets[i].stringID;
+		w->flags.greyWhenInvisible = false;
 		w->drawModeNormal   = DRAW_MODE_CUSTOM_PROC;
 		w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;
 		w->drawModeDown     = DRAW_MODE_CUSTOM_PROC;

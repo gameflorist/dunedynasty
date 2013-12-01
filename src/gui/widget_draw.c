@@ -54,7 +54,7 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 	g_widgetProperties[19].height = height;
 
 	state  = (w->state.selected) ? 0 : 2;
-	colour = (w->state.hover2) ? 231 : 232;
+	colour = (w->flags.invisible) ? 234 : (w->state.hover2) ? 231 : 232;
 
 	GUI_Widget_DrawBorder(19, state, 1);
 
