@@ -647,7 +647,7 @@ void Map_Bloom_ExplodeSpice(uint16 packed, enum HouseFlag houses)
 		Map_MakeExplosion(EXPLOSION_SPICE_BLOOM_TREMOR, Tile_UnpackTile(packed), 0, 0);
 	}
 
-	Server_Send_PlayVoice(houses, VOICE_SPICE_BLOOM_LOCATED);
+	Server_Send_PlayVoiceAtTile(houses, VOICE_SPICE_BLOOM_LOCATED, packed);
 
 	Map_FillCircleWithSpice(packed, 5);
 

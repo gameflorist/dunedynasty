@@ -499,8 +499,9 @@ static void
 Client_Recv_PlayVoice(const unsigned char **buf)
 {
 	const uint8 voiceID = Net_Decode_uint8(buf);
+	const uint16 packed = Net_Decode_uint16(buf);
 
-	Audio_PlayVoice(voiceID);
+	Audio_PlayVoiceAtTile(voiceID, packed);
 }
 
 static void

@@ -1904,23 +1904,27 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 	houseID = Unit_GetHouseID(unit);
 
 	if (unit->o.hitpoints == 0) {
+		const uint16 packed = Tile_PackTile(unit->o.position);
+
 		Unit_RemovePlayer(unit);
 
-		if (unit->o.type == UNIT_HARVESTER) Map_FillCircleWithSpice(Tile_PackTile(unit->o.position), unit->amount / 32);
+		if (unit->o.type == UNIT_HARVESTER)
+			Map_FillCircleWithSpice(packed, unit->amount / 32);
 
 		if (unit->o.type == UNIT_SABOTEUR) {
-			Server_Send_PlayVoice(FLAG_HOUSE_ALL, VOICE_SABOTEUR_DESTROYED);
+			Server_Send_PlayVoiceAtTile(FLAG_HOUSE_ALL,
+					VOICE_SABOTEUR_DESTROYED, packed);
 		}
 		else if (!ui->o.flags.noMessageOnDeath && alive) {
 			if (g_campaignID > 3) {
-				Server_Send_PlayVoice(FLAG_HOUSE_ALL,
-						VOICE_HARKONNEN_UNIT_DESTROYED + houseID);
+				Server_Send_PlayVoiceAtTile(FLAG_HOUSE_ALL,
+						VOICE_HARKONNEN_UNIT_DESTROYED + houseID, packed);
 			}
 			else {
-				Server_Send_PlayVoice(1 << houseID,
-						VOICE_HARKONNEN_UNIT_DESTROYED + houseID);
-				Server_Send_PlayVoice(FLAG_HOUSE_ALL & ~(1 << houseID),
-						VOICE_ENEMY_UNIT_DESTROYED);
+				Server_Send_PlayVoiceAtTile(1 << houseID,
+						VOICE_HARKONNEN_UNIT_DESTROYED + houseID, packed);
+				Server_Send_PlayVoiceAtTile(FLAG_HOUSE_ALL & ~(1 << houseID),
+						VOICE_ENEMY_UNIT_DESTROYED, packed);
 			}
 		}
 

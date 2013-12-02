@@ -12,8 +12,11 @@
 #include "audio.h"
 
 #include "../config.h"
+#include "../enhancement.h"
 #include "../file.h"
 #include "../gui/gui.h"
+#include "../map.h"
+#include "../net/net.h"
 #include "../opendune.h"
 #include "../sprites.h"
 #include "../string.h"
@@ -353,6 +356,19 @@ Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 	AudioA5_SetMusicVolume(volume);
 }
 
+static bool
+Audio_IsPositionAudible(uint16 packed)
+{
+	if (enhancement_fog_of_war && (packed != 0)
+			&& (g_host_type == HOSTTYPE_CLIENT_SERVER
+			 || g_host_type == HOSTTYPE_DEDICATED_CLIENT)) {
+		return Map_IsUnveiledToHouse(g_playerHouseID, packed)
+			&& (g_mapVisible[packed].timeout[g_playerHouseID] > g_timerGame);
+	}
+
+	return true;
+}
+
 void
 Audio_PlayEffect(enum SoundID effectID)
 {
@@ -506,6 +522,9 @@ Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position)
 	if (soundID == SOUND_INVALID)
 		return;
 
+	if (!Audio_IsPositionAudible(Tile_PackTile(position)))
+		return;
+
 	assert(soundID < SOUNDID_MAX);
 
 	const enum SampleID sampleID = g_table_voiceMapping[soundID];
@@ -596,13 +615,22 @@ Audio_QueueVoice(enum SampleID sampleID)
 void
 Audio_PlayVoice(enum VoiceID voiceID)
 {
-	if (voiceID == VOICE_INVALID)
-		return;
-
 	if (voiceID == VOICE_STOP) {
 		s_voice_head = s_voice_tail;
 		return;
 	}
+
+	Audio_PlayVoiceAtTile(voiceID, 0);
+}
+
+void
+Audio_PlayVoiceAtTile(enum VoiceID voiceID, uint16 packed)
+{
+	if (voiceID == VOICE_INVALID)
+		return;
+
+	if (!Audio_IsPositionAudible(packed))
+		return;
 
 	assert(voiceID < VOICEID_MAX);
 	const Feedback *s = &g_feedback[voiceID];

@@ -1250,11 +1250,11 @@ bool Structure_Damage(Structure *s, uint16 damage, uint16 range)
 
 		const enum HouseFlag allies = House_GetAllies(s->o.houseID);
 
-		Server_Send_PlayVoice(allies,
-				VOICE_HARKONNEN_STRUCTURE_DESTROYED + s->o.houseID);
+		Server_Send_PlayVoiceAtTile(allies,
+				VOICE_HARKONNEN_STRUCTURE_DESTROYED + s->o.houseID, 0);
 
-		Server_Send_PlayVoice(FLAG_HOUSE_ALL & (~allies),
-				VOICE_ENEMY_STRUCTURE_DESTROYED);
+		Server_Send_PlayVoiceAtTile(FLAG_HOUSE_ALL & (~allies),
+				VOICE_ENEMY_STRUCTURE_DESTROYED, Tile_PackTile(s->o.position));
 
 		Structure_UntargetMe(s);
 		return true;

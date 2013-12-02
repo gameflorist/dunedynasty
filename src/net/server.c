@@ -636,20 +636,28 @@ Server_Send_PlaySoundAtTile(enum HouseFlag houses,
 void
 Server_Send_PlayVoice(enum HouseFlag houses, enum VoiceID voiceID)
 {
+	Server_Send_PlayVoiceAtTile(houses, voiceID, 0);
+}
+
+void
+Server_Send_PlayVoiceAtTile(enum HouseFlag houses,
+		enum VoiceID voiceID, uint16 packed)
+{
 	if (voiceID == VOICE_INVALID)
 		return;
 
 	if (houses & (1 << g_playerHouseID)) {
-		Audio_PlayVoice(voiceID);
+		Audio_PlayVoiceAtTile(voiceID, packed);
 	}
 
 	houses &= g_client_houses;
 	if (houses) {
-		unsigned char src[2];
+		unsigned char src[4];
 		unsigned char *buf = src;
 
 		Net_Encode_ServerClientMsg(&buf, SCMSG_PLAY_VOICE);
-		Net_Encode_uint8(&buf, voiceID);
+		Net_Encode_uint8 (&buf, voiceID);
+		Net_Encode_uint16(&buf, packed);
 
 		Server_BufferGameEvent(houses, sizeof(src), src);
 	}

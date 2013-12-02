@@ -23,6 +23,7 @@ extern void Server_Send_StatusMessage3(enum HouseFlag houses, uint8 priority, ui
 extern void Server_Send_PlaySound(enum HouseFlag houses, enum SoundID soundID);
 extern void Server_Send_PlaySoundAtTile(enum HouseFlag houses, enum SoundID soundID, tile32 position);
 extern void Server_Send_PlayVoice(enum HouseFlag houses, enum VoiceID voiceID);
+extern void Server_Send_PlayVoiceAtTile(enum HouseFlag houses, enum VoiceID voiceID, uint16 packed);
 extern void Server_Send_PlayBattleMusic(enum HouseFlag houses);
 extern void Server_Send_WinLose(enum HouseType houseID, bool win);
 extern void Server_Send_ClientList(unsigned char **buf);

@@ -40,6 +40,7 @@ extern void Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position);
 extern void Audio_PlaySound(enum SoundID soundID);
 extern void Audio_PlaySoundCutscene(enum SoundID soundID);
 extern void Audio_PlayVoice(enum VoiceID voiceID);
+extern void Audio_PlayVoiceAtTile(enum VoiceID voiceID, uint16 packed);
 extern bool Audio_Poll(void);
 
 #include "audio_a5.h"
