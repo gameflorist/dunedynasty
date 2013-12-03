@@ -503,6 +503,10 @@ Client_Recv_ClientList(const unsigned char **buf)
 		}
 
 		snprintf(data->name, min(sizeof(data->name), len + 1), "%s", *buf);
+
+		if (peerID == g_local_client_id)
+			strncpy(g_net_name, data->name, sizeof(g_net_name));
+
 		(*buf) += len;
 	}
 }

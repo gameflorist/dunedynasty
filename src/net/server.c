@@ -3,7 +3,10 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "../os/math.h"
+#include "../os/strings.h"
 #include "enum_string.h"
 
 #include "server.h"
@@ -1201,23 +1204,64 @@ Server_Recv_PrefName(int peerID, const char *name)
 	}
 
 	if ((len > 0) && (*name != '\0')) {
+		char new_name[MAX_NAME_LEN + 1];
 		char chat_log[MAX_CHAT_LEN + 1];
 
-		if (strncmp((const char *)name, data->name, sizeof(data->name)) == 0)
+		if (strncmp(name, data->name, sizeof(data->name)) == 0)
+			return;
+
+		snprintf(new_name, len + 1, "%s", name);
+
+		bool retry = true;
+		for (int attempts = 10; attempts > 0 && retry; attempts--) {
+			retry = false;
+
+			for (int i = 0; i < MAX_CLIENTS; i++) {
+				const PeerData *other = &g_peer_data[i];
+				if (other->id == 0 || other->id == peerID)
+					continue;
+
+				if (strncasecmp(other->name, new_name, sizeof(new_name)) == 0) {
+					retry = true;
+					break;
+				}
+			}
+
+			if (retry) {
+				len = strlen(new_name);
+
+				for (; len > 0; len--) {
+					if (!isdigit(new_name[len - 1]))
+						break;
+				}
+
+				if (len == MAX_NAME_LEN)
+					len--;
+
+				int nth = atoi(new_name + len) + 1;
+				snprintf(new_name + len, sizeof(new_name) - len, "%d", nth);
+			}
+		}
+
+		/* Should not happen since we only have 6 clients. */
+		if (retry)
 			return;
 
 		if (data->name[0] == '\0') {
 			snprintf(chat_log, sizeof(chat_log), "%s joined",
-					name);
+					new_name);
 		}
 		else {
 			snprintf(chat_log, sizeof(chat_log), "%s is now %s",
-					data->name, name);
+					data->name, new_name);
 		}
 
-		snprintf(data->name, len + 1, "%s", name);
-		s_sendClientList = true;
+		memcpy(data->name, new_name, sizeof(data->name));
 
+		if (peerID == g_local_client_id)
+			memcpy(g_net_name, new_name, sizeof(g_net_name));
+
+		s_sendClientList = true;
 		Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
 	}
 }
