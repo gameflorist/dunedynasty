@@ -523,7 +523,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [7]                  */ UNIT_INVALID,
 		},
 		{ /* upgradeCampaign */
-		/* [0]                  */ { 5, 6, 6, 6, 6, 6 }, /* H trait: trooper squads one level earlier. */
+		/* [0]                  */ { 4, 6, 6, 6, 6, 6 }, /* H trait: trooper squads two levels earlier. */
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
