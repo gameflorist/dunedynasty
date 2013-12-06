@@ -169,7 +169,6 @@ void GameLoop_Structure(void)
 						break;
 
 					case REPAIR_COST_v100:
-						/* This seems to be the repair formula for v1.0, but only verified through testing. */
 						repairCost = ((10 * 256 / si->o.hitpoints) * si->o.buildCredits + 128) / 256;
 						break;
 
