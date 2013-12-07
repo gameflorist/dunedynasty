@@ -131,14 +131,15 @@ Client_Send_EnterPlacementMode(const Object *o)
 }
 
 void
-Client_Send_LeavePlacementMode(const Object *o)
+Client_Send_LeavePlacementMode(void)
 {
 	unsigned char *buf = Client_GetBuffer(CSMSG_ENTER_LEAVE_PLACEMENT_MODE);
 	if (buf == NULL)
 		return;
 
-	if (o != NULL) {
-		Net_Encode_ObjectIndex(&buf, o);
+	const Structure *s = Structure_Get_ByPackedTile(g_structureActivePosition);
+	if (s != NULL) {
+		Net_Encode_ObjectIndex(&buf, &s->o);
 	}
 	else {
 		Net_Encode_uint16(&buf, STRUCTURE_INDEX_INVALID);
@@ -619,12 +620,11 @@ Client_ChangeSelectionMode(void)
 		return;
 	}
 	else if ((g_playerHouse->structureActiveID == STRUCTURE_INDEX_INVALID)
-			&& (g_selectionType == SELECTIONTYPE_PLACE)) {
+			&& (g_structureActiveType != 0xFFFF)) {
 		g_structureActive = NULL;
 		g_structureActiveType = 0xFFFF;
-
-		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 		g_selectionState = 0; /* Invalid. */
+		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 		return;
 	}
 

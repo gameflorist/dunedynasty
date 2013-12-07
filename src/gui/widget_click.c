@@ -170,10 +170,7 @@ bool GUI_Widget_Cancel_Click(Widget *w)
 	VARIABLE_NOT_USED(w);
 
 	if (g_structureActiveType != 0xFFFF) {
-		const Structure *s = Structure_Get_ByPackedTile(g_structureActivePosition);
-		const Object *o = (s != NULL) ? &s->o : NULL;
-
-		Client_Send_LeavePlacementMode(o);
+		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 	}
 
 	if (g_unitActive == NULL) return true;

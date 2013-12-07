@@ -31,6 +31,7 @@
 #include "../input/input.h"
 #include "../load.h"
 #include "../map.h"
+#include "../net/client.h"
 #include "../newui/actionpanel.h"
 #include "../newui/editbox.h"
 #include "../newui/halloffame.h"
@@ -1451,6 +1452,7 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 
 		switch (oldSelectionType) {
 			case SELECTIONTYPE_PLACE:
+				Client_Send_LeavePlacementMode();
 				Map_SetSelection(g_structureActivePosition);
 				/* Fall-through */
 
