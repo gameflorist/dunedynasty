@@ -1439,6 +1439,10 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 		Unit_UnselectAll();
 	}
 
+	if (g_playerHouse->houseMissileID != UNIT_INDEX_INVALID) {
+		selectionType = SELECTIONTYPE_TARGET;
+	}
+
 	oldScreenID = GFX_Screen_SetActive(SCREEN_1);
 
 	if (g_selectionType != selectionType) {

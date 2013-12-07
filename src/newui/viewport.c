@@ -851,6 +851,9 @@ Viewport_Hotkey(enum SquadID squad)
 		return;
 
 	if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE) {
+		if (g_playerHouse->houseMissileID != UNIT_INDEX_INVALID)
+			return;
+
 		GUI_Widget_Cancel_Click(NULL);
 	}
 
@@ -978,7 +981,8 @@ Viewport_Homekey(void)
 	Structure *s;
 	bool centre_on_selection = false;
 
-	if (g_selectionType == SELECTIONTYPE_TARGET) {
+	if (g_selectionType == SELECTIONTYPE_TARGET
+			&& g_playerHouse->houseMissileID == UNIT_INDEX_INVALID) {
 		GUI_Widget_Cancel_Click(NULL);
 	}
 	else if (g_selectionType == SELECTIONTYPE_PLACE) {
