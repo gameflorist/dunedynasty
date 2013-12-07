@@ -143,6 +143,28 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 			}
 		}
 
+		if (g_campaign_selected == CAMPAIGNID_SKIRMISH
+		 || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
+			find.houseID = HOUSE_INVALID;
+			find.type    = UNIT_MCV;
+			find.index   = 0xFFFF;
+
+			while (true) {
+				if (foundFriendly && foundEnemy)
+					break;
+
+				const Unit *u = Unit_Find(&find);
+				if (u == NULL) break;
+
+				if (House_AreAllied(Unit_GetHouseID(u), houseID)) {
+					foundFriendly = true;
+				}
+				else {
+					foundEnemy = true;
+				}
+			}
+		}
+
 		if (g_scenario.winFlags & 0x3) {
 			if ((g_scenario.winFlags & 0x1) && !foundEnemy)
 				finish = true;
@@ -237,7 +259,10 @@ void GameLoop_LevelEnd(void)
 		return;
 
 	/* You have to play at least 7200 ticks before you can win the game */
-	if (g_timerGame - g_tickScenarioStart < 7200 && !s_debugForceWin)
+	if (!s_debugForceWin
+			&& g_timerGame - g_tickScenarioStart < 7200
+			&& g_campaign_selected != CAMPAIGNID_SKIRMISH
+			&& g_campaign_selected != CAMPAIGNID_MULTIPLAYER)
 		return;
 
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
