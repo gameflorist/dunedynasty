@@ -324,17 +324,22 @@ GameLoop_Client_ProcessInput(void)
 		if (g_mousePanning)
 			Video_WarpCursor(TRUE_DISPLAY_WIDTH / 2, TRUE_DISPLAY_HEIGHT / 2);
 	}
-	else if (g_gameOverlay == GAMEOVERLAY_HINT) {
-		Input_Tick(true);
-		MenuBar_TickHintOverlay();
-	}
-	else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
-		Input_Tick(true);
-		MenuBar_TickMentatOverlay();
-	}
 	else {
 		Input_Tick(true);
-		MenuBar_TickOptionsOverlay();
+
+		if (g_gameOverlay == GAMEOVERLAY_HINT) {
+			MenuBar_TickHintOverlay();
+		}
+		else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
+			MenuBar_TickMentatOverlay();
+		}
+		else if (g_gameOverlay == GAMEOVERLAY_WIN
+		      || g_gameOverlay == GAMEOVERLAY_LOSE) {
+			MenuBar_TickWinLoseOverlay();
+		}
+		else {
+			MenuBar_TickOptionsOverlay();
+		}
 	}
 }
 
@@ -346,9 +351,11 @@ GameLoop_Client_Draw(void)
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		GUI_DrawInterfaceAndRadar();
 	}
-	else if (g_gameOverlay == GAMEOVERLAY_HINT) {
+	else if (g_gameOverlay == GAMEOVERLAY_HINT
+	      || g_gameOverlay == GAMEOVERLAY_WIN
+	      || g_gameOverlay == GAMEOVERLAY_LOSE) {
 		GUI_DrawInterfaceAndRadar();
-		MenuBar_DrawHintOverlay();
+		MenuBar_DrawInGameOverlay();
 	}
 	else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
 		MenuBar_DrawMentatOverlay();
@@ -371,7 +378,9 @@ GameLoop_ProcessGUITimer(void)
 
 	const bool narrator_speaking = Audio_Poll();
 	if (!narrator_speaking) {
-		if (!g_enable_audio || !g_enable_music) {
+		if (!g_enable_audio || !g_enable_music
+				|| g_gameOverlay == GAMEOVERLAY_WIN
+				|| g_gameOverlay == GAMEOVERLAY_LOSE) {
 			g_musicInBattle = 0;
 		}
 		else if (g_musicInBattle > 0) {

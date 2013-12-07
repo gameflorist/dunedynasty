@@ -103,92 +103,21 @@ uint16 g_selectionTypeNew = 0;
 
 int16 g_musicInBattle = 0; /*!< 0 = no battle, 1 = fight is going on, -1 = music of fight is going on is active. */
 
-/**
- * Check if a level is finished, based on the values in WinFlags.
- *
- * @return True if and only if the level has come to an end.
- */
-static bool GameLoop_IsLevelFinished(void)
+static enum GameMode
+GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 {
+	const House *h = House_Get_ByIndex(houseID);
 	bool finish = false;
-
-	if (s_debugForceWin) return true;
-
-	/* You have to play at least 7200 ticks before you can win the game */
-	if (g_timerGame - g_tickScenarioStart < 7200) return false;
-
-	/* Check for structure counts hitting zero */
-	if ((g_scenario.winFlags & 0x3) != 0) {
-		PoolFindStruct find;
-		uint16 countStructureEnemy = 0;
-		uint16 countStructureFriendly = 0;
-
-		find.houseID = HOUSE_INVALID;
-		find.type    = 0xFFFF;
-		find.index   = 0xFFFF;
-
-		/* Calculate how many structures are left on the map */
-		while (true) {
-			Structure *s;
-
-			s = Structure_Find(&find);
-			if (s == NULL) break;
-
-			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
-			if (s->o.type == STRUCTURE_TURRET) continue;
-			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
-
-			if (House_AreAllied(s->o.houseID, g_playerHouseID)) {
-				countStructureFriendly++;
-			} else {
-				countStructureEnemy++;
-			}
-		}
-
-		if ((g_scenario.winFlags & 0x1) != 0 && countStructureEnemy == 0) {
-			finish = true;
-		}
-		if ((g_scenario.winFlags & 0x2) != 0 && countStructureFriendly == 0) {
-			finish = true;
-		}
-	}
-
-	/* Check for reaching spice quota */
-	if ((g_scenario.winFlags & 0x4) != 0 && g_playerCredits != 0xFFFF) {
-		if (g_playerCredits >= g_playerHouse->creditsQuota) {
-			finish = true;
-		}
-	}
-
-	/* Check for reaching timeout */
-	if ((g_scenario.winFlags & 0x8) != 0) {
-		/* XXX -- This code was with '<' instead of '>=', which makes
-		 *  no sense. As it is unused, who knows what the intentions
-		 *  were. This at least makes it sensible. */
-		if (g_timerGame - g_tickScenarioStart >= g_scenario.timeOut) {
-			finish = true;
-		}
-	}
-
-	return finish;
-}
-
-/**
- * Check if a level is won, based on the values in LoseFlags.
- *
- * @return True if and only if the level has been won by the human.
- */
-static bool GameLoop_IsLevelWon(void)
-{
 	bool win = false;
 
-	if (s_debugForceWin) return true;
+	if (s_debugForceWin)
+		return GM_WIN;
 
-	/* Check for structure counts hitting zero */
-	if ((g_scenario.loseFlags & 0x3) != 0) {
+	/* Check structures remaining. */
+	if ((g_scenario.winFlags & 0x3) || (g_scenario.loseFlags & 0x3)) {
 		PoolFindStruct find;
-		uint16 countStructureEnemy = 0;
-		uint16 countStructureFriendly = 0;
+		bool foundFriendly = false;
+		bool foundEnemy = false;
 
 		find.houseID = HOUSE_INVALID;
 		find.type    = 0xFFFF;
@@ -196,49 +125,89 @@ static bool GameLoop_IsLevelWon(void)
 
 		/* Calculate how many structures are left on the map */
 		while (true) {
-			Structure *s;
+			if (foundFriendly && foundEnemy)
+				break;
 
-			s = Structure_Find(&find);
+			const Structure *s = Structure_Find(&find);
 			if (s == NULL) break;
 
 			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
 
-			if (House_AreAllied(s->o.houseID, g_playerHouseID)) {
-				countStructureFriendly++;
-			} else {
-				countStructureEnemy++;
+			if (House_AreAllied(s->o.houseID, houseID)) {
+				foundFriendly = true;
+			}
+			else {
+				foundEnemy = true;
 			}
 		}
 
-		win = true;
-		if ((g_scenario.loseFlags & 0x1) != 0) {
-			win = win && (countStructureEnemy == 0);
+		if (g_scenario.winFlags & 0x3) {
+			if ((g_scenario.winFlags & 0x1) && !foundEnemy)
+				finish = true;
+			if ((g_scenario.winFlags & 0x2) && !foundFriendly)
+				finish = true;
 		}
-		if ((g_scenario.loseFlags & 0x2) != 0) {
-			win = win && (countStructureFriendly != 0);
+
+		if (g_scenario.loseFlags & 0x3) {
+			win = true;
+			if (g_scenario.loseFlags & 0x1)
+				win = win && (!foundEnemy);
+			if (g_scenario.loseFlags & 0x2)
+				win = win && foundFriendly;
 		}
 	}
 
-	/* Check for reaching spice quota */
-	if (!win && (g_scenario.loseFlags & 0x4) != 0 && g_playerCredits != 0xFFFF) {
-		win = (g_playerCredits >= g_playerHouse->creditsQuota);
+	/* Check spice quota. */
+	if ((g_scenario.winFlags & 0x4) || (g_scenario.loseFlags & 0x4)) {
+		bool reached_quota;
+
+		/* SINGLE PLAYER -- Wait until the counter ticks over the quota. */
+		if (g_host_type == HOSTTYPE_NONE) {
+			reached_quota
+				= (g_playerCredits != 0xFFFF)
+				&& (g_playerCredits >= g_playerHouse->creditsQuota);
+		}
+		else {
+			reached_quota
+				= (h->credits != 0xFFFF)
+				&& (h->credits >= h->creditsQuota);
+		}
+
+		if (reached_quota) {
+			if (g_scenario.winFlags & 0x4)
+				finish = true;
+			if (g_scenario.loseFlags & 0x4)
+				win = true;
+		}
 	}
 
-	/* Check for reaching timeout */
-	if (!win && (g_scenario.loseFlags & 0x8) != 0) {
-		/* ENHANCEMENT -- Same deal as for winFlags above.
-		 * This way we can make win-after-timeout (survival) and
-		 * lose-after-timeout (countdown) missions.
-		 *
-		 * survival: winFlags = 11, loseFlags = 9.
-		 * lose:     winFlags = 11, loseFlags = 1.
-		 */
-		win = (g_timerGame - g_tickScenarioStart >= g_scenario.timeOut);
+	/* Check scenario timeout.
+	 *
+	 * ENHANCEMENT -- This code originally had '<' instead of '>=',
+	 * which makes no sense.  At least this way is sensible, allowing
+	 * win-after-timeout (survival) and lose-after-timeout (countdown)
+	 * missions.
+	 *
+	 * survival: winFlags = 11, loseFlags = 9.
+	 * lose:     winFlags = 11, loseFlags = 1.
+	 */
+	if ((g_scenario.winFlags & 0x8) || (g_scenario.loseFlags & 0x8)) {
+		if (g_timerGame - g_tickScenarioStart >= g_scenario.timeOut) {
+			if (g_scenario.winFlags & 0x8)
+				finish = true;
+			if (g_scenario.loseFlags & 0x8)
+				win = true;
+		}
 	}
 
-	return win;
+	if (finish) {
+		return win ? GM_WIN : GM_LOSE;
+	}
+	else {
+		return GM_NORMAL;
+	}
 }
 
 void GameLoop_Uninit(void)
@@ -262,44 +231,41 @@ void GameLoop_Uninit(void)
  */
 void GameLoop_LevelEnd(void)
 {
-	static uint32 levelEndTimer = 0;
+	static int64_t l_levelEndTimer = 0;
 
-	if (levelEndTimer >= g_timerGame && !s_debugForceWin) return;
-
-	if (GameLoop_IsLevelFinished()) {
-		Audio_PlayMusic(MUSIC_STOP);
-		Audio_PlayVoice(VOICE_STOP);
-
-		Video_SetCursor(SHAPE_CURSOR_NORMAL);
-
-		if (GameLoop_IsLevelWon()) {
-			Audio_PlayVoice(VOICE_YOUR_MISSION_IS_COMPLETE);
-
-			GUI_DisplayModalMessage(String_Get_ByIndex(STR_YOU_HAVE_SUCCESSFULLY_COMPLETED_YOUR_MISSION), 0xFFFF);
-
-			g_gameMode = GM_WIN;
-		} else {
-			Audio_PlayVoice(VOICE_YOU_HAVE_FAILED_YOUR_MISSION);
-
-			GUI_DisplayModalMessage(String_Get_ByIndex(STR_YOU_HAVE_FAILED_YOUR_MISSION), 0xFFFF);
-
-			g_gameMode = GM_LOSE;
-		}
-
-		GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
-
-		g_playerHouse->flags.doneFullScaleAttack = false;
-
-#if 0
-		Sprites_LoadTiles();
-
-		g_gameMode = GM_RESTART;
-#endif
-		s_debugForceWin = false;
+	if (l_levelEndTimer >= g_timerGame && !s_debugForceWin)
 		return;
+
+	/* You have to play at least 7200 ticks before you can win the game */
+	if (g_timerGame - g_tickScenarioStart < 7200 && !s_debugForceWin)
+		return;
+
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		if (!House_IsHuman(houseID))
+			continue;
+
+		enum GameMode gm = GameLoop_Server_IsHouseFinished(houseID);
+		if (gm != GM_NORMAL) {
+			House *h = House_Get_ByIndex(houseID);
+
+			if (houseID == g_playerHouseID)
+				MenuBar_DisplayWinLose(gm == GM_WIN);
+
+			if (g_host_type != HOSTTYPE_NONE) {
+				g_client_houses &= ~(1 << houseID);
+
+				if (gm == GM_LOSE) {
+					h->flags.human = false;
+					h->flags.isAIActive = true;
+				}
+			}
+
+			h->flags.doneFullScaleAttack = false;
+			s_debugForceWin = false;
+		}
 	}
 
-	levelEndTimer = g_timerGame + 300;
+	l_levelEndTimer = g_timerGame + 300;
 }
 
 #if 0

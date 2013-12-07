@@ -285,6 +285,20 @@ MenuBar_DrawModalMessage(void)
 	w->xBase = old_x;
 }
 
+void
+MenuBar_DrawInGameOverlay(void)
+{
+	const enum ScreenDivID divID = A5_SaveTransform();
+
+	Video_ShadeScreen(128);
+
+	A5_UseTransform(SCREENDIV_MENU);
+
+	MenuBar_DrawModalMessage();
+
+	A5_UseTransform(divID);
+}
+
 /*--------------------------------------------------------------*/
 
 void
@@ -327,18 +341,43 @@ MenuBar_TickHintOverlay(void)
 		g_gameOverlay = GAMEOVERLAY_NONE;
 }
 
+/*--------------------------------------------------------------*/
+
 void
-MenuBar_DrawHintOverlay(void)
+MenuBar_DisplayWinLose(bool win)
 {
-	const enum ScreenDivID divID = A5_SaveTransform();
+	enum VoiceID voiceID;
+	enum StringID stringID;
 
-	Video_ShadeScreen(128);
+	Audio_PlayMusic(MUSIC_STOP);
+	Audio_PlayVoice(VOICE_STOP);
+	Video_SetCursor(SHAPE_CURSOR_NORMAL);
 
-	A5_UseTransform(SCREENDIV_MENU);
+	if (win) {
+		g_gameOverlay = GAMEOVERLAY_WIN;
+		stringID = STR_YOU_HAVE_SUCCESSFULLY_COMPLETED_YOUR_MISSION;
+		voiceID = VOICE_YOUR_MISSION_IS_COMPLETE;
+	}
+	else {
+		g_gameOverlay = GAMEOVERLAY_LOSE;
+		stringID = STR_YOU_HAVE_FAILED_YOUR_MISSION;
+		voiceID = VOICE_YOU_HAVE_FAILED_YOUR_MISSION;
+	}
 
-	MenuBar_DrawModalMessage();
+	Audio_PlayVoice(voiceID);
+	snprintf(s_modal_message_buf, sizeof(s_modal_message_buf), "%s",
+			String_Get_ByIndex(stringID));
+	MenuBar_PrepareModalMessage(SHAPE_INVALID);
+}
 
-	A5_UseTransform(divID);
+void
+MenuBar_TickWinLoseOverlay(void)
+{
+	if (MenuBar_TickModalMessage()) {
+		g_gameMode = (g_gameOverlay == GAMEOVERLAY_WIN) ? GM_WIN : GM_LOSE;
+		g_gameOverlay = GAMEOVERLAY_NONE;
+		GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
+	}
 }
 
 /*--------------------------------------------------------------*/
