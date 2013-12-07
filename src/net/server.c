@@ -795,6 +795,31 @@ Server_ReturnToLobbyNow(bool win)
 	}
 }
 
+void
+Server_Recv_ReturnToLobby(enum HouseType houseID)
+{
+	PeerData *data = Net_GetPeerData(g_multiplayer.client[houseID]);
+	data->state = CLIENTSTATE_IN_LOBBY;
+
+	if (g_multiplayer.state[houseID] == MP_HOUSE_PLAYING) {
+		char chat_log[MAX_CHAT_LEN + 1];
+		House *h = House_Get_ByIndex(houseID);
+
+		g_multiplayer.state[houseID] = MP_HOUSE_LOST;
+		g_client_houses &= ~(1 << houseID);
+		h->flags.human = false;
+		h->flags.isAIActive = true;
+
+		snprintf(chat_log, sizeof(chat_log), "%s surrendered",
+				Net_GetClientName(houseID));
+
+		Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
+	}
+
+	if (houseID == g_playerHouseID)
+		Server_ReturnToLobbyNow(false);
+}
+
 /*--------------------------------------------------------------*/
 
 static bool
@@ -1415,6 +1440,10 @@ Server_ProcessMessage(int peerID, enum HouseType houseID,
 		switch (msg) {
 			case CSMSG_DISCONNECT:
 				assert(false);
+				break;
+
+			case CSMSG_RETURN_TO_LOBBY:
+				Server_Recv_ReturnToLobby(houseID);
 				break;
 
 			case CSMSG_REPAIR_UPGRADE_STRUCTURE:

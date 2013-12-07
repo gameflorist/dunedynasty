@@ -6,6 +6,7 @@
 
 enum MultiplayerHouseState {
 	MP_HOUSE_UNUSED,
+	MP_HOUSE_IN_LOBBY,
 	MP_HOUSE_PLAYING,
 	MP_HOUSE_WON,
 	MP_HOUSE_LOST

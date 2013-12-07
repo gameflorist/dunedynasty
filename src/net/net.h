@@ -29,11 +29,17 @@ enum NetHostType {
 	HOSTTYPE_DEDICATED_CLIENT,
 };
 
+enum ClientState {
+	CLIENTSTATE_UNUSED,
+	CLIENTSTATE_IN_LOBBY,
+	CLIENTSTATE_IN_GAME
+};
+
 typedef struct PeerData {
+	enum ClientState state;
 	int id;
 	void *peer;
 	char name[MAX_NAME_LEN + 1];
-	bool is_ready;
 } PeerData;
 
 extern char g_net_name[MAX_NAME_LEN + 1];

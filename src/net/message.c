@@ -11,7 +11,8 @@ static const struct {
 	unsigned char symbol;
 	int len;
 } s_table_csmsg[CSMSG_MAX] = {
-	{ 'x', 0 }, /* CSMSG_DISCONNECT */
+	{'\0', 0 }, /* CSMSG_DISCONNECT */
+	{ 'x', 0 }, /* CSMSG_RETURN_TO_LOBBY */
 	{ 'r', 2 }, /* CSMSG_REPAIR_UPGRADE_STRUCTURE */
 	{ 'g', 4 }, /* CSMSG_SET_RALLY_POINT */
 	{ '+', 3 }, /* CSMSG_PURCHASE_RESUME_ITEM */

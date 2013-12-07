@@ -49,6 +49,7 @@ Net_NewPeerData(int peerID)
 		PeerData *data = &g_peer_data[i];
 
 		if (data->id == 0) {
+			data->state = CLIENTSTATE_IN_LOBBY;
 			data->id = peerID;
 			data->name[0] = '\0';
 			return data;
@@ -286,7 +287,7 @@ Net_IsPlayable(void)
 	}
 
 	for (int i = 0; i < MAX_CLIENTS; i++) {
-		if (g_peer_data[i].id != 0)
+		if (g_peer_data[i].state == CLIENTSTATE_IN_LOBBY)
 			total_players++;
 	}
 
@@ -321,6 +322,9 @@ Net_Synchronise(void)
 				g_multiplayer.state[h] = MP_HOUSE_UNUSED;
 			}
 			else {
+				PeerData *data = Net_GetPeerData(g_multiplayer.client[h]);
+
+				data->state = CLIENTSTATE_IN_GAME;
 				g_multiplayer.state[h] = MP_HOUSE_PLAYING;
 
 				if (g_multiplayer.client[h] != g_local_client_id)
@@ -525,6 +529,7 @@ Server_Recv_DisconnectClient(ENetEvent *event)
 	snprintf(chat_log, sizeof(chat_log), "%s left", data->name);
 	Server_Recv_PrefHouse(data->id, HOUSE_INVALID);
 
+	data->state = CLIENTSTATE_UNUSED;
 	data->id = 0;
 	data->peer = NULL;
 

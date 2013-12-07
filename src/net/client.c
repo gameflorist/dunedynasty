@@ -78,6 +78,14 @@ Client_Send_ObjectIndex(enum ClientServerMsg msg, const Object *o)
 /*--------------------------------------------------------------*/
 
 void
+Client_Send_ReturnToLobby(void)
+{
+	unsigned char *buf = Client_GetBuffer(CSMSG_RETURN_TO_LOBBY);
+	if (buf == NULL)
+		return;
+}
+
+void
 Client_Send_RepairUpgradeStructure(const Object *o)
 {
 	Client_Send_ObjectIndex(CSMSG_REPAIR_UPGRADE_STRUCTURE, o);

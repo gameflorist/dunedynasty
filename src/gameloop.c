@@ -498,5 +498,14 @@ GameLoop_Loop(void)
 		}
 	}
 
+	if (g_host_type != HOSTTYPE_NONE) {
+		if (g_host_type == HOSTTYPE_CLIENT_SERVER) {
+			Server_Recv_ReturnToLobby(g_playerHouseID);
+		}
+		else if (g_host_type == HOSTTYPE_DEDICATED_CLIENT) {
+			Client_Send_ReturnToLobby();
+		}
+	}
+
 	g_inGame = false;
 }

@@ -9,6 +9,7 @@ struct Object;
 
 extern void Client_ResetCache(void);
 
+extern void Client_Send_ReturnToLobby(void);
 extern void Client_Send_RepairUpgradeStructure(const struct Object *o);
 extern void Client_Send_SetRallyPoint(const struct Object *o, uint16 packed);
 extern void Client_Send_PurchaseResumeItem(const struct Object *o, uint8 objectType);
