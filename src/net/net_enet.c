@@ -211,17 +211,29 @@ void
 Net_Disconnect(void)
 {
 	if (s_host != NULL) {
-		int connected_peers = s_host->connectedPeers;
+		if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+		 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+			int connected_peers = 0;
 
-		for (size_t i = 0; i < s_host->connectedPeers; i++) {
-			enet_peer_disconnect(&s_host->peers[i], 0);
+			for (int i = 0; i < MAX_CLIENTS; i++) {
+				PeerData *data = &g_peer_data[i];
+
+				if (data->peer != NULL) {
+					enet_peer_disconnect(data->peer, 0);
+					connected_peers++;
+				}
+			}
+
+			while (connected_peers > 0) {
+				if (!Net_WaitForEvent(ENET_EVENT_TYPE_DISCONNECT, 3000))
+					break;
+
+				connected_peers--;
+			}
 		}
-
-		while (connected_peers > 0) {
-			if (!Net_WaitForEvent(ENET_EVENT_TYPE_DISCONNECT, 3000))
-				break;
-
-			connected_peers--;
+		else if (s_peer != NULL) {
+			enet_peer_disconnect(s_peer, 0);
+			enet_host_flush(s_host);
 		}
 
 		enet_host_destroy(s_host);
