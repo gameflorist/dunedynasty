@@ -317,9 +317,14 @@ Net_Synchronise(void)
 		Server_ResetCache();
 
 		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-			if (g_multiplayer.client[h] != 0
-			 && g_multiplayer.client[h] != g_local_client_id) {
-				g_client_houses |= (1 << h);
+			if (g_multiplayer.client[h] == 0) {
+				g_multiplayer.state[h] = MP_HOUSE_UNUSED;
+			}
+			else {
+				g_multiplayer.state[h] = MP_HOUSE_PLAYING;
+
+				if (g_multiplayer.client[h] != g_local_client_id)
+					g_client_houses |= (1 << h);
 			}
 		}
 	}

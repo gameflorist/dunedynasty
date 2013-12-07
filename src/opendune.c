@@ -54,7 +54,9 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "input/input.h"
 #include "input/mouse.h"
 #include "map.h"
+#include "mods/multiplayer.h"
 #include "net/net.h"
+#include "net/server.h"
 #include "newui/actionpanel.h"
 #include "newui/menu.h"
 #include "newui/menubar.h"
@@ -113,6 +115,10 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 	if (s_debugForceWin)
 		return GM_WIN;
 
+	if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER
+			&& g_multiplayer.state[houseID] != MP_HOUSE_PLAYING)
+		return GM_NORMAL;
+
 	/* Check structures remaining. */
 	if ((g_scenario.winFlags & 0x3) || (g_scenario.loseFlags & 0x3)) {
 		PoolFindStruct find;
@@ -135,6 +141,12 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
 
+			if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER
+					&& (g_multiplayer.state[s->o.houseID] == MP_HOUSE_UNUSED
+					 || g_multiplayer.state[s->o.houseID] == MP_HOUSE_LOST)) {
+				continue;
+			}
+
 			if (House_AreAllied(s->o.houseID, houseID)) {
 				foundFriendly = true;
 			}
@@ -156,7 +168,14 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 				const Unit *u = Unit_Find(&find);
 				if (u == NULL) break;
 
-				if (House_AreAllied(Unit_GetHouseID(u), houseID)) {
+				const enum HouseType h2 = Unit_GetHouseID(u);
+				if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER
+						&& (g_multiplayer.state[h2] == MP_HOUSE_UNUSED
+						 || g_multiplayer.state[h2] == MP_HOUSE_LOST)) {
+					continue;
+				}
+
+				if (House_AreAllied(h2, houseID)) {
 					foundFriendly = true;
 				}
 				else {
@@ -273,17 +292,7 @@ void GameLoop_LevelEnd(void)
 		if (gm != GM_NORMAL) {
 			House *h = House_Get_ByIndex(houseID);
 
-			if (houseID == g_playerHouseID)
-				MenuBar_DisplayWinLose(gm == GM_WIN);
-
-			if (g_host_type != HOSTTYPE_NONE) {
-				g_client_houses &= ~(1 << houseID);
-
-				if (gm == GM_LOSE) {
-					h->flags.human = false;
-					h->flags.isAIActive = true;
-				}
-			}
+			Server_Send_WinLose(houseID, (gm == GM_WIN));
 
 			h->flags.doneFullScaleAttack = false;
 			s_debugForceWin = false;

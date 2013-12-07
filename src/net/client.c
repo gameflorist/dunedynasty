@@ -21,6 +21,7 @@
 #include "../newui/actionpanel.h"
 #include "../newui/chatbox.h"
 #include "../newui/menu.h"
+#include "../newui/menubar.h"
 #include "../object.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -494,6 +495,14 @@ Client_Recv_PlayVoice(const unsigned char **buf)
 }
 
 static void
+Client_Recv_WinLose(const unsigned char **buf)
+{
+	const uint8 winlose = Net_Decode_uint8(buf);
+
+	MenuBar_DisplayWinLose(winlose == 'W');
+}
+
+static void
 Client_Recv_Identity(const unsigned char **buf)
 {
 	const uint8 clientID = Net_Decode_uint8(buf);
@@ -693,6 +702,10 @@ Client_ProcessMessage(const unsigned char *buf, int count)
 			case SCMSG_PLAY_BATTLE_MUSIC:
 				if (g_musicInBattle == 0)
 					g_musicInBattle = 1;
+				break;
+
+			case SCMSG_WIN_LOSE:
+				Client_Recv_WinLose(&buf);
 				break;
 
 			case SCMSG_IDENTITY:

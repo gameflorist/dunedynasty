@@ -41,6 +41,7 @@ static unsigned char s_table_scmsg[SCMSG_MAX] = {
 	'>', /* SCMSG_PLAY_SOUND_AT_TILE */
 	'V', /* SCMSG_PLAY_VOICE */
 	'!', /* SCMSG_PLAY_BATTLE_MUSIC */
+	'W', /* SCMSG_WIN_LOSE */
 	'I', /* SCMSG_IDENTITY */
 	'N', /* SCMSG_CLIENT_LIST */
 	'Z', /* SCMSG_SCENARIO */

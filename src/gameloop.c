@@ -461,7 +461,9 @@ GameLoop_ProcessGameTimer(void)
 		GameLoop_Server_Logic();
 	}
 
-	GameLoop_LevelEnd();
+	if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
+		GameLoop_LevelEnd();
+	}
 }
 
 void

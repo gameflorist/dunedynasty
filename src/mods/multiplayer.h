@@ -4,9 +4,17 @@
 #include "enumeration.h"
 #include "types.h"
 
+enum MultiplayerHouseState {
+	MP_HOUSE_UNUSED,
+	MP_HOUSE_PLAYING,
+	MP_HOUSE_WON,
+	MP_HOUSE_LOST
+};
+
 typedef struct Multiplayer {
 	int client[HOUSE_MAX];
 	uint32 seed;
+	enum MultiplayerHouseState state[HOUSE_MAX];
 } Multiplayer;
 
 struct SkirmishData;

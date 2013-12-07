@@ -23,6 +23,7 @@
 #include "../mods/multiplayer.h"
 #include "../newui/chatbox.h"
 #include "../newui/menu.h"
+#include "../newui/menubar.h"
 #include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../pool/house.h"
@@ -84,6 +85,8 @@ static int64_t s_choamLastUpdate;
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
 static UnitDelta s_unitCopy[UNIT_INDEX_MAX];
 static int s_explosionLastCount;
+
+static void Server_ReturnToLobbyNow(bool win);
 
 /*--------------------------------------------------------------*/
 
@@ -672,6 +675,44 @@ Server_Send_PlayBattleMusic(enum HouseFlag houses)
 }
 
 void
+Server_Send_WinLose(enum HouseType houseID, bool win)
+{
+	if (g_host_type != HOSTTYPE_NONE) {
+		char chat_log[MAX_CHAT_LEN + 1];
+
+		snprintf(chat_log, sizeof(chat_log), "%s %s",
+				Net_GetClientName(houseID),
+				win ? "won" : "lost");
+
+		Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
+
+		g_multiplayer.state[houseID] = (win ? MP_HOUSE_WON : MP_HOUSE_LOST);
+		g_client_houses &= ~(1 << houseID);
+
+		if (!win) {
+			House *h = House_Get_ByIndex(houseID);
+			h->flags.human = false;
+			h->flags.isAIActive = true;
+		}
+	}
+
+	if (houseID == g_playerHouseID) {
+		MenuBar_DisplayWinLose(win);
+		Server_ReturnToLobbyNow(win);
+	}
+	else {
+		unsigned char src[2];
+		unsigned char *buf = src;
+
+		Net_Encode_ServerClientMsg(&buf, SCMSG_WIN_LOSE);
+		Net_Encode_uint8(&buf, win ? 'W' : 'L');
+
+		assert(buf - src == sizeof(src));
+		Server_BufferGameEvent(1 << houseID, sizeof(src), src);
+	}
+}
+
+void
 Server_Send_ClientList(unsigned char **buf)
 {
 	if (!g_sendClientList)
@@ -731,6 +772,27 @@ Server_Send_Scenario(unsigned char **buf)
 
 	lobby_regenerate_map = false;
 	lobby_new_map_seed = false;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+Server_ReturnToLobbyNow(bool win)
+{
+	/* XXX - assume two teams for now.  Ideally the server enters
+	 * observer mode, or runs the game from the lobby, or both.
+	 */
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_multiplayer.state[h] != MP_HOUSE_PLAYING)
+			continue;
+
+		if (House_AreAllied(g_playerHouseID, h)) {
+			Server_Send_WinLose(h, win);
+		}
+		else {
+			Server_Send_WinLose(h, !win);
+		}
+	}
 }
 
 /*--------------------------------------------------------------*/
