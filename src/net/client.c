@@ -337,6 +337,7 @@ Client_Recv_UpdateStructures(const unsigned char **buf)
 		const uint16 index = Net_Decode_ObjectIndex(buf);
 		Structure *s = Structure_Get_ByIndex(index);
 		Object *o = &s->o;
+		const uint8 old_upgradeLevel = s->upgradeLevel;
 
 		o->index        = index;
 		o->type         = Net_Decode_uint8 (buf);
@@ -362,6 +363,9 @@ Client_Recv_UpdateStructures(const unsigned char **buf)
 
 		if (s->objectType == 0xFF)
 			s->objectType = 0xFFFF;
+
+		if (s->upgradeLevel != old_upgradeLevel)
+			g_factoryWindowTotal = -1;
 	}
 
 	Structure_Recount();
