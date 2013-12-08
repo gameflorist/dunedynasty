@@ -593,11 +593,6 @@ Server_RecvMessages(void)
 void
 Client_SendMessages(void)
 {
-	if (g_host_type == HOSTTYPE_DEDICATED_SERVER)
-		return;
-
-	Client_Send_BuildQueue();
-
 	if (g_host_type != HOSTTYPE_DEDICATED_CLIENT)
 		return;
 

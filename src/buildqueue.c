@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "buildqueue.h"
 
@@ -10,6 +11,8 @@ BuildQueue_Init(BuildQueue *queue)
 {
 	queue->first = NULL;
 	queue->last = NULL;
+
+	memset(queue->count, 0, sizeof(queue->count));
 }
 
 void
@@ -24,8 +27,7 @@ BuildQueue_Free(BuildQueue *queue)
 		e = nx;
 	}
 
-	queue->first = NULL;
-	queue->last = NULL;
+	BuildQueue_Init(queue);
 }
 
 static BuildQueueItem *
@@ -46,6 +48,10 @@ void
 BuildQueue_Add(BuildQueue *queue, uint16 objectType, int credits)
 {
 	BuildQueueItem *e = BuildQueue_AllocItem(objectType, credits);
+	assert(objectType < OBJECTTYPE_MAX);
+
+	if (queue->count[objectType] >= 99)
+		return;
 	
 	if (queue->first == NULL)
 		queue->first = e;
@@ -56,6 +62,7 @@ BuildQueue_Add(BuildQueue *queue, uint16 objectType, int credits)
 	}
 
 	queue->last = e;
+	queue->count[objectType]++;
 }
 
 uint16
@@ -74,6 +81,8 @@ BuildQueue_RemoveHead(BuildQueue *queue)
 
 		if (queue->last == e)
 			queue->last = NULL;
+
+		queue->count[ret]--;
 
 		assert(e->prev == NULL);
 		free(e);
@@ -104,6 +113,8 @@ BuildQueue_RemoveTail(BuildQueue *queue, uint16 objectType, int *credits)
 			if (credits != NULL)
 				*credits = e->credits;
 
+			queue->count[objectType]--;
+
 			free(e);
 			return true;
 		}
@@ -127,15 +138,24 @@ BuildQueue_IsEmpty(const BuildQueue *queue)
 int
 BuildQueue_Count(const BuildQueue *queue, uint16 objectType)
 {
-	BuildQueueItem *e = queue->first;
-	int count = 0;
-
-	while (e != NULL) {
-		if ((e->objectType == objectType) || (objectType == 0xFFFF))
-			count++;
-
-		e = e->next;
+	if (objectType < OBJECTTYPE_MAX) {
+		return queue->count[objectType];
 	}
+	else {
+		int count = 0;
+		assert(objectType == 0xFFFF);
 
-	return count;
+		for (objectType = 0; objectType < OBJECTTYPE_MAX; objectType++) {
+			count += queue->count[objectType];
+		}
+
+		return count;
+	}
+}
+
+void
+BuildQueue_SetCount(BuildQueue *queue, uint16 objectType, int count)
+{
+	assert(objectType < OBJECTTYPE_MAX);
+	queue->count[objectType] = count;
 }

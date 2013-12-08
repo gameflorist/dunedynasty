@@ -60,6 +60,8 @@ typedef struct StructureDelta {
 	uint8       upgradeTime;
 	uint16      countDown;
 	uint16      rallyPoint;
+
+	uint8       buildQueueCount[OBJECTTYPE_MAX];
 } StructureDelta;
 
 typedef struct UnitDelta {
@@ -163,6 +165,11 @@ Server_InitStructureDelta(const Structure *s, StructureDelta *d)
 	d->upgradeTime      = s->upgradeTimeLeft;
 	d->countDown        = s->countDown;
 	d->rallyPoint       = s->rallyPoint;
+
+	for (uint16 objectType = 0; objectType < OBJECTTYPE_MAX; objectType++) {
+		d->buildQueueCount[objectType]
+			= BuildQueue_Count(&s->queue, objectType);
+	}
 }
 
 static void
@@ -350,7 +357,7 @@ void
 Server_Send_UpdateStructures(unsigned char **buf)
 {
 	const size_t header_len  = 1 + 1;
-	const size_t element_len = 2 + 13 + 10;
+	const size_t element_len = 2 + 13 + 10 + OBJECTTYPE_MAX;
 	const int max = Server_MaxElementsToEncode(buf, header_len, element_len);
 
 	if (max <= 0)
@@ -392,6 +399,11 @@ Server_Send_UpdateStructures(unsigned char **buf)
 		Net_Encode_uint8 (buf, d.upgradeTime);
 		Net_Encode_uint16(buf, d.countDown);
 		Net_Encode_uint16(buf, d.rallyPoint);
+
+		/* 32 bytes */
+		for (uint16 objectType = 0; objectType < OBJECTTYPE_MAX; objectType++) {
+			Net_Encode_uint8(buf, d.buildQueueCount[objectType]);
+		}
 
 		count++;
 	}
@@ -1040,8 +1052,14 @@ Server_Recv_PurchaseResumeItem(enum HouseType houseID, const unsigned char *buf)
 			}
 		}
 
-		if (can_build) {
+		if (!can_build)
+			return;
+
+		if ((s->o.linkedID == 0xFF) && BuildQueue_IsEmpty(&s->queue)) {
 			Structure_Server_BuildObject(s, objectType);
+		}
+		else {
+			BuildQueue_Add(&s->queue, objectType, 0);
 		}
 	}
 }
@@ -1065,12 +1083,24 @@ Server_Recv_PauseCancelItem(enum HouseType houseID, const unsigned char *buf)
 		Server_Recv_CancelItemStarport(s, objectType);
 	}
 	else if (s->objectType == objectType && s->o.linkedID != 0xFF) {
-		if (s->o.flags.s.onHold) {
-			Server_Recv_CancelItem(s);
+		if (s->o.flags.s.onHold
+				|| (s->o.type == STRUCTURE_CONSTRUCTION_YARD
+					&& s->countDown == 0)) {
+			const uint16 nextType = BuildQueue_RemoveHead(&s->queue);
+
+			if (nextType == 0xFFFF) {
+				Server_Recv_CancelItem(s);
+			}
+			else if (nextType != s->objectType) {
+				Structure_Server_BuildObject(s, nextType);
+			}
 		}
 		else {
 			s->o.flags.s.onHold = true;
 		}
+	}
+	else {
+		BuildQueue_RemoveTail(&s->queue, objectType, NULL);
 	}
 }
 

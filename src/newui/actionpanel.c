@@ -506,12 +506,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			case STR_COMPLETED:
 			case STR_D_DONE:
 				if (g_factoryWindowItems[item].available > 0) {
-					if ((s->o.linkedID == 0xFF) && BuildQueue_IsEmpty(&s->queue)) {
-						Client_Send_PurchaseResumeItem(&s->o, clicked_type);
-					}
-					else {
-						BuildQueue_Add(&s->queue, clicked_type, 0);
-					}
+					Client_Send_PurchaseResumeItem(&s->o, clicked_type);
 				}
 				else {
 					action_successful = false;
@@ -523,20 +518,11 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 		}
 	}
 	else if (rmb) {
-		if ((s->objectType == clicked_type) && (s->o.linkedID != 0xFF)) {
-			if (s->o.flags.s.onHold) {
-				const uint16 nextType = BuildQueue_RemoveHead(&s->queue);
-
-				if (nextType != s->objectType) {
-					Client_Send_PurchaseResumeItem(&s->o, nextType);
-				}
-			}
-			else {
-				Client_Send_PauseCancelItem(&s->o, clicked_type);
-			}
+		if ((clicked_type < STRUCTURE_MAX) && true /* (s->numQueued[clicked_type] > 0) */) {
+			Client_Send_PauseCancelItem(&s->o, clicked_type);
 		}
 		else {
-			BuildQueue_RemoveTail(&s->queue, clicked_type, NULL);
+			action_successful = false;
 		}
 	}
 

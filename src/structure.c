@@ -330,9 +330,34 @@ void GameLoop_Structure(void)
 					}
 
 					if (start_next) {
-						s->objectType = 0xFFFF;
-						s->o.linkedID = 0xFF;
-						s->state = STRUCTURE_STATE_IDLE;
+						uint16 object_type;
+
+						object_type = BuildQueue_RemoveHead(&s->queue);
+						while (object_type != 0xFFFF) {
+							bool can_build = false;
+
+							if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+								can_build = Structure_GetAvailable_ConstructionYard(s, object_type);
+							}
+							else {
+								for (int i = 0; i < 8; i++) {
+									if (si->buildableUnits[i] == object_type) {
+										can_build = Structure_GetAvailable_Factory(s, i);
+										break;
+									}
+								}
+							}
+
+							if (can_build) {
+								if (Structure_Server_BuildObject(s, object_type))
+									break;
+							}
+
+							object_type = BuildQueue_RemoveHead(&s->queue);
+						}
+
+						if (object_type == 0xFFFF)
+							s->state = STRUCTURE_STATE_IDLE;
 					}
 				}
 

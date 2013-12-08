@@ -1,7 +1,14 @@
 #ifndef BUILDQUEUE_H
 #define BUILDQUEUE_H
 
+#include "enumeration.h"
 #include "types.h"
+
+enum {
+	OBJECTTYPE_MAX = 32
+};
+assert_compile(OBJECTTYPE_MAX >= STRUCTURE_MAX);
+assert_compile(OBJECTTYPE_MAX >= UNIT_MAX);
 
 typedef struct BuildQueueItem {
 	struct BuildQueueItem *next;
@@ -16,6 +23,8 @@ typedef struct BuildQueueItem {
 typedef struct BuildQueue {
 	BuildQueueItem *first;
 	BuildQueueItem *last;
+
+	int count[OBJECTTYPE_MAX];
 } BuildQueue;
 
 extern void BuildQueue_Init(BuildQueue *queue);
@@ -26,5 +35,6 @@ extern uint16 BuildQueue_RemoveHead(BuildQueue *queue);
 extern bool BuildQueue_RemoveTail(BuildQueue *queue, uint16 objectType, int *credits);
 extern bool BuildQueue_IsEmpty(const BuildQueue *queue);
 extern int BuildQueue_Count(const BuildQueue *queue, uint16 objectType);
+extern void BuildQueue_SetCount(BuildQueue *queue, uint16 objectType, int count);
 
 #endif

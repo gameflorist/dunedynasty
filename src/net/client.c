@@ -196,45 +196,6 @@ Client_Send_IssueUnitAction(uint8 actionID, uint16 encoded, const Object *o)
 	Net_Encode_ObjectIndex(&buf, o);
 }
 
-void
-Client_Send_BuildQueue(void)
-{
-	if (g_host_type == HOSTTYPE_DEDICATED_SERVER)
-		return;
-
-	PoolFindStruct find;
-
-	/* For each structure, find any with non-empty build queues */
-	find.houseID = g_playerHouseID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	Structure *s;
-	while ((s = Structure_Find(&find)) != NULL) {
-		const bool start_next = (s->objectType == 0xFFFF) && (s->o.linkedID == 0xFF);
-		if (!start_next)
-			continue;
-
-		if (s->o.type == STRUCTURE_STARPORT) {
-			continue;
-		}
-
-		/* Wait until the active structure is placed before a
-		 * construction yard begins producing the next structure.
-		 * Note: if you have multiple construction yards, only one
-		 * should have linkedID=0xFF and a non-empty build queue.
-		 */
-		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD
-				&& g_playerHouse->structureActiveID != STRUCTURE_INDEX_INVALID) {
-			continue;
-		}
-
-		const uint16 objectType = BuildQueue_RemoveHead(&s->queue);
-		if (objectType != 0xFFFF)
-			Client_Send_PurchaseResumeItem(&s->o, objectType);
-	}
-}
-
 bool
 Client_Send_PrefName(const char *name)
 {
@@ -393,6 +354,11 @@ Client_Recv_UpdateStructures(const unsigned char **buf)
 		s->upgradeTimeLeft      = Net_Decode_uint8 (buf);
 		s->countDown            = Net_Decode_uint16(buf);
 		s->rallyPoint           = Net_Decode_uint16(buf);
+
+		for (uint16 objectType = 0; objectType < OBJECTTYPE_MAX; objectType++) {
+			const uint8 buildQueueCount = Net_Decode_uint8(buf);
+			BuildQueue_SetCount(&s->queue, objectType, buildQueueCount);
+		}
 
 		if (s->objectType == 0xFF)
 			s->objectType = 0xFFFF;
