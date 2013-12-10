@@ -79,7 +79,6 @@ typedef struct UnitDelta {
 	uint8   spriteOffset;
 } UnitDelta;
 
-static bool s_sendClientList;
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
 static int64_t s_choamLastUpdate;
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
@@ -675,7 +674,7 @@ Server_Send_PlayBattleMusic(enum HouseFlag houses)
 void
 Server_Send_ClientList(unsigned char **buf)
 {
-	if (!s_sendClientList)
+	if (!g_sendClientList)
 		return;
 
 	const size_t len = 1 + 1 + MAX_CLIENTS * 16;
@@ -704,7 +703,7 @@ Server_Send_ClientList(unsigned char **buf)
 
 	*buf_count = count;
 
-	s_sendClientList = false;
+	g_sendClientList = false;
 }
 
 void
@@ -1290,7 +1289,7 @@ Server_Recv_PrefName(int peerID, const char *name)
 		if (peerID == g_local_client_id)
 			memcpy(g_net_name, new_name, sizeof(g_net_name));
 
-		s_sendClientList = true;
+		g_sendClientList = true;
 		Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
 	}
 }

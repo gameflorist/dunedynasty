@@ -40,6 +40,7 @@ extern char g_host_port[MAX_PORT_LEN + 1];
 extern char g_join_addr[MAX_ADDR_LEN + 1];
 extern char g_join_port[MAX_PORT_LEN + 1];
 
+extern bool g_sendClientList;
 extern enum HouseFlag g_client_houses;
 extern enum NetHostType g_host_type;
 extern int g_local_client_id;

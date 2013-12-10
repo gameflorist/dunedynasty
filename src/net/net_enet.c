@@ -31,6 +31,7 @@ char g_host_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
 char g_join_addr[MAX_ADDR_LEN + 1] = "localhost";
 char g_join_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
 
+bool g_sendClientList;
 enum HouseFlag g_client_houses;
 enum NetHostType g_host_type;
 static ENetHost *s_host;
@@ -441,6 +442,7 @@ Server_Recv_DisconnectClient(ENetEvent *event)
 
 	enet_peer_disconnect(event->peer, 0);
 	lobby_regenerate_map = true;
+	g_sendClientList = true;
 
 	Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
 }
