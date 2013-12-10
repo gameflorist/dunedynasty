@@ -45,7 +45,6 @@ extern enum NetHostType g_host_type;
 extern int g_local_client_id;
 extern PeerData g_peer_data[MAX_CLIENTS];
 
-extern PeerData *Net_NewPeerData(int peerID);
 extern PeerData *Net_GetPeerData(int peerID);
 extern const char *Net_GetClientName(enum HouseType houseID);
 extern enum HouseType Net_GetClientHouse(int peerID);

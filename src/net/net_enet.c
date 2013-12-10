@@ -41,7 +41,7 @@ PeerData g_peer_data[MAX_CLIENTS];
 
 /*--------------------------------------------------------------*/
 
-PeerData *
+static PeerData *
 Net_NewPeerData(int peerID)
 {
 	for (int i = 0; i < MAX_CLIENTS; i++) {

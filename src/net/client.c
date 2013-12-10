@@ -506,23 +506,29 @@ static void
 Client_Recv_ClientList(const unsigned char **buf)
 {
 	const uint8 count = Net_Decode_uint8(buf);
+	int i;
 
-	for (size_t i = 0; i < count; i++) {
+	for (i = 0; i < count; i++) {
 		const uint8 peerID = Net_Decode_uint8(buf);
 		const size_t len = Net_Decode_uint8(buf);
 
-		PeerData *data = Net_GetPeerData(peerID);
-		if (data == NULL) {
-			data = Net_NewPeerData(peerID);
-			assert(data != NULL);
-		}
+		if (i >= MAX_CLIENTS)
+			continue;
 
+		PeerData *data = &g_peer_data[i];
+
+		data->id = peerID;
 		snprintf(data->name, min(sizeof(data->name), len + 1), "%s", *buf);
 
 		if (peerID == g_local_client_id)
 			strncpy(g_net_name, data->name, sizeof(g_net_name));
 
 		(*buf) += len;
+	}
+
+	for (; i < MAX_CLIENTS; i++) {
+		PeerData *data = &g_peer_data[i];
+		data->id = 0;
 	}
 }
 
