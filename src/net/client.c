@@ -381,7 +381,7 @@ Client_Recv_UpdateUnits(const unsigned char **buf)
 		const uint16 index = Net_Decode_ObjectIndex(buf);
 		Unit *u = Unit_Get_ByIndex(index);
 		Object *o = &u->o;
-		const bool was_used = o->flags.s.used;
+		const ObjectFlags old_flags = o->flags;
 
 		o->index        = index;
 		o->type         = Net_Decode_uint8 (buf);
@@ -404,7 +404,14 @@ Client_Recv_UpdateUnits(const unsigned char **buf)
 		/* XXX -- Smooth animation not yet implemented. */
 		u->lastPosition = o->position;
 
-		recount = recount || (was_used != o->flags.s.used);
+		if (o->flags.s.used != old_flags.s.used)
+			recount = true;
+
+		if ((!o->flags.s.used && old_flags.s.used)
+		 || (!o->flags.s.allocated && old_flags.s.allocated)
+		 || ( o->flags.s.isNotOnMap && !old_flags.s.isNotOnMap)) {
+			Unit_Unselect(u);
+		}
 	}
 
 	if (recount)

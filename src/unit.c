@@ -131,8 +131,16 @@ Unit_Unselect(const Unit *unit)
 		}
 	}
 
-	if ((g_selectionType == SELECTIONTYPE_UNIT) && !Unit_AnySelected())
+	if ((g_selectionType == SELECTIONTYPE_UNIT) && !Unit_AnySelected()) {
+		/* ENHANCEMENT -- When a unit enters or deploys into a
+		 * structure, the last tile the Unit was on becomes selected
+		 * rather than the entire Structure.
+		 */
+		if (enhancement_fix_selection_after_entering_structure)
+			Map_SetSelection(Tile_PackTile(unit->o.position));
+
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+	}
 }
 
 void
@@ -2563,6 +2571,7 @@ void Unit_Hide(Unit *unit)
 
 	Script_Reset(&unit->o.script, g_scriptUnit);
 	Unit_UntargetMe(unit);
+	Unit_Unselect(unit);
 
 	unit->o.flags.s.isNotOnMap = true;
 	Unit_HouseUnitCount_Remove(unit);
@@ -2630,14 +2639,6 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 	const UnitInfo *ui;
 
 	if (unit == NULL || s == NULL) return;
-
-	if (Unit_IsSelected(unit)) {
-		Unit_Unselect(unit);
-
-		/* ENHANCEMENT -- When a Unit enters a Structure, the last tile the Unit was on becomes selected rather than the entire Structure. */
-		if (enhancement_fix_selection_after_entering_structure && !Unit_AnySelected())
-			Map_SetSelection(Tile_PackTile(s->o.position));
-	}
 
 	ui = &g_table_unitInfo[unit->o.type];
 	si = &g_table_structureInfo[s->o.type];
