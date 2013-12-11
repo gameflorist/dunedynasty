@@ -327,7 +327,7 @@ StructureAI_GetBuildable(const Structure *s)
 		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
 		for (int i = 0; i < 8; i++) {
-			if (Structure_GetAvailable_Factory(s, i))
+			if (Structure_GetAvailable_Factory(s, i) > 0)
 				ret |= (1 << si->buildableUnits[i]);
 		}
 	}
