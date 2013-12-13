@@ -1838,12 +1838,9 @@ bool Unit_Move(Unit *unit, uint16 distance)
 
 				if (unit->o.type != UNIT_SANDWORM) {
 					if (g_map[packed].groundSpriteID == g_bloomSpriteID) {
-						g_map[g_selectionPosition].groundSpriteID = g_mapSpriteID[g_selectionPosition] & 0x01FF;
 						isSpiceBloom = true;
 					}
-
-					if (g_map[packed].groundSpriteID == g_bloomSpriteID + 1) {
-						g_map[g_selectionPosition].groundSpriteID = g_mapSpriteID[g_selectionPosition] & 0x01FF;
+					else if (g_map[packed].groundSpriteID == g_bloomSpriteID + 1) {
 						isSpecialBloom = true;
 					}
 				}
