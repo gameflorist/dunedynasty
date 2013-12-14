@@ -313,9 +313,10 @@ GameLoop_Client_ProcessUnhandledInput(bool init_transform, uint16 key)
 static void
 GameLoop_Client_ProcessInput(void)
 {
+	const bool init_transform = GFX_ScreenShake_Tick();
+
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		Input_Tick(false);
-		bool init_transform = GFX_ScreenShake_Tick();
 		A5_InitTransform(false);
 		uint16 key = GUI_Widget_HandleEvents(g_widgetLinkedListHead);
 		GameLoop_Client_ProcessUnhandledInput(init_transform, key);
