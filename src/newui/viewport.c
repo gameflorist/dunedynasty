@@ -1161,11 +1161,12 @@ Viewport_DrawRallyPoint(void)
 		return;
 
 	const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
-
-	if ((s == NULL) || (s->rallyPoint == 0xFFFF))
+	if (s == NULL)
 		return;
 
-	if (Structure_SupportsRallyPoints(s->o.type)) {
+	if ((s->o.houseID == g_playerHouseID)
+			&& (s->rallyPoint != 0xFFFF)
+			&& Structure_SupportsRallyPoints(s->o.type)) {
 		const int tx = Tile_GetPackedX(g_viewportPosition);
 		const int ty = Tile_GetPackedY(g_viewportPosition);
 		const int x1 = -g_viewport_scrollOffsetX + (TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - tx)) + (TILE_SIZE * g_selectionWidth)/2;
