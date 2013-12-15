@@ -1461,12 +1461,10 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 			return;
 	}
 
-	x += (int16)g_table_tilediff[0][u->wobbleIndex].x;
-	y += (int16)g_table_tilediff[0][u->wobbleIndex].y;
-
 	uint16 s_spriteFlags = 0;
 	uint16 index;
 
+	const enum HouseType houseID = Unit_GetHouseID(u);
 	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 	uint8 orientation = Orientation_256To8(u->orientation[0].current);
 
@@ -1503,10 +1501,24 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 	}
 
 	if (u->o.type != UNIT_SANDWORM && u->o.flags.s.isHighlighted) s_spriteFlags |= 0x100;
-	if (ui->o.flags.blurTile)
-		s_spriteFlags |= 0x200 | ((u->wobbleIndex & 0x7) << 4);
 
-	Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, 0, s_spriteFlags | 0xA000);
+	bool isWobbling = true;
+
+	if (ui->o.flags.blurTile) {
+		if ((u->o.type == UNIT_SANDWORM) || (houseID != g_playerHouseID)) {
+			s_spriteFlags |= 0x200 | ((u->wobbleIndex & 0x7) << 4);
+		}
+		else {
+			isWobbling = false;
+		}
+	}
+
+	if (isWobbling) {
+		x += (int16)g_table_tilediff[0][u->wobbleIndex].x;
+		y += (int16)g_table_tilediff[0][u->wobbleIndex].y;
+	}
+
+	Shape_DrawRemap(index, houseID, x, y, 0, s_spriteFlags | 0xA000);
 
 	/* XXX: Is it just ACTION_HARVEST, or ACTION_MOVE too? */
 	if (u->o.type == UNIT_HARVESTER && u->actionID == ACTION_HARVEST && u->spriteOffset >= 0 && (u->actionID == ACTION_HARVEST || u->actionID == ACTION_MOVE)) {
