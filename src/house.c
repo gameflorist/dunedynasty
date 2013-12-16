@@ -423,6 +423,19 @@ House_IsHuman(enum HouseType houseID)
 	return House_Get_ByIndex(houseID)->flags.human;
 }
 
+enum HouseFlag
+House_GetAIs(void)
+{
+	enum HouseFlag houses = 0;
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (!House_IsHuman(h))
+			houses |= (1 << h);
+	}
+
+	return houses;
+}
+
 /**
  * Checks if two houses are allied.
  *

@@ -3217,9 +3217,15 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 	if (!House_AreAllied(houseID, unit->o.houseID) && unit->actionID == ACTION_AMBUSH)
 		Unit_Server_SetAction(unit, ACTION_HUNT);
 
-	if (House_AreAllied(unit->o.houseID, g_playerHouseID)) {
-		unit->o.seenByHouses = 0xFF;
-	} else {
-		unit->o.seenByHouses |= houseIDBit;
+	if (g_host_type == HOSTTYPE_NONE) {
+		if (House_AreAllied(unit->o.houseID, g_playerHouseID)) {
+			unit->o.seenByHouses = 0xFF;
+		}
+		else {
+			unit->o.seenByHouses |= houseIDBit;
+		}
+	}
+	else {
+		unit->o.seenByHouses |= House_GetAllies(houseID) | House_GetAIs();
 	}
 }

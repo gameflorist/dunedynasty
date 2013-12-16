@@ -20,6 +20,7 @@
 #include "gui/widget.h"
 #include "house.h"
 #include "map.h"
+#include "net/net.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
 #include "newui/menubar.h"
@@ -621,8 +622,17 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 				Tile_UnpackTile(position), 2);
 	}
 
-	s->o.seenByHouses |= 1 << s->o.houseID;
-	if (House_AreAllied(s->o.houseID, g_playerHouseID)) s->o.seenByHouses |= 0xFF;
+	if (g_host_type == HOSTTYPE_NONE) {
+		if (House_AreAllied(s->o.houseID, g_playerHouseID)) {
+			s->o.seenByHouses |= 0xFF;
+		}
+		else {
+			s->o.seenByHouses |= (1 << s->o.houseID);
+		}
+	}
+	else {
+		s->o.seenByHouses |= House_GetAllies(houseID) | House_GetAIs();
+	}
 
 	s->o.flags.s.isNotOnMap = false;
 
