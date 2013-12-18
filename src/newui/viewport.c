@@ -465,6 +465,9 @@ Viewport_LMBAttemptsGenericCommand(uint16 packed)
 		Unit *u = Unit_Get_ByPackedTile(packed);
 		if (u != NULL)
 			houseID = Unit_GetHouseID(u);
+
+		if (houseID == HOUSE_INVALID)
+			return true;
 	}
 
 	return !House_AreAllied(houseID, g_playerHouseID);
