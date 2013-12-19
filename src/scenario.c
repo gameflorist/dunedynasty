@@ -608,11 +608,12 @@ Campaign_ReadHouseIni(void)
 			if (type != UNIT_INVALID) {
 				oi = &g_table_unitInfo[type].o;
 			}
-
-			type = Structure_StringToType(key);
-			if (type != STRUCTURE_INVALID) {
-				si = &g_table_structureInfo[type];
-				oi = &g_table_structureInfo[type].o;
+			else {
+				type = Structure_StringToType(key);
+				if (type != STRUCTURE_INVALID) {
+					si = &g_table_structureInfo[type];
+					oi = &g_table_structureInfo[type].o;
+				}
 			}
 
 			if (oi == NULL)
@@ -632,7 +633,7 @@ Campaign_ReadHouseIni(void)
 
 			if (count >= 2) {
 				oi->availableCampaign[houseID] = clamp(0, (oi->availableCampaign[houseID] & 0xFF) + availableCampaign, 99);
-				oi->upgradeLevelRequired[houseID] = clamp(0, (oi->upgradeLevelRequired[houseID] & 0xFF) + availableCampaign, 99);
+				oi->upgradeLevelRequired[houseID] = clamp(0, (oi->upgradeLevelRequired[houseID] & 0xFF) + upgradeLevelRequired, 99);
 			}
 
 			if ((count == 5) && (si != NULL) && oi->flags.factory) {
