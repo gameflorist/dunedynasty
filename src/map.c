@@ -844,6 +844,7 @@ Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID)
 
 			s = Structure_Find(&find);
 			if (s == NULL) break;
+			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
 			if (s->o.houseID == houseID) continue;
 
