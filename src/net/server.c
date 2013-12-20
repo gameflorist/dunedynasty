@@ -690,9 +690,7 @@ Server_Send_WinLose(enum HouseType houseID, bool win)
 		g_client_houses &= ~(1 << houseID);
 
 		if (!win) {
-			House *h = House_Get_ByIndex(houseID);
-			h->flags.human = false;
-			h->flags.isAIActive = true;
+			House_Server_ReassignToAI(houseID);
 		}
 	}
 
@@ -796,24 +794,24 @@ Server_ReturnToLobbyNow(bool win)
 }
 
 void
-Server_Recv_ReturnToLobby(enum HouseType houseID)
+Server_Recv_ReturnToLobby(enum HouseType houseID, bool log_message)
 {
 	PeerData *data = Net_GetPeerData(g_multiplayer.client[houseID]);
 	data->state = CLIENTSTATE_IN_LOBBY;
 
 	if (g_multiplayer.state[houseID] == MP_HOUSE_PLAYING) {
-		char chat_log[MAX_CHAT_LEN + 1];
-		House *h = House_Get_ByIndex(houseID);
-
 		g_multiplayer.state[houseID] = MP_HOUSE_LOST;
 		g_client_houses &= ~(1 << houseID);
-		h->flags.human = false;
-		h->flags.isAIActive = true;
+		House_Server_ReassignToAI(houseID);
 
-		snprintf(chat_log, sizeof(chat_log), "%s surrendered",
-				Net_GetClientName(houseID));
+		if (log_message) {
+			char chat_log[MAX_CHAT_LEN + 1];
 
-		Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
+			snprintf(chat_log, sizeof(chat_log), "%s surrendered",
+					Net_GetClientName(houseID));
+
+			Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
+		}
 	}
 
 	if (houseID == g_playerHouseID)
@@ -1443,7 +1441,7 @@ Server_ProcessMessage(int peerID, enum HouseType houseID,
 				break;
 
 			case CSMSG_RETURN_TO_LOBBY:
-				Server_Recv_ReturnToLobby(houseID);
+				Server_Recv_ReturnToLobby(houseID, true);
 				break;
 
 			case CSMSG_REPAIR_UPGRADE_STRUCTURE:

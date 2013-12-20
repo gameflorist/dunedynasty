@@ -527,6 +527,10 @@ Server_Recv_DisconnectClient(ENetEvent *event)
 			event->peer->address.host, event->peer->address.port);
 
 	snprintf(chat_log, sizeof(chat_log), "%s left", data->name);
+
+	if (data->state == CLIENTSTATE_IN_GAME)
+		Server_Recv_ReturnToLobby(Net_GetClientHouse(data->id), false);
+
 	Server_Recv_PrefHouse(data->id, HOUSE_INVALID);
 
 	data->state = CLIENTSTATE_UNUSED;

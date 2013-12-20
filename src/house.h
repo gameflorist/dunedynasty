@@ -127,6 +127,7 @@ extern bool House_IsHuman(enum HouseType houseID);
 extern enum HouseFlag House_GetAIs(void);
 extern bool House_AreAllied(enum HouseType houseID1, enum HouseType houseID2);
 extern enum HouseFlag House_GetAllies(enum HouseType houseID);
+extern void House_Server_ReassignToAI(enum HouseType houseID);
 extern void House_Client_UpdateRadarState(void);
 extern void House_UpdateCreditsStorage(uint8 houseID);
 extern void House_CalculatePowerAndCredit(struct House *h);

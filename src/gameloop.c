@@ -500,7 +500,7 @@ GameLoop_Loop(void)
 
 	if (g_host_type != HOSTTYPE_NONE) {
 		if (g_host_type == HOSTTYPE_CLIENT_SERVER) {
-			Server_Recv_ReturnToLobby(g_playerHouseID);
+			Server_Recv_ReturnToLobby(g_playerHouseID, true);
 		}
 		else if (g_host_type == HOSTTYPE_DEDICATED_CLIENT) {
 			Client_Send_ReturnToLobby();

@@ -486,6 +486,37 @@ House_GetAllies(enum HouseType houseID)
 }
 
 void
+House_Server_ReassignToAI(enum HouseType houseID)
+{
+	House *h = House_Get_ByIndex(houseID);
+
+	h->flags.human = false;
+	h->flags.isAIActive = true;
+
+	/* Might as well fix up all AI houses while we're at it. */
+	const enum HouseFlag ai_houses = House_GetAIs();
+	PoolFindStruct find;
+	Structure *s;
+	Unit *u;
+
+	find.houseID = HOUSE_INVALID;
+	find.index   = 0xFFFF;
+	find.type    = 0xFFFF;
+
+	while ((s = Structure_Find(&find)) != NULL) {
+		s->o.seenByHouses |= ai_houses;
+	}
+
+	find.houseID = HOUSE_INVALID;
+	find.index   = 0xFFFF;
+	find.type    = 0xFFFF;
+
+	while ((u = Unit_Find(&find)) != NULL) {
+		u->o.seenByHouses |= ai_houses;
+	}
+}
+
+void
 House_Client_UpdateRadarState(void)
 {
 	House *h = g_playerHouse;
