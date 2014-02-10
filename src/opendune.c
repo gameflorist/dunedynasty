@@ -58,6 +58,7 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "net/net.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
+#include "newui/chatbox.h"
 #include "newui/menu.h"
 #include "newui/menubar.h"
 #include "newui/viewport.h"
@@ -102,6 +103,7 @@ static bool  s_debugForceWin = false; /*!< When true, you immediately win the le
 uint16 g_validateStrictIfZero = 0; /*!< 0 = strict validation, basically: no-cheat-mode. */
 uint16 g_selectionType = 0;
 uint16 g_selectionTypeNew = 0;
+bool g_isEnteringChat = false;
 
 int16 g_musicInBattle = 0; /*!< 0 = no battle, 1 = fight is going on, -1 = music of fight is going on is active. */
 
@@ -559,6 +561,7 @@ void GameLoop_Main(bool new_game)
 	Net_Synchronise();
 	Timer_SetTimer(TIMER_GAME, true);
 	Timer_RegisterSource();
+	ChatBox_ResetTimestamps();
 
 	GameLoop_Loop();
 

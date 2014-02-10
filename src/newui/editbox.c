@@ -5,6 +5,7 @@
 
 #include "editbox.h"
 
+#include "../common_a5.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
 #include "../gui/widget.h"
@@ -114,25 +115,25 @@ EditBox_Input(char *text, int maxLength, enum EditBoxMode mode, uint16 key)
 			return 0;
 	}
 
-	key = GUI_EditBox_ScancodeToChar(key);
-	if (key == '\0')
-		return 0;
+	char c = GUI_EditBox_ScancodeToChar(key);
+	if (c == '\0')
+		return key;
 
 	if (mode == EDITBOX_WIDTH_LIMITED) {
 		const int maxWidth = g_curWidgetWidth - Font_GetCharWidth('W') - 1;
 		const int textWidth = Font_GetStringWidth(text);
-		const int keyWidth = Font_GetCharWidth(key);
+		const int keyWidth = Font_GetCharWidth(c);
 
 		if (textWidth + keyWidth >= maxWidth)
 			return 0;
 	}
 	else if (mode == EDITBOX_PORT) {
-		if (!('0' <= key && key <= '9'))
+		if (!('0' <= c && c <= '9'))
 			return 0;
 	}
 
 	/* Add char to the text */
-	*t = key & 0xFF;
+	*t = c;
 	*(++t) = '\0';
 
 	EditBox_ResetBlink();
@@ -170,7 +171,8 @@ void
 EditBox_Draw(const char *text, int x, int y, int w, int h, int cursor_width,
 		int col, int flags, bool draw_cursor)
 {
-	const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+	const enum ScreenDivID divID = A5_SaveTransform();
+	const ScreenDiv *div = &g_screenDiv[divID];
 	Video_SetClippingArea(div->scalex * (x + 1) + div->x, 0,
 			div->scalex * w, TRUE_DISPLAY_HEIGHT);
 

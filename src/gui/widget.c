@@ -208,19 +208,25 @@ void GUI_Widget_Draw(Widget *w)
  */
 uint16 GUI_Widget_HandleEvents(Widget *w)
 {
+	uint16 key = 0;
+
+	/* Get the key from the buffer, if there was any key pressed */
+	if (Input_IsInputAvailable()) {
+		key = Input_GetNextKey();
+	}
+
+	return GUI_Widget_HandleEventsKey(w, key);
+}
+
+uint16
+GUI_Widget_HandleEventsKey(Widget *w, uint16 key)
+{
 	static Widget *l_widget_selected     = NULL;
 	static Widget *l_widget_last         = NULL;
 	static uint16  l_widget_button_state = 0x0;
 
 	uint16 buttonState;
 	uint16 returnValue;
-	enum Scancode key;
-
-	/* Get the key from the buffer, if there was any key pressed */
-	key = 0;
-	if (Input_IsInputAvailable()) {
-		key = Input_GetNextKey();
-	}
 
 	if (w == NULL) return key & 0x7FFF;
 

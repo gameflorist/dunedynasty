@@ -9,17 +9,22 @@
 #include "chatbox.h"
 
 #include "editbox.h"
+#include "../common_a5.h"
 #include "../gui/font.h"
 #include "../gui/gui.h"
 #include "../net/net.h"
+#include "../opendune.h"
+#include "../timer/timer.h"
 #include "../video/video.h"
 
 enum {
+	CHAT_IN_GAME_DURATION   = 60 * 10,
 	MAX_CHAT_LINES = 9 + 1
 };
 
 typedef struct ChatEntry {
 	enum ChatType type;
+	int64_t timeout;
 	unsigned char col;
 	char name[MAX_NAME_LEN + 1];
 	char msg[MAX_CHAT_LEN + 1];
@@ -35,6 +40,29 @@ ChatBox_ClearHistory(void)
 	s_historyTail = s_historyHead;
 }
 
+void
+ChatBox_ResetTimestamps(void)
+{
+	for (unsigned int i = 0; i < MAX_CHAT_LINES; i++) {
+		s_history[i].timeout = 0;
+	}
+}
+
+static int
+ChatBox_CountLines(int64_t curr_ticks)
+{
+	int count = 0;
+
+	for (unsigned int i = s_historyHead;
+			i != s_historyTail;
+			i = (i + 1) % MAX_CHAT_LINES) {
+		if (s_history[i].timeout >= curr_ticks)
+			count++;
+	}
+
+	return count;
+}
+
 static void
 ChatBox_AddEntrySplit(enum ChatType type, unsigned char col,
 		const char *name, const char *start, const char *end)
@@ -42,6 +70,7 @@ ChatBox_AddEntrySplit(enum ChatType type, unsigned char col,
 	ChatEntry *c = &s_history[s_historyTail];
 
 	c->type = type;
+	c->timeout = Timer_GetTimer(TIMER_GUI) + CHAT_IN_GAME_DURATION;
 	c->col = col;
 
 	if (name != NULL) {
@@ -165,36 +194,74 @@ ChatBox_AddLog(enum ChatType type, const char *msg)
 }
 
 static void
-ChatBox_DrawHistory(int x, int y, int w, int h)
+ChatBox_DrawHistory(int x, int y, int style, int64_t curr_ticks)
 {
-	Prim_DrawBorder(x, y, w, h, 1, false, true, 0);
-	x += 2;
-	y += 2;
+	const int h = (style == 0x11) ? 7 : 10;
 
 	for (unsigned int i = s_historyHead;
 			i != s_historyTail;
 			i = (i + 1) % MAX_CHAT_LINES) {
 		const ChatEntry *c = &s_history[i];
+
+		if (c->timeout < curr_ticks)
+			continue;
+
 		int dx = 0;
 
-		if (c->name[0] != '\0') {
-			GUI_DrawText_Wrapper("%s", x, y, 144 + 2, 0, 0x11, c->name);
-			dx += Font_GetStringWidth(c->name);
-			dx += Font_GetCharWidth(' ');
+		unsigned char fg;
+
+		if (c->type == CHATTYPE_CHAT) {
+			if (c->name[0] != '\0') {
+				fg = (style == 0x11) ? (144 + 2) : c->col;
+				GUI_DrawText_Wrapper("%s", x, y, fg, 0, style, c->name);
+				dx += Font_GetStringWidth(c->name);
+				dx += Font_GetCharWidth(' ');
+			}
 		}
 
-		GUI_DrawText_Wrapper("%s", x + dx, y,
-				(c->col == 0) ? 228 : 31, 0, 0x11, c->msg);
+		fg = (style == 0x22) ? 15
+			: (c->type == CHATTYPE_CHAT) ? 31
+			: 228;
 
-		y += 7;
+		GUI_DrawText_Wrapper("%s", x + dx, y, fg, 0, style, c->msg);
+
+		y += h;
 	}
 }
 
 void
 ChatBox_Draw(const char *buf, bool draw_cursor)
 {
-	ChatBox_DrawHistory(200, 90, 100 + 4, 63 + 2 + 3);
+	Prim_DrawBorder(200, 90, 100 + 4, 63 + 5, 1, false, true, 0);
+	ChatBox_DrawHistory(202, 92, 0x11, 0);
 
 	Prim_DrawBorder(200, 159, 100 + 4, 11, 1, false, true, 0);
 	EditBox_Draw(buf, 202, 161, 100, 7, 4, 31, 0x11, draw_cursor);
+}
+
+void
+ChatBox_DrawInGame(const char *buf)
+{
+	const enum ScreenDivID divID = A5_SaveTransform();
+	const ScreenDiv *div = &g_screenDiv[SCREENDIV_HUD];
+	const int x = 8;
+	const int y = div->height - 16;
+
+	A5_UseTransform(SCREENDIV_HUD);
+
+	const int64_t curr_ticks = Timer_GetTicks();
+	ChatBox_DrawHistory(x, y - 10 * ChatBox_CountLines(curr_ticks), 0x22, curr_ticks);
+
+	if (g_isEnteringChat) {
+		int col = 144 + 16 * g_playerHouseID + 2;
+		int dx = 0;
+
+		GUI_DrawText_Wrapper("%s", x, y, col, 0, 0x22, g_net_name);
+		dx += Font_GetStringWidth(g_net_name);
+		dx += Font_GetCharWidth(' ');
+
+		EditBox_Draw(buf, x + dx, y, 100, 10, 6, 15, 0x22, true);
+	}
+
+	A5_UseTransform(divID);
 }

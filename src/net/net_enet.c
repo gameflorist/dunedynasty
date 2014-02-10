@@ -30,6 +30,7 @@ char g_host_addr[MAX_ADDR_LEN + 1] = "0.0.0.0";
 char g_host_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
 char g_join_addr[MAX_ADDR_LEN + 1] = "localhost";
 char g_join_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
+char g_chat_buf[MAX_CHAT_LEN + 1];
 
 bool g_sendClientList;
 enum HouseFlag g_client_houses;
@@ -142,6 +143,8 @@ Server_Send_StartGame(void)
 	if (!Net_IsPlayable())
 		return false;
 
+	Server_Recv_Chat(0, FLAG_HOUSE_ALL, "Game started");
+
 	unsigned char buf[1];
 	buf[0] = '1';
 
@@ -150,8 +153,6 @@ Server_Send_StartGame(void)
 
 	enet_host_broadcast(s_host, 0, packet);
 	enet_host_flush(s_host);
-
-	Server_Recv_Chat(0, FLAG_HOUSE_ALL, "Game started");
 	return true;
 }
 

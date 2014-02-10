@@ -24,6 +24,8 @@
 #include "net/net.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
+#include "newui/chatbox.h"
+#include "newui/editbox.h"
 #include "newui/menubar.h"
 #include "newui/viewport.h"
 #include "opendune.h"
@@ -106,7 +108,7 @@ GameLoop_Client_Logic(void)
  * squad selection, and changing zoom levels.
  */
 static void
-GameLoop_Client_ProcessUnhandledInput(bool init_transform, uint16 key)
+GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 {
 	const struct {
 		enum Scancode code;
@@ -171,6 +173,13 @@ GameLoop_Client_ProcessUnhandledInput(bool init_transform, uint16 key)
 
 		case SCANCODE_H:
 			Viewport_Homekey();
+			break;
+
+		case SCANCODE_ENTER:
+			if (g_host_type != HOSTTYPE_NONE) {
+				g_chat_buf[0] = '\0';
+				g_isEnteringChat = true;
+			}
 			break;
 
 		case SCANCODE_F5:
@@ -310,16 +319,43 @@ GameLoop_Client_ProcessUnhandledInput(bool init_transform, uint16 key)
 		A5_InitTransform(false);
 }
 
+static uint16
+GameLoop_Client_ProcessChatInput(uint16 key)
+{
+	key = EditBox_Input(g_chat_buf, sizeof(g_chat_buf), EDITBOX_FREEFORM, key);
+
+	if (key == SCANCODE_ENTER || key == SCANCODE_ESCAPE) {
+		if (key == SCANCODE_ENTER)
+			Net_Send_Chat(g_chat_buf);
+
+		g_chat_buf[0] = '\0';
+		g_isEnteringChat = false;
+		key = 0;
+	}
+
+	return key;
+}
+
 static void
 GameLoop_Client_ProcessInput(void)
 {
 	const bool init_transform = GFX_ScreenShake_Tick();
 
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
+		uint16 key = 0;
+
 		Input_Tick(false);
 		A5_InitTransform(false);
-		uint16 key = GUI_Widget_HandleEvents(g_widgetLinkedListHead);
-		GameLoop_Client_ProcessUnhandledInput(init_transform, key);
+
+		if (Input_IsInputAvailable()) {
+			key = Input_GetNextKey();
+
+			if (g_isEnteringChat)
+				key = GameLoop_Client_ProcessChatInput(key);
+		}
+
+		key = GUI_Widget_HandleEventsKey(g_widgetLinkedListHead, key);
+		GameLoop_Client_ProcessGameInput(init_transform, key);
 
 		if (g_mousePanning)
 			Video_WarpCursor(TRUE_DISPLAY_WIDTH / 2, TRUE_DISPLAY_HEIGHT / 2);
@@ -350,11 +386,13 @@ GameLoop_Client_Draw(void)
 {
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		GUI_DrawInterfaceAndRadar();
+		ChatBox_DrawInGame(g_chat_buf);
 	}
 	else if (g_gameOverlay == GAMEOVERLAY_HINT
 	      || g_gameOverlay == GAMEOVERLAY_WIN
 	      || g_gameOverlay == GAMEOVERLAY_LOSE) {
 		GUI_DrawInterfaceAndRadar();
+		ChatBox_DrawInGame(g_chat_buf);
 		MenuBar_DrawInGameOverlay();
 	}
 	else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
@@ -362,6 +400,7 @@ GameLoop_Client_Draw(void)
 	}
 	else {
 		GUI_DrawInterfaceAndRadar();
+		ChatBox_DrawInGame(g_chat_buf);
 		MenuBar_DrawOptionsOverlay();
 	}
 
@@ -472,6 +511,7 @@ GameLoop_Loop(void)
 	bool redraw = true;
 
 	g_inGame = true;
+	g_isEnteringChat = false;
 
 	while (g_gameMode == GM_NORMAL) {
 		const enum TimerType source = Timer_WaitForEvent();
@@ -508,4 +548,5 @@ GameLoop_Loop(void)
 	}
 
 	g_inGame = false;
+	g_isEnteringChat = false;
 }

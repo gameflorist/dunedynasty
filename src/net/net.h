@@ -47,6 +47,7 @@ extern char g_host_addr[MAX_ADDR_LEN + 1];
 extern char g_host_port[MAX_PORT_LEN + 1];
 extern char g_join_addr[MAX_ADDR_LEN + 1];
 extern char g_join_port[MAX_PORT_LEN + 1];
+extern char g_chat_buf[MAX_CHAT_LEN + 1];
 
 extern bool g_sendClientList;
 extern enum HouseFlag g_client_houses;

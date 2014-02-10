@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <math.h>
+#include "os/math.h"
 
 #include "common_a5.h"
 
@@ -111,6 +112,25 @@ A5_InitTransform(bool screen_size_changed)
 		al_destroy_bitmap(s_transform[SCREENDIV_MENU]);
 		s_transform[SCREENDIV_MENU] = sub;
 		al_build_transform(&trans, offx, offy, div->scalex, div->scaley, 0.0f);
+		al_use_transform(&trans);
+	}
+
+	/* Hud. */
+	{
+		ScreenDiv *div = &g_screenDiv[SCREENDIV_HUD];
+		div->scalex = min(scale, 2.0);
+		div->scaley = min(scale, 2.0);
+		div->width  = TRUE_DISPLAY_WIDTH / div->scalex;
+		div->height = TRUE_DISPLAY_HEIGHT / div->scaley;
+		div->x = 0;
+		div->y = 0;
+
+		ALLEGRO_BITMAP *sub = al_create_sub_bitmap(target, 0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+		al_set_target_bitmap(sub);
+
+		al_destroy_bitmap(s_transform[SCREENDIV_HUD]);
+		s_transform[SCREENDIV_HUD] = sub;
+		al_build_transform(&trans, 0, 0, div->scalex, div->scaley, 0.0f);
 		al_use_transform(&trans);
 	}
 

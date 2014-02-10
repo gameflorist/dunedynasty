@@ -29,8 +29,6 @@
 #include "../video/video.h"
 #include "../wsa.h"
 
-static char s_chat_buf[MAX_CHAT_LEN + 1];
-
 static Widget *pick_lobby_widgets;
 static Widget *skirmish_lobby_widgets;
 static Widget *multiplayer_lobby_widgets;
@@ -648,7 +646,7 @@ MultiplayerLobby_Initialise(void)
 	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 1), false);
 	GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 2), false);
 
-	s_chat_buf[0] = '\0';
+	g_chat_buf[0] = '\0';
 }
 
 void
@@ -672,7 +670,7 @@ MultiplayerLobby_Draw(void)
 			g_multiplayer.seed,
 			multiplayer_lobby_widgets);
 
-	ChatBox_Draw(s_chat_buf,
+	ChatBox_Draw(g_chat_buf,
 			!GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 8)->state.selected);
 
 	GUI_HallOfFame_SetColourScheme(false);
@@ -754,8 +752,8 @@ MultiplayerLobby_Loop(void)
 			break;
 
 		case SCANCODE_ENTER:
-			Net_Send_Chat(s_chat_buf);
-			s_chat_buf[0] = '\0';
+			Net_Send_Chat(g_chat_buf);
+			g_chat_buf[0] = '\0';
 			break;
 
 		case 0x8000 | 9:
@@ -766,7 +764,7 @@ MultiplayerLobby_Loop(void)
 			break;
 
 		default:
-			EditBox_Input(s_chat_buf, sizeof(s_chat_buf), EDITBOX_FREEFORM, widgetID);
+			EditBox_Input(g_chat_buf, sizeof(g_chat_buf), EDITBOX_FREEFORM, widgetID);
 			break;
 
 		case 0:
