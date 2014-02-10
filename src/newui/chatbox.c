@@ -19,6 +19,8 @@ enum {
 };
 
 typedef struct ChatEntry {
+	enum ChatType type;
+	unsigned char col;
 	char name[MAX_NAME_LEN + 1];
 	char msg[MAX_CHAT_LEN + 1];
 } ChatEntry;
@@ -34,9 +36,13 @@ ChatBox_ClearHistory(void)
 }
 
 static void
-ChatBox_AddEntrySplit(const char *name, const char *start, const char *end)
+ChatBox_AddEntrySplit(enum ChatType type, unsigned char col,
+		const char *name, const char *start, const char *end)
 {
 	ChatEntry *c = &s_history[s_historyTail];
+
+	c->type = type;
+	c->col = col;
 
 	if (name != NULL) {
 		snprintf(c->name, sizeof(c->name), "%s", name);
@@ -88,16 +94,26 @@ takewhile_space(const char *start, int *len)
 	return p;
 }
 
-void
-ChatBox_AddEntry(const char *name, const char *msg)
+static void
+ChatBox_AddEntry(enum ChatType type,
+		int peerID, const char *name, const char *msg)
 {
 	const int w = 100;
+	unsigned char col;
 	int len = 0;
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x11);
 	if (name != NULL && name[0] != '\0') {
 		len += Font_GetStringWidth(name);
 		len += Font_GetCharWidth(' ');
+	}
+
+	if (type == CHATTYPE_CHAT) {
+		const enum HouseType houseID = Net_GetClientHouse(peerID);
+		col = (houseID == HOUSE_INVALID) ? 15 : (144 + 16 * houseID + 2);
+	}
+	else {
+		col = 0;
 	}
 
 	const char *start = skip_spaces(msg);
@@ -127,11 +143,25 @@ ChatBox_AddEntry(const char *name, const char *msg)
 			}
 		}
 
-		ChatBox_AddEntrySplit(name, start, end);
+		ChatBox_AddEntrySplit(type, col, name, start, end);
 		start = skip_spaces(end);
 		name = NULL;
 		len = 0;
 	}
+}
+
+void
+ChatBox_AddChat(int peerID, const char *name, const char *msg)
+{
+	const enum ChatType type = (peerID == 0) ? CHATTYPE_LOG : CHATTYPE_CHAT;
+	ChatBox_AddEntry(type, peerID, name, msg);
+}
+
+void
+ChatBox_AddLog(enum ChatType type, const char *msg)
+{
+	assert(type != CHATTYPE_CHAT);
+	ChatBox_AddEntry(type, 0, NULL, msg);
 }
 
 static void
@@ -148,12 +178,13 @@ ChatBox_DrawHistory(int x, int y, int w, int h)
 		int dx = 0;
 
 		if (c->name[0] != '\0') {
-			GUI_DrawText_Wrapper("%s", x, y, 15, 0, 0x11, c->name);
+			GUI_DrawText_Wrapper("%s", x, y, 144 + 2, 0, 0x11, c->name);
 			dx += Font_GetStringWidth(c->name);
 			dx += Font_GetCharWidth(' ');
 		}
 
-		GUI_DrawText_Wrapper("%s", x + dx, y, 31, 0, 0x11, c->msg);
+		GUI_DrawText_Wrapper("%s", x + dx, y,
+				(c->col == 0) ? 228 : 31, 0, 0x11, c->msg);
 
 		y += 7;
 	}

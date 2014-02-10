@@ -3,8 +3,14 @@
 
 #include <stdbool.h>
 
+enum ChatType {
+	CHATTYPE_CHAT,
+	CHATTYPE_LOG
+};
+
 extern void ChatBox_ClearHistory(void);
-extern void ChatBox_AddEntry(const char *name, const char *msg);
+extern void ChatBox_AddChat(int peerID, const char *name, const char *msg);
+extern void ChatBox_AddLog(enum ChatType type, const char *msg);
 extern void ChatBox_Draw(const char *buf, bool draw_cursor);
 
 #endif

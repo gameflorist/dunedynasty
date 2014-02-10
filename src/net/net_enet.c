@@ -171,7 +171,7 @@ Net_CreateServer(const char *addr, int port, const char *name)
 			goto ERROR_HOST_CREATE;
 
 		ChatBox_ClearHistory();
-		ChatBox_AddEntry(NULL, "Server created");
+		ChatBox_AddLog(CHATTYPE_LOG, "Server created");
 
 		g_client_houses = 0;
 		memset(g_peer_data, 0, sizeof(g_peer_data));
@@ -374,7 +374,7 @@ Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf)
 		= enet_packet_create(msg, 3 + msg_len, ENET_PACKET_FLAG_RELIABLE);
 
 	if (houses == FLAG_HOUSE_ALL) {
-		ChatBox_AddEntry(name, msg + 2);
+		ChatBox_AddChat(peerID, name, msg + 2);
 		enet_host_broadcast(s_host, 0, packet);
 	}
 	else {
@@ -388,7 +388,7 @@ Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf)
 				continue;
 
 			if (data->id == g_local_client_id) {
-				ChatBox_AddEntry(name, msg + 2);
+				ChatBox_AddChat(peerID, name, msg + 2);
 			}
 			else if (data->peer != NULL) {
 				enet_peer_send(data->peer, 0, packet);

@@ -584,7 +584,7 @@ Client_Recv_Chat(const unsigned char **buf)
 	if (data != NULL)
 		name = data->name;
 
-	ChatBox_AddEntry(name, msg);
+	ChatBox_AddChat(peerID, name, msg);
 }
 
 void
