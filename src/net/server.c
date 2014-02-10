@@ -1426,7 +1426,7 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 	if (old_house == houseID)
 		return;
 
-	if (HOUSE_HARKONNEN <= houseID && houseID < HOUSE_MAX) {
+	if (houseID < HOUSE_MAX) {
 		if (!Multiplayer_IsHouseAvailable(houseID))
 			return;
 
