@@ -7,8 +7,8 @@
 enum {
 	OBJECTTYPE_MAX = 32
 };
-assert_compile(OBJECTTYPE_MAX >= STRUCTURE_MAX);
-assert_compile(OBJECTTYPE_MAX >= UNIT_MAX);
+assert_compile((int)OBJECTTYPE_MAX >= STRUCTURE_MAX);
+assert_compile((int)OBJECTTYPE_MAX >= UNIT_MAX);
 
 typedef struct BuildQueueItem {
 	struct BuildQueueItem *next;
