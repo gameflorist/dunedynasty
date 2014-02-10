@@ -235,15 +235,15 @@ Client_Send_PrefHouse(enum HouseType houseID)
 void
 Client_Send_Chat(const char *msg)
 {
-	const size_t len = strlen(msg) + 1;
+	const size_t len = strlen(msg);
 
-	if (len <= 0 || len >= MAX_CHAT_LEN)
+	if (len <= 0 || len > MAX_CHAT_LEN)
 		return;
 
 	unsigned char *buf = Client_GetBuffer(CSMSG_CHAT);
 
 	Net_Encode_uint8(&buf, FLAG_HOUSE_ALL);
-	memcpy(buf, msg, len);
+	memcpy(buf, msg, len + 1);
 }
 
 /*--------------------------------------------------------------*/
