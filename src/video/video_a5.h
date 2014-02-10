@@ -34,6 +34,7 @@ extern void VideoA5_DrawShapeGrey(enum ShapeID shapeID, int x, int y, int flags)
 extern void VideoA5_DrawShapeGreyScale(enum ShapeID shapeID, int x, int y, int w, int h, int flags);
 extern void VideoA5_DrawShapeTint(enum ShapeID shapeID, int x, int y, unsigned char c, int flags);
 extern void VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y);
+extern void VideoA5_DrawCharAlpha(unsigned char c, const uint8 *pal, int x, int y, unsigned char alpha);
 extern bool VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int h);
 extern void VideoA5_DrawWSAStatic(int frame, int x, int y);
 

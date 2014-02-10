@@ -99,6 +99,7 @@ extern void GUI_DisplayText(const char *str, int16 importance, ...);
 extern void GUI_DrawStatusBarText(int x, int y);
 extern void GUI_DrawStatusBarTextWrapper(uint8 priority, uint16 str1, uint16 str2, uint16 str3);
 extern void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour);
+extern void GUI_DrawTextAlpha(const char *string, int x, int y, unsigned char alpha);
 extern void GUI_DrawText_Wrapper(const char *string, int16 left, int16 top, uint8 fgColour, uint8 bgColour, uint16 flags, ...);
 extern void GUI_DrawTextOnFilledRectangle(const char *string, uint16 top);
 

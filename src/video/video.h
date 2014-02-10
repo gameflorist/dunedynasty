@@ -64,6 +64,7 @@ extern void Video_DrawMinimap(int left, int top, int map_scale, int mode);
 #define Video_DrawIcon          VideoA5_DrawIcon
 #define Video_DrawIconAlpha     VideoA5_DrawIconAlpha
 #define Video_DrawChar          VideoA5_DrawChar
+#define Video_DrawCharAlpha     VideoA5_DrawCharAlpha
 #define Video_DrawWSA           VideoA5_DrawWSA
 #define Video_DrawWSAStatic     VideoA5_DrawWSAStatic
 

@@ -2595,6 +2595,21 @@ VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y)
 		al_draw_tinted_bitmap(s_font[fnt][c], fg, x, y, 0);
 }
 
+void
+VideoA5_DrawCharAlpha(unsigned char c, const uint8 *pal, int x, int y, unsigned char alpha)
+{
+	const int fnt = VideoA5_FontIndex(g_fontCurrent, pal);
+	const ALLEGRO_COLOR tint
+		= al_map_rgba(
+				paletteRGB[3 * pal[1] + 0],
+				paletteRGB[3 * pal[1] + 1],
+				paletteRGB[3 * pal[1] + 2],
+				alpha);
+
+	if (s_font[fnt][c] != NULL)
+		al_draw_tinted_bitmap(s_font[fnt][c], tint, x, y, 0);
+}
+
 /*--------------------------------------------------------------*/
 
 static void

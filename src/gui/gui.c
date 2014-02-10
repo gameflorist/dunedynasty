@@ -434,6 +434,23 @@ void GUI_DrawText(const char *string, int16 left, int16 top, uint8 fgColour, uin
 	Video_HoldBitmapDrawing(false);
 }
 
+void
+GUI_DrawTextAlpha(const char *string, int x, int y, unsigned char alpha)
+{
+	const char *s = string;
+
+	Video_HoldBitmapDrawing(true);
+
+	while (*s != '\0') {
+		Video_DrawCharAlpha(*s, g_colours, x, y, alpha);
+
+		x += Font_GetCharWidth(*s);
+		s++;
+	}
+
+	Video_HoldBitmapDrawing(false);
+}
+
 /**
  * Draw a string to the screen, and so some magic.
  *

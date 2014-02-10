@@ -19,6 +19,7 @@
 
 enum {
 	CHAT_IN_GAME_DURATION   = 60 * 10,
+	CHAT_FADEOUT_DURATION   = 60 * 1,
 	MAX_CHAT_LINES = 9 + 1
 };
 
@@ -209,11 +210,22 @@ ChatBox_DrawHistory(int x, int y, int style, int64_t curr_ticks)
 		int dx = 0;
 
 		unsigned char fg;
+		unsigned char alpha;
+
+		if ((style == 0x22) && (c->timeout - curr_ticks < CHAT_FADEOUT_DURATION)) {
+			alpha = 0xFF * (c->timeout - curr_ticks) / CHAT_FADEOUT_DURATION;
+		}
+		else {
+			alpha = 0xFF;
+		}
 
 		if (c->type == CHATTYPE_CHAT) {
 			if (c->name[0] != '\0') {
 				fg = (style == 0x11) ? (144 + 2) : c->col;
-				GUI_DrawText_Wrapper("%s", x, y, fg, 0, style, c->name);
+
+				GUI_DrawText_Wrapper(NULL, 0, 0, fg, 0, style);
+				GUI_DrawTextAlpha(c->name, x + dx, y, alpha);
+
 				dx += Font_GetStringWidth(c->name);
 				dx += Font_GetCharWidth(' ');
 			}
@@ -223,7 +235,8 @@ ChatBox_DrawHistory(int x, int y, int style, int64_t curr_ticks)
 			: (c->type == CHATTYPE_CHAT) ? 31
 			: 228;
 
-		GUI_DrawText_Wrapper("%s", x + dx, y, fg, 0, style, c->msg);
+		GUI_DrawText_Wrapper(NULL, 0, 0, fg, 0, style);
+		GUI_DrawTextAlpha(c->msg, x + dx, y, alpha);
 
 		y += h;
 	}
