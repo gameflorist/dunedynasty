@@ -14,6 +14,7 @@
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "map.h"
+#include "mods/multiplayer.h"
 #include "net/net.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
@@ -92,7 +93,14 @@ void GameLoop_House(void)
 
 	if (g_tickHouseStarportRecalculatePrices <= g_timerGame) {
 		const int64_t next_minute = Random_Starport_GetSeedTime() + 1;
-		const uint16 seed = Random_Starport_GetSeed(g_scenarioID, g_playerHouseID);
+		uint16 seed;
+
+		if (g_host_type == HOSTTYPE_NONE) {
+			seed = Random_Starport_GetSeed(g_scenarioID, g_playerHouseID);
+		}
+		else {
+			seed = Random_Starport_GetSeed(g_multiplayer.seed, 0);
+		}
 
 		g_tickHouseStarportRecalculatePrices = g_tickScenarioStart + next_minute * 60 * 60;
 		Random_Starport_Seed(seed);
