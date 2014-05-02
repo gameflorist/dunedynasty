@@ -177,6 +177,7 @@ Net_CreateServer(const char *addr, int port, const char *name)
 		g_client_houses = 0;
 		memset(g_peer_data, 0, sizeof(g_peer_data));
 		memset(&g_multiplayer, 0, sizeof(g_multiplayer));
+		g_multiplayer.seed = rand() & 0x7FFF;
 
 		g_host_type = HOSTTYPE_CLIENT_SERVER;
 		PeerData *data = Server_NewClient();
