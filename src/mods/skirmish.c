@@ -16,6 +16,7 @@
 #include "../opendune.h"
 #include "../pool/pool.h"
 #include "../pool/structure.h"
+#include "../pool/unit.h"
 #include "../scenario.h"
 #include "../sprites.h"
 #include "../tile.h"
@@ -287,6 +288,29 @@ Skirmish_Prepare(void)
 {
 	Skirmish_ResetAlliances();
 	Skirmish_TweakTechTree();
+}
+
+void
+Skirmish_StartScenario(void)
+{
+	PoolFindStruct find;
+	assert(g_playerHouseID != HOUSE_INVALID);
+
+	Game_Prepare();
+	g_tickScenarioStart = g_timerGame;
+
+	GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+	Scenario_CentreViewport(g_playerHouseID);
+
+	find.houseID = g_playerHouseID;
+	find.type = UNIT_MCV;
+	find.index = UNIT_INDEX_INVALID;
+
+	const Unit *u = Unit_Find(&find);
+	assert(u != NULL);
+
+	Tile_RemoveFogInRadius(1 << g_playerHouseID, UNVEILCAUSE_LONG,
+			u->o.position, 10);
 }
 
 static void
@@ -974,14 +998,6 @@ Skirmish_GenerateMap2(bool only_landscape, SkirmishData *sd)
 	}
 #endif
 
-	Game_Prepare();
-
-	if (g_playerHouseID != HOUSE_INVALID) {
-		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
-		Scenario_CentreViewport(g_playerHouseID);
-	}
-
-	g_tickScenarioStart = g_timerGame;
 	return true;
 }
 

@@ -55,6 +55,7 @@ extern int _al_mangled_main(int argc, char **argv);
 #include "input/mouse.h"
 #include "map.h"
 #include "mods/multiplayer.h"
+#include "mods/skirmish.h"
 #include "net/net.h"
 #include "net/server.h"
 #include "newui/actionpanel.h"
@@ -544,12 +545,17 @@ void GameLoop_Main(bool new_game)
 	GUI_Palette_CreateRemap(g_playerHouseID);
 	Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 
+	Timer_ResetScriptTimers();
+	Net_Synchronise();
+
 	if (new_game) {
 		Game_LoadScenario(g_playerHouseID, g_scenarioID);
 		GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
 	}
-
-	Timer_ResetScriptTimers();
+	else if (g_campaign_selected == CAMPAIGNID_SKIRMISH
+	      || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
+		Skirmish_StartScenario();
+	}
 
 	/* Note: original game chose only MUSIC_IDLE1 .. MUSIC_IDLE6. */
 	Audio_PlayMusic(MUSIC_STOP);
@@ -558,7 +564,6 @@ void GameLoop_Main(bool new_game)
 	g_gameMode = GM_NORMAL;
 	g_gameOverlay = GAMEOVERLAY_NONE;
 
-	Net_Synchronise();
 	Timer_SetTimer(TIMER_GAME, true);
 	Timer_RegisterSource();
 	ChatBox_ResetTimestamps();

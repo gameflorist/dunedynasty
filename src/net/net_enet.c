@@ -304,15 +304,14 @@ Net_IsPlayable(void)
 void
 Net_Synchronise(void)
 {
-	assert(g_playerHouseID != HOUSE_INVALID);
-	assert(g_playerHouse != NULL);
-
 	if (g_host_type == HOSTTYPE_NONE)
 		return;
 
 	if (g_host_type == HOSTTYPE_CLIENT_SERVER
 	 || g_host_type == HOSTTYPE_DEDICATED_CLIENT) {
 		assert(g_local_client_id != 0);
+		assert(g_playerHouseID != HOUSE_INVALID);
+		assert(g_playerHouse != NULL);
 	}
 
 	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
