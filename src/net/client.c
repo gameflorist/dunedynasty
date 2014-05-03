@@ -137,13 +137,7 @@ Client_Send_LeavePlacementMode(void)
 	if (buf == NULL)
 		return;
 
-	const Structure *s = Structure_Get_ByPackedTile(g_structureActivePosition);
-	if (s != NULL) {
-		Net_Encode_ObjectIndex(&buf, &s->o);
-	}
-	else {
-		Net_Encode_uint16(&buf, STRUCTURE_INDEX_INVALID);
-	}
+	Net_Encode_uint16(&buf, STRUCTURE_INDEX_INVALID);
 }
 
 void

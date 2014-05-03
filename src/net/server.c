@@ -1112,20 +1112,7 @@ Server_Recv_EnterLeavePlacementMode(enum HouseType houseID, const unsigned char 
 
 	SERVER_LOG("objectID=%d", objectID);
 
-	/* If the construction yard was destroyed during placement mode,
-	 * and the placement was aborted, then destroy the structure.
-	 */
-	if (objectID == STRUCTURE_INDEX_INVALID) {
-		if (h->structureActiveID == STRUCTURE_INDEX_INVALID)
-			return;
-
-		Structure *s = Structure_Get_ByIndex(h->structureActiveID);
-		if (s != NULL)
-			Structure_Free(s);
-
-		h->structureActiveID = STRUCTURE_INDEX_INVALID;
-	}
-	else if (objectID < STRUCTURE_INDEX_MAX_SOFT) {
+	if (objectID < STRUCTURE_INDEX_MAX_SOFT) {
 		Structure *s = Structure_Get_ByIndex(objectID);
 		if ((s->o.type != STRUCTURE_CONSTRUCTION_YARD)
 				|| !Server_PlayerCanControlStructure(houseID, s))
@@ -1134,14 +1121,32 @@ Server_Recv_EnterLeavePlacementMode(enum HouseType houseID, const unsigned char 
 		if (s->countDown == 0
 				&& s->o.linkedID != STRUCTURE_INVALID
 				&& h->structureActiveID == STRUCTURE_INDEX_INVALID) {
+			h->constructionYardPosition = Tile_PackTile(s->o.position);
 			h->structureActiveID = s->o.linkedID;
 			s->o.linkedID = STRUCTURE_INVALID;
 		}
 		else if (s->o.linkedID == STRUCTURE_INVALID
 				&& h->structureActiveID != STRUCTURE_INDEX_INVALID) {
-			s->o.linkedID = h->structureActiveID;
-			h->structureActiveID = STRUCTURE_INDEX_INVALID;
 		}
+	}
+	else if (h->structureActiveID != STRUCTURE_INDEX_INVALID) {
+		/* Return the active structure back to the construction yard.
+		 * If the construction yard was captured or destroyed during
+		 * placement mode, and the placement was aborted, then destroy
+		 * the structure.
+		 */
+		Structure *s = Structure_Get_ByPackedTile(h->constructionYardPosition);
+		if (s != NULL
+				&& s->o.type == STRUCTURE_CONSTRUCTION_YARD
+				&& s->o.linkedID == STRUCTURE_INVALID
+				&& Server_PlayerCanControlStructure(houseID, s)) {
+			s->o.linkedID = h->structureActiveID;
+		}
+		else {
+			Structure_Free(Structure_Get_ByIndex(h->structureActiveID));
+		}
+
+		h->structureActiveID = STRUCTURE_INDEX_INVALID;
 	}
 }
 

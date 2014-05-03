@@ -8,6 +8,7 @@
 #include "../pool/pool.h"
 #include "../pool/structure.h"
 #include "../pool/unit.h"
+#include "../structure.h"
 
 static const SaveLoadDesc s_saveHouse[] = {
 	SLD_ENTRY2(House, SLDT_UINT16, index,           SLDT_UINT8),
@@ -72,9 +73,10 @@ bool House_Load(FILE *fp, uint32 length)
 		*h = hl;
 
 		/* Extra data. */
-		h->starportLinkedID = UNIT_INDEX_INVALID;
-		h->structureActiveID= STRUCTURE_INDEX_INVALID;
-		h->houseMissileID   = UNIT_INDEX_INVALID;
+		h->starportLinkedID         = UNIT_INDEX_INVALID;
+		h->constructionYardPosition = g_structureActivePosition;
+		h->structureActiveID        = STRUCTURE_INDEX_INVALID;
+		h->houseMissileID           = UNIT_INDEX_INVALID;
 
 		/* See if it is a human house */
 		if (h->flags.human) {
