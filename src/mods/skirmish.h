@@ -13,7 +13,7 @@ struct SkirmishData;
 
 extern Skirmish g_skirmish;
 
-extern bool Skirmish_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd);
+extern uint16 Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, struct SkirmishData *sd);
 
 extern bool Skirmish_IsPlayable(void);
 extern void Skirmish_Prepare(void);

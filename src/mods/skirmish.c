@@ -648,27 +648,20 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 	return false;
 }
 
-bool
-Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
+uint16
+Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, SkirmishData *sd)
 {
-	const int delta[7] = {
-		0, -4, 4,
-		-MAP_SIZE_MAX * 3 - 2, -MAP_SIZE_MAX * 3 + 2,
-		 MAP_SIZE_MAX * 3 - 2,  MAP_SIZE_MAX * 3 + 2,
-	};
-
 	const MapInfo *mi = &g_mapInfos[0];
 
 	/* Pick a tile that is not too close to the edge, and not too
 	 * close to the enemy.
 	 */
-	int r;
 	for (int attempts = 0; attempts < 100; attempts++) {
 		const int island = Skirmish_PickRandomIsland(sd);
 		if (island < 0)
-			return false;
+			return 0;
 
-		r = Tools_RandomLCG_Range(sd->island[island].start, sd->island[island].end - 1);
+		int r = Tools_RandomLCG_Range(sd->island[island].start, sd->island[island].end - 1);
 		if (!(mi->minX + 4 <= sd->buildable[r].x && sd->buildable[r].x < mi->minX + mi->sizeX - 4))
 			continue;
 
@@ -676,36 +669,65 @@ Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
 			continue;
 
 		PoolFindStruct find;
+
 		find.houseID = HOUSE_INVALID;
 		find.type = 0xFFFF;
 		find.index = STRUCTURE_INDEX_INVALID;
 
-		Structure *s = Structure_Find(&find);
-		for (; s != NULL; s = Structure_Find(&find)) {
+		Structure *s;
+		while ((s = Structure_Find(&find)) != NULL) {
 			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
 				continue;
 
-			if (House_AreAllied(g_playerHouseID, s->o.houseID))
+			if (House_AreAllied(houseID, s->o.houseID))
 				continue;
 
 			const uint16 dist = Tile_GetDistancePacked(Tile_PackTile(s->o.position), sd->buildable[r].packed);
-			if (dist < 24)
+			if (dist < dist_threshold)
 				break;
 		}
 
-		if (s == NULL) {
-			break;
+		if (s != NULL)
+			continue;
+
+		find.houseID = HOUSE_INVALID;
+		find.type = 0xFFFF;
+		find.index = UNIT_INDEX_INVALID;
+
+		Unit *u;
+		while ((u = Unit_Find(&find)) != NULL) {
+			if (House_AreAllied(houseID, u->o.houseID))
+				continue;
+
+			const uint16 dist = Tile_GetDistancePacked(Tile_PackTile(u->o.position), sd->buildable[r].packed);
+			if (dist < dist_threshold)
+				break;
 		}
-		else {
-			r = -1;
-		}
+
+		if (u != NULL)
+			continue;
+
+		return sd->buildable[r].packed;
 	}
 
-	if (r < 0)
+	return 0;
+}
+
+static bool
+Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
+{
+	static const int delta[7] = {
+		0, -4, 4,
+		-MAP_SIZE_MAX * 3 - 2, -MAP_SIZE_MAX * 3 + 2,
+		 MAP_SIZE_MAX * 3 - 2,  MAP_SIZE_MAX * 3 + 2,
+	};
+
+	const uint16 start_location = Skirmish_FindStartLocation(houseID, 24, sd);
+	if (!Map_IsValidPosition(start_location))
 		return false;
 
-	for (int i = 0; i < 7; i++) {
-		const uint16 packed = sd->buildable[r].packed + delta[i];
+	for (unsigned int i = 0; i < lengthof(delta); i++) {
+		const uint16 packed = start_location + delta[i];
 		const tile32 position = Tile_UnpackTile(packed);
 
 		enum UnitType type = (i == 0) ? UNIT_MCV : House_GetLightVehicle(houseID);

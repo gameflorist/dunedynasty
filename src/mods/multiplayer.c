@@ -8,10 +8,13 @@
 
 #include "skirmish.h"
 #include "../house.h"
+#include "../map.h"
 #include "../net/net.h"
 #include "../opendune.h"
 #include "../pool/house.h"
 #include "../scenario.h"
+#include "../tools/coord.h"
+#include "../unit.h"
 
 Multiplayer g_multiplayer;
 
@@ -24,6 +27,20 @@ Multiplayer_IsHouseAvailable(enum HouseType houseID)
 
 /*--------------------------------------------------------------*/
 
+static bool
+Multiplayer_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd)
+{
+	const uint16 start_location = Skirmish_FindStartLocation(houseID, 32, sd);
+	if (!Map_IsValidPosition(start_location))
+		return false;
+
+	const tile32 position = Tile_UnpackTile(start_location);
+	Scenario_Create_Unit(houseID, UNIT_MCV, 256, position, 127,
+			g_table_unitInfo[UNIT_MCV].o.actionsPlayer[3]);
+
+	return true;
+}
+
 bool
 Multiplayer_GenHouses(struct SkirmishData *sd)
 {
@@ -34,7 +51,7 @@ Multiplayer_GenHouses(struct SkirmishData *sd)
 			continue;
 
 		Scenario_Create_House(h, BRAIN_HUMAN, 1000, 0, 25);
-		if (!Skirmish_GenUnitsHuman(h, sd)) {
+		if (!Multiplayer_GenUnitsHuman(h, sd)) {
 			g_playerHouseID = playerHouseID;
 			g_playerHouse = House_Get_ByIndex(g_playerHouseID);
 			return false;
