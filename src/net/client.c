@@ -596,7 +596,7 @@ Client_ChangeSelectionMode(void)
 		g_structureActive = NULL;
 		g_structureActiveType = 0xFFFF;
 		g_selectionState = 0; /* Invalid. */
-		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
+		GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
 		return;
 	}
 
