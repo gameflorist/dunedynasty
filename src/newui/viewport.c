@@ -265,7 +265,7 @@ Viewport_Target(const Unit *u, enum UnitActionType action, uint16 packed)
 	else if (g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT) {
 		Audio_PlaySample(g_table_actionInfo[action].soundID, 255, 0.0);
 	}
-	else {
+	else if (u->o.type != UNIT_SANDWORM) {
 		const enum SampleID sampleID = (((Random_Xorshift_256() & 0x1) == 0) ? SAMPLE_ACKNOWLEDGED : SAMPLE_AFFIRMATIVE);
 
 		Audio_PlaySample(sampleID, 255, 0.0);

@@ -2148,7 +2148,13 @@ void Unit_Select(Unit *unit)
 		ui = &g_table_unitInfo[unit->o.type];
 
 		/* Plays the 'reporting' sound file. */
-		Audio_PlaySample(ui->movementType == MOVEMENT_FOOT ? SAMPLE_YES_SIR : SAMPLE_REPORTING, 255, 0.0);
+		if (unit->o.type != UNIT_SANDWORM) {
+			const enum SampleID sampleID
+				= (ui->movementType == MOVEMENT_FOOT)
+				? SAMPLE_YES_SIR : SAMPLE_REPORTING;
+
+			Audio_PlaySample(sampleID, 255, 0.0);
+		}
 
 		GUI_DisplayHint(g_playerHouseID, ui->o.hintStringID, ui->o.spriteID);
 	}
