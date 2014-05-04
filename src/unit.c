@@ -3160,10 +3160,13 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 	}
 
 	if (houseID == g_playerHouseID && g_selectionType != SELECTIONTYPE_MENTAT) {
+		bool playBattleMusic = false;
+		enum VoiceID feedbackID = VOICE_INVALID;
+
 		if (unit->o.type == UNIT_SANDWORM) {
 			if (h->timerSandwormAttack == 0) {
-				Server_Send_PlayBattleMusic(1 << houseID);
-				Server_Send_PlayVoice(1 << houseID, VOICE_WARNING_WORM_SIGN);
+				playBattleMusic = true;
+				feedbackID = VOICE_WARNING_WORM_SIGN;
 
 				if (g_gameConfig.language == LANGUAGE_ENGLISH) {
 					GUI_DisplayHint(houseID,
@@ -3177,14 +3180,11 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 			Team *t;
 
 			if (h->timerUnitAttack == 0) {
-				Server_Send_PlayBattleMusic(1 << houseID);
+				playBattleMusic = true;
 
 				if (unit->o.type == UNIT_SABOTEUR) {
-					Server_Send_PlayVoice(1 << houseID,
-							VOICE_WARNING_SABOTEUR_APPROACHING);
+					feedbackID = VOICE_WARNING_SABOTEUR_APPROACHING;
 				} else {
-					enum VoiceID feedbackID;
-
 					if (g_scenarioID < 3) {
 						PoolFindStruct find;
 						Structure *s;
@@ -3213,8 +3213,6 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 					} else {
 						feedbackID = VOICE_WARNING_HARKONNEN_UNIT_APPROACHING + unit->o.houseID;
 					}
-
-					Server_Send_PlayVoice(1 << houseID, feedbackID);
 				}
 
 				h->timerUnitAttack = 8;
@@ -3223,6 +3221,12 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 			t = Team_Get_ByIndex(unit->team);
 			if (t != NULL) t->script.variables[4] = 1;
 		}
+
+		if (playBattleMusic)
+			Server_Send_PlayBattleMusic(1 << houseID);
+
+		if (feedbackID != VOICE_INVALID)
+			Server_Send_PlayVoice(1 << houseID, feedbackID);
 	}
 
 	if (!House_AreAllied(houseID, unit->o.houseID) && unit->actionID == ACTION_AMBUSH)
