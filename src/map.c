@@ -1191,11 +1191,6 @@ Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause,
 	f->cause[houseID] = max(f->cause[houseID], cause);
 	f->timeout[houseID] = Map_GetUnveilTimeout(cause);
 
-	if (Map_IsPositionUnveiled(houseID, packed))
-		return;
-
-	f->isUnveiled |= (1 << houseID);
-
 	u = Unit_Get_ByPackedTile(packed);
 	if (u != NULL) Unit_HouseUnitCount_Add(u, houseID);
 
@@ -1203,6 +1198,14 @@ Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause,
 	if (s != NULL)
 		s->o.seenByHouses |= House_GetAllies(houseID);
 
+	/* ENHANCEMENT -- Originally, this test came before
+	 * Unit_Get_ByPackedTile and Structure_Get_ByPackedTile, causing
+	 * objects spawned in scouted territory to be not known.
+	 */
+	if (Map_IsPositionUnveiled(houseID, packed))
+		return;
+
+	f->isUnveiled |= (1 << houseID);
 	Map_UnveilTile_Neighbour(houseID, packed);
 	Map_UnveilTile_Neighbour(houseID, packed + 1);
 	Map_UnveilTile_Neighbour(houseID, packed - 1);
