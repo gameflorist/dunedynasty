@@ -83,11 +83,20 @@ Multiplayer_GenHouses(struct SkirmishData *sd)
 {
 	const enum HouseType playerHouseID = g_playerHouseID;
 
+	/* Note: create all the houses first to avoid Scenario_Create_Unit
+	 * thinking that later human houses belong to AIs.
+	 */
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		if (g_multiplayer.client[h] == 0)
 			continue;
 
 		Scenario_Create_House(h, BRAIN_HUMAN, 1000, 0, 25);
+	}
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_multiplayer.client[h] == 0)
+			continue;
+
 		if (!Multiplayer_GenUnitsHuman(h, sd)) {
 			g_playerHouseID = playerHouseID;
 			g_playerHouse = House_Get_ByIndex(g_playerHouseID);

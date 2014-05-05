@@ -3131,7 +3131,8 @@ Unit_HouseUnitCount_Remove(Unit *u)
  * @param unit The unit to add.
  * @param houseID The house registering the add.
  */
-void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
+static void
+Unit_Server_HouseUnitCount_Add(Unit *unit, enum HouseType houseID)
 {
 	const UnitInfo *ui;
 	uint16 houseIDBit;
@@ -3165,12 +3166,17 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 		}
 	}
 
-	if (houseID == g_playerHouseID && g_selectionType != SELECTIONTYPE_MENTAT) {
+	if ((g_host_type != HOSTTYPE_NONE)
+	 || (g_host_type == HOSTTYPE_NONE
+		 && houseID == g_playerHouseID
+		 && g_selectionType != SELECTIONTYPE_MENTAT)) {
 		bool playBattleMusic = false;
 		enum VoiceID feedbackID = VOICE_INVALID;
 
 		if (unit->o.type == UNIT_SANDWORM) {
-			if (h->timerSandwormAttack == 0) {
+			if (h->timerSandwormAttack == 0
+					&& (g_host_type == HOSTTYPE_NONE
+						|| !House_AreAllied(houseID, Unit_GetHouseID(unit)))) {
 				playBattleMusic = true;
 				feedbackID = VOICE_WARNING_WORM_SIGN;
 
@@ -3195,7 +3201,7 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 						PoolFindStruct find;
 						Structure *s;
 
-						find.houseID = g_playerHouseID;
+						find.houseID = houseID;
 						find.index   = 0xFFFF;
 						find.type    = STRUCTURE_CONSTRUCTION_YARD;
 
@@ -3248,5 +3254,22 @@ void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 	}
 	else {
 		unit->o.seenByHouses |= House_GetAllies(houseID) | House_GetAIs();
+	}
+}
+
+static void
+Unit_Client_HouseUnitCount_Add(Unit *unit, enum HouseType houseID)
+{
+	unit->o.seenByHouses |= (1 << houseID);
+}
+
+void
+Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
+{
+	if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
+		Unit_Server_HouseUnitCount_Add(unit, houseID);
+	}
+	else {
+		Unit_Client_HouseUnitCount_Add(unit, houseID);
 	}
 }
