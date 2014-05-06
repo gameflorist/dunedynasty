@@ -23,22 +23,22 @@
 #include "../map.h"
 
 /** variable_2484: 0x0003A4F4. */
-static const int16 s_xOffsets[8] = {
+static const int16 k_xOffsets[8] = {
 	0, 256, 256, 256, 0, -256, -256, -256
 };
 
 /** variable_2474: 0x0003A504. */
-static const int16 s_yOffsets[8] = {
+static const int16 k_yOffsets[8] = {
 	-256, -256, 0, 256, 256, 256, 0, -256
 };
 
 /** variable_23DA: 0x0003A45A. */
-static const uint16 s_orientationOffsets[4] = {
+static const uint16 k_orientationOffsets[4] = {
 	0x40, 0x80, 0x00, 0xC0
 };
 
 /** variable_23E2: 0x0003A462. */
-static const int32 s_gradients[32] = {
+static const int32 k_gradients[32] = {
 	0x3FFF, 0x28BC, 0x145A, 0x0D8E, 0x0A27, 0x081B, 0x06BD, 0x05C3,
 	0x0506, 0x0474, 0x03FE, 0x039D, 0x034B, 0x0306, 0x02CB, 0x0297,
 	0x026A, 0x0241, 0x021D, 0x01FC, 0x01DE, 0x01C3, 0x01AB, 0x0194,
@@ -46,7 +46,7 @@ static const int32 s_gradients[32] = {
 };
 
 /** variable_3C4C: 0x0003BCCC. */
-static const int8 s_stepX[256] = {
+static const int8 k_stepX[256] = {
 	   0,    3,    6,    9,   12,   15,   18,   21,   24,   27,   30,   33,   36,   39,   42,   45,
 	  48,   51,   54,   57,   59,   62,   65,   67,   70,   73,   75,   78,   80,   82,   85,   87,
 	  89,   91,   94,   96,   98,  100,  101,  103,  105,  107,  108,  110,  111,  113,  114,  116,
@@ -66,7 +66,7 @@ static const int8 s_stepX[256] = {
 };
 
 /** variable_3D4C: 0x0003BDCC. */
-static const int8 s_stepY[256] = {
+static const int8 k_stepY[256] = {
 	 127,  126,  126,  126,  126,  126,  125,  125,  124,  123,  123,  122,  121,  120,  119,  118,
 	 117,  116,  114,  113,  112,  110,  108,  107,  105,  103,  102,  100,   98,   96,   94,   91,
 	  89,   87,   85,   82,   80,   78,   75,   73,   70,   67,   65,   62,   59,   57,   54,   51,
@@ -323,8 +323,8 @@ Tile_MoveByDirectionUnbounded(tile32 tile, uint8 orient256, uint16 distance)
 	if (distance == 0)
 		return tile;
 
-	const int8 diffX = s_stepX[orient256];
-	const int8 diffY = s_stepY[orient256];
+	const int8 diffX = k_stepX[orient256];
+	const int8 diffY = k_stepY[orient256];
 
 	/** ENHANCEMENT -- rounding lead to asymmetries when moving N/W vs S/E. */
 	if (g_dune2_enhanced) {
@@ -359,8 +359,8 @@ Tile_MoveByRandom(tile32 tile, uint16 distance, bool centre)
 	distance = newDistance;
 
 	const uint8 orient256 = Tools_Random_256();
-	const uint16 x = tile.x + ((s_stepX[orient256] * distance) / 128) * 16;
-	const uint16 y = tile.y - ((s_stepY[orient256] * distance) / 128) * 16;
+	const uint16 x = tile.x + ((k_stepX[orient256] * distance) / 128) * 16;
+	const uint16 y = tile.y - ((k_stepY[orient256] * distance) / 128) * 16;
 
 	/* Note: 16384 = MAP_SIZE_MAX * 256. */
 	if (x > 16384 || y > 16384)
@@ -380,8 +380,8 @@ tile32
 Tile_MoveByOrientation(tile32 tile, uint8 orient256)
 {
 	const uint8 orient8 = Orientation_256To8(orient256);
-	const uint16 x = tile.x + s_xOffsets[orient8];
-	const uint16 y = tile.y + s_yOffsets[orient8];
+	const uint16 x = tile.x + k_xOffsets[orient8];
+	const uint16 y = tile.y + k_yOffsets[orient8];
 
 	/* Note: 16384 = MAP_SIZE_MAX * 256. */
 	if (x > 16384 || y > 16384)
@@ -456,8 +456,8 @@ Tile_GetDirection(tile32 from, tile32 to)
 		gradient = (dx != 0) ? ((dy << 8) / dx) : 0x7FFF;
 	}
 
-	for (i = 0; i < lengthof(s_gradients); i++) {
-		if (s_gradients[i] <= gradient)
+	for (i = 0; i < lengthof(k_gradients); i++) {
+		if (k_gradients[i] <= gradient)
 			break;
 	}
 
@@ -465,10 +465,10 @@ Tile_GetDirection(tile32 from, tile32 to)
 		i = 64 - i;
 
 	if (quadrant == 0 || quadrant == 3) {
-		return s_orientationOffsets[quadrant] + 64 - i;
+		return k_orientationOffsets[quadrant] + 64 - i;
 	}
 	else {
-		return s_orientationOffsets[quadrant] + i;
+		return k_orientationOffsets[quadrant] + i;
 	}
 }
 
