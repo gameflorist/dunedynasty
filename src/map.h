@@ -133,6 +133,5 @@ extern void Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause, u
 extern void Map_RefreshTile(enum HouseType houseID, enum TileUnveilCause cause, uint16 packed);
 extern void Map_ResetFogOfWar(void);
 extern void Map_Client_UpdateFogOfWar(void);
-extern void Map_CreateLandscape(uint32 seed);
 
 #endif /* MAP_H */

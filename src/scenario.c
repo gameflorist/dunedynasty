@@ -21,6 +21,7 @@
 #include "house.h"
 #include "ini.h"
 #include "map.h"
+#include "mods/landscape.h"
 #include "newui/mentat.h"
 #include "opendune.h"
 #include "pool/house.h"

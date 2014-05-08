@@ -35,6 +35,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/input/mouse_dd.c
 	src/load.c
 	src/map.c
+	src/mods/landscape.c
 	src/mods/multiplayer.c
 	src/mods/skirmish.c
 	src/net/client.c

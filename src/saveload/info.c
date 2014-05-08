@@ -5,6 +5,7 @@
 #include "../gui/gui.h"
 #include "../house.h"
 #include "../map.h"
+#include "../mods/landscape.h"
 #include "../newui/strategicmap.h"
 #include "../opendune.h"
 #include "../pool/structure.h"

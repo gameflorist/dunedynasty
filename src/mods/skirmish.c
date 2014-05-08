@@ -8,6 +8,7 @@
 
 #include "skirmish.h"
 
+#include "landscape.h"
 #include "multiplayer.h"
 #include "../ai.h"
 #include "../enhancement.h"
