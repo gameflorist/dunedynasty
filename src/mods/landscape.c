@@ -16,7 +16,7 @@
 #include "../tools/coord.h"
 #include "../tools/random_general.h"
 
-static const int8 around[21] = {
+static const int8 k_around[21] = {
 	  0,
 	 -1,  1, -16, 16,
 	-17, 17, -15, 15,
@@ -25,7 +25,7 @@ static const int8 around[21] = {
 	-30, 30, -34, 34
 };
 
-static const uint16 _offsetTable[2][21][4] = {
+static const uint16 k_offsetTable[2][21][4] = {
 	{
 		{0, 0, 4, 0}, {4, 0, 4, 4}, {0, 0, 0, 4}, {0, 4, 4, 4},
 		{0, 0, 0, 2}, {0, 2, 0, 4}, {0, 0, 2, 0}, {2, 0, 4, 0},
@@ -116,8 +116,8 @@ Map_CreateLandscape(uint32 seed)
 	while (i-- != 0) {
 		int16 base = Tools_Random_256();
 
-		for (j = 0; j < lengthof(around); j++) {
-			int16 index = min(max(0, base + around[j]), 272);
+		for (j = 0; j < lengthof(k_around); j++) {
+			int16 index = min(max(0, base + k_around[j]), 272);
 
 			memory[index] = (memory[index] + (Tools_Random_256() & 0xF)) & 0xF;
 		}
@@ -127,8 +127,8 @@ Map_CreateLandscape(uint32 seed)
 	while (i-- != 0) {
 		int16 base = Tools_Random_256();
 
-		for (j = 0; j < lengthof(around); j++) {
-			int16 index = min(max(0, base + around[j]), 272);
+		for (j = 0; j < lengthof(k_around); j++) {
+			int16 index = min(max(0, base + k_around[j]), 272);
 
 			memory[index] = Tools_Random_256() & 0x3;
 		}
@@ -144,7 +144,7 @@ Map_CreateLandscape(uint32 seed)
 	for (j = 0; j < 16; j++) {
 		for (i = 0; i < 16; i++) {
 			for (k = 0; k < 21; k++) {
-				const uint16 *offsets = _offsetTable[(i + 1) % 2][k];
+				const uint16 *offsets = k_offsetTable[(i + 1) % 2][k];
 				uint16 packed1;
 				uint16 packed2;
 				uint16 packed;
