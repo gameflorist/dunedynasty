@@ -294,15 +294,15 @@ LandscapeGenerator_Smooth(void)
 		for (i = 0; i < 64; i++) {
 			const uint16 curr   = t[i].groundSpriteID;
 			const uint16 up     = (j == 0)  ? curr : prevRow[i];
-			const uint16 left   = (i == 63) ? curr : currRow[i + 1];
+			const uint16 right  = (i == 63) ? curr : currRow[i + 1];
 			const uint16 down   = (j == 63) ? curr : t[i + 64].groundSpriteID;
-			const uint16 right  = (i == 0)  ? curr : currRow[i - 1];
+			const uint16 left   = (i == 0)  ? curr : currRow[i - 1];
 			uint16 spriteID = 0;
 
 			if (up    == curr) spriteID |= 1;
-			if (left  == curr) spriteID |= 2;
+			if (right == curr) spriteID |= 2;
 			if (down  == curr) spriteID |= 4;
-			if (right == curr) spriteID |= 8;
+			if (left  == curr) spriteID |= 8;
 
 			switch (curr) {
 				case LST_NORMAL_SAND:
@@ -310,9 +310,9 @@ LandscapeGenerator_Smooth(void)
 					break;
 				case LST_ENTIRELY_ROCK:
 					if (up    == LST_ENTIRELY_MOUNTAIN) spriteID |= 1;
-					if (left  == LST_ENTIRELY_MOUNTAIN) spriteID |= 2;
+					if (right == LST_ENTIRELY_MOUNTAIN) spriteID |= 2;
 					if (down  == LST_ENTIRELY_MOUNTAIN) spriteID |= 4;
-					if (right == LST_ENTIRELY_MOUNTAIN) spriteID |= 8;
+					if (left  == LST_ENTIRELY_MOUNTAIN) spriteID |= 8;
 					spriteID++;
 					break;
 				case LST_ENTIRELY_DUNE:
@@ -323,9 +323,9 @@ LandscapeGenerator_Smooth(void)
 					break;
 				case LST_SPICE:
 					if (up    == LST_THICK_SPICE) spriteID |= 1;
-					if (left  == LST_THICK_SPICE) spriteID |= 2;
+					if (right == LST_THICK_SPICE) spriteID |= 2;
 					if (down  == LST_THICK_SPICE) spriteID |= 4;
-					if (right == LST_THICK_SPICE) spriteID |= 8;
+					if (left  == LST_THICK_SPICE) spriteID |= 8;
 					spriteID += 49;
 					break;
 				case LST_THICK_SPICE:
