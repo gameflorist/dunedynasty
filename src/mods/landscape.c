@@ -45,13 +45,13 @@ static const uint16 k_offsetTable[2][21][4] = {
 };
 
 static void
-LandscapeGenerator_AddSpiceOnTile(uint16 packed)
+LandscapeGenerator_AddSpiceOnTile(uint16 packed, Tile *map)
 {
 	int i, j;
 	Tile *t;
 	Tile *t2;
 
-	t = &g_map[packed];
+	t = &map[packed];
 
 	switch (t->groundSpriteID) {
 		case LST_SPICE:
@@ -67,7 +67,7 @@ LandscapeGenerator_AddSpiceOnTile(uint16 packed)
 					if (Tile_IsOutOfMap(packed2))
 						continue;
 
-					t2 = &g_map[packed2];
+					t2 = &map[packed2];
 
 					if (!g_table_landscapeInfo[t2->groundSpriteID].canBecomeSpice) {
 						t->groundSpriteID = LST_SPICE;
@@ -87,7 +87,7 @@ LandscapeGenerator_AddSpiceOnTile(uint16 packed)
 }
 
 static void
-LandscapeGenerator_MakeRoughLandscape(void)
+LandscapeGenerator_MakeRoughLandscape(Tile *map)
 {
 	unsigned int i, j;
 	uint8 memory[273];
@@ -123,13 +123,13 @@ LandscapeGenerator_MakeRoughLandscape(void)
 	for (j = 0; j < 16; j++) {
 		for (i = 0; i < 16; i++) {
 			const uint16 packed = Tile_PackXY(4*i, 4*j);
-			g_map[packed].groundSpriteID = memory[16*j + i];
+			map[packed].groundSpriteID = memory[16*j + i];
 		}
 	}
 }
 
 static void
-LandscapeGenerator_AverageRoughLandscape(void)
+LandscapeGenerator_AverageRoughLandscape(Tile *map)
 {
 	unsigned int i, j, k;
 
@@ -158,22 +158,22 @@ LandscapeGenerator_AverageRoughLandscape(void)
 				packed2 = Tile_PackXY(x2 & 0x3F, y2);
 
 				assert(packed1 < 64 * 64);
-				sprite1 = g_map[packed1].groundSpriteID;
+				sprite1 = map[packed1].groundSpriteID;
 
 				/* ENHANCEMENT -- use groundSpriteID=0 when
 				 * out-of-bounds to generate the original maps.
 				 */
 				sprite2 = (packed2 < 64 * 64)
-					? g_map[packed2].groundSpriteID : 0;
+					? map[packed2].groundSpriteID : 0;
 
-				g_map[packed].groundSpriteID = (sprite1 + sprite2 + 1) / 2;
+				map[packed].groundSpriteID = (sprite1 + sprite2 + 1) / 2;
 			}
 		}
 	}
 }
 
 static void
-LandscapeGenerator_Average(void)
+LandscapeGenerator_Average(Tile *map)
 {
 	unsigned int i, j;
 	uint16 currRow[64];
@@ -182,7 +182,7 @@ LandscapeGenerator_Average(void)
 	memset(currRow, 0, sizeof(currRow));
 
 	for (j = 0; j < 64; j++) {
-		Tile *t = &g_map[64 * j];
+		Tile *t = &map[64 * j];
 		memcpy(prevRow, currRow, sizeof(prevRow));
 
 		for (i = 0; i < 64; i++) {
@@ -208,7 +208,7 @@ LandscapeGenerator_Average(void)
 }
 
 static void
-LandscapeGenerator_DetermineLandscapeTypes(void)
+LandscapeGenerator_DetermineLandscapeTypes(Tile *map)
 {
 	unsigned int i;
 	uint16 spriteID1;
@@ -232,12 +232,12 @@ LandscapeGenerator_DetermineLandscapeTypes(void)
 			: (spriteID <= spriteID2) ? LST_ENTIRELY_DUNE
 			: LST_NORMAL_SAND;
 
-		g_map[i].groundSpriteID = lst;
+		map[i].groundSpriteID = lst;
 	}
 }
 
 static void
-LandscapeGenerator_AddSpice(void)
+LandscapeGenerator_AddSpice(Tile *map)
 {
 	unsigned int i, j;
 
@@ -249,7 +249,7 @@ LandscapeGenerator_AddSpice(void)
 			const uint16 y = Tools_Random_256() & 0x3F;
 			const uint16 x = Tools_Random_256() & 0x3F;
 			const uint16 packed = Tile_PackXY(x, y);
-			const enum LandscapeType lst = g_map[packed].groundSpriteID;
+			const enum LandscapeType lst = map[packed].groundSpriteID;
 
 			if (g_table_landscapeInfo[lst].canBecomeSpice) {
 				tile = Tile_UnpackTile(packed);
@@ -265,7 +265,7 @@ LandscapeGenerator_AddSpice(void)
 				const uint16 packed = Tile_PackTile(tile2);
 
 				if (!Tile_IsOutOfMap(packed)) {
-					LandscapeGenerator_AddSpiceOnTile(packed);
+					LandscapeGenerator_AddSpiceOnTile(packed, map);
 					break;
 				}
 			}
@@ -274,7 +274,7 @@ LandscapeGenerator_AddSpice(void)
 }
 
 static void
-LandscapeGenerator_Smooth(void)
+LandscapeGenerator_Smooth(Tile *map)
 {
 	unsigned int i, j;
 	uint16 currRow[64];
@@ -283,7 +283,7 @@ LandscapeGenerator_Smooth(void)
 	memset(currRow, 0, sizeof(currRow));
 
 	for (j = 0; j < 64; j++) {
-		Tile *t = &g_map[64 * j];
+		Tile *t = &map[64 * j];
 
 		memcpy(prevRow, currRow, sizeof(prevRow));
 
@@ -341,13 +341,13 @@ LandscapeGenerator_Smooth(void)
 }
 
 static void
-LandscapeGenerator_Finalise(void)
+LandscapeGenerator_Finalise(Tile *map)
 {
 	const uint16 *iconMap = &g_iconMap[g_iconMap[ICM_ICONGROUP_LANDSCAPE]];
 	int i;
 
 	for (i = 0; i < 64 * 64; i++) {
-		Tile *t = &g_map[i];
+		Tile *t = &map[i];
 
 		t->groundSpriteID   = iconMap[t->groundSpriteID];
 		t->overlaySpriteID  = 0;
@@ -361,33 +361,35 @@ LandscapeGenerator_Finalise(void)
 	}
 
 	for (i = 0; i < 64 * 64; i++) {
-		g_mapSpriteID[i] = g_map[i].groundSpriteID;
+		g_mapSpriteID[i] = map[i].groundSpriteID;
 	}
 }
 
 void
 Map_CreateLandscape(uint32 seed)
 {
+	Tile *map = g_map;
+
 	Tools_Random_Seed(seed);
 
 	/* Place random data on a 4x4 grid. */
-	LandscapeGenerator_MakeRoughLandscape();
+	LandscapeGenerator_MakeRoughLandscape(map);
 
 	/* Average around the 4x4 grid. */
-	LandscapeGenerator_AverageRoughLandscape();
+	LandscapeGenerator_AverageRoughLandscape(map);
 
 	/* Average each tile with its neighbours. */
-	LandscapeGenerator_Average();
+	LandscapeGenerator_Average(map);
 
 	/* Filter each tile to determine its final type. */
-	LandscapeGenerator_DetermineLandscapeTypes();
+	LandscapeGenerator_DetermineLandscapeTypes(map);
 
 	/* Add some spice. */
-	LandscapeGenerator_AddSpice();
+	LandscapeGenerator_AddSpice(map);
 
 	/* Make everything smoother and use the right sprite indexes. */
-	LandscapeGenerator_Smooth();
+	LandscapeGenerator_Smooth(map);
 
 	/* Finalise the tiles with the real sprites. */
-	LandscapeGenerator_Finalise();
+	LandscapeGenerator_Finalise(map);
 }
