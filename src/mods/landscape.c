@@ -98,6 +98,8 @@ LandscapeGenerator_MakeRoughLandscape(void)
 			memory[i] = 0xA;
 	}
 
+	memory[272] = 0;
+
 	i = (Tools_Random_256() & 0xF) + 1;
 	while (i-- != 0) {
 		const int base = Tools_Random_256();
