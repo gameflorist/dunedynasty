@@ -16,6 +16,7 @@
 #include "../tools/coord.h"
 #include "../tools/random_general.h"
 
+/** variable_2006: 0x0003A086. */
 static const int8 k_around[21] = {
 	  0,
 	 -1,  1, -16, 16,
@@ -25,6 +26,7 @@ static const int8 k_around[21] = {
 	-30, 30, -34, 34
 };
 
+/** variable_201B: 0x0003A09B. */
 static const uint16 k_offsetTable[2][21][4] = {
 	{
 		{0, 0, 4, 0}, {4, 0, 4, 4}, {0, 0, 0, 4}, {0, 4, 4, 4},
@@ -44,6 +46,10 @@ static const uint16 k_offsetTable[2][21][4] = {
 	},
 };
 
+/**
+ * @brief   Add spice to a tile.
+ * @details f__B4B8_0899_002D_EBA1.  Removed redundant recursive call.
+ */
 static void
 LandscapeGenerator_AddSpiceOnTile(uint16 packed, Tile *map)
 {
@@ -86,6 +92,10 @@ LandscapeGenerator_AddSpiceOnTile(uint16 packed, Tile *map)
 	}
 }
 
+/**
+ * @brief   Initialises every fourth x/y tile in the map.
+ * @details f__B4B8_0000_001F_3BC3 between labels (l__001F, l__0191).
+ */
 static void
 LandscapeGenerator_MakeRoughLandscape(Tile *map)
 {
@@ -128,11 +138,20 @@ LandscapeGenerator_MakeRoughLandscape(Tile *map)
 	}
 }
 
+/**
+ * @brief   Fills in the gaps in the rough landscape.
+ * @details f__B4B8_0000_001F_3BC3 between labels (l__0191, l__02B8).
+ */
 static void
 LandscapeGenerator_AverageRoughLandscape(Tile *map)
 {
 	unsigned int i, j, k;
 
+	/* For each 5x5 grid with the 4 corner tiles initialised, this
+	 * function takes tiles (x1,y1), (x2,y2) as described by
+	 * k_offsetTable to create the intermediate tile.
+	 * e.g. (0,0) and (4,0) are used to make (2,0).
+	 */
 	for (j = 0; j < 16; j++) {
 		for (i = 0; i < 16; i++) {
 			for (k = 0; k < 21; k++) {
@@ -172,6 +191,10 @@ LandscapeGenerator_AverageRoughLandscape(Tile *map)
 	}
 }
 
+/**
+ * @brief   Average a tile and its immediate neighbours.
+ * @details f__B4B8_0000_001F_3BC3 between labels (l_02B8, l__0442).
+ */
 static void
 LandscapeGenerator_Average(Tile *map)
 {
@@ -207,6 +230,10 @@ LandscapeGenerator_Average(Tile *map)
 	}
 }
 
+/**
+ * @brief   Converts random values into landscape types.
+ * @details f__B4B8_0000_001F_3BC3 between labels (l__0442, l__004ED).
+ */
 static void
 LandscapeGenerator_DetermineLandscapeTypes(Tile *map)
 {
@@ -236,6 +263,10 @@ LandscapeGenerator_DetermineLandscapeTypes(Tile *map)
 	}
 }
 
+/**
+ * @brief   Adds spice fields to the map.
+ * @details f__B4B8_0000_001F_3BC3 between labels (l__04ED, l__0596).
+ */
 static void
 LandscapeGenerator_AddSpice(Tile *map)
 {
@@ -273,6 +304,10 @@ LandscapeGenerator_AddSpice(Tile *map)
 	}
 }
 
+/**
+ * @brief   Smooths the boundaries between different landscape types.
+ * @details f__B4B8_0000_001F_3BC3 between labels (l__0596, l__07D3).
+ */
 static void
 LandscapeGenerator_Smooth(Tile *map)
 {
@@ -340,6 +375,10 @@ LandscapeGenerator_Smooth(Tile *map)
 	}
 }
 
+/**
+ * @brief   Finalises the generated landscape's groundSpriteIDs.
+ * @details f__B4B8_0000_001F_3BC3 between labels (l__07D3, l__088D).
+ */
 static void
 LandscapeGenerator_Finalise(Tile *map)
 {
@@ -365,6 +404,10 @@ LandscapeGenerator_Finalise(Tile *map)
 	}
 }
 
+/**
+ * @brief   f__B4B8_0000_001F_3BC3.
+ * @details Refactored into several smaller functions.
+ */
 void
 Map_CreateLandscape(uint32 seed)
 {
