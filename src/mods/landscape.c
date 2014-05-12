@@ -270,6 +270,8 @@ LandscapeGenerator_DetermineLandscapeTypes(Tile *map)
 static void
 LandscapeGenerator_AddSpice(Tile *map)
 {
+	const unsigned int max_count = 65535;
+	unsigned int count = 0;
 	unsigned int i, j;
 
 	i = Tools_Random_256() & 0x2F;
@@ -286,6 +288,11 @@ LandscapeGenerator_AddSpice(Tile *map)
 				tile = Tile_UnpackTile(packed);
 				break;
 			}
+
+			/* ENHANCEMENT -- ensure termination. */
+			count++;
+			if (count > max_count)
+				return;
 		}
 
 		j = Tools_Random_256() & 0x1F;
