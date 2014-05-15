@@ -143,7 +143,7 @@ bool Info_Load(FILE *fp, uint32 length)
 
 	Sprites_LoadTiles();
 
-	Map_CreateLandscape(g_scenario.mapSeed);
+	Map_CreateLandscape(g_scenario.mapSeed, NULL, g_map);
 
 	return true;
 }

@@ -33,6 +33,7 @@
 #include "../input/input.h"
 #include "../input/mouse.h"
 #include "../mods/skirmish.h"
+#include "../mods/multiplayer.h"
 #include "../net/client.h"
 #include "../net/net.h"
 #include "../opendune.h"
@@ -373,7 +374,7 @@ Menu_Init(void)
 		w->drawParameterDown.text = w->drawParameterNormal.text;
 	}
 
-	g_skirmish.seed = rand() & 0x7FFF;
+	Skirmish_Initialise();
 
 	A5_UseTransform(SCREENDIV_MENU);
 }

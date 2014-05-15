@@ -8,7 +8,6 @@
 
 #include "skirmish.h"
 
-#include "landscape.h"
 #include "multiplayer.h"
 #include "../ai.h"
 #include "../enhancement.h"
@@ -119,6 +118,17 @@ static const SkirmishBuildOrder buildorder[] = {
 Skirmish g_skirmish;
 
 /*--------------------------------------------------------------*/
+
+void
+Skirmish_Initialise(void)
+{
+	memset(&g_skirmish, 0, sizeof(g_skirmish));
+
+	g_skirmish.seed = rand() & 0x7FFF;
+
+	g_skirmish.landscape_params.min_spice_fields = 24;
+	g_skirmish.landscape_params.max_spice_fields = 48;
+}
 
 bool
 Skirmish_IsPlayable(void)
@@ -958,12 +968,16 @@ Skirmish_GenerateMap2(bool only_landscape, SkirmishData *sd)
 
 	Game_Init();
 
-	uint32 seed = (is_skirmish ? g_skirmish.seed : g_multiplayer.seed);
+	const uint32 seed = is_skirmish ? g_skirmish.seed : g_multiplayer.seed;
+	const LandscapeGeneratorParams *params
+		= is_skirmish
+		? &g_skirmish.landscape_params : &g_multiplayer.landscape_params;
+
 	Skirmish_GenGeneral(seed);
 	Sprites_UnloadTiles();
 	Sprites_LoadTiles();
 	Tools_RandomLCG_Seed(seed);
-	Map_CreateLandscape(seed);
+	Map_CreateLandscape(seed, params, g_map);
 
 	if (only_landscape)
 		return true;

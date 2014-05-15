@@ -176,8 +176,7 @@ Net_CreateServer(const char *addr, int port, const char *name)
 
 		g_client_houses = 0;
 		memset(g_peer_data, 0, sizeof(g_peer_data));
-		memset(&g_multiplayer, 0, sizeof(g_multiplayer));
-		g_multiplayer.seed = rand() & 0x7FFF;
+		Multiplayer_Init();
 
 		g_host_type = HOSTTYPE_CLIENT_SERVER;
 		PeerData *data = Server_NewClient();
@@ -216,7 +215,7 @@ Net_ConnectToServer(const char *hostname, int port, const char *name)
 		NET_LOG("Connected to server %s:%d\n", hostname, port);
 
 		memset(g_peer_data, 0, sizeof(g_peer_data));
-		memset(&g_multiplayer, 0, sizeof(g_multiplayer));
+		Multiplayer_Init();
 
 		g_host_type = HOSTTYPE_DEDICATED_CLIENT;
 		g_local_client_id = 0;

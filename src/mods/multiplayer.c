@@ -20,6 +20,17 @@
 
 Multiplayer g_multiplayer;
 
+void
+Multiplayer_Init(void)
+{
+	memset(&g_multiplayer, 0, sizeof(g_multiplayer));
+
+	g_multiplayer.seed = rand() & 0x7FFF;
+
+	g_multiplayer.landscape_params.min_spice_fields = 24;
+	g_multiplayer.landscape_params.max_spice_fields = 48;
+}
+
 bool
 Multiplayer_IsHouseAvailable(enum HouseType houseID)
 {

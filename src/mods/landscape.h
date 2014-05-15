@@ -5,6 +5,13 @@
 
 #include "types.h"
 
-extern void Map_CreateLandscape(uint32 seed);
+struct Tile;
+
+typedef struct {
+	unsigned int min_spice_fields;
+	unsigned int max_spice_fields;
+} LandscapeGeneratorParams;
+
+extern void Map_CreateLandscape(uint32 seed, const LandscapeGeneratorParams *params, struct Tile *map);
 
 #endif

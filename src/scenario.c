@@ -1661,7 +1661,7 @@ bool Scenario_Load(uint16 scenarioID, uint8 houseID)
 
 	Scenario_Load_General();
 	Sprites_LoadTiles();
-	Map_CreateLandscape(g_scenario.mapSeed);
+	Map_CreateLandscape(g_scenario.mapSeed, NULL, g_map);
 
 	for (i = 0; i < 16; i++) {
 		g_scenario.reinforcement[i].unitID = UNIT_INDEX_INVALID;

@@ -268,13 +268,27 @@ LandscapeGenerator_DetermineLandscapeTypes(Tile *map)
  * @details f__B4B8_0000_001F_3BC3 between labels (l__04ED, l__0596).
  */
 static void
-LandscapeGenerator_AddSpice(Tile *map)
+LandscapeGenerator_AddSpice(const LandscapeGeneratorParams *params, Tile *map)
 {
 	const unsigned int max_count = 65535;
 	unsigned int count = 0;
 	unsigned int i, j;
 
-	i = Tools_Random_256() & 0x2F;
+	/* ENHANCEMENT -- spice field controls. */
+	if (params != NULL) {
+		const unsigned int a = min(params->min_spice_fields, 255);
+		const unsigned int b = min(params->max_spice_fields, 255);
+		const unsigned int min_spice_fields = min(a, b);
+		const unsigned int max_spice_fields = max(a, b);
+		const unsigned int range = (max_spice_fields - min_spice_fields + 1);
+
+		i = Tools_Random_256() * range / 256
+			+ min_spice_fields;
+	}
+	else {
+		i = Tools_Random_256() & 0x2F;
+	}
+
 	while (i-- != 0) {
 		tile32 tile;
 
@@ -414,12 +428,12 @@ LandscapeGenerator_Finalise(Tile *map)
 /**
  * @brief   f__B4B8_0000_001F_3BC3.
  * @details Refactored into several smaller functions.
+ *          params=NULL defaults to original Dune II parameters.
  */
 void
-Map_CreateLandscape(uint32 seed)
+Map_CreateLandscape(uint32 seed, const LandscapeGeneratorParams *params,
+		Tile *map)
 {
-	Tile *map = g_map;
-
 	Tools_Random_Seed(seed);
 
 	/* Place random data on a 4x4 grid. */
@@ -435,7 +449,7 @@ Map_CreateLandscape(uint32 seed)
 	LandscapeGenerator_DetermineLandscapeTypes(map);
 
 	/* Add some spice. */
-	LandscapeGenerator_AddSpice(map);
+	LandscapeGenerator_AddSpice(params, map);
 
 	/* Make everything smoother and use the right sprite indexes. */
 	LandscapeGenerator_Smooth(map);
