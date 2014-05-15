@@ -346,7 +346,15 @@ Net_Send_Chat(const char *msg)
 {
 	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
 	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
-		Server_Recv_Chat(g_local_client_id, FLAG_HOUSE_ALL, msg);
+		bool isChat = true;
+
+		if (msg[0] == '/') {
+			if (Server_ProcessCommand(msg))
+				isChat = false;
+		}
+
+		if (isChat)
+			Server_Recv_Chat(g_local_client_id, FLAG_HOUSE_ALL, msg);
 	}
 	else {
 		Client_Send_Chat(msg);

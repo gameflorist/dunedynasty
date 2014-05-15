@@ -33,5 +33,6 @@ extern void Server_Recv_ReturnToLobby(enum HouseType houseID, bool log_message);
 extern void Server_Recv_PrefName(int peerID, const char *name);
 extern void Server_Recv_PrefHouse(int peerID, enum HouseType houseID);
 extern void Server_ProcessMessage(int peerID, enum HouseType houseID, const unsigned char *buf, int count);
+extern bool Server_ProcessCommand(const char *msg);
 
 #endif

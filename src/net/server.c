@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../os/common.h"
 #include "../os/math.h"
 #include "../os/strings.h"
 #include "enum_string.h"
@@ -1544,4 +1545,57 @@ Server_ProcessMessage(int peerID, enum HouseType houseID,
 		buf += len;
 		count -= len;
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+Server_Console_Help(const char *msg)
+{
+	static const char *help[] = {
+		"Commands",
+	};
+	VARIABLE_NOT_USED(msg);
+
+	for (unsigned int i = 0; i < lengthof(help); i++) {
+		ChatBox_AddLog(CHATTYPE_CONSOLE, help[i]);
+	}
+}
+
+bool
+Server_ProcessCommand(const char *msg)
+{
+	static const struct {
+		const char *str;
+		void (*proc)(const char *msg);
+	} command[] = {
+		{ "/help",      Server_Console_Help },
+
+		/* Lobby only commands below this point. */
+		{ NULL,         NULL },
+	};
+
+	for (unsigned int i = 0; i < lengthof(command); i++) {
+		if (command[i].str == NULL) {
+			if (g_inGame)
+				return false;
+
+			continue;
+		}
+
+		const size_t len = strlen(command[i].str);
+
+		if (strncmp(msg, command[i].str, len) == 0
+				&& (msg[len] == '\0' || msg[len] == ' ')) {
+
+			msg = msg + len;
+			while (*msg != '\0' && isspace(*msg))
+				msg++;
+
+			command[i].proc(msg);
+			return true;
+		}
+	}
+
+	return false;
 }

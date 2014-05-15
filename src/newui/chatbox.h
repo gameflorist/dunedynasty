@@ -5,7 +5,8 @@
 
 enum ChatType {
 	CHATTYPE_CHAT,
-	CHATTYPE_LOG
+	CHATTYPE_LOG,
+	CHATTYPE_CONSOLE
 };
 
 extern void ChatBox_ClearHistory(void);

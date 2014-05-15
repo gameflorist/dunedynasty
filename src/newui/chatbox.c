@@ -129,6 +129,7 @@ ChatBox_AddEntry(enum ChatType type,
 		int peerID, const char *name, const char *msg)
 {
 	const int w = 100;
+	const char *start;
 	unsigned char col;
 	int len = 0;
 
@@ -140,13 +141,14 @@ ChatBox_AddEntry(enum ChatType type,
 
 	if (type == CHATTYPE_CHAT) {
 		const enum HouseType houseID = Net_GetClientHouse(peerID);
+
+		start = skip_spaces(msg);
 		col = (houseID == HOUSE_INVALID) ? 15 : (144 + 16 * houseID + 2);
 	}
 	else {
+		start = msg;
 		col = 0;
 	}
-
-	const char *start = skip_spaces(msg);
 
 	while (*start != '\0') {
 		const char *cur = start;
@@ -233,7 +235,8 @@ ChatBox_DrawHistory(int x, int y, int style, int64_t curr_ticks)
 
 		fg = (style == 0x22) ? 15
 			: (c->type == CHATTYPE_CHAT) ? 31
-			: 228;
+			: (c->type == CHATTYPE_LOG) ? 228
+			: (144 + 16 * 1 + 3);
 
 		GUI_DrawText_Wrapper(NULL, 0, 0, fg, 0, style);
 		GUI_DrawTextAlpha(c->msg, x + dx, y, alpha);
