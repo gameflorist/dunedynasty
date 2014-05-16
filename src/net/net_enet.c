@@ -525,14 +525,11 @@ ERROR:
 	enet_peer_disconnect(event->peer, 0);
 }
 
-static void
-Server_Recv_DisconnectClient(ENetEvent *event)
+void
+Server_DisconnectClient(PeerData *data)
 {
+	ENetPeer *peer = data->peer;
 	char chat_log[MAX_CHAT_LEN + 1];
-	PeerData *data = event->peer->data;
-
-	NET_LOG("Disconnect client from %x:%u.",
-			event->peer->address.host, event->peer->address.port);
 
 	snprintf(chat_log, sizeof(chat_log), "%s left", data->name);
 
@@ -540,16 +537,30 @@ Server_Recv_DisconnectClient(ENetEvent *event)
 		Server_Recv_ReturnToLobby(Net_GetClientHouse(data->id), false);
 
 	Server_Recv_PrefHouse(data->id, HOUSE_INVALID);
+	enet_peer_disconnect(data->peer, 0);
+	peer->data = NULL;
 
 	data->state = CLIENTSTATE_UNUSED;
 	data->id = 0;
 	data->peer = NULL;
 
-	enet_peer_disconnect(event->peer, 0);
 	lobby_regenerate_map = true;
 	g_sendClientList = true;
 
 	Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
+}
+
+static void
+Server_Recv_DisconnectClient(ENetEvent *event)
+{
+	if (event->peer->data != NULL) {
+		PeerData *data = event->peer->data;
+
+		NET_LOG("Disconnect client from %x:%u.",
+				event->peer->address.host, event->peer->address.port);
+
+		Server_DisconnectClient(data);
+	}
 }
 
 void

@@ -1555,12 +1555,40 @@ Server_Console_Help(const char *msg)
 	static const char *help[] = {
 		"Commands",
 		" /list",
+		" /kick <id | name>",
 	};
 	VARIABLE_NOT_USED(msg);
 
 	for (unsigned int i = 0; i < lengthof(help); i++) {
 		ChatBox_AddLog(CHATTYPE_CONSOLE, help[i]);
 	}
+}
+
+static void
+Server_Console_Kick(const char *msg)
+{
+	PeerData *data = NULL;
+	int peerID = 0;
+
+	if (msg[0] == '\0')
+		return;
+
+	if (sscanf(msg, "%d", &peerID) == 1) {
+		data = Net_GetPeerData(peerID);
+	}
+	else {
+		for (peerID = 0; peerID < MAX_CLIENTS; peerID++) {
+			data = &g_peer_data[peerID];
+			if (data->id == 0)
+				continue;
+
+			if (strcasecmp(msg, data->name) == 0)
+				break;
+		}
+	}
+
+	if (data != NULL && data->peer != NULL)
+		Server_DisconnectClient(data);
 }
 
 static void
@@ -1588,6 +1616,7 @@ Server_ProcessCommand(const char *msg)
 	} command[] = {
 		{ "/help",      Server_Console_Help },
 		{ "/list",      Server_Console_List },
+		{ "/kick",      Server_Console_Kick },
 
 		/* Lobby only commands below this point. */
 		{ NULL,         NULL },

@@ -70,6 +70,7 @@ extern void Net_Send_Chat(const char *buf);
 extern void Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf);
 extern bool Server_Send_StartGame(void);
 extern void Server_SendMessages(void);
+extern void Server_DisconnectClient(PeerData *data);
 extern void Server_RecvMessages(void);
 extern void Client_SendMessages(void);
 extern enum NetEvent Client_RecvMessages(void);
