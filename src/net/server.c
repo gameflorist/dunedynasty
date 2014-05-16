@@ -1554,11 +1554,28 @@ Server_Console_Help(const char *msg)
 {
 	static const char *help[] = {
 		"Commands",
+		" /list",
 	};
 	VARIABLE_NOT_USED(msg);
 
 	for (unsigned int i = 0; i < lengthof(help); i++) {
 		ChatBox_AddLog(CHATTYPE_CONSOLE, help[i]);
+	}
+}
+
+static void
+Server_Console_List(const char *msg)
+{
+	char chat_log[MAX_CHAT_LEN + 1];
+	VARIABLE_NOT_USED(msg);
+
+	for (int i = 0; i < MAX_CLIENTS; i++) {
+		const PeerData *data = &g_peer_data[i];
+		if (data->id == 0)
+			continue;
+
+		snprintf(chat_log, sizeof(chat_log), "%d: %s", data->id, data->name);
+		ChatBox_AddLog(CHATTYPE_CONSOLE, chat_log);
 	}
 }
 
@@ -1570,6 +1587,7 @@ Server_ProcessCommand(const char *msg)
 		void (*proc)(const char *msg);
 	} command[] = {
 		{ "/help",      Server_Console_Help },
+		{ "/list",      Server_Console_List },
 
 		/* Lobby only commands below this point. */
 		{ NULL,         NULL },
