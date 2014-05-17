@@ -1556,6 +1556,7 @@ Server_Console_Help(const char *msg)
 		"Commands",
 		" /list",
 		" /kick <id | name>",
+		" /seed <N>",
 	};
 	VARIABLE_NOT_USED(msg);
 
@@ -1607,6 +1608,18 @@ Server_Console_List(const char *msg)
 	}
 }
 
+static void
+Server_Console_Seed(const char *msg)
+{
+	unsigned int seed;
+
+	if (sscanf(msg, "%u", &seed) == 1) {
+		lobby_regenerate_map = true;
+		lobby_new_map_seed = false;
+		g_multiplayer.seed = seed;
+	}
+}
+
 bool
 Server_ProcessCommand(const char *msg)
 {
@@ -1620,6 +1633,7 @@ Server_ProcessCommand(const char *msg)
 
 		/* Lobby only commands below this point. */
 		{ NULL,         NULL },
+		{ "/seed",      Server_Console_Seed },
 	};
 
 	for (unsigned int i = 0; i < lengthof(command); i++) {
