@@ -546,6 +546,8 @@ Client_Recv_Scenario(const unsigned char **buf)
 	const uint32 old_seed = g_multiplayer.seed;
 
 	g_multiplayer.seed = Net_Decode_uint32(buf);
+	g_multiplayer.landscape_params.min_spice_fields = Net_Decode_uint8(buf);
+	g_multiplayer.landscape_params.max_spice_fields = Net_Decode_uint8(buf);
 	enhancement_fog_of_war = Net_Decode_uint8(buf);
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {

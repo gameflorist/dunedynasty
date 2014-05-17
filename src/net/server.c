@@ -777,12 +777,14 @@ Server_Send_Scenario(unsigned char **buf)
 		return;
 	}
 
-	const size_t len = 1 + 5 + MAX_CLIENTS;
+	const size_t len = 1 + 7 + MAX_CLIENTS;
 	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_SCENARIO);
 	Net_Encode_uint32(buf, g_multiplayer.seed);
+	Net_Encode_uint8 (buf, g_multiplayer.landscape_params.min_spice_fields);
+	Net_Encode_uint8 (buf, g_multiplayer.landscape_params.max_spice_fields);
 	Net_Encode_uint8 (buf, enhancement_fog_of_war);
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
@@ -1558,6 +1560,7 @@ Server_Console_Help(const char *msg)
 		" /kick <id | name>",
 		" /credits <N>",
 		" /seed <N>",
+		" /spice <min> <max>",
 	};
 	VARIABLE_NOT_USED(msg);
 
@@ -1639,6 +1642,39 @@ Server_Console_Seed(const char *msg)
 	}
 }
 
+static void
+Server_Console_Spice(const char *msg)
+{
+	char chat_log[MAX_CHAT_LEN + 1];
+	unsigned int spice1;
+	unsigned int spice2;
+	int count;
+
+	count = sscanf(msg, "%u %u", &spice1, &spice2);
+	if (count == 1 || count == 2) {
+		if (count == 1) {
+			spice1 = min(spice1, 255);
+			spice2 = spice1;
+		}
+		else {
+			spice1 = min(spice1, 255);
+			spice2 = min(spice2, 255);
+		}
+
+		lobby_regenerate_map = true;
+		lobby_new_map_seed = false;
+
+		g_multiplayer.landscape_params.min_spice_fields = min(spice1, spice2);
+		g_multiplayer.landscape_params.max_spice_fields = max(spice1, spice2);
+	}
+
+	snprintf(chat_log, sizeof(chat_log), "Set to [%d..%d] spice",
+			g_multiplayer.landscape_params.min_spice_fields,
+			g_multiplayer.landscape_params.max_spice_fields);
+
+	Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
+}
+
 bool
 Server_ProcessCommand(const char *msg)
 {
@@ -1654,6 +1690,7 @@ Server_ProcessCommand(const char *msg)
 		{ NULL,         NULL },
 		{ "/credits",   Server_Console_Credits },
 		{ "/seed",      Server_Console_Seed },
+		{ "/spice",     Server_Console_Spice },
 	};
 
 	for (unsigned int i = 0; i < lengthof(command); i++) {
