@@ -15,6 +15,7 @@ enum MultiplayerHouseState {
 typedef struct Multiplayer {
 	int client[HOUSE_MAX];
 
+	uint16 credits;
 	uint32 seed;
 	LandscapeGeneratorParams landscape_params;
 

@@ -1556,6 +1556,7 @@ Server_Console_Help(const char *msg)
 		"Commands",
 		" /list",
 		" /kick <id | name>",
+		" /credits <N>",
 		" /seed <N>",
 	};
 	VARIABLE_NOT_USED(msg);
@@ -1609,6 +1610,24 @@ Server_Console_List(const char *msg)
 }
 
 static void
+Server_Console_Credits(const char *msg)
+{
+	char chat_log[MAX_CHAT_LEN + 1];
+	unsigned int credits;
+
+	if (sscanf(msg, "%u", &credits) == 1) {
+		g_multiplayer.credits = clamp(1000, credits, 10000);
+		lobby_regenerate_map = true;
+		lobby_new_map_seed = false;
+	}
+
+	snprintf(chat_log, sizeof(chat_log), "Set to %d credits",
+			g_multiplayer.credits);
+
+	Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);
+}
+
+static void
 Server_Console_Seed(const char *msg)
 {
 	unsigned int seed;
@@ -1633,6 +1652,7 @@ Server_ProcessCommand(const char *msg)
 
 		/* Lobby only commands below this point. */
 		{ NULL,         NULL },
+		{ "/credits",   Server_Console_Credits },
 		{ "/seed",      Server_Console_Seed },
 	};
 

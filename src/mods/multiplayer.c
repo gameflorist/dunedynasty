@@ -25,6 +25,7 @@ Multiplayer_Init(void)
 {
 	memset(&g_multiplayer, 0, sizeof(g_multiplayer));
 
+	g_multiplayer.credits = 1000;
 	g_multiplayer.seed = rand() & 0x7FFF;
 
 	g_multiplayer.landscape_params.min_spice_fields = 24;
@@ -101,7 +102,7 @@ Multiplayer_GenHouses(struct SkirmishData *sd)
 		if (g_multiplayer.client[h] == 0)
 			continue;
 
-		Scenario_Create_House(h, BRAIN_HUMAN, 1000, 0, 25);
+		Scenario_Create_House(h, BRAIN_HUMAN, g_multiplayer.credits, 0, 25);
 	}
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
