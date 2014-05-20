@@ -59,10 +59,10 @@ set(DUNEDYNASTY_SRC_FILES
 	src/object.c
 	src/opendune.c
 	src/os/endian.c
-	src/pool/house.c
-	src/pool/structure.c
-	src/pool/team.c
-	src/pool/unit.c
+	src/pool/pool_house.c
+	src/pool/pool_structure.c
+	src/pool/pool_team.c
+	src/pool/pool_unit.c
 	src/save.c
 	src/saveload/house.c
 	src/saveload/info.c

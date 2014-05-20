@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "saveload.h"
-#include "../pool/unit.h"
 #include "../pool/pool.h"
+#include "../pool/pool_unit.h"
 #include "../unit.h"
 
 static const SaveLoadDesc s_saveUnitOrientation[] = {

@@ -8,9 +8,9 @@
 
 #include "../gui/gui.h"
 #include "../house.h"
-#include "../pool/team.h"
 #include "../pool/pool.h"
-#include "../pool/unit.h"
+#include "../pool/pool_team.h"
+#include "../pool/pool_unit.h"
 #include "../team.h"
 #include "../tile.h"
 #include "../tools/coord.h"

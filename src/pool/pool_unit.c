@@ -1,14 +1,18 @@
-/** @file src/pool/unit.c %Unit pool routines. */
+/**
+ * @file src/pool/pool_unit.c
+ *
+ * %Unit pool routines.
+ */
 
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "types.h"
 
-#include "unit.h"
+#include "pool_unit.h"
 
 #include "pool.h"
-#include "house.h"
+#include "pool_house.h"
 #include "../house.h"
 #include "../opendune.h"
 #include "../unit.h"

@@ -1,4 +1,4 @@
-/** @file src/pool/unit.h %Unit pool definitions. */
+/** @file src/pool/pool_unit.h */
 
 #ifndef POOL_UNIT_H
 #define POOL_UNIT_H
@@ -22,4 +22,4 @@ extern void Unit_Recount(void);
 extern struct Unit *Unit_Allocate(uint16 index, uint8 type, uint8 houseID);
 extern void Unit_Free(struct Unit *u);
 
-#endif /* POOL_UNIT_H */
+#endif

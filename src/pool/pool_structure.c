@@ -1,14 +1,18 @@
-/** @file src/pool/structure.c %Structure pool routines. */
+/**
+ * @file src/pool/pool_structure.c
+ *
+ * %Structure pool routines.
+ */
 
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "types.h"
 
-#include "structure.h"
+#include "pool_structure.h"
 
-#include "house.h"
 #include "pool.h"
+#include "pool_house.h"
 #include "../house.h"
 #include "../opendune.h"
 #include "../structure.h"

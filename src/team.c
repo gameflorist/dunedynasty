@@ -10,8 +10,8 @@
 #include "enhancement.h"
 #include "house.h"
 #include "pool/pool.h"
-#include "pool/team.h"
-#include "pool/house.h"
+#include "pool/pool_house.h"
+#include "pool/pool_team.h"
 #include "timer/timer.h"
 #include "tools/random_general.h"
 

@@ -1,4 +1,4 @@
-/** @file src/pool/house.h %House pool definitions. */
+/** @file src/pool/pool_house.h */
 
 #ifndef POOL_HOUSE_H
 #define POOL_HOUSE_H
@@ -18,4 +18,4 @@ extern void House_Init(void);
 extern struct House *House_Allocate(uint8 index);
 extern void House_Free(struct House *h);
 
-#endif /* POOL_HOUSE_H */
+#endif

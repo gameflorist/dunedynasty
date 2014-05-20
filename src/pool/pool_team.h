@@ -1,4 +1,4 @@
-/** @file src/pool/team.h %Team pool definitions. */
+/** @file src/pool/pool_team.h */
 
 #ifndef POOL_TEAM_H
 #define POOL_TEAM_H
@@ -19,4 +19,4 @@ extern void Team_Recount(void);
 extern struct Team *Team_Allocate(uint16 index);
 extern void Team_Free(struct Team *au);
 
-#endif /* POOL_TEAM_H */
+#endif

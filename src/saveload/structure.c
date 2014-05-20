@@ -5,10 +5,10 @@
 #include "saveload.h"
 #include "../house.h"
 #include "../opendune.h"
-#include "../pool/house.h"
 #include "../pool/pool.h"
-#include "../pool/structure.h"
-#include "../pool/unit.h"
+#include "../pool/pool_house.h"
+#include "../pool/pool_structure.h"
+#include "../pool/pool_unit.h"
 #include "../structure.h"
 #include "../unit.h"
 

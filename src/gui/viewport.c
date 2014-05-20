@@ -12,7 +12,7 @@
 #include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../pool/pool.h"
-#include "../pool/unit.h"
+#include "../pool/pool_unit.h"
 #include "../scenario.h"
 #include "../sprites.h"
 #include "../structure.h"

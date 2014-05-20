@@ -1,14 +1,18 @@
-/** @file src/pool/house.c %House pool routines. */
+/**
+ * @file src/pool/pool_house.c
+ *
+ * %House pool routines.
+ */
 
 #include <assert.h>
 #include <string.h>
 #include "types.h"
 
-#include "house.h"
+#include "pool_house.h"
 
 #include "pool.h"
-#include "structure.h"
-#include "unit.h"
+#include "pool_structure.h"
+#include "pool_unit.h"
 #include "../house.h"
 
 static struct House g_houseArray[HOUSE_INDEX_MAX];

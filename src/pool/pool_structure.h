@@ -1,4 +1,4 @@
-/** @file src/pool/structure.h %Structure pool definitions. */
+/** @file src/pool/pool_structure.h */
 
 #ifndef POOL_STRUCTURE_H
 #define POOL_STRUCTURE_H
@@ -24,4 +24,4 @@ extern void Structure_Recount(void);
 extern struct Structure *Structure_Allocate(uint16 index, uint8 type);
 extern void Structure_Free(struct Structure *s);
 
-#endif /* POOL_STRUCTURE_H */
+#endif

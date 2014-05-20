@@ -1,14 +1,18 @@
-/** @file src/pool/team.c %Team pool routines. */
+/**
+ * @file src/pool/pool_team.c
+ *
+ * %Team pool routines.
+ */
 
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "types.h"
 
-#include "team.h"
+#include "pool_team.h"
 
-#include "../house.h"
 #include "pool.h"
+#include "../house.h"
 #include "../team.h"
 
 static struct Team g_teamArray[TEAM_INDEX_MAX];

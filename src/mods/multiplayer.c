@@ -12,7 +12,7 @@
 #include "../map.h"
 #include "../net/net.h"
 #include "../opendune.h"
-#include "../pool/house.h"
+#include "../pool/pool_house.h"
 #include "../scenario.h"
 #include "../tools/coord.h"
 #include "../tools/random_lcg.h"

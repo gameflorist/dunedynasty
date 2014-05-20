@@ -26,8 +26,8 @@
 #include "encoded_index.h"
 
 #include "coord.h"
-#include "../pool/structure.h"
-#include "../pool/unit.h"
+#include "../pool/pool_structure.h"
+#include "../pool/pool_unit.h"
 #include "../structure.h"
 #include "../tile.h"
 #include "../unit.h"

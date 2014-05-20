@@ -16,7 +16,7 @@
 #include "../newui/chatbox.h"
 #include "../newui/menu.h"
 #include "../opendune.h"
-#include "../pool/house.h"
+#include "../pool/pool_house.h"
 
 #if 0
 #define NET_LOG(FORMAT,...)	\

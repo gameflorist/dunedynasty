@@ -5,8 +5,8 @@
 #include "object.h"
 
 #include "map.h"
-#include "pool/structure.h"
-#include "pool/unit.h"
+#include "pool/pool_structure.h"
+#include "pool/pool_unit.h"
 #include "structure.h"
 #include "tile.h"
 #include "tools/coord.h"

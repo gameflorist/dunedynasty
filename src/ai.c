@@ -11,10 +11,10 @@
 
 #include "enhancement.h"
 #include "map.h"
-#include "pool/house.h"
 #include "pool/pool.h"
-#include "pool/structure.h"
-#include "pool/unit.h"
+#include "pool/pool_house.h"
+#include "pool/pool_structure.h"
+#include "pool/pool_unit.h"
 #include "saveload/saveload.h"
 #include "scenario.h"
 #include "structure.h"

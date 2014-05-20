@@ -1,4 +1,4 @@
-/** @file src/pool/pool.h %Generic pool definitions. */
+/** @file src/pool/pool.h */
 
 #ifndef POOL_POOL_H
 #define POOL_POOL_H
@@ -13,4 +13,4 @@ typedef struct PoolFindStruct {
 	uint16 index;   /*!< Last index of search, or -1 to start from begin. */
 } PoolFindStruct;
 
-#endif /* POOL_POOL_H */
+#endif

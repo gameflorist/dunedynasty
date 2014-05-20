@@ -5,7 +5,7 @@
 #include "enumeration.h"
 #include "saveload.h"
 #include "../pool/pool.h"
-#include "../pool/team.h"
+#include "../pool/pool_team.h"
 #include "../team.h"
 
 static const SaveLoadDesc s_saveTeam[] = {
