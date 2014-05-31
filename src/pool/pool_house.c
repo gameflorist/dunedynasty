@@ -18,12 +18,19 @@ enum {
 	HOUSE_INDEX_MAX = HOUSE_MAX
 };
 
+/** variable_35FA. */
 static House g_houseArray[HOUSE_INDEX_MAX];
+
+/** variable_87C0. */
 static House *g_houseFindArray[HOUSE_INDEX_MAX];
+
+/** variable_35FE. */
 static uint16 g_houseFindCount;
 
 /**
  * @brief   Get the House from the pool with the indicated index.
+ * @details f__10BE_01AB_002F_0E7B.
+ *          Removed test for House->flags.used?
  */
 House *
 House_Get_ByIndex(uint8 index)
@@ -34,6 +41,8 @@ House_Get_ByIndex(uint8 index)
 
 /**
  * @brief   Start finding Houses in g_houseFindArray.
+ * @details f__10BE_01E2_0027_6596 and f__10BE_01F5_0014_C21B.
+ *          Removed global find struct for when find=NULL.
  */
 House *
 House_FindFirst(PoolFindStruct *find, enum HouseType houseID)
@@ -50,6 +59,8 @@ House_FindFirst(PoolFindStruct *find, enum HouseType houseID)
 
 /**
  * @brief   Continue finding Houses in g_houseFindArray.
+ * @details f__10BE_020F_004E_633B and f__10BE_0226_0037_B108.
+ *          Removed global find struct for when find=NULL.
  */
 House *
 House_FindNext(PoolFindStruct *find)
@@ -71,6 +82,7 @@ House_FindNext(PoolFindStruct *find)
 
 /**
  * @brief   Initialise the House pool.
+ * @details f__10BE_000C_0020_F10F.
  */
 void
 House_Init(void)
@@ -82,6 +94,7 @@ House_Init(void)
 
 /**
  * @brief   Allocate a House.
+ * @details f__10BE_00A0_0064_DF2A.
  */
 House *
 House_Allocate(uint8 index)
@@ -109,6 +122,7 @@ House_Allocate(uint8 index)
 
 /**
  * @brief   Free a House.
+ * @details Introduced.
  */
 #if 0
 void
