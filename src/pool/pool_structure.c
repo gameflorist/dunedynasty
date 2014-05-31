@@ -111,12 +111,12 @@ void Structure_Init(void)
 void Structure_Recount(void)
 {
 	uint16 index;
-	PoolFindStruct find = { -1, -1, -1 };
-	House *h = House_Find(&find);
+	PoolFindStruct find;
 
-	while (h != NULL) {
+	for (House *h = House_FindFirst(&find, HOUSE_INVALID);
+			h != NULL;
+			h = House_FindNext(&find)) {
 		h->unitCount = 0;
-		h = House_Find(&find);
 	}
 
 	g_structureFindCount = 0;

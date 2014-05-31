@@ -51,7 +51,6 @@ static void House_Server_TickMissileCountdown(House *h);
 void GameLoop_House(void)
 {
 	PoolFindStruct find;
-	House *h = NULL;
 	bool tickHouse                = false;
 	bool tickPowerMaintenance     = false;
 	bool tickStarport             = false;
@@ -108,11 +107,9 @@ void GameLoop_House(void)
 	}
 
 	if (tickMissileCountdown) {
-		find.houseID = HOUSE_INVALID;
-		find.index   = 0xFFFF;
-		find.type    = 0xFFFF;
-
-		while ((h = House_Find(&find)) != NULL) {
+		for (House *h = House_FindFirst(&find, HOUSE_INVALID);
+				h != NULL;
+				h = House_FindNext(&find)) {
 			House_Server_TickMissileCountdown(h);
 		}
 	}
@@ -188,14 +185,9 @@ void GameLoop_House(void)
 		}
 	}
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		h = House_Find(&find);
-		if (h == NULL) break;
-
+	for (House *h = House_FindFirst(&find, HOUSE_INVALID);
+			h != NULL;
+			h = House_FindNext(&find)) {
 		if (tickHouse) {
 			/* ENHANCEMENT -- Originally this code was outside the house loop, which seems very odd.
 			 *  This problem is considered to be so bad, that the original code has been removed. */

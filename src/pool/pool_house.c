@@ -6,7 +6,6 @@
 
 #include <assert.h>
 #include <string.h>
-#include "types.h"
 
 #include "pool_house.h"
 
@@ -14,6 +13,10 @@
 #include "pool_structure.h"
 #include "pool_unit.h"
 #include "../house.h"
+
+enum {
+	HOUSE_INDEX_MAX = HOUSE_MAX
+};
 
 static struct House g_houseArray[HOUSE_INDEX_MAX];
 static struct House *g_houseFindArray[HOUSE_INDEX_MAX];
@@ -32,14 +35,26 @@ House *House_Get_ByIndex(uint8 index)
 }
 
 /**
- * Find the first matching House based on the PoolFindStruct filter data.
- *
- * @param find A pointer to a PoolFindStruct which contains filter data and
- *   last known tried index. Calling this functions multiple times with the
- *   same 'find' parameter walks over all possible values matching the filter.
- * @return The House, or NULL if nothing matches (anymore).
+ * @brief   Start finding Houses in g_houseFindArray.
  */
-House *House_Find(PoolFindStruct *find)
+House *
+House_FindFirst(PoolFindStruct *find, enum HouseType houseID)
+{
+	assert(houseID < HOUSE_MAX || houseID == HOUSE_INVALID);
+
+	/* Note: houseID isn't actually used. */
+	find->houseID = (houseID < HOUSE_MAX) ? houseID : HOUSE_INVALID;
+	find->type    = 0xFFFF;
+	find->index   = 0xFFFF;
+
+	return House_FindNext(find);
+}
+
+/**
+ * @brief   Continue finding Houses in g_houseFindArray.
+ */
+House *
+House_FindNext(PoolFindStruct *find)
 {
 	if (find->index >= g_houseFindCount && find->index != 0xFFFF) return NULL;
 	find->index++; /* First, we always go to the next index */

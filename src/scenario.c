@@ -1114,15 +1114,11 @@ static void Scenario_Load_Houses(void)
 	 *  it based on values used for the AI controlled houses. */
 	if (h->unitCountMax == 0) {
 		PoolFindStruct find;
-		uint8 max;
-		House *h2;
+		uint8 max = 80;
 
-		find.houseID = HOUSE_INVALID;
-		find.index   = 0xFFFF;
-		find.type    = 0xFFFF;
-
-		max = 80;
-		while ((h2 = House_Find(&find)) != NULL) {
+		for (const House *h2 = House_FindFirst(&find, HOUSE_INVALID);
+				h2 != NULL;
+				h2 = House_FindNext(&find)) {
 			/* Skip the human controlled house */
 			if (h2->flags.human) continue;
 			max -= h2->unitCountMax;

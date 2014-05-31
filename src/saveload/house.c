@@ -132,16 +132,9 @@ bool House_Save(FILE *fp)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		House *h;
-
-		h = House_Find(&find);
-		if (h == NULL) break;
-
+	for (House *h = House_FindFirst(&find, HOUSE_INVALID);
+			h != NULL;
+			h = House_FindNext(&find)) {
 		if (!SaveLoad_Save(s_saveHouse, fp, h)) return false;
 	}
 
@@ -179,15 +172,9 @@ House_Save2(FILE *fp)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		House *h = House_Find(&find);
-		if (h == NULL)
-			break;
-
+	for (House *h = House_FindFirst(&find, HOUSE_INVALID);
+			h != NULL;
+			h = House_FindNext(&find)) {
 		if (!SaveLoad_Save(s_saveHouse2, fp, h))
 			return false;
 	}

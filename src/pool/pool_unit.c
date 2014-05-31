@@ -82,12 +82,12 @@ void Unit_Init(void)
 void Unit_Recount(void)
 {
 	uint16 index;
-	PoolFindStruct find = { -1, -1, -1 };
-	House *h = House_Find(&find);
+	PoolFindStruct find;
 
-	while (h != NULL) {
+	for (House *h = House_FindFirst(&find, HOUSE_INVALID);
+			h != NULL;
+			h = House_FindNext(&find)) {
 		h->unitCount = 0;
-		h = House_Find(&find);
 	}
 
 	g_unitFindCount = 0;
@@ -96,7 +96,7 @@ void Unit_Recount(void)
 		Unit *u = Unit_Get_ByIndex(index);
 		if (!u->o.flags.s.used) continue;
 
-		h = House_Get_ByIndex(u->o.houseID);
+		House *h = House_Get_ByIndex(u->o.houseID);
 		h->unitCount++;
 
 		g_unitFindArray[g_unitFindCount++] = u;

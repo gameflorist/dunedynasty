@@ -805,16 +805,9 @@ void Game_Prepare(void)
 		House_Get_ByIndex(s->o.houseID)->palacePosition = s->o.position;
 	}
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		House *h;
-
-		h = House_Find(&find);
-		if (h == NULL) break;
-
+	for (House *h = House_FindFirst(&find, HOUSE_INVALID);
+			h != NULL;
+			h = House_FindNext(&find)) {
 		h->structuresBuilt = Structure_GetStructuresBuilt(h);
 		House_UpdateCreditsStorage((uint8)h->index);
 		House_CalculatePowerAndCredit(h);
