@@ -110,6 +110,7 @@ House_Allocate(uint8 index)
 /**
  * @brief   Free a House.
  */
+#if 0
 void
 House_Free(House *h)
 {
@@ -134,3 +135,4 @@ House_Free(House *h)
 				(g_houseFindCount - i) * sizeof(g_houseFindArray[0]));
 	}
 }
+#endif
