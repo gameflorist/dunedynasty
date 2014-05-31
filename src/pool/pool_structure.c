@@ -21,12 +21,18 @@
 #include "../opendune.h"
 #include "../structure.h"
 
+/** variable_35F4. */
 static Structure g_structureArray[STRUCTURE_INDEX_MAX_HARD];
+
+/** variable_8622. */
 static Structure *g_structureFindArray[STRUCTURE_INDEX_MAX_SOFT];
+
+/** variable_35F8. */
 static uint16 g_structureFindCount;
 
 /**
  * @brief    Returns true for structure types that share pool elements.
+ * @details  Introduced.
  */
 bool
 Structure_SharesPoolElement(enum StructureType type)
@@ -38,6 +44,7 @@ Structure_SharesPoolElement(enum StructureType type)
 
 /**
  * @brief   Get the Structure from the pool with the indicated index.
+ * @details 1082:03A1:0023:9F5D.
  */
 Structure *
 Structure_Get_ByIndex(uint16 index)
@@ -48,6 +55,8 @@ Structure_Get_ByIndex(uint16 index)
 
 /**
  * @brief   Start finding Structures in g_structureFindArray.
+ * @details 1082_00FD_003A_D7E0 and f__1082_0110_0027_2707.
+ *          Removed global find struct for when find=NULL.
  */
 Structure *
 Structure_FindFirst(PoolFindStruct *find,
@@ -65,6 +74,8 @@ Structure_FindFirst(PoolFindStruct *find,
 
 /**
  * @brief   Continue finding Structures in g_structureFindArray.
+ * @details f__1082_013D_0038_4AF1 and f__1082_0155_0020_8556.
+ *          Removed global find struct for when find=NULL.
  */
 Structure *
 Structure_FindNext(PoolFindStruct *find)
@@ -118,6 +129,7 @@ Structure_FindNext(PoolFindStruct *find)
 
 /**
  * @brief   Initialise the Structure pool.
+ * @details f__1082_0098_001C_39E2.
  */
 void
 Structure_Init(void)
@@ -138,6 +150,7 @@ Structure_Init(void)
 
 /**
  * @brief   Recount all Structures, rebuilding g_structureFindArray.
+ * @details f__1082_000F_0012_A3C7.
  */
 void
 Structure_Recount(void)
@@ -166,6 +179,7 @@ Structure_Recount(void)
 
 /**
  * @brief   Allocate a Structure.
+ * @details f__1082_01E8_0020_FFB9.
  */
 Structure *
 Structure_Allocate(uint16 index, enum StructureType type)
@@ -228,6 +242,7 @@ Structure_Allocate(uint16 index, enum StructureType type)
 
 /**
  * @brief   Free a Structure.
+ * @details f__1082_0325_0018_025E.
  */
 void
 Structure_Free(Structure *s)
