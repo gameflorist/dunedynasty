@@ -409,7 +409,6 @@ uint16 Script_General_FindIdle(ScriptEngine *script)
 {
 	uint8 houseID;
 	uint16 index;
-	Structure *s;
 	PoolFindStruct find;
 
 	index = STACK_PEEK(1);
@@ -420,20 +419,18 @@ uint16 Script_General_FindIdle(ScriptEngine *script)
 	if (Tools_Index_GetType(index) == IT_TILE) return 0;
 
 	if (Tools_Index_GetType(index) == IT_STRUCTURE) {
-		s = Tools_Index_GetStructure(index);
+		const Structure *s = Tools_Index_GetStructure(index);
 		if (s->o.houseID != houseID) return 0;
 		if (s->state != STRUCTURE_STATE_IDLE) return 0;
 		return 1;
 	}
 
-	find.houseID = houseID;
-	find.index   = 0xFFFF;
-	find.type    = index;
-
-	while (true) {
-		s = Structure_Find(&find);
-		if (s == NULL) return 0;
+	for (const Structure *s = Structure_FindFirst(&find, houseID, index);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (s->state != STRUCTURE_STATE_IDLE) continue;
 		return Tools_Index_Encode(s->o.index, IT_STRUCTURE);
 	}
+
+	return 0;
 }

@@ -128,17 +128,12 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 		bool foundFriendly = false;
 		bool foundEnemy = false;
 
-		find.houseID = HOUSE_INVALID;
-		find.type    = 0xFFFF;
-		find.index   = 0xFFFF;
-
 		/* Calculate how many structures are left on the map */
-		while (true) {
+		for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+				s != NULL;
+				s = Structure_FindNext(&find)) {
 			if (foundFriendly && foundEnemy)
 				break;
-
-			const Structure *s = Structure_Find(&find);
-			if (s == NULL) break;
 
 			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 			if (s->o.type == STRUCTURE_TURRET) continue;
@@ -769,17 +764,10 @@ void Game_Prepare(void)
 		Unit_UpdateMap(1, u);
 	}
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Structure *s;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
+	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
-
 		if (s->o.flags.s.isNotOnMap) continue;
 
 		Structure_RemoveFog(UNVEILCAUSE_INITIALISATION, s);

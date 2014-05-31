@@ -83,23 +83,17 @@ void GameLoop_Structure(void)
 		g_tickStructurePalace = g_timerGame + 60;
 	}
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
 	if (g_debugScenario) return;
 
-	while (true) {
-		const StructureInfo *si;
+	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
+		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 		const HouseInfo *hi;
-		Structure *s;
 		House *h;
 
-		s = Structure_Find(&find);
-		if (s == NULL) break;
 		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
-		si = &g_table_structureInfo[s->o.type];
 		h  = House_Get_ByIndex(s->o.houseID);
 		hi = &g_table_houseInfo[h->index];
 
@@ -769,19 +763,12 @@ void Structure_CalculateHitpointsMax(House *h)
 		power = min(h->powerProduction * 256 / h->powerUsage, 256);
 	}
 
-	find.houseID = h->index;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
+	for (Structure *s = Structure_FindFirst(&find, h->index, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
+		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
-	while (true) {
-		const StructureInfo *si;
-		Structure *s;
-
-		s = Structure_Find(&find);
-		if (s == NULL) return;
 		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
-
-		si = &g_table_structureInfo[s->o.type];
 
 		s->hitpointsMax = si->o.hitpoints * power / 256;
 		s->hitpointsMax = max(s->hitpointsMax, si->o.hitpoints / 2);
@@ -868,18 +855,13 @@ uint32 Structure_GetStructuresBuilt(House *h)
 	if (h == NULL) return 0;
 
 	result = 0;
-	find.houseID = h->index;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
 
 	/* ENHANCEMENT -- recount windtraps after capture or loading old saved games. */
 	if (enhancement_fix_typos) h->windtrapCount = 0;
 
-	while (true) {
-		Structure *s;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
+	for (const Structure *s = Structure_FindFirst(&find, h->index, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (s->o.flags.s.isNotOnMap) continue;
 		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 		result |= 1 << s->o.type;
@@ -1028,18 +1010,11 @@ Structure_Server_ActivateSpecial(Structure *s)
 			if (!h->flags.human) {
 				PoolFindStruct find;
 
-				find.houseID = HOUSE_INVALID;
-				find.type    = 0xFFFF;
-				find.index   = 0xFFFF;
-
 				/* For the AI, try to find the first structure which is not ours, and launch missile to there */
-				while (true) {
-					Structure *sf;
-
-					sf = Structure_Find(&find);
-					if (sf == NULL) break;
+				for (const Structure *sf = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+						sf != NULL;
+						sf = Structure_FindNext(&find)) {
 					if (sf->o.type == STRUCTURE_SLAB_1x1 || sf->o.type == STRUCTURE_SLAB_2x2 || sf->o.type == STRUCTURE_WALL) continue;
-
 					if (House_AreAllied(s->o.houseID, sf->o.houseID)) continue;
 
 					Unit_Server_LaunchHouseMissile(h, Tile_PackTile(sf->o.position));
@@ -1187,12 +1162,8 @@ static void Structure_Destroy(Structure *s)
 			&& !BuildQueue_IsEmpty(&h->starportQueue)) {
 		PoolFindStruct find;
 
-		find.houseID = h->index;
-		find.type    = STRUCTURE_STARPORT;
-		find.index   = 0xFFFF;
-
-		Structure_Find(&find);
-		if (Structure_Find(&find) == NULL) {
+		Structure_FindFirst(&find, h->index, STRUCTURE_STARPORT);
+		if (Structure_FindNext(&find) == NULL) {
 			linkedID = h->starportLinkedID & 0xFF;
 
 			while (linkedID != 0xFF) {

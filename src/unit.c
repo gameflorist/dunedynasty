@@ -1064,9 +1064,8 @@ uint16 Unit_GetTargetUnitPriority(Unit *unit, Unit *target)
 uint16 Unit_FindClosestRefinery(Unit *unit)
 {
 	uint16 res;
-	Structure *s = NULL;
+	const Structure *s = NULL;
 	uint16 mind = 0;
-	Structure *s2;
 	uint16 d;
 	PoolFindStruct find;
 
@@ -1077,13 +1076,10 @@ uint16 Unit_FindClosestRefinery(Unit *unit)
 		return res;
 	}
 
-	find.type = STRUCTURE_REFINERY;
-	find.houseID = Unit_GetHouseID(unit);
-	find.index = 0xFFFF;
-
-	while (true) {
-		s2 = Structure_Find(&find);
-		if (s2 == NULL) break;
+	/* Find non-busy refinery. */
+	for (const Structure *s2 = Structure_FindFirst(&find, Unit_GetHouseID(unit), STRUCTURE_REFINERY);
+			s2 != NULL;
+			s2 = Structure_FindNext(&find)) {
 		if (s2->state != STRUCTURE_STATE_BUSY) continue;
 		d = Tile_GetDistance(unit->o.position, s2->o.position);
 		if (mind != 0 && d >= mind) continue;
@@ -1091,14 +1087,11 @@ uint16 Unit_FindClosestRefinery(Unit *unit)
 		s = s2;
 	}
 
+	/* Find busy refinery. */
 	if (s == NULL) {
-		find.type = STRUCTURE_REFINERY;
-		find.houseID = Unit_GetHouseID(unit);
-		find.index = 0xFFFF;
-
-		while (true) {
-			s2 = Structure_Find(&find);
-			if (s2 == NULL) break;
+		for (const Structure *s2 = Structure_FindFirst(&find, Unit_GetHouseID(unit), STRUCTURE_REFINERY);
+				s2 != NULL;
+				s2 = Structure_FindNext(&find)) {
 			d = Tile_GetDistance(unit->o.position, s2->o.position);
 			if (mind != 0 && d >= mind) continue;
 			mind = d;
@@ -2020,16 +2013,9 @@ void Unit_UntargetMe(Unit *unit)
 
 	Unit_UntargetEncodedIndex(encoded);
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Structure *s;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
-
+	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (s->o.type != STRUCTURE_TURRET && s->o.type != STRUCTURE_ROCKET_TURRET) continue;
 		if (s->o.script.variables[2] == encoded) s->o.script.variables[2] = 0;
 	}
@@ -2786,9 +2772,10 @@ Unit_StructureInRange(const Unit *unit, const Structure *s, uint16 distance)
  * @param mode How to determine the best target.
  * @return The best target or NULL if none found.
  */
-static Structure *Unit_FindBestTargetStructure(Unit *unit, uint16 mode)
+static const Structure *
+Unit_FindBestTargetStructure(Unit *unit, uint16 mode)
 {
-	Structure *best = NULL;
+	const Structure *best = NULL;
 	uint16 bestPriority = 0;
 	tile32 position;
 	uint16 distance;
@@ -2799,17 +2786,12 @@ static Structure *Unit_FindBestTargetStructure(Unit *unit, uint16 mode)
 	position = Tools_Index_GetTile(unit->originEncoded);
 	distance = g_table_unitInfo[unit->o.type].fireDistance << 8;
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Structure *s;
+	for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		tile32 curPosition;
 		uint16 priority;
 
-		s = Structure_Find(&find);
-		if (s == NULL) break;
 		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
 		if (mode != 0 && mode != 4) {
@@ -2909,7 +2891,7 @@ int16 Unit_GetTileEnterScore(Unit *unit, uint16 packed, uint16 orient8)
  */
 uint16 Unit_FindBestTargetEncoded(Unit *unit, uint16 mode)
 {
-	Structure *s;
+	const Structure *s;
 	Unit *target;
 
 	if (unit == NULL) return 0;
@@ -3059,7 +3041,7 @@ void Unit_AddToTile(Unit *unit, uint16 packed)
  * @param target The structure to look at.
  * @return The priority of the target.
  */
-uint16 Unit_GetTargetStructurePriority(Unit *unit, Structure *target)
+uint16 Unit_GetTargetStructurePriority(Unit *unit, const Structure *target)
 {
 	const StructureInfo *si;
 	uint16 priority;
@@ -3199,13 +3181,8 @@ Unit_Server_HouseUnitCount_Add(Unit *unit, enum HouseType houseID)
 				} else {
 					if (g_scenarioID < 3) {
 						PoolFindStruct find;
-						Structure *s;
 
-						find.houseID = houseID;
-						find.index   = 0xFFFF;
-						find.type    = STRUCTURE_CONSTRUCTION_YARD;
-
-						s = Structure_Find(&find);
+						const Structure *s = Structure_FindFirst(&find, houseID, STRUCTURE_CONSTRUCTION_YARD);
 						if (s != NULL) {
 							/* ENHANCEMENT -- Dune2's calculation for the direction is cruder than it needs to be. */
 							if (enhancement_fix_enemy_approach_direction_warning) {

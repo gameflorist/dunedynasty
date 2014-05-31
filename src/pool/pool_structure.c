@@ -34,14 +34,27 @@ Structure *Structure_Get_ByIndex(uint16 index)
 }
 
 /**
- * Find the first matching Structure based on the PoolFindStruct filter data.
- *
- * @param find A pointer to a PoolFindStruct which contains filter data and
- *   last known tried index. Calling this functions multiple times with the
- *   same 'find' parameter walks over all possible values matching the filter.
- * @return The Structure, or NULL if nothing matches (anymore).
+ * @brief   Start finding Structures in g_structureFindArray.
  */
-Structure *Structure_Find(PoolFindStruct *find)
+Structure *
+Structure_FindFirst(PoolFindStruct *find,
+		enum HouseType houseID, enum StructureType type)
+{
+	assert(houseID < HOUSE_MAX || houseID == HOUSE_INVALID);
+	assert(type < STRUCTURE_MAX || type == STRUCTURE_INVALID);
+
+	find->houseID = (houseID < HOUSE_MAX) ? houseID : HOUSE_INVALID;
+	find->type    = (type < STRUCTURE_MAX) ? type : 0xFFFF;
+	find->index   = 0xFFFF;
+
+	return Structure_FindNext(find);
+}
+
+/**
+ * @brief   Continue finding Structures in g_structureFindArray.
+ */
+Structure *
+Structure_FindNext(PoolFindStruct *find)
 {
 	if (find->index >= g_structureFindCount + 3 && find->index != 0xFFFF) return NULL;
 	find->index++; /* First, we always go to the next index */

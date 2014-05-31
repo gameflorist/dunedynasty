@@ -173,15 +173,13 @@ Skirmish_FindClosestStructures(enum HouseType houseID, uint16 packed,
 		uint16 *dist_ally, uint16 *dist_enemy)
 {
 	PoolFindStruct find;
-	Structure *s;
-
-	find.houseID = HOUSE_INVALID;
-	find.type = 0xFFFF;
-	find.index = STRUCTURE_INDEX_INVALID;
 
 	*dist_ally = 0xFFFF;
 	*dist_enemy = 0xFFFF;
-	while ((s = Structure_Find(&find)) != NULL) {
+
+	for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
 			continue;
 
@@ -680,13 +678,11 @@ Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, Skirmi
 			continue;
 
 		PoolFindStruct find;
+		const Structure *s;
 
-		find.houseID = HOUSE_INVALID;
-		find.type = 0xFFFF;
-		find.index = STRUCTURE_INDEX_INVALID;
-
-		Structure *s;
-		while ((s = Structure_Find(&find)) != NULL) {
+		for (s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+				s != NULL;
+				s = Structure_FindNext(&find)) {
 			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
 				continue;
 
@@ -764,16 +760,13 @@ Skirmish_GenUnitsAI(enum HouseType houseID)
 {
 	const uint16 unacceptableLst = (1 << LST_WALL) | (1 << LST_STRUCTURE) | (1 << LST_BLOOM_FIELD);
 
-	Structure *factory[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	const Structure *factory[8];
 	unsigned int nfactories = 0;
-
 	PoolFindStruct find;
-	find.houseID = houseID;
-	find.type = 0xFFFF;
-	find.index = STRUCTURE_INDEX_INVALID;
 
-	Structure *s;
-	while ((nfactories < lengthof(factory)) && ((s = Structure_Find(&find)) != NULL)) {
+	for (const Structure *s = Structure_FindFirst(&find, houseID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		/* Do not produce from hi-tech. */
 		if (s->o.type == STRUCTURE_LIGHT_VEHICLE ||
 		    s->o.type == STRUCTURE_HEAVY_VEHICLE ||
@@ -781,6 +774,9 @@ Skirmish_GenUnitsAI(enum HouseType houseID)
 		    s->o.type == STRUCTURE_BARRACKS) {
 			factory[nfactories] = s;
 			nfactories++;
+
+			if (nfactories >= lengthof(factory))
+				break;
 		}
 	}
 

@@ -235,7 +235,7 @@ void GameLoop_House(void)
 			if ((int16)h->starportTimeLeft < 0) h->starportTimeLeft = 0;
 
 			if (h->starportTimeLeft == 0) {
-				Structure *s = Structure_Get_ByIndex(h->starportID);
+				const Structure *s = Structure_Get_ByIndex(h->starportID);
 				Unit *u = NULL;
 
 				if (s->o.type == STRUCTURE_STARPORT && s->o.houseID == h->index) {
@@ -244,13 +244,9 @@ void GameLoop_House(void)
 				} else {
 					PoolFindStruct find2;
 
-					find2.houseID = h->index;
-					find2.index   = 0xFFFF;
-					find2.type    = STRUCTURE_STARPORT;
-
-					while (true) {
-						s = Structure_Find(&find2);
-						if (s == NULL) break;
+					for (s = Structure_FindFirst(&find2, h->index, STRUCTURE_STARPORT);
+							s != NULL;
+							s = Structure_FindNext(&find2)) {
 						if (s->o.linkedID != 0xFF) continue;
 
 						u = Unit_CreateWrapper(h->index, UNIT_FRIGATE,
@@ -373,15 +369,11 @@ uint8 House_StringToType(const char *name)
 static void House_EnsureHarvesterAvailable(uint8 houseID)
 {
 	PoolFindStruct find;
-	Structure *s;
+	const Structure *s;
 
-	find.houseID = houseID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		s = Structure_Find(&find);
-		if (s == NULL) break;
+	for (s = Structure_FindFirst(&find, houseID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		/* ENHANCEMENT -- Dune2 checked the wrong type to skip. LinkedID is a structure for a Construction Yard */
 		if (!g_dune2_enhanced && s->o.type == STRUCTURE_HEAVY_VEHICLE) continue;
 		if (g_dune2_enhanced && s->o.type == STRUCTURE_CONSTRUCTION_YARD) continue;
@@ -404,11 +396,7 @@ static void House_EnsureHarvesterAvailable(uint8 houseID)
 
 	if (Unit_IsTypeOnMap(houseID, UNIT_HARVESTER)) return;
 
-	find.houseID = houseID;
-	find.type    = STRUCTURE_REFINERY;
-	find.index   = 0xFFFF;
-
-	s = Structure_Find(&find);
+	s = Structure_FindFirst(&find, houseID, STRUCTURE_REFINERY);
 	if (s == NULL) return;
 
 	if (Unit_CreateWrapper(houseID, UNIT_HARVESTER, Tools_Index_Encode(s->o.index, IT_STRUCTURE)) == NULL) return;
@@ -496,14 +484,11 @@ House_Server_ReassignToAI(enum HouseType houseID)
 	/* Might as well fix up all AI houses while we're at it. */
 	const enum HouseFlag ai_houses = House_GetAIs();
 	PoolFindStruct find;
-	Structure *s;
 	Unit *u;
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while ((s = Structure_Find(&find)) != NULL) {
+	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		s->o.seenByHouses |= ai_houses;
 	}
 
@@ -547,19 +532,12 @@ void House_UpdateCreditsStorage(uint8 houseID)
 	uint16 oldValidateStrictIfZero = g_validateStrictIfZero;
 	g_validateStrictIfZero = 0;
 
-	find.houseID = houseID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
 	creditsStorage = 0;
-	while (true) {
-		const StructureInfo *si;
-		Structure *s;
 
-		s = Structure_Find(&find);
-		if (s == NULL) break;
-
-		si = &g_table_structureInfo[s->o.type];
+	for (const Structure *s = Structure_FindFirst(&find, houseID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
+		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 		creditsStorage += si->creditsStorage;
 	}
 
@@ -585,20 +563,13 @@ void House_CalculatePowerAndCredit(House *h)
 	h->powerProduction = 0;
 	h->creditsStorage  = 0;
 
-	find.houseID = h->index;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
+	for (const Structure *s = Structure_FindFirst(&find, h->index, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
+		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
-	while (true) {
-		const StructureInfo *si;
-		Structure *s;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
 		/* ENHANCEMENT -- Only count structures that are placed on the map, not ones we are building. */
 		if (g_dune2_enhanced && s->o.flags.s.isNotOnMap) continue;
-
-		si = &g_table_structureInfo[s->o.type];
 
 		h->creditsStorage += si->creditsStorage;
 

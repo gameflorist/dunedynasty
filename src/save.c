@@ -173,16 +173,10 @@ SaveFile(const char *filename, const char *description)
 			Unit_RemoveFog(UNVEILCAUSE_INITIALISATION, u);
 		}
 
-		find.houseID = HOUSE_INVALID;
-		find.type    = 0xFFFF;
-		find.index   = 0xFFFF;
-
 		/* Remove the fog of war for all structures */
-		while (true) {
-			Structure *s;
-
-			s = Structure_Find(&find);
-			if (s == NULL) break;
+		for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+				s != NULL;
+				s = Structure_FindNext(&find)) {
 			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 
 			Structure_RemoveFog(UNVEILCAUSE_INITIALISATION, s);

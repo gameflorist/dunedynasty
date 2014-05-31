@@ -46,17 +46,14 @@
 static void
 GameLoop_Client_Structure(void)
 {
+	PoolFindStruct find;
+
 	if (!enhancement_fog_of_war)
 		return;
 
-	PoolFindStruct find;
-	Structure *s;
-
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while ((s = Structure_Find(&find)) != NULL) {
+	for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		Structure_RemoveFog(UNVEILCAUSE_STRUCTURE_VISION, s);
 	}
 }

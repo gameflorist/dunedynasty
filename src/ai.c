@@ -111,6 +111,21 @@ AI_IsBrutalAI(enum HouseType houseID)
 
 /*--------------------------------------------------------------*/
 
+static int
+StructureAI_CountStructures(enum HouseType houseID, enum StructureType type)
+{
+	PoolFindStruct find;
+	int count = 0;
+
+	for (const Structure *s = Structure_FindFirst(&find, houseID, type);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
+		count++;
+	}
+
+	return count;
+}
+
 static bool
 StructureAI_ShouldBuildCarryalls(enum HouseType houseID)
 {
@@ -126,24 +141,13 @@ StructureAI_ShouldBuildCarryalls(enum HouseType houseID)
 static bool
 StructureAI_ShouldBuildHarvesters(enum HouseType houseID)
 {
-	PoolFindStruct find;
-
-	find.houseID = houseID;
-	find.index = 0xFFFF;
-	find.type = STRUCTURE_REFINERY;
-
-	int refinery_count = 0;
-	Structure *s;
-	while ((s = Structure_Find(&find)) != NULL) {
-		refinery_count++;
-	}
-
 	const int harvester_count = UnitAI_CountUnits(houseID, UNIT_HARVESTER);
 
 	/* If no harvesters, wait for the gifted harvester. */
 	if (harvester_count == 0)
 		return false;
 
+	const int refinery_count = StructureAI_CountStructures(houseID, STRUCTURE_REFINERY);
 	const int optimal_harvester_count =
 		(refinery_count == 0) ? 0 :
 		(refinery_count == 1) ? 2 : 3;
@@ -431,12 +435,9 @@ UnitAI_GetAnyEnemyInRange(const Unit *unit)
 		u = Unit_Find(&find);
 	}
 
-	find.houseID = HOUSE_INVALID;
-	find.index = 0xFFFF;
-	find.type = 0xFFFF;
-
-	Structure *s;
-	while ((s = Structure_Find(&find)) != NULL) {
+	for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (House_AreAllied(houseID, s->o.houseID)) {
 		}
 		else if (Tile_GetDistanceRoundedUp(unit->o.position, s->o.position) <= dist) {

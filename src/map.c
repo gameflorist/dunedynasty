@@ -877,18 +877,11 @@ Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID)
 	if (locationID == 6) { /* Enemy Base */
 		PoolFindStruct find;
 
-		find.houseID = HOUSE_INVALID;
-		find.index   = 0xFFFF;
-		find.type    = 0xFFFF;
-
 		/* Find the house of an enemy */
-		while (true) {
-			Structure *s;
-
-			s = Structure_Find(&find);
-			if (s == NULL) break;
+		for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+				s != NULL;
+				s = Structure_FindNext(&find)) {
 			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
-
 			if (s->o.houseID == houseID) continue;
 
 			houseID = s->o.houseID;
@@ -922,13 +915,7 @@ Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID)
 			case 6: /* Enemy Base */
 			case 7: { /* Home Base */
 				PoolFindStruct find;
-				Structure *s;
-
-				find.houseID = houseID;
-				find.index   = 0xFFFF;
-				find.type    = 0xFFFF;
-
-				s = Structure_Find(&find);
+				const Structure *s = Structure_FindFirst(&find, houseID, STRUCTURE_INVALID);
 
 				if (s != NULL) {
 					ret = Tile_PackTile(Tile_MoveByRandom(s->o.position, 120, true));

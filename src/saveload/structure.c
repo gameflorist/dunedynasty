@@ -97,17 +97,10 @@ bool Structure_Save(FILE *fp)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Structure *s;
-		Structure ss;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
-		ss = *s;
+	for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
+		Structure ss = *s;
 
 		if (!SaveLoad_Save(s_saveStructure, fp, &ss)) return false;
 	}
@@ -176,15 +169,9 @@ Structure_Save2(FILE *fp)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Structure *s = Structure_Find(&find);
-		if (s == NULL)
-			break;
-
+	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (!SaveLoad_Save(s_saveStructure2, fp, s))
 			return false;
 	}
@@ -272,11 +259,7 @@ SaveLoad_Structure_BuildQueue(void *object, uint32 value, bool loading)
 		if (s->o.type == STRUCTURE_STARPORT) {
 			PoolFindStruct find;
 
-			find.houseID = s->o.houseID;
-			find.type = STRUCTURE_STARPORT;
-			find.index = 0xFFFF;
-
-			if (s == Structure_Find(&find)) {
+			if (s == Structure_FindFirst(&find, s->o.houseID, STRUCTURE_STARPORT)) {
 				House *h = House_Get_ByIndex(s->o.houseID);
 				queue = &h->starportQueue;
 			}

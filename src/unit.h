@@ -187,7 +187,7 @@ extern void Unit_HouseUnitCount_Remove(Unit *unit);
 extern void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID);
 
 extern uint16 Unit_GetTargetUnitPriority(Unit *unit, Unit *target);
-extern uint16 Unit_GetTargetStructurePriority(Unit *unit, struct Structure *s);
+extern uint16 Unit_GetTargetStructurePriority(Unit *unit, const struct Structure *s);
 extern uint16 Unit_FindBestTargetEncoded(Unit *unit, uint16 mode);
 extern Unit *Unit_FindBestTargetUnit(Unit *u, uint16 mode);
 extern Unit *Unit_Sandworm_FindBestTarget(Unit *unit);

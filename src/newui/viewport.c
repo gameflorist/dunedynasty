@@ -214,11 +214,10 @@ Viewport_SelectRegion(void)
 		}
 
 #if 0
-		find.index = 0xFFFF;
-
 		/* Try to find own structure. */
-		Structure *s;
-		while ((s = Structure_Find(&find)) != NULL) {
+		for (const Structure *s = Structure_FindFirst(&find, g_playerHouseID, STRUCTURE_INVALID);
+				s != NULL;
+				s = Structure_FindNext(&find)) {
 			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 			const int sx = Tile_GetPosX(s->o.position);
 			const int sy = Tile_GetPosY(s->o.position);
@@ -888,16 +887,13 @@ Viewport_Hotkey(enum SquadID squad)
 			u = Unit_Find(&find);
 		}
 
-		find.houseID = g_playerHouseID;
-		find.type = 0xFFFF;
-		find.index = 0xFFFF;
-
 		const Structure *st = Structure_Get_ByPackedTile(g_selectionPosition);
 		if (st && (st->o.houseID != g_playerHouseID))
 			st = NULL;
 
-		Structure *s;
-		while ((s = Structure_Find(&find)) != NULL) {
+		for (Structure *s = Structure_FindFirst(&find, g_playerHouseID, STRUCTURE_INVALID);
+				s != NULL;
+				s = Structure_FindNext(&find)) {
 			if (s == st) {
 				s->squadID = squad;
 			}
@@ -944,12 +940,9 @@ Viewport_Hotkey(enum SquadID squad)
 		}
 
 		if (!Unit_AnySelected()) {
-			find.houseID = g_playerHouseID;
-			find.type = 0xFFFF;
-			find.index = 0xFFFF;
-
-			Structure *s;
-			while ((s = Structure_Find(&find)) != NULL) {
+			for (const Structure *s = Structure_FindFirst(&find, g_playerHouseID, STRUCTURE_INVALID);
+					s != NULL;
+					s = Structure_FindNext(&find)) {
 				if (s->squadID == squad) {
 					const StructureInfo *si = &g_table_structureInfo[s->o.type];
 					const XYSize *layout = &g_table_structure_layoutSize[si->layout];
@@ -978,7 +971,7 @@ Viewport_Hotkey(enum SquadID squad)
 void
 Viewport_Homekey(void)
 {
-	Structure *s;
+	PoolFindStruct find;
 	bool centre_on_selection = false;
 
 	if (g_selectionType == SELECTIONTYPE_TARGET
@@ -989,13 +982,7 @@ Viewport_Homekey(void)
 		centre_on_selection = true;
 	}
 
-	PoolFindStruct find;
-
-	find.houseID = g_playerHouseID;
-	find.type = STRUCTURE_CONSTRUCTION_YARD;
-	find.index = 0xFFFF;
-
-	s = Structure_Find(&find);
+	const Structure *s = Structure_FindFirst(&find, g_playerHouseID, STRUCTURE_CONSTRUCTION_YARD);
 	if (s != NULL) {
 		if (g_selectionType != SELECTIONTYPE_PLACE) {
 			if (s == Structure_Get_ByPackedTile(g_selectionPosition)) {

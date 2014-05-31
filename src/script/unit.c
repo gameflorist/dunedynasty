@@ -299,7 +299,7 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 
 		case IT_UNIT: {
 			Unit *u2;
-			Structure *s = NULL;
+			const Structure *s = NULL;
 			PoolFindStruct find;
 			int16 minDistance = 0;
 
@@ -307,19 +307,11 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 
 			if (!u2->o.flags.s.allocated) return 0;
 
-			find.houseID = Unit_GetHouseID(u);
-			find.index   = 0xFFFF;
-			find.type    = 0xFFFF;
-
 			/* Find closest refinery / repair station */
-			while (true) {
-				Structure *s2;
-				int16 distance;
-
-				s2 = Structure_Find(&find);
-				if (s2 == NULL) break;
-
-				distance = Tile_GetDistanceRoundedUp(s2->o.position, u->o.position);
+			for (const Structure *s2 = Structure_FindFirst(&find, Unit_GetHouseID(u), STRUCTURE_INVALID);
+					s2 != NULL;
+					s2 = Structure_FindNext(&find)) {
+				const int16 distance = Tile_GetDistanceRoundedUp(s2->o.position, u->o.position);
 
 				if (u2->o.type == UNIT_HARVESTER) {
 					if (s2->o.type != STRUCTURE_REFINERY || s2->state != STRUCTURE_STATE_IDLE || s2->o.script.variables[4] != 0) continue;
@@ -1518,21 +1510,13 @@ uint16 Script_Unit_MoveToStructure(ScriptEngine *script)
 		}
 	}
 
-	find.houseID = Unit_GetHouseID(u);
-	find.index   = 0xFFFF;
-	find.type    = STACK_PEEK(1);
-
-	while (true) {
-		Structure *s;
-		uint16 encoded;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
-
+	for (const Structure *s = Structure_FindFirst(&find, Unit_GetHouseID(u), STACK_PEEK(1));
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (s->state != STRUCTURE_STATE_IDLE) continue;
 		if (s->o.script.variables[4] != 0) continue;
 
-		encoded = Tools_Index_Encode(s->o.index, IT_STRUCTURE);
+		const uint16 encoded = Tools_Index_Encode(s->o.index, IT_STRUCTURE);
 
 		Object_Script_Variable4_Link(Tools_Index_Encode(u->o.index, IT_UNIT), encoded);
 
@@ -1696,15 +1680,9 @@ uint16 Script_Unit_FindStructure(ScriptEngine *script)
 
 	u = g_scriptCurrentUnit;
 
-	find.houseID = Unit_GetHouseID(u);
-	find.index   = 0xFFFF;
-	find.type    = STACK_PEEK(1);
-
-	while (true) {
-		Structure *s;
-
-		s = Structure_Find(&find);
-		if (s == NULL) break;
+	for (const Structure *s = Structure_FindFirst(&find, Unit_GetHouseID(u), STACK_PEEK(1));
+			s != NULL;
+			s = Structure_FindNext(&find)) {
 		if (s->state != STRUCTURE_STATE_IDLE) continue;
 		if (s->o.linkedID != 0xFF) continue;
 		if (s->o.script.variables[4] != 0) continue;
@@ -1921,28 +1899,20 @@ uint16 Script_Unit_IdleAction(ScriptEngine *script)
 uint16 Script_Unit_GoToClosestStructure(ScriptEngine *script)
 {
 	Unit *u;
-	Structure *s = NULL;
+	const Structure *s = NULL;
 	PoolFindStruct find;
 	uint16 distanceMin =0;
 
 	u = g_scriptCurrentUnit;
 
-	find.houseID = Unit_GetHouseID(u);
-	find.index   = 0xFFFF;
-	find.type    = STACK_PEEK(1);
-
-	while (true) {
-		Structure *s2;
-		uint16 distance;
-
-		s2 = Structure_Find(&find);
-
-		if (s2 == NULL) break;
+	for (const Structure *s2 = Structure_FindFirst(&find, Unit_GetHouseID(u), STACK_PEEK(1));
+			s2 != NULL;
+			s2 = Structure_FindNext(&find)) {
 		if (s2->state != STRUCTURE_STATE_IDLE) continue;
 		if (s2->o.linkedID != 0xFF) continue;
 		if (s2->o.script.variables[4] != 0) continue;
 
-		distance = Tile_GetDistanceRoundedUp(s2->o.position, u->o.position);
+		const uint16 distance = Tile_GetDistanceRoundedUp(s2->o.position, u->o.position);
 
 		if (distance >= distanceMin && distanceMin != 0) continue;
 

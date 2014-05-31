@@ -1616,11 +1616,7 @@ void Scenario_CentreViewport(uint8 houseID)
 {
 	PoolFindStruct find;
 
-	find.houseID = houseID;
-	find.type = STRUCTURE_CONSTRUCTION_YARD;
-	find.index = 0xFFFF;
-
-	Structure *s = Structure_Find(&find);
+	const Structure *s = Structure_FindFirst(&find, houseID, STRUCTURE_CONSTRUCTION_YARD);
 	if (s != NULL) {
 		Map_CentreViewport((s->o.position.x >> 4) + TILE_SIZE, (s->o.position.y >> 4) + TILE_SIZE);
 		return;
