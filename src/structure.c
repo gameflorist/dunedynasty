@@ -92,7 +92,8 @@ void GameLoop_Structure(void)
 		const HouseInfo *hi;
 		House *h;
 
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+		if (Structure_SharesPoolElement(s->o.type))
+			continue;
 
 		h  = House_Get_ByIndex(s->o.houseID);
 		hi = &g_table_houseInfo[h->index];
@@ -768,7 +769,8 @@ void Structure_CalculateHitpointsMax(House *h)
 			s = Structure_FindNext(&find)) {
 		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+		if (Structure_SharesPoolElement(s->o.type))
+			continue;
 
 		s->hitpointsMax = si->o.hitpoints * power / 256;
 		s->hitpointsMax = max(s->hitpointsMax, si->o.hitpoints / 2);
@@ -863,7 +865,10 @@ uint32 Structure_GetStructuresBuilt(House *h)
 			s != NULL;
 			s = Structure_FindNext(&find)) {
 		if (s->o.flags.s.isNotOnMap) continue;
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+
+		if (Structure_SharesPoolElement(s->o.type))
+			continue;
+
 		result |= 1 << s->o.type;
 
 		if (enhancement_fix_typos && s->o.type == STRUCTURE_WINDTRAP) h->windtrapCount++;
@@ -1014,7 +1019,9 @@ Structure_Server_ActivateSpecial(Structure *s)
 				for (const Structure *sf = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 						sf != NULL;
 						sf = Structure_FindNext(&find)) {
-					if (sf->o.type == STRUCTURE_SLAB_1x1 || sf->o.type == STRUCTURE_SLAB_2x2 || sf->o.type == STRUCTURE_WALL) continue;
+					if (Structure_SharesPoolElement(sf->o.type))
+						continue;
+
 					if (House_AreAllied(s->o.houseID, sf->o.houseID)) continue;
 
 					Unit_Server_LaunchHouseMissile(h, Tile_PackTile(sf->o.position));

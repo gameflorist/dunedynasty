@@ -2792,7 +2792,8 @@ Unit_FindBestTargetStructure(Unit *unit, uint16 mode)
 		tile32 curPosition;
 		uint16 priority;
 
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+		if (Structure_SharesPoolElement(s->o.type))
+			continue;
 
 		if (mode != 0 && mode != 4) {
 			if (mode == 1) {

@@ -1162,7 +1162,8 @@ uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvestedEnemy
 	for (const Structure *s = Structure_FindFirst(&find, houseID, STRUCTURE_INVALID);
 			s != NULL;
 			s = Structure_FindNext(&find)) {
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+		if (Structure_SharesPoolElement(s->o.type))
+			continue;
 
 		score += g_table_structureInfo[s->o.type].o.buildCredits / 100;
 	}
@@ -1298,7 +1299,8 @@ void GUI_DrawInterfaceAndRadar(void)
 	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 			s != NULL;
 			s = Structure_FindNext(&find)) {
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+		if (Structure_SharesPoolElement(s->o.type))
+			continue;
 
 		Structure_UpdateMap(s);
 	}

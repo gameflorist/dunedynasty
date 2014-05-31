@@ -177,7 +177,8 @@ SaveFile(const char *filename, const char *description)
 		for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 				s != NULL;
 				s = Structure_FindNext(&find)) {
-			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+			if (Structure_SharesPoolElement(s->o.type))
+				continue;
 
 			Structure_RemoveFog(UNVEILCAUSE_INITIALISATION, s);
 		}

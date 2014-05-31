@@ -2,6 +2,12 @@
  * @file src/pool/pool_structure.c
  *
  * %Structure pool routines.
+ *
+ * ENHANCEMENT -- In the original game, concrete slabs and walls are
+ * all share the same dummy Structure.  However, this caused problems
+ * in the original game when there are multiple concrete slabs or
+ * walls in production.  As a result, there are quite a few special
+ * cases here and wherever Structure_FindFirst/Next is used.
  */
 
 #include <assert.h>
@@ -20,6 +26,17 @@
 static struct Structure g_structureArray[STRUCTURE_INDEX_MAX_HARD];
 static struct Structure *g_structureFindArray[STRUCTURE_INDEX_MAX_SOFT];
 static uint16 g_structureFindCount;
+
+/**
+ * @brief    Returns true for structure types that share pool elements.
+ */
+bool
+Structure_SharesPoolElement(enum StructureType type)
+{
+	return (type == STRUCTURE_SLAB_1x1
+	     || type == STRUCTURE_SLAB_2x2
+	     || type == STRUCTURE_WALL);
+}
 
 /**
  * Get a Structure from the pool with the indicated index.

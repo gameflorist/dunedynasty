@@ -881,7 +881,9 @@ Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID)
 		for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 				s != NULL;
 				s = Structure_FindNext(&find)) {
-			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+			if (Structure_SharesPoolElement(s->o.type))
+				continue;
+
 			if (s->o.houseID == houseID) continue;
 
 			houseID = s->o.houseID;

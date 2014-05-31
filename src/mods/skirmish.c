@@ -180,7 +180,7 @@ Skirmish_FindClosestStructures(enum HouseType houseID, uint16 packed,
 	for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 			s != NULL;
 			s = Structure_FindNext(&find)) {
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
+		if (Structure_SharesPoolElement(s->o.type))
 			continue;
 
 		const uint16 dist = Tile_GetDistancePacked(Tile_PackTile(s->o.position), packed);
@@ -683,7 +683,7 @@ Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, Skirmi
 		for (s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 				s != NULL;
 				s = Structure_FindNext(&find)) {
-			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL)
+			if (Structure_SharesPoolElement(s->o.type))
 				continue;
 
 			if (House_AreAllied(houseID, s->o.houseID))

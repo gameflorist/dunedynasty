@@ -21,6 +21,8 @@ enum {
 struct PoolFindStruct;
 struct Structure;
 
+extern bool Structure_SharesPoolElement(enum StructureType type);
+
 extern struct Structure *Structure_Get_ByIndex(uint16 index);
 extern struct Structure *Structure_FindFirst(struct PoolFindStruct *find, enum HouseType houseID, enum StructureType type);
 extern struct Structure *Structure_FindNext(struct PoolFindStruct *find);

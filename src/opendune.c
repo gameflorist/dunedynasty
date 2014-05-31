@@ -135,7 +135,9 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 			if (foundFriendly && foundEnemy)
 				break;
 
-			if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
+			if (Structure_SharesPoolElement(s->o.type))
+				continue;
+
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
 
@@ -767,8 +769,10 @@ void Game_Prepare(void)
 	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 			s != NULL;
 			s = Structure_FindNext(&find)) {
-		if (s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2 || s->o.type == STRUCTURE_WALL) continue;
 		if (s->o.flags.s.isNotOnMap) continue;
+
+		if (Structure_SharesPoolElement(s->o.type))
+			continue;
 
 		Structure_RemoveFog(UNVEILCAUSE_INITIALISATION, s);
 
