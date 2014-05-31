@@ -142,6 +142,7 @@ Structure_Init(void)
 void
 Structure_Recount(void)
 {
+#if 0
 	PoolFindStruct find;
 
 	for (House *h = House_FindFirst(&find, HOUSE_INVALID);
@@ -149,6 +150,7 @@ Structure_Recount(void)
 			h = House_FindNext(&find)) {
 		h->unitCount = 0;
 	}
+#endif
 
 	g_structureFindCount = 0;
 
