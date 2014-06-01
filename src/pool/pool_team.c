@@ -16,12 +16,18 @@ enum {
 	TEAM_INDEX_MAX = 16
 };
 
+/** variable_35EE. */
 static Team g_teamArray[TEAM_INDEX_MAX];
+
+/** variable_85DC. */
 static Team *g_teamFindArray[TEAM_INDEX_MAX];
+
+/** variable_35F2. */
 static uint16 g_teamFindCount;
 
 /**
  * @brief   Get the Team from the pool with the indicated index.
+ * @details f__104B_0354_0023_5A6D.
  */
 Team *
 Team_Get_ByIndex(uint16 index)
@@ -32,6 +38,8 @@ Team_Get_ByIndex(uint16 index)
 
 /**
  * @brief   Start finding Teams in g_teamFindArray.
+ * @details f__104B_00C2_0030_20A6 and f__104B_00D5_001D_2B68.
+ *          Removed global find struct for when find=NULL.
  */
 Team *
 Team_FindFirst(PoolFindStruct *find, enum HouseType houseID)
@@ -47,6 +55,8 @@ Team_FindFirst(PoolFindStruct *find, enum HouseType houseID)
 
 /**
  * @brief   Continue finding Teams in g_teamFindArray.
+ * @details 104B_00F8_002E_3820 and f__104B_0110_0016_6D19.
+ *          Removed global find struct for when find=NULL.
  */
 Team *
 Team_FindNext(PoolFindStruct *find)
@@ -72,6 +82,7 @@ Team_FindNext(PoolFindStruct *find)
 
 /**
  * @brief   Initialise the Team array.
+ * @details f__104B_005D_001C_39F6.
  */
 void
 Team_Init(void)
@@ -88,6 +99,7 @@ Team_Init(void)
 
 /**
  * @brief   Recount all Teams, rebuilding g_teamFindArray.
+ * @details f__104B_0006_0011_631B.
  */
 void
 Team_Recount(void)
@@ -106,6 +118,7 @@ Team_Recount(void)
 
 /**
  * @brief   Allocate a Team.
+ * @details f__104B_0171_0020_7F19.
  */
 Team *
 Team_Allocate(uint16 index)
@@ -145,6 +158,7 @@ Team_Allocate(uint16 index)
 
 /**
  * @brief   Free a Team.
+ * @details Introduced.
  */
 #if 0
 void
