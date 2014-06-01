@@ -362,7 +362,7 @@ uint16 Script_Structure_FindTargetUnit(ScriptEngine *script)
 {
 	PoolFindStruct find;
 	Structure *s;
-	Unit *u;
+	const Unit *u;
 	uint32 distanceCurrent;
 	uint32 targetRange;
 	tile32 position;
@@ -372,10 +372,6 @@ uint16 Script_Structure_FindTargetUnit(ScriptEngine *script)
 	distanceCurrent = 32000;
 	u = NULL;
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
 	/* ENHANCEMENT -- The original code calculated distances from the top-left corner of the structure. */
 	if (g_dune2_enhanced) {
 		position = Tile_Center(s->o.position);
@@ -383,12 +379,10 @@ uint16 Script_Structure_FindTargetUnit(ScriptEngine *script)
 		position = s->o.position;
 	}
 
-	while (true) {
+	for (const Unit *uf = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			uf != NULL;
+			uf = Unit_FindNext(&find)) {
 		uint16 distance;
-		Unit *uf;
-
-		uf = Unit_Find(&find);
-		if (uf == NULL) break;
 
 		if (House_AreAllied(s->o.houseID, Unit_GetHouseID(uf))) continue;
 

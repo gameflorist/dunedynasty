@@ -1477,16 +1477,9 @@ void Structure_UntargetMe(Structure *s)
 
 	Object_Script_Variable4_Clear(&s->o);
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (u->targetMove == encoded) u->targetMove = 0;
 		if (u->targetAttack == encoded) u->targetAttack = 0;
 		if (u->o.script.variables[4] == encoded) Object_Script_Variable4_Clear(&u->o);
@@ -2081,18 +2074,10 @@ void Structure_HouseUnderAttack(uint8 houseID)
 	/* ENHANCEMENT -- Dune2 originally only searches for units with type 0 (Carry-all). In result, the rest of this function does nothing. */
 	if (!g_dune2_enhanced) return;
 
-	find.houseID = houseID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		const UnitInfo *ui;
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
-		ui = &g_table_unitInfo[u->o.type];
+	for (Unit *u = Unit_FindFirst(&find, houseID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 
 		if (ui->bulletType == UNIT_INVALID) continue;
 

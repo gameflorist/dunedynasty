@@ -363,18 +363,10 @@ void GameLoop_Unit(void)
 		g_tickUnitDeviation = g_timerGame + 60;
 	}
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		const UnitInfo *ui;
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
-		ui = &g_table_unitInfo[u->o.type];
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 
 		g_scriptCurrentObject    = &u->o;
 		g_scriptCurrentStructure = NULL;
@@ -819,14 +811,14 @@ Team *Unit_GetTeam(Unit *u)
  */
 void Unit_Sort(void)
 {
+	PoolFindStruct find;
 	House *h;
-	uint16 i;
 
 	h = g_playerHouse;
 	h->unitCountEnemy = 0;
 	h->unitCountAllied = 0;
 
-	for (i = 0; i < g_unitFindCount - 1; i++) {
+	for (uint16 i = 0; i < g_unitFindCount - 1; i++) {
 		Unit *u1;
 		Unit *u2;
 		uint16 y1;
@@ -845,10 +837,9 @@ void Unit_Sort(void)
 		}
 	}
 
-	for (i = 0; i < g_unitFindCount; i++) {
-		Unit *u;
-
-		u = g_unitFindArray[i];
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if ((u->o.seenByHouses & (1 << g_playerHouseID)) != 0 && !u->o.flags.s.isNotOnMap) {
 			if (House_AreAllied(u->o.houseID, g_playerHouseID)) {
 				h->unitCountAllied++;
@@ -1210,18 +1201,9 @@ Unit *Unit_FindBestTargetUnit(Unit *u, uint16 mode)
 	distance = g_table_unitInfo[u->o.type].fireDistance << 8;
 	if (mode == 2) distance <<= 1;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *target;
-		uint16 priority;
-
-		target = Unit_Find(&find);
-
-		if (target == NULL) break;
-
+	for (Unit *target = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			target != NULL;
+			target = Unit_FindNext(&find)) {
 		if (mode != 0 && mode != 4) {
 			if (mode == 1) {
 				if (Tile_GetDistance(u->o.position, target->o.position) > distance) continue;
@@ -1231,8 +1213,7 @@ Unit *Unit_FindBestTargetUnit(Unit *u, uint16 mode)
 			}
 		}
 
-		priority = Unit_GetTargetUnitPriority(u, target);
-
+		const uint16 priority = Unit_GetTargetUnitPriority(u, target);
 		if ((int16)priority > (int16)bestPriority) {
 			best = target;
 			bestPriority = priority;
@@ -1306,19 +1287,10 @@ Unit *Unit_Sandworm_FindBestTarget(Unit *unit)
 
 	if (unit == NULL) return NULL;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-		uint16 priority;
-
-		u = Unit_Find(&find);
-
-		if (u == NULL) break;
-
-		priority = Unit_Sandworm_GetTargetPriority(unit, u);
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		const uint16 priority = Unit_Sandworm_GetTargetPriority(unit, u);
 
 		if (priority >= bestPriority) {
 			best = u;
@@ -1496,7 +1468,7 @@ bool Unit_Deviation_Decrease(Unit *unit, uint16 amount)
  * @param unit The Unit to remove fog around.
  */
 void
-Unit_RefreshFog(enum TileUnveilCause cause, Unit *unit, bool unveil)
+Unit_RefreshFog(enum TileUnveilCause cause, const Unit *unit, bool unveil)
 {
 	uint16 fogUncoverRadius;
 
@@ -1513,7 +1485,7 @@ Unit_RefreshFog(enum TileUnveilCause cause, Unit *unit, bool unveil)
 }
 
 void
-Unit_RemoveFog(enum TileUnveilCause cause, Unit *unit)
+Unit_RemoveFog(enum TileUnveilCause cause, const Unit *unit)
 {
 	Unit_RefreshFog(cause, unit, true);
 }
@@ -1988,16 +1960,9 @@ Unit_UntargetEncodedIndex(uint16 encoded)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (u->targetMove == encoded) u->targetMove = 0;
 		if (u->targetAttack == encoded) u->targetAttack = 0;
 		if (u->o.script.variables[4] == encoded) Object_Script_Variable4_Clear(&u->o);
@@ -2577,15 +2542,9 @@ Unit_CallUnitByType(enum UnitType type, uint8 houseID, uint16 target, bool creat
 	PoolFindStruct find;
 	Unit *unit = NULL;
 
-	find.houseID = houseID;
-	find.type    = type;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
+	for (Unit *u = Unit_FindFirst(&find, houseID, type);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (u->o.linkedID != 0xFF) continue;
 		if (u->targetMove != 0) continue;
 		unit = u;

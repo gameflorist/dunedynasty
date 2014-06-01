@@ -100,6 +100,7 @@ static const AISquadPlan aisquad_attack_plan[NUM_AISQUAD_ATTACK_PLANS] = {
 static AISquad s_aisquad[SQUADID_MAX + 1];
 
 static int UnitAI_CountUnits(enum HouseType houseID, enum UnitType unit_type);
+static Unit *UnitAI_SquadFindNext(PoolFindStruct *find, const AISquad *squad);
 
 /*--------------------------------------------------------------*/
 
@@ -206,11 +207,7 @@ StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType hou
 			break;
 
 		case STRUCTURE_HIGH_TECH:
-			find.houseID = houseID;
-			find.index   = 0xFFFF;
-			find.type    = UNIT_CARRYALL;
-
-			if (Unit_Find(&find))
+			if (Unit_FindFirst(&find, houseID, UNIT_CARRYALL))
 				buildable &= ~FLAG_UNIT_CARRYALL;
 			break;
 
@@ -410,18 +407,14 @@ StructureAI_PickNextToBuild(const Structure *s)
 uint16
 UnitAI_GetAnyEnemyInRange(const Unit *unit)
 {
-	UnitInfo *ui = &g_table_unitInfo[unit->o.type];
-	enum HouseType houseID = Unit_GetHouseID(unit);
-	int dist = max(4, ui->fireDistance);
-
+	const UnitInfo *ui = &g_table_unitInfo[unit->o.type];
+	const enum HouseType houseID = Unit_GetHouseID(unit);
+	const int dist = max(4, ui->fireDistance);
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.index = 0xFFFF;
-	find.type = 0xFFFF;
-
-	Unit *u = Unit_Find(&find);
-	while (u != NULL) {
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (u->o.type == UNIT_SANDWORM) {
 		}
 		else if (House_AreAllied(houseID, Unit_GetHouseID(u))) {
@@ -431,8 +424,6 @@ UnitAI_GetAnyEnemyInRange(const Unit *unit)
 		else if (Tile_GetDistanceRoundedUp(unit->o.position, u->o.position) <= dist) {
 			return Tools_Index_Encode(u->o.index, IT_UNIT);
 		}
-
-		u = Unit_Find(&find);
 	}
 
 	for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
@@ -456,23 +447,17 @@ UnitAI_CallCarryallToEvadeSandworm(const Unit *harvester)
 		return true;
 
 	PoolFindStruct find;
-	Unit *sandworm;
 	bool sandworm_is_close = false;
 
-	find.houseID = HOUSE_INVALID;
-	find.type = UNIT_SANDWORM;
-	find.index = 0xFFFF;
-
-	sandworm = Unit_Find(&find);
-	while (sandworm != NULL) {
+	for (const Unit *sandworm = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_SANDWORM);
+			sandworm != NULL;
+			sandworm = Unit_FindNext(&find)) {
 		const uint16 distance = Tile_GetDistanceRoundedUp(harvester->o.position, sandworm->o.position);
 
 		if (distance <= 5) {
 			sandworm_is_close = true;
 			break;
 		}
-
-		sandworm = Unit_Find(&find);
 	}
 
 	if (!sandworm_is_close)
@@ -630,15 +615,23 @@ UnitAI_SquadPlotWaypoints(AISquad *squad, Unit *unit, uint16 target_encoded)
 }
 
 static Unit *
-UnitAI_SquadFind(const AISquad *squad, PoolFindStruct *find)
+UnitAI_SquadFindFirst(PoolFindStruct *find, const AISquad *squad)
 {
-	Unit *u = Unit_Find(find);
+	find->houseID = squad->houseID;
+	find->type    = UNIT_INVALID;
+	find->index   = 0xFFFF;
 
-	while (u != NULL) {
+	return UnitAI_SquadFindNext(find, squad);
+}
+
+static Unit *
+UnitAI_SquadFindNext(PoolFindStruct *find, const AISquad *squad)
+{
+	Unit *u;
+
+	while ((u = Unit_FindNext(find)) != NULL) {
 		if (u->aiSquad == squad->aiSquad)
 			return u;
-
-		u = Unit_Find(find);
 	}
 
 	return NULL;
@@ -728,16 +721,11 @@ UnitAI_SquadCharge(AISquad *squad)
 {
 	PoolFindStruct find;
 
-	find.houseID = squad->houseID;
-	find.type = 0xFFFF;
-	find.index = 0xFFFF;
-
-	Unit *u = UnitAI_SquadFind(squad, &find);
-	while (u != NULL) {
+	for (Unit *u = UnitAI_SquadFindFirst(&find, squad);
+			u != NULL;
+			u = UnitAI_SquadFindNext(&find, squad)) {
 		Unit_Server_SetAction(u, ACTION_HUNT);
 		u->targetAttack = squad->target;
-
-		u = UnitAI_SquadFind(squad, &find);
 	}
 }
 
@@ -759,16 +747,11 @@ UnitAI_DisbandSquad(AISquad *squad)
 {
 	PoolFindStruct find;
 
-	find.houseID = squad->houseID;
-	find.type = 0xFFFF;
-	find.index = 0xFFFF;
-
-	Unit *u = UnitAI_SquadFind(squad, &find);
-	while (u != NULL) {
+	for (Unit *u = UnitAI_SquadFindFirst(&find, squad);
+			u != NULL;
+			u = UnitAI_SquadFindNext(&find, squad)) {
 		u->aiSquad = SQUADID_INVALID;
 		Unit_SetTarget(u, squad->target);
-
-		u = UnitAI_SquadFind(squad, &find);
 	}
 
 	squad->num_members = 0;
@@ -820,16 +803,11 @@ UnitAI_SquadIsInFormation(const AISquad *squad)
 	if (g_timerGame > squad->formation_timeout)
 		return true;
 
-	find.houseID = squad->houseID;
-	find.type = 0xFFFF;
-	find.index = 0xFFFF;
-
-	Unit *u = UnitAI_SquadFind(squad, &find);
-	while (u != NULL) {
+	for (Unit *u = UnitAI_SquadFindFirst(&find, squad);
+			u != NULL;
+			u = UnitAI_SquadFindNext(&find, squad)) {
 		if (u->targetMove != 0)
 			return false;
-
-		u = UnitAI_SquadFind(squad, &find);
 	}
 
 	return true;
@@ -858,12 +836,9 @@ UnitAI_SquadIsGathered(const AISquad *squad)
 		destination = Tile_UnpackTile(packed);
 	}
 
-	find.houseID = squad->houseID;
-	find.type = 0xFFFF;
-	find.index = 0xFFFF;
-
-	Unit *u = UnitAI_SquadFind(squad, &find);
-	while (u != NULL) {
+	for (Unit *u = UnitAI_SquadFindFirst(&find, squad);
+			u != NULL;
+			u = UnitAI_SquadFindNext(&find, squad)) {
 		int dist = Tile_GetDistanceRoundedUp(u->o.position, destination);
 		int proximity = max(8, g_table_unitInfo[u->o.type].fireDistance + 2);
 
@@ -873,8 +848,6 @@ UnitAI_SquadIsGathered(const AISquad *squad)
 		if (dist >= proximity) {
 			return false;
 		}
-
-		u = UnitAI_SquadFind(squad, &find);
 	}
 
 	return true;
@@ -912,12 +885,9 @@ UnitAI_ArrangeBattleFormation(AISquad *squad)
 
 	PoolFindStruct find;
 
-	find.houseID = squad->houseID;
-	find.type = 0xFFFF;
-	find.index = 0xFFFF;
-
-	Unit *u = UnitAI_SquadFind(squad, &find);
-	while (u != NULL) {
+	for (Unit *u = UnitAI_SquadFindFirst(&find, squad);
+			u != NULL;
+			u = UnitAI_SquadFindNext(&find, squad)) {
 		u->targetMove = Tools_Index_Encode(Tile_PackXY(ux, uy), IT_TILE);
 
 		/* We need the destination to be precise! */
@@ -929,7 +899,6 @@ UnitAI_ArrangeBattleFormation(AISquad *squad)
 
 		rank++;
 		sign = -sign;
-		u = UnitAI_SquadFind(squad, &find);
 	}
 
 	/* Time to build formation, 60 ticks per second. */

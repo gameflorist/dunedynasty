@@ -381,15 +381,9 @@ static void House_EnsureHarvesterAvailable(uint8 houseID)
 		if (Unit_Get_ByIndex(s->o.linkedID)->o.type == UNIT_HARVESTER) return;
 	}
 
-	find.houseID = houseID;
-	find.type    = UNIT_CARRYALL;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
+	for (const Unit *u = Unit_FindFirst(&find, houseID, UNIT_CARRYALL);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (u->o.linkedID == UNIT_INVALID) continue;
 		if (Unit_Get_ByIndex(u->o.linkedID)->o.type == UNIT_HARVESTER) return;
 	}
@@ -484,7 +478,6 @@ House_Server_ReassignToAI(enum HouseType houseID)
 	/* Might as well fix up all AI houses while we're at it. */
 	const enum HouseFlag ai_houses = House_GetAIs();
 	PoolFindStruct find;
-	Unit *u;
 
 	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 			s != NULL;
@@ -492,11 +485,9 @@ House_Server_ReassignToAI(enum HouseType houseID)
 		s->o.seenByHouses |= ai_houses;
 	}
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while ((u = Unit_Find(&find)) != NULL) {
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		u->o.seenByHouses |= ai_houses;
 	}
 }

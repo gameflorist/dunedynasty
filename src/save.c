@@ -159,17 +159,10 @@ SaveFile(const char *filename, const char *description)
 			tile->overlaySpriteID = g_veiledSpriteID;
 		}
 
-		find.houseID = HOUSE_INVALID;
-		find.type    = 0xFFFF;
-		find.index   = 0xFFFF;
-
 		/* Remove the fog of war for all units */
-		while (true) {
-			Unit *u;
-
-			u = Unit_Find(&find);
-			if (u == NULL) break;
-
+		for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+				u != NULL;
+				u = Unit_FindNext(&find)) {
 			Unit_RemoveFog(UNVEILCAUSE_INITIALISATION, u);
 		}
 

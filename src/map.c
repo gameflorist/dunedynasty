@@ -420,22 +420,15 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 
 	if (!s_debugNoExplosionDamage && hitpoints != 0) {
 		PoolFindStruct find;
-		find.houseID = HOUSE_INVALID;
-		find.index   = 0xFFFF;
-		find.type    = 0xFFFF;
 
-		while (true) {
-			const UnitInfo *ui;
+		for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+				u != NULL;
+				u = Unit_FindNext(&find)) {
+			const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 			uint16 distance;
 			Team *t;
-			Unit *u;
 			Unit *us;
 			Unit *attack;
-
-			u = Unit_Find(&find);
-			if (u == NULL) break;
-
-			ui = &g_table_unitInfo[u->o.type];
 
 			distance = Tile_GetDistance(position, u->o.position) >> 4;
 			if (distance >= reactionDistance) continue;
@@ -618,16 +611,9 @@ void Map_DeviateArea(uint16 type, tile32 position, uint16 radius, uint8 houseID)
 
 	Explosion_Start(type, position);
 
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-	find.houseID = HOUSE_INVALID;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-
-		if (u == NULL) break;
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (Tile_GetDistance(position, u->o.position) / 16 >= radius) continue;
 
 		Unit_Deviate(u, 0, houseID);
@@ -794,17 +780,10 @@ void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID)
 
 	enemyHouseID = houseID;
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
 	/* Find a house that belongs to the enemy */
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (u->o.houseID == houseID) continue;
 
 		enemyHouseID = u->o.houseID;
@@ -922,14 +901,7 @@ Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID)
 				if (s != NULL) {
 					ret = Tile_PackTile(Tile_MoveByRandom(s->o.position, 120, true));
 				} else {
-					Unit *u;
-
-					find.houseID = houseID;
-					find.index   = 0xFFFF;
-					find.type    = 0xFFFF;
-
-					u = Unit_Find(&find);
-
+					const Unit *u = Unit_FindFirst(&find, houseID, UNIT_INVALID);
 					if (u != NULL) {
 						ret = Tile_PackTile(Tile_MoveByRandom(u->o.position, 120, true));
 					} else {

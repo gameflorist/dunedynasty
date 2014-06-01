@@ -228,13 +228,9 @@ uint16 Script_General_UnitCount(ScriptEngine *script)
 	uint16 count = 0;
 	PoolFindStruct find;
 
-	find.houseID = g_scriptCurrentObject->houseID;
-	find.type    = STACK_PEEK(1);
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u = Unit_Find(&find);
-		if (u == NULL) break;
+	for (const Unit *u = Unit_FindFirst(&find, g_scriptCurrentObject->houseID, STACK_PEEK(1));
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		count++;
 	}
 

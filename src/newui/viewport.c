@@ -183,19 +183,15 @@ Viewport_SelectRegion(void)
 		const int y1 = viewport_click_y;
 		const int x2 = selection_box_x2;
 		const int y2 = selection_box_y2;
-
 		PoolFindStruct find;
 
-		find.houseID = g_playerHouseID;
-		find.type = 0xFFFF;
-		find.index = 0xFFFF;
-
 		/* Try to find own units. */
-		Unit *u = Unit_Find(&find);
-		while (u != NULL) {
+		for (Unit *u = Unit_FindFirst(&find, g_playerHouseID, UNIT_INVALID);
+				u != NULL;
+				u = Unit_FindNext(&find)) {
 			const ObjectInfo *oi = &g_table_unitInfo[u->o.type].o;
-
 			int ux, uy;
+
 			Map_IsPositionInViewport(u->o.position, &ux, &uy);
 
 			if ((oi->flags.tabSelectable) &&
@@ -204,8 +200,6 @@ Viewport_SelectRegion(void)
 				if (!Unit_IsSelected(u))
 					Unit_Select(u);
 			}
-
-			u = Unit_Find(&find);
 		}
 
 		if (Unit_AnySelected()) {
@@ -867,12 +861,9 @@ Viewport_Hotkey(enum SquadID squad)
 	count = 0;
 
 	if (key_ctrl) {
-		find.houseID = HOUSE_INVALID;
-		find.type = 0xFFFF;
-		find.index = 0xFFFF;
-
-		Unit *u = Unit_Find(&find);
-		while (u != NULL) {
+		for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+				u != NULL;
+				u = Unit_FindNext(&find)) {
 			if ((Unit_GetHouseID(u) == g_playerHouseID) && Unit_IsSelected(u)) {
 				u->squadID = squad;
 
@@ -883,8 +874,6 @@ Viewport_Hotkey(enum SquadID squad)
 			else if (u->squadID == squad) {
 				u->squadID = SQUADID_INVALID;
 			}
-
-			u = Unit_Find(&find);
 		}
 
 		const Structure *st = Structure_Get_ByPackedTile(g_selectionPosition);
@@ -906,15 +895,11 @@ Viewport_Hotkey(enum SquadID squad)
 	}
 	else {
 		const bool key_shift = Input_Test(SCANCODE_LSHIFT);
-
 		bool modified_selection = false;
 
-		find.houseID = HOUSE_INVALID;
-		find.type = 0xFFFF;
-		find.index = 0xFFFF;
-
-		Unit *u = Unit_Find(&find);
-		while (u != NULL) {
+		for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+				u != NULL;
+				u = Unit_FindNext(&find)) {
 			const bool is_controllable = (Unit_GetHouseID(u) == g_playerHouseID);
 
 			if ((u->squadID == squad) && is_controllable) {
@@ -935,8 +920,6 @@ Viewport_Hotkey(enum SquadID squad)
 				cy += (u->o.position.y >> 4);
 				count++;
 			}
-
-			u = Unit_Find(&find);
 		}
 
 		if (!Unit_AnySelected()) {
@@ -1276,11 +1259,7 @@ Viewport_DrawSelectionHealthBars(void)
 	}
 
 	if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS) {
-		find.houseID = HOUSE_INVALID;
-		find.type = 0xFFFF;
-		find.index = 0xFFFF;
-
-		u = Unit_Find(&find);
+		u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
 	}
 
 	for (Unit *next = NULL; u != NULL; u = next) {
@@ -1288,7 +1267,7 @@ Viewport_DrawSelectionHealthBars(void)
 		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 
 		if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS) {
-			next = Unit_Find(&find);
+			next = Unit_FindNext(&find);
 
 			if ((Unit_GetHouseID(u) != g_playerHouseID) && !Unit_IsSelected(u))
 				continue;

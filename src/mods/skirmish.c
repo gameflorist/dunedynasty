@@ -311,11 +311,7 @@ Skirmish_StartScenario(void)
 	GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);
 	Scenario_CentreViewport(g_playerHouseID);
 
-	find.houseID = g_playerHouseID;
-	find.type = UNIT_MCV;
-	find.index = UNIT_INDEX_INVALID;
-
-	const Unit *u = Unit_Find(&find);
+	const Unit *u = Unit_FindFirst(&find, g_playerHouseID, UNIT_MCV);
 	assert(u != NULL);
 
 	Tile_RemoveFogInRadius(1 << g_playerHouseID, UNVEILCAUSE_LONG,
@@ -679,6 +675,7 @@ Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, Skirmi
 
 		PoolFindStruct find;
 		const Structure *s;
+		const Unit *u;
 
 		for (s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 				s != NULL;
@@ -697,12 +694,9 @@ Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, Skirmi
 		if (s != NULL)
 			continue;
 
-		find.houseID = HOUSE_INVALID;
-		find.type = 0xFFFF;
-		find.index = UNIT_INDEX_INVALID;
-
-		Unit *u;
-		while ((u = Unit_Find(&find)) != NULL) {
+		for (u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+				u != NULL;
+				u = Unit_FindNext(&find)) {
 			if (House_AreAllied(houseID, u->o.houseID))
 				continue;
 

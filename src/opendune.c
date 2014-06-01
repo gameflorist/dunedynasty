@@ -157,16 +157,11 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 
 		if (g_campaign_selected == CAMPAIGNID_SKIRMISH
 		 || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
-			find.houseID = HOUSE_INVALID;
-			find.type    = UNIT_MCV;
-			find.index   = 0xFFFF;
-
-			while (true) {
+			for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_MCV);
+					u != NULL;
+					u = Unit_FindNext(&find)) {
 				if (foundFriendly && foundEnemy)
 					break;
-
-				const Unit *u = Unit_Find(&find);
-				if (u == NULL) break;
 
 				const enum HouseType h2 = Unit_GetHouseID(u);
 				if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER
@@ -750,16 +745,9 @@ void Game_Prepare(void)
 
 	Map_Client_UpdateFogOfWar();
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (u->o.flags.s.isNotOnMap) continue;
 
 		Unit_RemoveFog(UNVEILCAUSE_INITIALISATION, u);

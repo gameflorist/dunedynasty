@@ -3,6 +3,10 @@
 #ifndef POOL_UNIT_H
 #define POOL_UNIT_H
 
+#include "enum_house.h"
+#include "enum_unit.h"
+#include "types.h"
+
 enum {
 	UNIT_INDEX_MAX = 102,                                   /*!< The highest possible index for any Unit. */
 
@@ -10,12 +14,14 @@ enum {
 };
 
 struct PoolFindStruct;
+struct Unit;
 
 extern struct Unit *g_unitFindArray[UNIT_INDEX_MAX];
 extern uint16 g_unitFindCount;
 
 extern struct Unit *Unit_Get_ByIndex(uint16 index);
-extern struct Unit *Unit_Find(struct PoolFindStruct *find);
+extern struct Unit *Unit_FindFirst(struct PoolFindStruct *find, enum HouseType houseID, enum UnitType type);
+extern struct Unit *Unit_FindNext(struct PoolFindStruct *find);
 
 extern void Unit_Init(void);
 extern void Unit_Recount(void);

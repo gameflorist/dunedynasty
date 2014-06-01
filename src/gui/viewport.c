@@ -34,16 +34,10 @@ void GUI_Widget_Viewport_Draw(void)
 
 	Viewport_DrawTiles();
 
-	{
-		find.type    = UNIT_SANDWORM;
-		find.index   = 0xFFFF;
-		find.houseID = HOUSE_INVALID;
-
-		Unit *u = Unit_Find(&find);
-		while (u != NULL) {
-			Viewport_DrawSandworm(u);
-			u = Unit_Find(&find);
-		}
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_SANDWORM);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		Viewport_DrawSandworm(u);
 	}
 
 	/* Draw selected unit under units. */
@@ -56,18 +50,12 @@ void GUI_Widget_Viewport_Draw(void)
 		Prim_Rect_i(x1, y1, x2, y2, 0xFF);
 	}
 
-	if (true) {
-		find.type    = 0xFFFF;
-		find.index   = 0xFFFF;
-		find.houseID = HOUSE_INVALID;
-
-		Unit *u = Unit_Find(&find);
-		while (u != NULL) {
-			if ((19 <= u->o.index && u->o.index <= 21 && !enhancement_invisible_saboteurs) ||
-			    (22 <= u->o.index && u->o.index <= 101))
-				Viewport_DrawUnit(u, 0, 0, false);
-
-			u = Unit_Find(&find);
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		if ((19 <= u->o.index && u->o.index <= 21 && !enhancement_invisible_saboteurs)
+		 || (22 <= u->o.index && u->o.index <= 101)) {
+			Viewport_DrawUnit(u, 0, 0, false);
 		}
 	}
 
@@ -95,18 +83,11 @@ void GUI_Widget_Viewport_Draw(void)
 		}
 	}
 
-	if (true) {
-		find.type    = 0xFFFF;
-		find.index   = 0xFFFF;
-		find.houseID = HOUSE_INVALID;
-
-		Unit *u = Unit_Find(&find);
-		while (u != NULL) {
-			if (u->o.index <= 15)
-				Viewport_DrawAirUnit(u);
-
-			u = Unit_Find(&find);
-		}
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		if (u->o.index <= 15)
+			Viewport_DrawAirUnit(u);
 	}
 
 	if ((g_viewportMessageCounter & 1) != 0 && g_viewportMessageText != NULL) {

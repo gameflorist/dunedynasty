@@ -1623,11 +1623,7 @@ void Scenario_CentreViewport(uint8 houseID)
 	}
 
 	/* ENHANCEMENT -- centre on MCV. */
-	find.houseID = houseID;
-	find.type = UNIT_MCV;
-	find.index = 0xFFFF;
-
-	Unit *u = Unit_Find(&find);
+	const Unit *u = Unit_FindFirst(&find, houseID, UNIT_MCV);
 	if (u != NULL) {
 		Map_CentreViewport(u->o.position.x >> 4, u->o.position.y >> 4);
 	}

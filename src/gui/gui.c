@@ -1170,16 +1170,9 @@ uint16 Update_Score(int16 score, uint16 *harvestedAllied, uint16 *harvestedEnemy
 
 	g_validateStrictIfZero++;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = UNIT_HARVESTER;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_HARVESTER);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (House_AreAllied(Unit_GetHouseID(u), g_playerHouseID)) {
 			locdi += u->amount * 7;
 		} else {
@@ -1306,16 +1299,9 @@ void GUI_DrawInterfaceAndRadar(void)
 	}
 #endif
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		Unit_UpdateMap(1, u);
 	}
 

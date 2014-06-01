@@ -65,13 +65,10 @@ GameLoop_Client_Unit(void)
 		return;
 
 	PoolFindStruct find;
-	Unit *u;
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while ((u = Unit_Find(&find)) != NULL) {
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 
 		Unit_RefreshFog(UNVEILCAUSE_UNIT_VISION, u, ui->flags.isGroundUnit);

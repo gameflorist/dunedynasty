@@ -138,17 +138,10 @@ bool Unit_Save(FILE *fp)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-		Unit su;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-		su = *u;
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		Unit su = *u;
 
 		/* In original Dune II savegames, speed was shifted right by 4. */
 		su.speed >>= 4;
@@ -200,17 +193,10 @@ bool UnitNew_Save(FILE *fp)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u;
-		Unit su;
-
-		u = Unit_Find(&find);
-		if (u == NULL) break;
-		su = *u;
+	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		Unit su = *u;
 
 		if (!SaveLoad_Save(s_saveUnitNewIndex, fp, &su.o)) return false;
 		if (!SaveLoad_Save(s_saveUnitNew, fp, &su)) return false;
@@ -272,15 +258,9 @@ Unit_Save2(FILE *fp)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Unit *u = Unit_Find(&find);
-		if (u == NULL)
-			break;
-
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
 		if (!SaveLoad_Save(s_saveUnit2, fp, u))
 			return false;
 	}

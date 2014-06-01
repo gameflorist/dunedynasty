@@ -35,14 +35,27 @@ Unit *Unit_Get_ByIndex(uint16 index)
 }
 
 /**
- * Find the first matching Unit based on the PoolFindStruct filter data.
- *
- * @param find A pointer to a PoolFindStruct which contains filter data and
- *   last known tried index. Calling this functions multiple times with the
- *   same 'find' parameter walks over all possible values matching the filter.
- * @return The Unit, or NULL if nothing matches (anymore).
+ * @brief   Start finding Units in g_unitFindArray.
  */
-Unit *Unit_Find(PoolFindStruct *find)
+Unit *
+Unit_FindFirst(PoolFindStruct *find,
+		enum HouseType houseID, enum UnitType type)
+{
+	assert(houseID < HOUSE_MAX || houseID == HOUSE_INVALID);
+	assert(type < UNIT_MAX || type == UNIT_INVALID);
+
+	find->houseID = (houseID < HOUSE_MAX) ? houseID : HOUSE_INVALID;
+	find->type    = (type < UNIT_MAX) ? type : 0xFFFF;
+	find->index   = 0xFFFF;
+
+	return Unit_FindNext(find);
+}
+
+/**
+ * @brief   Continue finding Units in g_unitFindArray.
+ */
+Unit *
+Unit_FindNext(PoolFindStruct *find)
 {
 	if (find->index >= g_unitFindCount && find->index != 0xFFFF) return NULL;
 	find->index++; /* First, we always go to the next index */
