@@ -146,6 +146,7 @@ Team_Allocate(uint16 index)
 /**
  * @brief   Free a Team.
  */
+#if 0
 void
 Team_Free(Team *t)
 {
@@ -170,3 +171,4 @@ Team_Free(Team *t)
 				(g_teamFindCount - i) * sizeof(g_teamFindArray[0]));
 	}
 }
+#endif
