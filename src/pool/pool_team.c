@@ -15,6 +15,10 @@
 #include "../house.h"
 #include "../team.h"
 
+enum {
+	TEAM_INDEX_MAX = 16
+};
+
 static struct Team g_teamArray[TEAM_INDEX_MAX];
 static struct Team *g_teamFindArray[TEAM_INDEX_MAX];
 static uint16 g_teamFindCount;
@@ -32,14 +36,25 @@ Team *Team_Get_ByIndex(uint16 index)
 }
 
 /**
- * Find the first matching Team based on the PoolFindStruct filter data.
- *
- * @param find A pointer to a PoolFindStruct which contains filter data and
- *   last known tried index. Calling this functions multiple times with the
- *   same 'find' parameter walks over all possible values matching the filter.
- * @return The Team, or NULL if nothing matches (anymore).
+ * @brief   Start finding Teams in g_teamFindArray.
  */
-Team *Team_Find(PoolFindStruct *find)
+Team *
+Team_FindFirst(PoolFindStruct *find, enum HouseType houseID)
+{
+	assert(houseID < HOUSE_MAX || houseID == HOUSE_INVALID);
+
+	find->houseID = (houseID < HOUSE_MAX) ? houseID : HOUSE_INVALID;
+	find->type    = 0xFFFF;
+	find->index   = 0xFFFF;
+
+	return Team_FindNext(find);
+}
+
+/**
+ * @brief   Continue finding Teams in g_teamFindArray.
+ */
+Team *
+Team_FindNext(PoolFindStruct *find)
 {
 	if (find->index >= g_teamFindCount && find->index != 0xFFFF) return NULL;
 	find->index++; /* First, we always go to the next index */

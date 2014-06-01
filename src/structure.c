@@ -1492,16 +1492,9 @@ void Structure_UntargetMe(Structure *s)
 		if (u->o.script.variables[4] == encoded) Object_Script_Variable4_Clear(&u->o);
 	}
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
-	while (true) {
-		Team *t;
-
-		t = Team_Find(&find);
-		if (t == NULL) break;
-
+	for (Team *t = Team_FindFirst(&find, HOUSE_INVALID);
+			t != NULL;
+			t = Team_FindNext(&find)) {
 		if (t->target == encoded) t->target = 0;
 	}
 }

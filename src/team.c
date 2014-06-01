@@ -25,22 +25,14 @@ void GameLoop_Team(void)
 	if (g_tickTeamGameLoop > g_timerGame) return;
 	g_tickTeamGameLoop = g_timerGame + (Tools_Random_256() & 7) + 5;
 
-	find.houseID = HOUSE_INVALID;
-	find.index   = 0xFFFF;
-	find.type    = 0xFFFF;
-
 	g_scriptCurrentObject    = NULL;
 	g_scriptCurrentUnit      = NULL;
 	g_scriptCurrentStructure = NULL;
 
-	while (true) {
-		Team *t;
-		House *h;
-
-		t = Team_Find(&find);
-		if (t == NULL) break;
-
-		h = House_Get_ByIndex(t->houseID);
+	for (Team *t = Team_FindFirst(&find, HOUSE_INVALID);
+			t != NULL;
+			t = Team_FindNext(&find)) {
+		const House *h = House_Get_ByIndex(t->houseID);
 
 		g_scriptCurrentTeam = t;
 

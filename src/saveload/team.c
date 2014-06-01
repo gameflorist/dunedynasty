@@ -73,17 +73,10 @@ bool Team_Save(FILE *fp)
 {
 	PoolFindStruct find;
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Team *t;
-		Team st;
-
-		t = Team_Find(&find);
-		if (t == NULL) break;
-		st = *t;
+	for (const Team *t = Team_FindFirst(&find, HOUSE_INVALID);
+			t != NULL;
+			t = Team_FindNext(&find)) {
+		Team st = *t;
 
 		if (!SaveLoad_Save(s_saveTeam, fp, &st)) return false;
 	}

@@ -3,16 +3,19 @@
 #ifndef POOL_TEAM_H
 #define POOL_TEAM_H
 
-enum {
-	TEAM_INDEX_MAX = 16,                                 /*!< The highest possible index for any Team.  */
+#include "enum_house.h"
+#include "types.h"
 
+enum {
 	TEAM_INDEX_INVALID = 0xFFFF
 };
 
 struct PoolFindStruct;
+struct Team;
 
 extern struct Team *Team_Get_ByIndex(uint16 index);
-extern struct Team *Team_Find(struct PoolFindStruct *find);
+extern struct Team *Team_FindFirst(struct PoolFindStruct *find, enum HouseType houseID);
+extern struct Team *Team_FindNext(struct PoolFindStruct *find);
 
 extern void Team_Init(void);
 extern void Team_Recount(void);

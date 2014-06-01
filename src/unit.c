@@ -2023,16 +2023,9 @@ void Unit_UntargetMe(Unit *unit)
 	UnitAI_DetachFromSquad(unit);
 	Unit_RemoveFromTeam(unit);
 
-	find.houseID = HOUSE_INVALID;
-	find.type    = 0xFFFF;
-	find.index   = 0xFFFF;
-
-	while (true) {
-		Team *t;
-
-		t = Team_Find(&find);
-		if (t == NULL) break;
-
+	for (Team *t = Team_FindFirst(&find, HOUSE_INVALID);
+			t != NULL;
+			t = Team_FindNext(&find)) {
 		if (t->target == encoded) t->target = 0;
 	}
 }
