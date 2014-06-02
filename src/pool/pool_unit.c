@@ -15,12 +15,18 @@
 #include "../opendune.h"
 #include "../unit.h"
 
+/** variable_35E8. */
 static Unit g_unitArray[UNIT_INDEX_MAX];
+
+/** variable_843E. */
 struct Unit *g_unitFindArray[UNIT_INDEX_MAX];
+
+/** variable_35EC. */
 uint16 g_unitFindCount;
 
 /**
  * @brief   Get the Unit from the pool with the indicated index.
+ * @details f__0FE4_05FD_002C_15BA.
  */
 Unit *
 Unit_Get_ByIndex(uint16 index)
@@ -31,6 +37,8 @@ Unit_Get_ByIndex(uint16 index)
 
 /**
  * @brief   Start finding Units in g_unitFindArray.
+ * @details f__0FE4_0243_003A_D5F2 and f__0FE4_0256_0027_2707.
+ *          Removed global find struct for when find=NULL.
  */
 Unit *
 Unit_FindFirst(PoolFindStruct *find,
@@ -48,6 +56,8 @@ Unit_FindFirst(PoolFindStruct *find,
 
 /**
  * @brief   Continue finding Units in g_unitFindArray.
+ * @details f__0FE4_0283_0038_4950 and f__0FE4_029B_0020_87FE.
+ *          Removed global find struct for when find=NULL.
  */
 Unit *
 Unit_FindNext(PoolFindStruct *find)
@@ -81,6 +91,7 @@ Unit_FindNext(PoolFindStruct *find)
 
 /**
  * @brief   Initialise the Unit pool.
+ * @details f__0FE4_013F_001C_39CA.
  */
 void
 Unit_Init(void)
@@ -97,6 +108,7 @@ Unit_Init(void)
 
 /**
  * @brief   Recount all Units, rebuilding g_unitFindArray.
+ * @details f__0FE4_018D_0012_A3C7.
  */
 void
 Unit_Recount(void)
@@ -126,6 +138,7 @@ Unit_Recount(void)
 
 /**
  * @brief   Allocate a Unit.
+ * @details f__0FE4_03A7_0027_85D5.
  */
 Unit *
 Unit_Allocate(uint16 index, enum UnitType type, enum HouseType houseID)
@@ -196,6 +209,7 @@ Unit_Allocate(uint16 index, enum UnitType type, enum HouseType houseID)
 
 /**
  * @brief   Free a Unit.
+ * @details f__0FE4_0568_0018_8258.
  */
 void
 Unit_Free(Unit *u)
