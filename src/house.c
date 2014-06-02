@@ -370,6 +370,7 @@ static void House_EnsureHarvesterAvailable(uint8 houseID)
 {
 	PoolFindStruct find;
 	const Structure *s;
+	const Unit *u;
 
 	for (s = Structure_FindFirst(&find, houseID, STRUCTURE_INVALID);
 			s != NULL;
@@ -381,14 +382,15 @@ static void House_EnsureHarvesterAvailable(uint8 houseID)
 		if (Unit_Get_ByIndex(s->o.linkedID)->o.type == UNIT_HARVESTER) return;
 	}
 
-	for (const Unit *u = Unit_FindFirst(&find, houseID, UNIT_CARRYALL);
+	for (u = Unit_FindFirst(&find, houseID, UNIT_CARRYALL);
 			u != NULL;
 			u = Unit_FindNext(&find)) {
 		if (u->o.linkedID == UNIT_INVALID) continue;
 		if (Unit_Get_ByIndex(u->o.linkedID)->o.type == UNIT_HARVESTER) return;
 	}
 
-	if (Unit_IsTypeOnMap(houseID, UNIT_HARVESTER)) return;
+	u = Unit_FindFirst(&find, houseID, UNIT_HARVESTER);
+	if (u != NULL) return;
 
 	s = Structure_FindFirst(&find, houseID, STRUCTURE_REFINERY);
 	if (s == NULL) return;

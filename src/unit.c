@@ -683,30 +683,6 @@ Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, in
 }
 
 /**
- * Checks if a Unit is on the map.
- *
- * @param houseID The House of the Unit.
- * @param typeID The type of the Unit.
- * @return Returns true if and only if a Unit with the given attributes is on the map.
- */
-bool Unit_IsTypeOnMap(uint8 houseID, uint8 typeID)
-{
-	uint16 i;
-
-	for (i = 0; i < g_unitFindCount; i++) {
-		Unit *u;
-
-		u = g_unitFindArray[i];
-		if (houseID != HOUSE_INVALID && Unit_GetHouseID(u) != houseID) continue;
-		if (typeID != UNIT_INVALID && u->o.type != typeID) continue;
-		if (g_validateStrictIfZero == 0 && u->o.flags.s.isNotOnMap) continue;
-
-		return true;
-	}
-	return false;
-}
-
-/**
  * Sets the action the given unit will execute.
  *
  * @param u The Unit to set the action for.
