@@ -5,9 +5,7 @@
  */
 
 #include <assert.h>
-#include <stdio.h>
 #include <string.h>
-#include "types.h"
 
 #include "pool_unit.h"
 
@@ -17,18 +15,15 @@
 #include "../opendune.h"
 #include "../unit.h"
 
-
-static struct Unit g_unitArray[UNIT_INDEX_MAX];
+static Unit g_unitArray[UNIT_INDEX_MAX];
 struct Unit *g_unitFindArray[UNIT_INDEX_MAX];
 uint16 g_unitFindCount;
 
 /**
- * Get a Unit from the pool with the indicated index.
- *
- * @param index The index of the Unit to get.
- * @return The Unit.
+ * @brief   Get the Unit from the pool with the indicated index.
  */
-Unit *Unit_Get_ByIndex(uint16 index)
+Unit *
+Unit_Get_ByIndex(uint16 index)
 {
 	assert(index < UNIT_INDEX_MAX);
 	return &g_unitArray[index];
@@ -57,16 +52,26 @@ Unit_FindFirst(PoolFindStruct *find,
 Unit *
 Unit_FindNext(PoolFindStruct *find)
 {
-	if (find->index >= g_unitFindCount && find->index != 0xFFFF) return NULL;
-	find->index++; /* First, we always go to the next index */
+	if (find->index >= g_unitFindCount && find->index != 0xFFFF)
+		return NULL;
+
+	/* First, go to the next index. */
+	find->index++;
 
 	for (; find->index < g_unitFindCount; find->index++) {
 		Unit *u = g_unitFindArray[find->index];
-		if (u == NULL) continue;
 
-		if (u->o.flags.s.isNotOnMap && g_validateStrictIfZero == 0) continue;
-		if (find->houseID != HOUSE_INVALID       && find->houseID != Unit_GetHouseID(u)) continue;
-		if (find->type    != UNIT_INDEX_INVALID  && find->type    != u->o.type)  continue;
+		if (u == NULL)
+			continue;
+
+		if (u->o.flags.s.isNotOnMap && g_validateStrictIfZero == 0)
+			continue;
+
+		if (find->houseID != HOUSE_INVALID && find->houseID != Unit_GetHouseID(u))
+			continue;
+
+		if (find->type != 0xFFFF && find->type != u->o.type)
+			continue;
 
 		return u;
 	}
@@ -75,26 +80,27 @@ Unit_FindNext(PoolFindStruct *find)
 }
 
 /**
- * Initialize the Unit array.
+ * @brief   Initialise the Unit pool.
  */
-void Unit_Init(void)
+void
+Unit_Init(void)
 {
 	memset(g_unitArray, 0, sizeof(g_unitArray));
 	memset(g_unitFindArray, 0, sizeof(g_unitFindArray));
 	g_unitFindCount = 0;
 
-	for (int i = 0; i < UNIT_INDEX_MAX; i++) {
+	/* ENHANCEMENT -- Ensure the index is always valid. */
+	for (unsigned int i = 0; i < UNIT_INDEX_MAX; i++) {
 		g_unitArray[i].o.index = i;
 	}
 }
 
 /**
- * Recount all Units, ignoring the cache array. Also set the unitCount
- *  of all houses to zero.
+ * @brief   Recount all Units, rebuilding g_unitFindArray.
  */
-void Unit_Recount(void)
+void
+Unit_Recount(void)
 {
-	uint16 index;
 	PoolFindStruct find;
 
 	for (House *h = House_FindFirst(&find, HOUSE_INVALID);
@@ -105,106 +111,118 @@ void Unit_Recount(void)
 
 	g_unitFindCount = 0;
 
-	for (index = 0; index < UNIT_INDEX_MAX; index++) {
+	for (unsigned int index = 0; index < UNIT_INDEX_MAX; index++) {
 		Unit *u = Unit_Get_ByIndex(index);
-		if (!u->o.flags.s.used) continue;
 
-		House *h = House_Get_ByIndex(u->o.houseID);
-		h->unitCount++;
+		if (u->o.flags.s.used) {
+			House *h = House_Get_ByIndex(u->o.houseID);
+			h->unitCount++;
 
-		g_unitFindArray[g_unitFindCount++] = u;
+			g_unitFindArray[g_unitFindCount] = u;
+			g_unitFindCount++;
+		}
 	}
 }
 
 /**
- * Allocate a Unit.
- *
- * @param index The index to use, or UNIT_INDEX_INVALID to find an unused index.
- * @param typeID The type of the new Unit.
- * @param houseID The House of the new Unit.
- * @return The Unit allocated, or NULL on failure.
+ * @brief   Allocate a Unit.
  */
-Unit *Unit_Allocate(uint16 index, uint8 type, uint8 houseID)
+Unit *
+Unit_Allocate(uint16 index, enum UnitType type, enum HouseType houseID)
 {
-	House *h;
 	Unit *u = NULL;
+	assert(type < UNIT_MAX);
+	assert(houseID < HOUSE_MAX);
 
-	if (type == 0xFF || houseID == 0xFF) return NULL;
+	{
+		const UnitInfo *ui = &g_table_unitInfo[type];
+		House *h = House_Get_ByIndex(houseID);
 
-	h = House_Get_ByIndex(houseID);
-	if (h->unitCount >= h->unitCountMax) {
-		if (g_table_unitInfo[type].movementType != MOVEMENT_WINGER && g_table_unitInfo[type].movementType != MOVEMENT_SLITHER) {
-			if (g_validateStrictIfZero == 0) return NULL;
+		if ((g_validateStrictIfZero == 0)
+				&& (h->unitCount >= h->unitCountMax)) {
+			if (ui->movementType != MOVEMENT_WINGER
+			 && ui->movementType != MOVEMENT_SLITHER) {
+				return NULL;
+			}
 		}
-	}
 
-	if (index == 0 || index == UNIT_INDEX_INVALID) {
-		uint16 indexStart = g_table_unitInfo[type].indexStart;
-		uint16 indexEnd   = g_table_unitInfo[type].indexEnd;
-
-		for (index = indexStart; index <= indexEnd; index++) {
+		if (0 < index && index < UNIT_INDEX_MAX) {
 			u = Unit_Get_ByIndex(index);
-			if (!u->o.flags.s.used) break;
+			if (u->o.flags.s.used)
+				return NULL;
 		}
-		if (index > indexEnd) return NULL;
-	} else {
-		u = Unit_Get_ByIndex(index);
-		if (u->o.flags.s.used) return NULL;
+		else {
+			/* Find the first unused index. */
+			for (index = ui->indexStart; index <= ui->indexEnd; index++) {
+				u = Unit_Get_ByIndex(index);
+				if (!u->o.flags.s.used)
+					break;
+			}
+			if (index > ui->indexEnd)
+				return NULL;
+		}
+
+		h->unitCount++;
 	}
 	assert(u != NULL);
 
-	h->unitCount++;
-
-	/* Initialize the Unit */
+	/* Initialise the Unit. */
 	memset(u, 0, sizeof(Unit));
-	u->o.index                   = index;
-	u->o.type                    = type;
-	u->o.houseID                 = houseID;
-	u->o.linkedID                = 0xFF;
-	u->o.flags.s.used            = true;
-	u->o.flags.s.allocated       = true;
-	u->o.flags.s.isUnit = true;
-	u->o.script.delay      = 0;
-	u->route[0]            = 0xFF;
-	u->permanentFollow = false;
-	u->detonateAtTarget = false;
+	u->o.index              = index;
+	u->o.type               = type;
+	u->o.houseID            = houseID;
+	u->o.linkedID           = 0xFF;
+	u->o.flags.s.used       = true;
+	u->o.flags.s.allocated  = true;
+	u->o.flags.s.isUnit     = true;
+	u->o.script.delay       = 0;
+	u->route[0]             = 0xFF;
+
+	if (type == UNIT_SANDWORM)
+		u->amount = 3;
+
+	/* ENHANCEMENT -- Introduced variables. */
+	u->permanentFollow      = false;
+	u->detonateAtTarget     = false;
 	u->deviationDecremented = false;
 	u->squadID = SQUADID_INVALID;
 	u->aiSquad = SQUADID_INVALID;
-	if (type == UNIT_SANDWORM) u->amount = 3;
 
-	g_unitFindArray[g_unitFindCount++] = u;
+	g_unitFindArray[g_unitFindCount] = u;
+	g_unitFindCount++;
 
 	return u;
 }
 
 /**
- * Free a Unit.
- *
- * @param address The address of the Unit to free.
+ * @brief   Free a Unit.
  */
-void Unit_Free(Unit *u)
+void
+Unit_Free(Unit *u)
 {
-	int i;
+	unsigned int i;
 
 	memset(&u->o.flags, 0, sizeof(u->o.flags));
 
 	Script_Reset(&u->o.script, g_scriptUnit);
 
-	/* Walk the array to find the Unit we are removing */
+	/* Find the Unit to remove. */
 	for (i = 0; i < g_unitFindCount; i++) {
-		if (g_unitFindArray[i] == u) break;
+		if (g_unitFindArray[i] == u)
+			break;
 	}
-	assert(i < g_unitFindCount); /* We should always find an entry */
+
+	/* We should always find an entry. */
+	assert(i < g_unitFindCount);
 
 	g_unitFindCount--;
 
-	{
-		House *h = House_Get_ByIndex(u->o.houseID);
-		h->unitCount--;
-	}
+	House *h = House_Get_ByIndex(u->o.houseID);
+	h->unitCount--;
 
-	/* If needed, close the gap */
-	if (i == g_unitFindCount) return;
-	memmove(&g_unitFindArray[i], &g_unitFindArray[i + 1], (g_unitFindCount - i) * sizeof(g_unitFindArray[0]));
+	/* If needed, close the gap. */
+	if (i < g_unitFindCount) {
+		memmove(&g_unitFindArray[i], &g_unitFindArray[i + 1],
+				(g_unitFindCount - i) * sizeof(g_unitFindArray[0]));
+	}
 }

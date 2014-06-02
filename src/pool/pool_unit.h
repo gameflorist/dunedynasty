@@ -8,9 +8,9 @@
 #include "types.h"
 
 enum {
-	UNIT_INDEX_MAX = 102,                                   /*!< The highest possible index for any Unit. */
+	UNIT_INDEX_MAX      = 102, /* Highest index for any Unit. */
 
-	UNIT_INDEX_INVALID = 0xFFFF
+	UNIT_INDEX_INVALID  = 0xFFFF
 };
 
 struct PoolFindStruct;
@@ -25,7 +25,7 @@ extern struct Unit *Unit_FindNext(struct PoolFindStruct *find);
 
 extern void Unit_Init(void);
 extern void Unit_Recount(void);
-extern struct Unit *Unit_Allocate(uint16 index, uint8 type, uint8 houseID);
+extern struct Unit *Unit_Allocate(uint16 index, enum UnitType type, enum HouseType houseID);
 extern void Unit_Free(struct Unit *u);
 
 #endif
