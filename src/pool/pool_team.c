@@ -17,13 +17,13 @@ enum {
 };
 
 /** variable_35EE. */
-static Team g_teamArray[TEAM_INDEX_MAX];
+static Team s_teamArray[TEAM_INDEX_MAX];
 
 /** variable_85DC. */
-static Team *g_teamFindArray[TEAM_INDEX_MAX];
+static Team *s_teamFindArray[TEAM_INDEX_MAX];
 
 /** variable_35F2. */
-static uint16 g_teamFindCount;
+static uint16 s_teamFindCount;
 
 /**
  * @brief   Get the Team from the pool with the indicated index.
@@ -33,11 +33,11 @@ Team *
 Team_Get_ByIndex(uint16 index)
 {
 	assert(index < TEAM_INDEX_MAX);
-	return &g_teamArray[index];
+	return &s_teamArray[index];
 }
 
 /**
- * @brief   Start finding Teams in g_teamFindArray.
+ * @brief   Start finding Teams in s_teamFindArray.
  * @details f__104B_00C2_0030_20A6 and f__104B_00D5_001D_2B68.
  *          Removed global find struct for when find=NULL.
  */
@@ -54,21 +54,21 @@ Team_FindFirst(PoolFindStruct *find, enum HouseType houseID)
 }
 
 /**
- * @brief   Continue finding Teams in g_teamFindArray.
+ * @brief   Continue finding Teams in s_teamFindArray.
  * @details 104B_00F8_002E_3820 and f__104B_0110_0016_6D19.
  *          Removed global find struct for when find=NULL.
  */
 Team *
 Team_FindNext(PoolFindStruct *find)
 {
-	if (find->index >= g_teamFindCount && find->index != 0xFFFF)
+	if (find->index >= s_teamFindCount && find->index != 0xFFFF)
 		return NULL;
 
 	/* First, go to the next index. */
 	find->index++;
 
-	for (; find->index < g_teamFindCount; find->index++) {
-		Team *t = g_teamFindArray[find->index];
+	for (; find->index < s_teamFindCount; find->index++) {
+		Team *t = s_teamFindArray[find->index];
 
 		if (t == NULL)
 			continue;
@@ -87,31 +87,31 @@ Team_FindNext(PoolFindStruct *find)
 void
 Team_Init(void)
 {
-	memset(g_teamArray, 0, sizeof(g_teamArray));
-	memset(g_teamFindArray, 0, sizeof(g_teamFindArray));
-	g_teamFindCount = 0;
+	memset(s_teamArray, 0, sizeof(s_teamArray));
+	memset(s_teamFindArray, 0, sizeof(s_teamFindArray));
+	s_teamFindCount = 0;
 
 	/* ENHANCEMENT -- Ensure the index is always valid. */
 	for (unsigned int i = 0; i < TEAM_INDEX_MAX; i++) {
-		g_teamArray[i].index = i;
+		s_teamArray[i].index = i;
 	}
 }
 
 /**
- * @brief   Recount all Teams, rebuilding g_teamFindArray.
+ * @brief   Recount all Teams, rebuilding s_teamFindArray.
  * @details f__104B_0006_0011_631B.
  */
 void
 Team_Recount(void)
 {
-	g_teamFindCount = 0;
+	s_teamFindCount = 0;
 
 	for (unsigned int index = 0; index < TEAM_INDEX_MAX; index++) {
 		Team *t = Team_Get_ByIndex(index);
 
 		if (t->flags.used) {
-			g_teamFindArray[g_teamFindCount] = t;
-			g_teamFindCount++;
+			s_teamFindArray[s_teamFindCount] = t;
+			s_teamFindCount++;
 		}
 	}
 }
@@ -150,8 +150,8 @@ Team_Allocate(uint16 index)
 	t->index      = index;
 	t->flags.used = true;
 
-	g_teamFindArray[g_teamFindCount] = t;
-	g_teamFindCount++;
+	s_teamFindArray[s_teamFindCount] = t;
+	s_teamFindCount++;
 
 	return t;
 }
@@ -169,20 +169,20 @@ Team_Free(Team *t)
 	memset(&t->flags, 0, sizeof(t->flags));
 
 	/* Find the Team to remove. */
-	for (i = 0; i < g_teamFindCount; i++) {
-		if (g_teamFindArray[i] == t)
+	for (i = 0; i < s_teamFindCount; i++) {
+		if (s_teamFindArray[i] == t)
 			break;
 	}
 
 	/* We should always find an entry. */
-	assert(i < g_teamFindCount);
+	assert(i < s_teamFindCount);
 
-	g_teamFindCount--;
+	s_teamFindCount--;
 
 	/* If needed, close the gap. */
-	if (i < g_teamFindCount) {
-		memmove(&g_teamFindArray[i], &g_teamFindArray[i + 1],
-				(g_teamFindCount - i) * sizeof(g_teamFindArray[0]));
+	if (i < s_teamFindCount) {
+		memmove(&s_teamFindArray[i], &s_teamFindArray[i + 1],
+				(s_teamFindCount - i) * sizeof(s_teamFindArray[0]));
 	}
 }
 #endif
