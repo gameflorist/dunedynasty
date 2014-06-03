@@ -44,7 +44,7 @@ Structure_SharesPoolElement(enum StructureType type)
 
 /**
  * @brief   Get the Structure from the pool with the indicated index.
- * @details 1082:03A1:0023:9F5D.
+ * @details f__1082_03A1_0023_9F5D.
  */
 Structure *
 Structure_Get_ByIndex(uint16 index)
