@@ -22,13 +22,13 @@
 #include "../structure.h"
 
 /** variable_35F4. */
-static Structure g_structureArray[STRUCTURE_INDEX_MAX_HARD];
+static Structure s_structureArray[STRUCTURE_INDEX_MAX_HARD];
 
 /** variable_8622. */
-static Structure *g_structureFindArray[STRUCTURE_INDEX_MAX_SOFT];
+static Structure *s_structureFindArray[STRUCTURE_INDEX_MAX_SOFT];
 
 /** variable_35F8. */
-static uint16 g_structureFindCount;
+static uint16 s_structureFindCount;
 
 /**
  * @brief    Returns true for structure types that share pool elements.
@@ -50,11 +50,11 @@ Structure *
 Structure_Get_ByIndex(uint16 index)
 {
 	assert(index < STRUCTURE_INDEX_MAX_HARD);
-	return &g_structureArray[index];
+	return &s_structureArray[index];
 }
 
 /**
- * @brief   Start finding Structures in g_structureFindArray.
+ * @brief   Start finding Structures in s_structureFindArray.
  * @details 1082_00FD_003A_D7E0 and f__1082_0110_0027_2707.
  *          Removed global find struct for when find=NULL.
  */
@@ -73,37 +73,37 @@ Structure_FindFirst(PoolFindStruct *find,
 }
 
 /**
- * @brief   Continue finding Structures in g_structureFindArray.
+ * @brief   Continue finding Structures in s_structureFindArray.
  * @details f__1082_013D_0038_4AF1 and f__1082_0155_0020_8556.
  *          Removed global find struct for when find=NULL.
  */
 Structure *
 Structure_FindNext(PoolFindStruct *find)
 {
-	if (find->index >= g_structureFindCount + 3 && find->index != 0xFFFF)
+	if (find->index >= s_structureFindCount + 3 && find->index != 0xFFFF)
 		return NULL;
 
 	/* First, go to the next index. */
 	find->index++;
 
-	assert(g_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
-	for (; find->index < g_structureFindCount + 3; find->index++) {
+	assert(s_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
+	for (; find->index < s_structureFindCount + 3; find->index++) {
 		Structure *s = NULL;
 
-		if (find->index < g_structureFindCount) {
-			s = g_structureFindArray[find->index];
+		if (find->index < s_structureFindCount) {
+			s = s_structureFindArray[find->index];
 		}
-		else if (find->index == g_structureFindCount + 0) {
+		else if (find->index == s_structureFindCount + 0) {
 			s = Structure_Get_ByIndex(STRUCTURE_INDEX_WALL);
 			assert(s->o.index == STRUCTURE_INDEX_WALL
 			    && s->o.type == STRUCTURE_WALL);
 		}
-		else if (find->index == g_structureFindCount + 1) {
+		else if (find->index == s_structureFindCount + 1) {
 			s = Structure_Get_ByIndex(STRUCTURE_INDEX_SLAB_2x2);
 			assert(s->o.index == STRUCTURE_INDEX_SLAB_2x2
 			    && s->o.type == STRUCTURE_SLAB_2x2);
 		}
-		else if (find->index == g_structureFindCount + 2) {
+		else if (find->index == s_structureFindCount + 2) {
 			s = Structure_Get_ByIndex(STRUCTURE_INDEX_SLAB_1x1);
 			assert(s->o.index == STRUCTURE_INDEX_SLAB_1x1
 			    && s->o.type == STRUCTURE_SLAB_1x1);
@@ -134,13 +134,13 @@ Structure_FindNext(PoolFindStruct *find)
 void
 Structure_Init(void)
 {
-	memset(g_structureArray, 0, sizeof(g_structureArray));
-	memset(g_structureFindArray, 0, sizeof(g_structureFindArray));
-	g_structureFindCount = 0;
+	memset(s_structureArray, 0, sizeof(s_structureArray));
+	memset(s_structureFindArray, 0, sizeof(s_structureFindArray));
+	s_structureFindCount = 0;
 
 	/* ENHANCEMENT -- Ensure the index is always valid. */
 	for (unsigned int i = 0; i < STRUCTURE_INDEX_MAX_HARD; i++) {
-		g_structureArray[i].o.index = i;
+		s_structureArray[i].o.index = i;
 	}
 
 	Structure_Allocate(0, STRUCTURE_SLAB_1x1);
@@ -149,7 +149,7 @@ Structure_Init(void)
 }
 
 /**
- * @brief   Recount all Structures, rebuilding g_structureFindArray.
+ * @brief   Recount all Structures, rebuilding s_structureFindArray.
  * @details f__1082_000F_0012_A3C7.
  */
 void
@@ -165,14 +165,14 @@ Structure_Recount(void)
 	}
 #endif
 
-	g_structureFindCount = 0;
+	s_structureFindCount = 0;
 
 	for (unsigned int i = 0; i < STRUCTURE_INDEX_MAX_SOFT; i++) {
 		Structure *s = Structure_Get_ByIndex(i);
 
 		if (s->o.flags.s.used) {
-			g_structureFindArray[g_structureFindCount] = s;
-			g_structureFindCount++;
+			s_structureFindArray[s_structureFindCount] = s;
+			s_structureFindCount++;
 		}
 	}
 }
@@ -222,9 +222,9 @@ Structure_Allocate(uint16 index, enum StructureType type)
 					return NULL;
 			}
 
-			assert(g_structureFindCount < STRUCTURE_INDEX_MAX_SOFT);
-			g_structureFindArray[g_structureFindCount] = s;
-			g_structureFindCount++;
+			assert(s_structureFindCount < STRUCTURE_INDEX_MAX_SOFT);
+			s_structureFindArray[s_structureFindCount] = s;
+			s_structureFindCount++;
 			break;
 	}
 	assert(s != NULL);
@@ -259,20 +259,20 @@ Structure_Free(Structure *s)
 		return;
 
 	/* Find the Structure to remove. */
-	assert(g_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
-	for (i = 0; i < g_structureFindCount; i++) {
-		if (g_structureFindArray[i] == s)
+	assert(s_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
+	for (i = 0; i < s_structureFindCount; i++) {
+		if (s_structureFindArray[i] == s)
 			break;
 	}
 
 	/* We should always find an entry. */
-	assert(i < g_structureFindCount);
+	assert(i < s_structureFindCount);
 
-	g_structureFindCount--;
+	s_structureFindCount--;
 
 	/* If needed, close the gap. */
-	if (i < g_structureFindCount) {
-		memmove(&g_structureFindArray[i], &g_structureFindArray[i + 1],
-				(g_structureFindCount - i) * sizeof(g_structureFindArray[0]));
+	if (i < s_structureFindCount) {
+		memmove(&s_structureFindArray[i], &s_structureFindArray[i + 1],
+				(s_structureFindCount - i) * sizeof(s_structureFindArray[0]));
 	}
 }
