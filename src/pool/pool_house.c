@@ -19,13 +19,13 @@ enum {
 };
 
 /** variable_35FA. */
-static House g_houseArray[HOUSE_INDEX_MAX];
+static House s_houseArray[HOUSE_INDEX_MAX];
 
 /** variable_87C0. */
-static House *g_houseFindArray[HOUSE_INDEX_MAX];
+static House *s_houseFindArray[HOUSE_INDEX_MAX];
 
 /** variable_35FE. */
-static uint16 g_houseFindCount;
+static uint16 s_houseFindCount;
 
 /**
  * @brief   Get the House from the pool with the indicated index.
@@ -36,11 +36,11 @@ House *
 House_Get_ByIndex(uint8 index)
 {
 	assert(index < HOUSE_INDEX_MAX);
-	return &g_houseArray[index];
+	return &s_houseArray[index];
 }
 
 /**
- * @brief   Start finding Houses in g_houseFindArray.
+ * @brief   Start finding Houses in s_houseFindArray.
  * @details f__10BE_01E2_0027_6596 and f__10BE_01F5_0014_C21B.
  *          Removed global find struct for when find=NULL.
  */
@@ -58,21 +58,21 @@ House_FindFirst(PoolFindStruct *find, enum HouseType houseID)
 }
 
 /**
- * @brief   Continue finding Houses in g_houseFindArray.
+ * @brief   Continue finding Houses in s_houseFindArray.
  * @details f__10BE_020F_004E_633B and f__10BE_0226_0037_B108.
  *          Removed global find struct for when find=NULL.
  */
 House *
 House_FindNext(PoolFindStruct *find)
 {
-	if (find->index >= g_houseFindCount && find->index != 0xFFFF)
+	if (find->index >= s_houseFindCount && find->index != 0xFFFF)
 		return NULL;
 
 	/* First, go to the next index. */
 	find->index++;
 
-	for (; find->index < g_houseFindCount; find->index++) {
-		House *h = g_houseFindArray[find->index];
+	for (; find->index < s_houseFindCount; find->index++) {
+		House *h = s_houseFindArray[find->index];
 		if (h != NULL)
 			return h;
 	}
@@ -87,13 +87,13 @@ House_FindNext(PoolFindStruct *find)
 void
 House_Init(void)
 {
-	memset(g_houseArray, 0, sizeof(g_houseArray));
-	memset(g_houseFindArray, 0, sizeof(g_houseFindArray));
-	g_houseFindCount = 0;
+	memset(s_houseArray, 0, sizeof(s_houseArray));
+	memset(s_houseFindArray, 0, sizeof(s_houseFindArray));
+	s_houseFindCount = 0;
 
 	/* ENHANCEMENT -- Ensure the index is always valid. */
 	for (unsigned int i = 0; i < HOUSE_INDEX_MAX; i++) {
-		g_houseArray[i].index = i;
+		s_houseArray[i].index = i;
 	}
 }
 
@@ -119,8 +119,8 @@ House_Allocate(uint8 index)
 	h->structureActiveID= STRUCTURE_INDEX_INVALID;
 	h->houseMissileID   = UNIT_INDEX_INVALID;
 
-	g_houseFindArray[g_houseFindCount] = h;
-	g_houseFindCount++;
+	s_houseFindArray[s_houseFindCount] = h;
+	s_houseFindCount++;
 
 	return h;
 }
@@ -136,22 +136,22 @@ House_Free(House *h)
 	unsigned int i;
 
 	/* Find the House to remove. */
-	for (i = 0; i < g_houseFindCount; i++) {
-		if (g_houseFindArray[i] == h)
+	for (i = 0; i < s_houseFindCount; i++) {
+		if (s_houseFindArray[i] == h)
 			break;
 	}
 
 	/* We should always find an entry. */
-	assert(i < g_houseFindCount);
+	assert(i < s_houseFindCount);
 
 	BuildQueue_Free(&h->starportQueue);
 
-	g_houseFindCount--;
+	s_houseFindCount--;
 
 	/* If needed, close the gap. */
-	if (i < g_houseFindCount) {
-		memmove(&g_houseFindArray[i], &g_houseFindArray[i + 1],
-				(g_houseFindCount - i) * sizeof(g_houseFindArray[0]));
+	if (i < s_houseFindCount) {
+		memmove(&s_houseFindArray[i], &s_houseFindArray[i + 1],
+				(s_houseFindCount - i) * sizeof(s_houseFindArray[0]));
 	}
 }
 #endif
