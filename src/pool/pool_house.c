@@ -90,6 +90,11 @@ House_Init(void)
 	memset(g_houseArray, 0, sizeof(g_houseArray));
 	memset(g_houseFindArray, 0, sizeof(g_houseFindArray));
 	g_houseFindCount = 0;
+
+	/* ENHANCEMENT -- Ensure the index is always valid. */
+	for (unsigned int i = 0; i < HOUSE_INDEX_MAX; i++) {
+		g_houseArray[i].index = i;
+	}
 }
 
 /**
