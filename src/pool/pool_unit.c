@@ -16,7 +16,7 @@
 #include "../unit.h"
 
 /** variable_35E8. */
-static Unit g_unitArray[UNIT_INDEX_MAX];
+static Unit s_unitArray[UNIT_INDEX_MAX];
 
 /** variable_843E. */
 struct Unit *g_unitFindArray[UNIT_INDEX_MAX];
@@ -32,7 +32,7 @@ Unit *
 Unit_Get_ByIndex(uint16 index)
 {
 	assert(index < UNIT_INDEX_MAX);
-	return &g_unitArray[index];
+	return &s_unitArray[index];
 }
 
 /**
@@ -96,13 +96,13 @@ Unit_FindNext(PoolFindStruct *find)
 void
 Unit_Init(void)
 {
-	memset(g_unitArray, 0, sizeof(g_unitArray));
+	memset(s_unitArray, 0, sizeof(s_unitArray));
 	memset(g_unitFindArray, 0, sizeof(g_unitFindArray));
 	g_unitFindCount = 0;
 
 	/* ENHANCEMENT -- Ensure the index is always valid. */
 	for (unsigned int i = 0; i < UNIT_INDEX_MAX; i++) {
-		g_unitArray[i].o.index = i;
+		s_unitArray[i].o.index = i;
 	}
 }
 
