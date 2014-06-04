@@ -15,6 +15,13 @@
 #include "../opendune.h"
 #include "../unit.h"
 
+typedef struct UnitPool {
+	Unit pool[UNIT_INDEX_MAX];
+	Unit *find[UNIT_INDEX_MAX];
+	uint16 count;
+	bool allocated;
+} UnitPool;
+
 /** variable_35E8. */
 static Unit s_unitArray[UNIT_INDEX_MAX];
 
@@ -23,6 +30,10 @@ struct Unit *g_unitFindArray[UNIT_INDEX_MAX];
 
 /** variable_35EC. */
 uint16 g_unitFindCount;
+
+static UnitPool s_unitPoolBackup;
+assert_compile(sizeof(s_unitPoolBackup.pool) == sizeof(s_unitArray));
+assert_compile(sizeof(s_unitPoolBackup.find) == sizeof(g_unitFindArray));
 
 /**
  * @brief   Get the Unit from the pool with the indicated index.
@@ -239,4 +250,42 @@ Unit_Free(Unit *u)
 		memmove(&g_unitFindArray[i], &g_unitFindArray[i + 1],
 				(g_unitFindCount - i) * sizeof(g_unitFindArray[0]));
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+/**
+ * @brief   Saves the UnitPool.
+ * @details Introduced for server to generate maps without clobbering
+ *          the game state.
+ */
+UnitPool *
+UnitPool_Save(void)
+{
+	UnitPool *pool = &s_unitPoolBackup;
+	assert(!pool->allocated);
+
+	memcpy(pool->pool, s_unitArray, sizeof(s_unitArray));
+	memcpy(pool->find, g_unitFindArray, sizeof(g_unitFindArray));
+	pool->count = g_unitFindCount;
+
+	pool->allocated = true;
+	return pool;
+}
+
+/**
+ * @brief   Restores the UnitPool and deallocates it.
+ * @details Introduced for server to generate maps without clobbering
+ *          the game state.
+ */
+void
+UnitPool_Load(UnitPool *pool)
+{
+	assert(pool->allocated);
+
+	memcpy(s_unitArray, pool->pool, sizeof(s_unitArray));
+	memcpy(g_unitFindArray, pool->find, sizeof(g_unitFindArray));
+	g_unitFindCount = pool->count;
+
+	pool->allocated = false;
 }

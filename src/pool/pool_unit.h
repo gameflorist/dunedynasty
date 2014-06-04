@@ -28,4 +28,7 @@ extern void Unit_Recount(void);
 extern struct Unit *Unit_Allocate(uint16 index, enum UnitType type, enum HouseType houseID);
 extern void Unit_Free(struct Unit *u);
 
+extern struct UnitPool *UnitPool_Save(void);
+extern void UnitPool_Load(struct UnitPool *pool);
+
 #endif
