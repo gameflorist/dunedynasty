@@ -18,6 +18,13 @@ enum {
 	HOUSE_INDEX_MAX = HOUSE_MAX
 };
 
+typedef struct HousePool {
+	House pool[HOUSE_INDEX_MAX];
+	House *find[HOUSE_INDEX_MAX];
+	uint16 count;
+	bool allocated;
+} HousePool;
+
 /** variable_35FA. */
 static House s_houseArray[HOUSE_INDEX_MAX];
 
@@ -26,6 +33,10 @@ static House *s_houseFindArray[HOUSE_INDEX_MAX];
 
 /** variable_35FE. */
 static uint16 s_houseFindCount;
+
+static HousePool s_housePoolBackup;
+assert_compile(sizeof(s_housePoolBackup.pool) == sizeof(s_houseArray));
+assert_compile(sizeof(s_housePoolBackup.find) == sizeof(s_houseFindArray));
 
 /**
  * @brief   Get the House from the pool with the indicated index.
@@ -155,3 +166,41 @@ House_Free(House *h)
 	}
 }
 #endif
+
+/*--------------------------------------------------------------*/
+
+/**
+ * @brief   Saves the HousePool.
+ * @details Introduced for server to generate maps without clobbering
+ *          the game state.
+ */
+HousePool *
+HousePool_Save(void)
+{
+	HousePool *pool = &s_housePoolBackup;
+	assert(!pool->allocated);
+
+	memcpy(pool->pool, s_houseArray, sizeof(s_houseArray));
+	memcpy(pool->find, s_houseFindArray, sizeof(s_houseFindArray));
+	pool->count = s_houseFindCount;
+
+	pool->allocated = true;
+	return pool;
+}
+
+/**
+ * @brief   Restores the HousePool and deallocates it.
+ * @details Introduced for server to generate maps without clobbering
+ *          the game state.
+ */
+void
+HousePool_Load(HousePool *pool)
+{
+	assert(pool->allocated);
+
+	memcpy(s_houseArray, pool->pool, sizeof(s_houseArray));
+	memcpy(s_houseFindArray, pool->find, sizeof(s_houseFindArray));
+	s_houseFindCount = pool->count;
+
+	pool->allocated = false;
+}
