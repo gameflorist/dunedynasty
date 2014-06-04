@@ -16,6 +16,13 @@ enum {
 	TEAM_INDEX_MAX = 16
 };
 
+typedef struct TeamPool {
+	Team pool[TEAM_INDEX_MAX];
+	Team *find[TEAM_INDEX_MAX];
+	uint16 count;
+	bool allocated;
+} TeamPool;
+
 /** variable_35EE. */
 static Team s_teamArray[TEAM_INDEX_MAX];
 
@@ -24,6 +31,10 @@ static Team *s_teamFindArray[TEAM_INDEX_MAX];
 
 /** variable_35F2. */
 static uint16 s_teamFindCount;
+
+static TeamPool s_teamPoolBackup;
+assert_compile(sizeof(s_teamPoolBackup.pool) == sizeof(s_teamArray));
+assert_compile(sizeof(s_teamPoolBackup.find) == sizeof(s_teamFindArray));
 
 /**
  * @brief   Get the Team from the pool with the indicated index.
@@ -186,3 +197,41 @@ Team_Free(Team *t)
 	}
 }
 #endif
+
+/*--------------------------------------------------------------*/
+
+/**
+ * @brief   Saves the TeamPool.
+ * @details Introduced for server to generate maps without clobbering
+ *          the game state.
+ */
+TeamPool *
+TeamPool_Save(void)
+{
+	TeamPool *pool = &s_teamPoolBackup;
+	assert(!pool->allocated);
+
+	memcpy(pool->pool, s_teamArray, sizeof(s_teamArray));
+	memcpy(pool->find, s_teamFindArray, sizeof(s_teamFindArray));
+	pool->count = s_teamFindCount;
+
+	pool->allocated = true;
+	return pool;
+}
+
+/**
+ * @brief   Restores the TeamPool and deallocates it.
+ * @details Introduced for server to generate maps without clobbering
+ *          the game state.
+ */
+void
+TeamPool_Load(TeamPool *pool)
+{
+	assert(pool->allocated);
+
+	memcpy(s_teamArray, pool->pool, sizeof(s_teamArray));
+	memcpy(s_teamFindArray, pool->find, sizeof(s_teamFindArray));
+	s_teamFindCount = pool->count;
+
+	pool->allocated = false;
+}

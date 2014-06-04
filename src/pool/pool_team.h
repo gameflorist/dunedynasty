@@ -12,6 +12,7 @@ enum {
 
 struct PoolFindStruct;
 struct Team;
+struct TeamPool;
 
 extern struct Team *Team_Get_ByIndex(uint16 index);
 extern struct Team *Team_FindFirst(struct PoolFindStruct *find, enum HouseType houseID);
@@ -21,5 +22,8 @@ extern void Team_Init(void);
 extern void Team_Recount(void);
 extern struct Team *Team_Allocate(uint16 index);
 extern void Team_Free(struct Team *au);
+
+extern struct TeamPool *TeamPool_Save(void);
+extern void TeamPool_Load(struct TeamPool *pool);
 
 #endif
