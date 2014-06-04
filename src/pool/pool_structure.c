@@ -21,6 +21,13 @@
 #include "../opendune.h"
 #include "../structure.h"
 
+typedef struct StructurePool {
+	Structure pool[STRUCTURE_INDEX_MAX_HARD];
+	Structure *find[STRUCTURE_INDEX_MAX_SOFT];
+	uint16 count;
+	bool allocated;
+} StructurePool;
+
 /** variable_35F4. */
 static Structure s_structureArray[STRUCTURE_INDEX_MAX_HARD];
 
@@ -29,6 +36,10 @@ static Structure *s_structureFindArray[STRUCTURE_INDEX_MAX_SOFT];
 
 /** variable_35F8. */
 static uint16 s_structureFindCount;
+
+static StructurePool s_structurePoolBackup;
+assert_compile(sizeof(s_structurePoolBackup.pool) == sizeof(s_structureArray));
+assert_compile(sizeof(s_structurePoolBackup.find) == sizeof(s_structureFindArray));
 
 /**
  * @brief    Returns true for structure types that share pool elements.
@@ -275,4 +286,42 @@ Structure_Free(Structure *s)
 		memmove(&s_structureFindArray[i], &s_structureFindArray[i + 1],
 				(s_structureFindCount - i) * sizeof(s_structureFindArray[0]));
 	}
+}
+
+/*--------------------------------------------------------------*/
+
+/**
+ * @brief   Saves the StructurePool.
+ * @details Introduced for server to generate maps without clobbering
+ *          the game state.
+ */
+StructurePool *
+StructurePool_Save(void)
+{
+	StructurePool *pool = &s_structurePoolBackup;
+	assert(!pool->allocated);
+
+	memcpy(pool->pool, s_structureArray, sizeof(s_structureArray));
+	memcpy(pool->find, s_structureFindArray, sizeof(s_structureFindArray));
+	pool->count = s_structureFindCount;
+
+	pool->allocated = true;
+	return pool;
+}
+
+/**
+ * @brief   Restores the StructurePool and deallocates it.
+ * @details Introduced for server to generate maps without clobbering
+ *          the game state.
+ */
+void
+StructurePool_Load(StructurePool *pool)
+{
+	assert(pool->allocated);
+
+	memcpy(s_structureArray, pool->pool, sizeof(s_structureArray));
+	memcpy(s_structureFindArray, pool->find, sizeof(s_structureFindArray));
+	s_structureFindCount = pool->count;
+
+	pool->allocated = false;
 }
