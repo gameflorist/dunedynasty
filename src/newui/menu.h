@@ -2,6 +2,7 @@
 #define NEWUI_MENU_H
 
 #include "types.h"
+#include "../mods/mapgenerator.h"
 
 /* Menu loops can return a MenuAction to transition between screens,
  * or return itself to stay in the same menu.
@@ -48,8 +49,7 @@ struct MentatState;
 struct Widget;
 
 extern struct Widget *main_menu_widgets;
-extern bool lobby_regenerate_map;
-extern bool lobby_new_map_seed;
+extern enum MapGeneratorMode lobby_regenerate_map;
 
 extern void Menu_FreeWidgets(struct Widget *w);
 extern void Menu_LoadPalette(void);
@@ -58,8 +58,6 @@ extern void Menu_Run(void);
 
 extern void Lobby_InitWidgets(void);
 extern void Lobby_FreeWidgets(void);
-extern void Lobby_ResetRadarAnimation(void);
-extern void Lobby_RequestRegeneration(bool force, bool new_seed);
 extern void PickLobby_Draw(void);
 extern enum MenuAction PickLobby_Loop(void);
 extern void SkirmishLobby_Initialise(void);

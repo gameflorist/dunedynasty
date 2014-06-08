@@ -116,7 +116,7 @@ void GUI_Widget_Viewport_RedrawMap(void)
 {
 	const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP];
 
-	Video_DrawMinimap(wi->offsetX, wi->offsetY, g_scenario.mapScale, 0);
+	Video_DrawMinimap(wi->offsetX, wi->offsetY, g_scenario.mapScale, MINIMAP_IN_GAME);
 
 	Map_UpdateMinimapPosition(g_viewportPosition, true);
 }

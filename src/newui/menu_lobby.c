@@ -33,8 +33,7 @@ static Widget *pick_lobby_widgets;
 static Widget *skirmish_lobby_widgets;
 static Widget *multiplayer_lobby_widgets;
 static int64_t lobby_radar_timer;
-bool lobby_regenerate_map;
-bool lobby_new_map_seed;
+enum MapGeneratorMode lobby_regenerate_map;
 
 /*--------------------------------------------------------------*/
 
@@ -412,9 +411,18 @@ Lobby_ShowHideStartButton(Widget *w, bool show)
 	}
 }
 
-void
-Lobby_ResetRadarAnimation(void)
+static void
+Lobby_AnimateRadar(void)
 {
+	static uint32 l_seed = 0xFFFF;
+	const bool is_skirmish = (g_campaign_selected == CAMPAIGNID_SKIRMISH);
+	const uint32 seed = is_skirmish ? g_skirmish.seed : g_multiplayer.test_seed;
+
+	if (l_seed == seed)
+		return;
+
+	l_seed = seed;
+
 	const bool radar_animating
 		= (Timer_GetTicks() - lobby_radar_timer)
 		< (RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY);
@@ -426,26 +434,13 @@ Lobby_ResetRadarAnimation(void)
 	Audio_PlaySound(SOUND_RADAR_STATIC);
 }
 
-void
-Lobby_RequestRegeneration(bool force, bool new_seed)
-{
-	const bool radar_animating
-		= (Timer_GetTicks() - lobby_radar_timer)
-		< (RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY);
-
-	if (force || !radar_animating) {
-		lobby_regenerate_map = true;
-		lobby_new_map_seed = new_seed;
-
-		if (new_seed)
-			Lobby_ResetRadarAnimation();
-	}
-}
-
 static bool
 SkirmishLobby_IsPlayable(void)
 {
-	bool is_playable = Skirmish_IsPlayable();
+	const bool is_playable
+		= (lobby_regenerate_map == MAP_GENERATOR_STOP)
+		&&  Skirmish_IsPlayable();
+
 	Lobby_ShowHideStartButton(skirmish_lobby_widgets, is_playable);
 	return is_playable;
 }
@@ -456,9 +451,7 @@ SkirmishLobby_Initialise(void)
 	g_campaign_selected = CAMPAIGNID_SKIRMISH;
 	Campaign_Load();
 
-	Skirmish_GenerateMap(false);
-	lobby_regenerate_map = false;
-	SkirmishLobby_IsPlayable();
+	lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
 
 	Widget *w = GUI_Widget_Get_ByIndex(skirmish_lobby_widgets, 3);
 	WidgetScrollbar *ws = w->data;
@@ -486,23 +479,22 @@ Lobby_Draw(const char *heading, uint32 seed, Widget *w)
 	const int x2 = x1 + 63;
 	const int y2 = y1 + 63;
 
+	Lobby_AnimateRadar();
+
 	HallOfFame_DrawBackground(HOUSE_INVALID, HALLOFFAMESTYLE_CLEAR_BACKGROUND);
 	Prim_FillRect_i(x1, y1, x2, y2, 12);
 	GUI_DrawText_Wrapper(heading, SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
 
-	if (Timer_GetTicks() - lobby_radar_timer < RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
-		const int frame = max(0, (Timer_GetTicks() - lobby_radar_timer) / RADAR_ANIMATION_DELAY);
+	const int64_t ticks = Timer_GetTicks() - lobby_radar_timer;
+	if (ticks < RADAR_ANIMATION_FRAME_COUNT * RADAR_ANIMATION_DELAY) {
+		const int frame = max(0, ticks / RADAR_ANIMATION_DELAY);
 
 		GUI_DrawText_Wrapper("Generating", x1 + 32, y1 - 8, 31, 0, 0x111);
 		VideoA5_DrawWSAStatic(RADAR_ANIMATION_FRAME_COUNT - frame - 1, x1, y1);
 	}
-	else if (lobby_regenerate_map) {
-		GUI_DrawText_Wrapper("Generating", x1 + 32, y1 - 8, 31, 0, 0x111);
-		VideoA5_DrawWSAStatic(0, x1, y1);
-	}
 	else {
 		GUI_DrawText_Wrapper("Map %u", x1 + 32, y1 - 8, 31, 0, 0x111, seed);
-		Video_DrawMinimap(x1 + 1, y1 + 1, 0, 1);
+		Video_DrawMinimap(x1 + 1, y1 + 1, 0, MINIMAP_RESTORE);
 	}
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
@@ -531,8 +523,12 @@ SkirmishLobby_Draw(void)
 enum MenuAction
 SkirmishLobby_Loop(void)
 {
+	if (lobby_regenerate_map != MAP_GENERATOR_STOP) {
+		lobby_regenerate_map = Skirmish_GenerateMap(lobby_regenerate_map);
+		SkirmishLobby_IsPlayable();
+	}
+
 	int widgetID = GUI_Widget_HandleEvents(skirmish_lobby_widgets);
-	bool conditions_changed = false;
 	Widget *w;
 
 	w = GUI_Widget_Get_ByIndex(skirmish_lobby_widgets, 15);
@@ -589,30 +585,14 @@ SkirmishLobby_Loop(void)
 
 				if (*(si->d.brain) != new_brain) {
 					*(si->d.brain) = new_brain;
-					Lobby_RequestRegeneration(true, false);
+					lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
 				}
 			}
 			break;
 
 		case 0x8000 | 9:
-			Lobby_RequestRegeneration(false, true);
+			lobby_regenerate_map = MAP_GENERATOR_TRY_RAND_ELSE_RAND;
 			break;
-	}
-
-	if (lobby_regenerate_map) {
-		conditions_changed = true;
-
-		if (Skirmish_GenerateMap(lobby_new_map_seed)) {
-			lobby_regenerate_map = false;
-			lobby_new_map_seed = false;
-		}
-		else {
-			Lobby_RequestRegeneration(true, true);
-		}
-	}
-
-	if (conditions_changed) {
-		SkirmishLobby_IsPlayable();
 	}
 
 	return MENU_REDRAW | MENU_SKIRMISH_LOBBY;
@@ -626,8 +606,13 @@ MultiplayerLobby_Initialise(void)
 	g_campaign_selected = CAMPAIGNID_MULTIPLAYER;
 	Campaign_Load();
 
-	Multiplayer_GenerateMap(false);
-	lobby_regenerate_map = false;
+	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
+	}
+	else {
+		lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_STOP;
+	}
 
 	Widget *w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 3);
 	WidgetScrollbar *ws = w->data;
@@ -667,7 +652,7 @@ MultiplayerLobby_Draw(void)
 	Lobby_ShowHideStartButton(multiplayer_lobby_widgets, can_issue_start);
 
 	Lobby_Draw("Multiplayer",
-			g_multiplayer.seed,
+			g_multiplayer.next_seed,
 			multiplayer_lobby_widgets);
 
 	ChatBox_Draw(g_chat_buf,
@@ -687,6 +672,9 @@ MultiplayerLobby_Loop(void)
 	else {
 		Client_SendMessages();
 		enum NetEvent e = Client_RecvMessages();
+
+		lobby_regenerate_map = Multiplayer_GenerateMap(lobby_regenerate_map);
+
 		if (e == NETEVENT_DISCONNECT) {
 			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
 		}
@@ -757,9 +745,10 @@ MultiplayerLobby_Loop(void)
 			break;
 
 		case 0x8000 | 9:
-			if (g_host_type == HOSTTYPE_DEDICATED_SERVER
-			 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
-				Lobby_RequestRegeneration(false, true);
+			if ((lobby_regenerate_map == MAP_GENERATOR_STOP)
+					&& (g_host_type == HOSTTYPE_DEDICATED_SERVER
+					 || g_host_type == HOSTTYPE_CLIENT_SERVER)) {
+				lobby_regenerate_map = MAP_GENERATOR_TRY_RAND_ELSE_RAND;
 			}
 			break;
 

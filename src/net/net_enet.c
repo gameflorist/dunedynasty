@@ -336,7 +336,7 @@ Net_Synchronise(void)
 		Client_ResetCache();
 	}
 
-	Multiplayer_GenerateMap(false);
+	Multiplayer_GenerateMap(MAP_GENERATOR_FINAL);
 }
 
 /*--------------------------------------------------------------*/

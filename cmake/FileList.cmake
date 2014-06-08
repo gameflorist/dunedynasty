@@ -36,6 +36,7 @@ set(DUNEDYNASTY_SRC_FILES
 	src/load.c
 	src/map.c
 	src/mods/landscape.c
+	src/mods/mapgenerator.c
 	src/mods/multiplayer.c
 	src/mods/skirmish.c
 	src/net/client.c

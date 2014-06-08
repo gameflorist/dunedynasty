@@ -98,7 +98,7 @@ void GameLoop_House(void)
 			seed = Random_Starport_GetSeed(g_scenarioID, g_playerHouseID);
 		}
 		else {
-			seed = Random_Starport_GetSeed(g_multiplayer.seed, 0);
+			seed = Random_Starport_GetSeed(g_multiplayer.curr_seed, 0);
 		}
 
 		g_tickHouseStarportRecalculatePrices = g_tickScenarioStart + next_minute * 60 * 60;

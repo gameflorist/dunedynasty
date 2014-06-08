@@ -769,20 +769,19 @@ Server_Send_ClientList(unsigned char **buf)
 void
 Server_Send_Scenario(unsigned char **buf)
 {
-	if (g_inGame || !lobby_regenerate_map)
+	if (lobby_regenerate_map == MAP_GENERATOR_STOP)
 		return;
 
-	if (!Multiplayer_GenerateMap(lobby_new_map_seed)) {
-		Lobby_RequestRegeneration(true, true);
+	lobby_regenerate_map = Multiplayer_GenerateMap(lobby_regenerate_map);
+	if (lobby_regenerate_map != MAP_GENERATOR_STOP)
 		return;
-	}
 
 	const size_t len = 1 + 7 + MAX_CLIENTS;
 	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
 		return;
 
 	Net_Encode_ServerClientMsg(buf, SCMSG_SCENARIO);
-	Net_Encode_uint32(buf, g_multiplayer.seed);
+	Net_Encode_uint32(buf, g_multiplayer.next_seed);
 	Net_Encode_uint8 (buf, g_multiplayer.landscape_params.min_spice_fields);
 	Net_Encode_uint8 (buf, g_multiplayer.landscape_params.max_spice_fields);
 	Net_Encode_uint8 (buf, enhancement_fog_of_war);
@@ -790,9 +789,6 @@ Server_Send_Scenario(unsigned char **buf)
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		Net_Encode_uint8(buf, g_multiplayer.client[h]);
 	}
-
-	lobby_regenerate_map = false;
-	lobby_new_map_seed = false;
 }
 
 /*--------------------------------------------------------------*/
@@ -1620,8 +1616,6 @@ Server_Console_Credits(const char *msg)
 
 	if (sscanf(msg, "%u", &credits) == 1) {
 		g_multiplayer.credits = clamp(1000, credits, 10000);
-		lobby_regenerate_map = true;
-		lobby_new_map_seed = false;
 	}
 
 	snprintf(chat_log, sizeof(chat_log), "Set to %d credits",
@@ -1636,9 +1630,8 @@ Server_Console_Seed(const char *msg)
 	unsigned int seed;
 
 	if (sscanf(msg, "%u", &seed) == 1) {
-		lobby_regenerate_map = true;
-		lobby_new_map_seed = false;
-		g_multiplayer.seed = seed;
+		g_multiplayer.test_seed = seed;
+		lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_STOP;
 	}
 }
 
@@ -1661,11 +1654,9 @@ Server_Console_Spice(const char *msg)
 			spice2 = min(spice2, 255);
 		}
 
-		lobby_regenerate_map = true;
-		lobby_new_map_seed = false;
-
 		g_multiplayer.landscape_params.min_spice_fields = min(spice1, spice2);
 		g_multiplayer.landscape_params.max_spice_fields = max(spice1, spice2);
+		lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_STOP;
 	}
 
 	snprintf(chat_log, sizeof(chat_log), "Set to [%d..%d] spice",

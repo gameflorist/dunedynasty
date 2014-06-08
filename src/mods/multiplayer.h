@@ -3,6 +3,7 @@
 
 #include "enumeration.h"
 #include "landscape.h"
+#include "mapgenerator.h"
 
 enum MultiplayerHouseState {
 	MP_HOUSE_UNUSED,
@@ -15,8 +16,18 @@ enum MultiplayerHouseState {
 typedef struct Multiplayer {
 	int client[HOUSE_MAX];
 
+	/* Initial credits. */
 	uint16 credits;
-	uint32 seed;
+
+	/* Current map seed, used in the game. */
+	uint32 curr_seed;
+
+	/* Next (working) map seed to play. */
+	uint32 next_seed;
+
+	/* Seed to test map generation. */
+	uint32 test_seed;
+
 	LandscapeGeneratorParams landscape_params;
 
 	enum MultiplayerHouseState state[HOUSE_MAX];
@@ -29,6 +40,6 @@ extern Multiplayer g_multiplayer;
 extern void Multiplayer_Init(void);
 extern bool Multiplayer_IsHouseAvailable(enum HouseType houseID);
 extern bool Multiplayer_GenHouses(struct SkirmishData *sd);
-extern bool Multiplayer_GenerateMap(bool newseed);
+extern enum MapGeneratorMode Multiplayer_GenerateMap(enum MapGeneratorMode mode);
 
 #endif

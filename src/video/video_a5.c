@@ -2683,14 +2683,19 @@ VideoA5_DrawWSAStatic(int frame, int x, int y)
 
 /*--------------------------------------------------------------*/
 
-/* Mode: 0 = scouted, 1 = terrain only. */
 void
-Video_DrawMinimap(int left, int top, int map_scale, int mode)
+Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 {
 	const MapInfo *mapInfo = &g_mapInfos[map_scale];
 	bool redraw = false;
 	int sandworm_position[4 * 2];
 	int num_sandworms = 0;
+
+	if (mode == MINIMAP_RESTORE) {
+		al_draw_scaled_bitmap(s_minimap, 0.0f, 0.0f, mapInfo->sizeX, mapInfo->sizeY,
+				left, top, (map_scale + 1.0f) * mapInfo->sizeX, (map_scale + 1.0f) * mapInfo->sizeY, 0);
+		return;
+	}
 
 	for (int y = 0; y < mapInfo->sizeY; y++) {
 		uint16 packed = Tile_PackXY(mapInfo->minX, mapInfo->minY + y);

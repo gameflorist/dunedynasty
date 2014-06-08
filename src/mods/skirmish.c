@@ -24,6 +24,7 @@
 #include "../tools/coord.h"
 #include "../tools/random_general.h"
 #include "../tools/random_lcg.h"
+#include "../video/video.h"
 
 typedef struct {
 	int x, y;
@@ -124,7 +125,7 @@ Skirmish_Initialise(void)
 {
 	memset(&g_skirmish, 0, sizeof(g_skirmish));
 
-	g_skirmish.seed = rand() & 0x7FFF;
+	g_skirmish.seed = MapGenerator_PickRandomSeed();
 
 	g_skirmish.landscape_params.min_spice_fields = 24;
 	g_skirmish.landscape_params.max_spice_fields = 48;
@@ -958,7 +959,7 @@ Skirmish_GenerateMap2(bool only_landscape, SkirmishData *sd)
 
 	Game_Init();
 
-	const uint32 seed = is_skirmish ? g_skirmish.seed : g_multiplayer.seed;
+	const uint32 seed = is_skirmish ? g_skirmish.seed : g_multiplayer.test_seed;
 	const LandscapeGeneratorParams *params
 		= is_skirmish
 		? &g_skirmish.landscape_params : &g_multiplayer.landscape_params;
@@ -1059,18 +1060,29 @@ Skirmish_GenerateMap1(bool is_playable)
 	return ret;
 }
 
-bool
-Skirmish_GenerateMap(bool newseed)
+enum MapGeneratorMode
+Skirmish_GenerateMap(enum MapGeneratorMode mode)
 {
 	assert(g_campaign_selected == CAMPAIGNID_SKIRMISH);
 
+	switch (mode) {
+		case MAP_GENERATOR_TRY_TEST_ELSE_STOP:
+		case MAP_GENERATOR_TRY_TEST_ELSE_RAND:
+		case MAP_GENERATOR_FINAL:
+			break;
+
+		case MAP_GENERATOR_TRY_RAND_ELSE_STOP:
+		case MAP_GENERATOR_TRY_RAND_ELSE_RAND:
+			g_skirmish.seed = MapGenerator_PickRandomSeed();
+			break;
+
+		case MAP_GENERATOR_STOP:
+		default:
+			return MAP_GENERATOR_STOP;
+	}
+
 	g_campaignID = 7;
 	g_scenarioID = 20;
-
-	if (newseed) {
-		/* DuneMaps only supports 15 bit maps seeds, so there. */
-		g_skirmish.seed = rand() & 0x7FFF;
-	}
 
 	bool is_playable = Skirmish_IsPlayable();
 	if (is_playable) {
@@ -1078,5 +1090,12 @@ Skirmish_GenerateMap(bool newseed)
 		Skirmish_Prepare();
 	}
 
-	return Skirmish_GenerateMap1(is_playable);
+	bool success = Skirmish_GenerateMap1(is_playable);
+
+	if (success) {
+		/* Save the minimap for the lobby. */
+		Video_DrawMinimap(0, 0, 0, MINIMAP_SAVE);
+	}
+
+	return MapGenerator_TransitionState(mode, success);
 }

@@ -17,6 +17,7 @@
 #include "../tools/coord.h"
 #include "../tools/random_lcg.h"
 #include "../unit.h"
+#include "../video/video.h"
 
 Multiplayer g_multiplayer;
 
@@ -26,7 +27,8 @@ Multiplayer_Init(void)
 	memset(&g_multiplayer, 0, sizeof(g_multiplayer));
 
 	g_multiplayer.credits = 1000;
-	g_multiplayer.seed = rand() & 0x7FFF;
+	g_multiplayer.curr_seed = MapGenerator_PickRandomSeed();
+	g_multiplayer.next_seed = g_multiplayer.curr_seed;
 
 	g_multiplayer.landscape_params.min_spice_fields = 24;
 	g_multiplayer.landscape_params.max_spice_fields = 48;
@@ -131,24 +133,61 @@ Multiplayer_Prepare(void)
 	}
 }
 
-bool
-Multiplayer_GenerateMap(bool newseed)
+enum MapGeneratorMode
+Multiplayer_GenerateMap(enum MapGeneratorMode mode)
 {
+	bool success;
 	assert(g_campaign_selected == CAMPAIGNID_MULTIPLAYER);
 
-	g_campaignID = 9;
-	g_scenarioID = 22;
+	switch (mode) {
+		case MAP_GENERATOR_TRY_TEST_ELSE_STOP:
+		case MAP_GENERATOR_TRY_TEST_ELSE_RAND:
+			break;
 
-	if (newseed) {
-		/* DuneMaps only supports 15 bit maps seeds, so there. */
-		g_multiplayer.seed = rand() & 0x7FFF;
+		case MAP_GENERATOR_TRY_RAND_ELSE_STOP:
+		case MAP_GENERATOR_TRY_RAND_ELSE_RAND:
+			g_multiplayer.test_seed = MapGenerator_PickRandomSeed();
+			break;
+
+		case MAP_GENERATOR_FINAL:
+			g_multiplayer.test_seed = g_multiplayer.next_seed;
+			break;
+
+		case MAP_GENERATOR_STOP:
+		default:
+			return MAP_GENERATOR_STOP;
 	}
 
-	bool is_playable = true;
-	if (is_playable) {
-		Campaign_Load();
-		Multiplayer_Prepare();
+	if (mode != MAP_GENERATOR_FINAL) {
+		MapGenerator_SaveWorldState();
 	}
 
-	return Skirmish_GenerateMap1(is_playable);
+	{
+		g_campaignID = 9;
+		g_scenarioID = 22;
+
+		bool is_playable = true;
+		if (is_playable) {
+			Campaign_Load();
+			Multiplayer_Prepare();
+		}
+
+		success = Skirmish_GenerateMap1(is_playable);
+
+		if (success) {
+			g_multiplayer.next_seed = g_multiplayer.test_seed;
+
+			/* Save the minimap for the lobby. */
+			Video_DrawMinimap(0, 0, 0, MINIMAP_SAVE);
+		}
+	}
+
+	if (mode == MAP_GENERATOR_FINAL) {
+		g_multiplayer.curr_seed = g_multiplayer.test_seed;
+	}
+	else {
+		MapGenerator_LoadWorldState();
+	}
+
+	return MapGenerator_TransitionState(mode, success);
 }

@@ -543,9 +543,8 @@ Client_Recv_ClientList(const unsigned char **buf)
 static void
 Client_Recv_Scenario(const unsigned char **buf)
 {
-	const uint32 old_seed = g_multiplayer.seed;
-
-	g_multiplayer.seed = Net_Decode_uint32(buf);
+	g_multiplayer.next_seed = Net_Decode_uint32(buf);
+	g_multiplayer.test_seed = g_multiplayer.next_seed;
 	g_multiplayer.landscape_params.min_spice_fields = Net_Decode_uint8(buf);
 	g_multiplayer.landscape_params.max_spice_fields = Net_Decode_uint8(buf);
 	enhancement_fog_of_war = Net_Decode_uint8(buf);
@@ -560,10 +559,7 @@ Client_Recv_Scenario(const unsigned char **buf)
 		}
 	}
 
-	Multiplayer_GenerateMap(false);
-
-	if (g_multiplayer.seed != old_seed)
-		Lobby_ResetRadarAnimation();
+	lobby_regenerate_map = MAP_GENERATOR_FINAL;
 }
 
 static void

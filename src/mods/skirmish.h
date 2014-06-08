@@ -3,6 +3,7 @@
 
 #include "enumeration.h"
 #include "landscape.h"
+#include "mapgenerator.h"
 
 typedef struct Skirmish {
 	uint32 seed;
@@ -22,6 +23,6 @@ extern bool Skirmish_IsPlayable(void);
 extern void Skirmish_Prepare(void);
 extern void Skirmish_StartScenario(void);
 extern bool Skirmish_GenerateMap1(bool is_playable);
-extern bool Skirmish_GenerateMap(bool newseed);
+extern enum MapGeneratorMode Skirmish_GenerateMap(enum MapGeneratorMode mode);
 
 #endif
