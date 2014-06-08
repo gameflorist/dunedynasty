@@ -273,7 +273,7 @@ GUI_DrawStatusBarTextWrapper(uint8 priority,
 	if (str1 == STR_S_S_DESTROYED) {
 		format_str = String_Get_ByIndex(str1);
 
-		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+		if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
 			arg1 = String_Get_ByIndex(str3); /* <Unit> */
 			arg2 = String_Get_ByIndex(str2); /* <House> */
 		}
@@ -292,7 +292,7 @@ GUI_DrawStatusBarTextWrapper(uint8 priority,
 	else if (str1 == STR_IS_DESTROYED) {
 		format_str = "%s %s %s";
 
-		if (g_gameConfig.language == LANGUAGE_FRENCH) {
+		if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
 			arg1 = String_Get_ByIndex(str3); /* <Structure> */
 			arg2 = String_Get_ByIndex(str2); /* <House> */
 			arg3 = String_Get_ByIndex(str1); /* is destroyed. */
