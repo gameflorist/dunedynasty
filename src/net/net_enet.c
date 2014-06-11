@@ -169,7 +169,7 @@ Net_CreateServer(const char *addr, int port, const char *name)
 
 		s_enet_host = enet_host_create(&address, max_clients, 2, 0, 0);
 		if (s_enet_host == NULL)
-			goto ERROR_HOST_CREATE;
+			goto error_host_create;
 
 		ChatBox_ClearHistory();
 		ChatBox_AddLog(CHATTYPE_LOG, "Server created");
@@ -188,7 +188,7 @@ Net_CreateServer(const char *addr, int port, const char *name)
 		return true;
 	}
 
-ERROR_HOST_CREATE:
+error_host_create:
 	return false;
 }
 
@@ -202,14 +202,14 @@ Net_ConnectToServer(const char *hostname, int port, const char *name)
 
 		s_enet_host = enet_host_create(NULL, 1, 2, 57600/8, 14400/8);
 		if (s_enet_host == NULL)
-			goto ERROR_HOST_CREATE;
+			goto error_host_create;
 
 		s_enet_peer = enet_host_connect(s_enet_host, &address, 2, 0);
 		if (s_enet_peer == NULL)
-			goto ERROR_HOST_CONNECT;
+			goto error_host_connect;
 
 		if (!Net_WaitForEvent(ENET_EVENT_TYPE_CONNECT, 1000))
-			goto ERROR_TIMEOUT;
+			goto error_timeout;
 
 		ChatBox_ClearHistory();
 		NET_LOG("Connected to server %s:%d\n", hostname, port);
@@ -224,17 +224,17 @@ Net_ConnectToServer(const char *hostname, int port, const char *name)
 		return true;
 	}
 
-	goto ERROR_HOST_CREATE;
+	goto error_host_create;
 
-ERROR_TIMEOUT:
+error_timeout:
 	enet_peer_reset(s_enet_peer);
 	s_enet_peer = NULL;
 
-ERROR_HOST_CONNECT:
+error_host_connect:
 	enet_host_destroy(s_enet_host);
 	s_enet_host = NULL;
 
-ERROR_HOST_CREATE:
+error_host_create:
 	return false;
 }
 
@@ -509,7 +509,7 @@ Server_Recv_ConnectClient(ENetEvent *event)
 			event->peer->address.host, event->peer->address.port);
 
 	if (g_inGame)
-		goto ERROR;
+		goto error;
 
 	PeerData *data = Server_NewClient();
 	if (data != NULL) {
@@ -521,7 +521,7 @@ Server_Recv_ConnectClient(ENetEvent *event)
 		return;
 	}
 
-ERROR:
+error:
 	enet_peer_disconnect(event->peer, 0);
 }
 
