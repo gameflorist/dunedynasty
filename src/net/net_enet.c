@@ -35,8 +35,8 @@ char g_chat_buf[MAX_CHAT_LEN + 1];
 bool g_sendClientList;
 enum HouseFlag g_client_houses;
 enum NetHostType g_host_type;
-static ENetHost *s_host;
-static ENetPeer *s_peer;
+static ENetHost *s_enet_host;
+static ENetPeer *s_enet_peer;
 
 int g_local_client_id;
 PeerData g_peer_data[MAX_CLIENTS];
@@ -127,7 +127,7 @@ Net_WaitForEvent(enum _ENetEventType type, enet_uint32 duration)
 
 		Audio_PollMusic();
 
-		if (enet_host_service(s_host, &event, 25) <= 0)
+		if (enet_host_service(s_enet_host, &event, 25) <= 0)
 			continue;
 
 		if (event.type == type)
@@ -151,15 +151,15 @@ Server_Send_StartGame(void)
 	ENetPacket *packet
 		= enet_packet_create(buf, sizeof(buf), ENET_PACKET_FLAG_RELIABLE);
 
-	enet_host_broadcast(s_host, 0, packet);
-	enet_host_flush(s_host);
+	enet_host_broadcast(s_enet_host, 0, packet);
+	enet_host_flush(s_enet_host);
 	return true;
 }
 
 bool
 Net_CreateServer(const char *addr, int port, const char *name)
 {
-	if (g_host_type == HOSTTYPE_NONE && s_host == NULL && s_peer == NULL) {
+	if (g_host_type == HOSTTYPE_NONE && s_enet_host == NULL && s_enet_peer == NULL) {
 		/* Currently at most MAX_HOUSE players, or 5 remote clients. */
 		const int max_clients = MAX_CLIENTS - 1;
 
@@ -167,8 +167,8 @@ Net_CreateServer(const char *addr, int port, const char *name)
 		enet_address_set_host(&address, addr);
 		address.port = port;
 
-		s_host = enet_host_create(&address, max_clients, 2, 0, 0);
-		if (s_host == NULL)
+		s_enet_host = enet_host_create(&address, max_clients, 2, 0, 0);
+		if (s_enet_host == NULL)
 			goto ERROR_HOST_CREATE;
 
 		ChatBox_ClearHistory();
@@ -195,17 +195,17 @@ ERROR_HOST_CREATE:
 bool
 Net_ConnectToServer(const char *hostname, int port, const char *name)
 {
-	if (g_host_type == HOSTTYPE_NONE && s_host == NULL && s_peer == NULL) {
+	if (g_host_type == HOSTTYPE_NONE && s_enet_host == NULL && s_enet_peer == NULL) {
 		ENetAddress address;
 		enet_address_set_host(&address, hostname);
 		address.port = port;
 
-		s_host = enet_host_create(NULL, 1, 2, 57600/8, 14400/8);
-		if (s_host == NULL)
+		s_enet_host = enet_host_create(NULL, 1, 2, 57600/8, 14400/8);
+		if (s_enet_host == NULL)
 			goto ERROR_HOST_CREATE;
 
-		s_peer = enet_host_connect(s_host, &address, 2, 0);
-		if (s_peer == NULL)
+		s_enet_peer = enet_host_connect(s_enet_host, &address, 2, 0);
+		if (s_enet_peer == NULL)
 			goto ERROR_HOST_CONNECT;
 
 		if (!Net_WaitForEvent(ENET_EVENT_TYPE_CONNECT, 1000))
@@ -227,12 +227,12 @@ Net_ConnectToServer(const char *hostname, int port, const char *name)
 	goto ERROR_HOST_CREATE;
 
 ERROR_TIMEOUT:
-	enet_peer_reset(s_peer);
-	s_peer = NULL;
+	enet_peer_reset(s_enet_peer);
+	s_enet_peer = NULL;
 
 ERROR_HOST_CONNECT:
-	enet_host_destroy(s_host);
-	s_host = NULL;
+	enet_host_destroy(s_enet_host);
+	s_enet_host = NULL;
 
 ERROR_HOST_CREATE:
 	return false;
@@ -241,7 +241,7 @@ ERROR_HOST_CREATE:
 void
 Net_Disconnect(void)
 {
-	if (s_host != NULL) {
+	if (s_enet_host != NULL) {
 		if (g_host_type == HOSTTYPE_DEDICATED_SERVER
 		 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
 			int connected_peers = 0;
@@ -262,16 +262,16 @@ Net_Disconnect(void)
 				connected_peers--;
 			}
 		}
-		else if (s_peer != NULL) {
-			enet_peer_disconnect(s_peer, 0);
-			enet_host_flush(s_host);
+		else if (s_enet_peer != NULL) {
+			enet_peer_disconnect(s_enet_peer, 0);
+			enet_host_flush(s_enet_host);
 		}
 
-		enet_host_destroy(s_host);
-		s_host = NULL;
+		enet_host_destroy(s_enet_host);
+		s_enet_host = NULL;
 	}
 
-	s_peer = NULL;
+	s_enet_peer = NULL;
 	g_host_type = HOSTTYPE_NONE;
 }
 
@@ -383,7 +383,7 @@ Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf)
 
 	if (houses == FLAG_HOUSE_ALL) {
 		ChatBox_AddChat(peerID, name, msg + 2);
-		enet_host_broadcast(s_host, 0, packet);
+		enet_host_broadcast(s_enet_host, 0, packet);
 	}
 	else {
 		for (int i = 0; i < MAX_CLIENTS; i++) {
@@ -581,7 +581,7 @@ Server_RecvMessages(void)
 	}
 
 	ENetEvent event;
-	while (enet_host_service(s_host, &event, 0) > 0) {
+	while (enet_host_service(s_enet_host, &event, 0) > 0) {
 		switch (event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
 				{
@@ -620,14 +620,14 @@ Client_SendMessages(void)
 
 	NET_LOG("packet size=%d, num outgoing packets=%lu",
 			g_client2server_message_len,
-			enet_list_size(&s_host->peers[0].outgoingReliableCommands));
+			enet_list_size(&s_enet_host->peers[0].outgoingReliableCommands));
 
 	ENetPacket *packet
 		= enet_packet_create(
 				g_client2server_message_buf, g_client2server_message_len,
 				ENET_PACKET_FLAG_RELIABLE);
 
-	enet_peer_send(s_peer, 0, packet);
+	enet_peer_send(s_enet_peer, 0, packet);
 	g_client2server_message_len = 0;
 }
 
@@ -646,7 +646,7 @@ Client_RecvMessages(void)
 	}
 
 	ENetEvent event;
-	while (enet_host_service(s_host, &event, 0) > 0) {
+	while (enet_host_service(s_enet_host, &event, 0) > 0) {
 		switch (event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
 				{
