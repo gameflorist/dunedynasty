@@ -33,6 +33,7 @@
 #endif
 
 #include <stdio.h>
+#include "buildcfg.h"
 #include "../os/common.h"
 #include "../os/error.h"
 #include "../os/math.h"
@@ -370,7 +371,7 @@ VideoA5_Init(void)
 		return false;
 	}
 
-	al_set_window_title(display, "Dune Dynasty");
+	al_set_window_title(display, DUNE_DYNASTY_STR);
 
 	/* al_set_new_bitmap_flags(ALLEGRO_MAG_LINEAR); */
 	TRUE_DISPLAY_WIDTH = al_get_display_width(display);

@@ -1,6 +1,7 @@
 /** @file src/os/error_win32.c System dependant error messages for win32. */
 
 #include <windows.h>
+#include "buildcfg.h"
 #include "types.h"
 #include "strings.h"
 
@@ -15,7 +16,9 @@ void Error(const char *format, ...) {
 	vfprintf(stderr, format, ap);
 	va_end(ap);
 
-	MessageBox(NULL, message, "Error - OpenDUNE", MB_OK | MB_ICONERROR);
+	MessageBox(NULL, message,
+			"Error - " DUNE_DYNASTY_STR " " DUNE_DYNASTY_VERSION,
+			MB_OK | MB_ICONERROR);
 }
 
 void Warning(const char *format, ...) {
