@@ -28,15 +28,26 @@ ErrorLog_Init(const char *dir)
 	snprintf(filename, sizeof(filename), "%s/error.log", dir);
 	FILE *err = fopen(filename, "w");
 
+	if (err != NULL) {
+		if (_dup2(_fileno(err), _fileno(stderr)) != 0) {
+			fclose(err);
+			freopen(filename, "w", stderr);
+		}
+	}
+
 	snprintf(filename, sizeof(filename), "%s/output.log", dir);
 	FILE *out = fopen(filename, "w");
+
+	if (out != NULL) {
+		if (_dup2(_fileno(out), _fileno(stdout)) != 0) {
+			fclose(out);
+			freopen(filename, "w", stdout);
+		}
+	}
 
 #if defined(_MSC_VER)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-
-	if (err != NULL) _dup2(_fileno(err), _fileno(stderr));
-	if (out != NULL) _dup2(_fileno(out), _fileno(stdout));
 
 	FreeConsole();
 }
