@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "errorlog.h"
 #include "types.h"
 
 #include "save.h"
@@ -13,7 +14,6 @@
 #include "newui/menubar.h"
 #include "opendune.h"
 #include "os/endian.h"
-#include "os/error.h"
 #include "os/math.h"
 #include "os/strings.h"
 #include "pool/pool.h"

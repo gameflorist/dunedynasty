@@ -4,8 +4,8 @@
 
 #include <alloca.h>
 #include <alsa/asoundlib.h>
+#include "errorlog.h"
 #include "types.h"
-#include "../os/error.h"
 
 #include "midi.h"
 

@@ -1,12 +1,13 @@
 /** @file src/saveload/saveload.c General routines for load/save. */
 
+#include "errorlog.h"
+
 #include "saveload.h"
 
 #include "../house.h"
 #include "../object.h"
 #include "../team.h"
 #include "../file.h"
-#include "../os/error.h"
 
 /**
  * Get the length of the struct how it would be on disk.

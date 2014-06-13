@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "enum_string.h"
+#include "errorlog.h"
 #include "multichar.h"
 #include "types.h"
 #include "os/endian.h"
-#include "os/error.h"
 #include "os/strings.h"
 
 #include "load.h"

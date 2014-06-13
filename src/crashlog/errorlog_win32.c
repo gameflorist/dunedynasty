@@ -1,13 +1,18 @@
-/** @file src/os/error_win32.c System dependant error messages for win32. */
+/**
+ * @file src/crashlog/errorlog_win32.c
+ *
+ * System dependant error messages for win32.
+ */
 
 #include <windows.h>
 #include "buildcfg.h"
+#include "errorlog.h"
 #include "types.h"
-#include "strings.h"
+#include "../os/strings.h"
 
-#include "error.h"
-
-void Error(const char *format, ...) {
+void
+Error(const char *format, ...)
+{
 	char message[512];
 	va_list ap;
 
@@ -21,7 +26,9 @@ void Error(const char *format, ...) {
 			MB_OK | MB_ICONERROR);
 }
 
-void Warning(const char *format, ...) {
+void
+Warning(const char *format, ...)
+{
 	char message[512];
 	va_list ap;
 

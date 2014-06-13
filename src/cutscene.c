@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "enum_string.h"
+#include "errorlog.h"
 #include "types.h"
 #include "os/common.h"
-#include "os/error.h"
 #include "os/math.h"
 #include "os/sleep.h"
 

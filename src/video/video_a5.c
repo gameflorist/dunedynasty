@@ -34,8 +34,8 @@
 
 #include <stdio.h>
 #include "buildcfg.h"
+#include "errorlog.h"
 #include "../os/common.h"
-#include "../os/error.h"
 #include "../os/math.h"
 
 #include "video_a5.h"

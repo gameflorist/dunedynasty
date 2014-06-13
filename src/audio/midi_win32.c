@@ -4,8 +4,9 @@
 
 #include <stdio.h>
 #include <windows.h>
+#include "errorlog.h"
 #include "types.h"
-#include "../os/error.h"
+
 #include "midi.h"
 
 static HMIDIOUT s_midi = NULL;

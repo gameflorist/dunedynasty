@@ -152,10 +152,10 @@ endif(WITH_AUD)
 
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES
-	${DUNEDYNASTY_SRC_FILES} src/os/error_win32.c)
+	${DUNEDYNASTY_SRC_FILES} src/crashlog/errorlog_win32.c)
 else(WIN32)
     set(DUNEDYNASTY_SRC_FILES
-	${DUNEDYNASTY_SRC_FILES} src/os/error.c)
+	${DUNEDYNASTY_SRC_FILES} src/crashlog/errorlog_std.c)
 endif(WIN32)
 
 set(OPENDUNE_UNUSED_SRC_FILES

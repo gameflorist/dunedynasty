@@ -6,10 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "errorlog.h"
 #include "multichar.h"
 #include "types.h"
 #include "os/endian.h"
-#include "os/error.h"
 #include "os/file.h"
 #include "os/math.h"
 #include "os/strings.h"
