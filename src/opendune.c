@@ -9,15 +9,6 @@
 extern int _al_mangled_main(int argc, char **argv);
 #endif
 
-#if defined(_WIN32)
-	#if defined(_MSC_VER)
-		#define _CRTDBG_MAP_ALLOC
-		#include <stdlib.h>
-		#include <crtdbg.h>
-	#endif /* _MSC_VER */
-	#include <io.h>
-	#include <windows.h>
-#endif /* _WIN32 */
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -637,27 +628,7 @@ int main(int argc, char **argv)
 	if (A5_InitOptions() == false)
 		exit(1);
 
-#if defined(_WIN32)
-	#if defined(__MINGW32__) && defined(__STRICT_ANSI__)
-		int __cdecl __MINGW_NOTHROW _fileno (FILE*);
-	#endif
-
-	char filename[1024];
-
-	snprintf(filename, sizeof(filename), "%s/error.log", g_personal_data_dir);
-	FILE *err = fopen(filename, "w");
-
-	snprintf(filename, sizeof(filename), "%s/output.log", g_personal_data_dir);
-	FILE *out = fopen(filename, "w");
-
-	#if defined(_MSC_VER)
-		_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	#endif
-
-	if (err != NULL) _dup2(_fileno(err), _fileno(stderr));
-	if (out != NULL) _dup2(_fileno(out), _fileno(stdout));
-	FreeConsole();
-#endif
+	ErrorLog_Init(g_personal_data_dir);
 
 	if (!Unknown_25C4_000E()) exit(1);
 

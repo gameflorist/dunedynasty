@@ -12,6 +12,12 @@
 #include "../strings.h"
 
 void
+ErrorLog_Init(const char *dir)
+{
+	(void)dir;
+}
+
+void
 Error(const char *format, ...)
 {
 	va_list ap;
