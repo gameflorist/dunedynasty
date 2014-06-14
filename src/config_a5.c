@@ -516,7 +516,7 @@ Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *
 
 /*--------------------------------------------------------------*/
 
-static void
+void
 ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 {
 	ALLEGRO_PATH *dune_data_path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
@@ -587,7 +587,6 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 void
 GameOptions_Load(void)
 {
-	ConfigA5_InitDataDirectoriesAndLoadConfigFile();
 	if (s_configFile == NULL)
 		return;
 

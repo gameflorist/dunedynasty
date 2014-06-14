@@ -625,7 +625,7 @@ int main(int argc, char **argv)
 	FileHash_Init();
 	Mouse_Init();
 
-	if (A5_InitOptions() == false)
+	if (!A5_InitSystem())
 		exit(1);
 
 	ErrorLog_Init(g_personal_data_dir);

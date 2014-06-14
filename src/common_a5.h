@@ -7,7 +7,7 @@
 extern struct ALLEGRO_EVENT_QUEUE *g_a5_input_queue;
 
 extern void A5_InitTransform(bool screen_size_changed);
-extern bool A5_InitOptions(void);
+extern bool A5_InitSystem(void);
 extern bool A5_Init(void);
 extern void A5_Uninit(void);
 extern void A5_UseTransform(enum ScreenDivID div);

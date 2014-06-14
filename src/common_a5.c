@@ -150,7 +150,7 @@ A5_InitTransform(bool screen_size_changed)
 }
 
 bool
-A5_InitOptions(void)
+A5_InitSystem(void)
 {
 	if (al_init() != true)
 		return false;
@@ -161,8 +161,7 @@ A5_InitOptions(void)
 	al_set_app_name("dunedynasty");
 #endif
 
-	GFX_InitDefaultViewportScales(true);
-	GameOptions_Load();
+	ConfigA5_InitDataDirectoriesAndLoadConfigFile();
 
 	return true;
 }
@@ -170,6 +169,9 @@ A5_InitOptions(void)
 bool
 A5_Init(void)
 {
+	GFX_InitDefaultViewportScales(true);
+	GameOptions_Load();
+
 	g_a5_input_queue = al_create_event_queue();
 	if (g_a5_input_queue == NULL)
 		return false;
