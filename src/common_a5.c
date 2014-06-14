@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <math.h>
+#include "errorlog.h"
 #include "os/math.h"
 
 #include "common_a5.h"
@@ -152,8 +153,10 @@ A5_InitTransform(bool screen_size_changed)
 bool
 A5_InitSystem(void)
 {
-	if (al_init() != true)
+	if (!al_init()) {
+		Error("al_init() failed.\n");
 		return false;
+	}
 
 #ifdef ALLEGRO_WINDOWS
 	al_set_app_name("Dune Dynasty");
@@ -173,16 +176,18 @@ A5_Init(void)
 	GameOptions_Load();
 
 	g_a5_input_queue = al_create_event_queue();
-	if (g_a5_input_queue == NULL)
+	if (g_a5_input_queue == NULL) {
+		Error("g_a5_input_queue = al_create_event_queue() failed.\n");
+		return false;
+	}
+
+	if (!InputA5_Init())
 		return false;
 
-	if (InputA5_Init() != true)
+	if (!VideoA5_Init())
 		return false;
 
-	if (VideoA5_Init() != true)
-		return false;
-
-	if (TimerA5_Init() != true)
+	if (!TimerA5_Init())
 		return false;
 
 	AudioA5_Init();

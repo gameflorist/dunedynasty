@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_audio.h>
+#include "errorlog.h"
 
 #include "input_a5.h"
 
@@ -18,11 +19,15 @@
 bool
 InputA5_Init(void)
 {
-	if (al_install_keyboard() != true)
+	if (!al_install_keyboard()) {
+		Error("al_install_keyboard() failed.\n");
 		return false;
+	}
 
-	if (al_install_mouse() != true)
+	if (!al_install_mouse()) {
+		Error("al_install_mouse() failed.\n");
 		return false;
+	}
 
 	al_register_event_source(g_a5_input_queue, al_get_keyboard_event_source());
 	al_register_event_source(g_a5_input_queue, al_get_mouse_event_source());

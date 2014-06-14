@@ -335,31 +335,55 @@ VideoA5_InitWindowIcons(void)
 	al_destroy_bitmap(icon[0]);
 }
 
+static void
+VideoA5_AppendFlag(char *dst, int max, int *pos, const char *str)
+{
+	const int len = strlen(str);
+
+	if (*pos + len + 1 < max) {
+		memmove(dst + *pos, str, len + 1);
+		*pos += len;
+	}
+}
+
 bool
 VideoA5_Init(void)
 {
+#define APPEND_FLAG(FLAG) \
+	do { \
+		display_flags |= FLAG; \
+		VideoA5_AppendFlag(flags_str, sizeof(flags_str), &flags_len, #FLAG" "); \
+	} while (false)
+
 	const int w = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int h = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 	int display_flags = ALLEGRO_GENERATE_EXPOSE_EVENTS;
+	char flags_str[1024];
+	int flags_len = 0;
+
+	flags_str[0] = '\0';
 
 	switch (g_graphics_driver) {
 		case GRAPHICS_DRIVER_OPENGL:
 		default:
-			display_flags |= ALLEGRO_OPENGL;
+			APPEND_FLAG(ALLEGRO_OPENGL);
 			break;
 
 #ifdef ALLEGRO_WINDOWS
 		case GRAPHICS_DRIVER_DIRECT3D:
-			display_flags |= ALLEGRO_DIRECT3D;
+			APPEND_FLAG(ALLEGRO_DIRECT3D);
 			break;
 #endif
 	}
 
 	if (g_gameConfig.windowMode == WM_FULLSCREEN) {
-		display_flags |= ALLEGRO_FULLSCREEN;
+		APPEND_FLAG(ALLEGRO_FULLSCREEN);
 	}
 	else if (g_gameConfig.windowMode == WM_FULLSCREEN_WINDOW) {
-		display_flags |= ALLEGRO_FULLSCREEN_WINDOW;
+		APPEND_FLAG(ALLEGRO_FULLSCREEN_WINDOW);
+	}
+	else {
+		APPEND_FLAG(ALLEGRO_WINDOWED);
 	}
 
 	al_set_new_display_flags(display_flags);
@@ -367,7 +391,10 @@ VideoA5_Init(void)
 	al_set_new_display_option(ALLEGRO_STENCIL_SIZE, 8, ALLEGRO_SUGGEST);
 	display = al_create_display(TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 	if (display == NULL) {
-		Error("Could not create display!");
+		Error("al_create_display() failed.\n"
+				"  Tried %s%dx%d.\n"
+				"  Maybe try some different options?\n",
+				flags_str, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 		return false;
 	}
 
@@ -388,8 +415,13 @@ VideoA5_Init(void)
 	al_set_new_bitmap_flags(ALLEGRO_NO_PRESERVE_TEXTURE);
 	s_minimap = al_create_bitmap(64, 64);
 
-	if (interface_texture == NULL || shape_texture == NULL || region_texture == NULL || s_minimap == NULL)
+	if (interface_texture == NULL
+			|| shape_texture == NULL
+			|| region_texture == NULL
+			|| s_minimap == NULL) {
+		Error("al_create_bitmap() failed.\n");
 		return false;
+	}
 
 	al_register_event_source(g_a5_input_queue, al_get_display_event_source(display));
 
@@ -400,6 +432,8 @@ VideoA5_Init(void)
 	al_flip_display();
 
 	return true;
+
+#undef APPEND_FLAG
 }
 
 static void

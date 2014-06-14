@@ -2,6 +2,7 @@
 
 #include <allegro5/allegro.h>
 #include <assert.h>
+#include "errorlog.h"
 
 #include "timer_a5.h"
 
@@ -33,12 +34,16 @@ TimerA5_Init(void)
 {
 	s_timer[TIMER_GUI] = al_create_timer(s_game_speed[GAMESPEED_NORMAL]);
 	s_timer[TIMER_GAME] = al_create_timer(s_game_speed[GAMESPEED_NORMAL]);
-	if (s_timer[TIMER_GUI] == NULL || s_timer[TIMER_GAME] == NULL)
+	if (s_timer[TIMER_GUI] == NULL || s_timer[TIMER_GAME] == NULL) {
+		Error("al_create_timer() failed.\n");
 		return false;
+	}
 
 	s_timer_queue = al_create_event_queue();
-	if (s_timer_queue == NULL)
+	if (s_timer_queue == NULL) {
+		Error("s_timer_queue = al_create_event_queue() failed.\n");
 		return false;
+	}
 
 	al_register_event_source(g_a5_input_queue, al_get_timer_event_source(s_timer[TIMER_GUI]));
 	return true;
