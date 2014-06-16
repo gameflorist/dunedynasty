@@ -51,10 +51,10 @@ static bool Load_Main(FILE *fp)
 	uint32 header;
 	uint16 version;
 
-	/* All OpenDUNE / Dune2 savegames should start with 'FORM' */
+	/* All Dune II savegames should start with 'FORM'. */
 	if (fread(&header, sizeof(uint32), 1, fp) != 1) return false;
 	if (BETOH32(header) != CC_FORM) {
-		Error("Invalid magic header in savegame. Not an OpenDUNE / Dune2 savegame.");
+		Warning("Invalid magic header in savegame.  Not a Dune II savegame.");
 		return false;
 	}
 

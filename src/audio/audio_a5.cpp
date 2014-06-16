@@ -28,6 +28,8 @@
 #endif /* WITH_AUD */
 
 extern "C" {
+#include "errorlog.h"
+
 #ifdef WITH_MAD
 # include "allegro_mad.h"
 #else
@@ -150,7 +152,7 @@ AudioA5_Init(void)
 	bool enable_midi = false;
 
 	if (!al_install_audio()) {
-		fprintf(stderr, "al_install_audio() failed.\n");
+		Warning("al_install_audio() failed.\n");
 		goto audio_init_failed;
 	}
 	else {
@@ -159,13 +161,13 @@ AudioA5_Init(void)
 
 	al_voice = al_create_voice(SRATE, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2);
 	if (al_voice == NULL) {
-		fprintf(stderr, "al_create_voice() failed.\n");
+		Warning("al_create_voice() failed.\n");
 		goto audio_init_failed;
 	}
 
 	al_mixer = al_create_mixer(SRATE, ALLEGRO_AUDIO_DEPTH_FLOAT32, ALLEGRO_CHANNEL_CONF_2);
 	if (al_mixer == NULL) {
-		fprintf(stderr, "al_create_mixer() failed.\n");
+		Warning("al_create_mixer() failed.\n");
 		goto audio_init_failed;
 	}
 
@@ -193,7 +195,7 @@ AudioA5_Init(void)
 
 #ifdef WITH_FLUIDSYNTH
 		if (s_fluid_player == NULL)
-			fprintf(stderr, "create_midi_player() failed.\nGiven sound font: %s\n", sound_font_path);
+			Warning("create_midi_player( %s ) failed.\n", sound_font_path);
 #endif
 	}
 	else {
