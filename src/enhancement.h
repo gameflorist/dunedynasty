@@ -66,6 +66,7 @@ extern bool enhancement_raise_scenario_unit_cap;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
 extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;
+extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation_backup;
 extern bool enhancement_soldier_engineers;
 extern bool enhancement_structures_on_concrete_do_not_degrade;
 extern enum SubtitleOverride enhancement_subtitle_override;

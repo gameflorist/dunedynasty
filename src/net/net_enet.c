@@ -11,6 +11,7 @@
 #include "message.h"
 #include "server.h"
 #include "../audio/audio.h"
+#include "../enhancement.h"
 #include "../house.h"
 #include "../mods/multiplayer.h"
 #include "../newui/chatbox.h"
@@ -216,6 +217,8 @@ Net_ConnectToServer(const char *hostname, int port, const char *name)
 
 		memset(g_peer_data, 0, sizeof(g_peer_data));
 		Multiplayer_Init();
+
+		enhancement_smooth_unit_animation = SMOOTH_UNIT_ANIMATION_DISABLE;
 
 		g_host_type = HOSTTYPE_DEDICATED_CLIENT;
 		g_local_client_id = 0;

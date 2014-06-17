@@ -162,6 +162,7 @@ enum SecurityQuestionMode enhancement_security_question = SECURITY_QUESTION_ANSW
  * top-down units to arbitrary angles.
  */
 enum SmoothUnitAnimationMode enhancement_smooth_unit_animation = SMOOTH_UNIT_ANIMATION_ENABLE;
+enum SmoothUnitAnimationMode enhancement_smooth_unit_animation_backup = SMOOTH_UNIT_ANIMATION_ENABLE;
 
 /**
  * [OpenDUNE bug] Make soldiers entering structures do more damage,
