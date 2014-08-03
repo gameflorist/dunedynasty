@@ -1071,7 +1071,7 @@ PlaySkirmish_Loop(void)
 	do {
 		if (lobby_regenerate_map) {
 			if (!Skirmish_GenerateMap(false))
-				return MENU_EXTRAS;
+				return MENU_SKIRMISH_LOBBY;
 		}
 
 		PlayAGame_StartGame(false);
