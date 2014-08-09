@@ -1447,7 +1447,7 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 		g_multiplayer.client[old_house] = 0;
 	}
 
-	lobby_regenerate_map = true;
+	lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
 }
 
 static void

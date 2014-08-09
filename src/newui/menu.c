@@ -1069,13 +1069,10 @@ static enum MenuAction
 PlaySkirmish_Loop(void)
 {
 	do {
-		if (lobby_regenerate_map) {
-			if (!Skirmish_GenerateMap(false))
-				return MENU_SKIRMISH_LOBBY;
-		}
+		if (!Skirmish_GenerateMap(MAP_GENERATOR_FINAL))
+			return MENU_SKIRMISH_LOBBY;
 
 		PlayAGame_StartGame(false);
-		lobby_regenerate_map = true;
 	} while (g_gameMode == GM_RESTART);
 
 	if (g_gameMode == GM_WIN) {
@@ -1095,7 +1092,6 @@ static enum MenuAction
 PlayMultiplayer_Loop(void)
 {
 	PlayAGame_StartGame(false);
-	lobby_regenerate_map = true;
 
 	return MENU_MULTIPLAYER_LOBBY;
 }

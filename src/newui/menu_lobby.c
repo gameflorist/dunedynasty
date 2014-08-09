@@ -524,7 +524,9 @@ enum MenuAction
 SkirmishLobby_Loop(void)
 {
 	if (lobby_regenerate_map != MAP_GENERATOR_STOP) {
-		lobby_regenerate_map = Skirmish_GenerateMap(lobby_regenerate_map);
+		bool success = Skirmish_GenerateMap(lobby_regenerate_map);
+		lobby_regenerate_map
+			= MapGenerator_TransitionState(lobby_regenerate_map, success);
 		SkirmishLobby_IsPlayable();
 	}
 

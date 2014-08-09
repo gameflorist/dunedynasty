@@ -1060,7 +1060,7 @@ Skirmish_GenerateMap1(bool is_playable)
 	return ret;
 }
 
-enum MapGeneratorMode
+bool
 Skirmish_GenerateMap(enum MapGeneratorMode mode)
 {
 	assert(g_campaign_selected == CAMPAIGNID_SKIRMISH);
@@ -1097,5 +1097,5 @@ Skirmish_GenerateMap(enum MapGeneratorMode mode)
 		Video_DrawMinimap(0, 0, 0, MINIMAP_SAVE);
 	}
 
-	return MapGenerator_TransitionState(mode, success);
+	return success;
 }
