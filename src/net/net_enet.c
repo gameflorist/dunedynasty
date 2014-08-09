@@ -34,6 +34,7 @@ char g_join_port[MAX_PORT_LEN + 1] = DEFAULT_PORT_STR;
 char g_chat_buf[MAX_CHAT_LEN + 1];
 
 bool g_sendClientList;
+bool g_sendScenario;
 enum HouseFlag g_client_houses;
 enum NetHostType g_host_type;
 static ENetHost *s_enet_host;

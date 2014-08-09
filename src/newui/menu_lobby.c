@@ -668,6 +668,13 @@ MultiplayerLobby_Loop(void)
 {
 	if (g_host_type == HOSTTYPE_DEDICATED_SERVER
 	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+		if (lobby_regenerate_map != MAP_GENERATOR_STOP) {
+			lobby_regenerate_map = Multiplayer_GenerateMap(lobby_regenerate_map);
+
+			if (lobby_regenerate_map == MAP_GENERATOR_STOP)
+				g_sendScenario = true;
+		}
+
 		Server_RecvMessages();
 		Server_SendMessages();
 	}

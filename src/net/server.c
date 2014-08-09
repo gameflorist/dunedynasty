@@ -769,11 +769,7 @@ Server_Send_ClientList(unsigned char **buf)
 void
 Server_Send_Scenario(unsigned char **buf)
 {
-	if (lobby_regenerate_map == MAP_GENERATOR_STOP)
-		return;
-
-	lobby_regenerate_map = Multiplayer_GenerateMap(lobby_regenerate_map);
-	if (lobby_regenerate_map != MAP_GENERATOR_STOP)
+	if (!g_sendScenario || lobby_regenerate_map != MAP_GENERATOR_STOP)
 		return;
 
 	const size_t len = 1 + 7 + MAX_CLIENTS;
@@ -789,6 +785,8 @@ Server_Send_Scenario(unsigned char **buf)
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		Net_Encode_uint8(buf, g_multiplayer.client[h]);
 	}
+
+	g_sendScenario = false;
 }
 
 /*--------------------------------------------------------------*/
