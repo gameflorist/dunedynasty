@@ -523,7 +523,8 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 		if (loc22) Map_UpdateWall(positionPacked);
 	}
 
-	Explosion_Start(type, position);
+	const Unit *u = Tools_Index_GetUnit(unitOriginEncoded);
+	Explosion_Start(type, position, (u != NULL) ? Unit_GetHouseID(u) : HOUSE_HARKONNEN);
 }
 
 /**
@@ -609,7 +610,7 @@ void Map_DeviateArea(uint16 type, tile32 position, uint16 radius, uint8 houseID)
 {
 	PoolFindStruct find;
 
-	Explosion_Start(type, position);
+	Explosion_Start(type, position, enhancement_nonordos_deviation ? houseID : HOUSE_ORDOS);
 
 	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
 			u != NULL;

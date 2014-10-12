@@ -236,8 +236,9 @@ Explosion_Uninit(void)
  * Start a Explosion on a tile.
  * @param explosionType Type of Explosion.
  * @param position The position to use for init.
+ * @param houseID House from which the explosion originates. Determines deviator gas color.
  */
-void Explosion_Start(uint16 explosionType, tile32 position)
+void Explosion_Start(uint16 explosionType, tile32 position, uint8 houseID)
 {
 	if (explosionType > EXPLOSION_SPICE_BLOOM_TREMOR) return;
 
@@ -250,6 +251,7 @@ void Explosion_Start(uint16 explosionType, tile32 position)
 		e->current  = 0;
 		e->spriteID = 0;
 		e->position = position;
+		e->houseID = houseID;
 
 		g_map[packed].hasExplosion = true;
 
@@ -332,7 +334,7 @@ Explosion_Draw(void)
 		if (!Map_IsPositionInViewport(e->position, &x, &y))
 			continue;
 
-		Shape_Draw(e->spriteID, x, y, 2, 0xC000);
+		Shape_DrawRemap(e->spriteID, e->houseID, x, y, 2, 0xC000);
 	}
 }
 

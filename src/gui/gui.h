@@ -92,6 +92,7 @@ extern void GUI_DrawCredits(int credits, uint16 mode, int x);
 
 extern void GUI_Palette_CreateMapping(uint8 *palette, uint8 *colors, uint8 reference, uint8 intensity);
 extern void GUI_Palette_CreateRemap(uint8 houseID);
+extern void GUI_Palette_CreateRemapDeviatorGas(uint8 houseID);
 extern void GUI_PaletteAnimate(void);
 
 extern void GUI_DrawChar_(unsigned char c, int x, int y);

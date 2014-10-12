@@ -424,6 +424,10 @@ Client_Recv_UpdateExplosions(const unsigned char **buf)
 		e->spriteID     = Net_Decode_uint16(buf);
 		e->position.x   = Net_Decode_uint16(buf);
 		e->position.y   = Net_Decode_uint16(buf);
+		e->houseID      = Net_Decode_uint8 (buf);
+
+		if (e->houseID >= HOUSE_MAX)
+			e->houseID = HOUSE_HARKONNEN;
 	}
 }
 

@@ -68,11 +68,12 @@ typedef struct Explosion {
 	enum ShapeID spriteID;                  /*!< SpriteID. */
 	const ExplosionCommandStruct *commands; /*!< Commands being executed. */
 	tile32 position;                        /*!< Position where this explosion acts. */
+	uint8 houseID;                          /*!< House from which the explosion originates. Determines deviator gas color. */
 } Explosion;
 
 extern void Explosion_Init(void);
 extern void Explosion_Uninit(void);
-extern void Explosion_Start(uint16 explosionType, tile32 position);
+extern void Explosion_Start(uint16 explosionType, tile32 position, uint8 houseID);
 extern void Explosion_Tick(void);
 extern void Explosion_Draw(void);
 

@@ -2132,7 +2132,9 @@ VideoA5_InitShapes(unsigned char *buf)
 		{ 141, 150, false }, /* UNITS2.SHP: sonic tank turret, launcher turret */
 		{ 151, 161, false }, /* UNITS1.SHP */
 		{ 162, 167,  true }, /* UNITS1.SHP: tanks */
-		{ 168, 237, false }, /* UNITS1.SHP */
+		{ 168, 207, false }, /* UNITS1.SHP */
+		{ 208, 212,  true }, /* UNITS1.SHP: deviator gas */
+		{ 213, 237, false }, /* UNITS1.SHP */
 		{ 238, 257,  true }, /* UNITS.SHP: quad .. mcv */
 		{ 258, 282, false }, /* UNITS.SHP: rockets */
 		{ 283, 300,  true }, /* UNITS.SHP: carryall .. frigate */
@@ -2179,7 +2181,12 @@ VideoA5_InitShapes(unsigned char *buf)
 		}
 
 		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-			GUI_Palette_CreateRemap(houseID);
+			if (shape_data[group].start == SHAPE_DEVIATOR_GAS_CLOUD) {
+				GUI_Palette_CreateRemapDeviatorGas(houseID);
+			}
+			else {
+				GUI_Palette_CreateRemap(houseID);
+			}
 
 			for (uint16 shapeID = shape_data[group].start; shapeID <= shape_data[group].end; shapeID++) {
 				assert(shapeID < SHAPEID_MAX);

@@ -2207,7 +2207,7 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 }
 
 /**
- * Create the remap palette for the givern house.
+ * Create the remap palette for the given house.
  * @param houseID The house ID.
  */
 void GUI_Palette_CreateRemap(uint8 houseID)
@@ -2225,6 +2225,34 @@ void GUI_Palette_CreateRemap(uint8 houseID)
 		loc4 = i % 16;
 		if (loc6 == 9 && loc4 <= 6) {
 			*remap = (houseID << 4) + 0x90 + loc4;
+		}
+	}
+}
+
+/**
+ * Create the remap for the deviator gas from Ordos to the house specified.
+ * @param toHouseID The house ID.
+ */
+void GUI_Palette_CreateRemapDeviatorGas(uint8 houseID)
+{
+	int i;
+	int loc4;
+	int loc6;
+	uint8 *remap;
+
+	remap = g_remap;
+	for (i = 0; i < 0x100; i++, remap++) {
+		*remap = i & 0xFF;
+
+		loc6 = i / 16;
+		loc4 = i % 16;
+		if ((loc6 == 9 + HOUSE_ORDOS) && loc4 <= 6) {
+			if (houseID == HOUSE_ORDOS) *remap = (houseID << 4) + 0x90 + loc4;
+			else *remap = (houseID << 4) + 0x90 + loc4 + 1;
+		}
+		if ((houseID != HOUSE_ORDOS) && loc6 == 4 && loc4 == 5) {
+			if (houseID == HOUSE_ORDOS) *remap = 0x45;
+			else *remap = (houseID << 4) + 0x90;
 		}
 	}
 }

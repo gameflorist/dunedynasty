@@ -479,7 +479,7 @@ Server_Send_UpdateExplosions(unsigned char **buf)
 	if (num <= 1 && num == s_explosionLastCount)
 		return;
 
-	const size_t len = 2 + (num - 1) * 6;
+	const size_t len = 2 + (num - 1) * 7;
 	if (!Server_CanEncodeFixedWidthBuffer(buf, len))
 		return;
 
@@ -492,6 +492,7 @@ Server_Send_UpdateExplosions(unsigned char **buf)
 		Net_Encode_uint16(buf, e->spriteID);
 		Net_Encode_uint16(buf, e->position.x);
 		Net_Encode_uint16(buf, e->position.y);
+		Net_Encode_uint8 (buf, e->houseID);
 	}
 
 	s_explosionLastCount = num;
