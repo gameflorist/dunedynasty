@@ -547,11 +547,14 @@ Client_Recv_ClientList(const unsigned char **buf)
 static void
 Client_Recv_Scenario(const unsigned char **buf)
 {
+	g_multiplayer.credits = Net_Decode_uint16(buf);
 	g_multiplayer.next_seed = Net_Decode_uint32(buf);
 	g_multiplayer.test_seed = g_multiplayer.next_seed;
-	g_multiplayer.landscape_params.min_spice_fields = Net_Decode_uint8(buf);
-	g_multiplayer.landscape_params.max_spice_fields = Net_Decode_uint8(buf);
+	g_multiplayer.seed_mode = Net_Decode_uint32(buf);
+	g_multiplayer.landscape_params.min_spice_fields = Net_Decode_uint32(buf);
+	g_multiplayer.landscape_params.max_spice_fields = Net_Decode_uint32(buf);
 	enhancement_fog_of_war = Net_Decode_uint8(buf);
+	enhancement_insatiable_sandworms = Net_Decode_uint8(buf);
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		g_multiplayer.client[h] = Net_Decode_uint8(buf);
@@ -563,7 +566,7 @@ Client_Recv_Scenario(const unsigned char **buf)
 		}
 	}
 
-	lobby_regenerate_map = MAP_GENERATOR_FINAL;
+	lobby_map_generator_mode = MAP_GENERATOR_FINAL;
 }
 
 static void

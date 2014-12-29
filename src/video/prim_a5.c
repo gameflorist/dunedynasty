@@ -17,6 +17,12 @@ Prim_Line(float x1, float y1, float x2, float y2, uint8 c, float thickness)
 }
 
 void
+Prim_Line_i(int x1, int y1, int x2, int y2, uint8 c)
+{
+	al_draw_line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, paltoRGB[c], 1.0f);
+}
+
+void
 Prim_Hline(int x1, int y, int x2, uint8 c)
 {
 	assert(x1 <= x2);

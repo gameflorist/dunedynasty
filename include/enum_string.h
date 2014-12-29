@@ -433,6 +433,8 @@ enum StringID {
 	STR_MAIN_MENU       = 0x8002,
 	STR_HOST            = 0x8003,
 	STR_JOIN            = 0x8004,
+	STR_MAP_OPTIONS     = 0x8005,
+	STR_APPLY           = 0x8006,
 
 	STR_HOUSE_HARKONNEN = 0x8FFA,
 	STR_HOUSE_ATREIDES  = 0x8FFB,

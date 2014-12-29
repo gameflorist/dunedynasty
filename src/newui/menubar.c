@@ -554,7 +554,9 @@ MenuBar_ClickRadioButton(Widget *radio)
 	/* Bit of a hack to make the radio button retain the ON sprite
 	 * after we click something else.
 	 */
-	radio->drawParameterNormal.sprite = SHAPE_RADIO_BUTTON_ON;
+	bool isCheckBox = (radio->drawParameterNormal.sprite == SHAPE_CHECKBOX_OFF)
+			|| (radio->drawParameterNormal.sprite == SHAPE_CHECKBOX_ON);
+	radio->drawParameterNormal.sprite = (isCheckBox)? SHAPE_CHECKBOX_ON: SHAPE_RADIO_BUTTON_ON;
 	radio->state.selected = 1;
 
 	return true;

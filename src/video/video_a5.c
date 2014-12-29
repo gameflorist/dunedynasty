@@ -1896,9 +1896,9 @@ VideoA5_InitIcons(unsigned char *buf)
 	VideoA5_DrawIconPadding(icon_texture, connect);
 
 #if OUTPUT_TEXTURES
-	al_save_bitmap("icons16.png", icon_texture);
-	al_save_bitmap("icons32.png", icon_texture32);
-	al_save_bitmap("icons48.png", icon_texture48);
+	if (icon_texture != NULL) al_save_bitmap("icons16.png", icon_texture);
+	if (icon_texture32 != NULL) al_save_bitmap("icons32.png", icon_texture32);
+	if (icon_texture48 != NULL) al_save_bitmap("icons48.png", icon_texture48);
 #endif
 
 	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
@@ -2031,6 +2031,35 @@ VideoA5_ExportShape(enum ShapeID shapeID, int x, int y, int row_h,
 	return bmp;
 }
 
+static ALLEGRO_BITMAP *
+VideoA5_ExportCheckBox(bool checked, int x, int y, int row_h, int *retx, int *rety, int *ret_row_h)
+{
+	ALLEGRO_BITMAP *dest = al_get_target_bitmap();
+	const int TEXTURE_W = al_get_bitmap_width(dest);
+	const int TEXTURE_H = al_get_bitmap_height(dest);
+	const int w = 9;
+	const int h = 9;
+
+	ALLEGRO_BITMAP *bmp;
+
+	VideoA5_GetNextXY(TEXTURE_W, TEXTURE_H, x, y, w, h, row_h, &x, &y);
+
+	uint8 color = 31;
+	Prim_Rect_i(x, y, x + 8, y + 8, color);
+	if (checked) {
+		Prim_Line_i(x + 2, y + 2, x + 7, y + 7, color);
+		Prim_Line_i(x + 6, y + 2, x + 1, y + 7, color);
+	}
+
+	bmp = al_create_sub_bitmap(dest, x, y, w, h);
+	assert(bmp != NULL);
+
+	*retx = x + w + 1;
+	*rety = y;
+	*ret_row_h = (x <= 1) ? h : max(row_h, h);
+	return bmp;
+}
+
 static void
 VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
 {
@@ -2140,6 +2169,7 @@ VideoA5_InitShapes(unsigned char *buf)
 		{ 283, 300,  true }, /* UNITS.SHP: carryall .. frigate */
 		{ 301, 354,  true }, /* UNITS.SHP: saboteur .. landed ornithoper */
 		{ 373, 386, false }, /* MENTAT */
+		{ 525, 526, false }, /* SHAPE_CHECKBOX_OFF and SHAPE_CHECKBOX_ON */
 
 		{  -2,   0, false },
 		{ 477, 504,  true }, /* PIECES.SHP */
@@ -2200,6 +2230,10 @@ VideoA5_InitShapes(unsigned char *buf)
 
 						g_remap[RADIO_BUTTON_BACKGROUND_COLOUR] = backup;
 					}
+					else if ((shapeID == SHAPE_CHECKBOX_OFF) || (shapeID == SHAPE_CHECKBOX_ON)) {
+						bool checked = (shapeID == SHAPE_CHECKBOX_ON);
+						s_shape[shapeID][houseID] = VideoA5_ExportCheckBox(checked, x, y, row_h, &x, &y, &row_h);
+					}
 					else {
 						s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
 					}
@@ -2242,8 +2276,8 @@ VideoA5_InitShapes(unsigned char *buf)
 	VideoA5_CopyBitmap(WINDOW_W, buf, region_texture, TRANSPARENT_COLOUR_0);
 
 #if OUTPUT_TEXTURES
-	al_save_bitmap("shapes.png", shape_texture);
 	al_save_bitmap("regions.png", region_texture);
+	al_save_bitmap("shapes.png", shape_texture);
 #endif
 }
 
@@ -2995,4 +3029,21 @@ VideoA5_DisplayFound(void)
 	scratch = NULL;
 
 	memset(s_minimap_colour, 0, sizeof(s_minimap_colour));
+}
+
+int
+VideoA5_GetHeight(enum ShapeID shapeID)
+{
+	if (shapeID == SHAPE_INVALID)
+		return 0;
+
+	return al_get_bitmap_height(s_shape[shapeID][HOUSE_HARKONNEN]);
+}
+
+int VideoA5_GetWidth(enum ShapeID shapeID)
+{
+	if (shapeID == SHAPE_INVALID)
+		return 0;
+
+	return al_get_bitmap_width(s_shape[shapeID][HOUSE_HARKONNEN]);
 }

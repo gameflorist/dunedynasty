@@ -29,6 +29,7 @@ Multiplayer_Init(void)
 	g_multiplayer.credits = 1000;
 	g_multiplayer.curr_seed = MapGenerator_PickRandomSeed();
 	g_multiplayer.next_seed = g_multiplayer.curr_seed;
+	g_multiplayer.seed_mode = MAP_SEED_MODE_RANDOM;
 
 	g_multiplayer.landscape_params.min_spice_fields = 24;
 	g_multiplayer.landscape_params.max_spice_fields = 48;

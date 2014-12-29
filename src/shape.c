@@ -38,7 +38,7 @@ Shape_Width(enum ShapeID shapeID)
 	if (shapeID == SHAPE_INVALID)
 		return 0;
 
-	return g_sprites[shapeID][3];
+	return (g_sprites[shapeID])? g_sprites[shapeID][3]: VideoA5_GetHeight(shapeID);
 }
 
 int
@@ -47,7 +47,7 @@ Shape_Height(enum ShapeID shapeID)
 	if (shapeID == SHAPE_INVALID)
 		return 0;
 
-	return g_sprites[shapeID][2];
+	return (g_sprites[shapeID])? g_sprites[shapeID][2]: VideoA5_GetWidth(shapeID);
 }
 
 static void

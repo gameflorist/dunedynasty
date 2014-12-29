@@ -117,7 +117,12 @@ enum ShapeID {
 	SHAPE_SANDWORM_GREY = 639,
 
 	/* Final normal shape is 524 (CREDIT11.SHP). */
-	SHAPE_MAX = 525,
+
+	/* Shapes created during runtime. */
+	SHAPE_CHECKBOX_OFF = 525,
+	SHAPE_CHECKBOX_ON = 526,
+
+	SHAPE_MAX = 527,
 	SHAPE_INVALID = 0xFFFF
 };
 

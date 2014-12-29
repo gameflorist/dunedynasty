@@ -6,6 +6,9 @@
 #include "mapgenerator.h"
 
 typedef struct Skirmish {
+	/* Initial credits. */
+	uint16 credits;
+
 	uint32 seed;
 	LandscapeGeneratorParams landscape_params;
 

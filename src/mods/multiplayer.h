@@ -28,6 +28,9 @@ typedef struct Multiplayer {
 	/* Seed to test map generation. */
 	uint32 test_seed;
 
+	/* Map seed modes include random, user-defined and hidden from user. */
+	uint32 seed_mode;
+
 	LandscapeGeneratorParams landscape_params;
 
 	enum MultiplayerHouseState state[HOUSE_MAX];

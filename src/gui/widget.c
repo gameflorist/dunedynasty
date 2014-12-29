@@ -199,7 +199,7 @@ void GUI_Widget_Draw(Widget *w)
 
 /**
  * Check a widget for events like 'hover' or 'click'. Also check the keyboard
- *  buffer if there was any key which should active us.
+ *  buffer if there was any key which should activate us.
  *
  * @param w The widget to handle events for. If the widget has a valid next
  *   pointer, those widgets are handled too.
@@ -437,7 +437,9 @@ GUI_Widget_HandleEventsKey(Widget *w, uint16 key)
 			}
 		}
 
-		if ((!widgetHover) && (buttonState & 0x2200) != 0) {
+		bool isCheckBox = (w->drawParameterNormal.sprite == SHAPE_CHECKBOX_OFF)
+				|| (w->drawParameterNormal.sprite == SHAPE_CHECKBOX_ON);
+		if ((!widgetHover) && (buttonState & 0x2200) != 0 && !isCheckBox) {
 			w->state.selected = false;
 		}
 
@@ -643,7 +645,7 @@ Widget *GUI_Widget_Allocate(uint16 index, uint16 shortcut, uint16 offsetX, uint1
 	w->drawModeNormal   = drawMode;
 	w->drawParameterNormal   = drawParam1;
 	w->drawParameterDown     = drawParam2;
-	w->drawParameterSelected = (spriteID == 0x19) ? drawParam2 : drawParam1;
+	w->drawParameterSelected = ((spriteID == SHAPE_RADIO_BUTTON_OFF) || spriteID == SHAPE_CHECKBOX_OFF)? drawParam2 : drawParam1;
 
 	return w;
 }

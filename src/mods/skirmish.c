@@ -125,6 +125,7 @@ Skirmish_Initialise(void)
 {
 	memset(&g_skirmish, 0, sizeof(g_skirmish));
 
+	g_skirmish.credits = 1500;
 	g_skirmish.seed = MapGenerator_PickRandomSeed();
 
 	g_skirmish.landscape_params.min_spice_fields = 24;
@@ -821,7 +822,7 @@ Skirmish_GenHouses(SkirmishData *sd)
 			continue;
 
 		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
-			Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1500, 0, 25);
+			Scenario_Create_House(houseID, g_skirmish.brain[houseID], g_skirmish.credits, 0, 25);
 		}
 		else {
 			House *h = Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);

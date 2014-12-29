@@ -23,6 +23,17 @@ enum MapGeneratorMode {
 	MAP_GENERATOR_FINAL,
 };
 
+enum MapSeedMode {
+	/* A random seed is chosen automatically. User can request a new one. */
+	MAP_SEED_MODE_RANDOM = 0,
+
+	/* A user-defined seed is used for the map. */
+	MAP_SEED_MODE_FIXED = 1,
+
+	/* The map seed is random and is not revealed to the players. */
+	MAP_SEED_MODE_SURPRISE = 2,
+};
+
 extern enum MapGeneratorMode MapGenerator_TransitionState(enum MapGeneratorMode mode, bool success);
 extern uint32 MapGenerator_PickRandomSeed(void);
 

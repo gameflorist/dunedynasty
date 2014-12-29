@@ -105,6 +105,12 @@ char *String_Get_ByIndex(uint16 stringID)
 	else if (stringID == STR_JOIN) {
 		return (char *)"Join";
 	}
+	else if (stringID == STR_MAP_OPTIONS) {
+		return (char *)"Map Options";
+	}
+	else if (stringID == STR_APPLY) {
+		return (char *)"Apply";
+	}
 	else if (STR_HOUSE_HARKONNEN <= stringID && stringID <= STR_HOUSE_MERCENARY) {
 		const enum HouseType houseID = stringID - STR_HOUSE_HARKONNEN;
 		return (char *)g_table_houseInfo[houseID].name;

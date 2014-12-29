@@ -304,6 +304,18 @@ Net_IsPlayable(void)
 	}
 }
 
+bool
+Net_HasClientRole(void)
+{
+	return (g_host_type == HOSTTYPE_CLIENT_SERVER || g_host_type == HOSTTYPE_DEDICATED_CLIENT);
+}
+
+bool
+Net_HasServerRole(void)
+{
+	return (g_host_type == HOSTTYPE_DEDICATED_SERVER || g_host_type == HOSTTYPE_CLIENT_SERVER);
+}
+
 void
 Net_Synchronise(void)
 {
@@ -521,7 +533,7 @@ Server_Recv_ConnectClient(ENetEvent *event)
 		data->peer = event->peer;
 
 		Server_Send_ClientID(event->peer);
-		lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
+		lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
 		return;
 	}
 
@@ -548,7 +560,7 @@ Server_DisconnectClient(PeerData *data)
 	data->id = 0;
 	data->peer = NULL;
 
-	lobby_regenerate_map = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
+	lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
 	g_sendClientList = true;
 
 	Server_Recv_Chat(0, FLAG_HOUSE_ALL, chat_log);

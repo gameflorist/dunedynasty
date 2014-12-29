@@ -1352,6 +1352,10 @@ Menu_Run(void)
 					MultiplayerLobby_Initialise();
 					break;
 
+				case MENU_MAP_OPTIONS:
+					MapOptionsLobby_Initialise();
+					break;
+
 				case MENU_BATTLE_SUMMARY:
 				case MENU_SKIRMISH_SUMMARY:
 					BattleSummary_Initialise(g_playerHouseID, &g_hall_of_fame_state);
@@ -1406,6 +1410,10 @@ Menu_Run(void)
 
 				case MENU_MULTIPLAYER_LOBBY:
 					MultiplayerLobby_Draw();
+					break;
+
+				case MENU_MAP_OPTIONS:
+					MapOptionsLobby_Draw();
 					break;
 
 				case MENU_BATTLE_SUMMARY:
@@ -1497,6 +1505,10 @@ Menu_Run(void)
 
 			case MENU_MULTIPLAYER_LOBBY:
 				res = MultiplayerLobby_Loop();
+				break;
+
+			case MENU_MAP_OPTIONS:
+				res = MapOptionsLobby_Loop();
 				break;
 
 			case MENU_PLAY_SKIRMISH:
