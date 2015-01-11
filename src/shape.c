@@ -107,8 +107,7 @@ Shape_DrawRemapRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int y
 
 	if (abs(speed) >= abs(diff)) {
 		orient256 = orient->current + diff * frame;
-	}
-	else {
+	} else {
 		orient256 = orient->current + speed * frame;
 	}
 

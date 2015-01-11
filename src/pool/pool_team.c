@@ -141,8 +141,7 @@ Team_Allocate(uint16 index)
 		t = Team_Get_ByIndex(index);
 		if (t->flags.used)
 			return NULL;
-	}
-	else {
+	} else {
 		assert(index == TEAM_INDEX_INVALID);
 
 		/* Find the first unused index. */

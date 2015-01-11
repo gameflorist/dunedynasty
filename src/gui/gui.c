@@ -276,34 +276,29 @@ GUI_DrawStatusBarTextWrapper(uint8 priority,
 		if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
 			arg1 = String_Get_ByIndex(str3); /* <Unit> */
 			arg2 = String_Get_ByIndex(str2); /* <House> */
-		}
-		else {
+		} else {
 			arg1 = String_Get_ByIndex(str2); /* <House> */
 			arg2 = String_Get_ByIndex(str3); /* <Unit> */
 		}
-	}
-	else if (str1 == STR_IS_COMPLETE
-	      || str1 == STR_IS_COMPLETED_AND_READY_TO_PLACE
-	      || str1 == STR_IS_COMPLETED_AND_AWAITING_ORDERS) {
+	} else if (str1 == STR_IS_COMPLETE
+	        || str1 == STR_IS_COMPLETED_AND_READY_TO_PLACE
+	        || str1 == STR_IS_COMPLETED_AND_AWAITING_ORDERS) {
 		format_str = "%s %s";
 		arg1 = String_Get_ByIndex(str2); /* <Object> */
 		arg2 = String_Get_ByIndex(str1); /* is complete. */
-	}
-	else if (str1 == STR_IS_DESTROYED) {
+	} else if (str1 == STR_IS_DESTROYED) {
 		format_str = "%s %s %s";
 
 		if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
 			arg1 = String_Get_ByIndex(str3); /* <Structure> */
 			arg2 = String_Get_ByIndex(str2); /* <House> */
 			arg3 = String_Get_ByIndex(str1); /* is destroyed. */
-		}
-		else {
+		} else {
 			arg1 = String_Get_ByIndex(str2); /* <House> */
 			arg2 = String_Get_ByIndex(str3); /* <Structure> */
 			arg3 = String_Get_ByIndex(str1); /* is destroyed. */
 		}
-	}
-	else {
+	} else {
 		format_str = String_Get_ByIndex(str1);
 		arg1 = String_Get_ByIndex(str2);
 		arg2 = String_Get_ByIndex(str3);
@@ -963,8 +958,7 @@ void GUI_DrawSprite_(Screen screenID, uint8 *sprite, int16 posX, int16 posY, uin
 
 	if (windowID == WINDOWID_RENDER_TEXTURE) {
 		buf += width * loc22 + posX;
-	}
-	else {
+	} else {
 		buf += SCREEN_WIDTH * loc22 + posX;
 	}
 
@@ -1648,8 +1642,7 @@ GUI_String_Get_ByIndex(int16 stringID)
 				};
 
 				return str[g_enable_sound_effects];
-			}
-			else {
+			} else {
 				stringID = STR_OFF;
 				break;
 			}
@@ -1825,8 +1818,7 @@ GUI_HallOfFame_SetColourScheme(bool enter)
 	if (enter) {
 		memcpy(s_temporaryColourBorderSchema, s_colourBorderSchema, sizeof(s_colourBorderSchema));
 		memcpy(s_colourBorderSchema, s_HOF_ColourBorderSchema, sizeof(s_colourBorderSchema));
-	}
-	else {
+	} else {
 		memcpy(s_colourBorderSchema, s_temporaryColourBorderSchema, sizeof(s_temporaryColourBorderSchema));
 	}
 }
@@ -1956,8 +1948,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 		if (written != 128) return;
 #endif
-	}
-	else {
+	} else {
 		File_ReadBlockFile_Personal("SAVEFAME.DAT", data, 128);
 		GUI_HallOfFame_Decode(data);
 	}
@@ -2063,8 +2054,7 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 			if (ret == -1) {
 				confirm_clear = false;
 				redraw = true;
-			}
-			else if (ret == 1) {
+			} else if (ret == 1) {
 				break;
 			}
 
@@ -2077,15 +2067,13 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 				widget = GUI_Widget_GetNext(widget);
 			}
-		}
-		else {
+		} else {
 			const uint16 key = GUI_Widget_HandleEvents(w);
 
 			if (key == (0x8000 | 100)) { /* Clear list */
 				confirm_clear = true;
 				redraw = true;
-			}
-			else if (key == (0x8000 | 101)) { /* Resume */
+			} else if (key == (0x8000 | 101)) { /* Resume */
 				break;
 			}
 
@@ -2112,12 +2100,10 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 			if (g_campaign_selected == CAMPAIGNID_DUNE_II) {
 				GUI_DrawText_Wrapper("Dune II", SCREEN_WIDTH / 2, 43, 15, 0, 0x122);
-			}
-			else {
+			} else {
 				GUI_DrawText_Wrapper(g_campaign_list[g_campaign_selected].name, SCREEN_WIDTH / 2, 43, 15, 0, 0x122);
 			}
-		}
-		else {
+		} else {
 			HallOfFame_DrawScoreTime(fame->score, fame->time);
 			HallOfFame_DrawRank(fame);
 		}

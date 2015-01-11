@@ -511,11 +511,9 @@ uint8 GUI_Widget_GetShortcut(uint8 c)
 
 	if ('A' <= c && c <= 'Z') {
 		return shortcuts[c - 'A'];
-	}
-	else if ('a' <= c && c <= 'z') {
+	} else if ('a' <= c && c <= 'z') {
 		return shortcuts[c - 'a'];
-	}
-	else {
+	} else {
 		return 0;
 	}
 }

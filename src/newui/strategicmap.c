@@ -109,8 +109,7 @@ StrategicMap_DrawEmblem(unsigned char emblemID)
 	if (emblemID < 3) {
 		x = emblem[emblemID].x;
 		y = emblem[emblemID].y;
-	}
-	else {
+	} else {
 		x = emblem[2].x + 56 * (emblemID - 2);
 		y = emblem[2].y;
 	}
@@ -375,8 +374,7 @@ StrategicMap_ReadArrows(int campaignID, StrategicMapData *map)
 			if (StrategicMap_IsRegionAttempted(map->arrow[i].index))
 				map->arrow[i].index = -1;
 		}
-	}
-	else {
+	} else {
 		g_strategicRegionBits = 0;
 	}
 
@@ -451,8 +449,7 @@ StrategicMap_Initialise(enum HouseType houseID, int campaignID, StrategicMapData
 		StrategicMap_ReadOwnership(campaignID + 1, map);
 		StrategicMap_ReadArrows(campaignID, map);
 		map->state = STRATEGIC_MAP_SELECT_REGION;
-	}
-	else {
+	} else {
 		StrategicMap_ReadOwnership(campaignID, map);
 		StrategicMap_ReadProgression(houseID, campaignID, map);
 		StrategicMap_ReadArrows(campaignID, map);
@@ -487,19 +484,16 @@ StrategicMap_Draw(enum HouseType houseID, StrategicMapData *map, int64_t fade_st
 
 	if (map->state == STRATEGIC_MAP_SHOW_PROGRESSION) {
 		StrategicMap_DrawRegionFadeIn(map);
-	}
-	else if (map->state == STRATEGIC_MAP_SELECT_REGION) {
+	} else if (map->state == STRATEGIC_MAP_SELECT_REGION) {
 		StrategicMap_DrawArrows(houseID, -1, map);
-	}
-	else if (map->state == STRATEGIC_MAP_BLINK_REGION) {
+	} else if (map->state == STRATEGIC_MAP_BLINK_REGION) {
 		const int64_t curr_ticks = Timer_GetTicks();
 
 		if ((((curr_ticks - fade_start) / 20) & 0x1) == 0)
 			StrategicMap_DrawRegion(houseID, map->arrow[map->blink_scenario].index);
 
 		StrategicMap_DrawArrows(houseID, map->blink_scenario, map);
-	}
-	else if (map->state == STRATEGIC_MAP_BLINK_END) {
+	} else if (map->state == STRATEGIC_MAP_BLINK_END) {
 		StrategicMap_DrawArrows(houseID, map->blink_scenario, map);
 	}
 }
@@ -527,8 +521,7 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 			if (map->fast_forward || (curr_ticks - map->text_timer >= 120 + 60)) {
 				if (map->state == STRATEGIC_MAP_SHOW_SURFACE) {
 					map->region_aux = Video_InitFadeInCPS("DUNEMAP.CPS", 8, 24, 304, 120, false);
-				}
-				else {
+				} else {
 					map->region_aux = NULL;
 				}
 
@@ -557,8 +550,7 @@ StrategicMap_TimerLoop(StrategicMapData *map)
 				if (StrategicMap_GetNextProgression(map)) {
 					map->state = STRATEGIC_MAP_SHOW_TEXT;
 					map->region_aux = NULL;
-				}
-				else {
+				} else {
 					map->state = STRATEGIC_MAP_SELECT_REGION;
 					map->fast_forward = false;
 					map->region_aux = NULL;

@@ -117,8 +117,7 @@ BuildQueue_RemoveTail(BuildQueue *queue, uint16 objectType, int *credits)
 
 			free(e);
 			return true;
-		}
-		else {
+		} else {
 			e = e->prev;
 		}
 	}
@@ -140,8 +139,7 @@ BuildQueue_Count(const BuildQueue *queue, uint16 objectType)
 {
 	if (objectType < OBJECTTYPE_MAX) {
 		return queue->count[objectType];
-	}
-	else {
+	} else {
 		int count = 0;
 		assert(objectType == 0xFFFF);
 

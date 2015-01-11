@@ -149,8 +149,7 @@ Tools_Index_Decode(uint16 encoded)
 		const uint16 y = (encoded & 0x3F00) >> 8;
 		const uint16 x = (encoded & 0x007E) >> 1;
 		return Tile_PackXY(x, y);
-	}
-	else {
+	} else {
 		return encoded & 0x3FFF;
 	}
 }
@@ -265,8 +264,7 @@ Tools_Index_GetStructure(uint16 encoded)
 {
 	if (Tools_Index_GetType(encoded) == IT_STRUCTURE) {
 		return Structure_Get_ByIndex(Tools_Index_Decode(encoded));
-	}
-	else {
+	} else {
 		return NULL;
 	}
 }
@@ -280,8 +278,7 @@ Tools_Index_GetUnit(uint16 encoded)
 {
 	if (Tools_Index_GetType(encoded) == IT_UNIT) {
 		return Unit_Get_ByIndex(Tools_Index_Decode(encoded));
-	}
-	else {
+	} else {
 		return NULL;
 	}
 }

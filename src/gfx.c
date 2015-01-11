@@ -52,15 +52,13 @@ GFX_InitDefaultViewportScales(bool adjust_viewport)
 
 		if (adjust_viewport)
 			viewport->scalex = 1.0f;
-	}
-	else if (TRUE_DISPLAY_WIDTH <= 640) {
+	} else if (TRUE_DISPLAY_WIDTH <= 640) {
 		menubar->scalex = 1.0f;
 		sidebar->scalex = 1.0f;
 
 		if (adjust_viewport)
 			viewport->scalex = 2.0f;
-	}
-	else {
+	} else {
 		menubar->scalex = 2.0f;
 		sidebar->scalex = 2.0f;
 
@@ -217,8 +215,7 @@ void GFX_DrawSprite_(uint16 spriteID, uint16 x, uint16 y, uint8 houseID)
 	if (g_curWidgetIndex == WINDOWID_RENDER_TEXTURE) {
 		wptr += g_widgetProperties[WINDOWID_RENDER_TEXTURE].width * y + x;
 		s_spriteSpacing = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width - 2*s_spriteWidth;
-	}
-	else {
+	} else {
 		wptr += SCREEN_WIDTH * y + x;
 	}
 
@@ -450,8 +447,7 @@ GFX_ScreenShake_Start(uint16 packed, int num_ticks)
 	bool visible;
 	if (g_dune2_enhanced) {
 		visible = Map_IsUnveiledToHouse(g_playerHouseID, packed);
-	}
-	else {
+	} else {
 		visible = Map_IsPositionUnveiled(g_playerHouseID, packed);
 	}
 
@@ -477,8 +473,7 @@ GFX_ScreenShake_Offset(void)
 {
 	if (s_screen_shake_ticks == 0) {
 		return 0;
-	}
-	else {
+	} else {
 		return -4 * TRUE_DISPLAY_HEIGHT / SCREEN_HEIGHT;
 	}
 }

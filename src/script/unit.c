@@ -286,8 +286,7 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 			/* Check if the unit has a return-to position or try to find spice in case of a harvester */
 			if (u2->targetLast.x != 0 || u2->targetLast.y != 0) {
 				u->targetMove = Tools_Index_Encode(Tile_PackTile(u2->targetLast), IT_TILE);
-			}
-			else if (u2->o.type == UNIT_HARVESTER
+			} else if (u2->o.type == UNIT_HARVESTER
 					&& !House_IsHuman(Unit_GetHouseID(u2))) {
 				u->targetMove = Tools_Index_Encode(Map_SearchSpice(Tile_PackTile(u->o.position), 20), IT_TILE);
 			}
@@ -689,8 +688,7 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 			if ((u->o.type == UNIT_TROOPERS || u->o.type == UNIT_TROOPER) && (typeID == UNIT_MISSILE_TROOPER)) {
 				Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
 						SOUND_MINI_ROCKET, u->o.position);
-			}
-			else {
+			} else {
 				Server_Send_PlaySoundAtTile(FLAG_HOUSE_ALL,
 						ui->bulletSound, u->o.position);
 			}
@@ -703,8 +701,7 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 	if (enhancement_fix_firing_logic) {
 		u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 0xFFFF, true);
-	}
-	else {
+	} else {
 		u->fireDelay = Tools_AdjustToGameSpeed(ui->fireDelay * 2, 1, 255, true) & 0xFF;
 	}
 

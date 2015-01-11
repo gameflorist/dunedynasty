@@ -96,8 +96,7 @@ void GameLoop_House(void)
 
 		if (g_host_type == HOSTTYPE_NONE) {
 			seed = Random_Starport_GetSeed(g_scenarioID, g_playerHouseID);
-		}
-		else {
+		} else {
 			seed = Random_Starport_GetSeed(g_multiplayer.curr_seed, 0);
 		}
 
@@ -278,8 +277,7 @@ void GameLoop_House(void)
 
 					h->starportTimeLeft
 						= g_table_houseInfo[h->index].starportDeliveryTime;
-				}
-				else {
+				} else {
 					h->starportTimeLeft = 1;
 				}
 			}
@@ -339,8 +337,7 @@ House_Client_TickMissileCountdown(void)
 	if (!narrator_speaking
 			&& (VOICE_ONE <= voiceID && voiceID <= VOICE_FIVE)) {
 		Audio_PlayVoice(voiceID);
-	}
-	else if (voiceID == VOICE_FIVE) {
+	} else if (voiceID == VOICE_FIVE) {
 		Audio_PlaySound(EFFECT_COUNT_DOWN_TICK);
 	}
 }

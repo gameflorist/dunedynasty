@@ -75,8 +75,7 @@ MenuBar_DrawCredits(int credits_new, int credits_old, int offset, int x0)
 
 			if (char_new[i] != ' ')
 				Shape_Draw(shape_new, x, y + 8 + offset, 0, 0);
-		}
-		else {
+		} else {
 			if (char_new[i] != ' ')
 				Shape_Draw(shape_new, x, y + 1, 0, 0);
 		}
@@ -96,8 +95,7 @@ MenuBar_DrawStatusBar(const char *line1, const char *line2,
 	if (scrollInProgress) {
 		GUI_DrawText_Wrapper(line2, x, y - offset + 2, 12, 0, 0x012);
 		GUI_DrawText_Wrapper(line1, x, y - offset + 13, 12, 0, 0x012);
-	}
-	else {
+	} else {
 		GUI_DrawText_Wrapper(line1, x, y - offset + 2, 12, 0, 0x012);
 	}
 
@@ -196,8 +194,7 @@ MenuBar_StartRadarAnimation(bool activate)
 			|| (g_host_type != HOSTTYPE_NONE)) {
 		radar_animation_state = activate ? RADAR_ANIMATION_ACTIVATE : RADAR_ANIMATION_DEACTIVATE;
 		radar_animation_timer = Timer_GetTicks();
-	}
-	else {
+	} else {
 		Timer_SetTimer(TIMER_GAME, false);
 
 		for (int frame = 0; frame < RADAR_ANIMATION_FRAME_COUNT; frame++) {
@@ -276,8 +273,7 @@ MenuBar_DrawModalMessage(void)
 		Shape_Draw(s_modal_message_shapeID, 7, 8, WINDOWID_MODAL_MESSAGE, 0x4000);
 		GUI_DrawText(s_modal_message_buf, w->xBase + 5*8, w->yBase + 8,
 				w->fgColourBlink, 0);
-	}
-	else {
+	} else {
 		GUI_DrawText(s_modal_message_buf, w->xBase + 1*8, w->yBase + 8,
 				w->fgColourBlink, 0);
 	}
@@ -357,8 +353,7 @@ MenuBar_DisplayWinLose(bool win)
 		g_gameOverlay = GAMEOVERLAY_WIN;
 		stringID = STR_YOU_HAVE_SUCCESSFULLY_COMPLETED_YOUR_MISSION;
 		voiceID = VOICE_YOUR_MISSION_IS_COMPLETE;
-	}
-	else {
+	} else {
 		g_gameOverlay = GAMEOVERLAY_LOSE;
 		stringID = STR_YOU_HAVE_FAILED_YOUR_MISSION;
 		voiceID = VOICE_YOU_HAVE_FAILED_YOUR_MISSION;
@@ -498,8 +493,7 @@ MenuBar_DrawGameControlLabel(Widget *w)
 
 	if (g_gameConfig.language == LANGUAGE_FRENCH) {
 		GUI_DrawText_Wrapper(w->data, wi->xBase + 40 - 24, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
-	}
-	else {
+	} else {
 		GUI_DrawText_Wrapper(w->data, w->offsetX + wi->xBase - 10, w->offsetY + wi->yBase + 3, 232, 0, 0x222);
 	}
 }
@@ -538,8 +532,7 @@ MenuBar_ClickRadioButton(Widget *radio)
 
 		if (visible) {
 			GUI_Widget_MakeVisible(w);
-		}
-		else {
+		} else {
 			GUI_Widget_MakeInvisible(w);
 		}
 
@@ -769,11 +762,9 @@ MenuBar_UninitGameControls(void)
 		Widget *next = GUI_Widget_GetNext(w);
 
 		if (30 <= w->index && w->index <= 38) { /* Widgets stored in g_table_windowWidgets. */
-		}
-		else if (w->index >= 100) { /* Sliders. */
+		} else if (w->index >= 100) { /* Sliders. */
 			Slider_Free(w);
-		}
-		else { /* Regular widgets. */
+		} else { /* Regular widgets. */
 			free(w);
 		}
 
@@ -837,23 +828,19 @@ MenuBar_TickSaveLoadGame(enum GameOverlay overlay)
 		if (ret == -1) {
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
 			GUI_Window_Create(&g_optionsWindowDesc);
-		}
-		else if (ret == -2) {
+		} else if (ret == -2) {
 			g_gameOverlay = GAMEOVERLAY_NONE;
 		}
-	}
-	else {
+	} else {
 		const bool save = (overlay == GAMEOVERLAY_SAVE_GAME);
 		const int ret = SaveMenu_SaveLoad_Click(save);
 
 		if (ret == -1) {
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
 			GUI_Window_Create(&g_optionsWindowDesc);
-		}
-		else if (ret == -2) {
+		} else if (ret == -2) {
 			g_gameOverlay = GAMEOVERLAY_NONE;
-		}
-		else if (ret > 0) {
+		} else if (ret > 0) {
 			g_gameOverlay = GAMEOVERLAY_SAVE_ENTRY;
 			GUI_Window_Create(&g_savegameNameWindowDesc);
 			s_save_entry = ret - 0x1E;
@@ -883,12 +870,12 @@ MenuBar_TickGameControls(void)
 				g_enable_sound_effects++;
 				if (g_enable_sound_effects > SOUNDEFFECTS_SYNTH_AND_SAMPLES)
 					g_enable_sound_effects = SOUNDEFFECTS_NONE;
-			}
-			else {
-				if (g_enable_sound_effects == SOUNDEFFECTS_NONE)
+			} else {
+				if (g_enable_sound_effects == SOUNDEFFECTS_NONE) {
 					g_enable_sound_effects = SOUNDEFFECTS_SYNTH_AND_SAMPLES;
-				else
+				} else {
 					g_enable_sound_effects--;
+				}
 			}
 			g_enable_voices = !(g_enable_sound_effects == SOUNDEFFECTS_NONE || g_enable_sound_effects == SOUNDEFFECTS_SYNTH_ONLY);
 			break;
@@ -898,8 +885,7 @@ MenuBar_TickGameControls(void)
 			if (w->state.buttonState & 0x04) {
 				if (++g_gameConfig.gameSpeed >= 5)
 					g_gameConfig.gameSpeed = 0;
-			}
-			else {
+			} else {
 				if (--g_gameConfig.gameSpeed < 0)
 					g_gameConfig.gameSpeed = 4;
 			}
@@ -927,8 +913,7 @@ MenuBar_TickGameControls(void)
 			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 70);
 			if (w->state.buttonState & 0x04) {
 				enhancement_draw_health_bars = (enhancement_draw_health_bars + 1) % NUM_HEALTH_BAR_MODES;
-			}
-			else {
+			} else {
 				enhancement_draw_health_bars = (enhancement_draw_health_bars + NUM_HEALTH_BAR_MODES - 1) % NUM_HEALTH_BAR_MODES;
 			}
 			break;
@@ -954,11 +939,9 @@ MenuBar_TickConfirmation(enum GameOverlay overlay)
 		case 0x8000 | 30: /* Yes */
 			if (overlay == GAMEOVERLAY_CONFIRM_RESTART) {
 				g_gameMode = GM_RESTART;
-			}
-			else if (overlay == GAMEOVERLAY_CONFIRM_PICK_HOUSE) {
+			} else if (overlay == GAMEOVERLAY_CONFIRM_PICK_HOUSE) {
 				g_gameMode = GM_PICKHOUSE;
-			}
-			else {
+			} else {
 				g_gameMode = GM_QUITGAME;
 			}
 			break;

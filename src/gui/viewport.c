@@ -74,8 +74,7 @@ void GUI_Widget_Viewport_Draw(void)
 
 		if (g_selectionState == 0 && g_selectionType == SELECTIONTYPE_PLACE) {
 			VideoA5_DrawRectCross(x1, y1, g_selectionWidth, g_selectionHeight, 0xFF);
-		}
-		else {
+		} else {
 			const int x2 = x1 + (TILE_SIZE * g_selectionWidth) - 1;
 			const int y2 = y1 + (TILE_SIZE * g_selectionHeight) - 1;
 

@@ -595,8 +595,7 @@ Client_ChangeSelectionMode(void)
 			&& (g_structureActive == NULL)) {
 		ActionPanel_BeginPlacementMode();
 		return;
-	}
-	else if ((g_playerHouse->structureActiveID == STRUCTURE_INDEX_INVALID)
+	} else if ((g_playerHouse->structureActiveID == STRUCTURE_INDEX_INVALID)
 			&& (g_structureActiveType != 0xFFFF)) {
 		g_structureActive = NULL;
 		g_structureActiveType = 0xFFFF;
@@ -610,8 +609,7 @@ Client_ChangeSelectionMode(void)
 		l_houseMissileWasActive = true;
 		GUI_ChangeSelectionType(SELECTIONTYPE_TARGET);
 		return;
-	}
-	else if ((g_playerHouse->houseMissileID == UNIT_INDEX_INVALID)
+	} else if ((g_playerHouse->houseMissileID == UNIT_INDEX_INVALID)
 			&& (l_houseMissileWasActive)) {
 		l_houseMissileWasActive = false;
 		GUI_ChangeSelectionType(SELECTIONTYPE_STRUCTURE);

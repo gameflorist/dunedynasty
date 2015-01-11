@@ -674,8 +674,7 @@ uint16 Script_Structure_Destroy(ScriptEngine *script)
 			 */
 			if (enhancement_ai_respects_structure_placement || AI_IsBrutalAI(s->o.houseID)) {
 				Unit_Server_SetAction(u, ACTION_HUNT);
-			}
-			else {
+			} else {
 				Unit_Server_SetAction(u, ACTION_ATTACK);
 			}
 			continue;

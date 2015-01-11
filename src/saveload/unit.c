@@ -217,8 +217,7 @@ SaveLoad_Unit_ExtraFlags(void *object, uint32 value, bool loading)
 		u->permanentFollow  = (value & 0x80) ? true : false;
 		u->detonateAtTarget = (value & 0x40) ? true : false;
 		return 0;
-	}
-	else {
+	} else {
 		value = 0;
 		if (u->permanentFollow)  value |= 0x80;
 		if (u->detonateAtTarget) value |= 0x40;

@@ -128,8 +128,7 @@ Mentat_LoadHelpSubjects(Widget *scrollbar, bool init, enum SearchDirectory dir,
 
 		if (helpSubjects[size - 1] > campaignID + 1) {
 			skip = true;
-		}
-		else if (skip_advice && (helpSubjects[5] == '0')) {
+		} else if (skip_advice && (helpSubjects[5] == '0')) {
 			skip = true;
 		}
 
@@ -237,8 +236,7 @@ Mentat_DrawBackground(enum MentatID mentatID)
 
 	if (mentatID == MENTAT_CUSTOM) {
 		Video_DrawCPS(SEARCHDIR_CAMPAIGN_DIR, background[g_playerHouseID]);
-	}
-	else {
+	} else {
 		const enum HouseType houseID = (mentatID == MENTAT_BENE_GESSERIT) ? HOUSE_MERCENARY : (enum HouseType)mentatID;
 		Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, background[houseID]);
 	}
@@ -378,8 +376,7 @@ MentatBriefing_AdvanceText(MentatState *mentat)
 	if (mentat->lines <= 0) {
 		mentat->state = MENTAT_IDLE;
 		mentat->speaking_mode = 0;
-	}
-	else {
+	} else {
 		mentat->speaking_mode = 1;
 		mentat->speaking_timer = Timer_GetTicks() + 4 * strlen(mentat->text);
 	}
@@ -405,8 +402,7 @@ MentatBriefing_InitWSA(enum HouseType houseID, int scenarioID, enum BriefingEntr
 		}
 
 		mentat->wsa = WSA_LoadFile(wsaFilename, GFX_Screen_Get_ByIndex(SCREEN_2), GFX_Screen_GetSize_ByIndex(SCREEN_2), false);
-	}
-	else {
+	} else {
 		char filename[16];
 		snprintf(filename, sizeof(filename), "SCEN%c%03d.INI", g_table_houseInfo[houseID].name[0], scenarioID);
 
@@ -485,8 +481,7 @@ MentatSecurity_PrepareQuestion(bool pick_new_question, MentatState *mentat)
 	 */
 	if (enhancement_security_question == SECURITY_QUESTION_ANSWER_GIVEN) {
 		snprintf(mentat->security_prompt, sizeof(mentat->security_prompt), "%s", String_Get_ByIndex(mentat->security_question + 2));
-	}
-	else {
+	} else {
 		mentat->security_prompt[0] = '\0';
 	}
 }
@@ -541,8 +536,7 @@ MentatHelp_Draw(enum MentatID mentatID, MentatState *mentat)
 
 	if (mentat->state == MENTAT_SHOW_CONTENTS) {
 		GUI_Mentat_Draw(true);
-	}
-	else {
+	} else {
 		if (mentat->state >= MENTAT_SHOW_DESCRIPTION)
 			MentatBriefing_DrawDescription(mentat);
 
@@ -563,8 +557,7 @@ MentatHelp_TickPauseDescription(MentatState *mentat)
 		if (mentat->desc_lines == 1) {
 			mentat->state = MENTAT_SHOW_TEXT;
 			MentatBriefing_SplitText(mentat);
-		}
-		else {
+		} else {
 			mentat->state = MENTAT_SHOW_DESCRIPTION;
 			mentat->desc_timer = Timer_GetTicks() + 15;
 		}
@@ -592,8 +585,7 @@ MentatHelp_Tick(MentatState *mentat)
 
 		if (widgetID == 0x8001) {
 			return true;
-		}
-		else {
+		} else {
 			GUI_Mentat_HelpListLoop(widgetID);
 
 			if (mentat->state == MENTAT_PAUSE_DESCRIPTION)
@@ -612,11 +604,9 @@ MentatHelp_Tick(MentatState *mentat)
 
 	if (mentat->state == MENTAT_PAUSE_DESCRIPTION) {
 		MentatHelp_TickPauseDescription(mentat);
-	}
-	else if (mentat->state == MENTAT_SHOW_DESCRIPTION) {
+	} else if (mentat->state == MENTAT_SHOW_DESCRIPTION) {
 		MentatHelp_TickShowDescription(mentat);
-	}
-	else if (mentat->state == MENTAT_SHOW_TEXT) {
+	} else if (mentat->state == MENTAT_SHOW_TEXT) {
 		if (widgetID != 0x8001) {
 			const int key = widgetID;
 

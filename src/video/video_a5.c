@@ -217,8 +217,7 @@ VideoA5_SetBitmapFlags(int flags)
 	if (flags == ALLEGRO_MEMORY_BITMAP) {
 		old_flags = al_get_new_bitmap_flags();
 		al_set_new_bitmap_flags((old_flags & ~ALLEGRO_VIDEO_BITMAP) | ALLEGRO_MEMORY_BITMAP);
-	}
-	else {
+	} else {
 		al_set_new_bitmap_flags(old_flags);
 	}
 }
@@ -238,8 +237,7 @@ VideoA5_ResizeScratchBitmap(int w, int h)
 {
 	if (scratch == NULL) {
 		scratch = al_create_bitmap(w, h);
-	}
-	else if ((al_get_bitmap_width(scratch) != w) || (al_get_bitmap_height(scratch) != h)) {
+	} else if ((al_get_bitmap_width(scratch) != w) || (al_get_bitmap_height(scratch) != h)) {
 		al_destroy_bitmap(scratch);
 		scratch = al_create_bitmap(w, h);
 	}
@@ -296,8 +294,7 @@ VideoA5_InitDisplayIcon(char **xpm, int w, int h, int colours)
 				row[reg->pixel_size*x + 1] = 0x00;
 				row[reg->pixel_size*x + 2] = 0x00;
 				row[reg->pixel_size*x + 3] = 0x00;
-			}
-			else {
+			} else {
 				row[reg->pixel_size*x + 0] = map[c].r;
 				row[reg->pixel_size*x + 1] = map[c].g;
 				row[reg->pixel_size*x + 2] = map[c].b;
@@ -378,11 +375,9 @@ VideoA5_Init(void)
 
 	if (g_gameConfig.windowMode == WM_FULLSCREEN) {
 		APPEND_FLAG(ALLEGRO_FULLSCREEN);
-	}
-	else if (g_gameConfig.windowMode == WM_FULLSCREEN_WINDOW) {
+	} else if (g_gameConfig.windowMode == WM_FULLSCREEN_WINDOW) {
 		APPEND_FLAG(ALLEGRO_FULLSCREEN_WINDOW);
-	}
-	else {
+	} else {
 		APPEND_FLAG(ALLEGRO_WINDOWED);
 	}
 
@@ -550,8 +545,7 @@ VideoA5_CopyBitmap(int src_stride, const unsigned char *raw, ALLEGRO_BITMAP *des
 
 	if (mode == SKIP_COLOUR_0) {
 		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_READWRITE);
-	}
-	else {
+	} else {
 		reg = al_lock_bitmap(dest, ALLEGRO_PIXEL_FORMAT_ABGR_8888_LE, ALLEGRO_LOCK_WRITEONLY);
 	}
 
@@ -574,8 +568,7 @@ VideoA5_CopyBitmap(int src_stride, const unsigned char *raw, ALLEGRO_BITMAP *des
 					row[reg->pixel_size*x + 2] = 0x00;
 					row[reg->pixel_size*x + 3] = (mode == TRANSPARENT_COLOUR_0) ? 0x00 : 0xFF;
 				}
-			}
-			else {
+			} else {
 				row[reg->pixel_size*x + 0] = paletteRGB[3*c + 0];
 				row[reg->pixel_size*x + 1] = paletteRGB[3*c + 1];
 				row[reg->pixel_size*x + 2] = paletteRGB[3*c + 2];
@@ -602,8 +595,7 @@ VideoA5_CreateWhiteMask(unsigned char *src, ALLEGRO_LOCKED_REGION *reg,
 				row[reg->pixel_size * (dx + x) + 1] = 0xFF;
 				row[reg->pixel_size * (dx + x) + 2] = 0xFF;
 				row[reg->pixel_size * (dx + x) + 3] = 0xFF;
-			}
-			else {
+			} else {
 				row[reg->pixel_size * (dx + x) + 0] = 0x00;
 				row[reg->pixel_size * (dx + x) + 1] = 0x00;
 				row[reg->pixel_size * (dx + x) + 2] = 0x00;
@@ -785,8 +777,7 @@ VideoA5_InitDissolve_LockedBitmap(ALLEGRO_BITMAP *src, FadeInAux *aux)
 	if ((al_get_bitmap_width(src) == aux->width) && (al_get_bitmap_height(src) == aux->height)) {
 		al_destroy_bitmap(scratch);
 		scratch = al_clone_bitmap(src);
-	}
-	else {
+	} else {
 		ALLEGRO_BITMAP *old_target = al_get_target_bitmap();
 		VideoA5_ResizeScratchBitmap(aux->width, aux->height);
 
@@ -838,8 +829,7 @@ VideoA5_TickDissolve_LockedBitmap(FadeInAux *aux)
 
 		if (aux->fade_in) {
 			row[reg->pixel_size*x + 3] = 0xFF;
-		}
-		else {
+		} else {
 			row[reg->pixel_size*x + 3] = 0x00;
 		}
 	}
@@ -869,8 +859,7 @@ VideoA5_DrawDissolve_GLStencil(const FadeInAux *aux)
 	if (aux->fade_in) {
 		/* Stencil is 1 where we should draw. */
 		glStencilFunc(GL_EQUAL, 0x1, 0x1);
-	}
-	else {
+	} else {
 		/* Stencil is 0 where we should draw. */
 		glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
 	}
@@ -879,8 +868,7 @@ VideoA5_DrawDissolve_GLStencil(const FadeInAux *aux)
 
 	if ((al_get_bitmap_width(aux->bmp) == aux->width) && (al_get_bitmap_height(aux->bmp) == aux->height)) {
 		al_draw_bitmap(aux->bmp, aux->x, aux->y, 0);
-	}
-	else {
+	} else {
 		al_draw_bitmap_region(aux->bmp, aux->x, aux->y, aux->width, aux->height, aux->x, aux->y, 0);
 	}
 
@@ -937,8 +925,7 @@ VideoA5_InitDissolve_D3DStencil(ALLEGRO_BITMAP *src, FadeInAux *aux)
 
 	if (pDevice == NULL) {
 		aux->bmp = NULL;
-	}
-	else {
+	} else {
 		IDirect3DDevice9_Clear(pDevice, 0, NULL, D3DCLEAR_STENCIL, 0, 0, 0);
 		aux->bmp = src;
 	}
@@ -961,8 +948,7 @@ VideoA5_DrawDissolve_D3DStencil(const FadeInAux *aux)
 		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFUNC, D3DCMP_EQUAL);
 		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILREF, 1);
 		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILMASK, 1);
-	}
-	else {
+	} else {
 		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILFUNC, D3DCMP_NOTEQUAL);
 		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILREF, 1);
 		IDirect3DDevice9_SetRenderState(pDevice, D3DRS_STENCILMASK, 1);
@@ -974,8 +960,7 @@ VideoA5_DrawDissolve_D3DStencil(const FadeInAux *aux)
 
 	if ((al_get_bitmap_width(aux->bmp) == aux->width) && (al_get_bitmap_height(aux->bmp) == aux->height)) {
 		al_draw_bitmap(aux->bmp, aux->x, aux->y, 0);
-	}
-	else {
+	} else {
 		al_draw_bitmap_region(aux->bmp, aux->x, aux->y, aux->width, aux->height, aux->x, aux->y, 0);
 	}
 
@@ -1148,8 +1133,7 @@ VideoA5_ExportCPS(enum SearchDirectory dir, const char *filename, unsigned char 
 	cps->next = NULL;
 	if (dir == SEARCHDIR_CAMPAIGN_DIR) {
 		snprintf(cps->filename, sizeof(cps->filename), "%s%s", g_campaign_list[g_campaign_selected].dir_name, filename);
-	}
-	else {
+	} else {
 		snprintf(cps->filename, sizeof(cps->filename), "%s", filename);
 	}
 
@@ -1182,8 +1166,7 @@ VideoA5_LoadCPS(enum SearchDirectory dir, const char *filename)
 
 	if (dir == SEARCHDIR_CAMPAIGN_DIR) {
 		snprintf(campname, sizeof(campname), "%s%s", g_campaign_list[g_campaign_selected].dir_name, filename);
-	}
-	else {
+	} else {
 		snprintf(campname, sizeof(campname), "%s", filename);
 	}
 
@@ -1376,8 +1359,7 @@ VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y)
 
 		if (cpsID == CPS_SIDEBAR_BOTTOM) {
 			sy += 23 * houseID;
-		}
-		else {
+		} else {
 			sy += 4 * houseID;
 		}
 	}
@@ -1398,8 +1380,7 @@ VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int
 
 	if (cpsID == CPS_SIDEBAR_BOTTOM) {
 		sy += 23 * houseID;
-	}
-	else {
+	} else {
 		sy += 4 * houseID;
 	}
 
@@ -1428,8 +1409,7 @@ VideoA5_NumIconsInGroup(enum IconMapEntries group)
 	/* group == ICM_ICONGROUP_RADAR_OUTPOST. */
 	if (group + 1 == ICM_ICONGROUP_EOF) {
 		return 24;
-	}
-	else {
+	} else {
 		return g_iconMap[group + 1] - g_iconMap[group];
 	}
 }
@@ -1494,8 +1474,7 @@ VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 				s_icon[iconID][houseID].sx = x;
 				s_icon[iconID][houseID].sy = y;
 				x += TILE_SIZE + 2;
-			}
-			else {
+			} else {
 				s_icon[iconID][houseID] = s_icon[iconID][HOUSE_HARKONNEN];
 			}
 		}
@@ -1535,8 +1514,7 @@ VideoA5_DrawIconPadding(ALLEGRO_BITMAP *membmp, IconConnectivity *connect)
 			if (connect[iconID].iconU == 0) {
 				al_draw_bitmap_region(dup, targ->sx, targ->sy, TILE_SIZE, 1.0f,
 						targ->sx, targ->sy - 1.0f, 0);
-			}
-			else if (src->sx != 0 && src->sy != 0) {
+			} else if (src->sx != 0 && src->sy != 0) {
 				al_draw_bitmap_region(dup, src->sx, src->sy + TILE_SIZE - 1.0f, TILE_SIZE, 1.0f,
 						targ->sx, targ->sy - 1.0f, 0);
 			}
@@ -1546,8 +1524,7 @@ VideoA5_DrawIconPadding(ALLEGRO_BITMAP *membmp, IconConnectivity *connect)
 			if (connect[iconID].iconD == 0) {
 				al_draw_bitmap_region(dup, targ->sx, targ->sy + TILE_SIZE - 1.0f, TILE_SIZE, 1.0f,
 						targ->sx, targ->sy + TILE_SIZE, 0);
-			}
-			else if (src->sx != 0 && src->sy != 0) {
+			} else if (src->sx != 0 && src->sy != 0) {
 				al_draw_bitmap_region(dup, src->sx, src->sy, TILE_SIZE, 1.0f,
 						targ->sx, targ->sy + TILE_SIZE, 0);
 			}
@@ -1557,8 +1534,7 @@ VideoA5_DrawIconPadding(ALLEGRO_BITMAP *membmp, IconConnectivity *connect)
 			if (connect[iconID].iconL == 0) {
 				al_draw_bitmap_region(dup, targ->sx, targ->sy, 1.0f, TILE_SIZE,
 						targ->sx - 1.0f, targ->sy, 0);
-			}
-			else if (src->sx != 0 && src->sy != 0) {
+			} else if (src->sx != 0 && src->sy != 0) {
 				al_draw_bitmap_region(dup, src->sx + TILE_SIZE - 1.0f, src->sy, 1.0f, TILE_SIZE,
 						targ->sx - 1.0f, targ->sy, 0);
 			}
@@ -1568,8 +1544,7 @@ VideoA5_DrawIconPadding(ALLEGRO_BITMAP *membmp, IconConnectivity *connect)
 			if (connect[iconID].iconR == 0) {
 				al_draw_bitmap_region(dup, targ->sx + TILE_SIZE - 1.0f, targ->sy, 1.0f, TILE_SIZE,
 						targ->sx + TILE_SIZE, targ->sy, 0);
-			}
-			else if (src->sx != 0 && src->sy != 0) {
+			} else if (src->sx != 0 && src->sy != 0) {
 				al_draw_bitmap_region(dup, src->sx, src->sy, 1.0f, TILE_SIZE,
 						targ->sx + TILE_SIZE, targ->sy, 0);
 			}
@@ -1634,8 +1609,7 @@ VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 		dst = al_create_bitmap(w, h);
 		if (dst == NULL)
 			goto end;
-	}
-	else {
+	} else {
 		dst = icon_texture;
 	}
 
@@ -1671,18 +1645,15 @@ VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 				if (size == 32) {
 					coord->sx32 = s_icon[iconID][HOUSE_HARKONNEN].sx32;
 					coord->sy32 = s_icon[iconID][HOUSE_HARKONNEN].sy32;
-				}
-				else if (size == 48) {
+				} else if (size == 48) {
 					coord->sx48 = s_icon[iconID][HOUSE_HARKONNEN].sx48;
 					coord->sy48 = s_icon[iconID][HOUSE_HARKONNEN].sy48;
 				}
-			}
-			else {
+			} else {
 				if (size == 16) {
 					dx = coord->sx;
 					dy = coord->sy;
-				}
-				else {
+				} else {
 					VideoA5_GetNextXY(w, h, dx, dy, size + 1, size + 1, size + 1, &dx, &dy);
 				}
 
@@ -1716,8 +1687,7 @@ VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 				if (size == 32) {
 					coord->sx32 = dx;
 					coord->sy32 = dy;
-				}
-				else if (size == 48) {
+				} else if (size == 48) {
 					coord->sx48 = dx;
 					coord->sy48 = dy;
 				}
@@ -1937,25 +1907,24 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 		overlay = &s_icon[overlayID][HOUSE_HARKONNEN];
 	}
 
-	if (2.99f <= g_screenDiv[SCREENDIV_VIEWPORT].scalex && g_screenDiv[SCREENDIV_VIEWPORT].scalex <= 3.01f &&
-			icon_texture48 != NULL && coord->sx48 != 0 && coord->sy48 != 0) {
+	const float scalex = g_screenDiv[SCREENDIV_VIEWPORT].scalex;
+	if (2.99f <= scalex && scalex <= 3.01f
+			&& icon_texture48 != NULL && coord->sx48 != 0 && coord->sy48 != 0) {
 		al_draw_scaled_bitmap(icon_texture48, coord->sx48, coord->sy48, 48, 48, x, y, TILE_SIZE, TILE_SIZE, 0);
 
 		if (overlay) {
 			al_draw_tinted_scaled_bitmap(icon_texture48, paltoRGB[WINDTRAP_COLOUR],
 					overlay->sx48, overlay->sy48, 48, 48, x, y, TILE_SIZE, TILE_SIZE, 0);
 		}
-	}
-	else if (1.99f <= g_screenDiv[SCREENDIV_VIEWPORT].scalex && g_screenDiv[SCREENDIV_VIEWPORT].scalex <= 2.01f &&
-			icon_texture32 != NULL && coord->sx32 != 0 && coord->sy32 != 0) {
+	} else if (1.99f <= scalex && scalex <= 2.01f
+			&& icon_texture32 != NULL && coord->sx32 != 0 && coord->sy32 != 0) {
 		al_draw_scaled_bitmap(icon_texture32, coord->sx32, coord->sy32, 32, 32, x, y, TILE_SIZE, TILE_SIZE, 0);
 
 		if (overlay) {
 			al_draw_tinted_scaled_bitmap(icon_texture32, paltoRGB[WINDTRAP_COLOUR],
 					overlay->sx32, overlay->sy32, 32, 32, x, y, TILE_SIZE, TILE_SIZE, 0);
 		}
-	}
-	else {
+	} else {
 		al_draw_bitmap_region(icon_texture, coord->sx, coord->sy, TILE_SIZE, TILE_SIZE, x, y, 0);
 
 		if (overlay) {
@@ -1996,8 +1965,7 @@ VideoA5_DrawRectCross(int x1, int y1, int w, int h, unsigned char c)
 		Prim_Rect_i(x1, y1, x2, y2, c);
 		Prim_Line(x1 + 0.33f, y1 + 0.33f, x2 + 0.66f, y2 + 0.66f, c, 0.75f);
 		Prim_Line(x2 + 0.66f, y1 + 0.33f, x1 + 0.33f, y2 + 0.66f, c, 0.75f);
-	}
-	else {
+	} else {
 		const int idx = ((h - 1) << 2) | w;
 
 		al_draw_tinted_bitmap_region(icon_texture, paltoRGB[c],
@@ -2213,8 +2181,7 @@ VideoA5_InitShapes(unsigned char *buf)
 		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
 			if (shape_data[group].start == SHAPE_DEVIATOR_GAS_CLOUD) {
 				GUI_Palette_CreateRemapDeviatorGas(houseID);
-			}
-			else {
+			} else {
 				GUI_Palette_CreateRemap(houseID);
 			}
 
@@ -2229,22 +2196,18 @@ VideoA5_InitShapes(unsigned char *buf)
 						s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
 
 						g_remap[RADIO_BUTTON_BACKGROUND_COLOUR] = backup;
-					}
-					else if ((shapeID == SHAPE_CHECKBOX_OFF) || (shapeID == SHAPE_CHECKBOX_ON)) {
+					} else if ((shapeID == SHAPE_CHECKBOX_OFF) || (shapeID == SHAPE_CHECKBOX_ON)) {
 						bool checked = (shapeID == SHAPE_CHECKBOX_ON);
 						s_shape[shapeID][houseID] = VideoA5_ExportCheckBox(checked, x, y, row_h, &x, &y, &row_h);
-					}
-					else {
+					} else {
 						s_shape[shapeID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, g_remap);
 					}
 
 					if (SHAPE_CONCRETE_SLAB <= shapeID && shapeID <= SHAPE_SANDWORM) {
 						const enum ShapeID greyID = SHAPE_CONCRETE_SLAB_GREY + (shapeID - SHAPE_CONCRETE_SLAB);
-
 						s_shape[greyID][houseID] = VideoA5_ExportShape(shapeID, x, y, row_h, &x, &y, &row_h, greymap);
 					}
-				}
-				else {
+				} else {
 					s_shape[shapeID][houseID] = s_shape[shapeID][HOUSE_HARKONNEN];
 				}
 			}
@@ -2409,8 +2372,7 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ONE);
 		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
 		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
-	}
-	else if ((flags & 0x300) == 0x200) {
+	} else if ((flags & 0x300) == 0x200) {
 		/* Blur tile (sandworm, sonic wave). */
 		const int s_variable_60[8] = {1, 3, 2, 5, 4, 3, 2, 1};
 		const int effect = (flags >> 4) & 0x7;
@@ -2433,13 +2395,11 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 				/* VideoA5_DrawBlur_DestMinusSrc(brush, x, y, s_variable_60[effect]); */
 				break;
 		}
-	}
-	else if ((flags & 0x300) == 0x300) {
+	} else if ((flags & 0x300) == 0x300) {
 		/* Shadow. */
 		ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, flags & 0xF0);
 		al_draw_tinted_bitmap(s_shape[shapeID][houseID], tint, x, y, al_flags);
-	}
-	else {
+	} else {
 		/* Normal. */
 		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
 	}
@@ -2463,8 +2423,7 @@ VideoA5_DrawShapeRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int
 	if ((flags & 0x300) == 0x300) {
 		ALLEGRO_COLOR tint = al_map_rgba(0, 0, 0, flags & 0xF0);
 		al_draw_tinted_rotated_bitmap(bmp, tint, cx, cy, x, y, angle, al_flags);
-	}
-	else {
+	} else {
 		al_draw_rotated_bitmap(bmp, cx, cy, x, y, angle, al_flags);
 	}
 }
@@ -2533,14 +2492,12 @@ VideoA5_FontIndex(const Font *font, const uint8 *pal)
 		if (memcmp(pal+2, font_palette[0]+2, 2) == 0) return 0;
 		if (memcmp(pal+2, font_palette[1]+2, 2) == 0) return 1;
 		if (memcmp(pal+2, font_palette[2]+2, 2) == 0) return 2;
-	}
-	else if (font == g_fontNew8p) {
+	} else if (font == g_fontNew8p) {
 		/* 4 colour font. */
 		if (memcmp(pal+2, font_palette[0]+2, 2) == 0) return 3;
 		if (memcmp(pal+2, font_palette[1]+2, 2) == 0) return 4;
 		if (memcmp(pal+2, font_palette[2]+2, 2) == 0) return 5;
-	}
-	else {
+	} else {
 		/* 7 colour font. */
 		assert(font == g_fontIntro);
 		if (memcmp(pal+2, font_palette[0]+2, 5) == 0) return 6;
@@ -2645,8 +2602,7 @@ VideoA5_InitFonts(unsigned char *buf)
 		VideoA5_ExportFont(g_fontIntro, font_palette[3], y, &y);
 
 		VideoA5_CopyBitmap(WINDOW_W, buf, interface_texture, SKIP_COLOUR_0);
-	}
-	else {
+	} else {
 		/* Phase 2: create subbitmaps for each character, after
 		 * interface_texture converted into video bitmap.
 		 */
@@ -2784,14 +2740,12 @@ Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 			if (mode == 1) {
 				uint16 type = Map_GetLandscapeTypeOriginal(packed);
 				colour = g_table_landscapeInfo[type].radarColour;
-			}
-			else if (g_playerHouse->flags.radarActivated
-				&& Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
+			} else if (g_playerHouse->flags.radarActivated
+					&& Map_IsUnveiledToHouse(g_playerHouseID, packed)) {
 				Unit *u;
 
 				if (enhancement_fog_of_war && g_mapVisible[packed].timeout[g_playerHouseID] <= g_timerGame) {
-				}
-				else if (t->hasUnit && ((u = Unit_Get_ByPackedTile(packed)) != NULL)) {
+				} else if (t->hasUnit && ((u = Unit_Get_ByPackedTile(packed)) != NULL)) {
 					if (u->o.type == UNIT_SANDWORM) {
 						/* Really shouldn't have more than 3, but anyway. */
 						if (num_sandworms < 4) {
@@ -2799,8 +2753,7 @@ Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 							sandworm_position[2*num_sandworms + 1] = y;
 							num_sandworms++;
 						}
-					}
-					else {
+					} else {
 						colour = g_table_houseInfo[Unit_GetHouseID(u)].minimapColor;
 					}
 				}
@@ -2810,16 +2763,13 @@ Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 
 					if (g_table_landscapeInfo[type].radarColour == 0xFFFF) {
 						colour = g_table_houseInfo[t->houseID].minimapColor;
-					}
-					else if (enhancement_fog_of_war && g_mapVisible[packed].timeout[g_playerHouseID] <= g_timerGame) {
+					} else if (enhancement_fog_of_war && g_mapVisible[packed].timeout[g_playerHouseID] <= g_timerGame) {
 						colour = -g_table_landscapeInfo[type].radarColour;
-					}
-					else {
+					} else {
 						colour = g_table_landscapeInfo[type].radarColour;
 					}
 				}
-			}
-			else if (t->hasStructure && t->houseID == g_playerHouseID) {
+			} else if (t->hasStructure && t->houseID == g_playerHouseID) {
 				colour = g_table_houseInfo[t->houseID].minimapColor;
 			}
 
@@ -2844,8 +2794,7 @@ Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 					row[reg->pixel_size*x + 1] = paletteRGB[3*c + 1];
 					row[reg->pixel_size*x + 2] = paletteRGB[3*c + 2];
 					row[reg->pixel_size*x + 3] = 0xFF;
-				}
-				else {
+				} else {
 					const unsigned char c = -s_minimap_colour[mapInfo->sizeX * y + x];
 
 					/* Negative colour denotes darkened for fog of war. */

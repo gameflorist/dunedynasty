@@ -265,8 +265,7 @@ Net_Disconnect(void)
 
 				connected_peers--;
 			}
-		}
-		else if (s_enet_peer != NULL) {
+		} else if (s_enet_peer != NULL) {
 			enet_peer_disconnect(s_enet_peer, 0);
 			enet_host_flush(s_enet_host);
 		}
@@ -298,8 +297,7 @@ Net_IsPlayable(void)
 
 	if (assigned_players > 1 && assigned_players == total_players) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }
@@ -336,8 +334,7 @@ Net_Synchronise(void)
 		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 			if (g_multiplayer.client[h] == 0) {
 				g_multiplayer.state[h] = MP_HOUSE_UNUSED;
-			}
-			else {
+			} else {
 				PeerData *data = Net_GetPeerData(g_multiplayer.client[h]);
 
 				data->state = CLIENTSTATE_IN_GAME;
@@ -347,8 +344,7 @@ Net_Synchronise(void)
 					g_client_houses |= (1 << h);
 			}
 		}
-	}
-	else {
+	} else {
 		Client_ResetCache();
 	}
 
@@ -371,8 +367,7 @@ Net_Send_Chat(const char *msg)
 
 		if (isChat)
 			Server_Recv_Chat(g_local_client_id, FLAG_HOUSE_ALL, msg);
-	}
-	else {
+	} else {
 		Client_Send_Chat(msg);
 	}
 }
@@ -400,8 +395,7 @@ Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf)
 	if (houses == FLAG_HOUSE_ALL) {
 		ChatBox_AddChat(peerID, name, msg + 2);
 		enet_host_broadcast(s_enet_host, 0, packet);
-	}
-	else {
+	} else {
 		for (int i = 0; i < MAX_CLIENTS; i++) {
 			data = &g_peer_data[i];
 			if (data->id == 0)
@@ -413,8 +407,7 @@ Server_Recv_Chat(int peerID, enum HouseFlag houses, const char *buf)
 
 			if (data->id == g_local_client_id) {
 				ChatBox_AddChat(peerID, name, msg + 2);
-			}
-			else if (data->peer != NULL) {
+			} else if (data->peer != NULL) {
 				enet_peer_send(data->peer, 0, packet);
 			}
 		}
@@ -654,8 +647,7 @@ Client_RecvMessages(void)
 
 	if (g_host_type == HOSTTYPE_DEDICATED_SERVER) {
 		return ret;
-	}
-	else if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
+	} else if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
 		House_Client_UpdateRadarState();
 		Client_ChangeSelectionMode();
 		return ret;

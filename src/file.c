@@ -169,16 +169,13 @@ File_MakeCompleteFilename(char *buf, size_t len, enum SearchDirectory dir, const
 
 	if (dir == SEARCHDIR_GLOBAL_DATA_DIR) {
 		i = snprintf(buf, len, "%s/%s/", g_dune_data_dir, DUNE2_DATA_PREFIX);
-	}
-	else if (dir == SEARCHDIR_CAMPAIGN_DIR) {
+	} else if (dir == SEARCHDIR_CAMPAIGN_DIR) {
 		if (strchr(filename, '/') == NULL) { /* Dune II */
 			i = snprintf(buf, len, "%s/%s/", g_dune_data_dir, DUNE2_DATA_PREFIX);
-		}
-		else {
+		} else {
 			i = snprintf(buf, len, "%s/%s/", g_dune_data_dir, DUNE2_CAMPAIGN_PREFIX);
 		}
-	}
-	else if (dir == SEARCHDIR_PERSONAL_DATA_DIR) {
+	} else if (dir == SEARCHDIR_PERSONAL_DATA_DIR) {
 		i = snprintf(buf, len, "%s/%s/%s", g_personal_data_dir, DUNE2_SAVE_PREFIX, g_campaign_list[g_campaign_selected].dir_name);
 	}
 
@@ -316,8 +313,7 @@ _File_OpenInDir(enum SearchDirectory dir, const char *filename, uint8 mode)
 			/* Add campaign directory (and slash) to filename. */
 			if ((dir == SEARCHDIR_CAMPAIGN_DIR) && (g_campaign_selected != CAMPAIGNID_DUNE_II)) {
 				i = snprintf(pakFilename, sizeof(pakFilename), "%s", g_campaign_list[g_campaign_selected].dir_name);
-			}
-			else {
+			} else {
 				i = 0;
 			}
 

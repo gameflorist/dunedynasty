@@ -62,8 +62,7 @@ void GUI_Widget_TextButton_Draw(Widget *w)
 
 	if (w->stringID == STR_CANCEL || w->stringID == STR_PREVIOUS || w->stringID == STR_YES || w->stringID == STR_NO) {
 		centred = true;
-	}
-	else if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH) && ((int16)w->stringID >= -5)) {
+	} else if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH) && ((int16)w->stringID >= -5)) {
 		/* Centred text for in-game menu items and saved games. */
 		centred = true;
 	}
@@ -122,8 +121,7 @@ void GUI_Widget_SpriteTextButton_Draw(Widget *w)
 
 	if (s->o.type == STRUCTURE_PALACE) {
 		ActionPanel_DrawPalace(w, s);
-	}
-	else {
+	} else {
 		ActionPanel_DrawFactory(w, s);
 	}
 }
@@ -178,8 +176,7 @@ void GUI_Widget_TextButton2_Draw(Widget *w)
 	/* 20% taller pixels. */
 	if (height >= 12) {
 		positionY += 2;
-	}
-	else {
+	} else {
 		positionY++;
 	}
 
@@ -278,8 +275,7 @@ static uint16 GUI_Widget_ActionPanel_GetActionType(bool forceDraw)
 		} else {
 			actionType = 2; /* Unit */
 		}
-	}
-	else if (!Tile_IsOutOfMap(g_selectionPosition)
+	} else if (!Tile_IsOutOfMap(g_selectionPosition)
 			&& (g_debugScenario || Map_IsUnveiledToHouse(g_playerHouseID, g_selectionPosition))) {
 		if (Map_GetLandscapeType(g_selectionPosition) == LST_STRUCTURE) {
 			Structure *s;
@@ -460,13 +456,14 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 			case 2: /* Unit */
 				spriteID = oi->spriteID;
 				if (enhancement_special_trooper_portaits && (u != NULL)) {
-					if ((u->o.houseID == HOUSE_FREMEN) && (u->o.type == UNIT_TROOPER)) {
+					if ((u->o.houseID == HOUSE_FREMEN)
+							&& (u->o.type == UNIT_TROOPER)) {
 						spriteID = SHAPE_FREMEN;
-					}
-					else if ((u->o.houseID == HOUSE_FREMEN) && (u->o.type == UNIT_TROOPERS)) {
+					} else if ((u->o.houseID == HOUSE_FREMEN)
+							&& (u->o.type == UNIT_TROOPERS)) {
 						spriteID = SHAPE_FREMEN_SQUAD;
-					}
-					else if ((u->o.houseID == HOUSE_SARDAUKAR) && (u->o.type == UNIT_TROOPER || u->o.type == UNIT_TROOPERS)) {
+					} else if ((u->o.houseID == HOUSE_SARDAUKAR)
+							&& (u->o.type == UNIT_TROOPER || u->o.type == UNIT_TROOPERS)) {
 						spriteID = SHAPE_SARDAUKAR;
 					}
 				}
@@ -633,8 +630,7 @@ void GUI_Widget_DrawBorder(uint16 widgetIndex, uint16 borderType, bool pressed)
 	/* This is actually quite common. */
 	if (borderType == 2) {
 		Prim_DrawBorder(left, top, width, height, 2, false, true, colourSchemaIndex + 1);
-	}
-	else {
+	} else {
 		Prim_DrawBorder(left, top, width, height, 1, false, true, colourSchemaIndex + 1);
 
 		if (size != 0) {
@@ -666,8 +662,7 @@ GUI_Widget_DrawWindow(const WindowDesc *desc)
 		if (g_gameConfig.language == LANGUAGE_FRENCH
 		 || g_gameConfig.language == LANGUAGE_ITALIAN) {
 			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), wi->xBase + 40 - 24, w->offsetY + wi->yBase + 3, 232, 0, 0x22);
-		}
-		else {
+		} else {
 			GUI_DrawText_Wrapper(GUI_String_Get_ByIndex(desc->widgets[i].labelStringId), w->offsetX + wi->xBase - 10, w->offsetY + wi->yBase + 3, 232, 0, 0x222);
 		}
 	}

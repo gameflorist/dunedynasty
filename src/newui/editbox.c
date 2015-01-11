@@ -126,8 +126,7 @@ EditBox_Input(char *text, int maxLength, enum EditBoxMode mode, uint16 key)
 
 		if (textWidth + keyWidth >= maxWidth)
 			return 0;
-	}
-	else if (mode == EDITBOX_PORT) {
+	} else if (mode == EDITBOX_PORT) {
 		if (!('0' <= c && c <= '9'))
 			return 0;
 	}
@@ -184,8 +183,7 @@ EditBox_Draw(const char *text, int x, int y, int w, int h, int cursor_width,
 	const int text_width = Font_GetStringWidth(text);
 	if ((flags & 0x100) && (text_width <= w)) {
 		x += (w - text_width) / 2;
-	}
-	else if (text_width + cursor_space + cursor_width + 2 > w) {
+	} else if (text_width + cursor_space + cursor_width + 2 > w) {
 		x += w - (text_width + cursor_space + cursor_width + 2);
 	}
 

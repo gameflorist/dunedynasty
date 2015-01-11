@@ -117,16 +117,13 @@ Viewport_GetSelectionMode(void)
 
 		if (Unit_GetHouseID(u) == g_playerHouseID) {
 			return SELECTION_MODE_CONTROLLABLE_UNIT;
-		}
-		else {
+		} else {
 			return SELECTION_MODE_UNCONTROLLABLE_UNIT;
 		}
-	}
-	else {
+	} else {
 		if (Structure_Get_ByPackedTile(g_selectionPosition) != NULL) {
 			return SELECTION_MODE_STRUCTURE;
-		}
-		else {
+		} else {
 			return SELECTION_MODE_NONE;
 		}
 	}
@@ -142,8 +139,8 @@ Viewport_SelectRegion(void)
 	const int y0 = Tile_GetPackedY(g_viewportPosition);
 	const enum SelectionMode mode = Viewport_GetSelectionMode();
 
-	/* Select individual unit or structure. */
 	if (dx*dx + dy*dy < radius*radius) {
+		/* Select individual unit or structure. */
 		const int tilex = x0 + (selection_box_x2 + g_viewport_scrollOffsetX) / TILE_SIZE;
 		const int tiley = y0 + (selection_box_y2 + g_viewport_scrollOffsetY) / TILE_SIZE;
 
@@ -157,28 +154,25 @@ Viewport_SelectRegion(void)
 
 		if (mode == SELECTION_MODE_NONE) {
 			Map_SetSelection(packed);
-		}
-		else if (mode == SELECTION_MODE_CONTROLLABLE_UNIT || mode == SELECTION_MODE_UNCONTROLLABLE_UNIT) {
+		} else if (mode == SELECTION_MODE_CONTROLLABLE_UNIT
+		        || mode == SELECTION_MODE_UNCONTROLLABLE_UNIT) {
 			Unit *u = Unit_Get_ByPackedTile(packed);
 
 			if (u == NULL) {
-			}
-			else if (Unit_IsSelected(u)) {
+			} else if (Unit_IsSelected(u)) {
 				Unit_Unselect(u);
-			}
-			else if ((mode == SELECTION_MODE_CONTROLLABLE_UNIT) && (Unit_GetHouseID(u) == g_playerHouseID)) {
+			} else if ((mode == SELECTION_MODE_CONTROLLABLE_UNIT)
+					&& (Unit_GetHouseID(u) == g_playerHouseID)) {
 				Unit_Select(u);
 				Unit_DisplayStatusText(u);
 			}
-		}
-		else if (mode == SELECTION_MODE_STRUCTURE) {
+		} else if (mode == SELECTION_MODE_STRUCTURE) {
 			if (Structure_Get_ByPackedTile(packed) == Structure_Get_ByPackedTile(g_selectionPosition))
 				Map_SetSelection(0xFFFF);
 		}
-	}
-
-	/* Box selection. */
-	else if (mode == SELECTION_MODE_NONE || mode == SELECTION_MODE_CONTROLLABLE_UNIT) {
+	} else if (mode == SELECTION_MODE_NONE
+	        || mode == SELECTION_MODE_CONTROLLABLE_UNIT) {
+		/* Box selection. */
 		const int x1 = viewport_click_x;
 		const int y1 = viewport_click_y;
 		const int x2 = selection_box_x2;
@@ -245,8 +239,7 @@ Viewport_Target(const Unit *u, enum UnitActionType action, uint16 packed)
 
 	if (action != ACTION_MOVE && action != ACTION_HARVEST) {
 		encoded = Tools_Index_Encode(Unit_FindTargetAround(packed), IT_TILE);
-	}
-	else {
+	} else {
 		encoded = Tools_Index_Encode(packed, IT_TILE);
 	}
 
@@ -254,11 +247,9 @@ Viewport_Target(const Unit *u, enum UnitActionType action, uint16 packed)
 
 	if (g_enable_sound_effects == SOUNDEFFECTS_SYNTH_ONLY) {
 		Audio_PlayEffect(EFFECT_SET_TARGET);
-	}
-	else if (g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT) {
+	} else if (g_table_unitInfo[u->o.type].movementType == MOVEMENT_FOOT) {
 		Audio_PlaySample(g_table_actionInfo[action].soundID, 255, 0.0);
-	}
-	else if (u->o.type != UNIT_SANDWORM) {
+	} else if (u->o.type != UNIT_SANDWORM) {
 		const enum SampleID sampleID = (((Random_Xorshift_256() & 0x1) == 0) ? SAMPLE_ACKNOWLEDGED : SAMPLE_AFFIRMATIVE);
 
 		Audio_PlaySample(sampleID, 255, 0.0);
@@ -288,8 +279,7 @@ Viewport_Server_Place(House *h, Structure *s, uint16 packed)
 
 			if (u == NULL) {
 				h->harvestersIncoming++;
-			}
-			else {
+			} else {
 				u->originEncoded = Tools_Index_Encode(s->o.index, IT_STRUCTURE);
 			}
 		}
@@ -303,16 +293,14 @@ Viewport_Server_Place(House *h, Structure *s, uint16 packed)
 		}
 
 		GUI_DisplayHint(houseID, si->o.hintStringID, si->o.spriteID);
-	}
-	else {
+	} else {
 		Server_Send_PlaySound(1 << houseID, EFFECT_ERROR_OCCURRED);
 
 		if (s->o.type == STRUCTURE_SLAB_1x1
 		 || s->o.type == STRUCTURE_SLAB_2x2) {
 			Server_Send_StatusMessage1(1 << houseID, 2,
 					STR_CAN_NOT_PLACE_FOUNDATION_HERE);
-		}
-		else {
+		} else {
 			GUI_DisplayHint(houseID,
 					STR_HINT_STRUCTURES_MUST_BE_PLACED_ON_CLEAR_ROCK_OR_CONCRETE_AND_ADJACENT_TO_ANOTHER_FRIENDLY_STRUCTURE,
 					SHAPE_INVALID);
@@ -359,12 +347,11 @@ Viewport_ScrollMap(enum ShapeID *cursorID)
 	if (viewport_click_action == VIEWPORT_FAST_SCROLL) {
 		const int speed = max(1, 2 * g_gameConfig.scrollSpeed);
 		Map_MoveDirection(speed * dx, speed * dy);
-	}
-	else if (g_gameConfig.autoScroll) {
+	} else if (g_gameConfig.autoScroll) {
 		const int speed = max(1, g_gameConfig.scrollSpeed);
 		Map_MoveDirection(speed * dx, speed * dy);
-	}
-	else if ((!g_gameConfig.autoScroll) && (viewport_click_action == VIEWPORT_SELECTION_BOX)) {
+	} else if ((!g_gameConfig.autoScroll)
+			&& (viewport_click_action == VIEWPORT_SELECTION_BOX)) {
 		dx = 0;
 		dy = 0;
 	}
@@ -489,18 +476,16 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 		for (int i = 0; (i < 4) && (action == ACTION_INVALID); i++) {
 			if ((oi->actionsPlayer[i] == ACTION_ATTACK) && attack) {
 				action = ACTION_ATTACK;
-			}
-			else if (oi->actionsPlayer[i] == ACTION_MOVE) {
+			} else if (oi->actionsPlayer[i] == ACTION_MOVE) {
 				action = ACTION_MOVE;
-			}
-
-			/* Harvesters should only harvest if ordered to a spice field. */
-			else if (oi->actionsPlayer[i] == ACTION_HARVEST && (lst == LST_SPICE || lst == LST_THICK_SPICE) && scouted) {
+			} else if ((oi->actionsPlayer[i] == ACTION_HARVEST) && scouted
+					&& (lst == LST_SPICE || lst == LST_THICK_SPICE)) {
+				/* Harvesters should only harvest if ordered to a spice field. */
 				action = (u->amount < 100) ? ACTION_HARVEST : ACTION_MOVE;
-			}
-
-			/* Saboteurs should show target cursor for detonating on structures, walls, and units. */
-			else if ((oi->actionsPlayer[i] == ACTION_SABOTAGE) && (lst != LST_BLOOM_FIELD) && (dry_run || enhancement_targetted_sabotage)) {
+			} else if ((oi->actionsPlayer[i] == ACTION_SABOTAGE)
+					&& (lst != LST_BLOOM_FIELD)
+					&& (dry_run || enhancement_targetted_sabotage)) {
+				/* Saboteurs should show target cursor for detonating on structures, walls, and units. */
 				if (attack || sabotage)
 					action = ACTION_SABOTAGE;
 			}
@@ -510,8 +495,7 @@ Viewport_PerformContextSensitiveAction(uint16 packed, bool dry_run)
 			if (dry_run) {
 				if (action != ACTION_MOVE)
 					return true;
-			}
-			else {
+			} else {
 				Viewport_Target(u, action, packed);
 			}
 		}
@@ -553,8 +537,7 @@ Viewport_Click(Widget *w)
 		const int tilex = Map_Clamp(mapInfo->minX + (mouseX - w->offsetX) / (mapScale + 1));
 		const int tiley = Map_Clamp(mapInfo->minY + (mouseY - w->offsetY) / (mapScale + 1));
 		packed = Tile_PackXY(tilex, tiley);
-	}
-	else {
+	} else {
 		Mouse_TransformToDiv(SCREENDIV_VIEWPORT, &mouseX, &mouseY);
 
 		const int x0 = Tile_GetPackedX(g_viewportPosition);
@@ -585,8 +568,9 @@ Viewport_Click(Widget *w)
 	if (w->state.buttonState & 0x01) {
 		const bool mouse_in_scroll_widget = Viewport_MouseInScrollWidget();
 
-		/* Clicking LMB performs target. */
-		if ((g_selectionType == SELECTIONTYPE_TARGET) && !mouse_in_scroll_widget) {
+		if ((g_selectionType == SELECTIONTYPE_TARGET)
+				&& !mouse_in_scroll_widget) {
+			/* Clicking LMB performs target. */
 			GUI_DisplayText(NULL, -1);
 
 			if (g_playerHouse->houseMissileID != UNIT_INDEX_INVALID) {
@@ -602,21 +586,16 @@ Viewport_Click(Widget *w)
 			g_activeAction = 0xFFFF;
 			GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
 			return true;
-		}
-
-		/* Clicking LMB places structure. */
-		else if ((g_selectionType == SELECTIONTYPE_PLACE) && !mouse_in_scroll_widget) {
+		} else if ((g_selectionType == SELECTIONTYPE_PLACE)
+				&& !mouse_in_scroll_widget) {
+			/* Clicking LMB places structure. */
 			Client_Send_PlaceStructure(g_selectionPosition);
 			return true;
-		}
-
-		/* Clicking LMB begins minimap panning. */
-		else if (w->index == 44) {
+		} else if (w->index == 44) {
+			/* Clicking LMB begins minimap panning. */
 			viewport_click_action = VIEWPORT_PAN_MINIMAP;
-		}
-
-		/* Clicking LMB begins selection box or fast scroll. */
-		else if (viewport_click_action == VIEWPORT_CLICK_NONE) {
+		} else if (viewport_click_action == VIEWPORT_CLICK_NONE) {
+			/* Clicking LMB begins selection box or fast scroll. */
 			viewport_click_time = Timer_GetTicks();
 			viewport_click_x = mouseX;
 			viewport_click_y = mouseY;
@@ -624,8 +603,7 @@ Viewport_Click(Widget *w)
 			if (Input_Test(SCANCODE_LSHIFT)) {
 				selection_box_add_to_selection = true;
 				viewport_click_action = VIEWPORT_SELECTION_BOX;
-			}
-			else {
+			} else {
 				viewport_click_action = VIEWPORT_LMB;
 				selection_box_add_to_selection = false;
 
@@ -634,27 +612,23 @@ Viewport_Click(Widget *w)
 					viewport_click_action = VIEWPORT_FAST_SCROLL;
 				}
 			}
-		}
-
-		/* Clicking LMB cancels pan. */
-		else {
+		} else {
+			/* Clicking LMB cancels pan. */
 			Viewport_StopMousePanning();
 		}
 	}
 
 	if (w->state.buttonState & 0x10) {
-		/* Clicking RMB begins panning. */
 		if (viewport_click_action == VIEWPORT_CLICK_NONE) {
+			/* Clicking RMB begins panning. */
 			viewport_click_action = VIEWPORT_RMB;
 			viewport_click_time = Timer_GetTicks();
 			viewport_click_x = g_mouseClickX;
 			viewport_click_y = g_mouseClickY;
 			viewport_pan_dx = 0;
 			viewport_pan_dy = 0;
-		}
-
-		/* Clicking RMB cancels selection box. */
-		else {
+		} else {
+			/* Clicking RMB cancels selection box. */
 			viewport_click_action = VIEWPORT_CLICK_NONE;
 		}
 	}
@@ -664,18 +638,15 @@ Viewport_Click(Widget *w)
 			const int dx = viewport_click_x - mouseX;
 			const int dy = viewport_click_y - mouseY;
 
-			/* Dragging LMB begins selection box. */
 			if (dx*dx + dy*dy >= 5*5) {
+				/* Dragging LMB begins selection box. */
 				viewport_click_action = VIEWPORT_SELECTION_BOX;
-			}
-
-			/* Holding LMB begins fast scroll. */
-			else if (Viewport_MouseInScrollWidget() && (Timer_GetTicks() - viewport_click_time >= 10)) {
+			} else if (Viewport_MouseInScrollWidget()
+					&& (Timer_GetTicks() - viewport_click_time >= 10)) {
+				/* Holding LMB begins fast scroll. */
 				viewport_click_action = VIEWPORT_FAST_SCROLL;
 			}
-		}
-
-		else if (viewport_click_action == VIEWPORT_PAN_MINIMAP) {
+		} else if (viewport_click_action == VIEWPORT_PAN_MINIMAP) {
 			/* High-resolution panning. */
 			const ScreenDiv *div = &g_screenDiv[SCREENDIV_SIDEBAR];
 			const uint16 mapScale = g_scenario.mapScale;
@@ -692,9 +663,7 @@ Viewport_Click(Widget *w)
 			y = TILE_SIZE * mapInfo->minY + TILE_SIZE * y / (div->scaley * (mapScale + 1));
 
 			Map_CentreViewport(x, y);
-		}
-
-		else if (viewport_click_action == VIEWPORT_RMB) {
+		} else if (viewport_click_action == VIEWPORT_RMB) {
 			const int dx = viewport_click_x - g_mouseX;
 			const int dy = viewport_click_y - g_mouseY;
 
@@ -707,10 +676,8 @@ Viewport_Click(Widget *w)
 				g_mouseDX = 0;
 				g_mouseDY = 0;
 			}
-		}
-
-		/* Dragging RMB pans viewport. */
-		else if (viewport_click_action == VIEWPORT_PAN) {
+		} else if (viewport_click_action == VIEWPORT_PAN) {
+			/* Dragging RMB pans viewport. */
 			const int dx = g_mouseDX;
 			const int dy = g_mouseDY;
 
@@ -724,19 +691,16 @@ Viewport_Click(Widget *w)
 	if (w->state.buttonState & 0x04) {
 		bool perform_selection_box = false;
 
-		/* Releasing LMB performs selection box. */
 		if (viewport_click_action == VIEWPORT_SELECTION_BOX) {
+			/* Releasing LMB performs selection box. */
 			perform_selection_box = true;
-		}
-
-		/* Releasing LMB performs selection box (alt: context_sensitive_action). */
-		else if (viewport_click_action == VIEWPORT_LMB) {
+		} else if (viewport_click_action == VIEWPORT_LMB) {
+			/* Releasing LMB performs selection box (alt: context_sensitive_action). */
 			if (g_gameConfig.leftClickOrders) {
 				if (Unit_AnySelected()) {
 					if (Viewport_LMBAttemptsGenericCommand(packed))
 						perform_context_sensitive_action = true;
-				}
-				else {
+				} else {
 					const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 
 					/* Set rally point if we left click on an empty tile. */
@@ -783,30 +747,25 @@ Viewport_Click(Widget *w)
 	}
 
 	if (w->state.buttonState & 0x40) {
-		/* Releasing RMB cancels pan, but not target, placement. */
 		if (viewport_click_action == VIEWPORT_PAN) {
-		}
-
-		/* Releasing RMB cancels target, placement. */
-		else if (g_selectionType == SELECTIONTYPE_TARGET || g_selectionType == SELECTIONTYPE_PLACE) {
+			/* Releasing RMB cancels pan, but not target, placement. */
+		} else if (g_selectionType == SELECTIONTYPE_TARGET
+		        || g_selectionType == SELECTIONTYPE_PLACE) {
+			/* Releasing RMB cancels target, placement. */
 			GUI_Widget_Cancel_Click(NULL);
-		}
-
-		/* Releasing RMB performs context sensitive action (alt: deselect). */
-		else if (viewport_click_action == VIEWPORT_RMB) {
+		} else if (viewport_click_action == VIEWPORT_RMB) {
+			/* Releasing RMB performs context sensitive action (alt: deselect). */
 			if (g_gameConfig.leftClickOrders) {
 				const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 
 				/* Right-click on the selected structure clears the rally point, like RA3 airfields. */
 				if ((s != NULL) && (s == Structure_Get_ByPackedTile(packed))) {
 					perform_context_sensitive_action = true;
-				}
-				else {
+				} else {
 					Map_SetSelection(0xFFFF);
 					Unit_UnselectAll();
 				}
-			}
-			else {
+			} else {
 				perform_context_sensitive_action = true;
 			}
 		}
@@ -829,8 +788,7 @@ Viewport_Click(Widget *w)
 
 	if (g_selectionType == SELECTIONTYPE_TARGET) {
 		Map_SetSelection(Unit_FindTargetAround(packed));
-	}
-	else if (g_selectionType == SELECTIONTYPE_PLACE) {
+	} else if (g_selectionType == SELECTIONTYPE_PLACE) {
 		Map_SetSelection(packed);
 	}
 
@@ -870,8 +828,7 @@ Viewport_Hotkey(enum SquadID squad)
 				cx += (u->o.position.x >> 4);
 				cy += (u->o.position.y >> 4);
 				count++;
-			}
-			else if (u->squadID == squad) {
+			} else if (u->squadID == squad) {
 				u->squadID = SQUADID_INVALID;
 			}
 		}
@@ -885,15 +842,13 @@ Viewport_Hotkey(enum SquadID squad)
 				s = Structure_FindNext(&find)) {
 			if (s == st) {
 				s->squadID = squad;
-			}
-			else if (s->squadID == squad) {
+			} else if (s->squadID == squad) {
 				s->squadID = SQUADID_INVALID;
 			}
 		}
 
 		Audio_PlaySample(SAMPLE_BUTTON, 128, 0.0f);
-	}
-	else {
+	} else {
 		const bool key_shift = Input_Test(SCANCODE_LSHIFT);
 		bool modified_selection = false;
 
@@ -907,8 +862,7 @@ Viewport_Hotkey(enum SquadID squad)
 					Unit_Select(u);
 					modified_selection = true;
 				}
-			}
-			else if (!key_shift || !is_controllable) {
+			} else if (!key_shift || !is_controllable) {
 				if (Unit_IsSelected(u)) {
 					Unit_Unselect(u);
 					modified_selection = true;
@@ -960,8 +914,7 @@ Viewport_Homekey(void)
 	if (g_selectionType == SELECTIONTYPE_TARGET
 			&& g_playerHouse->houseMissileID == UNIT_INDEX_INVALID) {
 		GUI_Widget_Cancel_Click(NULL);
-	}
-	else if (g_selectionType == SELECTIONTYPE_PLACE) {
+	} else if (g_selectionType == SELECTIONTYPE_PLACE) {
 		centre_on_selection = true;
 	}
 
@@ -970,8 +923,7 @@ Viewport_Homekey(void)
 		if (g_selectionType != SELECTIONTYPE_PLACE) {
 			if (s == Structure_Get_ByPackedTile(g_selectionPosition)) {
 				centre_on_selection = true;
-			}
-			else {
+			} else {
 				Map_SetSelection(Tile_PackTile(s->o.position));
 			}
 		}
@@ -1163,8 +1115,7 @@ Viewport_DrawHealthBar(int x, int y, int width, int curr, int max)
 
 	if (enhancement_high_res_overlays) {
 		Prim_FillRect(x - deltax, y - deltay, x + width + 1.0f + deltax, y + 1.0f + deltay, 12);
-	}
-	else {
+	} else {
 		Prim_FillRect_i(x - 1, y - 1, x + width + 1, y + 1, 12);
 	}
 
@@ -1194,8 +1145,7 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 	/* Black outline. */
 	if (enhancement_high_res_overlays) {
 		Prim_FillRect(x - deltax, y - deltay, x + width + deltax, y + 1.0f + deltay, 12);
-	}
-	else {
+	} else {
 		Prim_FillRect_i(x - 1, y - 1, x + width, y + 1, 12);
 	}
 
@@ -1209,8 +1159,7 @@ Viewport_DrawSpiceBricks(int x, int y, int num_bricks, int curr, int max)
 		if (w > deltax) Prim_FillRect(x, y, x + w - deltax, y + 1.0f, 83);
 		Prim_FillRect(x + w, y, x + width, y + 1.0f, 13);
 		Prim_FillRect_RGBA(x + w, y, x + w + 2.0f, y + 1.0f, r, g, b, 0xFF);
-	}
-	else {
+	} else {
 		Prim_FillRect(x, y, x + width, y + 1.0f, 83);
 	}
 
@@ -1271,8 +1220,7 @@ Viewport_DrawSelectionHealthBars(void)
 
 			if ((Unit_GetHouseID(u) != g_playerHouseID) && !Unit_IsSelected(u))
 				continue;
-		}
-		else {
+		} else {
 			next = Unit_NextSelected(&iter);
 		}
 
@@ -1309,8 +1257,7 @@ Viewport_DrawSelectedUnit(int x, int y)
 		Prim_Line(x2 - 3.66f, y1 + 0.33f, x2 - 0.33f, y1 + 3.66f, 0xFF, 0.75f);
 		Prim_Line(x1 + 0.33f, y2 - 3.66f, x1 + 3.66f, y2 - 0.33f, 0xFF, 0.75f);
 		Prim_Line(x2 - 3.66f, y2 - 0.33f, x2 - 0.33f, y2 - 3.66f, 0xFF, 0.75f);
-	}
-	else {
+	} else {
 		Shape_DrawTint(SHAPE_SELECTED_UNIT, x, y, 0xFF, 0, 0x8000);
 	}
 }
@@ -1421,8 +1368,7 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 
 		x -= windowX;
 		y -= windowY;
-	}
-	else {
+	} else {
 		if (!Map_IsPositionInViewport(u->o.position, &x, &y))
 			return;
 	}
@@ -1473,8 +1419,7 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 	if (ui->o.flags.blurTile) {
 		if ((u->o.type == UNIT_SANDWORM) || (houseID != g_playerHouseID)) {
 			s_spriteFlags |= 0x200 | ((u->wobbleIndex & 0x7) << 4);
-		}
-		else {
+		} else {
 			isWobbling = false;
 		}
 	}
@@ -1614,8 +1559,7 @@ Viewport_DrawAirUnit(const Unit *u)
 		if (smooth_rotation) {
 			Shape_DrawRemapRotate(index, Unit_GetHouseID(u),
 					x + 1, y + 3, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x5FFF) | alpha);
-		}
-		else {
+		} else {
 			Shape_Draw(index, x + 1, y + 3, WINDOWID_VIEWPORT, (s_spriteFlags & 0xDFFF) | alpha);
 		}
 	}
@@ -1625,8 +1569,7 @@ Viewport_DrawAirUnit(const Unit *u)
 
 	if (smooth_rotation) {
 		Shape_DrawRemapRotate(index, Unit_GetHouseID(u), x, y, &u->orientation[0], WINDOWID_VIEWPORT, (s_spriteFlags & 0x7FFF) | 0x2000);
-	}
-	else {
+	} else {
 		Shape_DrawRemap(index, Unit_GetHouseID(u), x, y, WINDOWID_VIEWPORT, s_spriteFlags | 0x2000);
 	}
 }
@@ -1753,10 +1696,9 @@ Viewport_RenderBrush(int x, int y, int blurx)
 				continue;
 
 			const int index = t->index - 1;
-			if ((19 <= index && index <= 21 && !enhancement_invisible_saboteurs) ||
-			    (22 <= index && index <= 101)) {
-			}
-			else {
+			if ((19 <= index && index <= 21 && !enhancement_invisible_saboteurs)
+			 || (22 <= index && index <= 101)) {
+			} else {
 				continue;
 			}
 
@@ -1785,8 +1727,7 @@ Viewport_InterpolateMovement(const Unit *u, int *x, int *y)
 {
 	if (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE) {
 		return Map_IsPositionInViewport(u->o.position, x, y);
-	}
-	else {
+	} else {
 		const double frame = Timer_GetUnitMovementFrame();
 		tile32 pos = Unit_GetNextDestination(u);
 

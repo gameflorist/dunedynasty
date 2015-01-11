@@ -136,8 +136,7 @@ Random_Starport_CalculateUnitPrice(enum UnitType unitType)
 			const ObjectInfo *oi = &g_table_unitInfo[u].o;
 
 			return Random_Starport_CalculatePrice(oi->buildCredits);
-		}
-		else {
+		} else {
 			Random_Starport_Range(0, 6);
 			Random_Starport_Range(0, 6);
 		}

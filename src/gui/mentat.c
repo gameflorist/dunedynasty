@@ -331,8 +331,7 @@ GUI_Mentat_ShowHelp(Widget *scrollbar, enum SearchDirectory dir,
 
 	if (bufread >= 12) {
 		info.length = HTOBE32(info.length);
-	}
-	else {
+	} else {
 		/* Note: some files are buggy and don't give a proper length. */
 		info.length = File_GetSize(fileID);
 	}
@@ -378,57 +377,46 @@ GUI_Mentat_ShowHelp(Widget *scrollbar, enum SearchDirectory dir,
 	mentat->wsa_timer = Timer_GetTicks();
 	mentat->wsa_frame = 0;
 
-	if (enhancement_fix_typos && (g_gameConfig.language == LANGUAGE_ENGLISH) && (desc != NULL)) {
-		/* Barracks: "Power Needs: 20" to 10. */
+	if (enhancement_fix_typos
+			&& (g_gameConfig.language == LANGUAGE_ENGLISH) && (desc != NULL)) {
 		if (strcasecmp("BARRAC.WSA", picture) == 0) {
+			/* Barracks: "Power Needs: 20" to 10. */
 			char *str = strstr(desc, "Power Needs: 20");
 			if (str != NULL)
 				str[13] = '1';
-		}
-
-		/* Frigate: text is in German. */
-		else if (strcasecmp("FRIGATE.WSA", picture) == 0) {
+		} else if (strcasecmp("FRIGATE.WSA", picture) == 0) {
+			/* Frigate: text is in German. */
 			const char *fix_text = "These enormous spacecraft are used by CHOAM to transport bulk shipments from orbit to a starport.";
 			const char *fix_desc = "CHOAM Frigate\rPlanetary Transport";
 
 			strcpy(mentat->desc, fix_desc);
 			mentat->text = mentat->desc + strlen(fix_desc) + 1;
 			strcpy(mentat->text, fix_text);
-		}
-
-		/* Devastator: "It's armor and weapons are unequaled." */
-		else if (strcasecmp("HARKTANK.WSA", picture) == 0 && houseID == HOUSE_HARKONNEN) {
+		} else if (strcasecmp("HARKTANK.WSA", picture) == 0 && houseID == HOUSE_HARKONNEN) {
+			/* Devastator: "It's armor and weapons are unequaled." */
 			char *str = strstr(text, "It's armor");
 			if (str != NULL)
 				memmove(str + 2, str + 3, strlen(str + 3) + 1);
-		}
-
-		/* Siege tank: "It's armor and weaponry has the power you will need to complete your conquest of this planet." */
-		else if (strcasecmp("HTANK.WSA", picture) == 0 && houseID == HOUSE_HARKONNEN) {
+		} else if (strcasecmp("HTANK.WSA", picture) == 0 && houseID == HOUSE_HARKONNEN) {
+			/* Siege tank: "It's armor and weaponry has the power you will need to complete your conquest of this planet." */
 			char *str = strstr(text, "It's armor");
 			if (str != NULL)
 				memmove(str + 2, str + 3, strlen(str + 3) + 1);
-		}
-
-		/* Ornithoper: "The ornithopter is a fast and maneuverable, aircraft." */
-		else if (strcasecmp("ORNI.WSA", picture) == 0 && houseID == HOUSE_ORDOS) {
+		} else if (strcasecmp("ORNI.WSA", picture) == 0 && houseID == HOUSE_ORDOS) {
+			/* Ornithoper: "The ornithopter is a fast and maneuverable, aircraft." */
 			char *str = strstr(text, "maneuverable, aircraft");
 			if (str != NULL)
 				memmove(str + 12, str + 13, strlen(str + 13) + 1);
-		}
-
-		/* Sardaukar: text is in German. */
-		else if (strcasecmp("SARDUKAR.WSA", picture) == 0) {
+		} else if (strcasecmp("SARDUKAR.WSA", picture) == 0) {
+			/* Sardaukar: text is in German. */
 			const char *fix_text = "These are the elite troops of the Emperor.";
 			const char *fix_desc = "Sardaukar Troopers\rMobility: Foot\rFirepower: Heavy";
 
 			strcpy(mentat->desc, fix_desc);
 			mentat->text = mentat->desc + strlen(fix_desc) + 1;
 			strcpy(mentat->text, fix_text);
-		}
-
-		/* Starport: "Power Needs: 80" to 50. */
-		else if (strcasecmp("STARPORT.WSA", picture) == 0) {
+		} else if (strcasecmp("STARPORT.WSA", picture) == 0) {
+			/* Starport: "Power Needs: 80" to 50. */
 			char *str = strstr(desc, "Power Needs: 80");
 			if (str != NULL)
 				str[13] = '5';

@@ -74,22 +74,18 @@ ActionPanel_CalculateOptimalLayout(const Widget *widget, bool is_starport)
 		- (is_starport ? g_table_gameWidgetInfo[GAME_WIDGET_REPAIR_UPGRADE].height : 0) /* send order button. */
 		;
 
-	/* Use large icons if possible. */
 	if (h >= 4 * LARGE_PRODUCTION_ICON_MIN_STRIDE) {
+		/* Use large icons if possible. */
 		s_factory_panel_layout
 			= (is_starport ? FACTORYPANEL_STARPORT_FLAG : 0)
 			| (FACTORYPANEL_SCROLL_FLAG | FACTORYPANEL_LARGE_ICON_FLAG);
-	}
-
-	/* Use small icons with the scroll and send order buttons if they fit. */
-	else if (h >= 3 * SMALL_PRODUCTION_ICON_MIN_STRIDE) {
+	} else if (h >= 3 * SMALL_PRODUCTION_ICON_MIN_STRIDE) {
+		/* Use small icons with the scroll and send order buttons if they fit. */
 		s_factory_panel_layout
 			= (is_starport ? FACTORYPANEL_STARPORT_FLAG : 0)
 			| FACTORYPANEL_SCROLL_FLAG;
-	}
-
-	/* Otherwise, use small icons, without the scroll and send order buttons. */
-	else {
+	} else {
+		/* Otherwise, use small icons, without the scroll and send order buttons. */
 		s_factory_panel_layout = FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL;
 	}
 }
@@ -228,8 +224,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 					GUI_DrawText_Wrapper("Output:", 21, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
 					GUI_DrawText_Wrapper("%d", 72, y + 2 * g_fontCurrent->height, 29, 0, 0x211, powerAverage);
 					GUI_DrawText_Wrapper("%d", 72, y + 3 * g_fontCurrent->height, fg, 0, 0x211, powerOutput);
-				}
-				else {
+				} else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_POWER_INFONEEDEDOUTPUT), 18, y + 8, 29, 0, 0x11);
 					GUI_DrawText_Wrapper("%d", 62, y + 2 * g_fontCurrent->height, 29, 0, 0x11, powerAverage);
 					GUI_DrawText_Wrapper("%d", 62, y + 3 * g_fontCurrent->height, fg, 0, 0x11, powerOutput);
@@ -240,8 +235,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 		case STRUCTURE_STARPORT:
 			if (h->starportLinkedID != 0xFFFF) {
 				GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATEARRIVAL_INTMINUS_D), 18, y + 8, 29, 0, 0x11, h->starportTimeLeft);
-			}
-			else {
+			} else {
 				/* GUI_DrawText_Wrapper(String_Get_ByIndex(STR_FRIGATE_INORBIT_ANDAWAITINGORDER), 18, y + 8, 29, 0, 0x11); */
 			}
 			break;
@@ -261,8 +255,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 					GUI_DrawText_Wrapper("Max:", 21, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
 					GUI_DrawText_Wrapper("%d", 72, y + 2 * g_fontCurrent->height, 29, 0, 0x211, creditsStored);
 					GUI_DrawText_Wrapper("%d", 72, y + 3 * g_fontCurrent->height, 29, 0, 0x211, (si->creditsStorage / 100) * 100);
-				}
-				else {
+				} else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_SPICEHOLDS_4DMAX_4D), 18, y + 8, 29, 0, 0x11, creditsStored, (si->creditsStorage <= 1000) ? si->creditsStorage : 1000);
 				}
 			}
@@ -277,8 +270,7 @@ ActionPanel_DrawStructureDescription(Structure *s)
 					GUI_DrawText_Wrapper("Enemy:", 21, y + 3 * g_fontCurrent->height, 29, 0, 0x11);
 					GUI_DrawText_Wrapper("%d", 72, y + 2 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountAllied);
 					GUI_DrawText_Wrapper("%d", 72, y + 3 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountEnemy);
-				}
-				else {
+				} else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), 18, y + 8, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
 				}
 			}
@@ -336,8 +328,7 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 
 	if (items_per_screen <= 0) {
 		y += (widget_padding - height) / 2;
-	}
-	else {
+	} else {
 		const int item_padding = stride - 6 - 2 - height;
 		y += (widget_padding + item_padding) / 2 + 6 + 2;
 	}
@@ -359,8 +350,7 @@ ActionPanel_ScrollButtonDimensions(const Widget *widget, bool up,
 	if (s_factory_panel_layout == FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) {
 		x = widget->offsetX + widget->width - SCROLL_BUTTON_WIDTH - 1;
 		y = widget->offsetY + widget->height / 2 - (up ? SCROLL_BUTTON_HEIGHT : 0);
-	}
-	else {
+	} else {
 		x = widget->offsetX + (up ? 5 : 31);
 		y = widget->offsetY + ActionPanel_ProductionListHeight(widget) + SCROLL_BUTTON_MARGIN / 2;
 	}
@@ -507,8 +497,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			case STR_D_DONE:
 				if (g_factoryWindowItems[item].available > 0) {
 					Client_Send_PurchaseResumeItem(&s->o, clicked_type);
-				}
-				else {
+				} else {
 					action_successful = false;
 				}
 				break;
@@ -516,12 +505,10 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			default:
 				break;
 		}
-	}
-	else if (rmb) {
+	} else if (rmb) {
 		if ((clicked_type < STRUCTURE_MAX) && true /* (s->numQueued[clicked_type] > 0) */) {
 			Client_Send_PauseCancelItem(&s->o, clicked_type);
-		}
-		else {
+		} else {
 			action_successful = false;
 		}
 	}
@@ -540,8 +527,7 @@ ActionPanel_ClickStarportPlus(const Structure *s, int entry)
 
 	if ((g_starportAvailable[item->objectType] > 0) && (item->credits <= g_playerHouse->credits)) {
 		Client_Send_PurchaseResumeItem(&s->o, item->objectType);
-	}
-	else {
+	} else {
 		Audio_PlaySound(EFFECT_ERROR_OCCURRED);
 	}
 }
@@ -599,8 +585,7 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 
 	if (lmb) {
 		ActionPanel_ClickStarportPlus(s, item);
-	}
-	else if (rmb) {
+	} else if (rmb) {
 		ActionPanel_ClickStarportMinus(s, item);
 	}
 
@@ -665,18 +650,16 @@ ActionPanel_DrawScrollButtons(const Widget *widget)
 	ActionPanel_ScrollButtonDimensions(widget, true, &x1, &y1, &x2, &y2);
 	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP_PRESSED, x1, y1, 0, 0);
-	}
-	else if ((s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) ||
-			Mouse_InRegion_Div(widget->div, x1, y1, x2, y2 + 15)) {
+	} else if ((s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL)
+			|| Mouse_InRegion_Div(widget->div, x1, y1, x2, y2 + 15)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP, x1, y1, 0, 0);
 	}
 
 	ActionPanel_ScrollButtonDimensions(widget, false, &x1, &y1, &x2, &y2);
 	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN_PRESSED, x1, y1, 0, 0);
-	}
-	else if ((s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) ||
-			Mouse_InRegion_Div(widget->div, x1, y1 - 15, x2, y2)) {
+	} else if ((s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL)
+			|| Mouse_InRegion_Div(widget->div, x1, y1 - 15, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN, x1, y1, 0, 0);
 	}
 }
@@ -696,8 +679,7 @@ ActionPanel_DrawStarportOrder(const Widget *widget)
 		Prim_FillRect_RGBA(x1, y1, x2, y2, 0x9C, 0x9C, 0xB8, 0XFF);
 		Prim_DrawBorder(x1, y1, w, h, 1, true, false, 1);
 		fg = 0xE;
-	}
-	else {
+	} else {
 		const bool buttonDown = (widget->state.hover1 && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2));
 
 		Prim_DrawBorder(x1, y1, w, h, 1, true, true, buttonDown ? 0 : 1);
@@ -770,8 +752,7 @@ ActionPanel_HighlightIcon(enum HouseType houseID, int x1, int y1, bool large_ico
 
 	if (large_icon) {
 		Prim_Rect_RGBA(x1 + 1.0f, y1 + 0.5f, x1 + 52.0f, y1 + 38.0f, r, g, b, 0xFF, 3.0f);
-	}
-	else {
+	} else {
 		Prim_Rect_RGBA(x1 + 1.0f, y1 + 1.0f, x1 + 31.0f, y1 + 23.0f, r, g, b, 0xFF, 2.0f);
 	}
 }
@@ -823,22 +804,19 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 			name = String_Get_ByIndex(g_table_structureInfo[object_type].o.stringID_abbrev);
-		}
-		else {
+		} else {
 			name = String_Get_ByIndex(g_table_unitInfo[object_type].o.stringID_abbrev);
 		}
 
 		if ((s->o.type == STRUCTURE_STARPORT) && (g_starportAvailable[object_type] < 0)) {
 			Shape_DrawGreyScale(shapeID, x1, y1, w, h, 0, 0);
-		}
-		else if (g_factoryWindowItems[item].available < 0) {
+		} else if (g_factoryWindowItems[item].available < 0) {
 			Shape_DrawGreyScale(shapeID, x1, y1, w, h, 0, 0);
 
 			/* Draw layout. */
 			if (s->o.type == STRUCTURE_CONSTRUCTION_YARD)
 				ActionPanel_DrawStructureLayout(object_type, x1, y1);
-		}
-		else {
+		} else {
 			Shape_DrawScale(shapeID, x1, y1, w, h, 0, 0);
 
 			/* Draw layout. */
@@ -852,8 +830,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 				GUI_DrawText_Wrapper("OUT OF", xcentre, y1 +  7, 6, 0, 0x132);
 				GUI_DrawText_Wrapper("STOCK",  xcentre, y1 + 18, 6, 0, 0x132);
 			}
-		}
-		else if (s->objectType == object_type) {
+		} else if (s->objectType == object_type) {
 			/* Production icon is 32x24, or stretched up to 52x39. */
 			if (g_productionStringID != STR_BUILD_IT) {
 				const bool large_icon = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG);
@@ -869,19 +846,16 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 					if (g_productionStringID == STR_ON_HOLD) {
 						y1f = y1 + 2.0f;
 						y2f = y1 + 37.0f;
-					}
-					else {
+					} else {
 						y1f = y1 + 12.0f;
 						y2f = y1f + g_fontCurrent->height + 4.0f;
 					}
-				}
-				else {
+				} else {
 					/* On hold greys out the entire icon, which has 1px borders. */
 					if (g_productionStringID == STR_ON_HOLD) {
 						y1f = y1 + 1.0f;
 						y2f = y1 + 23.0f;
-					}
-					else {
+					} else {
 						/* For long strings, grey strip spans the widget width. */
 						if ((g_productionStringID == STR_COMPLETED) || (g_productionStringID == STR_PLACE_IT)) {
 							x1f = widget->offsetX + 1.0f;
@@ -901,12 +875,9 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 				if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 					const StructureInfo *si = &g_table_structureInfo[s->objectType];
-
 					buildTime = si->o.buildTime;
-				}
-				else {
+				} else {
 					const UnitInfo *ui = &g_table_unitInfo[s->objectType];
-
 					buildTime = ui->o.buildTime;
 				}
 
@@ -915,19 +886,16 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 				if ((g_productionStringID == STR_D_DONE) || !(s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG)) {
 					GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + (h - 10) / 2, fg, 0, 0x121, percentDone);
-				}
-				else {
+				} else {
 					GUI_DrawText_Wrapper("%d%%", xcentre, y1 + 10, fg, 0, 0x121, percentDone);
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_ON_HOLD), xcentre, y1 + 18, fg, 0, 0x121);
 				}
 
 				Prim_Rect(x1 + 1.0f, y1 + 1.0f, x1 + w - 1.0f, y1 + h - 1.0f, 0xFF, 2.0f);
-			}
-			else if (g_productionStringID != STR_BUILD_IT) {
+			} else if (g_productionStringID != STR_BUILD_IT) {
 				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), widget->offsetX + widget->width / 2, y1 + (h - 10) / 2, fg, 0, 0x121);
 			}
-		}
-		else if (g_factoryWindowItems[item].available < 0) {
+		} else if (g_factoryWindowItems[item].available < 0) {
 			if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
 				const int yupper = y1 + 7;
 				const int ylower = y1 + 18;
@@ -936,8 +904,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 				if (s->upgradeTimeLeft >= 100) {
 					GUI_DrawText_Wrapper("NEEDED", xcentre, ylower, 6, 0, 0x132);
-				}
-				else {
+				} else {
 					GUI_DrawText_Wrapper("%d%%", xcentre, ylower, 6, 0, 0x132, 100 - s->upgradeTimeLeft);
 				}
 			}
@@ -953,8 +920,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		/* Draw credits. */
 		if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
 			GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);
-		}
-		else if ((s->objectType != object_type) || (g_productionStringID != STR_PLACE_IT)) {
+		} else if ((s->objectType != object_type) || (g_productionStringID != STR_PLACE_IT)) {
 			GUI_DrawText_Wrapper("%d", widget->offsetX + widget->width - 3, y1 + 2, fg, 0, 0x231, g_factoryWindowItems[item].credits);
 		}
 
@@ -962,8 +928,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		int count;
 		if (s->o.type == STRUCTURE_STARPORT) {
 			count = g_playerHouse->starportCount[object_type];
-		}
-		else {
+		} else {
 			count = BuildQueue_Count(&s->queue, object_type);
 		}
 
@@ -973,8 +938,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 
 			if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
 				GUI_DrawText_Wrapper("x%d", widget->offsetX + widget->width - 5, y1 + h - 10, 15, 0, 0x232, count);
-			}
-			else {
+			} else {
 				GUI_DrawText_Wrapper("x%d", widget->offsetX + widget->width - 3, y1 + h - 10, 15, 0, 0x232, count);
 			}
 		}

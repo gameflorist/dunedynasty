@@ -317,14 +317,12 @@ StructureAI_GetBuildable(const Structure *s)
 	uint32 ret = 0;
 
 	if (s->o.type == STRUCTURE_STARPORT) {
-	}
-	else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+	} else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 		for (enum StructureType i = STRUCTURE_PALACE; i < STRUCTURE_MAX; i++) {
 			if (Structure_GetAvailable_ConstructionYard(s, i) > 0)
 				ret |= (1 << i);
 		}
-	}
-	else {
+	} else {
 		const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
 		for (int i = 0; i < 8; i++) {
@@ -364,8 +362,7 @@ StructureAI_PickNextToBuild(const Structure *s)
 
 	if (AI_IsBrutalAI(s->o.houseID)) {
 		buildable = StructureAI_FilterBuildOptions(s->o.type, s->o.houseID, buildable);
-	}
-	else {
+	} else {
 		buildable = StructureAI_FilterBuildOptions_Original(s->o.type, s->o.houseID, buildable);
 	}
 
@@ -378,8 +375,7 @@ StructureAI_PickNextToBuild(const Structure *s)
 		/* Adjustments to build order for brutal AI. */
 		if (AI_IsBrutalAI(s->o.houseID)) {
 			i = StructureAI_RemapBuildItem(j, &priority_i);
-		}
-		else {
+		} else {
 			i = j;
 			priority_i = g_table_unitInfo[i].o.priorityBuild;
 		}
@@ -416,12 +412,9 @@ UnitAI_GetAnyEnemyInRange(const Unit *unit)
 			u != NULL;
 			u = Unit_FindNext(&find)) {
 		if (u->o.type == UNIT_SANDWORM) {
-		}
-		else if (House_AreAllied(houseID, Unit_GetHouseID(u))) {
-		}
-		else if (!g_table_unitInfo[u->o.type].flags.isGroundUnit) {
-		}
-		else if (Tile_GetDistanceRoundedUp(unit->o.position, u->o.position) <= dist) {
+		} else if (House_AreAllied(houseID, Unit_GetHouseID(u))) {
+		} else if (!g_table_unitInfo[u->o.type].flags.isGroundUnit) {
+		} else if (Tile_GetDistanceRoundedUp(unit->o.position, u->o.position) <= dist) {
 			return Tools_Index_Encode(u->o.index, IT_UNIT);
 		}
 	}
@@ -430,8 +423,7 @@ UnitAI_GetAnyEnemyInRange(const Unit *unit)
 			s != NULL;
 			s = Structure_FindNext(&find)) {
 		if (House_AreAllied(houseID, s->o.houseID)) {
-		}
-		else if (Tile_GetDistanceRoundedUp(unit->o.position, s->o.position) <= dist) {
+		} else if (Tile_GetDistanceRoundedUp(unit->o.position, s->o.position) <= dist) {
 			return Tools_Index_Encode(s->o.index, IT_STRUCTURE);
 		}
 	}
@@ -533,8 +525,7 @@ UnitAI_ShouldDestructDevastator(const Unit *devastator)
 
 			if (House_AreAllied(devastator->o.houseID, u->o.houseID)) {
 				net_damage += cost;
-			}
-			else {
+			} else {
 				net_damage -= cost;
 			}
 		}
@@ -786,11 +777,9 @@ UnitAI_GetSquadDestination(Unit *unit, uint16 destination)
 
 	if (squad->state <= AISQUAD_DETOUR3) {
 		return Tools_Index_Encode(squad->waypoint[squad->state], IT_TILE);
-	}
-	else if (squad->state == AISQUAD_BATTLE_FORMATION) {
+	} else if (squad->state == AISQUAD_BATTLE_FORMATION) {
 		return unit->targetMove;
-	}
-	else {
+	} else {
 		return squad->target;
 	}
 }
@@ -824,11 +813,9 @@ UnitAI_SquadIsGathered(const AISquad *squad)
 
 	if (squad->state <= AISQUAD_DETOUR3) {
 		destination = Tile_UnpackTile(squad->waypoint[squad->state]);
-	}
-	else if (squad->state == AISQUAD_BATTLE_FORMATION) {
+	} else if (squad->state == AISQUAD_BATTLE_FORMATION) {
 		return UnitAI_SquadIsInFormation(squad);
-	}
-	else {
+	} else {
 		uint16 packed = Tools_Index_GetPackedTile(squad->target);
 		if (packed == 0)
 			return true;
@@ -927,8 +914,7 @@ UnitAI_SquadLoop(void)
 			if (squad->state == AISQUAD_BATTLE_FORMATION) {
 				if (squad->num_members == 1) {
 					squad->state++;
-				}
-				else {
+				} else {
 					UnitAI_ArrangeBattleFormation(squad);
 				}
 			}
@@ -974,12 +960,10 @@ SaveLoad_BrutalAI_RecruitmentTimeout(void *object, uint32 value, bool loading)
 	if (loading) {
 		squad->recruitment_timeout = (value == 0) ? 0 : (g_timerGame + value);
 		return 0;
-	}
-	else {
+	} else {
 		if (squad->recruitment_timeout <= g_timerGame) {
 			return 0;
-		}
-		else {
+		} else {
 			return squad->recruitment_timeout - g_timerGame;
 		}
 	}
@@ -993,12 +977,10 @@ SaveLoad_BrutalAI_FormationTimeout(void *object, uint32 value, bool loading)
 	if (loading) {
 		squad->formation_timeout = (value == 0) ? 0 : (g_timerGame + value);
 		return 0;
-	}
-	else {
+	} else {
 		if (squad->formation_timeout <= g_timerGame) {
 			return 0;
-		}
-		else {
+		} else {
 			return squad->formation_timeout - g_timerGame;
 		}
 	}

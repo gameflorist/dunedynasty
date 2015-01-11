@@ -99,8 +99,7 @@ Server_RestockStarport(enum UnitType unitType)
 	if (g_starportAvailable[unitType] != 0 && g_starportAvailable[unitType] < 10) {
 		if (g_starportAvailable[unitType] == -1) {
 			g_starportAvailable[unitType] = 1;
-		}
-		else {
+		} else {
 			g_starportAvailable[unitType]++;
 		}
 
@@ -139,8 +138,7 @@ Server_MaxElementsToEncode(unsigned char **buf,
 
 	if (*buf + header_len + element_len <= end) {
 		return (end - *buf - header_len) / element_len;
-	}
-	else {
+	} else {
 		return 0;
 	}
 }
@@ -719,8 +717,7 @@ Server_Send_WinLose(enum HouseType houseID, bool win)
 	if (houseID == g_playerHouseID) {
 		MenuBar_DisplayWinLose(win);
 		Server_ReturnToLobbyNow(win);
-	}
-	else {
+	} else {
 		unsigned char src[2];
 		unsigned char *buf = src;
 
@@ -807,8 +804,7 @@ Server_ReturnToLobbyNow(bool win)
 
 		if (House_AreAllied(g_playerHouseID, h)) {
 			Server_Send_WinLose(h, win);
-		}
-		else {
+		} else {
 			Server_Send_WinLose(h, !win);
 		}
 	}
@@ -885,8 +881,7 @@ Server_Recv_SetRallyPoint(enum HouseType houseID, const unsigned char *buf)
 
 	if (Tile_IsOutOfMap(packed)) {
 		s->rallyPoint = 0xFFFF;
-	}
-	else {
+	} else {
 		s->rallyPoint = packed;
 	}
 }
@@ -930,8 +925,7 @@ Server_Recv_PurchaseItemStarport(Structure *s, uint8 objectType)
 		Server_Send_StatusMessage1(1 << h->index, 2,
 				STR_UNABLE_TO_CREATE_MORE);
 		Server_Send_PlaySound(1 << h->index, EFFECT_ERROR_OCCURRED);
-	}
-	else {
+	} else {
 		h->credits -= credits;
 		u->o.linkedID = h->starportLinkedID & 0xFF;
 		h->starportLinkedID = u->o.index;
@@ -970,8 +964,7 @@ Server_Recv_CancelItemStarport(Structure *s, uint8 objectType)
 					h->starportLinkedID
 						= (u->o.linkedID == 0xFF)
 						? UNIT_INDEX_INVALID : u->o.linkedID;
-				}
-				else {
+				} else {
 					*prev = u->o.linkedID;
 				}
 
@@ -1025,24 +1018,20 @@ Server_Recv_PurchaseResumeItem(enum HouseType houseID, const unsigned char *buf)
 
 	if (objectType == 0xFF) {
 		Server_Recv_CancelItem(s);
-	}
-	else if ((s->objectType == objectType) && s->o.flags.s.onHold) {
+	} else if ((s->objectType == objectType) && s->o.flags.s.onHold) {
 		s->o.flags.s.repairing = false;
 		s->o.flags.s.onHold    = false;
 		s->o.flags.s.upgrading = false;
-	}
-	else {
+	} else {
 		bool can_build = false;
 
 		if (s->o.type == STRUCTURE_STARPORT) {
 			can_build = false;
-		}
-		else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		} else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 			can_build
 				= (objectType < STRUCTURE_MAX)
 				&& Structure_GetAvailable_ConstructionYard(s, objectType);
-		}
-		else if (objectType < UNIT_MAX) {
+		} else if (objectType < UNIT_MAX) {
 			const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
 			for (int i = 0; i < 8; i++) {
@@ -1058,8 +1047,7 @@ Server_Recv_PurchaseResumeItem(enum HouseType houseID, const unsigned char *buf)
 
 		if ((s->o.linkedID == 0xFF) && BuildQueue_IsEmpty(&s->queue)) {
 			Structure_Server_BuildObject(s, objectType);
-		}
-		else {
+		} else {
 			BuildQueue_Add(&s->queue, objectType, 0);
 		}
 	}
@@ -1082,8 +1070,7 @@ Server_Recv_PauseCancelItem(enum HouseType houseID, const unsigned char *buf)
 
 	if (s->o.type == STRUCTURE_STARPORT) {
 		Server_Recv_CancelItemStarport(s, objectType);
-	}
-	else if (s->objectType == objectType && s->o.linkedID != 0xFF) {
+	} else if (s->objectType == objectType && s->o.linkedID != 0xFF) {
 		if (s->o.flags.s.onHold
 				|| (s->o.type == STRUCTURE_CONSTRUCTION_YARD
 					&& s->countDown == 0)) {
@@ -1091,16 +1078,13 @@ Server_Recv_PauseCancelItem(enum HouseType houseID, const unsigned char *buf)
 
 			if (nextType == 0xFFFF) {
 				Server_Recv_CancelItem(s);
-			}
-			else if (nextType != s->objectType) {
+			} else if (nextType != s->objectType) {
 				Structure_Server_BuildObject(s, nextType);
 			}
-		}
-		else {
+		} else {
 			s->o.flags.s.onHold = true;
 		}
-	}
-	else {
+	} else {
 		BuildQueue_RemoveTail(&s->queue, objectType, NULL);
 	}
 }
@@ -1125,12 +1109,10 @@ Server_Recv_EnterLeavePlacementMode(enum HouseType houseID, const unsigned char 
 			h->constructionYardPosition = Tile_PackTile(s->o.position);
 			h->structureActiveID = s->o.linkedID;
 			s->o.linkedID = STRUCTURE_INVALID;
-		}
-		else if (s->o.linkedID == STRUCTURE_INVALID
+		} else if (s->o.linkedID == STRUCTURE_INVALID
 				&& h->structureActiveID != STRUCTURE_INDEX_INVALID) {
 		}
-	}
-	else if (h->structureActiveID != STRUCTURE_INDEX_INVALID) {
+	} else if (h->structureActiveID != STRUCTURE_INDEX_INVALID) {
 		/* Return the active structure back to the construction yard.
 		 * If the construction yard was captured or destroyed during
 		 * placement mode, and the placement was aborted, then destroy
@@ -1142,8 +1124,7 @@ Server_Recv_EnterLeavePlacementMode(enum HouseType houseID, const unsigned char 
 				&& s->o.linkedID == STRUCTURE_INVALID
 				&& Server_PlayerCanControlStructure(houseID, s)) {
 			s->o.linkedID = h->structureActiveID;
-		}
-		else {
+		} else {
 			Structure_Free(Structure_Get_ByIndex(h->structureActiveID));
 		}
 
@@ -1185,11 +1166,9 @@ Server_Recv_ActivateStructureAbility(enum HouseType houseID, const unsigned char
 	if (s->o.type == STRUCTURE_PALACE) {
 		if (s->countDown == 0)
 			Structure_Server_ActivateSpecial(s);
-	}
-	else if (s->o.type == STRUCTURE_STARPORT) {
+	} else if (s->o.type == STRUCTURE_STARPORT) {
 		Server_Recv_SendStarportOrder(s);
-	}
-	else if (s->o.type == STRUCTURE_REPAIR) {
+	} else if (s->o.type == STRUCTURE_REPAIR) {
 		if (s->o.linkedID != 0xFF)
 			Structure_Server_SetState(s, STRUCTURE_STATE_READY);
 	}
@@ -1242,8 +1221,7 @@ Server_Recv_IssueUnitActionUntargetted(Unit *u, enum UnitActionType actionID)
 	if (g_table_actionInfo[actionID].selectionType == SELECTIONTYPE_TARGET) {
 		u->deviationDecremented = true;
 		return;
-	}
-	else {
+	} else {
 		u->deviationDecremented = false;
 	}
 
@@ -1268,8 +1246,7 @@ Server_Recv_IssueUnitActionTargetted(Unit *u,
 	if (enhancement_targetted_sabotage && actionID == ACTION_SABOTAGE) {
 		actionID = ACTION_MOVE;
 		detonateAtTarget = true;
-	}
-	else if (actionID == ACTION_INVALID
+	} else if (actionID == ACTION_INVALID
 			|| g_table_actionInfo[actionID].selectionType != SELECTIONTYPE_TARGET) {
 		return;
 	}
@@ -1282,8 +1259,7 @@ Server_Recv_IssueUnitActionTargetted(Unit *u,
 		Unit_Deviation_Decrease(u, 5);
 		if (u->deviated == 0)
 			return;
-	}
-	else {
+	} else {
 		u->deviationDecremented = false;
 	}
 
@@ -1301,15 +1277,12 @@ Server_Recv_IssueUnitActionTargetted(Unit *u,
 
 		if (enhancement_targetted_sabotage && u->detonateAtTarget) {
 			target = Tools_Index_GetUnit(u->targetMove);
-		}
-		else if (enhancement_permanent_follow_mode) {
+		} else if (enhancement_permanent_follow_mode) {
 			u->permanentFollow = (Tools_Index_GetType(u->targetMove) == IT_UNIT);
 		}
-	}
-	else if (actionID == ACTION_HARVEST) {
+	} else if (actionID == ACTION_HARVEST) {
 		u->targetMove = encoded;
-	}
-	else {
+	} else {
 		Unit_SetTarget(u, encoded);
 		target = Tools_Index_GetUnit(u->targetAttack);
 	}
@@ -1338,11 +1311,9 @@ Server_Recv_IssueUnitAction(enum HouseType houseID, const unsigned char *buf)
 
 	if (actionID == ACTION_CANCEL) {
 		u->deviationDecremented = false;
-	}
-	else if (Tools_Index_GetType(encoded) == IT_NONE) {
+	} else if (Tools_Index_GetType(encoded) == IT_NONE) {
 		Server_Recv_IssueUnitActionUntargetted(u, actionID);
-	}
-	else if (Tools_Index_IsValid_Defensive(encoded)) {
+	} else if (Tools_Index_IsValid_Defensive(encoded)) {
 		Server_Recv_IssueUnitActionTargetted(u, actionID, encoded);
 	}
 }
@@ -1407,8 +1378,7 @@ Server_Recv_PrefName(int peerID, const char *name)
 		if (data->name[0] == '\0') {
 			snprintf(chat_log, sizeof(chat_log), "%s joined",
 					new_name);
-		}
-		else {
+		} else {
 			snprintf(chat_log, sizeof(chat_log), "%s is now %s",
 					data->name, new_name);
 		}
@@ -1578,8 +1548,7 @@ Server_Console_Kick(const char *msg)
 
 	if (sscanf(msg, "%d", &peerID) == 1) {
 		data = Net_GetPeerData(peerID);
-	}
-	else {
+	} else {
 		for (peerID = 0; peerID < MAX_CLIENTS; peerID++) {
 			data = &g_peer_data[peerID];
 			if (data->id == 0)
@@ -1651,8 +1620,7 @@ Server_Console_Spice(const char *msg)
 		if (count == 1) {
 			spice1 = min(spice1, 255);
 			spice2 = spice1;
-		}
-		else {
+		} else {
 			spice1 = min(spice1, 255);
 			spice2 = min(spice2, 255);
 		}

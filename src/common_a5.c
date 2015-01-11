@@ -31,8 +31,7 @@ A5_InitScreenDiv(ALLEGRO_BITMAP *parent, enum ScreenDivID divID,
 
 	if (g_aspect_correction == ASPECT_RATIO_CORRECTION_FULL) {
 		div->scaley = div->scalex * GFX_AspectCorrection_GetRatio();
-	}
-	else {
+	} else {
 		div->scaley = div->scalex;
 	}
 
@@ -55,8 +54,7 @@ A5_InitScreenDiv(ALLEGRO_BITMAP *parent, enum ScreenDivID divID,
 	if (divID == SCREENDIV_MAIN) {
 		al_identity_transform(&trans);
 		al_use_transform(&trans);
-	}
-	else {
+	} else {
 		al_build_transform(&trans, 0, 0, div->scalex, div->scaley, 0.0f);
 		al_use_transform(&trans);
 	}
@@ -89,8 +87,7 @@ A5_InitTransform(bool screen_size_changed)
 	if (aspect < preferred_aspect - 0.001) {
 		const double newh = pixel_aspect_ratio * scale * SCREEN_HEIGHT;
 		offy = (TRUE_DISPLAY_HEIGHT - newh) / 2;
-	}
-	else if (aspect > preferred_aspect + 0.001) {
+	} else if (aspect > preferred_aspect + 0.001) {
 		scale = (double)TRUE_DISPLAY_HEIGHT / (pixel_aspect_ratio * SCREEN_HEIGHT);
 		const double neww = scale * SCREEN_WIDTH;
 		offx = (TRUE_DISPLAY_WIDTH - neww) / 2;

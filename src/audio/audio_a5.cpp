@@ -154,8 +154,7 @@ AudioA5_Init(void)
 	if (!al_install_audio()) {
 		Warning("al_install_audio() failed.\n");
 		goto audio_init_failed;
-	}
-	else {
+	} else {
 		g_enable_audio = true;
 	}
 
@@ -197,8 +196,7 @@ AudioA5_Init(void)
 		if (s_fluid_player == NULL)
 			Warning("create_midi_player( %s ) failed.\n", sound_font_path);
 #endif
-	}
-	else {
+	} else {
 		s_fluid_player = NULL;
 	}
 
@@ -511,11 +509,9 @@ AudioA5_InitInternalMusic(const MusicInfo *mid)
 {
 	if (mid->music_set == MUSICSET_DUNE2_ADLIB) {
 		AudioA5_InitAdlibMusic(mid);
-	}
-	else if (mid->music_set == MUSICSET_DUNE2_MIDI) {
+	} else if (mid->music_set == MUSICSET_DUNE2_MIDI) {
 		AudioA5_InitMidiMusic(mid);
-	}
-	else {
+	} else {
 		AudioA5_InitFluidsynthMusic(mid);
 	}
 }
@@ -729,13 +725,11 @@ AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan)
 		idx_end = 0;
 		gain = voice_volume * volume;
 		pan = ALLEGRO_AUDIO_PAN_NONE;
-	}
-	else if (SAMPLE_AFFIRMATIVE <= sampleID && sampleID <= SAMPLE_MOVING_OUT) {
+	} else if (SAMPLE_AFFIRMATIVE <= sampleID && sampleID <= SAMPLE_MOVING_OUT) {
 		idx_start = 1;
 		idx_end = 1;
 		gain = sound_volume * volume;
-	}
-	else {
+	} else {
 		idx_start = 2;
 		idx_end = MAX_SAMPLE_INSTANCES - 1;
 		gain = sound_volume * volume;

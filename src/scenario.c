@@ -59,8 +59,7 @@ Campaign_Alloc(const char *dir_name)
 	camp = &g_campaign_list[g_campaign_total - 1];
 	if (dir_name == NULL) { /* Dune II */
 		camp->dir_name[0] = '\0';
-	}
-	else {
+	} else {
 		snprintf(camp->dir_name, sizeof(camp->dir_name), "%s/", dir_name);
 	}
 
@@ -138,8 +137,7 @@ Campaign_ResetEnhancements(void)
 	if (g_campaign_selected == CAMPAIGNID_DUNE_II) {
 		enhancement_fix_scenario_typos = true;
 		enhancement_read_scenario_structure_health = false;
-	}
-	else {
+	} else {
 		enhancement_fix_scenario_typos = false;
 		enhancement_read_scenario_structure_health = true;
 	}
@@ -148,8 +146,7 @@ Campaign_ResetEnhancements(void)
 	 || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
 		enhancement_true_unit_movement_speed = true;
 		enhancement_undelay_ordos_siege_tank_tech = true;
-	}
-	else {
+	} else {
 		enhancement_true_unit_movement_speed = false;
 		enhancement_undelay_ordos_siege_tank_tech = false;
 	}
@@ -171,14 +168,11 @@ Campaign_ReadEnhancements(char *source, char *keys)
 		if (strcasecmp(key, "repair_cost") == 0) {
 			     if (strcmp(value, "1.0")  == 0) enhancement_repair_cost_formula = REPAIR_COST_v100;
 			else if (strcmp(value, "1.07") == 0) enhancement_repair_cost_formula = REPAIR_COST_v107_HIGH_HP_FIX;
-		}
-		else if (strcasecmp(key, "infantry_mini_rockets") == 0) {
+		} else if (strcasecmp(key, "infantry_mini_rockets") == 0) {
 			String_GetBool(value, &enhancement_infantry_mini_rockets);
-		}
-		else if (strcasecmp(key, "special_trooper_portraits") == 0) {
+		} else if (strcasecmp(key, "special_trooper_portraits") == 0) {
 			String_GetBool(value, &enhancement_special_trooper_portaits);
-		}
-		else if (strcasecmp(key, "true_unit_movement_speed") == 0) {
+		} else if (strcasecmp(key, "true_unit_movement_speed") == 0) {
 			String_GetBool(value, &enhancement_true_unit_movement_speed);
 		}
 	}
@@ -221,8 +215,8 @@ Campaign_ReadMetaData(Campaign *camp)
 	unsigned int parent;
 
 	for (char *key = keys; *key != '\0'; key += strlen(key) + 1) {
-		/* Shortcut for all regions and scenarios. */
 		if (strcasecmp(key, "Scenarios") == 0) {
+			/* Shortcut for all regions and scenarios. */
 			Ini_GetString("PAK", "Scenarios", NULL, value + i, sizeof(value) - i, source);
 
 			/* Handle white-space. */
@@ -251,10 +245,8 @@ Campaign_ReadMetaData(Campaign *camp)
 					Campaign_AddFileInPAK(value, parent);
 				}
 			}
-		}
-
-		/* PAK file content lists. */
-		else {
+		} else {
+			/* PAK file content lists. */
 			snprintf(value + i, sizeof(value) - i, "%s", key);
 
 			/* Already indexed this file. */
@@ -277,8 +269,7 @@ Campaign_ReadMetaData(Campaign *camp)
 				char *sep = strchr(start, ',');
 				if (sep == NULL) {
 					sep = end;
-				}
-				else {
+				} else {
 					*sep = '\0';
 				}
 
@@ -404,11 +395,9 @@ Campaign_ApplyDefaultHouseTraits(void)
 				/* ENHANCEMENT -- Ordos siege tanks used to arrive one level late. */
 				if (enhancement_undelay_ordos_siege_tank_tech && (s == STRUCTURE_HEAVY_VEHICLE) && (h == HOUSE_ORDOS) && (i == 2)) {
 					si->upgradeCampaign[i][h] = (si->upgradeCampaign[i][h] & 0xFF);
-				}
-				else if (original->upgradeCampaign[i][h] == 0) {
+				} else if (original->upgradeCampaign[i][h] == 0) {
 					si->upgradeCampaign[i][h] = 0;
-				}
-				else {
+				} else {
 					const int delta = original->upgradeCampaign[i][h] - original->upgradeCampaign[i][HOUSE_MERCENARY];
 
 					si->upgradeCampaign[i][h] = clamp(0, (si->upgradeCampaign[i][h] & 0xFF) + delta, 99);
@@ -448,20 +437,17 @@ Campaign_ReadHouseIni(void)
 			/* Weakness, LemonFactor, Decay, Recharge, Frigate, Special, Voice. */
 			if (strncasecmp(key, "Weakness", 8) == 0) {
 				hi->toughness = Ini_GetInteger(category, key, original->toughness, source);
-			}
-			else if (strncasecmp(key, "LemonFactor", 11) == 0) {
+			} else if (strncasecmp(key, "LemonFactor", 11) == 0) {
 				hi->degradingChance = Ini_GetInteger(category, key, original->degradingChance, source);
-			}
-			else if (strncasecmp(key, "Decay", 5) == 0) {
+			} else if (strncasecmp(key, "Decay", 5) == 0) {
 				hi->degradingAmount = Ini_GetInteger(category, key, original->degradingAmount, source);
-			}
-			else if ((strcasecmp(key, "Recharge") == 0) || (strncasecmp(key, "Palace recharge", 15) == 0)) {
+			} else if ((strcasecmp(key, "Recharge") == 0)
+			        || (strncasecmp(key, "Palace recharge", 15) == 0)) {
 				hi->specialCountDown = Ini_GetInteger(category, key, original->specialCountDown, source);
-			}
-			else if (strncasecmp(key, "Frigate", 7) == 0) {
+			} else if (strncasecmp(key, "Frigate", 7) == 0) {
 				hi->starportDeliveryTime = Ini_GetInteger(category, key, original->starportDeliveryTime, source);
-			}
-			else if ((strcasecmp(key, "Special") == 0) || (strncasecmp(key, "Palace special", 14) == 0)) {
+			} else if ((strcasecmp(key, "Special") == 0)
+			        || (strncasecmp(key, "Palace special", 14) == 0)) {
 				Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
 
 				char *buf = buffer;
@@ -473,20 +459,17 @@ Campaign_ReadHouseIni(void)
 				if (buf[0] == 'M' || buf[0] == 'D') {
 					hi->specialWeapon = HOUSE_WEAPON_MISSILE;
 					hi->superWeapon.deathhand = NULL;
-				}
-				else if (buf[0] == 'F') {
+				} else if (buf[0] == 'F') {
 					hi->specialWeapon = HOUSE_WEAPON_FREMEN;
 					hi->superWeapon.fremen.owner = HOUSE_FREMEN;
 					hi->superWeapon.fremen.unit75 = UNIT_TROOPERS;
 					hi->superWeapon.fremen.unit25 = UNIT_TROOPER;
-				}
-				else if (buf[0] == 'S') {
+				} else if (buf[0] == 'S') {
 					hi->specialWeapon = HOUSE_WEAPON_SABOTEUR;
 					hi->superWeapon.saboteur.owner = houseID;
 					hi->superWeapon.saboteur.unit = UNIT_SABOTEUR;
 				}
-			}
-			else if (strncasecmp(key, "Voice", 5) == 0) {
+			} else if (strncasecmp(key, "Voice", 5) == 0) {
 				Ini_GetString(category, key, NULL, buffer, sizeof(buffer), source);
 
 				char *buf = buffer;
@@ -551,21 +534,16 @@ Campaign_ReadHouseIni(void)
 
 			if (strcasecmp(key, "Mentat") == 0) {
 				hi->mentat = Mentat_InitFromString(buffer, houseID);
-			}
-			else if (strcasecmp(key, "Win music") == 0) {
+			} else if (strcasecmp(key, "Win music") == 0) {
 				hi->musicWin = Campaign_MusicFromString(buffer, g_table_houseInfo_original[houseID].musicWin);
-			}
-			else if (strcasecmp(key, "Lose music") == 0) {
+			} else if (strcasecmp(key, "Lose music") == 0) {
 				hi->musicLose = Campaign_MusicFromString(buffer, g_table_houseInfo_original[houseID].musicLose);
-			}
-			else if (strcasecmp(key, "Mentat music") == 0) {
+			} else if (strcasecmp(key, "Mentat music") == 0) {
 				hi->musicBriefing = Campaign_MusicFromString(buffer, g_table_houseInfo_original[houseID].musicBriefing);
-			}
-			else if (strcasecmp(key, "Superweapon") == 0) {
+			} else if (strcasecmp(key, "Superweapon") == 0) {
 				if (hi->specialWeapon == HOUSE_WEAPON_MISSILE) {
 					hi->superWeapon.deathhand = NULL;
-				}
-				else if (hi->specialWeapon == HOUSE_WEAPON_FREMEN) {
+				} else if (hi->specialWeapon == HOUSE_WEAPON_FREMEN) {
 					uint16 owner, unit75, unit25;
 
 					const int count = sscanf(buffer, "%hu,%hu,%hu", &owner, &unit75, &unit25);
@@ -578,8 +556,7 @@ Campaign_ReadHouseIni(void)
 					hi->superWeapon.fremen.owner = (owner < HOUSE_MAX) ? owner : houseID;
 					hi->superWeapon.fremen.unit75 = (unit75 <= UNIT_MCV || unit75 == UNIT_SANDWORM) ? unit75 : UNIT_TROOPERS;
 					hi->superWeapon.fremen.unit25 = (unit25 <= UNIT_MAX || unit25 == UNIT_SANDWORM) ? unit25 : UNIT_TROOPER;
-				}
-				else if (hi->specialWeapon == HOUSE_WEAPON_SABOTEUR) {
+				} else if (hi->specialWeapon == HOUSE_WEAPON_SABOTEUR) {
 					uint16 owner, unit;
 
 					const int count = sscanf(buffer, "%hu,%hu", &owner, &unit);
@@ -608,8 +585,7 @@ Campaign_ReadHouseIni(void)
 			type = Unit_StringToType(key);
 			if (type != UNIT_INVALID) {
 				oi = &g_table_unitInfo[type].o;
-			}
-			else {
+			} else {
 				type = Structure_StringToType(key);
 				if (type != STRUCTURE_INVALID) {
 					si = &g_table_structureInfo[type];
@@ -641,10 +617,8 @@ Campaign_ReadHouseIni(void)
 				si->upgradeCampaign[0][houseID] = clamp(0, (si->upgradeCampaign[0][houseID] & 0xFF) + upgradeCampaign[0], 99);
 				si->upgradeCampaign[1][houseID] = clamp(0, (si->upgradeCampaign[1][houseID] & 0xFF) + upgradeCampaign[1], 99);
 				si->upgradeCampaign[2][houseID] = clamp(0, (si->upgradeCampaign[2][houseID] & 0xFF) + upgradeCampaign[2], 99);
-			}
-			else if (count >= 2) {
-			}
-			else if ((si != NULL) && oi->flags.factory) {
+			} else if (count >= 2) {
+			} else if ((si != NULL) && oi->flags.factory) {
 				const StructureInfo *original = &g_table_structureInfo_original[type];
 
 				fprintf(stderr, "[%s] %s=%d,%d,%d,%d,%d\n", category, key,
@@ -653,8 +627,7 @@ Campaign_ReadHouseIni(void)
 						original->upgradeCampaign[0][houseID] - original->upgradeCampaign[0][HOUSE_MERCENARY],
 						original->upgradeCampaign[1][houseID] - original->upgradeCampaign[1][HOUSE_MERCENARY],
 						original->upgradeCampaign[2][houseID] - original->upgradeCampaign[2][HOUSE_MERCENARY]);
-			}
-			else {
+			} else {
 				const ObjectInfo *original = (si == NULL) ? &g_table_unitInfo_original[type].o : &g_table_structureInfo_original[type].o;
 
 				fprintf(stderr, "[%s] %s=%d,%d\n", category, key,
@@ -1314,12 +1287,10 @@ static void Scenario_Load_Structure(const char *key, char *settings)
 	if (enhancement_read_scenario_structure_health) {
 		if (enhancement_fix_scenario_typos) {
 			hitpoints = clamp(0, atoi(settings), 256);
-		}
-		else {
+		} else {
 			hitpoints = atoi(settings);
 		}
-	}
-	else {
+	} else {
 		hitpoints = 256;
 	}
 
@@ -1386,8 +1357,7 @@ static void Scenario_Load_Map(const char *key, char *settings)
 	if (isUnveiled) {
 		f->isUnveiled = (1 << g_playerHouseID);
 		f->fogSpriteID = 0;
-	}
-	else {
+	} else {
 		f->fogSpriteID = g_veiledSpriteID;
 	}
 }
@@ -1694,8 +1664,7 @@ Scenario_GetOldStats(enum HouseType houseID, OldScenarioStats *stats)
 			stats->killedAllied += g_scenario.unitsLost[h];
 			stats->destroyedAllied += g_scenario.structuresLost[h];
 			stats->harvestedAllied = min(65000, stats->harvestedAllied + g_scenario.spiceHarvested[h]);
-		}
-		else {
+		} else {
 			stats->score -= g_scenario.score[h];
 			stats->killedEnemy += g_scenario.unitsLost[h];
 			stats->destroyedEnemy += g_scenario.structuresLost[h];

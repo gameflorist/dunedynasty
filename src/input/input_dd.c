@@ -53,8 +53,7 @@ Input_EventHandler(enum Scancode key)
 
 	if (key & SCANCODE_RELEASE) {
 		s_activeInputMap[idx] &=~bit;
-	}
-	else {
+	} else {
 		s_activeInputMap[idx] |= bit;
 	}
 
@@ -81,8 +80,7 @@ Input_PeekNextKey(void)
 {
 	if (Input_IsInputAvailable()) {
 		return s_history[s_historyHead];
-	}
-	else {
+	} else {
 		return 0;
 	}
 }

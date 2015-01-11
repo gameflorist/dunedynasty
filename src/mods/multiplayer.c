@@ -66,18 +66,15 @@ Multiplayer_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd)
 	if (!left_is_mountain && !right_is_mountain) {
 		delta[1] = Tools_RandomLCG_Range(0, 1) ? 2 : -2;
 		delta[2] = (delta[1] == 2) ? -2 : 2;
-	}
-	else if (left_is_mountain && !right_is_mountain) {
+	} else if (left_is_mountain && !right_is_mountain) {
 		/* Put troopers on mountain (left). */
 		delta[1] = 2;
 		delta[2] = -2;
-	}
-	else if (!left_is_mountain && right_is_mountain) {
+	} else if (!left_is_mountain && right_is_mountain) {
 		/* Put troopers on mountain (right). */
 		delta[1] = -2;
 		delta[2] = 2;
-	}
-	else {
+	} else {
 		/* Rather unlikely scenario, just let the MCV and Trike overlap. */
 		delta[2] = Tools_RandomLCG_Range(0, 1) ? 2 : -2;
 	}
@@ -185,8 +182,7 @@ Multiplayer_GenerateMap(enum MapGeneratorMode mode)
 
 	if (mode == MAP_GENERATOR_FINAL) {
 		g_multiplayer.curr_seed = g_multiplayer.test_seed;
-	}
-	else {
+	} else {
 		MapGenerator_LoadWorldState();
 	}
 

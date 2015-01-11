@@ -142,8 +142,7 @@ Structure_Load2(FILE *fp, uint32 length)
 
 			if (BuildQueue_IsEmpty(&h->starportQueue)) {
 				h->starportQueue = sl.queue;
-			}
-			else {
+			} else {
 				sl.queue.first->prev = h->starportQueue.last;
 				h->starportQueue.last->next = sl.queue.first;
 				h->starportQueue.last = sl.queue.last;
@@ -152,8 +151,7 @@ Structure_Load2(FILE *fp, uint32 length)
 			for (enum UnitType u = UNIT_CARRYALL; u < UNIT_MAX; u++) {
 				h->starportCount[u] = BuildQueue_Count(&h->starportQueue, u);
 			}
-		}
-		else {
+		} else {
 			s->queue = sl.queue;
 		}
 	}
@@ -194,8 +192,7 @@ SaveLoad_Structure_BuildQueue(void *object, uint32 value, bool loading)
 		uint32 count = BuildQueue_Count(&s->queue, 0xFFFF);
 
 		size = sizeof(count) + count * elem_size;
-	}
-	else if (loading) {
+	} else if (loading) {
 		uint32 count;
 
 		if (fread(&count, sizeof(uint32), 1, fp) != 1)
@@ -235,8 +232,7 @@ SaveLoad_Structure_BuildQueue(void *object, uint32 value, bool loading)
 				if (u == NULL) {
 					h->credits += item.credits;
 					insert_item = false;
-				}
-				else {
+				} else {
 					u->o.linkedID = h->starportLinkedID & 0xFF;
 					h->starportLinkedID = u->o.index;
 					h->starportTimeLeft = 0;
@@ -250,8 +246,7 @@ SaveLoad_Structure_BuildQueue(void *object, uint32 value, bool loading)
 
 			count--;
 		}
-	}
-	else {
+	} else {
 		/* Save starport queue into first starport for backwards
 		 * compatability.
 		 */

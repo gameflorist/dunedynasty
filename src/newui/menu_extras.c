@@ -108,8 +108,7 @@ Extras_ShowScrollbar(void)
 	if (ws->scrollMax > ws->scrollPageSize) {
 		GUI_Widget_MakeVisible(GUI_Widget_Get_ByIndex(extras_widgets, 16));
 		GUI_Widget_MakeVisible(GUI_Widget_Get_ByIndex(extras_widgets, 17));
-	}
-	else {
+	} else {
 		GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 16));
 		GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 17));
 	}
@@ -281,8 +280,7 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 				perform_selection = true;
 				break;
 		}
-	}
-	else {
+	} else {
 		const int64_t curr_ticks = Timer_GetTicks();
 
 		if ((WSA_GetFrameCount(mentat->wsa) > 1) && (curr_ticks - mentat->wsa_timer >= 7)) {
@@ -296,8 +294,7 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 			/* WSA is positioned at 128, 48, size 184 x 112. */
 			if (Mouse_InRegion(128, 48, 128 + 48, 160)) {
 				widgetID = SCANCODE_KEYPAD_4;
-			}
-			else if (Mouse_InRegion(128 + 64, 48, 128 + 184, 160)) {
+			} else if (Mouse_InRegion(128 + 64, 48, 128 + 184, 160)) {
 				widgetID = SCANCODE_KEYPAD_6;
 			}
 		}
@@ -335,8 +332,7 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 				if (*c == '\r' || *c == '\n') {
 					*c = '\0';
 					break;
-				}
-				else {
+				} else {
 					c++;
 				}
 			}
@@ -350,8 +346,7 @@ PickGallery_Loop(MentatState *mentat, int widgetID)
 
 			if (oi != NULL) {
 				extras_credits = oi->buildCredits;
-			}
-			else {
+			} else {
 				extras_credits = 0;
 			}
 
@@ -422,14 +417,12 @@ PickMusic_Initialise(void)
 
 				if (m->songname != NULL) {
 					snprintf(si->text, sizeof(si->text), "%s", m->songname);
-				}
-				else if (lump_together) {
+				} else if (lump_together) {
 					const char *sub = strchr(l->songname, ':');
 					const char *str = (sub == NULL) ? l->songname : (sub + 2);
 
 					snprintf(si->text, sizeof(si->text), "%s", str);
-				}
-				else {
+				} else {
 					snprintf(si->text, sizeof(si->text), "%s", g_table_music_set[m->music_set].name);
 				}
 			}
@@ -451,15 +444,13 @@ PickMusic_Draw(MentatState *mentat)
 
 	if (width <= 184) {
 		GUI_DrawText_Wrapper(music_message, 128, 23, 12, 0, 0x12);
-	}
-	else {
+	} else {
 		int dx = -(Timer_GetTicks() - mentat->desc_timer - 60 * 2) / 12;
 
 		/* 2 second delay before scrolling. */
 		if (dx > 0) {
 			dx = 0;
-		}
-		else if (dx + width + 32 <= 0) {
+		} else if (dx + width + 32 <= 0) {
 			mentat->desc_timer = Timer_GetTicks() - 60 * 2;
 			dx = 0;
 		}
@@ -653,8 +644,7 @@ Extras_DrawRadioButton(Widget *w)
 
 	if (page == EXTRASMENU_JUKEBOX && !g_enable_audio) {
 		Shape_DrawGrey(shapeID[page], w->offsetX, w->offsetY, 0, 0);
-	}
-	else {
+	} else {
 		Shape_Draw(shapeID[page], w->offsetX, w->offsetY, 0, 0);
 	}
 
@@ -688,8 +678,7 @@ Extras_Draw(MentatState *mentat)
 		case EXTRASMENU_GALLERY:
 			if (mentat->wsa == NULL) {
 				headline = String_Get_ByIndex(STR_SELECT_SUBJECT);
-			}
-			else {
+			} else {
 				PickGallery_Draw(mentat);
 			}
 			break;
@@ -697,8 +686,7 @@ Extras_Draw(MentatState *mentat)
 		case EXTRASMENU_JUKEBOX:
 			if (g_enable_audio) {
 				headline = "Select a Song:";
-			}
-			else {
+			} else {
 				GUI_DrawText_Wrapper("MUSIC IS OFF", 220, 99, 6, 0, 0x132);
 			}
 			break;
@@ -822,12 +810,10 @@ Extras_Loop(MentatState *mentat)
 
 	if ((res & 0xFF) != MENU_EXTRAS) {
 		Audio_StopMusicUnlessMenu();
-	}
-	else if (!Audio_MusicIsPlaying()) {
+	} else if (!Audio_MusicIsPlaying()) {
 		if (l_pause < curr_ticks) {
 			l_pause = curr_ticks + 60 * 2;
-		}
-		else if (l_pause < curr_ticks + 60) {
+		} else if (l_pause < curr_ticks + 60) {
 			Audio_PlayMusicNextInSequence();
 			mentat->desc_timer = curr_ticks;
 		}

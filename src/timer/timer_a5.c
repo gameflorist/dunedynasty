@@ -67,16 +67,14 @@ Timer_SetTimer(enum TimerType timer, bool set)
 		if (timer == TIMER_GAME) {
 			if (enhancement_true_game_speed_adjustment) {
 				al_set_timer_speed(s_timer[timer], s_game_speed[g_gameConfig.gameSpeed]);
-			}
-			else {
+			} else {
 				al_set_timer_speed(s_timer[timer], s_game_speed[GAMESPEED_NORMAL]);
 			}
 		}
 
 		al_start_timer(s_timer[timer]);
 		return true;
-	}
-	else {
+	} else {
 		if (g_host_type == HOSTTYPE_NONE)
 			al_stop_timer(s_timer[timer]);
 		return false;
@@ -114,8 +112,7 @@ Timer_WaitForEvent(void)
 
 	if (ev.timer.source == s_timer[TIMER_GUI]) {
 		return TIMER_GUI;
-	}
-	else {
+	} else {
 		return TIMER_GAME;
 	}
 }

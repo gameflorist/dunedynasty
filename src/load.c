@@ -175,8 +175,7 @@ static bool Load_Main(FILE *fp)
 		if (skip) {
 			Error("Unknown chunk in savegame: %c%c%c%c (length: %d). Skipped.\n",
 					header, header >> 8, header >> 16, header >> 24, length);
-		}
-		else if (abort) {
+		} else if (abort) {
 			Error("Faulty chunk in savegame: %c%c%c%c (length: %d).\n",
 					header, header >> 8, header >> 16, header >> 24, length);
 			return false;
@@ -190,8 +189,7 @@ static bool Load_Main(FILE *fp)
 	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
 		if (Skirmish_IsPlayable()) {
 			Skirmish_Prepare();
-		}
-		else {
+		} else {
 			GUI_DisplayModalMessage("Missing skirmish saved game data!", 0xFFFF);
 			return false;
 		}

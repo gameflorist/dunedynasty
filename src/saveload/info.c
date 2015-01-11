@@ -192,8 +192,7 @@ bool Info_Save(FILE *fp)
 		s_houseMissileCountdown = g_playerHouse->houseMissileCountdown;
 		s_houseMissileID        = g_playerHouse->houseMissileID;
 		s_starportID            = g_playerHouse->starportID;
-	}
-	else {
+	} else {
 		s_playerCreditsNoSilo   = 0;
 		s_structureActiveID     = STRUCTURE_INDEX_INVALID;
 		s_houseMissileCountdown = 0;

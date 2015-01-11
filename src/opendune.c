@@ -140,8 +140,7 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 
 			if (House_AreAllied(s->o.houseID, houseID)) {
 				foundFriendly = true;
-			}
-			else {
+			} else {
 				foundEnemy = true;
 			}
 		}
@@ -163,8 +162,7 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 
 				if (House_AreAllied(h2, houseID)) {
 					foundFriendly = true;
-				}
-				else {
+				} else {
 					foundEnemy = true;
 				}
 			}
@@ -195,8 +193,7 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 			reached_quota
 				= (g_playerCredits != 0xFFFF)
 				&& (g_playerCredits >= g_playerHouse->creditsQuota);
-		}
-		else {
+		} else {
 			reached_quota
 				= (h->credits != 0xFFFF)
 				&& (h->credits >= h->creditsQuota);
@@ -231,8 +228,7 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 
 	if (finish) {
 		return win ? GM_WIN : GM_LOSE;
-	}
-	else {
+	} else {
 		return GM_NORMAL;
 	}
 }
@@ -364,8 +360,7 @@ GameLoop_TweakWidgetDimensions(void)
 		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_3].height = 12;
 		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_4].offsetY = 110 - 40 + 6;
 		g_table_gameWidgetInfo[GAME_WIDGET_UNIT_COMMAND_4].height = 12;
-	}
-	else {
+	} else {
 		g_table_gameWidgetInfo[GAME_WIDGET_PICTURE].height = 24;
 		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY = 87 - 40 + 2;
 		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].height = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetY - (14 + g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height) - 1;
@@ -402,8 +397,7 @@ GameLoop_TweakWidgetDimensions(void)
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height = 5;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetX = 0;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].offsetY = TRUE_DISPLAY_HEIGHT - g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_DOWN].height;
-	}
-	else {
+	} else {
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].width = viewport->scalex * viewport->width;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].height = menubar->scaley * 16;
 		g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP].offsetX = 0;
@@ -534,9 +528,8 @@ void GameLoop_Main(bool new_game)
 	if (new_game) {
 		Game_LoadScenario(g_playerHouseID, g_scenarioID);
 		GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
-	}
-	else if (g_campaign_selected == CAMPAIGNID_SKIRMISH
-	      || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
+	} else if (g_campaign_selected == CAMPAIGNID_SKIRMISH
+	        || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
 		Skirmish_StartScenario();
 	}
 

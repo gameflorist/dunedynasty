@@ -14,8 +14,7 @@ Map_UnveilTileForHouses(enum HouseFlag houses, enum TileUnveilCause cause,
 		if (houses & (1 << h)) {
 			if (unveil) {
 				Map_UnveilTile(h, cause, packed);
-			}
-			else {
+			} else {
 				Map_RefreshTile(h, cause, packed);
 			}
 		}

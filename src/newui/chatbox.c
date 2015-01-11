@@ -76,8 +76,7 @@ ChatBox_AddEntrySplit(enum ChatType type, unsigned char col,
 
 	if (name != NULL) {
 		snprintf(c->name, sizeof(c->name), "%s", name);
-	}
-	else {
+	} else {
 		c->name[0] = '\0';
 	}
 
@@ -144,8 +143,7 @@ ChatBox_AddEntry(enum ChatType type,
 
 		start = skip_spaces(msg);
 		col = (houseID == HOUSE_INVALID) ? 15 : (144 + 16 * houseID + 2);
-	}
-	else {
+	} else {
 		start = msg;
 		col = 0;
 	}
@@ -158,8 +156,7 @@ ChatBox_AddEntry(enum ChatType type,
 			cur = takeuntil_space(cur, w, &len);
 			if (isspace(*cur)) {
 				end = cur;
-			}
-			else {
+			} else {
 				/* Note: if name != NULL, then we can split at the
 				 * space between the use name and the message.
 				 */
@@ -216,8 +213,7 @@ ChatBox_DrawHistory(int x, int y, int style, int64_t curr_ticks)
 
 		if ((style == 0x22) && (c->timeout - curr_ticks < CHAT_FADEOUT_DURATION)) {
 			alpha = 0xFF * (c->timeout - curr_ticks) / CHAT_FADEOUT_DURATION;
-		}
-		else {
+		} else {
 			alpha = 0xFF;
 		}
 

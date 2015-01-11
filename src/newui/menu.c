@@ -367,8 +367,7 @@ Menu_Init(void)
 		 * CAMPAIGNID_DUNE_II, CAMPAIGNID_SKIRMISH, CAMPAIGNID_MULTIPLAYER.
 		 */
 		GUI_Widget_MakeInvisible(w);
-	}
-	else {
+	} else {
 		Config_GetCampaign();
 		w->drawParameterNormal.text = g_campaign_list[g_campaign_selected].name;
 		w->drawParameterDown.text = w->drawParameterNormal.text;
@@ -458,8 +457,7 @@ MainMenu_Draw(Widget *widget)
 		subtitle = w->drawParameterDown.text;
 		alpha = 0xFF * (curr_ticks - subtitle_timer) / SUBTITLE_FADE_TICKS;
 		colour = 192;
-	}
-	else {
+	} else {
 		subtitle = w->drawParameterNormal.text;
 
 		if (curr_ticks - subtitle_timer - SUBTITLE_FADE_TICKS < SUBTITLE_FADE_TICKS) {
@@ -503,8 +501,7 @@ MainMenu_SetupBlink(Widget *w, int widgetID)
 	while (w != NULL) {
 		if (w->index == widgetID) {
 			GUI_Widget_MakeSelected(w, false);
-		}
-		else {
+		} else {
 			GUI_Widget_MakeNormal(w, false);
 		}
 
@@ -536,8 +533,7 @@ MainMenu_SelectCampaign(int campaignID, int delta)
 
 		if (campaignID >= g_campaign_total)
 			campaignID = CAMPAIGNID_DUNE_II;
-	}
-	else if (delta < 0) {
+	} else if (delta < 0) {
 		campaignID--;
 
 		if (campaignID < 0)
@@ -629,8 +625,7 @@ MainMenu_BlinkLoop(int64_t blink_start)
 	if (ticks >= 20) {
 		Video_SetPalette(blink_col[1], 6, 1);
 		return true;
-	}
-	else {
+	} else {
 		Video_SetPalette(blink_col[(ticks / 3) & 0x1], 6, 1);
 		return false;
 	}
@@ -718,8 +713,7 @@ PickHouse_Loop(void)
 			/* Fremen, Sardaukar, and Mercenaries don't have special house samples. */
 			if (g_playerHouseID <= HOUSE_ORDOS) {
 				Audio_LoadSampleSet(SAMPLESET_BENE_GESSERIT);
-			}
-			else {
+			} else {
 				Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 			}
 
@@ -782,8 +776,7 @@ Security_InputLoop(enum HouseType houseID, MentatState *mentat)
 			MentatBriefing_SplitText(mentat);
 
 			return MENU_BLINK_CONFIRM | MENU_BRIEFING;
-		}
-		else {
+		} else {
 			mentat->state = MENTAT_SECURITY_INCORRECT;
 			strncpy(mentat->buf, String_Get_ByIndex(STR_SECURITY_WRONG_HARKONNEN + houseID * 3), sizeof(mentat->buf));
 			mentat->text = mentat->buf;
@@ -811,11 +804,9 @@ Briefing_Initialise(enum MenuAction menu, MentatState *mentat)
 	if (menu == MENU_CONFIRM_HOUSE) {
 		MentatBriefing_InitText(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
 		MentatBriefing_InitWSA(g_playerHouseID, -1, MENTAT_BRIEFING_ORDERS, mentat);
-	}
-	else if (menu == MENU_SECURITY) {
+	} else if (menu == MENU_SECURITY) {
 		MentatSecurity_Initialise(g_playerHouseID, mentat);
-	}
-	else {
+	} else {
 		const enum BriefingEntry entry =
 			(menu == MENU_BRIEFING_WIN) ? MENTAT_BRIEFING_WIN :
 			(menu == MENU_BRIEFING_LOSE) ? MENTAT_BRIEFING_LOSE :
@@ -841,8 +832,7 @@ Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 
 	if (mentat->state == MENTAT_SHOW_TEXT || mentat->state == MENTAT_SECURITY_INCORRECT) {
 		MentatBriefing_DrawText(mentat);
-	}
-	else if (mentat->state == MENTAT_IDLE) {
+	} else if (mentat->state == MENTAT_IDLE) {
 		if (curr_menu == MENU_CONFIRM_HOUSE) {
 			const char *misc = String_GenerateFilename("MISC");
 			const int offset = g_campaign_list[g_campaign_selected].misc_cps[g_playerHouseID];
@@ -851,11 +841,9 @@ Briefing_Draw(enum MenuAction curr_menu, MentatState *mentat)
 			Video_DrawCPSRegion(SEARCHDIR_CAMPAIGN_DIR, misc, 0, 24 * (offset + 1), 26*8, 0, 13*8, 24);
 
 			GUI_Widget_DrawAll(briefing_yes_no_widgets);
-		}
-		else if (curr_menu == MENU_SECURITY) {
+		} else if (curr_menu == MENU_SECURITY) {
 			MentatSecurity_Draw(mentat);
-		}
-		else {
+		} else {
 			GUI_Widget_DrawAll(briefing_proceed_repeat_widgets);
 		}
 	}
@@ -906,17 +894,13 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 	if (mentat->state == MENTAT_IDLE) {
 		if (curr_menu == MENU_CONFIRM_HOUSE) {
 			widgetID = GUI_Widget_HandleEvents(briefing_yes_no_widgets);
-		}
-		else if (curr_menu == MENU_SECURITY) {
+		} else if (curr_menu == MENU_SECURITY) {
 			enum MenuAction ret = Security_InputLoop(g_playerHouseID, mentat);
-
 			return (redraw ? MENU_REDRAW : 0) | ret;
-		}
-		else {
+		} else {
 			widgetID = GUI_Widget_HandleEvents(briefing_proceed_repeat_widgets);
 		}
-	}
-	else if (Input_IsInputAvailable()) {
+	} else if (Input_IsInputAvailable()) {
 		widgetID = Input_GetNextKey();
 	}
 
@@ -937,12 +921,10 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 		case 0x8003: /* proceed */
 			if (curr_menu == MENU_BRIEFING_WIN) {
 				return MENU_NO_TRANSITION | MENU_BATTLE_SUMMARY;
-			}
-			else if (curr_menu == MENU_BRIEFING_LOSE) {
+			} else if (curr_menu == MENU_BRIEFING_LOSE) {
 				if (g_campaignID == 0) {
 					return MENU_NO_TRANSITION | MENU_BRIEFING;
-				}
-				else {
+				} else {
 					return MENU_STRATEGIC_MAP;
 				}
 			}
@@ -964,8 +946,7 @@ Briefing_Loop(enum MenuAction curr_menu, enum HouseType houseID, MentatState *me
 					MentatSecurity_PrepareQuestion(false, mentat);
 
 				redraw = true;
-			}
-			else if (mentat->state == MENTAT_SECURITY_INCORRECT) {
+			} else if (mentat->state == MENTAT_SECURITY_INCORRECT) {
 				MentatSecurity_PrepareQuestion(true, mentat);
 				mentat->state = MENTAT_IDLE;
 				redraw = true;
@@ -1043,11 +1024,9 @@ LoadGame_Loop(void)
 
 	if (ret == -1) {
 		return MENU_MAIN_MENU;
-	}
-	else if (ret == -2) {
+	} else if (ret == -2) {
 		return PlayAGame_Loop(false);
-	}
-	else if (ret == -3) {
+	} else if (ret == -3) {
 		redraw = true;
 	}
 
@@ -1078,12 +1057,10 @@ PlaySkirmish_Loop(void)
 	if (g_gameMode == GM_WIN) {
 		Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicWin);
 		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
-	}
-	else if (g_gameMode == GM_LOSE) {
+	} else if (g_gameMode == GM_LOSE) {
 		Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicLose);
 		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
-	}
-	else {
+	} else {
 		return MENU_SKIRMISH_LOBBY;
 	}
 }
@@ -1189,14 +1166,12 @@ BattleSummary_TimerLoop(int curr_menu, int scenarioID, HallOfFameData *fame)
 				if ((fame->curr_meter_idx & 0x1) == 0) {
 					fame->state = HALLOFFAME_PAUSE_METER;
 					fame->pause_timer = curr_ticks + 12;
-				}
-				else {
+				} else {
 					fame->state = HALLOFFAME_PAUSE_METER;
 					fame->pause_timer = curr_ticks + 60 + 12;
 				}
 				Audio_PlayEffect(EFFECT_HALL_OF_FAME_END_METER);
-			}
-			else {
+			} else {
 				fame->meter[fame->curr_meter_idx].width++;
 				Audio_PlaySound(EFFECT_CREDITS_INCREASE);
 			}
@@ -1210,8 +1185,7 @@ BattleSummary_TimerLoop(int curr_menu, int scenarioID, HallOfFameData *fame)
 				if ((fame->curr_meter_idx >= 6) || (scenarioID == 1 && fame->curr_meter_idx >= 4)) {
 					fame->state = HALLOFFAME_WAIT_FOR_INPUT;
 					Input_History_Clear();
-				}
-				else {
+				} else {
 					fame->state = HALLOFFAME_SHOW_METER;
 				}
 			}
@@ -1266,13 +1240,11 @@ StrategicMap_InputLoop(int campaignID, StrategicMapData *map)
 			if ((enhancement_security_question != SECURITY_QUESTION_SKIP) && (g_campaign_list[g_campaign_selected].intermission) &&
 					(g_gameMode == GM_WIN) && (campaignID == 1 || campaignID == 7)) {
 				return MENU_BLINK_CONFIRM | MENU_SECURITY;
-			}
-			else {
+			} else {
 				return MENU_BLINK_CONFIRM | MENU_BRIEFING;
 			}
 		}
-	}
-	else {
+	} else {
 		if (Input_IsInputAvailable()) {
 			const int key = Input_GetNextKey();
 
@@ -1435,8 +1407,7 @@ Menu_Run(void)
 
 			if (curr_menu & MENU_FADE_IN) {
 				Menu_DrawFadeIn(fade_start);
-			}
-			else if ((curr_menu & (MENU_BLINK_CONFIRM | MENU_FADE_OUT)) == MENU_FADE_OUT) {
+			} else if ((curr_menu & (MENU_BLINK_CONFIRM | MENU_FADE_OUT)) == MENU_FADE_OUT) {
 				Menu_DrawFadeOut(fade_start);
 			}
 
@@ -1523,8 +1494,7 @@ Menu_Run(void)
 			case MENU_SKIRMISH_SUMMARY:
 				if (event.type == ALLEGRO_EVENT_TIMER) {
 					res = BattleSummary_TimerLoop(curr_menu, g_scenarioID, &g_hall_of_fame_state);
-				}
-				else {
+				} else {
 					res = BattleSummary_InputLoop(curr_menu, &g_hall_of_fame_state);
 				}
 				break;
@@ -1547,14 +1517,12 @@ Menu_Run(void)
 					/* Only show end game for Dune II campaign. */
 					if (g_campaign_list[g_campaign_selected].intermission) {
 						GameLoop_GameEndAnimation();
-					}
-					else {
+					} else {
 						GameLoop_GameCredits(g_playerHouseID);
 					}
 
 					res = MENU_MAIN_MENU;
-				}
-				else {
+				} else {
 					/* Only show intermission for Dune II campaign. */
 					if (g_campaign_list[g_campaign_selected].intermission)
 						GameLoop_LevelEndAnimation();
@@ -1567,8 +1535,7 @@ Menu_Run(void)
 				if (event.type == ALLEGRO_EVENT_TIMER) {
 					if (StrategicMap_TimerLoop(&g_strategic_map_state))
 						res |= MENU_REDRAW;
-				}
-				else {
+				} else {
 					res = StrategicMap_InputLoop(g_campaignID, &g_strategic_map_state);
 				}
 				break;
@@ -1589,8 +1556,7 @@ Menu_Run(void)
 						res = next_menu;
 						initialise_menu = true;
 					}
-				}
-				else if (curr_menu & MENU_FADE_IN) {
+				} else if (curr_menu & MENU_FADE_IN) {
 					if (Timer_GetTicks() >= fade_start + MENU_FADE_TICKS) {
 						res &= ~MENU_FADE_IN;
 						Input_History_Clear();
@@ -1613,13 +1579,11 @@ Menu_Run(void)
 			if (res & MENU_NO_TRANSITION) {
 				curr_menu = (res & 0xFF);
 				initialise_menu = true;
-			}
-			else if (res & MENU_FADE_IN) {
+			} else if (res & MENU_FADE_IN) {
 				curr_menu = (res & (MENU_FADE_IN | 0xFF));
 				fade_start = Timer_GetTicks();
 				initialise_menu = true;
-			}
-			else {
+			} else {
 				if (res & MENU_BLINK_CONFIRM)
 					curr_menu |= MENU_BLINK_CONFIRM;
 
@@ -1627,14 +1591,12 @@ Menu_Run(void)
 				next_menu = MENU_FADE_IN | (res & 0xFF);
 				fade_start = Timer_GetTicks();
 			}
-		}
-		else if ((curr_menu^res) & (MENU_BLINK_CONFIRM | MENU_FADE_OUT | MENU_FADE_IN)) {
+		} else if ((curr_menu^res) & (MENU_BLINK_CONFIRM | MENU_FADE_OUT | MENU_FADE_IN)) {
 			redraw = true;
 
 			curr_menu = (res & ~MENU_REDRAW);
 			fade_start = Timer_GetTicks();
-		}
-		else {
+		} else {
 			if (res & (MENU_REDRAW | MENU_BLINK_CONFIRM | MENU_FADE_OUT | MENU_FADE_IN))
 				redraw = true;
 

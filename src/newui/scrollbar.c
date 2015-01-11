@@ -37,8 +37,7 @@ GUI_Widget_Scrollbar_CalculateSize(WidgetScrollbar *scrollbar)
 
 	if (scrollbar->scrollMax <= 0) {
 		size = (max(w->width, w->height) - 2);
-	}
-	else {
+	} else {
 		size = scrollbar->scrollPageSize * (max(w->width, w->height) - 2) / scrollbar->scrollMax;
 	}
 
@@ -77,8 +76,7 @@ GUI_Widget_Scrollbar_CalculateScrollPosition(WidgetScrollbar *scrollbar)
 
 	if (scrollbar->scrollMax - scrollbar->scrollPageSize <= 0) {
 		scrollbar->scrollPosition = 0;
-	}
-	else {
+	} else {
 		scrollbar->scrollPosition = scrollbar->position * (scrollbar->scrollMax - scrollbar->scrollPageSize) / (max(w->width, w->height) - 2 - scrollbar->size);
 	}
 }
@@ -280,8 +278,7 @@ Scrollbar_Sorter(const void *a, const void *b)
 
 	if (ia == ib) {
 		return strcasecmp(sb->text, sa->text);
-	}
-	else {
+	} else {
 		return ib - ia;
 	}
 }
@@ -375,8 +372,7 @@ Scrollbar_CycleUp(Widget *w)
 			s_selectedHelpSubject = ws->scrollMax - 1;
 			ws->scrollPosition = ws->scrollMax - ws->scrollPageSize;
 			GUI_Widget_Scrollbar_CalculatePosition(ws);
-		}
-		else {
+		} else {
 			Scrollbar_SelectUp(w);
 		}
 	} while (Scrollbar_GetSelectedItem(w)->type == SCROLLBAR_CATEGORY);
@@ -392,8 +388,7 @@ Scrollbar_CycleDown(Widget *w)
 			s_selectedHelpSubject = 0;
 			ws->scrollPosition = 0;
 			GUI_Widget_Scrollbar_CalculatePosition(ws);
-		}
-		else {
+		} else {
 			Scrollbar_SelectDown(w);
 		}
 	} while (Scrollbar_GetSelectedItem(w)->type == SCROLLBAR_CATEGORY);
@@ -428,8 +423,7 @@ Scrollbar_HandleEvent(Widget *w, int key)
 		case 0x80 | MOUSE_ZAXIS:
 			if (g_mouseDZ > 0) {
 				Scrollbar_ArrowUp_Click(w);
-			}
-			else if (g_mouseDZ < 0) {
+			} else if (g_mouseDZ < 0) {
 				Scrollbar_ArrowDown_Click(w);
 			}
 			break;
@@ -598,8 +592,7 @@ ScrollListArea_Draw(Widget *w)
 					else if (*(si->d.brain) == BRAIN_CPU_ENEMY) str = "Enemy";
 					else if (*(si->d.brain) == BRAIN_CPU_ALLY)  str = "Ally";
 					else str = NULL;
-				}
-				else {
+				} else {
 					str = Net_GetClientName(si->d.offset);
 				}
 
@@ -612,8 +605,7 @@ ScrollListArea_Draw(Widget *w)
 				const int string_width = Font_GetStringWidth(str);
 				if (string_width >= width) {
 					GUI_DrawText_Wrapper(str, x, y + 1, colour, 0, 0x11);
-				}
-				else {
+				} else {
 					GUI_DrawText_Wrapper(str, x + width / 2, y + 1, colour, 0, 0x111);
 				}
 

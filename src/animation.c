@@ -279,8 +279,7 @@ void Animation_Tick(void)
 
 		if (animation->commands == NULL) {
 			BinHeap_Pop(&s_animations);
-		}
-		else {
+		} else {
 			BinHeap_UpdateMin(&s_animations);
 		}
 

@@ -74,8 +74,7 @@ HallOfFame_DrawBackground(enum HouseType houseID, enum HallOfFameStyle style)
 	if (houseID != HOUSE_INVALID) {
 		const int emblemID = g_campaign_list[g_campaign_selected].fame_cps[houseID];
 		HallOfFame_DrawEmblem(emblemID, emblemID);
-	}
-	else {
+	} else {
 		/* XXX: would be nice to use the highest score's house. */
 		HallOfFame_DrawEmblem(0, 1);
 	}
@@ -181,8 +180,7 @@ HallOfFame_DrawMeter(enum HouseType houseID, const HallOfFameData *fame, int met
 
 			if (fame->meter_colour_dir) {
 				c[idx] = 35 * 4 + 4.0f/3.0f * dt;
-			}
-			else {
+			} else {
 				c[idx] = 63 * 4 - 4.0f/3.0f * dt;
 			}
 
@@ -205,8 +203,7 @@ HallOfFame_DrawMeter(enum HouseType houseID, const HallOfFameData *fame, int met
 
 			c[idx] = clamp(35 * 4, c[idx], 63 * 4);
 			Prim_FillRect_RGBA(x, y, x + w, y + h, c[0], c[1], c[2], 0xFF);
-		}
-		else {
+		} else {
 			Prim_FillRect_i(x, y, x + w - 1, y + h - 1, 209);
 		}
 
@@ -220,8 +217,7 @@ HallOfFame_DrawMeter(enum HouseType houseID, const HallOfFameData *fame, int met
 
 	if (done) {
 		GUI_DrawText_Wrapper("%u", 287, y - 1, 0x0F, 0, 0x121, fame->meter[meter].max);
-	}
-	else {
+	} else {
 		GUI_DrawText_Wrapper("%u", 287, y - 1, 0x14, 0, 0x121, fame->curr_meter_val);
 	}
 }

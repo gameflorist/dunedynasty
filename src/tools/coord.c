@@ -139,8 +139,7 @@ Tile_GetDistancePacked(uint16 a, uint16 b)
 
 	if (dx > dy) {
 		return dx + (dy / 2);
-	}
-	else {
+	} else {
 		return dy + (dx / 2);
 	}
 }
@@ -176,8 +175,7 @@ Tile_GetBearing(int16 x1, int16 y1, int16 x2, int16 y2)
 	if (dx >= dy) {
 		if (((dx + 1) / 2) > dy)
 			index |= 0x1;
-	}
-	else {
+	} else {
 		index |= 0x2;
 		if (((dy + 1) / 2) > dx)
 			index |= 0x1;
@@ -333,8 +331,7 @@ Tile_MoveByDirectionUnbounded(tile32 tile, uint8 orient256, uint16 distance)
 
 		tile.x += (diffX * distance + roundingOffsetX) / 128;
 		tile.y -= (diffY * distance + roundingOffsetY) / 128;
-	}
-	else {
+	} else {
 		tile.x += (64 + diffX * distance) / 128;
 		tile.y += (64 - diffY * distance) / 128;
 	}
@@ -405,8 +402,7 @@ Tile_GetDistance(tile32 a, tile32 b)
 
 	if (dx > dy) {
 		return dx + (dy / 2);
-	}
-	else {
+	} else {
 		return dy + (dx / 2);
 	}
 }
@@ -451,8 +447,7 @@ Tile_GetDirection(tile32 from, tile32 to)
 
 	if (dx >= dy) {
 		gradient = (dy != 0) ? ((dx << 8) / dy) : 0x7FFF;
-	}
-	else {
+	} else {
 		gradient = (dx != 0) ? ((dy << 8) / dx) : 0x7FFF;
 	}
 
@@ -466,8 +461,7 @@ Tile_GetDirection(tile32 from, tile32 to)
 
 	if (quadrant == 0 || quadrant == 3) {
 		return k_orientationOffsets[quadrant] + 64 - i;
-	}
-	else {
+	} else {
 		return k_orientationOffsets[quadrant] + i;
 	}
 }

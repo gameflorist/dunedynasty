@@ -176,8 +176,7 @@ Lobby_ShowHideStartButton(Widget *w, bool show)
 
 	if (show) {
 		GUI_Widget_MakeVisible(w);
-	}
-	else {
+	} else {
 		GUI_Widget_MakeInvisible(w);
 	}
 }
@@ -220,8 +219,7 @@ Lobby_HandleMessages(void)
 	if (Net_HasServerRole()) {
 		Server_RecvMessages();
 		Server_SendMessages();
-	}
-	else {
+	} else {
 		Client_SendMessages();
 		e = Client_RecvMessages();
 	}
@@ -503,8 +501,7 @@ MapOptionsLobby_HandleMapAndMessages(bool sendScenario)
 		}
 		if (e == NETEVENT_DISCONNECT) {
 			return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
-		}
-		else if (e == NETEVENT_START_GAME) {
+		} else if (e == NETEVENT_START_GAME) {
 			return MENU_PLAY_MULTIPLAYER;
 		}
 	} else {
@@ -827,20 +824,16 @@ PickLobby_Loop(void)
 
 		if (editbox == SCANCODE_ENTER)
 			GUI_Widget_MakeSelected(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 22), false);
-	}
-	else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 22))->state.selected) {
+	} else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 22))->state.selected) {
 		editbox = GUI_EditBox(g_host_port, sizeof(g_host_port), w, EDITBOX_PORT);
-	}
-	else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 31))->state.selected) {
+	} else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 31))->state.selected) {
 		editbox = GUI_EditBox(g_join_addr, sizeof(g_join_addr), w, EDITBOX_ADDRESS);
 
 		if (editbox == SCANCODE_ENTER)
 			GUI_Widget_MakeSelected(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 32), false);
-	}
-	else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 32))->state.selected) {
+	} else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 32))->state.selected) {
 		editbox = GUI_EditBox(g_join_port, sizeof(g_join_port), w, EDITBOX_PORT);
-	}
-	else {
+	} else {
 		widgetID = GUI_Widget_HandleEvents(pick_lobby_widgets);
 	}
 
@@ -914,8 +907,7 @@ Lobby_DrawRadar(Widget *w, uint32 next_seed)
 
 		GUI_DrawText_Wrapper("Generating", x1 + 32, y1 - 8, 31, 0, 0x111);
 		VideoA5_DrawWSAStatic(RADAR_ANIMATION_FRAME_COUNT - frame - 1, x1, y1);
-	}
-	else {
+	} else {
 		if (map_options_seed_mode != MAP_SEED_MODE_SURPRISE) {
 			GUI_DrawText_Wrapper("Map %u", x1 + 32, y1 - 8, 31, 0, 0x111, next_seed);
 			Video_DrawMinimap(x1 + 1, y1 + 1, 0, MINIMAP_RESTORE);
@@ -1144,8 +1136,7 @@ SkirmishLobby_Loop(void)
 
 				if (Input_Test(MOUSE_RMB)) {
 					new_brain = BRAIN_NONE;
-				}
-				else {
+				} else {
 					const int change_player = (widgetID == SCANCODE_KEYPAD_4) ? -1 : 1;
 
 					new_brain = ((new_brain + change_player) % (BRAIN_CPU_ALLY + 1));
@@ -1187,8 +1178,7 @@ MultiplayerLobby_Initialise(void)
 
 	if (Net_HasServerRole()) {
 		lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
-	}
-	else {
+	} else {
 		lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_STOP;
 	}
 
@@ -1221,8 +1211,7 @@ MultiplayerLobby_Draw(void)
 
 	if (Net_HasServerRole()) {
 		can_issue_start = Net_IsPlayable();
-	}
-	else {
+	} else {
 		can_issue_start = false;
 	}
 
@@ -1254,8 +1243,7 @@ MultiplayerLobby_Loop(void)
 	}
 	if (e == NETEVENT_DISCONNECT) {
 		return MENU_NO_TRANSITION | MENU_PICK_LOBBY;
-	}
-	else if (e == NETEVENT_START_GAME) {
+	} else if (e == NETEVENT_START_GAME) {
 		return MENU_PLAY_MULTIPLAYER;
 	}
 
@@ -1270,13 +1258,11 @@ MultiplayerLobby_Loop(void)
 		if (editbox == SCANCODE_ENTER || editbox == SCANCODE_ESCAPE || !w->state.selected) {
 			if (Client_Send_PrefName(g_net_name)) {
 				GUI_Widget_MakeNormal(w, false);
-			}
-			else {
+			} else {
 				GUI_Widget_MakeSelected(w, false);
 			}
 		}
-	}
-	else {
+	} else {
 		widgetID = GUI_Widget_HandleEvents(multiplayer_lobby_widgets);
 
 		w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 15);
@@ -1307,8 +1293,7 @@ MultiplayerLobby_Loop(void)
 				if (widgetID == SCANCODE_KEYPAD_4 || Input_Test(MOUSE_RMB)) {
 					if (Net_GetClientHouse(g_local_client_id) == si->d.offset)
 						Client_Send_PrefHouse(HOUSE_INVALID);
-				}
-				else {
+				} else {
 					Client_Send_PrefHouse(si->d.offset);
 				}
 			}

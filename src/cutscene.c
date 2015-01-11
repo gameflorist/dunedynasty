@@ -495,8 +495,7 @@ static void GameLoop_PlaySubtitle(uint8 animation)
 		if ((!enhancement_play_additional_voices) &&
 		    (loc06 == VOICE_INTRO_DUNE || loc06 == VOICE_INTRO_THE_BUILDING_OF_A_DYNASTY)) {
 			/* Newer versions lost these sounds. */
-		}
-		else {
+		} else {
 			Audio_PlayVoice(loc06);
 		}
 

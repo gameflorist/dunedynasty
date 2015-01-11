@@ -155,8 +155,7 @@ BinHeap_UpdateMin(BinHeap *heap)
 
 		if (tmp->key <= c->key) {
 			break;
-		}
-		else {
+		} else {
 			memcpy(e, c, heap->elem_size);
 			idx = child;
 			e = c;

@@ -89,33 +89,24 @@ char *String_Get_ByIndex(uint16 stringID)
 	if (stringID < 0x8000) {
 		assert(stringID < s_stringsCount);
 		return s_strings[stringID];
-	}
-	else if (stringID == STR_START_GAME) {
+	} else if (stringID == STR_START_GAME) {
 		return (char *)"Start Game";
-	}
-	else if (stringID == STR_START) {
+	} else if (stringID == STR_START) {
 		return (char *)"Start";
-	}
-	else if (stringID == STR_MAIN_MENU) {
+	} else if (stringID == STR_MAIN_MENU) {
 		return (char *)"Main Menu";
-	}
-	else if (stringID == STR_HOST) {
+	} else if (stringID == STR_HOST) {
 		return (char *)"Host";
-	}
-	else if (stringID == STR_JOIN) {
+	} else if (stringID == STR_JOIN) {
 		return (char *)"Join";
-	}
-	else if (stringID == STR_MAP_OPTIONS) {
+	} else if (stringID == STR_MAP_OPTIONS) {
 		return (char *)"Map Options";
-	}
-	else if (stringID == STR_APPLY) {
+	} else if (stringID == STR_APPLY) {
 		return (char *)"Apply";
-	}
-	else if (STR_HOUSE_HARKONNEN <= stringID && stringID <= STR_HOUSE_MERCENARY) {
+	} else if (STR_HOUSE_HARKONNEN <= stringID && stringID <= STR_HOUSE_MERCENARY) {
 		const enum HouseType houseID = stringID - STR_HOUSE_HARKONNEN;
 		return (char *)g_table_houseInfo[houseID].name;
-	}
-	else {
+	} else {
 		assert(false);
 		return NULL;
 	}
@@ -196,8 +187,7 @@ String_Load(enum SearchDirectory dir, const char *filename, bool compressed, int
 			dst = (char *)calloc(strlen(src) * 2 + 1, sizeof(char));
 			String_Decompress(src, dst);
 			String_TranslateSpecial(dst, dst);
-		}
-		else {
+		} else {
 			dst = strdup(src);
 		}
 
@@ -265,8 +255,7 @@ String_ReloadCampaignStrings(void)
 				dst = (char *)calloc(strlen(src) * 2 + 1, sizeof(char));
 				String_Decompress(src, dst);
 				String_TranslateSpecial(dst, dst);
-			}
-			else {
+			} else {
 				dst = strdup(src);
 			}
 
@@ -293,8 +282,7 @@ void String_Init(void)
 	/* EU version has one more string in DUNE langfile. */
 	if (s_strings[STR_LOAD_GAME] == NULL) {
 		s_strings[STR_LOAD_GAME] = strdup(s_strings[STR_LOAD_A_GAME]);
-	}
-	else {
+	} else {
 		const char *str = s_strings[STR_LOAD_GAME];
 		while (*str == ' ') str++;
 

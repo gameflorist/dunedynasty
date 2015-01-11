@@ -309,8 +309,7 @@ void Explosion_Tick(void)
 		/* Push explosion with updated time before pop. */
 		if (e->commands == NULL) {
 			BinHeap_Pop(&s_explosions);
-		}
-		else {
+		} else {
 			BinHeap_UpdateMin(&s_explosions);
 		}
 

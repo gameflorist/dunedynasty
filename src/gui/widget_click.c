@@ -116,8 +116,7 @@ bool GUI_Widget_TextButton_Click(Widget *w)
 
 	if (sampleID == SAMPLE_BUTTON) {
 		Audio_PlaySample(sampleID, 128, 0.0f);
-	}
-	else if (sampleID != SAMPLE_INVALID) {
+	} else if (sampleID != SAMPLE_INVALID) {
 		Audio_PlaySample(sampleID, 255, 0.0f);
 	}
 
@@ -204,16 +203,13 @@ GUI_Widget_Picture_Click(Widget *w)
 	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 		if (g_productionStringID == STR_PLACE_IT)
 			Client_Send_EnterPlacementMode(&s->o);
-	}
-	else if (s->o.type == STRUCTURE_PALACE) {
+	} else if (s->o.type == STRUCTURE_PALACE) {
 		if (s->countDown == 0)
 			Client_Send_ActivateSuperweapon(&s->o);
-	}
-	else if (s->o.type == STRUCTURE_STARPORT) {
+	} else if (s->o.type == STRUCTURE_STARPORT) {
 		if (!House_StarportQueueEmpty(g_playerHouse))
 			Client_Send_SendStarportOrder(&s->o);
-	}
-	else if (s->o.type == STRUCTURE_REPAIR) {
+	} else if (s->o.type == STRUCTURE_REPAIR) {
 		if (s->o.linkedID != 0xFF)
 			Client_Send_EjectRepairFacility(&s->o);
 	}
@@ -366,8 +362,7 @@ int GUI_Widget_HOF_ClearList_Click(Widget *w)
 			File_Delete_Personal("SAVEFAME.DAT");
 		GUI_Widget_MakeNormal(w, false);
 		return 1;
-	}
-	else if (ret == (0x8000 | 31)) { /* No */
+	} else if (ret == (0x8000 | 31)) { /* No */
 		GUI_Widget_MakeNormal(w, false);
 		return -1;
 	}

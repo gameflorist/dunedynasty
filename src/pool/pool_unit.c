@@ -174,8 +174,7 @@ Unit_Allocate(uint16 index, enum UnitType type, enum HouseType houseID)
 			u = Unit_Get_ByIndex(index);
 			if (u->o.flags.s.used)
 				return NULL;
-		}
-		else {
+		} else {
 			/* Find the first unused index. */
 			for (index = ui->indexStart; index <= ui->indexEnd; index++) {
 				u = Unit_Get_ByIndex(index);

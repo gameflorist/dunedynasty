@@ -507,8 +507,7 @@ Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *
 
 	if (ext->volume > 0.0f) {
 		ext->enable |= MUSIC_WANT;
-	}
-	else {
+	} else {
 		ext->volume = -ext->volume;
 		ext->enable &=~MUSIC_WANT;
 	}
@@ -555,8 +554,7 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 	/* 4. Try DUNE_DATA_DIR/data/DUNE.PAK. */
 	if (fp == NULL) {
 		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
-	}
-	else {
+	} else {
 		fclose(fp);
 	}
 
@@ -694,8 +692,7 @@ GameOptions_Load(void)
 			config = al_load_config_file(filename);
 
 			snprintf(category, sizeof(category), "%s", g_table_music_set[music_set].prefix);
-		}
-		else if (g_table_music_set[music_set].enable || music_set == default_music_pack) {
+		} else if (g_table_music_set[music_set].enable || music_set == default_music_pack) {
 			char filename[1024];
 
 			snprintf(filename, sizeof(filename), "%smusic/%s/volume.cfg", g_dune_data_dir, g_table_music_set[music_set].prefix);
@@ -727,12 +724,10 @@ GameOptions_Load(void)
 
 					if (want) {
 						m->enable |= MUSIC_WANT;
-					}
-					else {
+					} else {
 						m->enable &=~MUSIC_WANT;
 					}
-				}
-				else {
+				} else {
 					const char *key = strrchr(m->filename, '/') + 1;
 					assert(key != NULL);
 

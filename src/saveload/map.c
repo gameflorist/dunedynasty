@@ -144,8 +144,7 @@ Map_Load2Fallback(void)
 			f->fogSpriteID      = t->overlaySpriteID;
 			f->overlaySpriteID  = 0;
 			t->overlaySpriteID  = 0;
-		}
-		else {
+		} else {
 			f->fogSpriteID      = 0;
 			f->overlaySpriteID  = t->overlaySpriteID;
 		}
@@ -180,8 +179,7 @@ Map_Load2(FILE *fp, uint32 length)
 		spriteID >>= 9;
 		if (g_veiledSpriteID - 16 <= spriteID && spriteID <= g_veiledSpriteID) {
 			f->fogSpriteID  = spriteID;
-		}
-		else {
+		} else {
 			f->overlaySpriteID  = spriteID;
 		}
 

@@ -77,8 +77,7 @@ LandscapeGenerator_AddSpiceOnTile(uint16 packed, Tile *map)
 
 					if (!g_table_landscapeInfo[t2->groundSpriteID].canBecomeSpice) {
 						t->groundSpriteID = LST_SPICE;
-					}
-					else if (t2->groundSpriteID != LST_THICK_SPICE) {
+					} else if (t2->groundSpriteID != LST_THICK_SPICE) {
 						t2->groundSpriteID = LST_SPICE;
 					}
 				}
@@ -284,8 +283,7 @@ LandscapeGenerator_AddSpice(const LandscapeGeneratorParams *params, Tile *map)
 
 		i = Tools_Random_256() * range / 256
 			+ min_spice_fields;
-	}
-	else {
+	} else {
 		i = Tools_Random_256() & 0x2F;
 	}
 

@@ -151,11 +151,9 @@ Prim_DrawBorder(float x, float y, float w, float h, int thickness, bool outline,
 
 		if (outline)
 			Prim_Rect(x - 0.5f, y - 0.5f, x + w + 0.5f, y + h + 0.5f, 12, 1.0f);
-	}
-	else if (!outline) {
+	} else if (!outline) {
 		start += 6;
-	}
-	else {
+	} else {
 		/* Black outline. */
 		for (int i = 0; i <= 3; i++)
 			vtx[i].color = paltoRGB[12];
@@ -215,8 +213,7 @@ Prim_DrawBorder(float x, float y, float w, float h, int thickness, bool outline,
 			vtx[i].color = paltoRGB[scheme[3]];
 
 		end -= 12;
-	}
-	else {
+	} else {
 		for (int i = 20; i <= 33; i++)
 			vtx[i].color = paltoRGB[scheme[3]];
 

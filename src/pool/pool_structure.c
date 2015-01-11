@@ -103,18 +103,15 @@ Structure_FindNext(PoolFindStruct *find)
 
 		if (find->index < s_structureFindCount) {
 			s = s_structureFindArray[find->index];
-		}
-		else if (find->index == s_structureFindCount + 0) {
+		} else if (find->index == s_structureFindCount + 0) {
 			s = Structure_Get_ByIndex(STRUCTURE_INDEX_WALL);
 			assert(s->o.index == STRUCTURE_INDEX_WALL
 			    && s->o.type == STRUCTURE_WALL);
-		}
-		else if (find->index == s_structureFindCount + 1) {
+		} else if (find->index == s_structureFindCount + 1) {
 			s = Structure_Get_ByIndex(STRUCTURE_INDEX_SLAB_2x2);
 			assert(s->o.index == STRUCTURE_INDEX_SLAB_2x2
 			    && s->o.type == STRUCTURE_SLAB_2x2);
-		}
-		else if (find->index == s_structureFindCount + 2) {
+		} else if (find->index == s_structureFindCount + 2) {
 			s = Structure_Get_ByIndex(STRUCTURE_INDEX_SLAB_1x1);
 			assert(s->o.index == STRUCTURE_INDEX_SLAB_1x1
 			    && s->o.type == STRUCTURE_SLAB_1x1);
@@ -221,8 +218,7 @@ Structure_Allocate(uint16 index, enum StructureType type)
 				s = Structure_Get_ByIndex(index);
 				if (s->o.flags.s.used)
 					return NULL;
-			}
-			else {
+			} else {
 				/* Find the first unused index. */
 				for (index = 0; index < STRUCTURE_INDEX_MAX_SOFT; index++) {
 					s = Structure_Get_ByIndex(index);

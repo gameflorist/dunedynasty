@@ -141,8 +141,7 @@ Audio_PlayMusicGroup(enum MusicID musicID, bool respect_want_setting)
 	if (musicID == MUSIC_RANDOM_IDLE) {
 		start = MUSIC_IDLE1;
 		end = MUSIC_BONUS;
-	}
-	else if (musicID == MUSIC_RANDOM_ATTACK) {
+	} else if (musicID == MUSIC_RANDOM_ATTACK) {
 		start = MUSIC_ATTACK1;
 		end = MUSIC_ATTACK6;
 	}
@@ -150,8 +149,7 @@ Audio_PlayMusicGroup(enum MusicID musicID, bool respect_want_setting)
 	for (enum MusicID m = start; m <= end; m++) {
 		if (respect_want_setting) {
 			num_songs += g_table_music[m].count;
-		}
-		else {
+		} else {
 			num_songs += g_table_music[m].count_found;
 		}
 
@@ -186,12 +184,10 @@ Audio_PlayMusicGroup(enum MusicID musicID, bool respect_want_setting)
 			check_flags = MUSIC_ENABLE;
 
 		r = Random_Xorshift_Range(0, num_songs - 1);
-	}
-	else if (num_songs_default > 0) {
+	} else if (num_songs_default > 0) {
 		check_music_pack = default_music_pack;
 		r = Random_Xorshift_Range(0, num_songs_default - 1);
-	}
-	else {
+	} else {
 		check_music_pack = MUSICSET_DUNE2_ADLIB;
 
 		if (musicID == MUSIC_RANDOM_IDLE) r = Random_Xorshift_Range(0, 9 - 1);
@@ -231,8 +227,7 @@ Audio_PlayMusicFile(const MusicList *l, MusicInfo *m)
 
 	if (m->music_set <= MUSICSET_FLUIDSYNTH) {
 		AudioA5_InitInternalMusic(m);
-	}
-	else {
+	} else {
 		AudioA5_InitExternalMusic(m);
 	}
 
@@ -241,12 +236,10 @@ Audio_PlayMusicFile(const MusicList *l, MusicInfo *m)
 	if (m->songname != NULL) {
 		snprintf(music_message, sizeof(music_message), "Playing %s, %s",
 				g_table_music_set[m->music_set].name, m->songname);
-	}
-	else if (l->songname != NULL) {
+	} else if (l->songname != NULL) {
 		snprintf(music_message, sizeof(music_message), "Playing %s, %s",
 				g_table_music_set[m->music_set].name, l->songname);
-	}
-	else {
+	} else {
 		snprintf(music_message, sizeof(music_message), "Playing %s", m->filename);
 	}
 }
@@ -296,8 +289,7 @@ Audio_PlayMusicNextInSequence(void)
 					Audio_PlayMusicGroup(musicID, false);
 					return;
 				}
-			}
-			else if (curr_found) {
+			} else if (curr_found) {
 				Audio_PlayMusicFile(l, m);
 				return;
 			}
@@ -335,15 +327,13 @@ Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only)
 		m->volume = clamp(0.0f, m->volume, 2.0f);
 
 		volume = music_volume * m->volume;
-	}
-	else {
+	} else {
 		music_volume += delta;
 		music_volume = clamp(0.0f, music_volume, 1.0f);
 
 		if (m->music_set <= MUSICSET_FLUIDSYNTH) {
 			volume = music_volume;
-		}
-		else {
+		} else {
 			volume = music_volume * m->volume;
 		}
 	}
@@ -551,8 +541,7 @@ Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position)
 
 	if (play_synth) {
 		Audio_PlayEffect(soundID);
-	}
-	else {
+	} else {
 		int volume = 255;
 		float pan = 0.0f;
 

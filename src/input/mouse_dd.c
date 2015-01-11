@@ -31,8 +31,7 @@ Mouse_SwitchHWCursor(void)
 {
 	if (g_gameConfig.hardwareCursor) {
 		Video_ShowCursor();
-	}
-	else {
+	} else {
 		Video_HideHWCursor();
 	}
 }

@@ -222,8 +222,7 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 
 					break;
 				}
-			}
-			else {
+			} else {
 				const WidgetProperties *w = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
 
 				if (Mouse_InRegion_Div(SCREENDIV_SIDEBAR, w->xBase, w->yBase, w->xBase + w->width - 1, w->yBase + w->height - 1))
@@ -262,16 +261,13 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 						Mouse_TransformToDiv(SCREENDIV_VIEWPORT, &mousex, &mousey);
 						viewport_cx = (0.50 * viewport_cx) + (0.50 * mousex);
 						viewport_cy = (0.50 * viewport_cy) + (0.50 * mousey);
-					}
-					else {
+					} else {
 						new_scale = curr + 1;
 					}
-				}
-				else {
+				} else {
 					if (key == SCANCODE_EQUALS || key == SCANCODE_KEYPAD_PLUS) {
 						new_scale = curr + 1;
-					}
-					else {
+					} else {
 						new_scale = curr - 1;
 					}
 				}
@@ -353,21 +349,17 @@ GameLoop_Client_ProcessInput(void)
 
 		if (g_mousePanning)
 			Video_WarpCursor(TRUE_DISPLAY_WIDTH / 2, TRUE_DISPLAY_HEIGHT / 2);
-	}
-	else {
+	} else {
 		Input_Tick(true);
 
 		if (g_gameOverlay == GAMEOVERLAY_HINT) {
 			MenuBar_TickHintOverlay();
-		}
-		else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
+		} else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
 			MenuBar_TickMentatOverlay();
-		}
-		else if (g_gameOverlay == GAMEOVERLAY_WIN
-		      || g_gameOverlay == GAMEOVERLAY_LOSE) {
+		} else if (g_gameOverlay == GAMEOVERLAY_WIN
+		        || g_gameOverlay == GAMEOVERLAY_LOSE) {
 			MenuBar_TickWinLoseOverlay();
-		}
-		else {
+		} else {
 			MenuBar_TickOptionsOverlay();
 		}
 	}
@@ -381,18 +373,15 @@ GameLoop_Client_Draw(void)
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		GUI_DrawInterfaceAndRadar();
 		ChatBox_DrawInGame(g_chat_buf);
-	}
-	else if (g_gameOverlay == GAMEOVERLAY_HINT
-	      || g_gameOverlay == GAMEOVERLAY_WIN
-	      || g_gameOverlay == GAMEOVERLAY_LOSE) {
+	} else if (g_gameOverlay == GAMEOVERLAY_HINT
+	        || g_gameOverlay == GAMEOVERLAY_WIN
+	        || g_gameOverlay == GAMEOVERLAY_LOSE) {
 		GUI_DrawInterfaceAndRadar();
 		ChatBox_DrawInGame(g_chat_buf);
 		MenuBar_DrawInGameOverlay();
-	}
-	else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
+	} else if (g_gameOverlay == GAMEOVERLAY_MENTAT) {
 		MenuBar_DrawMentatOverlay();
-	}
-	else {
+	} else {
 		GUI_DrawInterfaceAndRadar();
 		ChatBox_DrawInGame(g_chat_buf);
 		MenuBar_DrawOptionsOverlay();
@@ -415,12 +404,10 @@ GameLoop_ProcessGUITimer(void)
 				|| g_gameOverlay == GAMEOVERLAY_WIN
 				|| g_gameOverlay == GAMEOVERLAY_LOSE) {
 			g_musicInBattle = 0;
-		}
-		else if (g_musicInBattle > 0) {
+		} else if (g_musicInBattle > 0) {
 			Audio_PlayMusic(MUSIC_RANDOM_ATTACK);
 			g_musicInBattle = -1;
-		}
-		else if (!Audio_MusicIsPlaying()) {
+		} else if (!Audio_MusicIsPlaying()) {
 			const enum MusicID musicID
 				= (g_gameOverlay == GAMEOVERLAY_MENTAT)
 				? g_table_houseInfo[g_playerHouseID].musicBriefing : MUSIC_RANDOM_IDLE;
@@ -443,8 +430,7 @@ GameLoop_ProcessGameTimer(void)
 
 		if (g_timerGame != curr_ticks) {
 			g_timerGame = curr_ticks;
-		}
-		else {
+		} else {
 			return;
 		}
 	}
@@ -483,13 +469,11 @@ GameLoop_ProcessGameTimer(void)
 		if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
 			Server_RecvMessages();
 			GameLoop_Server_Logic();
-		}
-		else {
+		} else {
 			GameLoop_Client_Logic();
 		}
-	}
-	else if (g_host_type == HOSTTYPE_DEDICATED_SERVER
-	      || g_host_type == HOSTTYPE_CLIENT_SERVER) {
+	} else if (g_host_type == HOSTTYPE_DEDICATED_SERVER
+	        || g_host_type == HOSTTYPE_CLIENT_SERVER) {
 		Server_RecvMessages();
 		GameLoop_Server_Logic();
 	}
@@ -518,8 +502,7 @@ GameLoop_Loop(void)
 		if (source == TIMER_GUI) {
 			redraw = true;
 			GameLoop_ProcessGUITimer();
-		}
-		else {
+		} else {
 			GameLoop_ProcessGameTimer();
 		}
 
@@ -535,8 +518,7 @@ GameLoop_Loop(void)
 	if (g_host_type != HOSTTYPE_NONE) {
 		if (g_host_type == HOSTTYPE_CLIENT_SERVER) {
 			Server_Recv_ReturnToLobby(g_playerHouseID, true);
-		}
-		else if (g_host_type == HOSTTYPE_DEDICATED_CLIENT) {
+		} else if (g_host_type == HOSTTYPE_DEDICATED_CLIENT) {
 			Client_Send_ReturnToLobby();
 		}
 	}

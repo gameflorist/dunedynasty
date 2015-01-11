@@ -219,8 +219,7 @@ void GameLoop_Structure(void)
 							/* For brutal AI, double production speed (except for ornithopters). */
 							if (!(s->o.type == STRUCTURE_HIGH_TECH && s->objectType == UNIT_ORNITHOPTER))
 								buildSpeed *= 2;
-						}
-						else if (buildSpeed > g_campaignID * 20 + 95) {
+						} else if (buildSpeed > g_campaignID * 20 + 95) {
 							/* For AIs, we slow down building speed in all but the last campaign */
 							buildSpeed = g_campaignID * 20 + 95;
 						}
@@ -231,8 +230,7 @@ void GameLoop_Structure(void)
 					/* For brutal AI, half production cost. */
 					if (AI_IsBrutalAI(s->o.houseID)) {
 						buildCost = buildSpeed * buildCost / (256 * 2);
-					}
-					else if (buildSpeed < 256) {
+					} else if (buildSpeed < 256) {
 						buildCost = buildSpeed * buildCost / 256;
 					}
 
@@ -316,11 +314,9 @@ void GameLoop_Structure(void)
 
 					if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 						start_next = (s->o.linkedID == 0xFF) && (h->structureActiveID == STRUCTURE_INDEX_INVALID);
-					}
-					else if (s->o.type == STRUCTURE_STARPORT) {
+					} else if (s->o.type == STRUCTURE_STARPORT) {
 						start_next = false;
-					}
-					else if (s->state == STRUCTURE_STATE_IDLE) {
+					} else if (s->state == STRUCTURE_STATE_IDLE) {
 						start_next = true;
 					}
 
@@ -333,8 +329,7 @@ void GameLoop_Structure(void)
 
 							if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 								can_build = Structure_GetAvailable_ConstructionYard(s, object_type);
-							}
-							else {
+							} else {
 								for (int i = 0; i < 8; i++) {
 									if (si->buildableUnits[i] == object_type) {
 										can_build = Structure_GetAvailable_Factory(s, i);
@@ -539,8 +534,7 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 			s->upgradeLevel++;
 		}
 		s->upgradeTimeLeft = 0;
-	}
-	else {
+	} else {
 		while (Structure_IsUpgradable(s) && Structure_SkipUpgradeLevel(s, s->upgradeLevel))
 			s->upgradeLevel++;
 
@@ -629,8 +623,7 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 	if (enhancement_ai_respects_structure_placement
 			&& !House_IsHuman(houseID)) {
 		validBuildLocation = Structure_IsValidBuildLandscape(position, s->o.type);
-	}
-	else {
+	} else {
 		validBuildLocation = Structure_IsValidBuildLocation(houseID, position, s->o.type);
 	}
 
@@ -645,12 +638,10 @@ bool Structure_Place(Structure *s, uint16 position, enum HouseType houseID)
 	if (g_host_type == HOSTTYPE_NONE) {
 		if (House_AreAllied(s->o.houseID, g_playerHouseID)) {
 			s->o.seenByHouses |= 0xFF;
-		}
-		else {
+		} else {
 			s->o.seenByHouses |= (1 << s->o.houseID);
 		}
-	}
-	else {
+	} else {
 		s->o.seenByHouses |= House_GetAllies(houseID) | House_GetAIs();
 	}
 
@@ -820,8 +811,7 @@ Structure_Client_GetRallyPoint(const Structure *s, uint16 packed)
 
 	if ((x1 <= tx && tx <= x2) && (y1 <= ty && ty <= y2)) {
 		return 0xFFFF;
-	}
-	else {
+	} else {
 		return packed;
 	}
 }
@@ -1083,8 +1073,7 @@ Structure_Server_ActivateSpecial(Structure *s)
 			if (position == 0) {
 				/* ENHANCEMENT -- Do not reset the countdown to one as that causes an irritating blink. */
 				if (!g_dune2_enhanced) s->countDown = 1;
-			}
-			else {
+			} else {
 				g_validateStrictIfZero++;
 				u = Unit_Create(UNIT_INDEX_INVALID, hi->superWeapon.saboteur.unit, hi->superWeapon.saboteur.owner, Tile_UnpackTile(position), Tools_Random_256());
 				g_validateStrictIfZero--;
@@ -1093,8 +1082,7 @@ Structure_Server_ActivateSpecial(Structure *s)
 			if (u != NULL) {
 				s->countDown = g_table_houseInfo[s->o.houseID].specialCountDown;
 				Unit_Server_SetAction(u, ACTION_SABOTAGE);
-			}
-			else if (enhancement_play_additional_voices) {
+			} else if (enhancement_play_additional_voices) {
 				/* ENHANCEMENT -- Feedback if we cannot create a saboteur. */
 				Server_Send_PlaySound(1 << h->index, EFFECT_ERROR_OCCURRED);
 			}
@@ -1316,8 +1304,7 @@ bool Structure_IsUpgradable(Structure *s)
 
 	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 		/* XXX: Too lazy to do this case. */
-	}
-	else {
+	} else {
 		while (next_upgrade_level < 3) {
 			if (Structure_UpgradeUnlocksNewUnit(s, next_upgrade_level + 1))
 				break;
@@ -1355,8 +1342,7 @@ Structure_SkipUpgradeLevel(const Structure *s, int level)
 	if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 		/* XXX: Too lazy to do this case. */
 		return false;
-	}
-	else {
+	} else {
 #if 0
 		/* Original behaviour: Harkonnen cannot produce trikes,
 		 * so light factories begin upgraded.
@@ -1712,8 +1698,7 @@ bool Structure_Server_BuildObject(Structure *s, uint16 objectType)
 		 */
 		if (s->o.type == STRUCTURE_STARPORT) {
 			s->objectType = objectType;
-		}
-		else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		} else if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 			for (enum StructureType i = STRUCTURE_SLAB_1x1; i < STRUCTURE_MAX; i++) {
 				if (Structure_GetAvailable_ConstructionYard(s, i) > 0) {
 					s->objectType = i;
@@ -1722,8 +1707,7 @@ bool Structure_Server_BuildObject(Structure *s, uint16 objectType)
 			}
 
 			return false;
-		}
-		else {
+		} else {
 			for (int i = 0; i < 8; i++) {
 				if (Structure_GetAvailable_Factory(s, i)) {
 					s->objectType = si->buildableUnits[i];
@@ -1751,8 +1735,7 @@ bool Structure_Server_BuildObject(Structure *s, uint16 objectType)
 		if (u != NULL) {
 			o = &u->o;
 			oi = &g_table_unitInfo[objectType].o;
-		}
-		else {
+		} else {
 			o = NULL;
 		}
 	} else {
@@ -1766,8 +1749,7 @@ bool Structure_Server_BuildObject(Structure *s, uint16 objectType)
 						STR_HINT_THERE_ISNT_ENOUGH_OPEN_CONCRETE_TO_PLACE_THIS_STRUCTURE_YOU_MAY_PROCEED_BUT_WITHOUT_ENOUGH_CONCRETE_THE_BUILDING_WILL_NEED_REPAIRS,
 						oi->spriteID);
 			}
-		}
-		else {
+		} else {
 			o = NULL;
 		}
 	}
@@ -1785,8 +1767,7 @@ bool Structure_Server_BuildObject(Structure *s, uint16 objectType)
 				STR_PRODUCTION_OF_S_HAS_STARTED, oi->stringID_full);
 
 		return true;
-	}
-	else {
+	} else {
 		Server_Send_StatusMessage1(1 << s->o.houseID, 2,
 				STR_UNABLE_TO_CREATE_MORE);
 
@@ -1977,8 +1958,7 @@ Structure_GetAvailable_ConstructionYard(const Structure *s, enum StructureType t
 			if ((s->upgradeLevel >= si->o.upgradeLevelRequired[s->o.houseID])
 					|| !House_IsHuman(s->o.houseID)) {
 				return 1;
-			}
-			else if ((s->upgradeTimeLeft != 0)
+			} else if ((s->upgradeTimeLeft != 0)
 					&& (s->upgradeLevel + 1 >= si->o.upgradeLevelRequired[s->o.houseID])) {
 				return -1;
 			}
@@ -2038,8 +2018,7 @@ Structure_GetAvailable_Factory(const Structure *s, int i)
 
 	if (s->upgradeLevel >= upgradeLevelRequired) {
 		return 1;
-	}
-	else if (s->upgradeTimeLeft != 0 && nextUpgradeLevel >= upgradeLevelRequired) {
+	} else if (s->upgradeTimeLeft != 0 && nextUpgradeLevel >= upgradeLevelRequired) {
 		return -1;
 	}
 
@@ -2064,8 +2043,7 @@ void Structure_HouseUnderAttack(uint8 houseID)
 
 		h->timerStructureAttack = 8;
 		return;
-	}
-	else if (h->flags.doneFullScaleAttack) {
+	} else if (h->flags.doneFullScaleAttack) {
 		return;
 	}
 
@@ -2122,8 +2100,7 @@ void Structure_InitFactoryItems(const Structure *s)
 
 			if (s->o.type == STRUCTURE_STARPORT) {
 				available = Structure_GetAvailable_Starport(i);
-			}
-			else {
+			} else {
 				available = Structure_GetAvailable_Factory(s, i);
 			}
 
@@ -2137,18 +2114,15 @@ void Structure_InitFactoryItems(const Structure *s)
 
 			if (s->o.type == STRUCTURE_STARPORT) {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = Random_Starport_CalculatePrice(oi->buildCredits);
-			}
-			else if (available == -1) {
+			} else if (available == -1) {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = floor(si->o.buildCredits / 40) * 20;
-			}
-			else {
+			} else {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
 			}
 
 			g_factoryWindowTotal++;
 		}
-	}
-	else {
+	} else {
 		for (enum StructureType i = STRUCTURE_SLAB_1x1; i < STRUCTURE_MAX; i++) {
 			const ObjectInfo *oi = &g_table_structureInfo[i].o;
 			const int available = Structure_GetAvailable_ConstructionYard(s, i);
@@ -2162,16 +2136,14 @@ void Structure_InitFactoryItems(const Structure *s)
 
 			if (available == -1) {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = floor(si->o.buildCredits / 40) * 20;
-			}
-			else {
+			} else {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = oi->buildCredits;
 			}
 
 #if 0
 			if (i == STRUCTURE_SLAB_1x1 || i == STRUCTURE_SLAB_2x2) {
 				g_factoryWindowItems[g_factoryWindowTotal].sortPriority = 0x64;
-			}
-			else {
+			} else {
 				g_factoryWindowItems[g_factoryWindowTotal].sortPriority = oi->sortPriority;
 			}
 #else

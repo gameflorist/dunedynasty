@@ -138,8 +138,7 @@ SaveMenu_FreeScrollbar(void)
 
 		if (w == s_scrollbar) {
 			GUI_Widget_Free_WithScrollbar(w);
-		}
-		else {
+		} else {
 			free(w);
 		}
 
@@ -201,16 +200,14 @@ SaveMenu_UpdateArrows(Widget *scrollbar)
 	w = &g_table_windowWidgets[7];
 	if (ws->scrollPosition > 0) {
 		GUI_Widget_MakeVisible(w);
-	}
-	else {
+	} else {
 		GUI_Widget_MakeInvisible(w);
 	}
 
 	w = &g_table_windowWidgets[8];
 	if (ws->scrollPosition + ws->scrollPageSize < ws->scrollMax) {
 		GUI_Widget_MakeVisible(w);
-	}
-	else {
+	} else {
 		GUI_Widget_MakeInvisible(w);
 	}
 }
@@ -280,8 +277,7 @@ SaveMenu_SaveLoad_Click(bool save)
 	if (key == (0x80 | MOUSE_ZAXIS)) {
 		if ((g_mouseDZ > 0) && (!g_table_windowWidgets[7].flags.invisible)) {
 			key = 0x8025;
-		}
-		else if ((g_mouseDZ < 0) && (!g_table_windowWidgets[8].flags.invisible)) {
+		} else if ((g_mouseDZ < 0) && (!g_table_windowWidgets[8].flags.invisible)) {
 			key = 0x8026;
 		}
 	}
@@ -297,8 +293,7 @@ SaveMenu_SaveLoad_Click(bool save)
 			case 0x26: /* Down */
 				if (key == 0x25) {
 					Scrollbar_ArrowUp_Click(scrollbar);
-				}
-				else {
+				} else {
 					Scrollbar_ArrowDown_Click(scrollbar);
 				}
 
@@ -320,8 +315,7 @@ SaveMenu_SaveLoad_Click(bool save)
 					SaveMenu_FreeScrollbar();
 					Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 					return -2;
-				}
-				else {
+				} else {
 					return key;
 				}
 		}

@@ -134,8 +134,7 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			 */
 			if (g_mousePanning) {
 				Mouse_EventHandler(false, g_mouseX, g_mouseY, 0, mouse_event);
-			}
-			else {
+			} else {
 				Mouse_EventHandler(apply_mouse_transform, event->mouse.x, event->mouse.y, event->mouse.dz, mouse_event);
 			}
 			return (!g_gameConfig.hardwareCursor && !g_mouseHidden);
@@ -145,16 +144,13 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			    (event->keyboard.keycode == ALLEGRO_KEY_ENTER && (event->keyboard.modifiers & (ALLEGRO_KEYMOD_ALT | ALLEGRO_KEYMOD_ALTGR)))) {
 				VideoA5_ToggleFullscreen();
 				return true;
-			}
-			else if (event->keyboard.keycode == ALLEGRO_KEY_F10) {
+			} else if (event->keyboard.keycode == ALLEGRO_KEY_F10) {
 				VideoA5_ToggleFPS();
 				return true;
-			}
-			else if (event->keyboard.keycode == ALLEGRO_KEY_F12) {
+			} else if (event->keyboard.keycode == ALLEGRO_KEY_F12) {
 				VideoA5_CaptureScreenshot();
 				return true;
-			}
-			else if (event->keyboard.keycode == ALLEGRO_KEY_ENTER) { /* Enter without alt. */
+			} else if (event->keyboard.keycode == ALLEGRO_KEY_ENTER) { /* Enter without alt. */
 				Input_EventHandler(SCANCODE_ENTER);
 				return true;
 			}

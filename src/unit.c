@@ -275,8 +275,7 @@ Unit_GetNextDestination(const Unit *u)
 		const int dist = min(u->speed, Tile_GetDistance(u->o.position, u->currentDestination) + 16);
 
 		return Tile_MoveByDirectionUnbounded(u->o.position, u->orientation[0].current, dist);
-	}
-	else {
+	} else {
 		return u->o.position;
 	}
 }
@@ -292,8 +291,7 @@ static void Unit_MovementTick(Unit *unit)
 	/* ENHANCEMENT -- always move units with maximum speedPerTick. */
 	if (enhancement_true_game_speed_adjustment && unit->speedPerTick == 255) {
 		speed = unit->speedRemainder + 256;
-	}
-	else {
+	} else {
 		speed = unit->speedRemainder + Tools_AdjustToGameSpeed(unit->speedPerTick, 1, 255, false);
 	}
 
@@ -335,8 +333,7 @@ void GameLoop_Unit(void)
 			tickBlinking = true;
 			g_tickUnitBlinking = Timer_GetTicks() + 3;
 		}
-	}
-	else {
+	} else {
 		if (g_tickUnitBlinking <= g_timerGame) {
 			tickBlinking = true;
 			g_tickUnitBlinking = g_timerGame + 3;
@@ -584,8 +581,7 @@ uint8 Unit_MovementStringToType(const char *name)
 		/* ENHANCEMENT -- AI team typos: "Track", "Wheel" instead of Tracked, Wheeled. */
 		if (enhancement_fix_scenario_typos) {
 			if (strncasecmp(g_table_movementTypeName[type], name, 5) == 0) return type;
-		}
-		else {
+		} else {
 			if (strcasecmp(g_table_movementTypeName[type], name) == 0) return type;
 		}
 	}
@@ -1008,11 +1004,9 @@ uint16 Unit_GetTargetUnitPriority(Unit *unit, Unit *target)
 		if (was_ally) {
 			if (g_table_unitInfo[unit->o.type].damage >= target->o.hitpoints) {
 				return 0;
-			}
-			else if (g_table_unitInfo[unit->o.type].damage <= 10) {
+			} else if (g_table_unitInfo[unit->o.type].damage <= 10) {
 				priority += 100;
-			}
-			else {
+			} else {
 				priority = 1;
 			}
 		}
@@ -1514,8 +1508,7 @@ bool Unit_Deviate(Unit *unit, uint16 probability, uint8 houseID)
 		if (AI_IsBrutalAI(houseID)
 				&& UnitAI_ShouldDestructDevastator(unit)) {
 			Unit_Server_SetAction(unit, ACTION_DESTRUCT);
-		}
-		else {
+		} else {
 			Unit_Server_SetAction(unit, ui->actionAI);
 		}
 	}
@@ -1582,8 +1575,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 
 	if (ui->flags.canWobble && unit->o.flags.s.isWobbling) {
 		unit->wobbleIndex = Tools_Random_256() & 7;
-	}
-	else if (ui->o.flags.blurTile) {
+	} else if (ui->o.flags.blurTile) {
 		/* Use wobbleIndex for blur effect instead of a global
 		 * variable because we only want the unit's wobble amount to
 		 * change when it moves.
@@ -1593,12 +1585,10 @@ bool Unit_Move(Unit *unit, uint16 distance)
 		 */
 		if (unit->o.type == UNIT_SANDWORM) {
 			unit->wobbleIndex = (unit->wobbleIndex + 3) & 7;
-		}
-		else {
+		} else {
 			unit->wobbleIndex = (unit->wobbleIndex + 1) & 7;
 		}
-	}
-	else {
+	} else {
 		unit->wobbleIndex = 0;
 	}
 
@@ -1744,13 +1734,12 @@ bool Unit_Move(Unit *unit, uint16 distance)
 					bool detonate = (Map_GetLandscapeType(Tile_PackTile(newPosition)) == LST_WALL);
 
 					if (!detonate) {
-						/* ENHANCEMENT -- Only detonate if the action was a sabotage or a targetted sabotage. */
 						if (enhancement_targetted_sabotage) {
+							/* ENHANCEMENT -- Only detonate if the action was a sabotage or a targetted sabotage. */
 							detonate = ((unit->actionID == ACTION_SABOTAGE) || (unit->actionID == ACTION_MOVE && unit->detonateAtTarget)) &&
 								(Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
-						}
-						/* ENHANCEMENT -- Saboteurs tend to forget their goal, depending on terrain and game speed: to blow up on reaching their destination. */
-						else if (enhancement_fix_firing_logic) {
+						} else if (enhancement_fix_firing_logic) {
+							/* ENHANCEMENT -- Saboteurs tend to forget their goal, depending on terrain and game speed: to blow up on reaching their destination. */
 							detonate = (unit->targetMove != 0 && Tile_GetDistance(newPosition, Tools_Index_GetTile(unit->targetMove)) < 16);
 						} else {
 							detonate = (unit->targetMove != 0 && Tile_GetDistance(unit->o.position, Tools_Index_GetTile(unit->targetMove)) < 32);
@@ -1789,8 +1778,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 				if (unit->o.type != UNIT_SANDWORM) {
 					if (g_map[packed].groundSpriteID == g_bloomSpriteID) {
 						isSpiceBloom = true;
-					}
-					else if (g_map[packed].groundSpriteID == g_bloomSpriteID + 1) {
+					} else if (g_map[packed].groundSpriteID == g_bloomSpriteID + 1) {
 						isSpecialBloom = true;
 					}
 				}
@@ -1863,13 +1851,11 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 		if (unit->o.type == UNIT_SABOTEUR) {
 			Server_Send_PlayVoiceAtTile(FLAG_HOUSE_ALL,
 					VOICE_SABOTEUR_DESTROYED, packed);
-		}
-		else if (!ui->o.flags.noMessageOnDeath && alive) {
+		} else if (!ui->o.flags.noMessageOnDeath && alive) {
 			if (g_campaignID > 3) {
 				Server_Send_PlayVoiceAtTile(FLAG_HOUSE_ALL,
 						VOICE_HARKONNEN_UNIT_DESTROYED + houseID, packed);
-			}
-			else {
+			} else {
 				Server_Send_PlayVoiceAtTile(1 << houseID,
 						VOICE_HARKONNEN_UNIT_DESTROYED + houseID, packed);
 				Server_Send_PlayVoiceAtTile(FLAG_HOUSE_ALL & ~(1 << houseID),
@@ -2281,8 +2267,7 @@ void Unit_SetSpeed(Unit *unit, uint16 speed)
 			speed >>= 4;
 			speed <<= 4;
 		}
-	}
-	else {
+	} else {
 		speed = 16;
 	}
 
@@ -2647,8 +2632,7 @@ void Unit_EnterStructure(Unit *unit, Structure *s)
 		/* ENHANCEMENT -- A bug in OpenDune made soldiers into quite effective engineers. */
 		if (enhancement_soldier_engineers) {
 			damage = s->o.hitpoints / 2;
-		}
-		else {
+		} else {
 			damage = min(unit->o.hitpoints * 2, s->o.hitpoints / 2);
 		}
 
@@ -3056,8 +3040,7 @@ Unit_Server_HouseUnitCount_Add(Unit *unit, enum HouseType houseID)
 
 	if (unit->o.type != UNIT_SANDWORM) {
 		houseIDBit = House_GetAllies(houseID);
-	}
-	else {
+	} else {
 		houseIDBit = (1 << houseID);
 	}
 
@@ -3153,12 +3136,10 @@ Unit_Server_HouseUnitCount_Add(Unit *unit, enum HouseType houseID)
 	if (g_host_type == HOSTTYPE_NONE) {
 		if (House_AreAllied(unit->o.houseID, g_playerHouseID)) {
 			unit->o.seenByHouses = 0xFF;
-		}
-		else {
+		} else {
 			unit->o.seenByHouses |= houseIDBit;
 		}
-	}
-	else {
+	} else {
 		unit->o.seenByHouses |= House_GetAllies(houseID) | House_GetAIs();
 	}
 }
@@ -3174,8 +3155,7 @@ Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 {
 	if (g_host_type != HOSTTYPE_DEDICATED_CLIENT) {
 		Unit_Server_HouseUnitCount_Add(unit, houseID);
-	}
-	else {
+	} else {
 		Unit_Client_HouseUnitCount_Add(unit, houseID);
 	}
 }

@@ -129,8 +129,7 @@ Map_CentreViewport(int x, int y)
 	if (x >= 0) {
 		tilex = x / TILE_SIZE;
 		g_viewport_scrollOffsetX = x % TILE_SIZE;
-	}
-	else {
+	} else {
 		tilex = 0;
 		g_viewport_scrollOffsetX = x;
 	}
@@ -138,8 +137,7 @@ Map_CentreViewport(int x, int y)
 	if (y >= 0) {
 		tiley = y / TILE_SIZE;
 		g_viewport_scrollOffsetY = y % TILE_SIZE;
-	}
-	else {
+	} else {
 		tiley = 0;
 		g_viewport_scrollOffsetY = y;
 	}
@@ -363,8 +361,7 @@ Map_FindHousesInRadius(tile32 tile, int radius)
 			enum HouseType houseID = HOUSE_INVALID;
 			if (g_map[packed].hasStructure) {
 				houseID = g_map[packed].houseID;
-			}
-			else if (g_map[packed].hasUnit && (u = Unit_Get_ByPackedTile(packed)) != NULL) {
+			} else if (g_map[packed].hasUnit && (u = Unit_Get_ByPackedTile(packed)) != NULL) {
 				const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 				if (!ui->flags.isBullet
 						&&  u->o.flags.s.used
@@ -1126,8 +1123,7 @@ Map_UnveilTile_Neighbour(enum HouseType houseID, uint16 packed)
 			if (u != NULL)
 				Unit_HouseUnitCount_Add(u, houseID);
 		}
-	}
-	else {
+	} else {
 		bits = 0xF;
 	}
 
@@ -1215,8 +1211,7 @@ Map_Client_UpdateFogOfWar(void)
 			if (!Map_IsUnveiledToHouse(g_playerHouseID, packed)
 					|| (f->timeout[g_playerHouseID] <= g_timerGame)) {
 				f->fogOverlayBits = 0xF;
-			}
-			else {
+			} else {
 				const Tile *t = &g_map[packed];
 
 				f->groundSpriteID = t->groundSpriteID;
@@ -1231,8 +1226,7 @@ Map_Client_UpdateFogOfWar(void)
 				if (g_mapVisible[packed -  1].timeout[g_playerHouseID] <= g_timerGame) f->fogOverlayBits |= 0x8;
 			}
 		}
-	}
-	else {
+	} else {
 		for (uint16 packed = 65; packed < MAP_SIZE_MAX * MAP_SIZE_MAX - 65; packed++) {
 			const Tile *t = &g_map[packed];
 			FogOfWarTile *f = &g_mapVisible[packed];
