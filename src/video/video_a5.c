@@ -2015,8 +2015,8 @@ VideoA5_ExportCheckBox(bool checked, int x, int y, int row_h, int *retx, int *re
 	uint8 color = 31;
 	Prim_Rect_i(x, y, x + 8, y + 8, color);
 	if (checked) {
-		Prim_Line_i(x + 2, y + 2, x + 7, y + 7, color);
-		Prim_Line_i(x + 6, y + 2, x + 1, y + 7, color);
+		Prim_Line(x + 2.01f, y + 2.01f, x + 6.99f, y + 6.99f, color, 1.0f);
+		Prim_Line(x + 6.99f, y + 2.01f, x + 2.01f, y + 6.99f, color, 1.0f);
 	}
 
 	bmp = al_create_sub_bitmap(dest, x, y, w, h);
