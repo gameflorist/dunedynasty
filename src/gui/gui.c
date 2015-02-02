@@ -1426,7 +1426,8 @@ void GUI_ChangeSelectionType(uint16 selectionType)
 		Unit_UnselectAll();
 	}
 
-	if (g_playerHouse->houseMissileID != UNIT_INDEX_INVALID) {
+	if (g_playerHouse != NULL
+			&& g_playerHouse->houseMissileID != UNIT_INDEX_INVALID) {
 		selectionType = SELECTIONTYPE_TARGET;
 	}
 
