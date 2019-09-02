@@ -9,7 +9,7 @@
 #include <stdarg.h>
 #include "errorlog.h"
 #include "types.h"
-#include "../strings.h"
+#include "../os/strings.h"
 
 void
 ErrorLog_Init(const char *dir)
