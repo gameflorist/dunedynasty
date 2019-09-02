@@ -1908,7 +1908,7 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 	}
 
 	const float scalex = g_screenDiv[SCREENDIV_VIEWPORT].scalex;
-	if (2.99f <= scalex && scalex <= 3.01f
+	if (2.99f <= scalex
 			&& icon_texture48 != NULL && coord->sx48 != 0 && coord->sy48 != 0) {
 		al_draw_scaled_bitmap(icon_texture48, coord->sx48, coord->sy48, 48, 48, x, y, TILE_SIZE, TILE_SIZE, 0);
 
@@ -2832,14 +2832,19 @@ VideoA5_InitCursor(unsigned char *buf)
 	 * Note that Windows cursors are always 32x32, so we can't go
 	 * above 2x scaling.  Also, we can't do the shifting trick/hack.
 	 */
-	const int scale = (TRUE_DISPLAY_WIDTH >= 640) ? 2 : 1;
 	const int sw = 16;
 	const int sh = 16;
 
+	ALLEGRO_MONITOR_INFO info;
+	al_get_monitor_info(0, &info);
+	const int monitor_width = info.x2 - info.x1;
+
 #ifdef ALLEGRO_WINDOWS
+	const int scale = 2
 	const int dw = scale * sw;
 	const int dh = scale * sh;
 #else
+	const int scale = max(1, (monitor_width / 640) - 1);
 	const int dw = scale * (sw + 8);
 	const int dh = scale * (sh + 8);
 #endif

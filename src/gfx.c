@@ -58,6 +58,12 @@ GFX_InitDefaultViewportScales(bool adjust_viewport)
 
 		if (adjust_viewport)
 			viewport->scalex = 2.0f;
+	} else if (TRUE_DISPLAY_WIDTH >= 2960) {
+		menubar->scalex = 4.0f;
+		sidebar->scalex = 4.0f;
+
+		if (adjust_viewport)
+			viewport->scalex = 6.0f;
 	} else {
 		menubar->scalex = 2.0f;
 		sidebar->scalex = 2.0f;

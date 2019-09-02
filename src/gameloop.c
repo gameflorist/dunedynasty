@@ -234,7 +234,7 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 		case SCANCODE_KEYPAD_MINUS:
 		case SCANCODE_KEYPAD_PLUS:
 			{
-				const float scaling_factor[] = { 1.0f, 1.5f, 2.0f, 3.0f };
+				const float scaling_factor[] = { 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f };
 				ScreenDiv *viewport = &g_screenDiv[SCREENDIV_VIEWPORT];
 
 				int curr;
