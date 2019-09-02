@@ -11,7 +11,9 @@ config.cache.pwd
 config.cache.source.list
 config.log
 config.pwd
+include/buildcfg.h
 dist/dunedynasty
+dist/data/*.pak
 objs/
 src/rev.c
 tags
