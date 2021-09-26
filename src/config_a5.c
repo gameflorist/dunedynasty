@@ -32,7 +32,7 @@ typedef struct GameOption {
 		CONFIG_CAMPAIGN,
 		CONFIG_FLOAT,
 		CONFIG_FLOAT_05_2,
-		CONFIG_FLOAT_1_3,
+		CONFIG_FLOAT_1_6,
 		CONFIG_GRAPHICS_DRIVER,
 		CONFIG_HEALTH_BAR,
 		CONFIG_INT,
@@ -111,9 +111,9 @@ static const GameOption s_game_option[] = {
 	{ "graphics",   "screen_width",     CONFIG_INT,             .d._int = &saved_screen_width },
 	{ "graphics",   "screen_height",    CONFIG_INT,             .d._int = &saved_screen_height },
 	{ "graphics",   "correct_aspect_ratio", CONFIG_ASPECT_CORRECTION,   .d._aspect_correction = &g_aspect_correction },
-	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scalex },
-	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scalex },
-	{ "graphics",   "viewport_scale",   CONFIG_FLOAT_1_3,       .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scalex },
+	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_6,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scalex },
+	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_6,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scalex },
+	{ "graphics",   "viewport_scale",   CONFIG_FLOAT_1_6,       .d._float = &g_screenDiv[SCREENDIV_VIEWPORT].scalex },
 	{ "graphics",   "hardware_cursor",  CONFIG_BOOL,            .d._bool = &g_gameConfig.hardwareCursor },
 
 	{ "controls",   "auto_scroll",              CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
@@ -605,8 +605,8 @@ GameOptions_Load(void)
 				Config_GetFloat(str, 0.5f, 2.0f, opt->d._float);
 				break;
 
-			case CONFIG_FLOAT_1_3:
-				Config_GetFloat(str, 1.0f, 3.0f, opt->d._float);
+			case CONFIG_FLOAT_1_6:
+				Config_GetFloat(str, 1.0f, 6.0f, opt->d._float);
 				break;
 
 			case CONFIG_GRAPHICS_DRIVER:
@@ -751,7 +751,7 @@ GameOptions_Save(void)
 
 			case CONFIG_FLOAT:
 			case CONFIG_FLOAT_05_2:
-			case CONFIG_FLOAT_1_3:
+			case CONFIG_FLOAT_1_6:
 				Config_SetFloat(s_configFile, opt->section, opt->key, *(opt->d._float));
 				break;
 

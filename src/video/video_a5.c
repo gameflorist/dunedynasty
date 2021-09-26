@@ -1900,7 +1900,7 @@ VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 		overlay = &s_icon[overlayID][HOUSE_HARKONNEN];
 	}
 
-	if (2.99f <= g_screenDiv[SCREENDIV_VIEWPORT].scalex && g_screenDiv[SCREENDIV_VIEWPORT].scalex <= 3.01f &&
+	if (2.99f <= g_screenDiv[SCREENDIV_VIEWPORT].scalex &&
 			icon_texture48 != NULL && coord->sx48 != 0 && coord->sy48 != 0) {
 		al_draw_scaled_bitmap(icon_texture48, coord->sx48, coord->sy48, 48, 48, x, y, TILE_SIZE, TILE_SIZE, 0);
 
