@@ -165,7 +165,7 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 			Viewport_Hotkey(key - SCANCODE_1 + SQUADID_1);
 			break;
 
-		case SCANCODE_H:
+		case SCANCODE_F4:
 			Viewport_Homekey();
 			break;
 

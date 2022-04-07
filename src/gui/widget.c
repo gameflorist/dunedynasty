@@ -538,8 +538,7 @@ GUI_Widget_SetShortcuts(Widget *w)
 			w->shortcut2 = SCANCODE_S;
 			break;
 		case STR_HARVEST:
-			/* H is used to go to construction yard. */
-			w->shortcut = SCANCODE_A;
+			w->shortcut2 = SCANCODE_A;
 			break;
 		case STR_EXIT_GAME:
 			w->shortcut2 = SCANCODE_ESCAPE;

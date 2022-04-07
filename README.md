@@ -126,9 +126,9 @@ the rally point on buildings.
 Keyboard shortcuts are mostly just the first letter of the action.
 
     A           Attack or Harvest
+    H		Harvest
     M           Move
     G, S        Guard (Stop)
-    H           Select construction yard
     P           Place constructed structure
 
     Ctrl-1      Assign control group 1
@@ -142,6 +142,7 @@ Keyboard shortcuts are mostly just the first letter of the action.
     F1          Mentat
     F2          Options
     F3          Click structure icon
+    F4          Select construction yard
     F5          Show current song
     F6          Decrease music volume
     F7          Increase music volume
