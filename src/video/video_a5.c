@@ -2846,7 +2846,7 @@ VideoA5_InitCursor(unsigned char *buf)
 	const int monitor_width = info.x2 - info.x1;
 
 #ifdef ALLEGRO_WINDOWS
-	const int scale = 2
+	const int scale = 2;
 	const int dw = scale * sw;
 	const int dh = scale * sh;
 #else
