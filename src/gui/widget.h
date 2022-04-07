@@ -196,6 +196,7 @@ extern void    GUI_Widget_MakeInvisible(Widget *w);
 extern void    GUI_Widget_MakeVisible(Widget *w);
 extern void    GUI_Widget_Draw(Widget *w);
 extern uint8   GUI_Widget_GetShortcut(uint8 c);
+extern uint8 GUI_Widget_ScancodeToChar(uint8 key);
 extern void GUI_Widget_SetShortcuts(Widget *w);
 extern Widget *GUI_Widget_Allocate(uint16 index, uint16 shortcut, uint16 offsetX, uint16 offsetY, uint16 spriteID, uint16 stringID);
 extern void    GUI_Widget_MakeNormal(Widget *w, bool clickProc);

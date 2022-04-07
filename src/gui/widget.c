@@ -518,6 +518,55 @@ uint8 GUI_Widget_GetShortcut(uint8 c)
 	}
 }
 
+uint8 GUI_Widget_ScancodeToChar(uint8 key)
+{
+	const unsigned char char_10[] = "1234567890-=";
+	const unsigned char shft_10[] = "!@#$%^&*()_+";
+	const unsigned char char_qp[] = "qwertyuiop[]";
+	const unsigned char shft_qp[] = "QWERTYUIOP{}";
+	const unsigned char char_al[] = "asdfghjkl;'";
+	const unsigned char shft_al[] = "ASDFGHJKL:\"";
+	const unsigned char char_zm[] = "zxcvbnm,./";
+	const unsigned char shft_zm[] = "ZXCVBNM<>?";
+
+	if (key == SCANCODE_SPACE)
+		return ' ';
+
+	if (SCANCODE_1 <= key && key <= SCANCODE_EQUALS) {
+		return Input_Test(SCANCODE_LSHIFT)
+			? shft_10[key - SCANCODE_1]
+			: char_10[key - SCANCODE_1];
+	}
+
+	if (SCANCODE_Q <= key && key <= SCANCODE_CLOSEBRACE) {
+		return Input_Test(SCANCODE_LSHIFT)
+			? shft_qp[key - SCANCODE_Q]
+			: char_qp[key - SCANCODE_Q];
+	}
+
+	if (SCANCODE_A <= key && key <= SCANCODE_QUOTE) {
+		return Input_Test(SCANCODE_LSHIFT)
+			? shft_al[key - SCANCODE_A]
+			: char_al[key - SCANCODE_A];
+	}
+
+	if (SCANCODE_Z <= key && key <= SCANCODE_SLASH) {
+		return Input_Test(SCANCODE_LSHIFT)
+			? shft_zm[key - SCANCODE_Z]
+			: char_zm[key - SCANCODE_Z];
+	}
+
+	if (key == SCANCODE_BACKSLASH) {
+		return Input_Test(SCANCODE_LSHIFT) ? '|' : '\\';
+	}
+
+	if (key == SCANCODE_TILDE) {
+		return Input_Test(SCANCODE_LSHIFT) ? '~' : '`';
+	}
+
+	return '\0';
+}
+
 void
 GUI_Widget_SetShortcuts(Widget *w)
 {

@@ -974,8 +974,10 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		/* Draw credits. */
 		if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
 			GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);
+			GUI_DrawText_Wrapper("%c", x1 + 1, y1 + 2, fg, 0, 0x31, GUI_Widget_ScancodeToChar(g_factoryWindowItems[item].shortcut));
 		} else if ((s->objectType != object_type) || (g_productionStringID != STR_PLACE_IT)) {
 			GUI_DrawText_Wrapper("%d", widget->offsetX + widget->width - 3, y1 + 2, fg, 0, 0x231, g_factoryWindowItems[item].credits);
+			GUI_DrawText_Wrapper("%c", widget->offsetX + widget->width - 3, y1 + h - 8, fg, 0, 0x231, GUI_Widget_ScancodeToChar(g_factoryWindowItems[item].shortcut));
 		}
 
 		/* Draw build queue count. */
@@ -1015,6 +1017,7 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 	const char *deploy;
 	uint16 type;
 	int x, y, w, h;
+	int fg = 0xF;
 	VARIABLE_NOT_USED(s);
 
 	switch (g_productionStringID) {
@@ -1060,6 +1063,12 @@ ActionPanel_DrawPalace(const Widget *widget, Structure *s)
 
 	if (y + h + 1 + 6 < widget->offsetY + widget->height)
 		GUI_DrawText_Wrapper(deploy, xcentre, y + h + 1, 0xF, 0, 0x161);
+
+	if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+		GUI_DrawText_Wrapper("%c", x + 1, y + 2, fg, 0, 0x31, 'S');
+	} else {
+		GUI_DrawText_Wrapper("%c", widget->offsetX + widget->width - 3, y + h - 8, fg, 0, 0x231, 'S');
+	}
 
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 }
