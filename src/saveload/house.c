@@ -73,7 +73,6 @@ bool House_Load(FILE *fp, uint32 length)
 		*h = hl;
 
 		/* Extra data. */
-		h->starportLinkedID         = UNIT_INDEX_INVALID;
 		h->constructionYardPosition = g_structureActivePosition;
 		h->structureActiveID        = STRUCTURE_INDEX_INVALID;
 		h->houseMissileID           = UNIT_INDEX_INVALID;
