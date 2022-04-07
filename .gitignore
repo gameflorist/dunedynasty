@@ -18,3 +18,4 @@
 /src/rev.c
 /tags
 *.swp
+dist/data/*.PAK
