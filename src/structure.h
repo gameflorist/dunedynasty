@@ -64,6 +64,7 @@ typedef struct StructureInfo {
 	uint8  animationIndex[3];                               /*!< The index inside g_table_animation_structure for the Animation of the Structure. */
 	uint8  buildableUnits[8];                               /*!< Which units this structure can produce. */
 	uint16 upgradeCampaign[3][HOUSE_MAX];                   /*!< Minimum campaign for upgrades. */
+	uint16 shortcut;
 } StructureInfo;
 
 /** X/Y pair defining a 2D size. */

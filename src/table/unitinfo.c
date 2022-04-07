@@ -4,6 +4,7 @@
 #include "enum_string.h"
 #include "enumeration.h"
 #include "types.h"
+#include "../input/scancode.h"
 
 #include "sound.h"
 #include "../explosion.h"
@@ -84,7 +85,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 0,
 		/* explosionType        */ EXPLOSION_INVALID,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ SOUND_ROCKET
+		/* bulletSound          */ SOUND_ROCKET,
+		/* shortcut             */ SCANCODE_A
 	},
 
 	{ /* 1 */
@@ -157,7 +159,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 50,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_MISSILE_TROOPER,
-		/* bulletSound          */ SOUND_ROCKET
+		/* bulletSound          */ SOUND_ROCKET,
+		/* shortcut             */ SCANCODE_O
 	},
 
 	{ /* 2 */
@@ -230,7 +233,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 3,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_GUN
+		/* bulletSound          */ SOUND_GUN,
+		/* shortcut             */ SCANCODE_A
 	},
 
 	{ /* 3 */
@@ -303,7 +307,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 5,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_MACHINE_GUN
+		/* bulletSound          */ SOUND_MACHINE_GUN,
+		/* shortcut             */ SCANCODE_Q
 	},
 
 	{ /* 4 */
@@ -376,7 +381,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 3,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_GUN
+		/* bulletSound          */ SOUND_GUN,
+		/* shortcut             */ SCANCODE_D
 	},
 
 	{ /* 5 */
@@ -449,7 +455,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 5,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_MACHINE_GUN
+		/* bulletSound          */ SOUND_MACHINE_GUN,
+		/* shortcut             */ SCANCODE_E
 	},
 
 	{ /* 6 */
@@ -522,7 +529,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 2,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_GUN
+		/* bulletSound          */ SOUND_GUN,
+		/* shortcut             */ SCANCODE_S
 	},
 
 	{ /* 7 */
@@ -595,7 +603,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 75,
 		/* explosionType        */ EXPLOSION_IMPACT_EXPLODE,
 		/* bulletType           */ UNIT_MISSILE_ROCKET,
-		/* bulletSound          */ -1
+		/* bulletSound          */ -1,
+		/* shortcut             */ SCANCODE_E
 	},
 
 	{ /* 8 */
@@ -668,7 +677,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 0,
 		/* explosionType        */ EXPLOSION_IMPACT_EXPLODE,
 		/* bulletType           */ UNIT_MISSILE_DEVIATOR,
-		/* bulletSound          */ -1
+		/* bulletSound          */ -1,
+		/* shortcut             */ SCANCODE_D
 	},
 
 	{ /* 9 */
@@ -741,7 +751,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 25,
 		/* explosionType        */ EXPLOSION_IMPACT_MEDIUM,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_TANK
+		/* bulletSound          */ SOUND_TANK,
+		/* shortcut             */ SCANCODE_C
 	},
 
 	{ /* 10 */
@@ -814,7 +825,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 30,
 		/* explosionType        */ EXPLOSION_IMPACT_MEDIUM,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_TANK
+		/* bulletSound          */ SOUND_TANK,
+		/* shortcut             */ SCANCODE_S
 	},
 
 	{ /* 11 */
@@ -887,7 +899,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 40,
 		/* explosionType        */ EXPLOSION_IMPACT_MEDIUM,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_TANK
+		/* bulletSound          */ SOUND_TANK,
+		/* shortcut             */ SCANCODE_D
 	},
 
 	{ /* 12 */
@@ -960,7 +973,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 60,
 		/* explosionType        */ EXPLOSION_INVALID,
 		/* bulletType           */ UNIT_SONIC_BLAST,
-		/* bulletSound          */ EFFECT_SONIC_BLAST
+		/* bulletSound          */ EFFECT_SONIC_BLAST,
+		/* shortcut             */ SCANCODE_D
 	},
 
 	{ /* 13 */
@@ -1033,7 +1047,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 5,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_MACHINE_GUN
+		/* bulletSound          */ SOUND_MACHINE_GUN,
+		/* shortcut             */ SCANCODE_T
 	},
 
 	{ /* 14 */
@@ -1106,7 +1121,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 5,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_MACHINE_GUN
+		/* bulletSound          */ SOUND_MACHINE_GUN,
+		/* shortcut             */ SCANCODE_T
 	},
 
 	{ /* 15 */
@@ -1179,7 +1195,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 7,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_BULLET,
-		/* bulletSound          */ SOUND_MACHINE_GUN
+		/* bulletSound          */ SOUND_MACHINE_GUN,
+		/* shortcut             */ SCANCODE_Q
 	},
 
 	{ /* 16 */
@@ -1252,7 +1269,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 0,
 		/* explosionType        */ EXPLOSION_INVALID,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ 0
+		/* bulletSound          */ 0,
+		/* shortcut             */ SCANCODE_H
 	},
 
 	{ /* 17 */
@@ -1325,7 +1343,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 0,
 		/* explosionType        */ EXPLOSION_INVALID,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ 0
+		/* bulletSound          */ 0,
+		/* shortcut             */ SCANCODE_V
 	},
 
 	{ /* 18 */
@@ -1398,7 +1417,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 100,
 		/* explosionType        */ EXPLOSION_DEATH_HAND,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ SOUND_ROCKET
+		/* bulletSound          */ SOUND_ROCKET,
+		/* shortcut             */ 0
 	},
 
 	{ /* 19 */
@@ -1471,7 +1491,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 75,
 		/* explosionType        */ EXPLOSION_IMPACT_EXPLODE,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ SOUND_ROCKET
+		/* bulletSound          */ SOUND_ROCKET,
+		/* shortcut             */ 0
 	},
 
 	{ /* 20 */
@@ -1544,7 +1565,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 75,
 		/* explosionType        */ EXPLOSION_IMPACT_EXPLODE,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ SOUND_ROCKET
+		/* bulletSound          */ SOUND_ROCKET,
+		/* shortcut             */ 0
 	},
 
 	{ /* 21 */
@@ -1617,7 +1639,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 75,
 		/* explosionType        */ EXPLOSION_DEVIATOR_GAS,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ SOUND_ROCKET
+		/* bulletSound          */ SOUND_ROCKET,
+		/* shortcut             */ 0
 	},
 
 	{ /* 22 */
@@ -1690,7 +1713,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 0,
 		/* explosionType        */ EXPLOSION_MINI_ROCKET,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ -1 /* was SOUND_MINI_ROCKET. */
+		/* bulletSound          */ -1, /* was SOUND_MINI_ROCKET. */
+		/* shortcut             */ 0
 	},
 
 	{ /* 23 */
@@ -1763,7 +1787,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 0,
 		/* explosionType        */ EXPLOSION_IMPACT_SMALL,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ -1
+		/* bulletSound          */ -1,
+		/* shortcut             */ 0
 	},
 
 	{ /* 24 */
@@ -1836,7 +1861,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 25,
 		/* explosionType        */ EXPLOSION_INVALID,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ -1
+		/* bulletSound          */ -1,
+		/* shortcut             */ 0
 	},
 
 	{ /* 25 */
@@ -1909,7 +1935,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 300,
 		/* explosionType        */ EXPLOSION_SANDWORM_SWALLOW,
 		/* bulletType           */ UNIT_SANDWORM,
-		/* bulletSound          */ SOUND_SANDWORM
+		/* bulletSound          */ SOUND_SANDWORM,
+		/* shortcut             */ 0
 	},
 
 	{ /* 26 */
@@ -1982,7 +2009,8 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* damage               */ 0,
 		/* explosionType        */ EXPLOSION_INVALID,
 		/* bulletType           */ UNIT_INVALID,
-		/* bulletSound          */ -1
+		/* bulletSound          */ -1,
+		/* shortcut             */ 0
 	}
 };
 

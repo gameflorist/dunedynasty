@@ -99,6 +99,7 @@ typedef struct UnitInfo {
 	uint16 explosionType;                                   /*!< Type of the explosion of Unit. */
 	uint8  bulletType;                                      /*!< Type of the bullets of Unit. */
 	uint16 bulletSound;                                     /*!< Sound for the bullets. */
+	uint16 shortcut;
 } UnitInfo;
 
 /**

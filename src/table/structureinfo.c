@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "enum_string.h"
 #include "enumeration.h"
+#include "../input/scancode.h"
 
 #include "../shape.h"
 #include "../sprites.h"
@@ -72,6 +73,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_X
 	},
 
 	{ /* 1 */
@@ -137,6 +139,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_Z
 	},
 
 	{ /* 2 */
@@ -202,6 +205,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_A
 	},
 
 	{ /* 3 */
@@ -267,6 +271,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_F
 	},
 
 	{ /* 4 */
@@ -332,6 +337,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 5, 5, 5, 5, 5, 5 },
 		/* [2]                  */ { 6, 6, 7, 6, 6, 6 }, /* O trait: siege tanks one level later. */
 		},
+		/* shortcut             */ SCANCODE_H
 	},
 
 	{ /* 5 */
@@ -397,6 +403,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_V
 	},
 
 	{ /* 6 */
@@ -462,6 +469,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_N
 	},
 
 	{ /* 7 */
@@ -527,6 +535,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_B
 	},
 
 	{ /* 8 */
@@ -592,6 +601,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 6, 6, 6, 6, 6, 6 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_C
 	},
 
 	{ /* 9 */
@@ -657,6 +667,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_Q
 	},
 
 	{ /* 10 */
@@ -722,6 +733,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_B
 	},
 
 	{ /* 11 */
@@ -787,6 +799,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_S
 	},
 
 	{ /* 12 */
@@ -852,6 +865,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_E
 	},
 
 	{ /* 13 */
@@ -917,6 +931,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_G
 	},
 
 	{ /* 14 */
@@ -982,6 +997,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_W
 	},
 
 	{ /* 15 */
@@ -1047,6 +1063,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_Y
 	},
 
 	{ /* 16 */
@@ -1112,6 +1129,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_T
 	},
 
 	{ /* 17 */
@@ -1177,6 +1195,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_I
 	},
 
 	{ /* 18 */
@@ -1242,6 +1261,7 @@ const StructureInfo g_table_structureInfo_original[STRUCTURE_MAX] = {
 		/* [1]                  */ { 0, 0, 0, 0, 0, 0 },
 		/* [2]                  */ { 0, 0, 0, 0, 0, 0 },
 		},
+		/* shortcut             */ SCANCODE_D
 	}
 };
 
