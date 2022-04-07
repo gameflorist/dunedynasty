@@ -212,6 +212,7 @@ extern void GUI_Widget_Viewport_RedrawMap(void);
 
 /* widget_click.c */
 extern bool GUI_Widget_SpriteTextButton_Click(Widget *w);
+extern bool GUI_Widget_ActionPanel_ProcessGameInput(Widget* w, uint16 key);
 extern bool GUI_Widget_TextButton_Click(Widget *w);
 extern bool GUI_Widget_Name_Click(Widget *w);
 extern bool GUI_Widget_Cancel_Click(Widget *w);

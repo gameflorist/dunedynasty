@@ -300,8 +300,17 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 			break;
 #endif
 
-		default:
+		case 0:
 			break;
+
+		default:
+		{
+			Widget *w = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 5);
+
+			if ((w != NULL) && !w->flags.invisible)
+				GUI_Widget_ActionPanel_ProcessGameInput(w, key);
+			break;
+		}
 	}
 
 	/* We may still need to translate the screen for screen shakes. */

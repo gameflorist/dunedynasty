@@ -429,12 +429,12 @@ ActionPanel_BeginPlacementMode(void)
 }
 
 bool
-ActionPanel_ClickFactory(const Widget *widget, Structure *s)
+ActionPanel_ClickFactory(const Widget *widget, Structure *s, uint16 scancode)
 {
 	if (s->o.flags.s.upgrading)
 		return false;
 
-	if (widget->state.keySelected) {
+	if (!scancode && widget->state.keySelected) {
 		if (g_productionStringID == STR_PLACE_IT)
 			Client_Send_EnterPlacementMode(&s->o);
 		return true;
@@ -446,25 +446,36 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
-	if (ActionPanel_ScrollFactory(widget, s))
-		return true;
-
-	int mouseY;
-	Mouse_TransformToDiv(widget->div, NULL, &mouseY);
-
-	if (mouseY >= widget->offsetY + ActionPanel_ProductionListHeight(widget))
-		return false;
-
-	const bool lmb = (widget->state.buttonState & 0x04);
-	const bool rmb = (widget->state.buttonState & 0x40);
 	int item;
 
-	for (item = 0; item < g_factoryWindowTotal; item++) {
-		int x1, y1, x2, y2;
+	if (scancode) {
+		for (item = 0; item < g_factoryWindowTotal; item++) {
+			if (g_factoryWindowItems[item].shortcut == scancode) {
+				break;
+			}
+		}
+	}
+	else {
+		if (ActionPanel_ScrollFactory(widget, s))
+			return true;
 
-		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
-		if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
-			break;
+		int mouseY;
+		Mouse_TransformToDiv(widget->div, NULL, &mouseY);
+
+		if (mouseY >= widget->offsetY + ActionPanel_ProductionListHeight(widget))
+			return false;
+
+		for (item = 0; item < g_factoryWindowTotal; item++) {
+			int x1, y1, x2, y2;
+
+			ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
+			if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
+				break;
+		}
+	}
+
+	if (item >= g_factoryWindowTotal) {
+		return false;
 	}
 
 	/* Upgrade required. */
@@ -478,7 +489,19 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 	const uint16 clicked_type = g_factoryWindowItems[item].objectType;
 	bool action_successful = true;
 
-	if (lmb) {
+	bool action_purchase_resume = false;
+	bool action_pause_cancel = false;
+
+	if (scancode){
+		action_pause_cancel = Input_Test(SCANCODE_LSHIFT);
+		action_purchase_resume = !action_pause_cancel;
+	}
+	else{
+		action_purchase_resume = (widget->state.buttonState & 0x04); //lmb
+		action_pause_cancel = (widget->state.buttonState & 0x40);    //rmb
+	}
+
+	if (action_purchase_resume) {
 		switch (g_productionStringID) {
 			case STR_PLACE_IT:
 				if ((s->objectType == clicked_type) && (s->o.linkedID != 0xFF) && (s->countDown == 0)) {
@@ -505,7 +528,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s)
 			default:
 				break;
 		}
-	} else if (rmb) {
+	} else if (action_pause_cancel) {
 		if ((clicked_type < STRUCTURE_MAX) && true /* (s->numQueued[clicked_type] > 0) */) {
 			Client_Send_PauseCancelItem(&s->o, clicked_type);
 		} else {
@@ -542,13 +565,13 @@ ActionPanel_ClickStarportMinus(const Structure *s, int entry)
 }
 
 bool
-ActionPanel_ClickStarport(const Widget *widget, Structure *s)
+ActionPanel_ClickStarport(const Widget *widget, Structure *s, uint16 scancode)
 {
-	const bool lmb = (widget->state.buttonState & 0x04);
-	const bool rmb = (widget->state.buttonState & 0x40);
-
-	int x1, y1, x2, y2;
-	int item;
+	if (scancode == SCANCODE_D) {
+		if (!House_StarportQueueEmpty(g_playerHouse))
+			Client_Send_SendStarportOrder(&s->o);
+		return true;
+	}
 
 	if (g_factoryWindowTotal < 0) {
 		Structure_InitFactoryItems(s);
@@ -556,36 +579,60 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 		ActionPanel_ClampFactoryScrollOffset(widget, s);
 	}
 
-	if (s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) {
-		ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
-		if (lmb && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
-			if (!House_StarportQueueEmpty(g_playerHouse))
-				Client_Send_SendStarportOrder(&s->o);
-			return true;
-		}
+	bool action_plus;
+	bool action_minus;
+
+	if (scancode){
+		action_minus = Input_Test(SCANCODE_LSHIFT);
+		action_plus = !action_minus;
+	}
+	else{
+		action_plus = (widget->state.buttonState & 0x04);   //lmb
+		action_minus = (widget->state.buttonState & 0x40);  //rmb
 	}
 
-	if (ActionPanel_ScrollFactory(widget, s))
-		return true;
+	int item;
 
-	int mouseY;
-	Mouse_TransformToDiv(widget->div, NULL, &mouseY);
+	if (scancode == 0) {
+		int x1, y1, x2, y2;
 
-	if (mouseY >= widget->offsetY + ActionPanel_ProductionListHeight(widget))
-		return false;
+		if (s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) {
+			ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
+			if (action_plus && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
+				if (!House_StarportQueueEmpty(g_playerHouse))
+					Client_Send_SendStarportOrder(&s->o);
+				return true;
+			}
+		}
 
-	for (item = 0; item < g_factoryWindowTotal; item++) {
-		ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
-		if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
-			break;
+		if (ActionPanel_ScrollFactory(widget, s))
+			return true;
+
+		int mouseY;
+		Mouse_TransformToDiv(widget->div, NULL, &mouseY);
+
+		if (mouseY >= widget->offsetY + ActionPanel_ProductionListHeight(widget))
+			return false;
+
+		for (item = 0; item < g_factoryWindowTotal; item++) {
+			ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
+			if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
+				break;
+		}
+	}
+	else {
+		for (item = 0; item < g_factoryWindowTotal; item++) {
+			if (g_factoryWindowItems[item].shortcut == scancode)
+				break;
+		}
 	}
 
 	if (!(0 <= item && item < g_factoryWindowTotal))
 		return false;
 
-	if (lmb) {
+	if (action_plus) {
 		ActionPanel_ClickStarportPlus(s, item);
-	} else if (rmb) {
+	} else if (action_minus) {
 		ActionPanel_ClickStarportMinus(s, item);
 	}
 
@@ -593,8 +640,16 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s)
 }
 
 bool
-ActionPanel_ClickPalace(const Widget *widget, Structure *s)
+ActionPanel_ClickPalace(const Widget *widget, Structure *s, uint16 scancode)
 {
+	if (scancode != 0) {
+		if (scancode == SCANCODE_S) {
+			Client_Send_ActivateSuperweapon(&s->o);
+			return true;
+		}
+		return false;
+	}
+
 	const bool lmb = (widget->state.buttonState & 0x04);
 	int x1, x2, y1, y2;
 

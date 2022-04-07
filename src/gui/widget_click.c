@@ -5,6 +5,7 @@
 #include <string.h>
 #include "enum_string.h"
 #include "types.h"
+#include "../input/scancode.h"
 
 #include "gui.h"
 #include "widget.h"
@@ -38,7 +39,12 @@ static void GUI_Widget_Scrollbar_Scroll(WidgetScrollbar *scrollbar, uint16 scrol
  * @param w The widget.
  * @return False, always.
  */
-bool GUI_Widget_SpriteTextButton_Click(Widget *w)
+
+bool GUI_Widget_SpriteTextButton_Click(Widget *w){
+	return GUI_Widget_ActionPanel_ProcessGameInput(w, 0);
+}
+
+bool GUI_Widget_ActionPanel_ProcessGameInput(Widget *w, uint16 key)
 {
 	Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 
@@ -46,7 +52,7 @@ bool GUI_Widget_SpriteTextButton_Click(Widget *w)
 		return false;
 
 	if (s->o.type == STRUCTURE_STARPORT) {
-		return ActionPanel_ClickStarport(w, s);
+		return ActionPanel_ClickStarport(w, s, key);
 	}
 
 	switch (g_productionStringID) {
@@ -57,12 +63,12 @@ bool GUI_Widget_SpriteTextButton_Click(Widget *w)
 		case STR_ON_HOLD:
 		case STR_BUILD_IT:
 		case STR_D_DONE:
-			return ActionPanel_ClickFactory(w, s);
+			return ActionPanel_ClickFactory(w, s, key);
 
 		case STR_LAUNCH:
 		case STR_FREMEN:
 		case STR_SABOTEUR:
-			return ActionPanel_ClickPalace(w, s);
+			return ActionPanel_ClickPalace(w, s, key);
 	}
 	return false;
 }

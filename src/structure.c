@@ -2111,6 +2111,7 @@ void Structure_InitFactoryItems(const Structure *s)
 			g_factoryWindowItems[g_factoryWindowTotal].available = available;
 			g_factoryWindowItems[g_factoryWindowTotal].sortPriority = oi->sortPriority;
 			g_factoryWindowItems[g_factoryWindowTotal].shapeID = oi->spriteID;
+			g_factoryWindowItems[g_factoryWindowTotal].shortcut = g_table_unitInfo[unitType].shortcut;
 
 			if (s->o.type == STRUCTURE_STARPORT) {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = Random_Starport_CalculatePrice(oi->buildCredits);
@@ -2133,6 +2134,7 @@ void Structure_InitFactoryItems(const Structure *s)
 			g_factoryWindowItems[g_factoryWindowTotal].objectType = i;
 			g_factoryWindowItems[g_factoryWindowTotal].available = available;
 			g_factoryWindowItems[g_factoryWindowTotal].shapeID = oi->spriteID;
+			g_factoryWindowItems[g_factoryWindowTotal].shortcut = g_table_structureInfo[i].shortcut;
 
 			if (available == -1) {
 				g_factoryWindowItems[g_factoryWindowTotal].credits = floor(si->o.buildCredits / 40) * 20;
