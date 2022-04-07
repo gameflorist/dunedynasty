@@ -1034,7 +1034,7 @@ Structure_Server_ActivateSpecial(Structure *s)
 			uint16 i;
 
 			/* Find a random location to appear */
-			const uint16 packed = Map_Server_FindLocationTile(4, HOUSE_INVALID);
+			const uint16 packed = Map_Server_FindLocationTile(8, HOUSE_INVALID);
 
 			for (i = 0; i < 5; i++) {
 				Unit *u;

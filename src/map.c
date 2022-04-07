@@ -908,6 +908,9 @@ Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID)
 				}
 				break;
 			}
+			case 8: //Fremen
+				ret = Tile_PackXY(mapInfo->minX + Tools_RandomLCG_Range(2, mapInfo->sizeX - 3), mapInfo->minY + Tools_RandomLCG_Range(2, mapInfo->sizeY - 3));
+				break;
 
 			default: return 0;
 		}
