@@ -1,7 +1,18 @@
 Dune Dynasty
 ============
 
+Version 1.6.1, 2022-04-07
+-------------------------
+
+  - Fix critical saveload bug which breaks the behavior of starports
+  - Fix attempts to spawn Fremen outside the map
+  - Unbind hotkey H
+  - Add hotkeys for each type of unit/structure
+  - Bind unit/structure hotkeys to action panel
+  - Add hotkey hints to action panel
+
 Version 1.6.0, 2015-02-03
+-------------------------
 
   - Version changed to 1.6.0 to reflect all those undocumented changes
     that were added for 2013-2015
