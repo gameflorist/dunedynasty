@@ -1,6 +1,17 @@
 Dune Dynasty
 ============
 
+Version 1.6.2, 2022-04-14
+-------------------------
+
+  - Action Panel title text no longer reacts to mouse clicks
+  - Action Panel title click behavior moved to the portrait
+  - Add old style status button to action panel
+  - Remove Send Order button from Starport menu (uses status button)
+  - Add new status button for Palace menu
+  - Pause/Cancel factory task by pressing ESC
+  - Pause/Cancel factory task by rmb click on status button
+
 Version 1.6.1, 2022-04-07
 -------------------------
 
