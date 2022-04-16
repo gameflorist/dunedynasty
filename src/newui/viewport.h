@@ -10,6 +10,7 @@ struct Structure;
 
 extern void Viewport_Init(void);
 extern void Viewport_Hotkey(enum SquadID squad);
+extern void Viewport_NextBuilding(void);
 extern void Viewport_Homekey(void);
 extern void Viewport_DrawTiles(void);
 extern void Viewport_DrawTileFog(void);

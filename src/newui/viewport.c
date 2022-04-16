@@ -934,6 +934,26 @@ Viewport_Homekey(void)
 	}
 }
 
+void
+Viewport_NextBuilding(void)
+{
+	if (g_selectionType != SELECTIONTYPE_STRUCTURE) return;
+
+	const Structure *cs = Structure_Get_ByPackedTile(g_selectionPosition);
+	if (cs == NULL) return;
+	if (Structure_SharesPoolElement(cs->o.type)) return;
+
+	PoolFindStruct find;
+	Structure *sf = Structure_FindFirst(&find, g_playerHouseID, cs->o.type);
+	if (sf == NULL) return;
+
+	Structure *s = sf;
+	while (s != NULL && s != cs) s = Structure_FindNext(&find);
+	if (s == cs) s = Structure_FindNext(&find);
+	if (s != NULL) Map_SetSelection(Tile_PackTile(s->o.position));
+	else Map_SetSelection(Tile_PackTile(sf->o.position));
+}
+
 static bool
 Viewport_TileIsDebris(uint16 iconID)
 {
