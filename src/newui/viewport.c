@@ -906,6 +906,13 @@ Viewport_Hotkey(enum SquadID squad)
 }
 
 void
+Viewport_FocusOnStructure(const struct Structure *s)
+{
+	if (s == NULL) return;
+	Map_CentreViewport((s->o.position.x >> 4) + TILE_SIZE, (s->o.position.y >> 4) + TILE_SIZE);
+}
+
+void
 Viewport_Homekey(void)
 {
 	PoolFindStruct find;
@@ -929,7 +936,7 @@ Viewport_Homekey(void)
 		}
 
 		if (centre_on_selection) {
-			Map_CentreViewport((s->o.position.x >> 4) + TILE_SIZE, (s->o.position.y >> 4) + TILE_SIZE);
+			Viewport_FocusOnStructure(s);
 		}
 	}
 }

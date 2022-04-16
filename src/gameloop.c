@@ -173,6 +173,10 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 			Viewport_NextBuilding();
 			break;
 
+		case SCANCODE_SPACE:
+			Viewport_FocusOnStructure(Structure_Get_ByPackedTile(g_selectionPosition));
+			break;
+
 		case SCANCODE_ENTER:
 			if (g_host_type != HOSTTYPE_NONE) {
 				g_chat_buf[0] = '\0';
