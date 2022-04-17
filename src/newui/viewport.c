@@ -1244,9 +1244,6 @@ Viewport_DrawSelectionHealthBars(void)
 
 		if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS) {
 			next = Unit_FindNext(&find);
-
-			if ((Unit_GetHouseID(u) != g_playerHouseID) && !Unit_IsSelected(u))
-				continue;
 		} else {
 			next = Unit_NextSelected(&iter);
 		}
