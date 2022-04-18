@@ -105,16 +105,6 @@ bool Map_Save(FILE *fp)
 	for (i = 0; i < 0x1000; i++) {
 		Tile *tile = &g_map[i];
 
-		/* If there is nothing on the tile, not unveiled, and it is equal to the mapseed generated tile, don't store it */
-		if (!tile->isUnveiled_
-		 && !tile->hasStructure
-		 && !tile->hasUnit
-		 && !tile->hasAnimation
-		 && !tile->hasExplosion
-		 && (g_mapSpriteID[i] & 0x8000) == 0
-		 && (g_mapSpriteID[i] == tile->groundSpriteID))
-			continue;
-
 		/* Store the index, then the tile itself */
 		if (!fwrite_le_uint16(i, fp)) return false;
 		if (!fwrite_tile(tile, &g_mapVisible[i], fp)) return false;
@@ -193,24 +183,12 @@ bool
 Map_Save2(FILE *fp)
 {
 	for (uint16 packed = 0; packed < MAP_SIZE_MAX * MAP_SIZE_MAX; packed++) {
-		const Tile *t = &g_map[packed];
 		const FogOfWarTile *f = &g_mapVisible[packed];
 		uint16 timeout      = (f->timeout[g_playerHouseID] <= g_timerGame) ? 0 : (f->timeout[g_playerHouseID] - g_timerGame);
 		uint8  overlay      = f->fogSpriteID ? f->fogSpriteID : f->overlaySpriteID;
 		uint16 spriteID     = ((overlay & 0x7F) << 9) | (f->groundSpriteID & 0x1FF);
 		uint8 houseID       = f->houseID;
 		uint8 hasStructure  = f->hasStructure;
-
-		/* Only store interesting tiles. */
-		if (!g_map[packed].isUnveiled_ || spriteID == 0)
-			continue;
-
-		if ((timeout == 0) &&
-				(f->groundSpriteID == t->groundSpriteID) &&
-				(f->fogSpriteID || (f->overlaySpriteID == t->overlaySpriteID)) &&
-				(f->houseID == t->houseID) &&
-				(f->hasStructure == t->hasStructure))
-			continue;
 
 		if (fwrite(&packed,         sizeof(uint16), 1, fp) != 1) return false;
 		if (fwrite(&timeout,        sizeof(uint16), 1, fp) != 1) return false;
