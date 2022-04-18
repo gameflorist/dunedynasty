@@ -291,6 +291,25 @@ bool Map_IsValidPosition(uint16 position)
 	return (mapInfo->minX <= x && x < (mapInfo->minX + mapInfo->sizeX) && mapInfo->minY <= y && y < (mapInfo->minY + mapInfo->sizeY));
 }
 
+uint16 Map_Clamp_Packed(uint16 position)
+{
+	const MapInfo *mapInfo;
+
+	if ((position & 0xC000) != 0) return 0;
+
+	uint16 x = Tile_GetPackedX(position);
+	uint16 y = Tile_GetPackedY(position);
+
+	mapInfo = &g_mapInfos[g_scenario.mapScale];
+
+	if (mapInfo->minX > x) x = mapInfo->minX;
+	if ( (mapInfo->minX + mapInfo->sizeX - 1) < x) x = mapInfo->minX + mapInfo->sizeX - 1;
+	if (mapInfo->minY > y) y = mapInfo->minY;
+	if ( (mapInfo->minY + mapInfo->sizeY - 1) < y) y = mapInfo->minY + mapInfo->sizeY - 1;
+
+	return Tile_PackXY(x, y);
+}
+
 bool
 Map_IsUnveiledToHouse(enum HouseType houseID, uint16 packed)
 {

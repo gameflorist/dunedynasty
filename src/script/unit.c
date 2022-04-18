@@ -1412,7 +1412,7 @@ uint16 Script_Unit_CalculateRoute(ScriptEngine *script)
 	if (u->currentDestination.x != 0 || u->currentDestination.y != 0 || !Tools_Index_IsValid(encoded)) return 1;
 
 	packedSrc = Tile_PackTile(u->o.position);
-	packedDst = Tools_Index_GetPackedTile(encoded);
+	packedDst = Map_Clamp_Packed(Tools_Index_GetPackedTile(encoded));
 
 	if (packedDst == packedSrc) {
 		u->route[0] = 0xFF;

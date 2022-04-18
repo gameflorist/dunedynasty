@@ -93,6 +93,7 @@ extern void Map_SetSelectionSize(uint16 layout);
 extern uint16 Map_SetSelectionObjectPosition(uint16 packed);
 extern void Map_UpdateMinimapPosition(uint16 packed, bool forceUpdate);
 extern bool Map_IsValidPosition(uint16 position);
+extern uint16 Map_Clamp_Packed(uint16 position);
 extern bool Map_IsUnveiledToHouse(enum HouseType houseID, uint16 packed);
 extern bool Map_IsPositionUnveiled(enum HouseType houseID, uint16 packed);
 extern bool Map_IsPositionInViewport(tile32 position, int *retX, int *retY);
