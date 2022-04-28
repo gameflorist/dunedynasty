@@ -1,6 +1,19 @@
 Dune Dynasty
 ============
 
+Version 1.6.3, 2022-04-28
+-------------------------
+  - New Action Panel mode: Interactive unit list
+    - Shift + click removes clicked unit from list
+    - Shift + Ctrl + click removes clicked unit type from list
+    - Ctrl + click removes all units except clicked type
+    - Click removes all units except clicked unit
+  - New hotkey: select next building of the same type (Tab key)
+  - New hotkey: focus viewport on selected structure (Space key)
+  - Draw health bars for all visible units in "All units" mode
+  - Fix save/load bug: fix fog data loss in saved games
+  - Fix pathfinder freeze in case if destination is out of map 
+
 Version 1.6.2, 2022-04-14
 -------------------------
 
