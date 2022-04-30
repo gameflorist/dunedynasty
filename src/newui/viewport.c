@@ -781,8 +781,17 @@ Viewport_Click(Widget *w)
 		if ((s != NULL)
 				&& (s->o.houseID == g_playerHouseID)
 				&& Structure_SupportsRallyPoints(s->o.type)) {
-			Client_Send_SetRallyPoint(&s->o,
+			if (!Input_Test(SCANCODE_LCTRL)) {
+				Client_Send_SetRallyPoint(&s->o,
 					Structure_Client_GetRallyPoint(s, packed));
+			} else {
+				PoolFindStruct find;
+				s = Structure_FindFirst(&find, g_playerHouseID, s->o.type);
+				for(; s != NULL; s = Structure_FindNext(&find)) {
+					Client_Send_SetRallyPoint(&s->o,
+						Structure_Client_GetRallyPoint(s, packed));
+				}
+			}
 		}
 	}
 
