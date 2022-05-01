@@ -1123,6 +1123,18 @@ Structure_GetCenter(const Structure *s)
 	return result;
 }
 
+static void
+Viewport_DrawTargetMarker(tile32 from, tile32 to)
+{
+	int x1, x2, y1, y2;
+
+	Map_IsPositionInViewport(from, &x1, &y1);
+	Map_IsPositionInViewport(to, &x2, &y2);
+
+	Prim_Line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, 14, 1.0f);
+	Shape_DrawTint(SHAPE_CURSOR_TARGET, x2, y2, 14, 0, 0x8000);
+}
+
 void
 Viewport_DrawRallyPoint(void)
 {
@@ -1138,15 +1150,7 @@ Viewport_DrawRallyPoint(void)
 			&& Structure_SupportsRallyPoints(s->o.type)) {
 		tile32 structure_center = Structure_GetCenter(s);
 
-		const int tx = Tile_GetPackedX(g_viewportPosition);
-		const int ty = Tile_GetPackedY(g_viewportPosition);
-		const int x1 = -g_viewport_scrollOffsetX + (TILE_SIZE * -tx) + structure_center.x / TILE_SIZE;
-		const int y1 = -g_viewport_scrollOffsetY + (TILE_SIZE * -ty) + structure_center.y / TILE_SIZE;
-		const int x2 = -g_viewport_scrollOffsetX + (TILE_SIZE * (Tile_GetPackedX(s->rallyPoint) - tx)) + TILE_SIZE/2;
-		const int y2 = -g_viewport_scrollOffsetY + (TILE_SIZE * (Tile_GetPackedY(s->rallyPoint) - ty)) + TILE_SIZE/2;
-
-		Prim_Line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, 14, 1.0f);
-		Shape_DrawTint(SHAPE_CURSOR_TARGET, x2, y2, 14, 0, 0x8000);
+		Viewport_DrawTargetMarker(structure_center, Tile_UnpackTile(s->rallyPoint));
 	}
 }
 
