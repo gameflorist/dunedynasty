@@ -1135,13 +1135,9 @@ Viewport_DrawTargetMarker(tile32 from, tile32 to)
 	Shape_DrawTint(SHAPE_CURSOR_TARGET, x2, y2, 14, 0, 0x8000);
 }
 
-void
-Viewport_DrawRallyPoint(void)
+static void
+Viewport_Structure_DrawRallyPoint(const Structure *s)
 {
-	if (g_selectionType != SELECTIONTYPE_STRUCTURE)
-		return;
-
-	const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
 	if (s == NULL)
 		return;
 
@@ -1151,6 +1147,31 @@ Viewport_DrawRallyPoint(void)
 		tile32 structure_center = Structure_GetCenter(s);
 
 		Viewport_DrawTargetMarker(structure_center, Tile_UnpackTile(s->rallyPoint));
+	}
+}
+
+void
+Viewport_DrawRallyPoint(void)
+{
+	if (g_selectionType != SELECTIONTYPE_STRUCTURE)
+		return;
+
+	const Structure *s = Structure_Get_ByPackedTile(g_selectionPosition);
+
+	if (s == NULL)
+		return;
+
+	if (!Structure_SupportsRallyPoints(s->o.type))
+		return;
+
+	if (!Input_Test(SCANCODE_LCTRL)) {
+		Viewport_Structure_DrawRallyPoint(s);
+	} else {
+		PoolFindStruct find;
+		s = Structure_FindFirst(&find, g_playerHouseID, s->o.type);
+		for(; s != NULL; s = Structure_FindNext(&find)) {
+			Viewport_Structure_DrawRallyPoint(s);
+		}
 	}
 }
 
