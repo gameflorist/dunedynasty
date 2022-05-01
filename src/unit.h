@@ -127,6 +127,8 @@ extern UnitInfo g_table_unitInfo[UNIT_MAX];
 extern Unit *g_unitActive;
 extern int16 g_starportAvailable[UNIT_MAX];
 
+static inline bool Unit_IsMoving(const Unit *u) { return u->currentDestination.x != 0 || u->currentDestination.y != 0; }
+
 extern Unit *Unit_FirstSelected(int *iter);
 extern Unit *Unit_NextSelected(int *iter);
 extern bool Unit_IsSelected(const Unit *unit);

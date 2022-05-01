@@ -760,7 +760,7 @@ uint16 Script_Unit_Rotate(ScriptEngine *script)
 	u = g_scriptCurrentUnit;
 	ui = &g_table_unitInfo[u->o.type];
 
-	if (ui->movementType != MOVEMENT_WINGER && (u->currentDestination.x != 0 || u->currentDestination.y != 0)) return 1;
+	if (ui->movementType != MOVEMENT_WINGER && Unit_IsMoving(u)) return 1;
 
 	index = ui->o.flags.hasTurret ? 1 : 0;
 
@@ -954,7 +954,7 @@ uint16 Script_Unit_SetDestinationDirect(ScriptEngine *script)
 
 	u = g_scriptCurrentUnit;
 
-	if ((u->currentDestination.x == 0 && u->currentDestination.y == 0) || g_table_unitInfo[u->o.type].flags.isNormalUnit) {
+	if (!Unit_IsMoving(u) || g_table_unitInfo[u->o.type].flags.isNormalUnit) {
 		u->currentDestination = Tools_Index_GetTile(encoded);
 	}
 
@@ -993,7 +993,7 @@ uint16 Script_Unit_GetInfo(ScriptEngine *script)
 		case 0x08: return Tools_Index_Encode(u->o.index, IT_UNIT);
 		case 0x09: return u->movingSpeed;
 		case 0x0A: return abs(u->orientation[0].target - u->orientation[0].current);
-		case 0x0B: return (u->currentDestination.x == 0 && u->currentDestination.y == 0) ? 0 : 1;
+		case 0x0B: return Unit_IsMoving(u);
 		case 0x0C: return u->fireDelay == 0 ? 1 : 0;
 		case 0x0D: return ui->flags.explodeOnDeath;
 		case 0x0E: return Unit_GetHouseID(u);
@@ -1409,7 +1409,7 @@ uint16 Script_Unit_CalculateRoute(ScriptEngine *script)
 	u = g_scriptCurrentUnit;
 	encoded = STACK_PEEK(1);
 
-	if (u->currentDestination.x != 0 || u->currentDestination.y != 0 || !Tools_Index_IsValid(encoded)) return 1;
+	if (Unit_IsMoving(u) || !Tools_Index_IsValid(encoded)) return 1;
 
 	packedSrc = Tile_PackTile(u->o.position);
 	packedDst = Map_Clamp_Packed(Tools_Index_GetPackedTile(encoded));

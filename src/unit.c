@@ -503,7 +503,7 @@ void GameLoop_Unit(void)
 		}
 
 		if (u->nextActionID == ACTION_INVALID) continue;
-		if (u->currentDestination.x != 0 || u->currentDestination.y != 0) continue;
+		if (Unit_IsMoving(u)) continue;
 
 		Unit_Server_SetAction(u, u->nextActionID);
 		u->nextActionID = ACTION_INVALID;
@@ -702,7 +702,7 @@ Unit_Server_SetAction(Unit *u, enum UnitActionType action)
 
 	switch (ai->switchType) {
 		case 0:
-			if (u->currentDestination.x != 0 || u->currentDestination.y != 0) {
+			if (Unit_IsMoving(u)) {
 				u->nextActionID = action;
 				return;
 			}
@@ -1720,7 +1720,7 @@ bool Unit_Move(Unit *unit, uint16 distance)
 					return true;
 				}
 			} else if (ui->flags.isGroundUnit) {
-				if (currentDestination.x != 0 || currentDestination.y != 0) newPosition = currentDestination;
+				if (Unit_IsMoving(unit)) newPosition = currentDestination;
 				unit->targetPreLast = unit->targetLast;
 				unit->targetLast    = unit->o.position;
 				unit->currentDestination.x = 0;
