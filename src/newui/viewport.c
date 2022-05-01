@@ -1112,6 +1112,17 @@ Viewport_DrawTileFog(void)
 	Viewport_DrawTilesInRange(x0, y0, viewportX1, viewportY1, viewportX2, viewportY2, false, true);
 }
 
+static tile32
+Structure_GetCenter(const Structure *s)
+{
+	StructureInfo *si = &g_table_structureInfo[s->o.type];
+	const XYSize *layout_size = &g_table_structure_layoutSize[si->layout];
+	tile32 result = s->o.position;
+	result.x += layout_size->width << 7;
+	result.y += layout_size->height << 7;
+	return result;
+}
+
 void
 Viewport_DrawRallyPoint(void)
 {
@@ -1125,10 +1136,12 @@ Viewport_DrawRallyPoint(void)
 	if ((s->o.houseID == g_playerHouseID)
 			&& (s->rallyPoint != 0xFFFF)
 			&& Structure_SupportsRallyPoints(s->o.type)) {
+		tile32 structure_center = Structure_GetCenter(s);
+
 		const int tx = Tile_GetPackedX(g_viewportPosition);
 		const int ty = Tile_GetPackedY(g_viewportPosition);
-		const int x1 = -g_viewport_scrollOffsetX + (TILE_SIZE * (Tile_GetPackedX(g_selectionRectanglePosition) - tx)) + (TILE_SIZE * g_selectionWidth)/2;
-		const int y1 = -g_viewport_scrollOffsetY + (TILE_SIZE * (Tile_GetPackedY(g_selectionRectanglePosition) - ty)) + (TILE_SIZE * g_selectionHeight)/2;
+		const int x1 = -g_viewport_scrollOffsetX + (TILE_SIZE * -tx) + structure_center.x / TILE_SIZE;
+		const int y1 = -g_viewport_scrollOffsetY + (TILE_SIZE * -ty) + structure_center.y / TILE_SIZE;
 		const int x2 = -g_viewport_scrollOffsetX + (TILE_SIZE * (Tile_GetPackedX(s->rallyPoint) - tx)) + TILE_SIZE/2;
 		const int y2 = -g_viewport_scrollOffsetY + (TILE_SIZE * (Tile_GetPackedY(s->rallyPoint) - ty)) + TILE_SIZE/2;
 
