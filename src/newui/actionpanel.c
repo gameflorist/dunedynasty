@@ -458,6 +458,8 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s, uint16 scancode)
 	else {
 		if (ActionPanel_ScrollFactory(widget, s))
 			return true;
+		else if (!(widget->state.buttonState & 0x44))
+			return false;
 
 		int mouseY;
 		Mouse_TransformToDiv(widget->div, NULL, &mouseY);
@@ -607,6 +609,8 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s, uint16 scancode)
 
 		if (ActionPanel_ScrollFactory(widget, s))
 			return true;
+		else if (!(widget->state.buttonState & 0x44))
+			return false;
 
 		int mouseY;
 		Mouse_TransformToDiv(widget->div, NULL, &mouseY);
