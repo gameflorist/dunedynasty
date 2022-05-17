@@ -69,6 +69,7 @@ static int64_t viewport_click_time;
 static int viewport_click_x;
 static int viewport_click_y;
 static bool selection_box_add_to_selection;
+static bool selection_box_ctrl_pressed;
 static int selection_box_x2;
 static int selection_box_y2;
 static int viewport_pan_dx;
@@ -152,6 +153,7 @@ Viewport_SelectRegion(void)
 		if (g_mapVisible[packed].fogOverlayBits == 0xF)
 			return;
 
+		bool unselect = false;
 		if (mode == SELECTION_MODE_NONE) {
 			Map_SetSelection(packed);
 		} else if (mode == SELECTION_MODE_CONTROLLABLE_UNIT
@@ -161,6 +163,7 @@ Viewport_SelectRegion(void)
 			if (u == NULL) {
 			} else if (Unit_IsSelected(u)) {
 				Unit_Unselect(u);
+				unselect = true;
 			} else if ((mode == SELECTION_MODE_CONTROLLABLE_UNIT)
 					&& (Unit_GetHouseID(u) == g_playerHouseID)) {
 				Unit_Select(u);
@@ -169,6 +172,16 @@ Viewport_SelectRegion(void)
 		} else if (mode == SELECTION_MODE_STRUCTURE) {
 			if (Structure_Get_ByPackedTile(packed) == Structure_Get_ByPackedTile(g_selectionPosition))
 				Map_SetSelection(0xFFFF);
+		}
+
+		if (g_selectionType == SELECTIONTYPE_UNIT && selection_box_ctrl_pressed) {
+			Unit *u = Unit_Get_ByPackedTile(packed);
+			if (u == NULL || Unit_GetHouseID(u) != g_playerHouseID || u->o.type == UNIT_CARRYALL) {
+			} else if (unselect) {
+				Unit_UnselectType(u->o.type);
+			} else {
+				Unit_SelectType(u->o.type);
+			}
 		}
 	} else if (mode == SELECTION_MODE_NONE
 	        || mode == SELECTION_MODE_CONTROLLABLE_UNIT) {
@@ -599,6 +612,8 @@ Viewport_Click(Widget *w)
 			viewport_click_time = Timer_GetTicks();
 			viewport_click_x = mouseX;
 			viewport_click_y = mouseY;
+
+			selection_box_ctrl_pressed = Input_Test(SCANCODE_LCTRL) ? true : false;
 
 			if (Input_Test(SCANCODE_LSHIFT)) {
 				selection_box_add_to_selection = true;
