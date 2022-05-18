@@ -1172,7 +1172,7 @@ Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause,
 	f->timeout[houseID] = Map_GetUnveilTimeout(cause);
 
 	u = Unit_Get_ByPackedTile(packed);
-	if (u != NULL) Unit_HouseUnitCount_Add(u, houseID);
+	if (u != NULL && (House_IsHuman(houseID) || u->o.type != UNIT_SANDWORM)) Unit_HouseUnitCount_Add(u, houseID);
 
 	s = Structure_Get_ByPackedTile(packed);
 	if (s != NULL)
