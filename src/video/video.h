@@ -47,6 +47,8 @@ extern void Video_ShowCursor(void);
 extern void Video_HideCursor(void);
 extern void Video_HideHWCursor(void);
 extern void Video_WarpCursor(int x, int y);
+extern void Video_GrabCursor(void);
+extern void Video_UngrabCursor(void);
 extern void Video_ShadeScreen(int alpha);
 extern void Video_HoldBitmapDrawing(bool hold);
 

@@ -542,6 +542,7 @@ void GameLoop_Main(bool new_game)
 
 	Timer_SetTimer(TIMER_GAME, true);
 	Timer_RegisterSource();
+	Video_GrabCursor();
 	ChatBox_ResetTimestamps();
 
 	GameLoop_Loop();

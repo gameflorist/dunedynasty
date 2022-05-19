@@ -89,6 +89,14 @@ Timer_GetTimer(enum TimerType timer)
 	return al_get_timer_count(s_timer[timer]);
 }
 
+bool
+Timer_IsStarted(enum TimerType timer)
+{
+	assert(timer <= TIMER_GAME);
+
+	return al_get_timer_started(s_timer[timer]);
+}
+
 void
 Timer_RegisterSource(void)
 {

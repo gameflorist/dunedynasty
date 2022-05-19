@@ -108,6 +108,14 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			exit(0);
 			break;
 
+		case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
+			Video_GrabCursor();
+			return true;
+
+		case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
+			Video_UngrabCursor();
+			return true;
+
 		case ALLEGRO_EVENT_DISPLAY_EXPOSE:
 			return true;
 

@@ -359,6 +359,8 @@ MenuBar_DisplayWinLose(bool win)
 		voiceID = VOICE_YOU_HAVE_FAILED_YOUR_MISSION;
 	}
 
+	Video_UngrabCursor();
+
 	Audio_PlayVoice(voiceID);
 	snprintf(s_modal_message_buf, sizeof(s_modal_message_buf), "%s",
 			String_Get_ByIndex(stringID));
@@ -395,6 +397,7 @@ MenuBar_ClickMentat(Widget *w)
 	Audio_PlayVoice(VOICE_STOP);
 	Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicBriefing);
 	Timer_SetTimer(TIMER_GAME, false);
+	Video_UngrabCursor();
 
 	g_widgetLinkedListTail = NULL;
 	g_widgetMentatFirst = GUI_Widget_Allocate(1, SCANCODE_ESCAPE, 200, 168, SHAPE_EXIT, 5);
@@ -429,6 +432,7 @@ MenuBar_TickMentatOverlay(void)
 
 		g_gameOverlay = GAMEOVERLAY_NONE;
 		Timer_SetTimer(TIMER_GAME, true);
+		Video_GrabCursor();
 		Audio_PlayEffect(EFFECT_FADE_OUT);
 
 		/* XXX: fix this rubbish. */
@@ -473,6 +477,7 @@ MenuBar_ClickOptions(Widget *w)
 	g_gameOverlay = GAMEOVERLAY_OPTIONS;
 	Video_SetCursor(SHAPE_CURSOR_NORMAL);
 	Timer_SetTimer(TIMER_GAME, false);
+	Video_UngrabCursor();
 	GUI_Window_Create(&g_optionsWindowDesc);
 
 	if (g_host_type != HOSTTYPE_NONE) {
@@ -986,6 +991,7 @@ MenuBar_TickOptionsOverlay(void)
 
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		Timer_SetTimer(TIMER_GAME, true);
+		Video_GrabCursor();
 		Structure_Recount();
 		Unit_Recount();
 

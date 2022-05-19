@@ -524,6 +524,7 @@ VideoA5_ToggleFullscreen(void)
 
 	/* Free CPS store when we toggle fullscreen mode, important for Direct3D. */
 	VideoA5_DisplayFound();
+	Timer_IsStarted(TIMER_GAME) ? Video_GrabCursor() : Video_UngrabCursor();
 }
 
 void
@@ -749,6 +750,20 @@ void
 Video_WarpCursor(int x, int y)
 {
 	al_set_mouse_xy(display, x, y);
+}
+
+void
+Video_GrabCursor(void)
+{
+	if (Timer_IsStarted(TIMER_GAME))
+		al_grab_mouse(display);
+}
+
+void
+Video_UngrabCursor(void)
+{
+	if (!Timer_IsStarted(TIMER_GAME))
+		al_ungrab_mouse();
 }
 
 void
