@@ -2944,7 +2944,7 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 	if (type == 1) {
 		if (unit->o.type != UNIT_SANDWORM) {
 			Tile_RemoveFogInRadius(House_GetAllies(Unit_GetHouseID(unit)),
-					UNVEILCAUSE_UNIT_UPDATE, position, 1);
+					UNVEILCAUSE_UNIT_UPDATE, position, g_table_unitInfo[unit->o.type].o.fogUncoverRadius);
 		}
 
 		if (Object_GetByPackedTile(packed) == NULL) {
