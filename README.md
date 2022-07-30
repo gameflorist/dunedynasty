@@ -1,10 +1,8 @@
-Dune Dynasty
-============
+# Dune Dynasty
 
 Classic Dune. Modern Controls.
 
-About
------
+## About
 
 Dune Dynasty is a continuation of the classic real-time strategy game
 Dune II by Westwood Studios.  It is not a remake.  It builds upon the
@@ -38,39 +36,53 @@ release and source download of the game.
 [![Screenshot]][Screenshot]
 
 
-Download
---------
+## Download
 
-[Download] the source code or Windows binaries from the [SourceForge]
+[Download] the source code or Windows binaries from the [Github]
 project page.
 
 Read the list of [changes].
 
 
-Compiling from source
----------------------
-(Skip this if you are using precompiled Windows binaries.)
+## Compiling from source
+
+*Skip this if you are using precompiled Windows binaries.*
+
+### Source dependencies
+
+*Skip this if you are using installed OS packages.*
 
 You will need [CMake] and [Allegro 5].  [FluidSynth] and [MAD] are
 optional dependencies.
 
-    cmake .
-    make
+### OS dependencies
 
-Alternatively, you can use an out-of-source build:
+#### Debian, Ubuntu
 
-    mkdir Build
-    cd Build
-    cmake ..
-    make
+```
+sudo apt install liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
+```
+
+#### MacOs
+
+```
+brew install allegro enet libmad fluidsynth
+export LDFLAGS="-L/opt/homebrew/lib"
+```
+
+### Build
+
+```
+cmake .
+make
+```
 
 The binary will be placed in the dist/ directory.
 
 
-Starting up
------------
+## Starting up
 
-You will need the *.PAK data files from the EU v1.07 release of Dune II.
+You will need the \*.PAK data files from the EU v1.07 release of Dune II.
 Place them into one of the following places:
 
  1. In a directory named `data` next to the dunedynasty executable.
@@ -81,19 +93,19 @@ Place them into one of the following places:
 
     On Unix, this will be:
 
-        ~/.local/share/dunedynasty/data
+        `~/.local/share/dunedynasty/data`
 
     On Windows, this will be something like:
 
-        C:\users\nobody\Application Data\Dune Dynasty\data
+        `C:\users\nobody\Application Data\Dune Dynasty\data`
 
     or
 
-        C:\users\nobody\AppData\Roaming\Dune Dynasty\data
+        `C:\users\nobody\AppData\Roaming\Dune Dynasty\data`
 
     or
 
-        C:\Documents and Settings\nobody\Application Data\Dune Dynasty\data
+        `C:\Documents and Settings\nobody\Application Data\Dune Dynasty\data`
 
  3. The system-wide directory as configured in the CMake variable
     `$DUNE_DATA_DIR/data`.
@@ -102,8 +114,7 @@ Once the data files are in place, you may start the game by running
 `dunedynasty.exe` or `dunedynasty`.
 
 
-Controls
---------
+## Controls
 
 The controls should be similar to most real-time strategy games.
 You can finally select multiple units by dragging a rectangle,
@@ -139,8 +150,7 @@ Double tap H or a control group number to centre on the
 construction yard or the control group.
 
 
-Configuration
--------------
+## Configuration
 
 The configuration file will be read from one of two places:
 
@@ -160,8 +170,26 @@ options.  You can modify the existing `dunedynasty.cfg` file or
 replace it with `dunedynasty.cfg-sample`.
 
 
-General MIDI music
-------------------
+## Saved games
+
+Saved games are located in the `save` directory next to `dunedynasty.cfg`.
+If no configuration file exists, they will be in placed in a personal
+data directory.
+
+On Unix this will be:
+
+    ~/.config/dunedynasty/save
+
+On Windows this will be something like:
+
+    C:\users\nobody\Application Data\Dune Dynasty\save
+
+Saved games from Dune II should work if placed there.
+
+
+## Tweaks
+
+### General MIDI music
 
 Dune Dynasty can play MIDI music via FluidSynth.  You will need
 to set the `sound_font` path in the configuration file to an
@@ -177,8 +205,7 @@ should start it with smaller buffer sizes to avoid the "drunk drummer" problem:
     timidity -iA -B 4,8
 
 
-External music packs
---------------------
+### External music packs
 
 Dune Dynasty can play various external music sets, e.g. music from Dune 2000.
 Each of these have their own subdirectory in the music/ directory.
@@ -204,26 +231,7 @@ include Dune 2000 music, but exclude "Robotix":
     ROBOTIX=0
 
 
-Saved games
------------
-
-Saved games are located in the `save` directory next to `dunedynasty.cfg`.
-If no configuration file exists, they will be in placed in a personal
-data directory.
-
-On Unix this will be:
-
-    ~/.config/dunedynasty/save
-
-On Windows this will be something like:
-
-    C:\users\nobody\Application Data\Dune Dynasty\save
-
-Saved games from Dune II should work if placed there.
-
-
-Custom campaigns
-----------------
+## Custom campaigns
 
 Dune Dynasty can play [fan-made campaigns] such as [Super Dune II Classic],
 [Stefan Hendriks' Atreides Campaign], and [Dune 2 eXtended].  These should
@@ -246,8 +254,7 @@ See MrFlibble's Alternative Scenarios (mfas/) as a simple example of
 scenarios stored in a PAK file.
 
 
-Acknowledgements
-----------------
+## Acknowledgements
 
 Thank you to:
 
@@ -274,22 +281,21 @@ Wesker.
 Westwood Studios, for an amazing game!
 
 
-Author
-------
+## Author
 
 David Wang <dswang@users.sourceforge.net>
 
 
 
 [OpenDUNE]: http://www.opendune.org/
-[Allegro 5]: http://alleg.sourceforge.net/
+[Allegro 5]: https://github.com/liballeg/allegro5
 [CMake]: http://www.cmake.org/
 [Timidity++]: http://timidity.sourceforge.net/
 [FluidSynth]: http://sourceforge.net/apps/trac/fluidsynth/
 [MAD]: http://www.underbit.com/products/mad/
-[Download]: http://sourceforge.net/projects/dunedynasty/files/
+[Download]: https://github.com/neg3ntropy/dunedynasty/
 [Screenshot]: http://sourceforge.net/projects/dunedynasty/screenshots/screenshot_hark2.png "Screenshot"
-[SourceForge]: http://sourceforge.net/projects/dunedynasty/
+[Github]: https://github.com/neg3ntropy/dunedynasty/
 [Fan-made campaigns]: http://forum.dune2k.com/topic/20526-dune-ii-goodies-extras/
 [Super Dune II Classic]: http://forum.dune2k.com/topic/20065-super-dune-ii-classic/
 [Stefan Hendriks' Atreides Campaign]: http://arrakis.dune2k.com/downloads.html
