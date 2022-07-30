@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include "buildcfg.h"
 #include "../os/common.h"
@@ -79,8 +80,10 @@ Audio_ScanMusic(void)
 				goto count_song;
 
 			/* External music. */
-			char buf[1024];
+			char buf[PATH_MAX];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 #ifdef WITH_ACODEC
 			snprintf(buf, sizeof(buf), "%s/%s.flac", g_dune_data_dir, m->filename);
 			if (stat(buf, &st) == 0)
@@ -104,6 +107,7 @@ Audio_ScanMusic(void)
 			if (stat(buf, &st) == 0)
 				goto found_song;
 #endif
+#pragma GCC diagnostic pop
 
 			m->enable &=~MUSIC_FOUND;
 			if (verbose) fprintf(stdout, "[missing] %s\n", m->filename);

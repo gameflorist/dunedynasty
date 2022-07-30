@@ -68,7 +68,7 @@ GUI_Mentat_HelpListLoop(int key)
 		Widget *w = GUI_Widget_Get_ByIndex(g_widgetMentatTail, 15);
 
 		switch (key) {
-			case 0x80 | MOUSE_ZAXIS:
+			case 0x80 | SCANCODE_MOUSE_ZAXIS:
 			case SCANCODE_KEYPAD_8: /* NUMPAD 8 / ARROW UP */
 			case SCANCODE_KEYPAD_2: /* NUMPAD 2 / ARROW DOWN */
 			case SCANCODE_KEYPAD_9: /* NUMPAD 9 / PAGE UP */
@@ -76,7 +76,7 @@ GUI_Mentat_HelpListLoop(int key)
 				Scrollbar_HandleEvent(w, key);
 				break;
 
-			case MOUSE_LMB:
+			case SCANCODE_MOUSE_LMB:
 				break;
 
 			case 0x8003:
@@ -610,7 +610,7 @@ MentatHelp_Tick(MentatState *mentat)
 		if (widgetID != 0x8001) {
 			const int key = widgetID;
 
-			if (key == SCANCODE_ESCAPE || key == SCANCODE_SPACE || key == MOUSE_LMB || key == MOUSE_RMB)
+			if (key == SCANCODE_ESCAPE || key == SCANCODE_SPACE || key == SCANCODE_MOUSE_LMB || key == SCANCODE_MOUSE_RMB)
 				MentatBriefing_AdvanceText(mentat);
 		}
 	}

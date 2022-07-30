@@ -121,7 +121,7 @@ InputA5_ProcessEvent(ALLEGRO_EVENT *event, bool apply_mouse_transform)
 			mouse_event |= SCANCODE_RELEASE;
 			/* Fall through. */
 		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-			mouse_event |= MOUSE_LMB - (event->mouse.button - 1);
+			mouse_event |= SCANCODE_MOUSE_LMB - (event->mouse.button - 1);
 			/* Fall through. */
 		case ALLEGRO_EVENT_MOUSE_AXES:
 			g_mouseDX += event->mouse.dx;

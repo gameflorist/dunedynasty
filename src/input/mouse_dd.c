@@ -50,7 +50,7 @@ Mouse_EventHandler(bool apply_transform, int x, int y, int dz, enum Scancode sta
 	g_mouseDZ = dz;
 
 	if (dz != 0)
-		Input_EventHandler(SCANCODE_RELEASE | MOUSE_ZAXIS);
+		Input_EventHandler(SCANCODE_RELEASE | SCANCODE_MOUSE_ZAXIS);
 
 	if (state == 0)
 		return;

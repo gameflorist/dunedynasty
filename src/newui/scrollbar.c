@@ -420,7 +420,7 @@ Scrollbar_HandleEvent(Widget *w, int key)
 	WidgetScrollbar *ws = w->data;
 
 	switch (key) {
-		case 0x80 | MOUSE_ZAXIS:
+		case 0x80 | SCANCODE_MOUSE_ZAXIS:
 			if (g_mouseDZ > 0) {
 				Scrollbar_ArrowUp_Click(w);
 			} else if (g_mouseDZ < 0) {

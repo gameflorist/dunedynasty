@@ -245,8 +245,8 @@ MenuBar_TickModalMessage(void)
 		if (narrator_speaking)
 			return false;
 
-		if (key == MOUSE_LMB
-		 || key == MOUSE_RMB
+		if (key == SCANCODE_MOUSE_LMB
+		 || key == SCANCODE_MOUSE_RMB
 		 || key == SCANCODE_ESCAPE
 		 || key == SCANCODE_SPACE) {
 			return true;

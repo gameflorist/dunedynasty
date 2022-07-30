@@ -312,10 +312,13 @@ AudioA5_InitAdlib(const MusicInfo *mid)
 	return stream;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
+
 static ALLEGRO_AUDIO_STREAM *
 AudioA5_InitFlac(const char *filename)
 {
-	char fn[1024];
+	char fn[PATH_MAX];
 
 	snprintf(fn, sizeof(fn), "%s/%s.flac", g_dune_data_dir, filename);
 	return al_load_audio_stream(fn, NUMFRAGS, FRAGLEN);
@@ -324,7 +327,7 @@ AudioA5_InitFlac(const char *filename)
 static MP3 *
 AudioA5_InitMp3(const char *filename)
 {
-	char fn[1024];
+	char fn[PATH_MAX];
 
 	snprintf(fn, sizeof(fn), "%s/%s.mp3", g_dune_data_dir, filename);
 
@@ -334,7 +337,7 @@ AudioA5_InitMp3(const char *filename)
 static ALLEGRO_AUDIO_STREAM *
 AudioA5_InitOgg(const char *filename)
 {
-	char fn[1024];
+	char fn[PATH_MAX];
 
 	snprintf(fn, sizeof(fn), "%s/%s.ogg", g_dune_data_dir, filename);
 	return al_load_audio_stream(fn, NUMFRAGS, FRAGLEN);
@@ -343,7 +346,7 @@ AudioA5_InitOgg(const char *filename)
 static AUDSTREAM *
 AudioA5_InitAud(const char *filename)
 {
-	char fn[1024];
+	char fn[PATH_MAX];
 
 	snprintf(fn, sizeof(fn), "%s/%s.AUD", g_dune_data_dir, filename);
 
@@ -353,6 +356,8 @@ AudioA5_InitAud(const char *filename)
 
 	return load_aud_stream(f);
 }
+
+#pragma GCC diagnostic pop
 
 static void
 AudioA5_FreeMusicStream(void)

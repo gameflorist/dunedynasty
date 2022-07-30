@@ -60,13 +60,15 @@ optional dependencies.
 #### Debian, Ubuntu
 
 ```
-sudo apt install liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
+sudo apt -y install cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
 ```
 
 #### MacOs
 
+Install [Homebrew].
+
 ```
-brew install allegro enet libmad fluidsynth
+brew install cmake allegro enet libmad fluidsynth
 export LDFLAGS="-L/opt/homebrew/lib"
 ```
 
@@ -77,7 +79,7 @@ cmake .
 make
 ```
 
-The binary will be placed in the dist/ directory.
+The binary will be placed in the `dist/` directory.
 
 
 ## Starting up
@@ -93,19 +95,19 @@ Place them into one of the following places:
 
     On Unix, this will be:
 
-        `~/.local/share/dunedynasty/data`
+        ~/.local/share/dunedynasty/data
 
     On Windows, this will be something like:
 
-        `C:\users\nobody\Application Data\Dune Dynasty\data`
+        C:\users\nobody\Application Data\Dune Dynasty\data
 
     or
 
-        `C:\users\nobody\AppData\Roaming\Dune Dynasty\data`
+        C:\users\nobody\AppData\Roaming\Dune Dynasty\data
 
     or
 
-        `C:\Documents and Settings\nobody\Application Data\Dune Dynasty\data`
+        C:\Documents and Settings\nobody\Application Data\Dune Dynasty\data
 
  3. The system-wide directory as configured in the CMake variable
     `$DUNE_DATA_DIR/data`.
@@ -281,23 +283,25 @@ Wesker.
 Westwood Studios, for an amazing game!
 
 
-## Author
+## Authors
 
-David Wang <dswang@users.sourceforge.net>
-
+- David Wang <dswang@users.sourceforge.net> https://github.com/wangds/ - original author
+- Andrea Ratto <aratto@topcon.com> https://github.com/neg3ntropy/ - compilation fixes and graphics updates
+- Zbynek Vyskovsky <kvr000@gmail.com> https://github.com/kvr000/ - compilation fixes and other polishing
 
 
 [OpenDUNE]: http://www.opendune.org/
+[Homebrew]: https://docs.brew.sh/Installation
 [Allegro 5]: https://github.com/liballeg/allegro5
 [CMake]: http://www.cmake.org/
 [Timidity++]: http://timidity.sourceforge.net/
 [FluidSynth]: http://sourceforge.net/apps/trac/fluidsynth/
 [MAD]: http://www.underbit.com/products/mad/
-[Download]: https://github.com/neg3ntropy/dunedynasty/
+[Download]: ./
 [Screenshot]: http://sourceforge.net/projects/dunedynasty/screenshots/screenshot_hark2.png "Screenshot"
-[Github]: https://github.com/neg3ntropy/dunedynasty/
+[Github]: ./
 [Fan-made campaigns]: http://forum.dune2k.com/topic/20526-dune-ii-goodies-extras/
 [Super Dune II Classic]: http://forum.dune2k.com/topic/20065-super-dune-ii-classic/
 [Stefan Hendriks' Atreides Campaign]: http://arrakis.dune2k.com/downloads.html
 [Dune 2 eXtended]: http://forum.dune2k.com/topic/18360-dune-2-extended-project/
-[changes]: changes.html
+[changes]: CHANGES.txt

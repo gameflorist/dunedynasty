@@ -936,7 +936,7 @@ void MPU_ClearData(uint16 index)
 void MPU_SetVolume(uint16 index, uint16 volume, uint16 arg0C)
 {
 	MSData *data;
-	uint16 diff;
+	int32_t diff;
 
 	if (index == 0xFFFF) return;
 

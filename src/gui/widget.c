@@ -238,10 +238,10 @@ GUI_Widget_HandleEventsKey(Widget *w, uint16 key)
 		s_widgetReset = false;
 
 		/* Check for left click */
-		if (Input_Test(MOUSE_LMB)) l_widget_button_state |= 0x0200;
+		if (Input_Test(SCANCODE_MOUSE_LMB)) l_widget_button_state |= 0x0200;
 
 		/* Check for right click */
-		if (Input_Test(MOUSE_RMB)) l_widget_button_state |= 0x2000;
+		if (Input_Test(SCANCODE_MOUSE_RMB)) l_widget_button_state |= 0x2000;
 
 #if 0
 		/* Draw all the widgets */
@@ -261,8 +261,8 @@ GUI_Widget_HandleEventsKey(Widget *w, uint16 key)
 			/* if ((key & 0x00FF) == 0xC7) buttonStateChange = 0x1000; */
 			/* if ((key & 0x00FF) == 0xC6) buttonStateChange = 0x0100; */
 		} else {
-			if ((key & 0x007F) == MOUSE_RMB) buttonStateChange = 0x1000;
-			if ((key & 0x007F) == MOUSE_LMB) buttonStateChange = 0x0100;
+			if ((key & 0x007F) == SCANCODE_MOUSE_RMB) buttonStateChange = 0x1000;
+			if ((key & 0x007F) == SCANCODE_MOUSE_LMB) buttonStateChange = 0x0100;
 		}
 
 		/* Mouse button up */
@@ -470,7 +470,7 @@ GUI_Widget_HandleEventsKey(Widget *w, uint16 key)
 #endif
 
 		/* XXX: Always click hovered object on mouse wheel event. */
-		if (widgetHover && ((key & 0x7F) == MOUSE_ZAXIS)) {
+		if (widgetHover && ((key & 0x7F) == SCANCODE_MOUSE_ZAXIS)) {
 			widgetClick = true;
 		}
 

@@ -274,7 +274,7 @@ SaveMenu_SaveLoad_Click(bool save)
 	uint16 key = GUI_Widget_HandleEvents(w);
 	int ret = 0;
 
-	if (key == (0x80 | MOUSE_ZAXIS)) {
+	if (key == (0x80 | SCANCODE_MOUSE_ZAXIS)) {
 		if ((g_mouseDZ > 0) && (!g_table_windowWidgets[7].flags.invisible)) {
 			key = 0x8025;
 		} else if ((g_mouseDZ < 0) && (!g_table_windowWidgets[8].flags.invisible)) {

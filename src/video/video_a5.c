@@ -629,16 +629,19 @@ VideoA5_Tick(void)
 	if (take_screenshot) {
 		struct tm *tm;
 		time_t timep;
-		char filename[1024];
-		char filepath[1024];
+		char filename[PATH_MAX];
+		char filepath[PATH_MAX];
 
 		take_screenshot = false;
 
 		timep = time(NULL);
 		tm = localtime(&timep);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 		strftime(filename, sizeof(filename), "screenshot_%Y%m%d_%H%M%S.png", tm);
 		snprintf(filepath, sizeof(filepath), "%s/%s", g_personal_data_dir, filename);
+#pragma GCC diagnostic pop
 
 		al_save_bitmap(filepath, al_get_backbuffer(display));
 		fprintf(stdout, "screenshot: %s\n", filepath);
@@ -1753,8 +1756,11 @@ VideoA5_MaskDebrisTiles(ALLEGRO_BITMAP *membmp)
 		{ 64, 32, ICM_ICONGROUP_HOUSE_PALACE, 17 },
 	};
 
-	char filename[1024];
+	char filename[PATH_MAX];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 	snprintf(filename, sizeof(filename), "%s/gfx/rubblemask.png", g_dune_data_dir);
+#pragma GCC diagnostic pop
 
 	ALLEGRO_BITMAP *mask = al_load_bitmap(filename);
 	if (mask == NULL)

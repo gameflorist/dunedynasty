@@ -308,10 +308,13 @@ Menu_SortCampaigns(const void *a, const void *b)
 static void
 Menu_ScanCampaigns(void)
 {
-	char dirname[1024];
+	char dirname[PATH_MAX];
 	ALLEGRO_FS_ENTRY *e, *f;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 	snprintf(dirname, sizeof(dirname), "%s/campaign/", g_dune_data_dir);
+#pragma GCC diagnostic pop
 
 	e = al_create_fs_entry(dirname);
 	if (!e)
@@ -1248,7 +1251,7 @@ StrategicMap_InputLoop(int campaignID, StrategicMapData *map)
 		if (Input_IsInputAvailable()) {
 			const int key = Input_GetNextKey();
 
-			if (key == SCANCODE_ESCAPE || key == SCANCODE_SPACE || key == MOUSE_LMB || key == MOUSE_RMB)
+			if (key == SCANCODE_ESCAPE || key == SCANCODE_SPACE || key == SCANCODE_MOUSE_LMB || key == SCANCODE_MOUSE_RMB)
 				map->fast_forward = true;
 		}
 	}

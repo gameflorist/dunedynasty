@@ -157,7 +157,7 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 			}
 		}
 	} else {
-		if (Input_Test(MOUSE_LMB) == 0 && Input_Test(MOUSE_RMB) == 0) {
+		if (Input_Test(SCANCODE_MOUSE_LMB) == 0 && Input_Test(SCANCODE_MOUSE_RMB) == 0) {
 			if (movingMouthSprite != 0) {
 				movingMouthSprite = 0;
 				movingMouthTimer = 0;
@@ -175,7 +175,7 @@ GUI_Mentat_Animation(enum MentatID mentatID, uint16 speakingMode)
 		}
 	}
 
-	if (Input_Test(MOUSE_LMB) != 0 || Input_Test(MOUSE_RMB) != 0) {
+	if (Input_Test(SCANCODE_MOUSE_LMB) != 0 || Input_Test(SCANCODE_MOUSE_RMB) != 0) {
 		if (Mouse_InRegion(s_eyesLeft, s_eyesTop, s_eyesRight, s_eyesBottom) != 0) {
 			if (movingEyesSprite != 0x4) {
 				movingEyesSprite = (movingEyesSprite == 3) ? 4 : 3;

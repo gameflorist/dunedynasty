@@ -8,13 +8,7 @@
 	#define sleep(x) Sleep(x * 1000)
 	#define msleep(x) Sleep(x)
 #else
-	#if !defined(__USE_BSD)
-		#define __USE_BSD
-		#include <unistd.h>
-		#undef __USE_BSD
-	#else
-		#include <unistd.h>
-	#endif /* __USE_BSD */
+	#include <unistd.h>
 
 	#define msleep(x) usleep(x * 1000)
 #endif /* _WIN32 */

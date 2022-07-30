@@ -71,7 +71,7 @@ Cutscene_InputSkipScene(void)
 
 		if (key == SCANCODE_ESCAPE ||
 			key == SCANCODE_SPACE ||
-			key == MOUSE_RMB)
+			key == SCANCODE_MOUSE_RMB)
 			return true;
 
 		Input_GetNextKey();

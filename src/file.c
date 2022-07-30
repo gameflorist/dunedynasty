@@ -37,8 +37,8 @@ typedef struct File {
 static File s_file[FILE_MAX];
 static FileInfo s_hash_file[HASH_SIZE];
 
-char g_dune_data_dir[1024];
-char g_personal_data_dir[1024];
+char g_dune_data_dir[PATH_MAX];
+char g_personal_data_dir[PATH_MAX];
 
 extern const FileInfo g_table_fileInfo[FILEINFO_MAX];
 

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 
 project(dunedynasty)
-set(DUNE_DYNASTY_VERSION 1.5)
+set(DUNE_DYNASTY_VERSION 1.6)
 
 set(DUNE_DATA_DIR "." CACHE PATH "Directory containing game data")
 option(WITH_ACODEC "FLAC and Ogg Vorbis music" ON)

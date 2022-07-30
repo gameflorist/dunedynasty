@@ -268,7 +268,7 @@ MapOptionsLobby_UpdateReadOnlyView(void)
 		/* Propagate server changes in read-only mode. */
 		snprintf(map_options_starting_credits, sizeof(map_options_starting_credits), "%d", g_multiplayer.credits);
 		if (g_multiplayer.seed_mode == MAP_SEED_MODE_SURPRISE) {
-			snprintf(map_options_fixed_seed, sizeof(map_options_fixed_seed), "");
+			strcpy(map_options_fixed_seed, "");
 		} else {
 			snprintf(map_options_fixed_seed, sizeof(map_options_fixed_seed), "%d", g_multiplayer.next_seed);
 		}
@@ -1134,7 +1134,7 @@ SkirmishLobby_Loop(void)
 				ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
 				enum Brain new_brain = *(si->d.brain);
 
-				if (Input_Test(MOUSE_RMB)) {
+				if (Input_Test(SCANCODE_MOUSE_RMB)) {
 					new_brain = BRAIN_NONE;
 				} else {
 					const int change_player = (widgetID == SCANCODE_KEYPAD_4) ? -1 : 1;
@@ -1290,7 +1290,7 @@ MultiplayerLobby_Loop(void)
 				w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 3);
 				ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
 
-				if (widgetID == SCANCODE_KEYPAD_4 || Input_Test(MOUSE_RMB)) {
+				if (widgetID == SCANCODE_KEYPAD_4 || Input_Test(SCANCODE_MOUSE_RMB)) {
 					if (Net_GetClientHouse(g_local_client_id) == si->d.offset)
 						Client_Send_PrefHouse(HOUSE_INVALID);
 				} else {

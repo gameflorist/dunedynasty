@@ -1,6 +1,14 @@
 Dune Dynasty
 ============
 
+Version 1.6.0, 2022-07-30
+-------------------------
+
+  - Fix compiler errors due to outdated code.
+  - Fix many compiler warnings.
+  - Updated the README.md to point to up to date references.
+
+
 Version 1.5.7, 2013-08-18
 -------------------------
 

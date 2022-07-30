@@ -4,6 +4,7 @@
 #define FILE_H
 
 #include <stdio.h>
+#include <limits.h>
 #include "types.h"
 
 enum {
@@ -39,8 +40,8 @@ typedef struct FileInfo {
 	} flags;                                                /*!< General flags of the FileInfo. */
 } FileInfo;
 
-extern char g_dune_data_dir[1024];
-extern char g_personal_data_dir[1024];
+extern char g_dune_data_dir[PATH_MAX];
+extern char g_personal_data_dir[PATH_MAX];
 
 extern void FileHash_Init(void);
 extern FileInfo *FileHash_Store(const char *key);

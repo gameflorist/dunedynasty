@@ -209,7 +209,7 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 			}
 			break;
 
-		case 0x80 | MOUSE_ZAXIS:
+		case 0x80 | SCANCODE_MOUSE_ZAXIS:
 			if (g_mouseDZ == 0)
 				break;
 
@@ -228,7 +228,7 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 				if (Mouse_InRegion_Div(SCREENDIV_SIDEBAR, w->xBase, w->yBase, w->xBase + w->width - 1, w->yBase + w->height - 1))
 					break;
 			}
-			/* Fall though. */
+			/* Fall through. */
 		case SCANCODE_MINUS:
 		case SCANCODE_EQUALS:
 		case SCANCODE_KEYPAD_MINUS:
@@ -250,7 +250,7 @@ GameLoop_Client_ProcessGameInput(bool init_transform, uint16 key)
 				int new_scale;
 
 				/* For mouse wheel zooming in, zoom towards the cursor. */
-				if ((key == (0x80 | MOUSE_ZAXIS)) && (g_mouseDZ > 0)) {
+				if ((key == (0x80 | SCANCODE_MOUSE_ZAXIS)) && (g_mouseDZ > 0)) {
 					const ScreenDiv *div = &g_screenDiv[SCREENDIV_VIEWPORT];
 
 					if (Mouse_InRegion_Div(SCREENDIV_VIEWPORT, 0, 0, div->width, div->height)) {

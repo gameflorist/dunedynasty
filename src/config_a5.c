@@ -254,7 +254,7 @@ Config_SaveCampaignCompletion(void)
 		return;
 
 	const Campaign *camp = &g_campaign_list[g_campaign_selected];
-	char filename[1024];
+	char filename[PATH_MAX];
 
 	if (s_configFile == NULL) {
 		s_configFile = Config_CreateConfigFile();
@@ -275,7 +275,10 @@ Config_SaveCampaignCompletion(void)
 		al_set_config_value(s_configFile, "completion", key, value);
 	}
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
+#pragma GCC diagnostic pop
 	al_save_config_file(filename, s_configFile);
 }
 
@@ -524,11 +527,11 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 	const char *dune_data_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
 	const char *user_data_cstr = al_path_cstr(user_data_path, ALLEGRO_NATIVE_PATH_SEP);
 	const char *user_settings_cstr = al_path_cstr(user_settings_path, ALLEGRO_NATIVE_PATH_SEP);
-	char filename[1024];
+	char filename[PATH_MAX];
 	FILE *fp;
 
 	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
-	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), "%s", dune_data_cstr);
+	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir)-1, "%s", dune_data_cstr);
 
 	/* Find global data directory.  Test we can read DUNE.PAK. */
 
@@ -561,15 +564,18 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 	/* Find personal directory, and create subdirectories. */
 
 	/* 1. Try current executable directory/dunedynasty.cfg. */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
 	s_configFile = al_load_config_file(filename);
 
 	/* 2. Try ~/.config/dunedynasty/dunedynasty.cfg. */
 	if (s_configFile == NULL) {
-		snprintf(g_personal_data_dir, sizeof(g_personal_data_dir), "%s", user_settings_cstr);
+		snprintf(g_personal_data_dir, sizeof(g_personal_data_dir)-1, "%s", user_settings_cstr);
 		snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
 		s_configFile = al_load_config_file(filename);
 	}
+#pragma GCC diagnostic pop
 
 	if (!al_make_directory(g_personal_data_dir)) {
 		fprintf(stderr, "Could not create %s!\n", filename);
@@ -683,21 +689,24 @@ GameOptions_Load(void)
 	/* Music configuration. */
 	for (enum MusicSet music_set = MUSICSET_DUNE2_ADLIB; music_set < NUM_MUSIC_SETS; music_set++) {
 		ALLEGRO_CONFIG *config = NULL;
-		char category[1024];
+		char category[PATH_MAX];
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 		if (music_set <= MUSICSET_FLUIDSYNTH) {
-			char filename[1024];
+			char filename[PATH_MAX];
 
 			snprintf(filename, sizeof(filename), "%smusic/music.cfg", g_dune_data_dir);
 			config = al_load_config_file(filename);
 
 			snprintf(category, sizeof(category), "%s", g_table_music_set[music_set].prefix);
 		} else if (g_table_music_set[music_set].enable || music_set == default_music_pack) {
-			char filename[1024];
+			char filename[PATH_MAX];
 
 			snprintf(filename, sizeof(filename), "%smusic/%s/volume.cfg", g_dune_data_dir, g_table_music_set[music_set].prefix);
 			config = al_load_config_file(filename);
 		}
+#pragma GCC diagnostic pop
 
 		for (enum MusicID musicID = MUSIC_LOGOS; musicID < MUSICID_MAX; musicID++) {
 			MusicList *l = &g_table_music[musicID];
@@ -747,7 +756,7 @@ GameOptions_Load(void)
 void
 GameOptions_Save(void)
 {
-	char filename[1024];
+	char filename[PATH_MAX];
 
 	if (s_configFile == NULL) {
 		s_configFile = Config_CreateConfigFile();
@@ -820,6 +829,9 @@ GameOptions_Save(void)
 		}
 	}
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
+#pragma GCC diagnostic pop
 	al_save_config_file(filename, s_configFile);
 }

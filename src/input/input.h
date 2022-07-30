@@ -4,13 +4,6 @@
 #include <stdbool.h>
 #include "scancode.h"
 
-/* "Scancodes" for mouse events, stored from 0x7F backwards. */
-enum {
-	MOUSE_ZAXIS = 0x7F,
-	MOUSE_LMB = 0x7E,
-	MOUSE_RMB = 0x7D
-};
-
 enum InputMouseMode {
 	INPUT_MOUSE_MODE_NORMAL = 0,
 	INPUT_MOUSE_MODE_RECORD = 1,
