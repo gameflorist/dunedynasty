@@ -506,17 +506,21 @@ MenuBar_DrawGameControlLabel(Widget *w)
 static bool
 MenuBar_ClickRadioButton(Widget *radio)
 {
-	const int visible_widgets[3][4 + 5*3 + 1] = {
-		{ 35, 90, 91, 92,
+	const int visible_widgets[4][5 + 5*3 + 1] = {
+		{ 35, 90, 91, 92, 93,
 		  20, 30, 100, 21, 31, 101, 22, 32, 102, 23, 33, 103, 24, 34, 104,
 		  -1
 		},
-		{ 35, 90, 91, 92,
+		{ 35, 90, 91, 92, 93,
 		  40, 50, 110, 41, 51, 111, 42, 52, 112, 43, 53, 113, 44, 54, 114,
 		  -1
 		},
-		{ 35, 90, 91, 92,
+		{ 35, 90, 91, 92, 93,
 		  60, 70, 120, 61, 71, 121, 62, 72, 122, 63, 73, 123, 64, 74, 124,
+		  -1
+		},
+		{ 35, 90, 91, 92, 93,
+		  45, 55, 115, 46, 56, 116, 47, 57, 117,
 		  -1
 		},
 	};
@@ -611,6 +615,48 @@ MenuBar_ClickPanSensitivitySlider(Widget *w)
 	return true;
 }
 
+static bool
+MenuBar_ClickMenubarScaleSlider(Widget *w)
+{
+	if (Slider_Click(w)) {
+		const SliderData *data = w->data;
+
+		g_screenDiv[SCREENDIV_MENUBAR].scalex = data->curr;
+		A5_InitTransform(false);
+		GameLoop_TweakWidgetDimensions();
+	}
+
+	return true;
+}
+
+static bool
+MenuBar_ClickSidebarScaleSlider(Widget *w)
+{
+	if (Slider_Click(w)) {
+		const SliderData *data = w->data;
+
+		g_screenDiv[SCREENDIV_SIDEBAR].scalex = data->curr;
+		A5_InitTransform(false);
+		GameLoop_TweakWidgetDimensions();
+	}
+
+	return true;
+}
+
+static bool
+MenuBar_ClickViewportScaleSlider(Widget *w)
+{
+	if (Slider_Click(w)) {
+		const SliderData *data = w->data;
+
+		g_screenDiv[SCREENDIV_VIEWPORT].scalex = data->curr;
+		A5_InitTransform(false);
+		GameLoop_TweakWidgetDimensions();
+	}
+
+	return true;
+}
+
 static void
 MenuBar_CreateGameControls(void)
 {
@@ -625,6 +671,10 @@ MenuBar_CreateGameControls(void)
 	 * 42, 52       -- scrolling edge label, on/off.
 	 * 43, 53, 113  -- auto scroll label, on/off, slider.
 	 * 44, 54, 114  -- pan sensitivity label, slider.
+	 * 
+	 * 45, 55, 115  -- menubar scale label, slider.
+	 * 46, 56, 116  -- sidebar scale label, slider.
+	 * 47, 57, 117  -- viewport scale label, slider.
 	 *
 	 * 60, 70   -- health bars label, off/on/always on.
 	 * 61, 71   -- hi-res overlays label, off/on.
@@ -633,7 +683,7 @@ MenuBar_CreateGameControls(void)
 	 * 64, 74   -- hardware mouse cursor label, off/on.
 	 *
 	 * 25 -- previous.
-	 * 90, 91, 92   -- radio buttons.
+	 * 90, 91, 92, 93   -- radio buttons.
 	 */
 
 	const WindowDesc *desc = &g_gameControlWindowDesc;
@@ -642,7 +692,7 @@ MenuBar_CreateGameControls(void)
 	GUI_Window_Create(&g_gameControlWindowDesc);
 
 	/* Radio buttons. */
-	for (int page = 0; page < 3; page++) {
+	for (int page = 0; page < 4; page++) {
 		w = GUI_Widget_Allocate(90 + page, 0, 8 + 10 * page, g_widgetProperties[g_gameControlWindowDesc.index].height - 17, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
 		w->parentID = g_gameControlWindowDesc.index;
 		w->clickProc = MenuBar_ClickRadioButton;
@@ -666,6 +716,9 @@ MenuBar_CreateGameControls(void)
 		{ 42, 2, "Scrolling edge" },
 		{ 43, 3, String_Get_ByIndex(STR_AUTO_SCROLL_IS) },
 		{ 44, 4, "Pan sensitivity" },
+		{ 45, 0, "Menubar Scale" },
+		{ 46, 1, "Sidebar Scale" },
+		{ 47, 2, "Viewport Scale" },
 		{ 60, 0, "Health bars" },
 		{ 61, 1, "Hi-res overlays" },
 		{ 62, 2, "Smooth unit animation" },
@@ -730,6 +783,9 @@ MenuBar_CreateGameControls(void)
 		{ 101, 180, 1, 0, 20, 2, MenuBar_ClickSoundVolumeSlider },
 		{ 113, 180, 3, 0,  4, 1, MenuBar_ClickScrollSpeedSlider },
 		{ 114, 131, 4, 2,  8, 1, MenuBar_ClickPanSensitivitySlider },
+		{ 115, 131, 0, 1,  8, 1, MenuBar_ClickMenubarScaleSlider },
+		{ 116, 131, 1, 1,  8, 1, MenuBar_ClickSidebarScaleSlider },
+		{ 117, 131, 2, 1,  8, 1, MenuBar_ClickViewportScaleSlider },
 	};
 
 	for (unsigned int i = 0; i < lengthof(slider); i++) {
@@ -750,6 +806,9 @@ MenuBar_CreateGameControls(void)
 			case 101: data->curr = 20 * sound_volume; break;
 			case 113: data->curr = clamp(data->min, (g_gameConfig.scrollSpeed / 4), data->max); break;
 			case 114: data->curr = clamp(data->min, g_gameConfig.panSensitivity / 0.25f, data->max); break;
+			case 115: data->curr = clamp(data->min, g_screenDiv[SCREENDIV_MENUBAR].scalex, data->max); break;
+			case 116: data->curr = clamp(data->min, g_screenDiv[SCREENDIV_SIDEBAR].scalex, data->max); break;
+			case 117: data->curr = clamp(data->min, g_screenDiv[SCREENDIV_VIEWPORT].scalex, data->max); break;
 			default: assert(false); break;
 		}
 
