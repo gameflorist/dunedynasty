@@ -14,6 +14,7 @@
 #include "mt32mpu.h"
 
 #include "midi.h"
+#include <stdint.h>
 
 #if 0
 static Semaphore s_mpu_sem = NULL;
