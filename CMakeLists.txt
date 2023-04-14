@@ -157,8 +157,7 @@ target_link_libraries(dunedynasty
 install(TARGETS dunedynasty DESTINATION "bin")
 install(FILES
 	${CMAKE_SOURCE_DIR}/CHANGES.txt
-	${CMAKE_SOURCE_DIR}/COPYING
-	${CMAKE_SOURCE_DIR}/README_dd.txt
+	${CMAKE_SOURCE_DIR}/LICENSE.txt
 	${CMAKE_SOURCE_DIR}/enhancement.txt
 	${CMAKE_SOURCE_DIR}/opendune.txt
 	${CMAKE_SOURCE_DIR}/dist/dunedynasty.cfg-sample
