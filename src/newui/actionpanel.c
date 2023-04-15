@@ -52,8 +52,6 @@ enum FactoryPanelLayout {
 	FACTORYPANEL_LARGE_ICON_FLAG    = 0x01,
 	FACTORYPANEL_SCROLL_FLAG        = 0x02,
 	FACTORYPANEL_STARPORT_FLAG      = 0x04,
-
-	FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL = 0x00,
 };
 
 FactoryWindowItem g_factoryWindowItems[MAX_FACTORY_WINDOW_ITEMS];
@@ -79,14 +77,11 @@ ActionPanel_CalculateOptimalLayout(const Widget *widget, bool is_starport)
 		s_factory_panel_layout
 			= (is_starport ? FACTORYPANEL_STARPORT_FLAG : 0)
 			| (FACTORYPANEL_SCROLL_FLAG | FACTORYPANEL_LARGE_ICON_FLAG);
-	} else if (h >= 3 * SMALL_PRODUCTION_ICON_MIN_STRIDE) {
+	} else {
 		/* Use small icons with the scroll and send order buttons if they fit. */
 		s_factory_panel_layout
 			= (is_starport ? FACTORYPANEL_STARPORT_FLAG : 0)
 			| FACTORYPANEL_SCROLL_FLAG;
-	} else {
-		/* Otherwise, use small icons, without the scroll and send order buttons. */
-		s_factory_panel_layout = FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL;
 	}
 }
 
@@ -347,13 +342,8 @@ ActionPanel_ScrollButtonDimensions(const Widget *widget, bool up,
 {
 	int x, y;
 
-	if (s_factory_panel_layout == FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) {
-		x = widget->offsetX + widget->width - SCROLL_BUTTON_WIDTH - 1;
-		y = widget->offsetY + widget->height / 2 - (up ? SCROLL_BUTTON_HEIGHT : 0);
-	} else {
-		x = widget->offsetX + (up ? 5 : 31);
-		y = widget->offsetY + ActionPanel_ProductionListHeight(widget) + SCROLL_BUTTON_MARGIN / 2;
-	}
+	x = widget->offsetX + (up ? 5 : 31);
+	y = widget->offsetY + ActionPanel_ProductionListHeight(widget) + SCROLL_BUTTON_MARGIN / 2;
 
 	if (x1 != NULL) *x1 = x;
 	if (y1 != NULL) *y1 = y;
@@ -598,13 +588,11 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s, uint16 scancode)
 	if (scancode == 0) {
 		int x1, y1, x2, y2;
 
-		if (s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL) {
-			ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
-			if (action_plus && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
-				if (!House_StarportQueueEmpty(g_playerHouse))
-					Client_Send_SendStarportOrder(&s->o);
-				return true;
-			}
+		ActionPanel_SendOrderButtonDimensions(widget, &x1, &y1, &x2, &y2, NULL, NULL);
+		if (action_plus && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
+			if (!House_StarportQueueEmpty(g_playerHouse))
+				Client_Send_SendStarportOrder(&s->o);
+			return true;
 		}
 
 		if (ActionPanel_ScrollFactory(widget, s))
@@ -708,16 +696,14 @@ ActionPanel_DrawScrollButtons(const Widget *widget)
 	ActionPanel_ScrollButtonDimensions(widget, true, &x1, &y1, &x2, &y2);
 	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP_PRESSED, x1, y1, 0, 0);
-	} else if ((s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL)
-			|| Mouse_InRegion_Div(widget->div, x1, y1, x2, y2 + 15)) {
+	} else {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_UP, x1, y1, 0, 0);
 	}
 
 	ActionPanel_ScrollButtonDimensions(widget, false, &x1, &y1, &x2, &y2);
 	if (pressed && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2)) {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN_PRESSED, x1, y1, 0, 0);
-	} else if ((s_factory_panel_layout != FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL)
-			|| Mouse_InRegion_Div(widget->div, x1, y1 - 15, x2, y2)) {
+	} else {
 		Shape_Draw(SHAPE_SAVE_LOAD_SCROLL_DOWN, x1, y1, 0, 0);
 	}
 }
@@ -725,8 +711,6 @@ ActionPanel_DrawScrollButtons(const Widget *widget)
 static void
 ActionPanel_DrawStarportOrder(const Widget *widget)
 {
-	if (s_factory_panel_layout == FACTORYPANEL_SMALL_ICONS_WITHOUT_SCROLL)
-		return;
 
 	int x1, y1, x2, y2, w, h;
 	int fg;
