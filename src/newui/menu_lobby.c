@@ -781,22 +781,22 @@ PickLobby_Draw(void)
 			colours[i + 1] = 215 + i;
 
 		GUI_InitColors(colours, 0, 15);
-		Font_Select(g_fontIntro);
 		g_fontCharOffset = 0;
 	}
 
+	// make texts shadowed
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x1);
+
 	/* Skirmish */
 	Prim_DrawBorder( 11, 86, 102, 83, 1, false, false, 3);
-	GUI_DrawText("Skirmish", 25, 96, 144, 0);
+	GUI_DrawText_Wrapper("Skirmish", 61, 96, 0xF, 0, 0x122);
 
 	Shape_Draw(SHAPE_INFANTRY, 46, 118, WINDOWID_MAINMENU_FRAME, 0);
 	Prim_DrawBorder(46, 118, 32, 24, 1, false, false, 4);
 
 	/* Multiplayer. */
 	Prim_DrawBorder(120, 86, 189, 83, 1, false, false, 3);
-	GUI_DrawText("Multiplayer", 170, 96, 144, 0);
-
-	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x1);
+	GUI_DrawText("Multiplayer", 186, 96, 0xF, 0);
 	GUI_DrawText_Wrapper("Address", 127, 119, 0xF, 0, 0x21);
 
 	GUI_Widget_DrawAll(pick_lobby_widgets);
