@@ -66,10 +66,14 @@ static const uint16 values_32A4[8][2] = {
 /* Selection box is in screen coordinates. */
 static enum ViewportClickAction viewport_click_action = VIEWPORT_CLICK_NONE;
 static int64_t viewport_click_time;
+static int64_t viewport_last_click_time;
 static int viewport_click_x;
 static int viewport_click_y;
+static int viewport_last_click_x;
+static int viewport_last_click_y;
 static bool selection_box_add_to_selection;
 static bool selection_box_ctrl_pressed;
+static bool double_click_performed;
 static int selection_box_x2;
 static int selection_box_y2;
 static int viewport_pan_dx;
@@ -174,7 +178,7 @@ Viewport_SelectRegion(void)
 				Map_SetSelection(0xFFFF);
 		}
 
-		if (g_selectionType == SELECTIONTYPE_UNIT && selection_box_ctrl_pressed) {
+		if (g_selectionType == SELECTIONTYPE_UNIT && (selection_box_ctrl_pressed || double_click_performed)) {
 			Unit *u = Unit_Get_ByPackedTile(packed);
 			if (u == NULL || Unit_GetHouseID(u) != g_playerHouseID || u->o.type == UNIT_CARRYALL) {
 			} else if (unselect) {
@@ -608,12 +612,27 @@ Viewport_Click(Widget *w)
 			/* Clicking LMB begins minimap panning. */
 			viewport_click_action = VIEWPORT_PAN_MINIMAP;
 		} else if (viewport_click_action == VIEWPORT_CLICK_NONE) {
-			/* Clicking LMB begins selection box or fast scroll. */
+
+			// Save old click-info for double click detection
+			viewport_last_click_time = viewport_click_time;			
+			viewport_last_click_x = viewport_click_x;
+			viewport_last_click_y = viewport_click_y;
+
+			// Get current click info
 			viewport_click_time = Timer_GetTicks();
 			viewport_click_x = mouseX;
 			viewport_click_y = mouseY;
 
+			/* Clicking LMB begins selection box or fast scroll. */
 			selection_box_ctrl_pressed = Input_Test(SCANCODE_LCTRL) ? true : false;
+
+			// Check for double click
+			double_click_performed =
+				(viewport_click_time - viewport_last_click_time <= 10) &&
+				(viewport_click_x < viewport_last_click_x + 10) &&
+				(viewport_click_x > viewport_last_click_x - 10) &&
+				(viewport_click_y < viewport_last_click_y + 10) &&
+				(viewport_click_y > viewport_last_click_y - 10);
 
 			if (Input_Test(SCANCODE_LSHIFT)) {
 				selection_box_add_to_selection = true;
