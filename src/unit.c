@@ -149,7 +149,10 @@ Unit_SelectType(enum UnitType type)
 	PoolFindStruct find;
 	Unit *u = Unit_FindFirst(&find, g_playerHouseID, type);
 	while (u != NULL) {
-		Unit_AddSelected(u);
+		int x, y;
+		if (Map_IsPositionInViewport(u->o.position, &x, &y)) {		
+			Unit_AddSelected(u);
+		}
 		u = Unit_FindNext(&find);
 	}
 }
