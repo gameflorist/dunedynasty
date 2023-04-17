@@ -18,7 +18,7 @@ driver=opengl
 window_mode=windowed
 screen_width=640
 screen_height=480
-# scale is from 1.00, 2.00, 3.00... up to 8.0
+# scale is from 1.00, 2.00, 3.00... up to 8.00
 menubar_scale=1.00
 sidebar_scale=1.00
 viewport_scale=2.00
