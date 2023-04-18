@@ -1770,6 +1770,7 @@ bool Structure_Server_BuildObject(Structure *s, uint16 objectType)
 	} else {
 		Server_Send_StatusMessage1(1 << s->o.houseID, 2,
 				STR_UNABLE_TO_CREATE_MORE);
+		Server_Send_PlaySound(1 << s->o.houseID, EFFECT_ERROR_OCCURRED);
 
 		return false;
 	}
