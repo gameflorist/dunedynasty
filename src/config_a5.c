@@ -73,7 +73,7 @@ GameCfg g_gameConfig = {
 #ifdef __PANDORA__
 	WM_FULLSCREEN,
 #else
-	WM_WINDOWED,
+	WM_FULLSCREEN_WINDOW,
 #endif
 
 	LANGUAGE_ENGLISH,
