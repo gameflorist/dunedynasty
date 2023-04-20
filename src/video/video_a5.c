@@ -2846,6 +2846,26 @@ Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 
 /*--------------------------------------------------------------*/
 
+int
+VideoA5_GetDesktopWidth(void)
+{
+  ALLEGRO_MONITOR_INFO info;
+  al_get_monitor_info(0, &info);
+
+  return info.x2 - info.x1;
+}
+
+int
+VideoA5_GetDesktopHeight(void)
+{
+  ALLEGRO_MONITOR_INFO info;
+  al_get_monitor_info(0, &info);
+
+  return info.y2 - info.y1;
+}
+
+/*--------------------------------------------------------------*/
+
 static void
 VideoA5_InitCursor(unsigned char *buf)
 {
@@ -2855,10 +2875,8 @@ VideoA5_InitCursor(unsigned char *buf)
 	 */
 	const int sw = 16;
 	const int sh = 16;
-
-	ALLEGRO_MONITOR_INFO info;
-	al_get_monitor_info(0, &info);
-	const int monitor_width = info.x2 - info.x1;
+	
+	const int monitor_width = VideoA5_GetDesktopWidth();
 
 #ifdef ALLEGRO_WINDOWS
 	const int scale = 2;

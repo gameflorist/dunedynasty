@@ -93,13 +93,8 @@ GameCfg g_gameConfig = {
 #endif
 };
 
-#ifdef __PANDORA__
-static int saved_screen_width  = 800;
-static int saved_screen_height = 480;
-#else
-static int saved_screen_width  = 640;
-static int saved_screen_height = 480;
-#endif
+static int saved_screen_width  = 0;
+static int saved_screen_height = 0;
 
 /*--------------------------------------------------------------*/
 
@@ -591,8 +586,19 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 void
 GameOptions_Load(void)
 {
-	if (s_configFile == NULL)
+	if (s_configFile == NULL) {
+
+		// set default screen width and height
+		if (saved_screen_width == 0) {
+			saved_screen_width = VideoA5_GetDesktopWidth();
+		}
+		if (saved_screen_height == 0) {
+			saved_screen_height = VideoA5_GetDesktopHeight();
+		}
+		TRUE_DISPLAY_WIDTH = saved_screen_width;
+		TRUE_DISPLAY_HEIGHT = saved_screen_height;
 		return;
+	}
 
 	for (int i = 0; s_game_option[i].key != NULL; i++) {
 		const GameOption *opt = &s_game_option[i];
@@ -748,7 +754,6 @@ GameOptions_Load(void)
 		if (config != NULL && config != s_configFile)
 			al_destroy_config(config);
 	}
-
 	TRUE_DISPLAY_WIDTH = saved_screen_width;
 	TRUE_DISPLAY_HEIGHT = saved_screen_height;
 }

@@ -38,6 +38,9 @@ extern void VideoA5_DrawCharAlpha(unsigned char c, const uint8 *pal, int x, int 
 extern bool VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int h);
 extern void VideoA5_DrawWSAStatic(int frame, int x, int y);
 
+extern int VideoA5_GetDesktopWidth(void);
+extern int VideoA5_GetDesktopHeight(void);
+
 extern int VideoA5_GetHeight(enum ShapeID shapeID);
 extern int VideoA5_GetWidth(enum ShapeID shapeID);
 
