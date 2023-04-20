@@ -597,6 +597,7 @@ GameOptions_Load(void)
 		}
 		TRUE_DISPLAY_WIDTH = saved_screen_width;
 		TRUE_DISPLAY_HEIGHT = saved_screen_height;
+		GFX_InitDefaultViewportScales(true);
 		return;
 	}
 

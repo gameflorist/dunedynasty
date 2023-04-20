@@ -58,12 +58,24 @@ GFX_InitDefaultViewportScales(bool adjust_viewport)
 
 		if (adjust_viewport)
 			viewport->scalex = 2.0f;
-	} else if (TRUE_DISPLAY_WIDTH >= 2960) {
+	} else if (TRUE_DISPLAY_WIDTH >= 2560) { // Quad High Definition (QHD)
 		menubar->scalex = 4.0f;
 		sidebar->scalex = 4.0f;
 
 		if (adjust_viewport)
+			viewport->scalex = 4.0f;
+	} else if (TRUE_DISPLAY_WIDTH >= 3440) { // Wide Quad High Definition (WQHD)
+		menubar->scalex = 6.0f;
+		sidebar->scalex = 6.0f;
+
+		if (adjust_viewport)
 			viewport->scalex = 6.0f;
+	} else if (TRUE_DISPLAY_WIDTH >= 3840) { // 4K or Ultra High Definition (UHD)
+		menubar->scalex = 8.0f;
+		sidebar->scalex = 8.0f;
+
+		if (adjust_viewport)
+			viewport->scalex = 8.0f;
 	} else {
 		menubar->scalex = 2.0f;
 		sidebar->scalex = 2.0f;

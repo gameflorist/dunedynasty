@@ -169,7 +169,6 @@ A5_InitSystem(void)
 bool
 A5_Init(void)
 {
-	GFX_InitDefaultViewportScales(true);
 	GameOptions_Load();
 
 	g_a5_input_queue = al_create_event_queue();
