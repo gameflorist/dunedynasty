@@ -96,7 +96,7 @@ MainMenu_InitWidgets(void)
 	} menuitem[] = {
 		{ MENU_PLAY_A_GAME,  NULL, STR_PLAY_A_GAME, -1 },
 		{ MENU_LOAD_GAME,    NULL, STR_LOAD_GAME, -1 },
-		{ MENU_PICK_LOBBY,   "Skirmish", STR_NULL, SCANCODE_S },
+		{ MENU_PICK_LOBBY,   "Skirmish and Multiplayer", STR_NULL, SCANCODE_S },
 		{ MENU_EXTRAS,       "Options and Extras", STR_NULL, SCANCODE_O },
 		{ MENU_EXIT_GAME,    NULL, STR_EXIT_GAME, -1 },
 	};
