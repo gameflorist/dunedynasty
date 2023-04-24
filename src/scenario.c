@@ -29,6 +29,7 @@
 #include "pool/pool_structure.h"
 #include "pool/pool_unit.h"
 #include "shape.h"
+#include "enum_string.h"
 #include "sprites.h"
 #include "string.h"
 #include "structure.h"
@@ -656,6 +657,7 @@ Campaign_ReadProfileIni(void)
 		{ 'U', "UnitObjectInfo" },
 		{ 'U', "UnitInfo" },
 		{ 'U', "UnitGFX" },
+		{ 'U', "UnitName" },
 	};
 
 	if (!File_Exists_Ex(SEARCHDIR_CAMPAIGN_DIR, "PROFILE.INI"))
@@ -961,6 +963,24 @@ Campaign_ReadProfileIni(void)
 						ui->destroyedSpriteID   = g_table_unitInfo_original[baseUnit].destroyedSpriteID;
 						ui->turretSpriteID      = (0 <= baseTurret && baseTurret <= UNIT_MAX) ? g_table_unitInfo_original[baseTurret].turretSpriteID : -1;
 						ui->animationSpeed      = animationSpeed;
+					}
+					break;
+
+				case 8: /* UnitName: stringIdAbbrev, stringIdFull. */
+					{
+						uint16 stringIdAbbrev;
+						uint16 stringIdFull;
+
+						const int count = sscanf(buffer, "%hu,%hu",
+								&stringIdAbbrev, &stringIdFull);
+						if ((count < 2)) {
+							fprintf(stderr, "[%s] %s=%u,%u\n", category, key,
+									ui->o.stringID_abbrev, ui->o.stringID_full);
+							break;
+						}
+
+						ui->o.stringID_abbrev   = clamp(STR_CARRYALL, stringIdAbbrev, STR_MOBILE_CONST_VEHICLE);
+						ui->o.stringID_full   = clamp(STR_CARRYALL, stringIdFull, STR_MOBILE_CONST_VEHICLE);
 					}
 					break;
 
