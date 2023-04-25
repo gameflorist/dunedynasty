@@ -1801,6 +1801,9 @@ Structure_Server_SetUpgradingState(Structure *s, int state)
 		ret = true;
 	}
 
+	// make sure, upgrade is possible, if structure is indeed upgradable.
+	if (s->upgradeTimeLeft == 0 && Structure_IsUpgradable(s)) s->upgradeTimeLeft = 100;
+
 	if (state == 0 || s->o.flags.s.upgrading || s->upgradeTimeLeft == 0) return ret;
 
 	Server_Send_StatusMessage1(1 << s->o.houseID, 2,
