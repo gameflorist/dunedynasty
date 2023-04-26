@@ -116,6 +116,10 @@ void
 stop_midi_player(MIDI_PLAYER *pl)
 {
     if (pl->player) {
+        fluid_synth_program_reset(pl->synth);
+        fluid_synth_system_reset(pl->synth);
+        fluid_player_stop(pl->player);
+        fluid_player_join(pl->player);
         delete_fluid_player(pl->player);
         pl->player = new_fluid_player(pl->synth);
     }
