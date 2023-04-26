@@ -1,8 +1,10 @@
 # Dune Dynasty sample config file.
 #
 # Copy this file to your personal data directory:
-# ${HOME}/.config/dunedynasty/dunedynasty.cfg
-# C:\users\nobody\Application Data\Dune Dynasty\data
+# - On Linux: ~/.config/dunedynasty/dunedynasty.cfg
+# - On Windows 32bit: C:\users\<your user>\Application Data\Dune Dynasty\dunedynasty.cfg
+# - On Windows 64bit: C:\users\<your user>\AppData\Roaming\Dune Dynasty\dunedynasty.cfg
+# Or copy/rename in current Dune Dynasty directory as dunedynasty.cfg for portable mode.
 
 [game]
 # language is one of: ENG, FRE, GER, ITA, SPA
