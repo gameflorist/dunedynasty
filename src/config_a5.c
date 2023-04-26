@@ -20,6 +20,7 @@
 #include "string.h"
 #include "table/locale.h"
 #include "video/video.h"
+#include "video/video_a5.h"
 
 #define CONFIG_FILENAME "dunedynasty.cfg"
 
@@ -93,9 +94,6 @@ GameCfg g_gameConfig = {
 #endif
 };
 
-static int saved_screen_width  = 0;
-static int saved_screen_height = 0;
-
 /*--------------------------------------------------------------*/
 
 static const GameOption s_game_option[] = {
@@ -106,8 +104,8 @@ static const GameOption s_game_option[] = {
 
 	{ "graphics",   "driver",           CONFIG_GRAPHICS_DRIVER, .d._graphics_driver = &g_graphics_driver },
 	{ "graphics",   "window_mode",      CONFIG_WINDOW_MODE,     .d._window_mode = &g_gameConfig.windowMode },
-	{ "graphics",   "screen_width",     CONFIG_INT,             .d._int = &saved_screen_width },
-	{ "graphics",   "screen_height",    CONFIG_INT,             .d._int = &saved_screen_height },
+	{ "graphics",   "screen_width",     CONFIG_INT,             .d._int = &g_gameConfig.displayMode.width },
+	{ "graphics",   "screen_height",    CONFIG_INT,             .d._int = &g_gameConfig.displayMode.height },
 	{ "graphics",   "correct_aspect_ratio", CONFIG_ASPECT_CORRECTION,   .d._aspect_correction = &g_aspect_correction },
 	{ "graphics",   "menubar_scale",    CONFIG_FLOAT_1_8,       .d._float = &g_screenDiv[SCREENDIV_MENUBAR].scalex },
 	{ "graphics",   "sidebar_scale",    CONFIG_FLOAT_1_8,       .d._float = &g_screenDiv[SCREENDIV_SIDEBAR].scalex },
@@ -589,14 +587,14 @@ GameOptions_Load(void)
 	if (s_configFile == NULL) {
 
 		// set default screen width and height
-		if (saved_screen_width == 0) {
-			saved_screen_width = VideoA5_GetDesktopWidth();
+		if (g_gameConfig.displayMode.width == 0) {
+			g_gameConfig.displayMode.width = VideoA5_GetDesktopWidth();
 		}
-		if (saved_screen_height == 0) {
-			saved_screen_height = VideoA5_GetDesktopHeight();
+		if (g_gameConfig.displayMode.height == 0) {
+			g_gameConfig.displayMode.height = VideoA5_GetDesktopHeight();
 		}
-		TRUE_DISPLAY_WIDTH = saved_screen_width;
-		TRUE_DISPLAY_HEIGHT = saved_screen_height;
+		TRUE_DISPLAY_WIDTH = g_gameConfig.displayMode.width;
+		TRUE_DISPLAY_HEIGHT = g_gameConfig.displayMode.height;
 		GFX_InitDefaultViewportScales(true);
 		return;
 	}
@@ -755,8 +753,8 @@ GameOptions_Load(void)
 		if (config != NULL && config != s_configFile)
 			al_destroy_config(config);
 	}
-	TRUE_DISPLAY_WIDTH = saved_screen_width;
-	TRUE_DISPLAY_HEIGHT = saved_screen_height;
+	TRUE_DISPLAY_WIDTH = g_gameConfig.displayMode.width;
+	TRUE_DISPLAY_HEIGHT = g_gameConfig.displayMode.height;
 }
 
 void

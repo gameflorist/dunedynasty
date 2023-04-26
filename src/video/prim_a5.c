@@ -33,6 +33,46 @@ Prim_Vline(int x, int y1, int y2, uint8 c)
 /*--------------------------------------------------------------*/
 
 void
+Prim_Circle(float cx, float cy, float rd, uint8 c, float thickness)
+{
+	al_draw_circle(cx, cy, rd, paltoRGB[c], thickness);
+}
+
+void
+Prim_Circle_i(int cx, int cy, int rd, uint8 c)
+{
+	al_draw_circle(cx + 0.5f, cy + 0.5f, rd + 0.5f, paltoRGB[c], 1.0f);
+}
+
+void
+Prim_Circle_RGBA(float cx, float cy, float rd, unsigned char r, unsigned char g, unsigned char b, unsigned char alpha, float thickness)
+{
+	al_draw_circle(cx, cy, rd, al_map_rgba(r, g, b, alpha), thickness);
+}
+
+/*--------------------------------------------------------------*/
+
+void
+Prim_FillCircle(float cx, float cy, float rd, uint8 c)
+{
+	al_draw_filled_circle(cx, cy, rd, paltoRGB[c]);
+}
+
+void
+Prim_FillCircle_i(int cx, int cy, int rd, uint8 c)
+{
+	al_draw_filled_circle(cx + 0.5f, cy + 0.5f, rd + 0.5f, paltoRGB[c]);
+}
+
+void
+Prim_FillCircle_RGBA(float cx, float cy, float rd, unsigned char r, unsigned char g, unsigned char b, unsigned char alpha)
+{
+	al_draw_filled_circle(cx, cy, rd, al_map_rgba(r, g, b, alpha));
+}
+
+/*--------------------------------------------------------------*/
+
+void
 Prim_Rect(float x1, float y1, float x2, float y2, uint8 c, float thickness)
 {
 	al_draw_rectangle(x1, y1, x2, y2, paltoRGB[c], thickness);

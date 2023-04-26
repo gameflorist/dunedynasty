@@ -565,6 +565,14 @@ ScrollListArea_Draw(Widget *w)
 				GUI_DrawText_Wrapper(si->text, x - 8, y, colour, 0, 0x11);
 				break;
 
+			case SCROLLBAR_INFO:
+				GUI_DrawText_Wrapper(si->text, x - 8, y, 31, 0, 0x12);
+				break;
+
+			case SCROLLBAR_INDENTED_INFO:
+				GUI_DrawText_Wrapper(si->text, x, y, 31, 0, 0x12);
+				break;
+
 			case SCROLLBAR_ITEM:
 				colour = (n == s_selectedHelpSubject) ? 8 : 15;
 				GUI_DrawText_Wrapper(si->text, x, y, colour, 0, 0x11);
@@ -576,6 +584,16 @@ ScrollListArea_Draw(Widget *w)
 
 				if (*(si->d.checkbox))
 					GUI_DrawText_Wrapper("x", x + 1, y + 1, colour, 0, 0x11);
+
+				GUI_DrawText_Wrapper(si->text, x + 14, y, colour, 0, 0x12);
+				break;
+
+			case SCROLLBAR_RADIO:
+				colour = (n == s_selectedHelpSubject) ? 8 : 31;
+				Prim_Circle_i(x + 4, y + 4, 4, colour);
+				
+				if (*(si->d.radio.currentValue) == si->d.radio.value)
+					Prim_FillCircle_i(x + 4, y + 4, 2, colour);
 
 				GUI_DrawText_Wrapper(si->text, x + 14, y, colour, 0, 0x12);
 				break;

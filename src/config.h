@@ -4,6 +4,7 @@
 #define CONFIG_H
 
 #include "enum_language.h"
+#include "video/video_a5.h"
 
 enum WindowMode {
 	WM_WINDOWED,
@@ -32,6 +33,7 @@ typedef struct GameCfg {
 	bool holdControlToZoom;
 	float panSensitivity;
 	bool hardwareCursor;
+	struct DisplayMode displayMode;
 } GameCfg;
 
 extern GameCfg g_gameConfig;

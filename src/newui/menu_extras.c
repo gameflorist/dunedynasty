@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <allegro5/allegro.h>
 #include "enum_string.h"
 #include "../os/common.h"
 #include "../os/math.h"
@@ -31,12 +32,24 @@
 #include "../video/video.h"
 #include "../wsa.h"
 
+enum ExtrasMenuCategory {
+	EXTRASMENU_CATEGORY_OPTIONS,
+	EXTRASMENU_CATEGORY_EXTRAS,
+
+	EXTRASMENU_CATEGORY_MAX
+};
+
 enum ExtrasMenu {
-	EXTRASMENU_CUTSCENE,
+	// Options
+	EXTRASMENU_VIDEO_OPTIONS,
+	EXTRASMENU_MUSIC_OPTIONS,
+	EXTRASMENU_GAMEPLAY_OPTIONS,
+
+	// Extras
+	EXTRASMENU_CUTSCENES,
 	EXTRASMENU_GALLERY,
 	EXTRASMENU_JUKEBOX,
-	EXTRASMENU_CAMPAIGN,
-	EXTRASMENU_OPTIONS,
+	EXTRASMENU_HISCORES,
 
 	EXTRASMENU_MAX
 };
@@ -44,29 +57,52 @@ enum ExtrasMenu {
 static Widget *extras_widgets;
 static enum ExtrasMenu extras_page;
 static int extras_credits;
+static int currentDisplayMode;
 
-static void Extras_DrawRadioButton(Widget *w);
-static bool Extras_ClickRadioButton(Widget *w);
+static void Extras_DrawMenuHeader(Widget *w);
+static void Extras_DrawMenuItem(Widget *w);
+static bool Extras_ClickMenuItem(Widget *w);
 
 /*--------------------------------------------------------------*/
 
 static Widget *
-Extras_AllocateAndLinkRadioButton(Widget *list, int index, uint16 shortcut, int x, int y)
+Extras_AllocateAndLinkMenuItem(Widget *list, int index, uint16 shortcut, int x, int y)
 {
 	Widget *w;
 
 	w = GUI_Widget_Allocate(index, shortcut, x, y, SHAPE_INVALID, STR_NULL);
 	w->width = 32;
-	w->height = 24;
+	w->height = 8;
 	w->flags.buttonFilterLeft = 0x4;
-	w->clickProc = Extras_ClickRadioButton;
+	w->clickProc = Extras_ClickMenuItem;
 
 	w->drawModeNormal = DRAW_MODE_CUSTOM_PROC;
 	w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;
 	w->drawModeDown = DRAW_MODE_CUSTOM_PROC;
-	w->drawParameterNormal.proc = Extras_DrawRadioButton;
-	w->drawParameterSelected.proc = Extras_DrawRadioButton;
-	w->drawParameterDown.proc = Extras_DrawRadioButton;
+	w->drawParameterNormal.proc = Extras_DrawMenuItem;
+	w->drawParameterSelected.proc = Extras_DrawMenuItem;
+	w->drawParameterDown.proc = Extras_DrawMenuItem;
+
+	return GUI_Widget_Link(list, w);
+}
+
+
+static Widget *
+Extras_AllocateMenuHeader(Widget *list, int index, int x, int y)
+{
+	Widget *w;
+
+	w = GUI_Widget_Allocate(index, 0, x, y, SHAPE_INVALID, STR_NULL);
+	w->width = 32;
+	w->height = 34;
+	w->flags.buttonFilterLeft = 0x4;
+
+	w->drawModeNormal = DRAW_MODE_CUSTOM_PROC;
+	w->drawModeSelected = DRAW_MODE_CUSTOM_PROC;
+	w->drawModeDown = DRAW_MODE_CUSTOM_PROC;
+	w->drawParameterNormal.proc = Extras_DrawMenuHeader;
+	w->drawParameterSelected.proc = Extras_DrawMenuHeader;
+	w->drawParameterDown.proc = Extras_DrawMenuHeader;
 
 	return GUI_Widget_Link(list, w);
 }
@@ -80,11 +116,18 @@ Extras_InitWidgets(void)
 	w->shortcut = SCANCODE_P;
 	extras_widgets = GUI_Widget_Link(extras_widgets, w);
 
-	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 20, SCANCODE_F1, 72, 24);
-	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 21, SCANCODE_F2, 72, 56);
-	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 22, SCANCODE_F3, 72, 88);
-	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 23, SCANCODE_F4, 72, 120);
-	extras_widgets = Extras_AllocateAndLinkRadioButton(extras_widgets, 24, SCANCODE_F5, 72, 152);
+	// Options
+	extras_widgets = Extras_AllocateMenuHeader(extras_widgets, 10, 72, 20); // Header
+	extras_widgets = Extras_AllocateAndLinkMenuItem(extras_widgets, 20, SCANCODE_F1, 72, 60); // Video
+	extras_widgets = Extras_AllocateAndLinkMenuItem(extras_widgets, 21, SCANCODE_F2, 72, 70); // Music
+	extras_widgets = Extras_AllocateAndLinkMenuItem(extras_widgets, 22, SCANCODE_F3, 72, 80); // Enhancements
+
+	// Extras
+	extras_widgets = Extras_AllocateMenuHeader(extras_widgets, 11, 72, 100); // Header
+	extras_widgets = Extras_AllocateAndLinkMenuItem(extras_widgets, 23, SCANCODE_F4, 72, 140); // Cutscene
+	extras_widgets = Extras_AllocateAndLinkMenuItem(extras_widgets, 24, SCANCODE_F5, 72, 150); // Gallery
+	extras_widgets = Extras_AllocateAndLinkMenuItem(extras_widgets, 25, SCANCODE_F6, 72, 160); // Jukebox
+	extras_widgets = Extras_AllocateAndLinkMenuItem(extras_widgets, 26, SCANCODE_F7, 72, 170); // Hiscores
 
 	extras_widgets = Scrollbar_Allocate(extras_widgets, WINDOWID_STARPORT_INVOICE, -8, 4, 3, false);
 }
@@ -546,7 +589,104 @@ PickCampaign_Loop(int widgetID)
 /*--------------------------------------------------------------*/
 
 static void
-Options_Initialise(void)
+VideoOptions_Initialize(void)
+{
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
+	WidgetScrollbar *ws = w->data;
+	ScrollbarItem *si;	
+
+	currentDisplayMode = VideoA5_GetCurrentDisplayMode();
+
+	w->offsetY = 22;
+	ws->itemHeight = 14;
+	ws->scrollMax = 0;
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_INFO);
+	snprintf(si->text, sizeof(si->text), "%s", "Restart game to apply changes.");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "Window Mode");
+
+	const char *windowModeTexts[3] = {
+		"Windowed", "Fullscreen", "Fullscreen Window"
+	};
+
+	for(enum WindowMode windowMode = WM_WINDOWED; windowMode <= WM_FULLSCREEN_WINDOW; windowMode++) {
+		si = Scrollbar_AllocItem(w, SCROLLBAR_RADIO);
+		si->d.radio.group = "windowMode";
+		si->d.radio.value = (int)windowMode;
+		si->d.radio.currentValue = &g_gameConfig.windowMode;
+
+		snprintf(si->text, sizeof(si->text), "%s", windowModeTexts[windowMode]);
+	}
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "Resolution");
+
+	struct DisplayMode* resolutions = VideoA5_GetDisplayModes();
+	int numDisplayModes = VideoA5_GetNumDisplayModes();
+	for (int i=0; i<numDisplayModes; ++i) {
+		if (resolutions[i].width != 0) {
+			si = Scrollbar_AllocItem(w, SCROLLBAR_RADIO);
+			si->d.radio.group = "resolution";
+			si->d.radio.value = i;
+			si->d.radio.currentValue = &currentDisplayMode;
+			snprintf(si->text, sizeof(si->text), "%dx%d", resolutions[i].width, resolutions[i].height);
+		}
+	}
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "Other Options");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &g_gameConfig.hardwareCursor;
+	snprintf(si->text, sizeof(si->text), "Hardware mouse cursor");
+
+	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
+}
+
+static enum MenuAction
+VideoOptions_Loop(int widgetID)
+{
+	Widget *scrollbar = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	ScrollbarItem *si;
+
+	switch (widgetID) {
+		case 0x8000 | 1: /* exit. */
+			return MENU_MAIN_MENU;
+
+		case 0x8000 | 3: /* list entry. */
+		case SCANCODE_ENTER:
+		case SCANCODE_KEYPAD_5:
+		case SCANCODE_SPACE:
+			si = Scrollbar_GetSelectedItem(scrollbar);
+			if (si != NULL) {
+				if (si->type == SCROLLBAR_CHECKBOX) {
+					*(si->d.checkbox) = !(*(si->d.checkbox));
+				}
+				else if (si->type == SCROLLBAR_RADIO) {
+					if (si->d.radio.group == "windowMode") {
+						g_gameConfig.windowMode = si->d.radio.value;
+					}
+					else if (si->d.radio.group == "resolution") {
+						struct DisplayMode* resolutions = VideoA5_GetDisplayModes();
+						g_gameConfig.displayMode.width = resolutions[si->d.radio.value].width;
+						g_gameConfig.displayMode.height = resolutions[si->d.radio.value].height;
+						currentDisplayMode = si->d.radio.value;
+					}
+				}
+			}
+
+			break;
+	}
+
+	return MENU_EXTRAS;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+MusicOptions_Initialize(void)
 {
 	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
 	WidgetScrollbar *ws = w->data;
@@ -555,6 +695,100 @@ Options_Initialise(void)
 	w->offsetY = 22;
 	ws->itemHeight = 14;
 	ws->scrollMax = 0;
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_INFO);
+	snprintf(si->text, sizeof(si->text), "%s", "Restart game to apply changes.");
+
+	// Get lists of available and unavailable music sets (midi and adlib are always available).
+	enum MusicSet availableSets[NUM_MUSIC_SETS] = { MUSICSET_DUNE2_ADLIB, MUSICSET_DUNE2_MIDI, MUSICSET_FLUIDSYNTH, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID};
+	enum MusicSet unavailableSets[NUM_MUSIC_SETS] = {MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID, MUSICSET_INVALID};
+	int unavailableSetsCount = 0;
+	// Use main menu music to determine existance of music sets, since this song is present in all sets.
+	const MusicList *l = &g_table_music[MUSIC_MAIN_MENU];
+	for (int i = 0; i < l->length-1; i++) {
+		const MusicInfo *m = &l->song[i];
+		if (m->music_set == MUSICSET_DUNE2_ADLIB || m->music_set == MUSICSET_DUNE2_MIDI || m->music_set == MUSICSET_FLUIDSYNTH)
+			continue;
+		const bool musicSetFound = m->enable & MUSIC_FOUND;
+		if (musicSetFound) {
+			availableSets[i] = m->music_set;
+		}
+		else {
+			unavailableSets[i] = m->music_set;
+			unavailableSetsCount++;
+		}
+	}
+
+	// List available music sets with checkboxes to enable them for random play.	
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "Availabe Music Sets");
+	si = Scrollbar_AllocItem(w, SCROLLBAR_INDENTED_INFO);
+	snprintf(si->text, sizeof(si->text), "%s", "Enable for random play:");
+	for (int i = 0; i < NUM_MUSIC_SETS; i++) {
+		if (availableSets[i] != MUSICSET_INVALID) {
+			si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+			si->d.checkbox = &g_table_music_set[availableSets[i]].enable;
+			snprintf(si->text, sizeof(si->text), g_table_music_set[availableSets[i]].name);
+		}
+	}
+
+	// List unavailable music sets.
+	if(unavailableSetsCount > 0) {
+		si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+		snprintf(si->text, sizeof(si->text), "%s", "Unavailable Music Sets");
+		si = Scrollbar_AllocItem(w, SCROLLBAR_INDENTED_INFO);
+		snprintf(si->text, sizeof(si->text), "%s", "(See README for installation infos)");
+		for (int i = 0; i < NUM_MUSIC_SETS; i++) {
+			if (unavailableSets[i] != MUSICSET_INVALID) {
+				si = Scrollbar_AllocItem(w, SCROLLBAR_INDENTED_INFO);
+				snprintf(si->text, sizeof(si->text), g_table_music_set[unavailableSets[i]].name);
+			}
+		}
+	}
+
+	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
+}
+
+static enum MenuAction
+MusicOptions_Loop(int widgetID)
+{
+	Widget *scrollbar = GUI_Widget_Get_ByIndex(extras_widgets, 15);
+	ScrollbarItem *si;
+
+	switch (widgetID) {
+		case 0x8000 | 1: /* exit. */
+			return MENU_MAIN_MENU;
+
+		case 0x8000 | 3: /* list entry. */
+		case SCANCODE_ENTER:
+		case SCANCODE_KEYPAD_5:
+		case SCANCODE_SPACE:
+			si = Scrollbar_GetSelectedItem(scrollbar);
+			if ((si != NULL) && (si->type == SCROLLBAR_CHECKBOX)) {
+				*(si->d.checkbox) = !(*(si->d.checkbox));
+			}
+
+			break;
+	}
+
+	return MENU_EXTRAS;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
+GameplayOptions_Initialize(void)
+{
+	Widget *w = GUI_Widget_Get_ByIndex(extras_widgets, 3);
+	WidgetScrollbar *ws = w->data;
+	ScrollbarItem *si;
+
+	w->offsetY = 22;
+	ws->itemHeight = 14;
+	ws->scrollMax = 0;	
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_INFO);
+	snprintf(si->text, sizeof(si->text), "%s", "Enhancements over original Dune II:");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_brutal_ai;
@@ -576,15 +810,11 @@ Options_Initialise(void)
 	si->d.checkbox = &enhancement_true_game_speed_adjustment;
 	snprintf(si->text, sizeof(si->text), "True game speed adjustment");
 
-	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->d.checkbox = &g_gameConfig.hardwareCursor;
-	snprintf(si->text, sizeof(si->text), "Hardware mouse cursor");
-
 	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
 }
 
 static enum MenuAction
-Options_Loop(int widgetID)
+GameplayOptions_Loop(int widgetID)
 {
 	Widget *scrollbar = GUI_Widget_Get_ByIndex(extras_widgets, 15);
 	ScrollbarItem *si;
@@ -634,22 +864,32 @@ Extras_Initialise(MentatState *mentat)
 }
 
 static void
-Extras_DrawRadioButton(Widget *w)
+Extras_DrawMenuHeader(Widget *w)
+{
+	const enum ExtrasMenuCategory categoryIndex = w->index - 10;
+	const char *text[EXTRASMENU_CATEGORY_MAX] = {
+		"Options", "Extras"
+	};
+	const enum ShapeID shapeID[EXTRASMENU_CATEGORY_MAX] = {
+		SHAPE_MCV, SHAPE_PALACE
+	};
+	assert(categoryIndex <= EXTRASMENU_CATEGORY_MAX);
+
+	Shape_Draw(shapeID[categoryIndex], w->offsetX, w->offsetY, 0, 0);
+	GUI_DrawText_Wrapper(text[categoryIndex], w->offsetX + 15, w->offsetY + 26, 15, 0, 0x122);
+}
+
+static void
+Extras_DrawMenuItem(Widget *w)
 {
 	const enum ExtrasMenu page = w->index - 20;
-	const enum ShapeID shapeID[EXTRASMENU_MAX] = {
-		SHAPE_TROOPERS, SHAPE_ORNITHOPTER, SHAPE_SONIC_TANK, SHAPE_PALACE, SHAPE_MCV
+	const char *text[EXTRASMENU_MAX] = {
+		"Video", "Music", "Gameplay", "Cutscenes", "Gallery", "Jukebox", "Hiscores"
 	};
 	assert(page <= EXTRASMENU_MAX);
 
-	if (page == EXTRASMENU_JUKEBOX && !g_enable_audio) {
-		Shape_DrawGrey(shapeID[page], w->offsetX, w->offsetY, 0, 0);
-	} else {
-		Shape_Draw(shapeID[page], w->offsetX, w->offsetY, 0, 0);
-	}
-
-	if (page == extras_page)
-		ActionPanel_HighlightIcon(HOUSE_HARKONNEN, w->offsetX, w->offsetY, false);
+	const int8_t textColor = (page == extras_page) ? 6 : 15;
+	GUI_DrawText_Wrapper(text[page], w->offsetX + 15, w->offsetY, textColor, 0, 0x111);
 }
 
 void
@@ -671,13 +911,26 @@ Extras_Draw(MentatState *mentat)
 	Widget_SetAndPaintCurrentWidget(WINDOWID_STARPORT_INVOICE);
 
 	switch (extras_page) {
-		case EXTRASMENU_CUTSCENE:
-			headline = "Select Cutscene:";
+
+		case EXTRASMENU_VIDEO_OPTIONS:
+			headline = "Video Options";
+			break;
+
+		case EXTRASMENU_MUSIC_OPTIONS:
+			headline = "Music Options";
+			break;
+
+		case EXTRASMENU_GAMEPLAY_OPTIONS:
+			headline = "Gameplay Options";
+			break;
+			
+		case EXTRASMENU_CUTSCENES:
+			headline = "Select Cutscene";
 			break;
 
 		case EXTRASMENU_GALLERY:
 			if (mentat->wsa == NULL) {
-				headline = String_Get_ByIndex(STR_SELECT_SUBJECT);
+				headline = "Select Subject";
 			} else {
 				PickGallery_Draw(mentat);
 			}
@@ -685,18 +938,14 @@ Extras_Draw(MentatState *mentat)
 
 		case EXTRASMENU_JUKEBOX:
 			if (g_enable_audio) {
-				headline = "Select a Song:";
+				headline = "Select a Song";
 			} else {
 				GUI_DrawText_Wrapper("MUSIC IS OFF", 220, 99, 6, 0, 0x132);
 			}
 			break;
 
-		case EXTRASMENU_CAMPAIGN:
+		case EXTRASMENU_HISCORES:
 			headline = String_Get_ByIndex(STR_HALL_OF_FAME);
-			break;
-
-		case EXTRASMENU_OPTIONS:
-			headline = "Enhancement Options:";
 			break;
 
 		default:
@@ -705,7 +954,7 @@ Extras_Draw(MentatState *mentat)
 
 	if (headline != NULL) {
 		const WidgetProperties *wi = &g_widgetProperties[WINDOWID_STARPORT_INVOICE];
-		GUI_DrawText_Wrapper(headline, wi->xBase + 8, wi->yBase + 5, 12, 0, 0x12);
+		GUI_DrawText_Wrapper(headline, wi->xBase + 8, wi->yBase + 5, 15, 0, 0x22);
 	}
 
 	if ((extras_page != EXTRASMENU_GALLERY) || (mentat->wsa == NULL))
@@ -716,7 +965,7 @@ Extras_Draw(MentatState *mentat)
 }
 
 static bool
-Extras_ClickRadioButton(Widget *w)
+Extras_ClickMenuItem(Widget *w)
 {
 	const enum ExtrasMenu new_extras_page = w->index - 20;
 
@@ -729,7 +978,20 @@ Extras_ClickRadioButton(Widget *w)
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(extras_widgets, 9));
 
 	switch (extras_page) {
-		case EXTRASMENU_CUTSCENE:
+
+		case EXTRASMENU_VIDEO_OPTIONS:
+			VideoOptions_Initialize();
+			break;
+
+		case EXTRASMENU_MUSIC_OPTIONS:
+			MusicOptions_Initialize();
+			break;
+
+		case EXTRASMENU_GAMEPLAY_OPTIONS:
+			GameplayOptions_Initialize();
+			break;
+
+		case EXTRASMENU_CUTSCENES:
 			PickCutscene_Initialise();
 			break;
 
@@ -746,12 +1008,8 @@ Extras_ClickRadioButton(Widget *w)
 			PickMusic_Initialise();
 			break;
 
-		case EXTRASMENU_CAMPAIGN:
+		case EXTRASMENU_HISCORES:
 			PickCampaign_Initialise();
-			break;
-
-		case EXTRASMENU_OPTIONS:
-			Options_Initialise();
 			break;
 
 		default:
@@ -784,7 +1042,18 @@ Extras_Loop(MentatState *mentat)
 		Scrollbar_HandleEvent(w, widgetID);
 
 	switch (extras_page) {
-		case EXTRASMENU_CUTSCENE:
+
+		case EXTRASMENU_VIDEO_OPTIONS:
+			res = VideoOptions_Loop(widgetID);
+			break;
+		case EXTRASMENU_MUSIC_OPTIONS:
+			res = MusicOptions_Loop(widgetID);
+			break;
+		case EXTRASMENU_GAMEPLAY_OPTIONS:
+			res = GameplayOptions_Loop(widgetID);
+			break;
+
+		case EXTRASMENU_CUTSCENES:
 			res = PickCutscene_Loop(widgetID);
 			break;
 
@@ -796,12 +1065,8 @@ Extras_Loop(MentatState *mentat)
 			res = PickMusic_Loop(mentat, widgetID);
 			break;
 
-		case EXTRASMENU_CAMPAIGN:
+		case EXTRASMENU_HISCORES:
 			res = PickCampaign_Loop(widgetID);
-			break;
-
-		case EXTRASMENU_OPTIONS:
-			res = Options_Loop(widgetID);
 			break;
 
 		default:

@@ -379,6 +379,7 @@ VideoA5_Init(void)
 		APPEND_FLAG(ALLEGRO_FULLSCREEN_WINDOW);
 	} else {
 		APPEND_FLAG(ALLEGRO_WINDOWED);
+		// APPEND_FLAG(ALLEGRO_RESIZABLE); // TODO: make resizable
 	}
 
 	al_set_new_display_flags(display_flags);
@@ -3039,4 +3040,52 @@ int VideoA5_GetWidth(enum ShapeID shapeID)
 		return 0;
 
 	return al_get_bitmap_width(s_shape[shapeID][HOUSE_HARKONNEN]);
+}
+
+struct DisplayMode* VideoA5_GetDisplayModes(void)
+{
+	int num_modes = VideoA5_GetNumDisplayModes();
+	struct DisplayMode* displayModes = (DisplayMode*)calloc(num_modes, sizeof(struct DisplayMode));
+	for (int i = 0; i < num_modes; ++i)
+	{
+		ALLEGRO_DISPLAY_MODE admode;
+		if (al_get_display_mode(i, &admode) == &admode)
+		{
+
+			// check if we already have this resolution in displayModes, 
+			// since allegro returns resolutions multiple times (per refresh rate).
+			bool alreadyPresent = false;
+			for (int j = 0; j < num_modes; ++j)
+			{
+				if (displayModes[j].width == admode.width && displayModes[j].height == admode.height)
+				{
+					alreadyPresent = true;
+					break;
+				}
+			}
+			if(!alreadyPresent) {
+				displayModes[i].width = admode.width;
+				displayModes[i].height = admode.height;
+			}
+		}
+	}
+
+	return displayModes;
+}
+
+int VideoA5_GetNumDisplayModes(void)
+{
+	return al_get_num_display_modes();
+}
+
+int* VideoA5_GetCurrentDisplayMode(void)
+{
+	struct DisplayMode* resolutions = VideoA5_GetDisplayModes();
+	int numDisplayModes = VideoA5_GetNumDisplayModes();
+	
+	for (int i=0; i < numDisplayModes; ++i) {
+		if (resolutions[i].width != 0 && resolutions[i].width == g_gameConfig.displayMode.width && resolutions[i].height == g_gameConfig.displayMode.height) {
+			return i;
+		}
+	}
 }

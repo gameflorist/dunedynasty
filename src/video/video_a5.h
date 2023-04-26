@@ -9,6 +9,11 @@ enum GraphicsDriver {
 	GRAPHICS_DRIVER_DIRECT3D,
 };
 
+typedef struct DisplayMode {
+   int width;          // Screen width
+   int height;         // Screen height
+} DisplayMode;
+
 extern enum GraphicsDriver g_graphics_driver;
 
 extern bool VideoA5_Init(void);
@@ -43,5 +48,9 @@ extern int VideoA5_GetDesktopHeight(void);
 
 extern int VideoA5_GetHeight(enum ShapeID shapeID);
 extern int VideoA5_GetWidth(enum ShapeID shapeID);
+
+struct DisplayMode* VideoA5_GetDisplayModes(void);
+int VideoA5_GetNumDisplayModes(void);
+int* VideoA5_GetCurrentDisplayMode(void);
 
 #endif
