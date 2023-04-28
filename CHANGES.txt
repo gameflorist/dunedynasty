@@ -1,55 +1,76 @@
 Dune Dynasty
 ============
 
-Version 1.6.4, 2022-05-19
+Version 1.6.0
 -------------------------
-  - Ctrl + RMB sets rally points for all similar buildings
-  - Ctrl shows rally points for all similar buildings
-  - Fix action panel scrolling bug which triggers error sound
-  - Ctrl + LMB selects all units of the same type
-  - Fix AI bug: sandworm wakes AI if seen by AI
-  - Gameplay fix: update the unit's vision every time it moves
-  - Capture the mouse if the game is not paused
+  - Many unreleased changes (incl. multiplayer!)
+    that were added from 2013-2015 in SourceForge SVN
+    (https://sourceforge.net/projects/dunedynasty/)
+    mainly by David Wang, the original Dune Dynasty creator.
+    (See commits by "dwang" in this timeframe for details.)
+  - Merge fixes and improvements from https://github.com/1oom-fork/dunedynasty
+    o Ctrl + RMB sets rally points for all similar buildings
+    o Ctrl shows rally points for all similar buildings
+    o Ctrl + LMB selects all units of the same type
+    o Fix AI bug: sandworm wakes AI if seen by AI
+    o Gameplay fix: update the unit's vision every time it moves
+    o Capture the mouse if the game is not paused
+    o New hotkey: select next building of the same type (Tab key)
+    o New hotkey: focus viewport on selected structure (Space key)
+    o Draw health bars for all visible units in "All units" mode
+    o Fix save/load bug: fix fog data loss in saved games
+    o Fix pathfinder freeze in case if destination is out of map
+    o Action Panel title text no longer reacts to mouse clicks
+    o Action Panel title click behavior moved to the portrait
+    o Add old style status button to action panel
+    o Remove Send Order button from Starport menu (uses status button)
+    o Add new status button for Palace menu
+    o Pause/Cancel factory task by pressing ESC
+    o Pause/Cancel factory task by rmb click on status button
+    o Fix critical saveload bug which breaks the behavior of starports
+    o Fix attempts to spawn Fremen outside the map
+    o Bind hotkey H to Harvest and F4 to select construction yard
+    o Add hotkeys for each type of unit/structure
+    o Bind unit/structure hotkeys to action panel
+    o Add hotkey hints to action panel
+  - Merge changes by neg3ntropy and kvr000 (https://github.com/neg3ntropy/dunedynasty)
+    o Fix compiler errors due to outdated code.
+    o Fix many compiler warnings.
+  - Add higher-res icon for executable. 
+  - Add scaling options from 1-8 (merged from https://github.com/YuriyGuts/dunedynasty-macos).
+  - Add sliders for menubar/sidebar/viewport scaling to in-game control menu.
+  - LMB double click selects all units of the same type.
+  - Select units of the same type only in current viewport (as this is pretty standard in modern RTS).
+  - Fix scroll buttons disappearing on high sidepanel scalings.
+  - Fix error sound not playing on "Unable to create more"
+  - Fix another critical saveload bug which breaks the behavior of starports.
+  - Always display unit/structure hotkeys within picture (to avoid obfuscation by queue-count).
+  - Change default window mode to fullscreenwindow.
+  - Set monitor resolution as default screen_width/screen_height.
+  - Add further default scales for high resolutions.
+  - Fix Sardaukar Troopers showing up as Raider Trikes in Dune 2 eXtended.
+  - Display custom campaign name as title in options window.
+  - Main menu improvements:
+    o Reintroduce "Replay Introduction" to main menu.
+    o Add arrows to change campaign in main menu.
+    o Rename "Skirmish" to "Skirmish & Multiplayer" in main menu.
+  - Rework Extras and Options:
+    o Add video options (window mode, resolution, hardware cursor).
+    o Add music options (enable/disable and show available/unavailable music sets).
+    o Change menu layout.
+  - Multiplayer fixes and improvements:
+    o Add lose condition setting to multiplayer and skirmish (either structures only [default] or structures + ground-units).
+    o Fix 2nd construction yard (rocket tower) upgrade not working for non-host players in multiplayer.
+    o Fix multiplayer match ending for all players, if host is defeated.
+      Now host will lose all units/structures, become observer and will be kicked to lobby, once other players finish the game.
+    o Fix blinking of targeted unit to only be visible for player issuing command.
+  - Add support for new music packs (with songs sorted into attack/idle music):
+    o Dune (1992) game (by Cryo) - Adlib
+    o Dune (1992) game (by Cryo) - Spice Opera
+    o Dune (1984) Original Motion Picture Soundtrack
+    o Dune: Part One (2021) Original Motion Picture Soundtrack
+    o Dune: Part One (2021) Sketchbook Soundtrack
 
-Version 1.6.3, 2022-04-28
--------------------------
-  - New Action Panel mode: Interactive unit list
-    - Shift + click removes clicked unit from list
-    - Shift + Ctrl + click removes clicked unit type from list
-    - Ctrl + click removes all units except clicked type
-    - Click removes all units except clicked unit
-  - New hotkey: select next building of the same type (Tab key)
-  - New hotkey: focus viewport on selected structure (Space key)
-  - Draw health bars for all visible units in "All units" mode
-  - Fix save/load bug: fix fog data loss in saved games
-  - Fix pathfinder freeze in case if destination is out of map 
-
-Version 1.6.2, 2022-04-14
--------------------------
-
-  - Action Panel title text no longer reacts to mouse clicks
-  - Action Panel title click behavior moved to the portrait
-  - Add old style status button to action panel
-  - Remove Send Order button from Starport menu (uses status button)
-  - Add new status button for Palace menu
-  - Pause/Cancel factory task by pressing ESC
-  - Pause/Cancel factory task by rmb click on status button
-
-Version 1.6.1, 2022-04-07
--------------------------
-
-  - Fix critical saveload bug which breaks the behavior of starports
-  - Fix attempts to spawn Fremen outside the map
-  - Unbind hotkey H
-  - Add hotkeys for each type of unit/structure
-  - Bind unit/structure hotkeys to action panel
-  - Add hotkey hints to action panel
-
-Version 1.6.0, 2015-02-03
--------------------------
-
-  - Version changed to 1.6.0 to reflect all those undocumented changes
-    that were added for 2013-2015
 
 Version 1.5.7, 2013-08-18
 -------------------------

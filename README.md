@@ -1,90 +1,108 @@
 # Dune Dynasty
 
-Classic Dune. Modern Controls.
+[![Latest Release](https://img.shields.io/github/v/release/gameflorist/duneflorist?display_name=tag&label=Download%20Latest%20Release&style=flat-square)](https://github.com/gameflorist/dunedynasty/releases)
+[![Windows Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-build.yml)
+[![Linux Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-build.yml?label=Linux%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-build.yml)
+
+![Dune Dynasty](/docs/banner.jpg)
 
 ## About
 
-Dune Dynasty is a continuation of the classic real-time strategy game
-Dune II by Westwood Studios.  It is not a remake.  It builds upon the
-original game engine as reverse-engineered by the [OpenDUNE] project.
+_Dune Dynasty_ is an enhancement of the classic real-time strategy game
+_Dune II_ by Westwood Studios. It is not a remake. It builds upon the
+original game engine as reverse-engineered by the [OpenDUNE](https://github.com/OpenDUNE/OpenDUNE) project.
 
-Dune Dynasty features these modern enhancements:
+_Dune Dynasty_ features these modern enhancements for _Dune II_:
 
-  - Runs natively on Linux and Windows (OpenGL or Direct3D)
-  - High-resolution graphics, including zooming
-  - Multiple unit selection with control groups
-  - New build queue interface
-  - Rally points
+- __Runs natively on Linux and Windows (OpenGL or Direct3D)__  
+    (for MacOS see [this port](https://github.com/YuriyGuts/dunedynasty-macos))
+- __Graphics Enhancements:__
+  - High-resolution widescreen graphics
+  - Separate customizable scaling of menubar, sidebar and map/viewport for HiDPI displays
+  - Smoother unit animation (optional)
+  - High-res overlay (optional)
+- __Control Enhancements (Command & Conquer style):__
+  - Build/order units and structures in scrollable sidepanel
+  - Queue building of multiple items
+  - Select and command multiple units by drawing a rectangle
+  - Select all units of same type in viewport via double-click (or CTRL-LMB)
+  - Save/load unit control groups via keyboard hotkeys
+  - Set rally points for buildings
+  - [Windows Touchscreen Support](#touchscreen-support)
+- __Skirmish and Multiplayer:__
+  - With 3 additional factions: Fremen, Sardaukar and Mercenaries
+  - For up to 6 players/AI
+  - Alliances (skirmish only)
+  - Random maps (or enter fixed map seed)
+  - Settings for starting credits, amount of spice fields and lose condition
+- __Sound and Music Enhancements:__
+  - Emulated AdLib sound and music playback
+  - [General MIDI playback via FluidSynth](#general-midi-music) (supporting SoundFonts)
+  - [Support for external music sets](#external-music-sets):
+    - Recorded AdLib, MT-32 and SC-55 packs
+    - Sega Mega Drive soundtrack (mostly different songs, but also ___very___ good!)
+    - _Dune 2000_ game soundtrack
+    - _Dune_ (1992) game by Cryo (an excellent, award winning, much more chill soundtrack of _Dune II_'s predecessor both as AdLib Gold recording and the remastered _Spice Opera_ soundtrack by Exxos)
+    - _Dune_ (1984) Original Motion Picture Soundtrack
+    - _Dune: Part One_ (2021) Original Motion Picture Soundtrack and "_The Dune Sketchbook_" soundtrack
+    - ...with many options for randomly combining them during gameplay
+    - ...all playable in in-game jukebox
   - Multiple sound channels
-
-Plus:
-
-  - Emulated Ad-Lib sound and music playback
-  - General MIDI playback
-  - Custom campaigns
-  - Fog of war option
-  - Smoother unit animation
+- __Gameplay Enhancements (optional):__
+  - Health bars
+  - Fog of war
   - Brutal AI mode
-  - Skirmish mode
-  - Jukebox
-  - Bug fixes
+  - Infantry squad corpses
+  - Raise scenario unit cap
+  - Start level selection
+- __[Support for Custom campaigns](#custom-campaigns):__
+  - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
+  - [MrFlibble's Alternate Scenarios](https://www.mediafire.com/file/9vs75nukou8o3wq/Dune2-MrFlibble%2527sAlternateScenarios.zip/file)
+  - [Stefan Henriks' Atreides campaign](http://arrakis.dune2k.com/downloads.html)
+  - [Super Dune II](http://forum.dune2k.com/topic/20065-super-dune-ii-classic/)
+- __Various bug fixes__
 
-Dune Dynasty is licensed under the GNU General Public License version
-2.0.  For more information, see the `COPYING` file included with every
-release and source download of the game.
+A more detailed list of changes by _Dune Dynasty_ and OpenDUNE from the original Dune II can be found in the file [enhancement.txt](enhancement.txt).
 
-[![Screenshot]][Screenshot]
+### Development History
 
+_Dune Dynasty_ was initially developed by __David Wang__, with the source code hosted on [SourceForge](https://sourceforge.net/projects/dunedynasty/). Its last official version was v1.5.7 from 2013. After that __David Wang__ added lots of new features (mainly multiplayer) up until 2015, but never released a new version. Later some github-repos emerged with additional fixes and improvements (by [1oom-fork](https://github.com/1oom-fork/dunedynasty) and [neg3ntropy](https://github.com/neg3ntropy/dunedynasty)), but again no new release. This fork is intended to merge these improvements, fix further bugs, add minor features, and provide new releases (v1.6.0+) with binary download-packages for Windows and Linux (see [this fork](https://github.com/YuriyGuts/dunedynasty-macos) for Mac).
+
+## Screenshots
+
+![Screenshots](/docs/screenshots.jpg)
+
+## Alternatives
+
+Here are some alternatives for enjoying _Dune II_ on modern systems:
+
+- [___OpenDUNE___](https://github.com/OpenDUNE/OpenDUNE): Reverse-engineered source port of _Dune II_, upon which _Dune Dynasty_ is based on. It's goal is to keep it as close to the original as possible and thus has significantly less features and modernizations than _Dune Dynasty_. _OpenDUNE_ and _Dune Dynasty_ can both read original file formats (e.g. save games).
+- [___Dune Legacy___](https://dunelegacy.sourceforge.net/): A _Dune II_ clone / engine recreation / remake with a similar feature-set as _Dune Dynasty_, but deviating more from the original's look and feel. Has multiplayer support and map editor.
+- [___Dune II - The Maker___](https://dune2themaker.fundynamic.com/): Another _Dune II_ remake with modern features and upscaled graphics. Also deviates quite a bit from the original's look and feel.
+- There is also a [___Dune II mod for OpenRA___](https://github.com/OpenRA/d2/wiki), an open source engine for the early _Command & Conquer_ games.
+- _Dune II_ is also perfectly playable using [DOSBox](https://dosbox-staging.github.io/).
+- There is a well done _Dune II_ clone for Android on [Google Play Store](https://play.google.com/store/apps/details?id=de.morphbot.dune).
+- There is also [a fork of _Dune Dynasty_ explicitly for MacOS](https://github.com/YuriyGuts/dunedynasty-macos).
+
+_Dune Dynasty_'s unique selling points are probably it's faithfulness to the look and feel of the original (due to it basing on an [engine re-creation](https://github.com/OpenDUNE/OpenDUNE) of the original) combined with many control modernizations, it's support for [fan-generated campaigns](#custom-campaigns), [various music soundtracks](#external-music-sets) and multiplayer.
+
+## Changes
+
+You can find the list of changes between versions in the file [CHANGES.txt](CHANGES.txt).
 
 ## Download
 
-[Download] the source code or Windows binaries from the [Github]
-project page.
+The most current Windows and Linux binaries and source code can be downloaded from the Github release page:
 
-Read the list of [changes].
+[![Latest Release](https://img.shields.io/github/v/release/gameflorist/duneflorist?display_name=tag&label=Latest%20Release&style=for-the-badge)](https://github.com/gameflorist/dunedynasty/releases)
 
+For MacOS, check out this fork:  
+[https://github.com/YuriyGuts/dunedynasty-macos](https://github.com/YuriyGuts/dunedynasty-macos)
 
-## Compiling from source
+## Installation
 
-*Skip this if you are using precompiled Windows binaries.*
+You will need the `\*.PAK` data files from the EU v1.07 release of _Dune II_. See the file [data/FILELIST.TXT](/dist/data/FILELIST.TXT) for a complete list of needed files.
 
-### Source dependencies
-
-*Skip this if you are using installed OS packages.*
-
-You will need [CMake] and [Allegro 5].  [FluidSynth] and [MAD] are
-optional dependencies.
-
-### OS dependencies
-
-#### Debian, Ubuntu
-
-```
-sudo apt -y install cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
-```
-
-#### MacOs
-
-Install [Homebrew].
-
-```
-brew install cmake allegro enet libmad fluidsynth
-export LDFLAGS="-L/opt/homebrew/lib"
-```
-
-### Build
-
-```
-cmake .
-make
-```
-
-The binary will be placed in the `dist/` directory.
-
-
-## Starting up
-
-You will need the \*.PAK data files from the EU v1.07 release of Dune II.
 Place them into one of the following places:
 
  1. In a directory named `data` next to the dunedynasty executable.
@@ -93,85 +111,105 @@ Place them into one of the following places:
  2. In your personal data directory.
     The location depends on your operating system.
 
-    On Unix, this will be:
+    On Unix, this will be `~/.local/share/dunedynasty/data`.
 
-        ~/.local/share/dunedynasty/data
+    On Windows 32bit, this will be something like:  
+    `C:\users\<your user>\Application Data\Dune Dynasty\data`
 
-    On Windows, this will be something like:
-
-        C:\users\nobody\Application Data\Dune Dynasty\data
-
-    or
-
-        C:\users\nobody\AppData\Roaming\Dune Dynasty\data
-
-    or
-
-        C:\Documents and Settings\nobody\Application Data\Dune Dynasty\data
-
- 3. The system-wide directory as configured in the CMake variable
-    `$DUNE_DATA_DIR/data`.
+    And on Windows 64bit it will be:  
+    `C:\users\<your user>\AppData\Roaming\Dune Dynasty\data`
 
 Once the data files are in place, you may start the game by running
 `dunedynasty.exe` or `dunedynasty`.
 
+On Linux you will also have to install the libraries __Dune Dynasty__ depends on:
 
-## Controls
+```shell
+sudo apt install liballegro5.2 liballegro-acodec5.2 liballegro-image5.2 libenet7 libfluidsynth3 libmad0 libgl1
+```
 
-The controls should be similar to most real-time strategy games.
-You can finally select multiple units by dragging a rectangle,
-or shift clicking.  Right click issues commands on units, and sets
-the rally point on buildings.
-
-Keyboard shortcuts are mostly just the first letter of the action.
-
-    A           Attack or Harvest
-    H		Harvest
-    M           Move
-    G, S        Guard (Stop)
-    P           Place constructed structure
-
-    Ctrl-1      Assign control group 1
-    Ctrl-2      Assign control group 2, etc.
-    1-0         Jump to control group 1-0
-
-    -, +        Zoom in or out
-    [, ]        Toggle size of menu and side bars
-    Alt-Enter   Toggle windowed mode
-
-    F1          Mentat
-    F2          Options
-    F3          Click structure icon
-    F4          Select construction yard
-    F5          Show current song
-    F6          Decrease music volume
-    F7          Increase music volume
-    F11         Toggle windowed mode
-    F12         Save screenshot into data directory
-
-Double tap H or a control group number to centre on the
-construction yard or the control group.
-
+If `libfluidsynth3` is not available on your distribution, try `libfluidsynth2` instead.
 
 ## Configuration
 
-The configuration file will be read from one of two places:
+Just as the data-files, the configuration file `dunedynasty.cfg` will be read from one of two places:
 
  1. In the same directory as the dunedynasty executable.
 
- 2. In a personal data directory.
-    On Unix the configuration file is located at:
+ 2. In a personal data directory. This is the default behaviour - meaning `dunedynasty.cfg` will be created here on initial launch.
 
-        ~/.config/dunedynasty/dunedynasty.cfg
+    On Unix the configuration file is located at:  
+    `~/.config/dunedynasty/dunedynasty.cfg`
 
-    On Windows the configuration file will be located somewhere like:
+    On Windows 32bit, this will be something like:  
+    `C:\users\<your user>\Application Data\Dune Dynasty\dunedynasty.cfg`
 
-        C:\users\nobody\Application Data\Dune Dynasty\dunedynasty.cfg
+    And on Windows 64bit it will be:  
+    `C:\users\<your user>\AppData\Roaming\Dune Dynasty\dunedynasty.cfg`
 
 See the sample file `dunedynasty.cfg-sample` for a list of configuration
 options.  You can modify the existing `dunedynasty.cfg` file or
 replace it with `dunedynasty.cfg-sample`.
 
+### Portable mode
+
+If you place `dunedynasty.cfg` in the same directory as the dunedynasty executable, _Dune Dynasty_ will operate in portable mode - keeping everything (e.g. savegames) inside the install directory.
+
+### Video Settings
+
+Display mode and resolution can be changed in the game's "Options and Extras" menu. The game initially launches in _Fullscreen Window_ mode (using your Desktop-resolution).
+
+You might want to increase or decrease the scaling factors of the menubar, sidebar and viewport. You can do this in-game in the __Game Control__ menu.
+
+## Controls
+
+The controls should be similar to most real-time strategy games.
+You can finally select multiple units by dragging a rectangle,
+or shift clicking. You can also select all units of the same type in the current viewscreen via a double click or via `Ctrl + LMB`.
+
+Right click issues commands to units, and sets the rally point on buildings. You can also change this to Left Click (which is very useful for touchscreen input).
+
+Keyboard shortcuts are mostly just the first letter of the action.
+
+```txt
+A           Attack or Harvest
+H           Harvest
+M           Move
+G, S        Guard (Stop)
+P           Place constructed structure
+
+Ctrl-1      Assign control group 1
+Ctrl-2      Assign control group 2, etc.
+1-0         Select control group 1-0 (press 2 times to center in viewport)
+
+Ctrl + LMB  Select all units of the same type in current viewport
+Double LMB  Select all units of the same type in current viewport
+Ctrl + RMB  Set rally points for all similar buildings
+Space       Focus viewport on selected structure
+Tab         Select next building of the same type
+Esc         Pause/Cancel factory task
+
+
+-, +        Zoom in or out
+[, ]        Toggle size of menu and side bars
+Alt-Enter   Toggle windowed mode
+
+F1          Mentat
+F2          Options
+F3          Click structure icon
+F4          Select construction yard (press 2 times to center in viewport)
+F5          Show current song
+F6          Decrease music volume
+F7          Increase music volume
+F11         Toggle windowed mode
+F12         Save screenshot into data directory
+```
+
+There are also keyboard shortcuts for constructing buildings with the construction yard. They are displayed in the build-panel.
+
+### Touchscreen Support
+
+_Dune Dynasty_ works very well with touchscreens (e.g. like Microsoft Surface Pro), since most actions are performed using the left mouse button. You can perform a right button click via a long (ca. 1 sec.) press. Commands are issued via the right button by default, but you can change this by setting `Control Style` to `Left Click` in the Game Control options. Then you can quickly select and command your units via short taps with your finger. To deselect units or structures perform a long press or simply _draw_ an empty rectangle into the sand. You can even zoom the viewport with a _pinch_ finger-movement.
 
 ## Saved games
 
@@ -179,130 +217,219 @@ Saved games are located in the `save` directory next to `dunedynasty.cfg`.
 If no configuration file exists, they will be in placed in a personal
 data directory.
 
-On Unix this will be:
+On Unix, this will be `~/.config/dunedynasty/save`.
 
-    ~/.config/dunedynasty/save
+On Windows 32bit, this will be something like:  
+`C:\users\<your user>\Application Data\Dune Dynasty\save`
 
-On Windows this will be something like:
+And on Windows 64bit it will be:  
+`C:\users\<your user>\AppData\Roaming\Dune Dynasty\save`
 
-    C:\users\nobody\Application Data\Dune Dynasty\save
+Saved games from _Dune II_ should work if placed there.
 
-Saved games from Dune II should work if placed there.
+## Music
 
+_Dune Dynasty_ supports the following music sources:
 
-## Tweaks
+- Midi (using your machine's default Midi device)
+- AdLib (built-in emulation)
+- FluidSynth (General Midi via SoundFonts)
+- Various External music sets ([see below](#external-music-sets))
 
-### General MIDI music
+By default, _Dune Dynasty_ will randomly mix music from all the available sources. You can disable any sources in the game's "__Options and Extras__"-menu (changes require a restart).
 
-Dune Dynasty can play MIDI music via FluidSynth.  You will need
-to set the `sound_font` path in the configuration file to an
+There you will also find a __Jukebox__ to listen to all available songs from all available sources.
+
+### Midi
+
+_Dune Dynasty_ can play music via the system MIDI output on Windows and Linux (ALSA). If you use [Timidity++] as an ALSA sequencer client on Linux you should start it with smaller buffer sizes to avoid the "drunk drummer" problem:
+
+```txt
+timidity -iA -B 4,8
+```
+
+### FluidSynth
+
+FluidSynth allows playing music via a specified SoundFont. You will need
+to set the `sound_font` path in the [configuration file](#configuration) to an
 appropriate sound font (.sf2) file, e.g.
 
-    [audio]
-    sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
+```ini
+[audio]
+sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
+```
 
-Dune Dynasty can also play music via the system MIDI output on Windows and
-Linux (ALSA).  If you use [Timidity++] as an ALSA sequencer client on Linux you
-should start it with smaller buffer sizes to avoid the "drunk drummer" problem:
+Popular SoundFonts are e.g.:
 
-    timidity -iA -B 4,8
+- [Timbres of Heaven](https://midkar.com/soundfonts/index.html)
+- [Arachno Soundfont](https://www.arachnosoft.com/main/soundfont.php)
 
+### External music sets
 
-### External music packs
+_Dune Dynasty_ can play various external music sets, e.g. recordings of the original PC or Sega Mega Drive soundtrack, music from different Dune games like _Dune 2000_ or Cryo's 1992 _Dune_, or even the motion picture soundtracks.
 
-Dune Dynasty can play various external music sets, e.g. music from Dune 2000.
-Each of these have their own subdirectory in the music/ directory.
-Instructions are provided in the respective FILELIST.TXT files.
+Each of these have their own subdirectory in the `music` directory. Instructions and download/purchase links are provided below and in the respective `FILELIST.TXT` files.
 
-If you want to disable any music set, edit the [music] section of the
-config file.  If a particular track is missing, it will look for a
-suitable replacement in the default music pack, or use the Adlib music
-if that also fails.  e.g. to play Sega Mega Drive music, and MT-32
-rips only as required:
+Here is a list of supported Music packs:
 
-    [music]
-    dune2_adlib=0
-    dune2_midi=0
-    ...
-    dune2_smd=1
-    default=fed2k_mt32
+- Original _Dune II_ (PC) music:
+  - [rcblanke's SC-55 recording](https://www.vogons.org/viewtopic.php?t=33823&start=42)
+  - [ShaiWa's MT-32 recording](https://dune2k.com/Download/783)
+  - [Dune II - The Maker AdLib recording](https://dune2themaker.fundynamic.com/downloads/mp3adlib.zip)
+  - [Dune II - The Maker MT-32 recording](https://dune2themaker.fundynamic.com/downloads/mp3mt32.zip)
+  - [Dune II - The Maker SC-55 recording](https://dune2themaker.fundynamic.com/downloads/mp3sc55.zip)
+- [___Dune II___ Sega Mega Drive music](http://nyerguds.arsaneus-design.com/dune/dunesega/)  
+  Mostly different songs from PC version, but also ___very___ good!
+- ___Dune 2000___ game music  
+  Unfortunately, this game cannot be purchased anymore at the moment.
+- ___Dune___ (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:  
+   The excellent award-winning soundtrack for _Dune II_'s predecessor - the 1992 _Dune_ game by _Cryo_. It is very atmospheric, and makes _Dune II_ a much more relaxing and chill experience. Two versions are supported:
+ 
+  - [AdLib Gold recording by DOS Nostalgia](https://www.dosnostalgia.com/?p=542)
+  - ___Spice Opera___ by Exxos  
+     A remastered CD release of the soundtrack. Unfortunately it is not available for purchase anymore (but Google might be your friend here).
 
-In addition, individual songs can be disabled.  e.g. if you want to
-include Dune 2000 music, but exclude "Robotix":
+- ___Dune (1984)___ Original Motion Picture Soundtrack by Toto and Brian Eno  
+  Seems to be only available on CD. Purchase e.g. from [amazon.com](https://www.amazon.com/-/de/dp/B000006YDD/) or [amazon.de](https://www.amazon.de/Dune-Toto/dp/B000006YDD/) and rip files to MP3.
+- ___Dune: Part One (2021)___ Original Motion Picture Soundtrack by Hans Zimmer  
+  Purchase e.g. from [amazon.com](https://www.amazon.com/music/player/albums/B09F1Y3NCK/) or [amazon.de](https://www.amazon.de/music/player/albums/B09F2HWHGJ).
+- ___Dune: Part One (2021)___ "The Dune Sketchbook" soundtrack by Hans Zimmer  
+  Purchase e.g. from [amazon.com](https://www.amazon.com/music/player/albums/B09C3YS6DX) or [amazon.de](https://www.amazon.de/music/player/albums/B09C3YZZPW).
 
-    [music/dune2000]
-    ROBOTIX=0
+After installation of a music set, you can check it's availability in the "Music" section of the game's "Options and Extras" menu. There you can also enable/disable music sets for random play.
 
+You can also disable individual songs from music sets. You have to do this by editing your config-file though.
+
+Example: If you want to include Dune 2000 music, but exclude "Robotix":
+
+```ini
+[music/dune2000]
+ROBOTIX=0
+```
 
 ## Custom campaigns
 
-Dune Dynasty can play [fan-made campaigns] such as [Super Dune II Classic],
-[Stefan Hendriks' Atreides Campaign], and [Dune 2 eXtended].  These should
-be placed in the subdirectories inside the campaign/ directory.  Click the
-"The Building of a Dynasty" subtitle to switch between campaigns.
+_Dune Dynasty_ supports various fan-made campaigns:
+
+- [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
+- [MrFlibble's Alternate Scenarios](https://www.mediafire.com/file/9vs75nukou8o3wq/Dune2-MrFlibble%2527sAlternateScenarios.zip/file)
+- [Stefan Henriks' Atreides campaign](http://arrakis.dune2k.com/downloads.html)
+- [Super Dune II](http://forum.dune2k.com/topic/20065-super-dune-ii-classic/)
+
+These should be placed in the existing subdirectories inside the `campaign` directory.
+
+Click the arrows next to the __"The Building of a Dynasty"__ subtitle in the main menu to switch between campaigns.
 
 You can also create your own campaigns.  A campaign should consist of
-a META.INI file, a REGIONX.INI file for each playable House, where X
+a `META.INI` file, a `REGIONX.INI` file for each playable House, where X
 is the first letter of the House name, and a complete set of scenarios
-for each House, named SCENX001.INI through SCENX022.INI.  See Stefan
-Hendriks' Atreides Campaign (shac/) as a simple example.
+for each House, named `SCENX001.INI` through `SCENX022.INI`.  See Stefan
+Hendriks' Atreides Campaign (subfolder `shac`) as a simple example.
 
 Each campaign can also contain custom balance tweaks, specified in
-PROFILE.INI and HOUSE.INI.  Please refer to the sample files in the
-campaign directory for more infomation.
+`PROFILE.INI` and `HOUSE.INI`.  Please refer to the sample files in the
+campaign directory for more information.
 
 Finally, the scenarios can either be distributed as loose INI files or
-as a single PAK file.  Data stored in PAK files must be listed in META.INI.
-See MrFlibble's Alternative Scenarios (mfas/) as a simple example of
+as a single PAK file.  Data stored in PAK files must be listed in `META.INI`.
+See _MrFlibble's Alternative Scenarios_ (subfolder `mfas`) as a simple example of
 scenarios stored in a PAK file.
 
+## Development
+
+### Compilation
+
+#### General Info
+
+The binary will be placed in the `dist` directory.
+
+The steps below will build the release-version. You can change value of the `DCMAKE_BUILD_TYPE` parameter to build different versions, with the possible options being: `Debug`, `Release`, `RelWithDebInfo` and `MinSizeRel`.
+
+#### Windows
+
+1. Download and install [MSYS2](https://www.msys2.org/#installation).
+2. Launch `MSYS2 UCRT64` from the startmenu.
+3. Install dependencies:
+
+    ```shell
+    pacman -S mingw-w64-ucrt-x86_64-cmake
+    pacman -S mingw-w64-ucrt-x86_64-gcc
+    pacman -S mingw-w64-ucrt-x86_64-gdb
+    pacman -S mingw-w64-ucrt-x86_64-allegro
+    pacman -S mingw-w64-ucrt-x86_64-enet
+    pacman -S mingw-w64-ucrt-x86_64-fluidsynth
+    pacman -S mingw-w64-ucrt-x86_64-libmad
+    ```
+
+4. Perform build:
+
+    ```shell
+    cd <path-to-dune-dynasty-src>
+    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
+    ninja
+    ```
+
+5. For packaging, you have to copy all required .dll files to the `dist` folder. To do this, simply call the following script:
+
+    ```shell
+    ./scripts/copy-dlls.sh
+    ```
+
+#### Debian, Ubuntu
+
+1. Install dependencies:
+
+    ```shell
+    sudo apt -y install build-essential cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
+    ```
+
+2. Perform build:
+
+    ```shell
+    cmake -DCMAKE_BUILD_TYPE=Release .
+    make
+    ```
+
+3. When packaging, there is the problem, that the fluidsynth-library is called `libfluidsynth2` on some distributions, and `libfluidsynth3` on others. To mitigate, call this script, which will copy the library-file to `dist/libs` and patch the executable to use the inlcuded library instead:
+
+    ```shell
+    ./scripts/copy-libs.sh
+    ```
+
+#### MacOs
+
+Check out this fork of _Dune Dynasty_ explicitly for MacOS:  
+[https://github.com/YuriyGuts/dunedynasty-macos](https://github.com/YuriyGuts/dunedynasty-macos)
 
 ## Acknowledgements
 
 Thank you to:
 
-The OpenDUNE team:
-
+- The OpenDUNE team:
   - Albert Hofkamp (Alberth)
   - Loic Guilloux (glx)
   - Patric Stout (TrueBrain)
   - Steven Noorbergen (Xaroth)
-
-The Allegro 5 developers.
-
-The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else
-who worked on the Adlib/OPL/MIDI player code.
-
-Peter, for help on various bits of the code, the music code, and AUDlib.
-
-Nyerguds, for his Dune II editor.
-
-Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
+- The Allegro 5 developers.
+- The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else
+who worked on the AdLib/OPL/MIDI player code.
+- Peter, for help on various bits of the code, the music code, and AUDlib.
+- Nyerguds, for his Dune II editor.
+- Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
 Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine,
 Wesker.
+- Westwood Studios, for an amazing game!
 
-Westwood Studios, for an amazing game!
+## License
 
+_Dune Dynasty_ is licensed under the GNU General Public License version
+2.0.  For more information, see the `LICENSE.txt` file included with every
+release and source download of the game.
 
 ## Authors
 
-- David Wang <dswang@users.sourceforge.net> https://github.com/wangds/ - original author
-- Andrea Ratto <aratto@topcon.com> https://github.com/neg3ntropy/ - compilation fixes and graphics updates
-- Zbynek Vyskovsky <kvr000@gmail.com> https://github.com/kvr000/ - compilation fixes and other polishing
-
-
-[OpenDUNE]: http://www.opendune.org/
-[Homebrew]: https://docs.brew.sh/Installation
-[Allegro 5]: https://github.com/liballeg/allegro5
-[CMake]: http://www.cmake.org/
-[Timidity++]: http://timidity.sourceforge.net/
-[FluidSynth]: http://sourceforge.net/apps/trac/fluidsynth/
-[MAD]: http://www.underbit.com/products/mad/
-[Download]: ./
-[Screenshot]: http://sourceforge.net/projects/dunedynasty/screenshots/screenshot_hark2.png "Screenshot"
-[Github]: ./
-[Fan-made campaigns]: http://forum.dune2k.com/topic/20526-dune-ii-goodies-extras/
-[Super Dune II Classic]: http://forum.dune2k.com/topic/20065-super-dune-ii-classic/
-[Stefan Hendriks' Atreides Campaign]: http://arrakis.dune2k.com/downloads.html
-[Dune 2 eXtended]: http://forum.dune2k.com/topic/18360-dune-2-extended-project/
-[changes]: CHANGES.txt
+- [David Wang aka wangds](https://github.com/wangds/): Original author
+- [Andrea Ratto aka neg3ntropy](https://github.com/neg3ntropy/): Compilation fixes and graphics updates
+- [Zbynek Vyskovsky aka kvr000](https://github.com/kvr000/): Compilation fixes and other polishing
+- [1oom-fork](https://github.com/1oom-fork/): Various fixes and new features
+- [codeflorist](https://github.com/codeflorist/): Various fixes, new features and maintainer of this fork
