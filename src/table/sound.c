@@ -5,37 +5,52 @@
 
 #include "sound.h"
 
-#define D2TM_ADLIB_PREFIX   "d2tm_adlib"
-#define D2TM_MT32_PREFIX    "d2tm_mt32"
-#define D2TM_SC55_PREFIX    "d2tm_sc55"
-#define DUNE2000_PREFIX     "dune2000"
-#define DUNE2_SMD_PREFIX    "dune2_smd"
-#define SHAIWA_MT32_PREFIX  "fed2k_mt32"
-#define RCBLANKE_SC55_PREFIX    "rcblanke_sc55"
+#define D2TM_ADLIB_PREFIX   		"d2tm_adlib"
+#define D2TM_MT32_PREFIX    		"d2tm_mt32"
+#define D2TM_SC55_PREFIX    		"d2tm_sc55"
+#define DUNE2000_PREFIX     		"dune2000"
+#define DUNE2_SMD_PREFIX    		"dune2_smd"
+#define SHAIWA_MT32_PREFIX  		"fed2k_mt32"
+#define RCBLANKE_SC55_PREFIX    	"rcblanke_sc55"
+#define DUNE1992_ADLIB_PREFIX    	"dune1992_adlib"
+#define DUNE1992_SPICEOPERA_PREFIX	"dune1992_spiceopera"
+#define DUNE1984_OST_PREFIX    		"dune1984_ost"
+#define DUNE2021_OST_PREFIX    		"dune2021_ost"
+#define DUNE2021_SKETCHBOOK_PREFIX	"dune2021_sketchbook"
 
 #define ADD_MUSIC_LIST(TABLE,SONGNAME)  { 0, 0, 0, SONGNAME, lengthof(TABLE), TABLE }
-#define ADD_MUSIC_FROM_DUNE2_ADLIB(FILENAME,TRACK)  { MUSIC_ENABLE, MUSICSET_DUNE2_ADLIB,   NULL,   FILENAME, TRACK, 1.0f }
-#define ADD_MUSIC_FROM_DUNE2_MIDI(FILENAME,TRACK)   { MUSIC_ENABLE, MUSICSET_DUNE2_MIDI,    NULL,   FILENAME, TRACK, 1.0f }
-#define ADD_MUSIC_FROM_FLUIDSYNTH(FILENAME,TRACK)   { MUSIC_ENABLE, MUSICSET_FLUIDSYNTH,    NULL,   FILENAME, TRACK, 1.0f }
-#define ADD_MUSIC_FROM_SHAIWA_MT32(FILENAME)        { MUSIC_WANT,   MUSICSET_SHAIWA_MT32,   NULL,   "music/" SHAIWA_MT32_PREFIX "/" FILENAME, 0, 0.65f }
-#define ADD_MUSIC_FROM_RCBLANKE_SC55(FILENAME)      { MUSIC_WANT,   MUSICSET_RCBLANKE_SC55, NULL,   "music/" RCBLANKE_SC55_PREFIX"/"FILENAME, 0, 0.80f }
-#define ADD_MUSIC_FROM_D2TM_ADLIB(FILENAME,VOLUME)  { MUSIC_WANT,   MUSICSET_D2TM_ADLIB,    NULL,   "music/" D2TM_ADLIB_PREFIX  "/" FILENAME, 0, VOLUME }
-#define ADD_MUSIC_FROM_D2TM_MT32(FILENAME)          { MUSIC_WANT,   MUSICSET_D2TM_MT32,     NULL,   "music/" D2TM_MT32_PREFIX   "/" FILENAME, 0, 0.65f }
-#define ADD_MUSIC_FROM_D2TM_SC55(FILENAME,VOLUME)   { MUSIC_WANT,   MUSICSET_D2TM_SC55,     NULL,   "music/" D2TM_SC55_PREFIX   "/" FILENAME, 0, VOLUME }
-#define ADD_MUSIC_FROM_DUNE2_SMD(FILENAME,SONGNAME) { MUSIC_WANT,   MUSICSET_DUNE2_SMD,     SONGNAME,"music/"DUNE2_SMD_PREFIX   "/" FILENAME, 0, 0.50f }
-#define ADD_MUSIC_FROM_DUNE2000(FILENAME,SONGNAME)  { MUSIC_WANT,   MUSICSET_DUNE2000,      SONGNAME,"music/"DUNE2000_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE2_ADLIB(FILENAME,TRACK)  			{ MUSIC_ENABLE, MUSICSET_DUNE2_ADLIB,   		NULL,   FILENAME, TRACK, 1.0f }
+#define ADD_MUSIC_FROM_DUNE2_MIDI(FILENAME,TRACK)   			{ MUSIC_ENABLE, MUSICSET_DUNE2_MIDI,    		NULL,   FILENAME, TRACK, 1.0f }
+#define ADD_MUSIC_FROM_FLUIDSYNTH(FILENAME,TRACK)   			{ MUSIC_ENABLE, MUSICSET_FLUIDSYNTH,    		NULL,   FILENAME, TRACK, 1.0f }
+#define ADD_MUSIC_FROM_SHAIWA_MT32(FILENAME)        			{ MUSIC_WANT,   MUSICSET_SHAIWA_MT32,   		NULL,   "music/" SHAIWA_MT32_PREFIX "/" FILENAME, 0, 0.65f }
+#define ADD_MUSIC_FROM_RCBLANKE_SC55(FILENAME)      			{ MUSIC_WANT,   MUSICSET_RCBLANKE_SC55, 		NULL,   "music/" RCBLANKE_SC55_PREFIX"/"FILENAME, 0, 0.80f }
+#define ADD_MUSIC_FROM_D2TM_ADLIB(FILENAME,VOLUME)  			{ MUSIC_WANT,   MUSICSET_D2TM_ADLIB,    		NULL,   "music/" D2TM_ADLIB_PREFIX  "/" FILENAME, 0, VOLUME }
+#define ADD_MUSIC_FROM_D2TM_MT32(FILENAME)          			{ MUSIC_WANT,   MUSICSET_D2TM_MT32,     		NULL,   "music/" D2TM_MT32_PREFIX   "/" FILENAME, 0, 0.65f }
+#define ADD_MUSIC_FROM_D2TM_SC55(FILENAME,VOLUME)   			{ MUSIC_WANT,   MUSICSET_D2TM_SC55,     		NULL,   "music/" D2TM_SC55_PREFIX   "/" FILENAME, 0, VOLUME }
+#define ADD_MUSIC_FROM_DUNE2_SMD(FILENAME,SONGNAME) 			{ MUSIC_WANT,   MUSICSET_DUNE2_SMD,     		SONGNAME,"music/"DUNE2_SMD_PREFIX   "/" FILENAME, 0, 0.50f }
+#define ADD_MUSIC_FROM_DUNE2000(FILENAME,SONGNAME)  			{ MUSIC_WANT,   MUSICSET_DUNE2000,      		SONGNAME,"music/"DUNE2000_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE1992_ADLIB(FILENAME,SONGNAME)		{ MUSIC_WANT,   MUSICSET_DUNE1992_ADLIB,      	SONGNAME,"music/"DUNE1992_ADLIB_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE1992_SPICEOPERA(FILENAME,SONGNAME)  	{ MUSIC_WANT,   MUSICSET_DUNE1992_SPICEOPERA,	SONGNAME,"music/"DUNE1992_SPICEOPERA_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE1984_OST(FILENAME,SONGNAME)  		{ MUSIC_WANT,   MUSICSET_DUNE1984_OST,      	SONGNAME,"music/"DUNE1984_OST_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE2021_OST(FILENAME,SONGNAME)  		{ MUSIC_WANT,   MUSICSET_DUNE2021_OST,      	SONGNAME,"music/"DUNE2021_OST_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK(FILENAME,SONGNAME)	{ MUSIC_WANT,   MUSICSET_DUNE2021_SKETCHBOOK,	SONGNAME,"music/"DUNE2021_SKETCHBOOK_PREFIX    "/" FILENAME, 0, 1.00f }
 
 MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
-	{ true, "dune2_adlib",  "AdLib" },
-	{ true, "dune2_midi",   "MIDI" },
-	{ true, "fluidsynth",   "FluidSynth" },
-	{ true, SHAIWA_MT32_PREFIX,     "ShaiWa MT-32" },
-	{ true, RCBLANKE_SC55_PREFIX,   "RCBlanke SC-55" },
-	{ true, D2TM_ADLIB_PREFIX,  "D2TM AdLib" },
-	{ true, D2TM_MT32_PREFIX,   "D2TM MT-32" },
-	{ true, D2TM_SC55_PREFIX,   "D2TM SC-55" },
-	{ true, DUNE2_SMD_PREFIX,   "Sega Mega Drive" },
-	{ true, DUNE2000_PREFIX,    "Dune 2000" },
+	{ true, "dune2_adlib",  			"AdLib" },
+	{ true, "dune2_midi",   			"MIDI" },
+	{ true, "fluidsynth",   			"FluidSynth" },
+	{ true, SHAIWA_MT32_PREFIX,     	"ShaiWa MT-32" },
+	{ true, RCBLANKE_SC55_PREFIX,   	"RCBlanke SC-55" },
+	{ true, D2TM_ADLIB_PREFIX,  		"D2TM AdLib" },
+	{ true, D2TM_MT32_PREFIX,   		"D2TM MT-32" },
+	{ true, D2TM_SC55_PREFIX,   		"D2TM SC-55" },
+	{ true, DUNE2_SMD_PREFIX,   		"Sega Mega Drive" },
+	{ true, DUNE2000_PREFIX,    		"Dune 2000" },
+	{ true, DUNE1992_ADLIB_PREFIX,    	"Dune Adlib" },
+	{ true, DUNE1992_SPICEOPERA_PREFIX,	"Dune Spice Opera" },
+	{ true, DUNE1984_OST_PREFIX,    	"Dune 1984 OST" },
+	{ true, DUNE2021_OST_PREFIX,    	"Dune 2021 OST" },
+	{ true, DUNE2021_SKETCHBOOK_PREFIX,	"Dune 2021 Sketchbook" },
 };
 
 static MusicInfo s_table_music_stop[] = {
@@ -84,25 +99,32 @@ static MusicInfo s_table_music_cutscene[] = {
 };
 
 static MusicInfo s_table_music_credits[] = {
-	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune20.ADL", 2),
-	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune20.C55", 2),
-	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune20.C55", 2),
-	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_20_22"),
-	ADD_MUSIC_FROM_RCBLANKE_SC55("credits"),
-	ADD_MUSIC_FROM_DUNE2_SMD    ("20_credits", NULL),
+	ADD_MUSIC_FROM_DUNE2_ADLIB  		("dune20.ADL", 2),
+	ADD_MUSIC_FROM_DUNE2_MIDI   		("dune20.C55", 2),
+	ADD_MUSIC_FROM_FLUIDSYNTH   		("dune20.C55", 2),
+	ADD_MUSIC_FROM_SHAIWA_MT32  		("dune2_mt32_20_22"),
+	ADD_MUSIC_FROM_RCBLANKE_SC55		("credits"),
+	ADD_MUSIC_FROM_DUNE2_SMD    		("20_credits", NULL),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("13 - Cryogenia", "Cryogenia"),
+	ADD_MUSIC_FROM_DUNE1984_OST			("17 - Take My Hand", "Take My Hand"),
 };
 
 static MusicInfo s_table_music_main_menu[] = {
-	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 6),
-	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune7.C55", 6),
-	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 6),
-	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_07_13"),
-	ADD_MUSIC_FROM_RCBLANKE_SC55("title"),
-	ADD_MUSIC_FROM_D2TM_ADLIB   ("menu", 1.0f),
-	ADD_MUSIC_FROM_D2TM_MT32    ("menu"),
-	ADD_MUSIC_FROM_D2TM_SC55    ("menu", 1.0f),
-	ADD_MUSIC_FROM_DUNE2_SMD    ("12_chosendestiny", "Chosen Destiny"),
-	ADD_MUSIC_FROM_DUNE2000     ("OPTIONS", "Options"),
+	ADD_MUSIC_FROM_DUNE2_ADLIB  		("dune7.ADL", 6),
+	ADD_MUSIC_FROM_DUNE2_MIDI   		("dune7.C55", 6),
+	ADD_MUSIC_FROM_FLUIDSYNTH   		("dune7.C55", 6),
+	ADD_MUSIC_FROM_SHAIWA_MT32  		("dune2_mt32_07_13"),
+	ADD_MUSIC_FROM_RCBLANKE_SC55		("title"),
+	ADD_MUSIC_FROM_D2TM_ADLIB   		("menu", 1.0f),
+	ADD_MUSIC_FROM_D2TM_MT32    		("menu"),
+	ADD_MUSIC_FROM_D2TM_SC55    		("menu", 1.0f),
+	ADD_MUSIC_FROM_DUNE2_SMD    		("12_chosendestiny", "Chosen Destiny"),
+	ADD_MUSIC_FROM_DUNE2000     		("OPTIONS", "Options"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB     	("Spice Opera", "Spice Opera"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("01 - Spice Opera", "Spice Opera"),
+	ADD_MUSIC_FROM_DUNE1984_OST     	("02 - Main Title", "Main Title"),
+	ADD_MUSIC_FROM_DUNE2021_OST     	("01 - Dream of Arrakis", "Dream of Arrakis"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK	("05 - Paul's Dream", "Paul's Dream"),
 
 	/* Dune 2000 battle summary as alternative menu music. */
 	{ 0, MUSICSET_DUNE2000,     "Score", "music/" DUNE2000_PREFIX "/SCORE", 0, 1.0f },
@@ -369,6 +391,56 @@ static MusicInfo s_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2000     ("SOLDAPPR", "The Soldiers Approach"),
 	ADD_MUSIC_FROM_DUNE2000     ("SPICESCT", "Spice Scouting"),
 	ADD_MUSIC_FROM_DUNE2000     ("WAITGAME", "The Waiting Game"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Chani's Eyes", "Chani's Eyes"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Dune Variation.mp3", "Dune Variation"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Free Men", "Free Men"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Sietch Tuek", "Sietch Tuek"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Sign of the Worm", "Sign of the Worm"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Too", "Too"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Wake Up", "Wake Up"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Water", "Water"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("02 - Emotion Control", "Emotion Control"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("03 - Ecolove", "Ecolove"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("04 - Water", "Water"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("05 - Revelation", "Revelation"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("06 - Free Men", "Free Men"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("07 - Wake Up", "Wake Up"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("08 - Dune Theme", "Dune Theme"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("09 - Chani's Eyes", "Chani's Eyes"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("10 - Sign of the Worm", "Sign of the Worm"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("11 - Too", "Too"),
+	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("12 - Dune Variation", "Dune Variation"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("04 - Leto's Theme", "Leto's Theme"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("05 - The Box", "The Box"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("07 - Trip to Arrakis", "Trip to Arrakis"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("09 - Prophecy Theme", "Prophecy Theme"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("10 - Dune (Desert Theme)", "Dune (Desert Theme)"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("11 - Paul Meets Chani", "Paul Meets Chani"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("13 - Paul Takes The Water Of Life", "Paul Takes The Water Of Life"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("16 - Final Dream", "Final Dream"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("01 - Dream of Arrakis", "Dream of Arrakis"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("02 - Herald of the Change", "Herald of the Change"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("03 - Bene Gesserit", "Bene Gesserit"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("05 - The One", "The One"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("06 - Leaving Caladan", "Leaving Caladan"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("07 - Arrakeen", "Arrakeen"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("08 - Ripples in the Sand", "Ripples in the Sand"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("09 - Visions of Chani", "Visions of Chani"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("10 - Night on Arrakis", "Night on Arrakis"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("13 - Stranded", "Stranded"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("14 - Blood for Blood", "Blood for Blood"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("15 - The Fall", "The Fall"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("17 - Sanctuary", "Sanctuary"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("18 - Premonition", "Premonition"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("21 - Stillsuits", "Stillsuits"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("22 - My Road Leads into the Desert", "My Road Leads into the Desert"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("01 - Song of the Sisters", "Song of the Sisters"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("02 - I See You in My Dreams", "I See You in My Dreams"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("03 - House Atreides", "House Atreides"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("04 - The Shortening of the Way", "The Shortening of the Way"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("05 - Paul's Dream", "Paul's Dream"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("06 - Moon over Caladan", "Moon over Caladan"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("07 - Shai-hulud", "Shai-hulud"),
 };
 
 static MusicInfo s_table_music_bonus[] = { /* Disabled by default. */
@@ -449,6 +521,21 @@ static MusicInfo s_table_music_attack6[] = {
 	ADD_MUSIC_FROM_D2TM_SC55    ("attack6", 1.0f),
 };
 
+static MusicInfo s_table_music_attack_other[] = {
+	ADD_MUSIC_FROM_DUNE1984_OST ("03 - Robot Fight", "Robot Fight"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("08 - First Attack", "First Attack"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("14 - Big Battle", "Big Battle"),
+	ADD_MUSIC_FROM_DUNE1984_OST ("15 - Paul Kills Feyd", "Paul Kills Feyd"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("04 - Gom Jabbar", "Gom Jabbar"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("11 - Armada", "Armada"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("12 - Burning Palms", "Burning Palms"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("16 - Holy War", "Holy War"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("19 - Ornithopter", "Ornithopter"),
+	ADD_MUSIC_FROM_DUNE2021_OST ("20 - Sandstorm", "Sandstorm"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("08 - Mind-killer", "Mind-killer"),
+	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("09 - Grains of Sand", "Grains of Sand"),
+};
+
 MusicList g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_LIST(s_table_music_stop,  NULL),
 	ADD_MUSIC_LIST(s_table_music_logos, "Title Screen"),
@@ -486,6 +573,7 @@ MusicList g_table_music[MUSICID_MAX] = {
 	ADD_MUSIC_LIST(s_table_music_attack4, "Attack 4: Adrenaline Rush"),
 	ADD_MUSIC_LIST(s_table_music_attack5, "Attack 5: Only the Strongest Survives"),
 	ADD_MUSIC_LIST(s_table_music_attack6, "Attack 6: Marching Towards the End"),
+	ADD_MUSIC_LIST(s_table_music_attack_other, "Attack (Others)"),
 };
 
 /** Available voices. */

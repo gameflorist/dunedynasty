@@ -147,7 +147,7 @@ Audio_PlayMusicGroup(enum MusicID musicID, bool respect_want_setting)
 		end = MUSIC_BONUS;
 	} else if (musicID == MUSIC_RANDOM_ATTACK) {
 		start = MUSIC_ATTACK1;
-		end = MUSIC_ATTACK6;
+		end = MUSIC_ATTACK_OTHER;
 	}
 
 	for (enum MusicID m = start; m <= end; m++) {

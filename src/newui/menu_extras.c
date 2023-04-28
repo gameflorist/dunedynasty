@@ -410,7 +410,7 @@ PickMusic_Initialise(void)
 		const char *name;
 	} category[] = {
 		{ MUSIC_IDLE1, MUSIC_BONUS, "Idle" },
-		{ MUSIC_ATTACK1, MUSIC_ATTACK6, "Attack" },
+		{ MUSIC_ATTACK1, MUSIC_ATTACK_OTHER, "Attack" },
 		{ MUSIC_BRIEFING_HARKONNEN, MUSIC_END_GAME_ORDOS, "Mentat" },
 		{ MUSIC_LOGOS, MUSIC_CREDITS, "Other" },
 	};
@@ -459,7 +459,7 @@ PickMusic_Initialise(void)
 				si->d.offset = (s << 8) | musicID;
 
 				if (m->songname != NULL) {
-					snprintf(si->text, sizeof(si->text), "%s", m->songname);
+					snprintf(si->text, sizeof(si->text), "%s (%s)", m->songname, g_table_music_set[m->music_set].name);
 				} else if (lump_together) {
 					const char *sub = strchr(l->songname, ':');
 					const char *str = (sub == NULL) ? l->songname : (sub + 2);

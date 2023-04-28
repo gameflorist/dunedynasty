@@ -1,5 +1,9 @@
-Put Dune 2 Sega Mega Drive music here.
+Put Dune II Sega Mega Drive music here.
+
+Download from:
 http://nyerguds.arsaneus-design.com/dune/dunesega/
+
+List of files:
 
 01_intro.mp3
 02_cyrilscouncil.mp3
