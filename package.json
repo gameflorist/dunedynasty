@@ -1,0 +1,12 @@
+{
+  "name": "dunedynasty",
+  "scripts": {
+    "generate-readme-txt": "node generate-readme-txt.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "html-to-text": "^9.0.5",
+    "lodash": "^4.17.21",
+    "markdown-to-txt": "^2.0.1"
+  }
+}

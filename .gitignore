@@ -35,3 +35,4 @@ dist/music/*/*.aud
 .ninja_deps
 .ninja_log
 build.ninja
+node_modules
