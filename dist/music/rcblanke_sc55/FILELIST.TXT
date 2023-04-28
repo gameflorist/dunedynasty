@@ -1,5 +1,5 @@
 Put rcblanke's SC-55 addon here.
-http://vogons.zetafleet.com/viewtopic.php?t=33823&start=42
+https://dbgl.org/download/misc/dune2_sc55_flac.zip
 
 ambient01.flac
 ambient02.flac

@@ -1,5 +1,9 @@
-Put Dune 2 The Maker SC-55 addon here.
-http://dune2themaker.fundynamic.com/
+Put Dune II - The Maker SC-55 addon here.
+
+Download from:
+http://dune2themaker.fundynamic.com/downloads/mp3sc55.zip
+
+List of files:
 
 attack1.mp3
 attack2.mp3
