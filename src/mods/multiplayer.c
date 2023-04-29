@@ -26,7 +26,7 @@ Multiplayer_Init(void)
 {
 	memset(&g_multiplayer, 0, sizeof(g_multiplayer));
 
-	g_multiplayer.credits = 1000;
+	g_multiplayer.credits = 1500;
 	g_multiplayer.curr_seed = MapGenerator_PickRandomSeed();
 	g_multiplayer.next_seed = g_multiplayer.curr_seed;
 	g_multiplayer.seed_mode = MAP_SEED_MODE_RANDOM;
