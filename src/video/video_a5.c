@@ -1343,6 +1343,15 @@ VideoA5_DrawCPS(enum SearchDirectory dir, const char *filename)
 }
 
 void
+VideoA5_DrawCPSCoordinates(enum SearchDirectory dir, const char *filename, int dx, int dy)
+{
+	CPSStore *cps = VideoA5_LoadCPS(dir, filename);
+
+	if (cps != NULL)
+		al_draw_bitmap(cps->bmp, dx, dy, 0);
+}
+
+void
 VideoA5_DrawCPSRegion(enum SearchDirectory dir, const char *filename, int sx, int sy, int dx, int dy, int w, int h)
 {
 	CPSStore *cps = VideoA5_LoadCPS(dir, filename);

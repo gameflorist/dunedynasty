@@ -95,6 +95,7 @@ MainMenu_InitWidgets(void)
 		int shortcut2;
 	} menuitem[] = {
 		{ MENU_PLAY_A_GAME,  NULL, STR_PLAY_A_GAME, -1 },
+		{ MENU_REPLAY_INTRODUCTION,  NULL, STR_REPLAY_INTRODUCTION, -1 },
 		{ MENU_LOAD_GAME,    NULL, STR_LOAD_GAME, -1 },
 		{ MENU_PICK_LOBBY,   "Skirmish and Multiplayer", STR_NULL, SCANCODE_S },
 		{ MENU_EXTRAS,       "Options and Extras", STR_NULL, SCANCODE_O },
@@ -131,7 +132,7 @@ MainMenu_InitWidgets(void)
 	}
 
 	/* Add widget to change campaign. */
-	Widget *w = GUI_Widget_Allocate(100, 0, 0, 104, SHAPE_INVALID, STR_NULL);
+	Widget *w = GUI_Widget_Allocate(100, 0, 0, 84, SHAPE_INVALID, STR_NULL);
 	w->width = SCREEN_WIDTH;
 	w->height = g_fontIntro->height;
 	w->drawModeNormal = DRAW_MODE_NONE;
@@ -433,10 +434,10 @@ MainMenu_Initialise(Widget *w)
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
 
-	prop13->height = 11 + 5 * g_fontCurrent->height;
+	prop13->height = 11 + 6 * g_fontCurrent->height;
 	prop13->width = w->width + 2*8;
 	prop13->xBase = (SCREEN_WIDTH - prop13->width)/2;
-	prop13->yBase = 160 - prop13->height/2;
+	prop13->yBase = 150 - prop13->height/2;
 
 	while (w != NULL) {
 		GUI_Widget_MakeNormal(w, false);
@@ -447,7 +448,7 @@ MainMenu_Initialise(Widget *w)
 static void
 MainMenu_Draw(Widget *widget)
 {
-	Video_DrawCPS(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("TITLE"));
+	VideoA5_DrawCPSCoordinates(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("TITLE"),0,-20);
 
 	const int64_t curr_ticks = Timer_GetTicks();
 	const Widget *w = GUI_Widget_Get_ByIndex(widget, 100);
@@ -474,7 +475,7 @@ MainMenu_Draw(Widget *widget)
 
 	unsigned char colours[16];
 	const int x = (SCREEN_WIDTH - Font_GetStringWidth(subtitle)) / 2;
-	const int y = 104;
+	const int y = 84;
 
 	memset(colours, 0, sizeof(colours));
 
@@ -567,6 +568,10 @@ MainMenu_Loop(void)
 			Campaign_Load();
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_PICK_HOUSE;
+
+		case 0x8000 | MENU_REPLAY_INTRODUCTION:
+			MainMenu_SetupBlink(main_menu_widgets, widgetID);
+			return MENU_BLINK_CONFIRM | MENU_REPLAY_INTRODUCTION;
 
 		case 0x8000 | MENU_EXTRAS:
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
@@ -1463,6 +1468,11 @@ Menu_Run(void)
 
 			case MENU_PLAY_A_GAME:
 				res = PlayAGame_Loop(true);
+				break;
+
+			case MENU_REPLAY_INTRODUCTION:				
+				GameLoop_GameIntroAnimation();
+				res = MENU_MAIN_MENU;
 				break;
 
 			case MENU_LOAD_GAME:
