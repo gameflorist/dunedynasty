@@ -25,6 +25,7 @@
 #include "../tools/coord.h"
 #include "../unit.h"
 #include "../video/video.h"
+#include "../scenario.h"
 
 /**
  * Draw a text button widget to the display, relative to its parent.
@@ -645,6 +646,11 @@ GUI_Widget_DrawWindow(const WindowDesc *desc)
 {
 	const WidgetProperties *wi = &g_widgetProperties[desc->index];
 	const char *title = GUI_String_Get_ByIndex(desc->stringID);
+
+	// use custom campaign name as options title, if currently selected.
+	if (desc == &g_optionsWindowDesc && g_campaign_selected > CAMPAIGNID_MULTIPLAYER) {
+		title = g_campaign_list[g_campaign_selected].name;
+	}
 
 	GUI_Widget_DrawBorder(desc->index, 2, true);
 
