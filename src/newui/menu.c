@@ -131,18 +131,20 @@ MainMenu_InitWidgets(void)
 		w->width = maxWidth;
 	}
 
-	/* Add widget to change campaign. */
-	Widget *w = GUI_Widget_Allocate(100, 0, 0, 84, SHAPE_INVALID, STR_NULL);
-	w->width = SCREEN_WIDTH;
-	w->height = g_fontIntro->height;
-	w->drawModeNormal = DRAW_MODE_NONE;
-	w->drawModeSelected = DRAW_MODE_NONE;
-	w->drawModeDown = DRAW_MODE_NONE;
-	w->drawParameterNormal.text = g_campaign_list[g_campaign_selected].name;
-	w->drawParameterSelected.text = w->drawParameterNormal.text;
-	w->drawParameterDown.text = w->drawParameterNormal.text;
-	w->flags.clickAsHover = false;
-	main_menu_widgets = GUI_Widget_Link(main_menu_widgets, w);
+	// Add widgets for arrows to change campaign.
+	for (int i = 1; i <= 2; ++i) {
+		bool isRightArrow = i == 2;
+		int arrowXOffset = isRightArrow ? SCREEN_WIDTH / 2 : 0;
+		Widget *arrowWidget = GUI_Widget_Allocate(100+i, 0, arrowXOffset, 84, SHAPE_INVALID, STR_NULL);
+		arrowWidget->width = SCREEN_WIDTH / 2;
+		arrowWidget->height = g_fontIntro->height;
+		arrowWidget->drawModeNormal = DRAW_MODE_NONE;
+		arrowWidget->drawModeSelected = DRAW_MODE_NONE;
+		arrowWidget->drawModeDown = DRAW_MODE_NONE;
+		arrowWidget->flags.clickAsHover = false;
+		arrowWidget->flags.invisible = !Campaign_CustomCampaignsAvailable();
+		main_menu_widgets = GUI_Widget_Link(main_menu_widgets, arrowWidget);
+	}
 
 	subtitle_timer = -2 * SUBTITLE_FADE_TICKS;
 }
@@ -356,6 +358,7 @@ static void
 Menu_Init(void)
 {
 	Menu_ScanCampaigns();
+	Config_GetCampaign();
 
 	MainMenu_InitWidgets();
 	PickHouse_InitWidgets();
@@ -363,19 +366,6 @@ Menu_Init(void)
 	Briefing_InitWidgets();
 	Extras_InitWidgets();
 	StrategicMap_Init();
-
-	Widget *w = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
-
-	if (g_campaign_total <= CAMPAIGNID_MULTIPLAYER + 1) {
-		/* No additional campaigns installed.  Only
-		 * CAMPAIGNID_DUNE_II, CAMPAIGNID_SKIRMISH, CAMPAIGNID_MULTIPLAYER.
-		 */
-		GUI_Widget_MakeInvisible(w);
-	} else {
-		Config_GetCampaign();
-		w->drawParameterNormal.text = g_campaign_list[g_campaign_selected].name;
-		w->drawParameterDown.text = w->drawParameterNormal.text;
-	}
 
 	Skirmish_Initialise();
 
@@ -450,19 +440,34 @@ MainMenu_Draw(Widget *widget)
 {
 	VideoA5_DrawCPSCoordinates(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("TITLE"),0,-20);
 
+	MainMenu_DrawSubtitle(widget);
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
+	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
+	GUI_Widget_DrawAll(widget);
+
+	GUI_DrawText_Wrapper("dd" DUNE_DYNASTY_VERSION,
+			SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x221);
+}
+
+void
+MainMenu_DrawSubtitle(Widget *widget)
+{
+
+	// Draw subtitle
 	const int64_t curr_ticks = Timer_GetTicks();
 	const Widget *w = GUI_Widget_Get_ByIndex(widget, 100);
 	const char *subtitle;
 	int alpha = 0;
-	int colour = (w->state.hover1) ? 192 : 144;
+	int colour = 192;
 
 	if (curr_ticks - subtitle_timer < SUBTITLE_FADE_TICKS) {
 		/* Interesting colours: 192, 216, 231, 240. */
-		subtitle = w->drawParameterDown.text;
+		subtitle = g_campaign_list[g_campaign_selected].name;
 		alpha = 0xFF * (curr_ticks - subtitle_timer) / SUBTITLE_FADE_TICKS;
 		colour = 192;
 	} else {
-		subtitle = w->drawParameterNormal.text;
+		subtitle = g_campaign_list[g_campaign_selected].name;
 
 		if (curr_ticks - subtitle_timer - SUBTITLE_FADE_TICKS < SUBTITLE_FADE_TICKS) {
 			alpha = 0xFF - 0xFF * (curr_ticks - subtitle_timer - SUBTITLE_FADE_TICKS) / SUBTITLE_FADE_TICKS;
@@ -489,12 +494,25 @@ MainMenu_Draw(Widget *widget)
 	if (alpha > 0)
 		Prim_FillRect_RGBA(0, y, SCREEN_WIDTH, y + g_fontIntro->height, 0, 0, 0, alpha);
 
-	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
-	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
-	GUI_Widget_DrawAll(widget);
+	// Draw arrows to change campaign
+	/* Width is 70/72 with the EU font, 73-75 with the US font. */
+	if (Campaign_CustomCampaignsAvailable()) {
+		const ScreenDiv *div = &g_screenDiv[SCREENDIV_MENU];
+		const int width = Font_GetStringWidth(subtitle);
+		const Widget *arrowLeftWidget = GUI_Widget_Get_ByIndex(widget, 101);
+		const Widget *arrowRightWidget = GUI_Widget_Get_ByIndex(widget, 102);
+		const int arrowsOffsetY = arrowLeftWidget->offsetY + 6;
 
-	GUI_DrawText_Wrapper("dd" DUNE_DYNASTY_VERSION,
-			SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x221);
+		const float xl = (SCREEN_WIDTH - width) / 2 - 10.0f;
+		Video_SetClippingArea(div->scalex * (xl + 1) + div->x, div->scaley * (arrowsOffsetY) + div->y, div->scalex * 3, div->scaley * 5);
+		Shape_DrawTint(SHAPE_CURSOR_LEFT, xl, arrowsOffsetY - 3, (arrowLeftWidget->state.hover1) ? 192 : 144, 0, 0);
+
+		const float xr = (SCREEN_WIDTH + width) / 2 - 0.0f;
+		Video_SetClippingArea(div->scalex * (xr + 5) + div->x, div->scaley * (arrowsOffsetY) + div->y, div->scalex * 3, div->scaley * 5);
+		Shape_DrawTint(SHAPE_CURSOR_RIGHT, xr, arrowsOffsetY - 3, (arrowRightWidget->state.hover1) ? 192 : 144, 0, 0);
+
+		Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+	}
 }
 
 static void
@@ -547,9 +565,6 @@ MainMenu_SelectCampaign(int campaignID, int delta)
 			campaignID = CAMPAIGNID_DUNE_II;
 	}
 
-	Widget *subtitle = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
-	subtitle->drawParameterNormal.text = g_campaign_list[campaignID].name;
-
 	g_campaign_selected = campaignID;
 }
 
@@ -594,16 +609,13 @@ MainMenu_Loop(void)
 			MainMenu_SetupBlink(main_menu_widgets, widgetID);
 			return MENU_BLINK_CONFIRM | MENU_EXIT_GAME;
 
-		case 0x8000 | 100: /* Switch campaign. */
+		/* Switch campaign. */
+		case 0x8000 | 101:
+		case 0x8000 | 102:
 			if (curr_ticks - subtitle_timer < 2 * SUBTITLE_FADE_TICKS)
 				break;
-
-			Widget *subtitle = GUI_Widget_Get_ByIndex(main_menu_widgets, 100);
-			subtitle->drawParameterDown.text = subtitle->drawParameterNormal.text;
-
-			const int delta = (subtitle->state.buttonState & 0x04) ? 1 : -1;
+			int delta = (widgetID == (0x8000 | 101)) ? -1 : 1;
 			MainMenu_SelectCampaign(g_campaign_selected, delta);
-
 			subtitle_timer = Timer_GetTicks();
 			break;
 

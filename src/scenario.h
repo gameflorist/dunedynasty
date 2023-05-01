@@ -79,6 +79,7 @@ extern Scenario g_scenario;
 
 extern Campaign *Campaign_Alloc(const char *dir_name);
 extern void Campaign_Load(void);
+extern bool Campaign_CustomCampaignsAvailable(void);
 extern bool Scenario_Load(uint16 scenarioID, uint8 houseID);
 extern void Scenario_CentreViewport(uint8 houseID);
 

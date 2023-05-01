@@ -286,6 +286,15 @@ Campaign_ReadMetaData(Campaign *camp)
 	}
 }
 
+bool
+Campaign_CustomCampaignsAvailable(void)
+{
+	/* No additional campaigns installed.  Only
+	* CAMPAIGNID_DUNE_II, CAMPAIGNID_SKIRMISH, CAMPAIGNID_MULTIPLAYER.
+	*/
+	return g_campaign_total > CAMPAIGNID_MULTIPLAYER + 1;
+}
+
 static enum MusicID
 Campaign_MusicFromString(const char *str, enum MusicID def)
 {
