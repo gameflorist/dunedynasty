@@ -1,7 +1,7 @@
 {
   "name": "dunedynasty",
   "scripts": {
-    "generate-readme-txt": "node generate-readme-txt.js"
+    "generate-readme-txt": "node ./scripts/generate-readme-txt.js"
   },
   "type": "module",
   "dependencies": {
