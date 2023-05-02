@@ -26,6 +26,7 @@ dist/*.dll
 dist/*.exe
 dist/*.log
 dist/*.cfg
+dist/libs
 dist/save
 dist/music/*/*.mp3
 dist/music/*/*.flac
