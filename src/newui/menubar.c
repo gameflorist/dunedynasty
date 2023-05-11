@@ -40,6 +40,7 @@
 #include "../tools/random_xorshift.h"
 #include "../video/video.h"
 #include "../wsa.h"
+#include "../mods/multiplayer.h"
 
 static enum {
 	RADAR_ANIMATION_NONE,
@@ -362,8 +363,19 @@ MenuBar_DisplayWinLose(bool win)
 	Video_UngrabCursor();
 
 	Audio_PlayVoice(voiceID);
-	snprintf(s_modal_message_buf, sizeof(s_modal_message_buf), "%s",
-			String_Get_ByIndex(stringID));
+
+	if (!win && g_campaign_selected == CAMPAIGNID_MULTIPLAYER && Net_HasServerRole() && Multiplayer_IsAnyHouseLeftPlaying()) {
+		snprintf(
+			s_modal_message_buf,
+			sizeof(s_modal_message_buf), "%s %s",
+			String_Get_ByIndex(stringID),
+			"As host you will become observer until the other players finish the game."
+		);
+	}
+	else {
+		snprintf(s_modal_message_buf, sizeof(s_modal_message_buf), "%s",
+				String_Get_ByIndex(stringID));
+	}
 	MenuBar_PrepareModalMessage(SHAPE_INVALID);
 }
 
@@ -371,9 +383,21 @@ void
 MenuBar_TickWinLoseOverlay(void)
 {
 	if (MenuBar_TickModalMessage()) {
-		g_gameMode = (g_gameOverlay == GAMEOVERLAY_WIN) ? GM_WIN : GM_LOSE;
-		g_gameOverlay = GAMEOVERLAY_NONE;
-		GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
+		bool finishMap = true;
+
+		// Multiplayer host can only end map, if all houses have either won or lost.
+		if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER && Net_HasServerRole() && Multiplayer_IsAnyHouseLeftPlaying()) {
+			finishMap = false;
+		}		
+
+		if (finishMap) {
+			g_gameMode = (g_gameOverlay == GAMEOVERLAY_WIN) ? GM_WIN : GM_LOSE;
+			g_gameOverlay = GAMEOVERLAY_NONE;
+			GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
+		}
+		else  {
+			g_gameOverlay = GAMEOVERLAY_NONE;
+		}
 	}
 }
 

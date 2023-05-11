@@ -44,5 +44,6 @@ extern void Multiplayer_Init(void);
 extern bool Multiplayer_IsHouseAvailable(enum HouseType houseID);
 extern bool Multiplayer_GenHouses(struct SkirmishData *sd);
 extern enum MapGeneratorMode Multiplayer_GenerateMap(enum MapGeneratorMode mode);
+extern bool Multiplayer_IsAnyHouseLeftPlaying(void);
 
 #endif

@@ -710,13 +710,14 @@ Server_Send_WinLose(enum HouseType houseID, bool win)
 		g_client_houses &= ~(1 << houseID);
 
 		if (!win) {
-			House_Server_ReassignToAI(houseID);
+			// this is not working: House_Server_ReassignToAI(houseID);
+			// so we blow up everything instead.
+			House_Server_Eliminate(houseID);
 		}
 	}
 
 	if (houseID == g_playerHouseID) {
 		MenuBar_DisplayWinLose(win);
-		Server_ReturnToLobbyNow(win);
 	} else {
 		unsigned char src[2];
 		unsigned char *buf = src;
@@ -726,6 +727,15 @@ Server_Send_WinLose(enum HouseType houseID, bool win)
 
 		assert(buf - src == sizeof(src));
 		Server_BufferGameEvent(1 << houseID, sizeof(src), src);
+
+		// If no other houses are left playing,
+		// the host might have lost earlier and might
+		// still be waiting for the game to end.
+		// So we send him back to the lobby.
+		if (!Multiplayer_IsAnyHouseLeftPlaying() && g_gameOverlay == GAMEOVERLAY_NONE) {
+			g_gameMode = GM_LOSE;
+			GUI_ChangeSelectionType(SELECTIONTYPE_MENTAT);
+		}
 	}
 }
 

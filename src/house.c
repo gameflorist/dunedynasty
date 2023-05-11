@@ -492,6 +492,26 @@ House_Server_ReassignToAI(enum HouseType houseID)
 }
 
 void
+House_Server_Eliminate(enum HouseType houseID)
+{
+	House *h = House_Get_ByIndex(houseID);
+
+	PoolFindStruct find;
+
+	for (Structure *s = Structure_FindFirst(&find, houseID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
+		Structure_Damage(s, s->o.hitpoints * 2, 0);
+	}
+
+	for (Unit *u = Unit_FindFirst(&find, houseID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		Unit_Damage(u, u->o.hitpoints * 2, 0);
+	}
+}
+
+void
 House_Client_UpdateRadarState(void)
 {
 	House *h = g_playerHouse;

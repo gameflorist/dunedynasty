@@ -131,6 +131,17 @@ Multiplayer_Prepare(void)
 	}
 }
 
+bool Multiplayer_IsAnyHouseLeftPlaying(void)
+{
+	bool houseLeft = false;
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_multiplayer.state[h] == MP_HOUSE_PLAYING)
+			houseLeft = true;
+	}
+
+	return houseLeft;
+}
+
 enum MapGeneratorMode
 Multiplayer_GenerateMap(enum MapGeneratorMode mode)
 {
