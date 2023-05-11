@@ -147,11 +147,22 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 
 		if (g_campaign_selected == CAMPAIGNID_SKIRMISH
 		 || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
-			for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_MCV);
+
+			// If lose condition is set to structures,
+			// we only search for MCVs to determine, if house is still alive.
+			// It it is set to units, we search for all units,
+			// and filter out non-ground-units in the loop.
+			uint8 findUnitType = g_multiplayer.lose_condition == MAP_LOSE_CONDITION_STRUCTURES ? UNIT_MCV : 0xFFFF;
+
+			for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, findUnitType);
 					u != NULL;
 					u = Unit_FindNext(&find)) {
 				if (foundFriendly && foundEnemy)
 					break;
+				
+				// Only ground units count for lose condition.
+				if (u->o.type < UNIT_INFANTRY || u->o.type > UNIT_MCV)
+					continue;
 
 				const enum HouseType h2 = Unit_GetHouseID(u);
 				if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER

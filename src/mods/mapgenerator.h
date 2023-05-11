@@ -34,6 +34,11 @@ enum MapSeedMode {
 	MAP_SEED_MODE_SURPRISE = 2,
 };
 
+enum MapLoseCondition {
+	MAP_LOSE_CONDITION_STRUCTURES = 0,
+	MAP_LOSE_CONDITION_UNITS = 1
+};
+
 extern enum MapGeneratorMode MapGenerator_TransitionState(enum MapGeneratorMode mode, bool success);
 extern uint32 MapGenerator_PickRandomSeed(void);
 

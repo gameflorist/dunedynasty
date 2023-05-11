@@ -551,6 +551,7 @@ Client_Recv_Scenario(const unsigned char **buf)
 	g_multiplayer.next_seed = Net_Decode_uint32(buf);
 	g_multiplayer.test_seed = g_multiplayer.next_seed;
 	g_multiplayer.seed_mode = Net_Decode_uint32(buf);
+	g_multiplayer.lose_condition = Net_Decode_uint32(buf);
 	g_multiplayer.landscape_params.min_spice_fields = Net_Decode_uint32(buf);
 	g_multiplayer.landscape_params.max_spice_fields = Net_Decode_uint32(buf);
 	enhancement_fog_of_war = Net_Decode_uint8(buf);

@@ -41,6 +41,7 @@ enum MapGeneratorMode lobby_map_generator_mode;
 
 char map_options_fixed_seed[5 + 1] = "";
 char map_options_starting_credits[5 + 1] = "0";
+enum MapLoseCondition map_options_lose_condition = MAP_LOSE_CONDITION_STRUCTURES;
 enum MapSeedMode map_options_seed_mode = MAP_SEED_MODE_RANDOM;
 char map_options_spice_fields_min[3 + 1] = "0";
 char map_options_spice_fields_max[3 + 1] = "0";
@@ -49,6 +50,7 @@ char map_options_spice_fields_max[3 + 1] = "0";
 Skirmish map_options_saved_skirmish;
 Multiplayer map_options_saved_multiplayer;
 enum MapSeedMode map_options_saved_seed_mode;
+enum MapLoseCondition map_options_saved_lose_condition;
 
 /*--------------------------------------------------------------*/
 
@@ -262,6 +264,17 @@ MapOptionsLobby_ChangeSeedMode(enum MapSeedMode seed_mode)
 }
 
 static void
+MapOptionsLobby_ChangeLoseCondition(enum MapLoseCondition lose_condition)
+{
+	for(int m = 0; m < 2; m++) {
+		Widget *w = GUI_Widget_Get_ByIndex(map_options_lobby_widgets, MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES + m);
+		w->drawParameterNormal.sprite = ((int)lose_condition == m) ? SHAPE_RADIO_BUTTON_ON: SHAPE_RADIO_BUTTON_OFF;
+		w->state.selected = ((int)lose_condition == m) ? 1: 0;
+	}
+	map_options_lose_condition = lose_condition;
+}
+
+static void
 MapOptionsLobby_UpdateReadOnlyView(void)
 {
 	if ((g_campaign_selected == CAMPAIGNID_MULTIPLAYER) && !Net_HasServerRole()) {
@@ -283,13 +296,26 @@ MapOptionsLobby_UpdateReadOnlyView(void)
 			map_options_seed_mode = g_multiplayer.seed_mode;
 			MapOptionsLobby_ChangeSeedMode(map_options_seed_mode);
 		}
+
+		if (map_options_lose_condition != g_multiplayer.lose_condition) {
+			map_options_lose_condition = g_multiplayer.lose_condition;
+			MapOptionsLobby_ChangeLoseCondition(map_options_lose_condition);
+		}
 	}
 }
 
 static bool
-MapOptionsLobby_ClickRadioButton(Widget *radio)
+MapOptionsLobby_ClickMapSeedRadioButton(Widget *radio)
 {
 	MapOptionsLobby_ChangeSeedMode(radio->index - MAP_OPTIONS_WIDGET_SEED_RANDOM);
+
+	return true;
+}
+
+static bool
+MapOptionsLobby_ClickLoseConditionRadioButton(Widget *radio)
+{
+	MapOptionsLobby_ChangeLoseCondition(radio->index - MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES);
 
 	return true;
 }
@@ -300,6 +326,7 @@ MapOptionsLobby_InitWidgets(void)
 	Widget *w;
 
 	const int lineHeight = MAP_OPTIONS_GUI_LINE_HEIGHT;
+	int offsetY;
 
 	/* Starting credits. */
 	w = GUI_Widget_Allocate(24, 0, MAP_OPTIONS_GUI_MAIN_X + 4, MAP_OPTIONS_GUI_MAIN_Y + 1*lineHeight, 0xFFFE, STR_NULL);
@@ -319,23 +346,36 @@ MapOptionsLobby_InitWidgets(void)
 	w->flags.invisible = true;
 	map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
 
+	/* lose condition radio buttons. */
+	const int loseConditionRadioOffsetX[] = {0,68};
+	for (int choice = 0; choice < 2; choice++) {
+		w = GUI_Widget_Allocate(MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES + choice, 0, MAP_OPTIONS_GUI_MAIN_X + loseConditionRadioOffsetX[choice],
+				MAP_OPTIONS_GUI_MAIN_Y + 44, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
+		w->width = (choice == MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES) ? 84 : 46;
+		w->clickProc = MapOptionsLobby_ClickLoseConditionRadioButton;
+		w->drawParameterNormal.sprite = (choice == (int)map_options_lose_condition) ? SHAPE_RADIO_BUTTON_ON: SHAPE_RADIO_BUTTON_OFF;
+		w->state.selected = (choice == (int)map_options_lose_condition) ? 1: 0;
+		w->flags.greyWhenInvisible = true;
+		map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
+	}
+
 	/* Map selection mode. */
 
-	/* Radio buttons. */
-	const int mapOffsetY[] = {14, 28, 56};
+	/* Seed radio buttons. */
+	const int mapOffsetY[] = {14, 28, 42};
 	for (int choice = 0; choice < 3; choice++) {
 		w = GUI_Widget_Allocate(MAP_OPTIONS_WIDGET_SEED_RANDOM + choice, 0, MAP_OPTIONS_GUI_MAP_X + 4,
 				MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[choice], SHAPE_RADIO_BUTTON_OFF, STR_NULL);
 		w->width = (choice == MAP_SEED_MODE_SURPRISE) ? 84 : 46;
-		w->clickProc = MapOptionsLobby_ClickRadioButton;
+		w->clickProc = MapOptionsLobby_ClickMapSeedRadioButton;
 		w->drawParameterNormal.sprite = (choice == (int)map_options_seed_mode) ? SHAPE_RADIO_BUTTON_ON: SHAPE_RADIO_BUTTON_OFF;
 		w->state.selected = (choice == (int)map_options_seed_mode) ? 1: 0;
 		w->flags.greyWhenInvisible = true;
 		map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
 	}
 
-	/* Map selection override. */
-	w = GUI_Widget_Allocate(23, 0, MAP_OPTIONS_GUI_MAP_X + 16, MAP_OPTIONS_GUI_MAP_Y + 42 - 2, 0xFFFE, STR_NULL);
+	/* Map fixed seed input. */
+	w = GUI_Widget_Allocate(23, 0, MAP_OPTIONS_GUI_MAP_X + 50, MAP_OPTIONS_GUI_MAP_Y + 28 - 2, 0xFFFE, STR_NULL);
 	w->width  = 46;
 	w->height = 12;
 	memset(&w->flags, 0, sizeof(w->flags));
@@ -352,9 +392,8 @@ MapOptionsLobby_InitWidgets(void)
 	w->flags.invisible = true;
 	map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
 
-	/* Spice fields */
-	int offsetY = MAP_OPTIONS_GUI_MAIN_Y + 6;
-	w = GUI_Widget_Allocate(3, 0, MAP_OPTIONS_GUI_MAIN_X + 22, offsetY + 3 * lineHeight, 0xFFFE, STR_NULL);
+	/* Spice fields min input */
+	w = GUI_Widget_Allocate(3, 0, MAP_OPTIONS_GUI_MAP_X + 22, MAP_OPTIONS_GUI_MAP_Y + 70 -2, 0xFFFE, STR_NULL);
 	w->width  = 32;
 	w->height = 12;
 	memset(&w->flags, 0, sizeof(w->flags));
@@ -371,7 +410,8 @@ MapOptionsLobby_InitWidgets(void)
 	w->flags.invisible = true;
 	map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
 
-	w = GUI_Widget_Allocate(4, 0, MAP_OPTIONS_GUI_MAIN_X + 78, offsetY + 3 * lineHeight, 0xFFFE, STR_NULL);
+	/* Spice fields max input */
+	w = GUI_Widget_Allocate(4, 0, MAP_OPTIONS_GUI_MAP_X + 78, MAP_OPTIONS_GUI_MAP_Y + 70 -2, 0xFFFE, STR_NULL);
 	w->width  = 32;
 	w->height = 12;
 	memset(&w->flags, 0, sizeof(w->flags));
@@ -405,7 +445,7 @@ MapOptionsLobby_InitWidgets(void)
 	map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
 
 	/* Regenerate map. */
-	w = GUI_Widget_Allocate(9, 0, MAP_OPTIONS_GUI_MAP_X + 110, MAP_OPTIONS_GUI_MAP_Y + 9, SHAPE_INVALID, STR_NULL);
+	w = GUI_Widget_Allocate(9, 0, MAP_OPTIONS_GUI_MAP_X + 119, MAP_OPTIONS_GUI_MAP_Y + 9, SHAPE_INVALID, STR_NULL);
 	w->width = 62;
 	w->height = 62;
 	map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
@@ -458,9 +498,10 @@ MapOptionsLobby_Initialise(void)
 	map_options_saved_skirmish = g_skirmish;
 	map_options_saved_multiplayer = g_multiplayer;
 	map_options_saved_seed_mode = map_options_seed_mode;
+	map_options_saved_lose_condition = map_options_lose_condition;
 
-	int widgetIDs[] = {3, 4, 5, 6, 23, 24, MAP_OPTIONS_WIDGET_SEED_RANDOM,
-			MAP_OPTIONS_WIDGET_SEED_RANDOM+1, MAP_OPTIONS_WIDGET_SEED_RANDOM+2, -1};
+	int widgetIDs[] = {3, 4, 5, 6, 23, 24, MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES, MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES+1,
+		MAP_OPTIONS_WIDGET_SEED_RANDOM,	MAP_OPTIONS_WIDGET_SEED_RANDOM+1, MAP_OPTIONS_WIDGET_SEED_RANDOM+2, -1};
 	for (int i = 0; widgetIDs[i] > 0; i++)
 		GUI_Widget_Get_ByIndex(map_options_lobby_widgets, widgetIDs[i])->flags.invisible = MapOptionsLobby_IsReadOnly();
 
@@ -481,6 +522,7 @@ MapOptionsLobby_Initialise(void)
 	widgetApply->flags.greyWhenInvisible = !MapOptionsLobby_IsReadOnly();
 
 	MapOptionsLobby_ChangeSeedMode(map_options_seed_mode);
+	MapOptionsLobby_ChangeLoseCondition(map_options_lose_condition);
 }
 
 static int
@@ -567,12 +609,14 @@ MapOptionsLobby_Loop(void)
 		g_skirmish = map_options_saved_skirmish;
 		g_multiplayer = map_options_saved_multiplayer;
 		map_options_seed_mode = map_options_saved_seed_mode;
+		map_options_lose_condition = map_options_saved_lose_condition;
 		return MENU_NO_TRANSITION | (is_multiplayer ? MENU_MULTIPLAYER_LOBBY: MENU_SKIRMISH_LOBBY);
 	}
 
 	if (widgetID == 0x8002) { /* Apply was pressed. */
 		GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(map_options_lobby_widgets, 2), false);
 		g_multiplayer.seed_mode = map_options_seed_mode;
+		g_multiplayer.lose_condition = map_options_lose_condition;
 		enhancement_fog_of_war = (GUI_Widget_Get_ByIndex(map_options_lobby_widgets, 5)->state.selected != 0);
 		enhancement_insatiable_sandworms = (GUI_Widget_Get_ByIndex(map_options_lobby_widgets, 6)->state.selected != 0);
 		int result = MapOptionsLobby_HandleMapAndMessages(true);
@@ -975,6 +1019,7 @@ MapOptionsLobby_Draw(void)
 	const int lineHeight = MAP_OPTIONS_GUI_LINE_HEIGHT;
 	const int errorX = MAP_OPTIONS_GUI_ERROR_X, errorY = MAP_OPTIONS_GUI_ERROR_Y;
 	bool issuesFound = false;
+	int offsetY;
 
 	GUI_HallOfFame_SetColourScheme(true);
 	HallOfFame_DrawBackground(HOUSE_INVALID, HALLOFFAMESTYLE_CLEAR_BACKGROUND);
@@ -1002,34 +1047,11 @@ MapOptionsLobby_Draw(void)
 		}
 	}
 
-	/* Spice fields */
-	int offsetY = MAP_OPTIONS_GUI_MAIN_Y + 6;
-	GUI_DrawText_Wrapper("Spice fields:", MAP_OPTIONS_GUI_MAIN_X, offsetY + 2*lineHeight, 0xF, 0, 0x22);
-	GUI_DrawText_Wrapper("Min:", MAP_OPTIONS_GUI_MAIN_X, offsetY + 3*lineHeight + 2, 0xF, 0, 0x21);
-	GUI_DrawText_Wrapper("Max:", MAP_OPTIONS_GUI_MAIN_X + 55, offsetY + 3*lineHeight + 2, 0xF, 0, 0x21);
-	const int spice_min = atoi(map_options_spice_fields_min);
-	if (spice_min < MAP_OPTIONS_SPICE_MIN) {
-		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 68, offsetY + 2*lineHeight, 0xE7, 0, 0x21);
-		if (!issuesFound) {
-			GUI_DrawText_Wrapper("Min. %u spice field spawn points", errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_SPICE_MIN);
-			issuesFound = true;
-		}
-	}
-	const int spice_max = atoi(map_options_spice_fields_max);
-	if (spice_max > MAP_OPTIONS_SPICE_MAX) {
-		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 68, offsetY + 2*lineHeight, 0xE7, 0, 0x21);
-		if (!issuesFound) {
-			GUI_DrawText_Wrapper("Max. %u spice field spawn points", errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_SPICE_MAX);
-			issuesFound = true;
-		}
-	}
-	if (spice_min > spice_max) {
-		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 68, offsetY + 2*lineHeight, 0xE7, 0, 0x21);
-		if (!issuesFound) {
-			GUI_DrawText_Wrapper("Min. spice larger than max.", errorX, errorY, 0xE7, 0, 0x21);
-			issuesFound = true;
-		}
-	}
+	/* Win Condition */
+	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 6;
+	GUI_DrawText_Wrapper("Lose condition:", MAP_OPTIONS_GUI_MAIN_X, offsetY + 2*lineHeight, 0xF, 0, 0x22);
+	GUI_DrawText_Wrapper("Structures", MAP_OPTIONS_GUI_MAIN_X + 10, offsetY + 3*lineHeight + 2, (map_options_lose_condition == MAP_LOSE_CONDITION_STRUCTURES) ? 0x8: 0xF, 0, 0x21);
+	GUI_DrawText_Wrapper("Units", MAP_OPTIONS_GUI_MAIN_X + 78, offsetY + 3*lineHeight + 2, (map_options_lose_condition == MAP_LOSE_CONDITION_UNITS) ? 0x8: 0xF, 0, 0x21);
 
 	/* Enhancement: Fog of War */
 	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 12;
@@ -1040,20 +1062,22 @@ MapOptionsLobby_Draw(void)
 	/* Map and map options */
 	Prim_DrawBorder(MAP_OPTIONS_GUI_MAP_X - 2, MAP_OPTIONS_GUI_MAP_Y - 2,
 			MAP_OPTIONS_GUI_MAP_W + 4, MAP_OPTIONS_GUI_MAP_H + 4, 1, false, false, 4);
-	const int mapOffsetY[] = {0, 14, 28, 42, 56};
+	const int mapOffsetY[] = {0, 14, 28, 42, 56, 70};
+
+	/* Map Seed */
 	GUI_DrawText_Wrapper("Map seed:", MAP_OPTIONS_GUI_MAP_X, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[0], 0xF, 0, 0x22);
 	GUI_DrawText_Wrapper("Random", MAP_OPTIONS_GUI_MAP_X + 16, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[1],
 			(map_options_seed_mode == MAP_SEED_MODE_RANDOM) ? 0x8: 0xF, 0, 0x21);
 	GUI_DrawText_Wrapper("Fixed:", MAP_OPTIONS_GUI_MAP_X + 16, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[2],
 			(map_options_seed_mode == MAP_SEED_MODE_FIXED) ? 0x8: 0xF, 0, 0x21);
-	GUI_DrawText_Wrapper("Surprise me!", MAP_OPTIONS_GUI_MAP_X + 16, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[4],
+	GUI_DrawText_Wrapper("Surprise me!", MAP_OPTIONS_GUI_MAP_X + 16, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[3],
 			(map_options_seed_mode == MAP_SEED_MODE_SURPRISE) ? 0x8: 0xF, 0, 0x21);
 
 	const uint32 override_seed = atoi(map_options_fixed_seed);
 	const uint32 current_seed = is_skirmish ? g_skirmish.seed : g_multiplayer.test_seed;
 	if ((map_options_seed_mode == MAP_SEED_MODE_FIXED) && (override_seed != current_seed)) {
 		/* Show an error indication, because the requested seed could not be applied.*/
-		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 65, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[3], 0xE7, 0, 0x21);
+		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 97, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[2], 0xE7, 0, 0x21);
 		if (!issuesFound) {
 			GUI_DrawText_Wrapper("Map rejected. Enough build space?",
 					errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_STARTING_CREDITS_MAX);
@@ -1061,9 +1085,34 @@ MapOptionsLobby_Draw(void)
 		}
 	}
 
-	/* Error message box region */
-	Prim_DrawBorder(MAP_OPTIONS_GUI_ERROR_X - 2, MAP_OPTIONS_GUI_ERROR_Y - 2,
-			MAP_OPTIONS_GUI_ERROR_W + 4, MAP_OPTIONS_GUI_ERROR_H + 4, 1, false, false, 4);
+	/* Spice fields */
+	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 6;
+	GUI_DrawText_Wrapper("Spice fields:", MAP_OPTIONS_GUI_MAP_X, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[4], 0xF, 0, 0x22);
+	GUI_DrawText_Wrapper("Min:", MAP_OPTIONS_GUI_MAP_X, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[5], 0xF, 0, 0x21);
+	GUI_DrawText_Wrapper("Max:", MAP_OPTIONS_GUI_MAP_X + 55, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[5], 0xF, 0, 0x21);
+	const int spice_min = atoi(map_options_spice_fields_min);
+	if (spice_min < MAP_OPTIONS_SPICE_MIN) {
+		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 110, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[5], 0xE7, 0, 0x21);
+		if (!issuesFound) {
+			GUI_DrawText_Wrapper("Min. %u spice field spawn points", errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_SPICE_MIN);
+			issuesFound = true;
+		}
+	}
+	const int spice_max = atoi(map_options_spice_fields_max);
+	if (spice_max > MAP_OPTIONS_SPICE_MAX) {
+		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 110, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[5], 0xE7, 0, 0x21);
+		if (!issuesFound) {
+			GUI_DrawText_Wrapper("Max. %u spice field spawn points", errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_SPICE_MAX);
+			issuesFound = true;
+		}
+	}
+	if (spice_min > spice_max) {
+		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 110, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[5], 0xE7, 0, 0x21);
+		if (!issuesFound) {
+			GUI_DrawText_Wrapper("Min. spice larger than max.", errorX, errorY, 0xE7, 0, 0x21);
+			issuesFound = true;
+		}
+	}
 
 	const uint32 next_seed = is_skirmish ? g_skirmish.seed : g_multiplayer.next_seed;
 	Lobby_DrawRadar(map_options_lobby_widgets, next_seed);
