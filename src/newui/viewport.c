@@ -1517,7 +1517,7 @@ Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_
 		s_spriteFlags = 0;
 	}
 
-	if (u->o.type != UNIT_SANDWORM && u->o.flags.s.isHighlighted) s_spriteFlags |= 0x100;
+	if (u->o.type != UNIT_SANDWORM && u->o.flags.s.isHighlighted && u->blinkHouse == g_playerHouseID) s_spriteFlags |= 0x100;
 
 	bool isWobbling = true;
 

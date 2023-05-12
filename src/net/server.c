@@ -81,6 +81,7 @@ typedef struct UnitDelta {
 	int8    orientation1_current;
 	uint8   wobbleIndex;
 	uint8   spriteOffset;
+	uint8   blinkHouse;
 } UnitDelta;
 
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
@@ -193,6 +194,7 @@ Server_InitUnitDelta(const Unit *u, UnitDelta *d)
 	d->orientation1_current = u->orientation[1].current;
 	d->wobbleIndex          = u->wobbleIndex;
 	d->spriteOffset         = u->spriteOffset;
+	d->blinkHouse		   	= u->blinkHouse;
 }
 
 void
@@ -417,7 +419,7 @@ void
 Server_Send_UpdateUnits(unsigned char **buf)
 {
 	const size_t header_len  = 1 + 1;
-	const size_t element_len = 2 + 12 + 9;
+	const size_t element_len = 2 + 12 + 10;
 	const int max = Server_MaxElementsToEncode(buf, header_len, element_len);
 
 	if (max <= 0)
@@ -450,7 +452,7 @@ Server_Send_UpdateUnits(unsigned char **buf)
 		Net_Encode_uint16(buf, d.position.y);
 		Net_Encode_uint16(buf, d.hitpoints);
 
-		/* 9 bytes. */
+		/* 10 bytes. */
 		Net_Encode_uint8 (buf, d.actionID);
 		Net_Encode_uint8 (buf, d.nextActionID);
 		Net_Encode_uint8 (buf, d.amount);
@@ -460,6 +462,7 @@ Server_Send_UpdateUnits(unsigned char **buf)
 		Net_Encode_uint8 (buf, d.orientation1_current);
 		Net_Encode_uint8 (buf, d.wobbleIndex);
 		Net_Encode_uint8 (buf, d.spriteOffset);
+		Net_Encode_uint8 (buf, d.blinkHouse);
 
 		count++;
 	}
@@ -1298,8 +1301,10 @@ Server_Recv_IssueUnitActionTargetted(Unit *u,
 		target = Tools_Index_GetUnit(u->targetAttack);
 	}
 
-	if (target != NULL)
+	if (target != NULL) {
 		target->blinkCounter = 8;
+		target->blinkHouse = Unit_GetHouseID(u);
+	}
 }
 
 static void

@@ -394,6 +394,7 @@ Client_Recv_UpdateUnits(const unsigned char **buf)
 		u->orientation[1].current   = Net_Decode_uint8(buf);
 		u->wobbleIndex  = Net_Decode_uint8(buf);
 		u->spriteOffset = Net_Decode_uint8(buf);
+		u->blinkHouse   = Net_Decode_uint8(buf);
 
 		/* XXX -- Smooth animation not yet implemented. */
 		u->lastPosition = o->position;
