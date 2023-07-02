@@ -1,6 +1,6 @@
 # Dune Dynasty
 
-[![Latest Release](https://img.shields.io/github/v/release/gameflorist/duneflorist?display_name=tag&label=Download%20Latest%20Release&style=flat-square)](https://github.com/gameflorist/dunedynasty/releases)
+[![Latest Release](https://img.shields.io/github/v/release/gameflorist/dunedynasty?display_name=tag&label=Download%20Latest%20Release&style=flat-square)](https://github.com/gameflorist/dunedynasty/releases)
 [![Windows Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-build.yml)
 [![Linux Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-build.yml?label=Linux%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-build.yml)
 
@@ -94,7 +94,7 @@ You can find the list of changes between versions in the file [CHANGES.txt](CHAN
 
 The most current Windows and Linux binaries and source code can be downloaded from the Github release page:
 
-[![Latest Release](https://img.shields.io/github/v/release/gameflorist/duneflorist?display_name=tag&label=Latest%20Release&style=for-the-badge)](https://github.com/gameflorist/dunedynasty/releases)
+[![Latest Release](https://img.shields.io/github/v/release/gameflorist/dunedynasty?display_name=tag&label=Latest%20Release&style=for-the-badge)](https://github.com/gameflorist/dunedynasty/releases)
 
 For MacOS, check out this fork:  
 [https://github.com/YuriyGuts/dunedynasty-macos](https://github.com/YuriyGuts/dunedynasty-macos)
