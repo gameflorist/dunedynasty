@@ -433,6 +433,10 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 {
 	uint16 reactionDistance = (type == EXPLOSION_DEATH_HAND) ? 32 : 16;
 	uint16 positionPacked = Tile_PackTile(position);
+	const Unit *unit_origin = Tools_Index_GetUnit(unitOriginEncoded);
+	uint16 dist_adjust;
+	uint16 origin = UNIT_INVALID;
+	if (unit_origin != NULL) origin=unit_origin->o.type;
 
 	if (!s_debugNoExplosionDamage && hitpoints != 0) {
 		PoolFindStruct find;
@@ -449,8 +453,35 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 			distance = Tile_GetDistance(position, u->o.position) >> 4;
 			if (distance >= reactionDistance) continue;
 
+			uint16 hp_adjust = hitpoints;
+			dist_adjust=distance >> 2;
+			
 			if (!(u->o.type == UNIT_SANDWORM && type == EXPLOSION_SANDWORM_SWALLOW) && u->o.type != UNIT_FRIGATE) {
-				Unit_Damage(u, hitpoints >> (distance >> 2), 0);
+			
+				/* Logic for enhancement_attack_dir_consistency */
+				if (enhancement_attack_dir_consistency == true || g_campaign_selected == CAMPAIGNID_MULTIPLAYER)
+				{
+					if (origin == UNIT_INFANTRY     ||
+						origin == UNIT_SOLDIER      ||
+						origin == UNIT_TANK         ||
+						origin == UNIT_SIEGE_TANK   ||
+						origin == UNIT_DEVASTATOR   ||
+						origin == UNIT_TRIKE        ||
+						origin == UNIT_RAIDER_TRIKE ||
+						origin == UNIT_QUAD)
+						/* Gun turret identifies as UNIT_INVALID */
+					{
+						if ((Tile_Center(position).x==Tile_Center(u->o.position).x) && (Tile_Center(position).y==Tile_Center(u->o.position).y))
+						{
+							if (hitpoints>10) {hp_adjust-=6;} /* Tanks */
+							if (hitpoints> 5) {hp_adjust-=1;} /* Quads, Tanks again */
+							if (hitpoints> 4) {hp_adjust-=2;} /* Trikes, Quads, Tanks again */
+							dist_adjust = 0;
+						}
+					}
+				}
+			
+				Unit_Damage(u, hp_adjust >> dist_adjust, 0);
 			}
 
 			if (House_IsHuman(u->o.houseID)) continue;

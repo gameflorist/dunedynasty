@@ -273,6 +273,25 @@ Glitches and improvement suggestions
 - If you have no buildings at the start, but only an MCV, you lose all
     your money when deploying the MCV.
 
+- In Dune II, attack damage is heavily dependent on the direction:
+    U=Target, F=Attacker making full damage, H=Attacker making half damage
+    ---F---
+    -HHFHH-
+    -HHFHH-
+    HHHUHHH
+    -HFFFH-
+    -HFFFH-
+    ---F---
+    It is unknown, if this is an unintended bug or a hidden feature.
+
+    More info:
+    https://forum.dune2k.com/topic/19996-info-dune-2-half-damage-bugtip-plus-question-on-fremensarduakar/
+    http://nyerguds.arsaneus-design.com/manuals/Dune%20II/Dune%20II%20-%20Insider's%20Guide.pdf (Page 279)
+
+    Dune Dynasty has the option to enable consistent directional damage.
+    ("attack_dir_consistency" in config, also available in in-game options)
+    This is always enabled in multiplayer due to balancing.
+
 
 Mission-specific fixes
 ----------------------

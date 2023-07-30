@@ -810,6 +810,10 @@ GameplayOptions_Initialize(void)
 	si->d.checkbox = &enhancement_true_game_speed_adjustment;
 	snprintf(si->text, sizeof(si->text), "True game speed adjustment");
 
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_attack_dir_consistency;
+	snprintf(si->text, sizeof(si->text), "Consistent directional damage");
+
 	GUI_Widget_Scrollbar_Init(w, ws->scrollMax, 6, 0);
 }
 

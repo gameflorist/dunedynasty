@@ -200,6 +200,25 @@ bool enhancement_true_game_speed_adjustment = true;
  */
 bool enhancement_true_unit_movement_speed = false;
 
+/**
+ * In Dune II, attack damage is heavily dependent on the direction:
+ * U=Target, F=Attacker making full damage, H=Attacker making half damage
+ * ---F---
+ * -HHFHH-
+ * -HHFHH-
+ * HHHUHHH
+ * -HFFFH-
+ * -HFFFH-
+ * ---F---
+ * It is unknown, if this is an unintended bug or a hidden feature.
+ * 
+ * More info:
+ * https://forum.dune2k.com/topic/19996-info-dune-2-half-damage-bugtip-plus-question-on-fremensarduakar/
+ * http://nyerguds.arsaneus-design.com/manuals/Dune%20II/Dune%20II%20-%20Insider's%20Guide.pdf (Page 279)
+ * 
+ */
+bool enhancement_attack_dir_consistency = false;
+
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 

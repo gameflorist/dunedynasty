@@ -153,6 +153,7 @@ static const GameOption s_game_option[] = {
 	{ "enhancement",    "true_game_speed",          CONFIG_BOOL,.d._bool = &enhancement_true_game_speed_adjustment },
 	{ "enhancement",    "infantry_squad_death_anim",CONFIG_BOOL,.d._bool = &enhancement_infantry_squad_death_animations },
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
+	{ "enhancement",    "attack_dir_consistency",   CONFIG_BOOL,.d._bool = &enhancement_attack_dir_consistency },
 	{ "enhancement",    "raise_scenario_unit_cap",  CONFIG_BOOL,.d._bool = &enhancement_raise_scenario_unit_cap },
 	{ "enhancement",    "repeat_reinforcements",    CONFIG_BOOL,.d._bool = &enhancement_repeat_reinforcements },
 	{ "enhancement",    "smooth_unit_animation",    CONFIG_SMOOTH_ANIM, .d._smooth_anim = &enhancement_smooth_unit_animation },

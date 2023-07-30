@@ -55,6 +55,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Infantry squad corpses
   - Raise scenario unit cap
   - Start level selection
+  - Consistent directional damage.
 - __[Support for Custom campaigns](#custom-campaigns):__
   - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
   - [MrFlibble's Alternate Scenarios](https://www.mediafire.com/file/9vs75nukou8o3wq/Dune2-MrFlibble%2527sAlternateScenarios.zip/file)
@@ -400,6 +401,14 @@ The steps below will build the release-version. You can change value of the `DCM
 
 Check out this fork of _Dune Dynasty_ explicitly for MacOS:  
 [https://github.com/YuriyGuts/dunedynasty-macos](https://github.com/YuriyGuts/dunedynasty-macos)
+
+### Debugging
+
+You can use the function `GUI_DisplayText` to display debugging info in the status bar. E.g.:
+
+```
+GUI_DisplayText("my debug info:%u, my other debug info:%u", 2, my_value, my_other_value);
+```
 
 ## Acknowledgements
 
