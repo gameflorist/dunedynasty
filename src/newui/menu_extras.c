@@ -791,6 +791,10 @@ GameplayOptions_Initialize(void)
 	snprintf(si->text, sizeof(si->text), "%s", "Enhancements over original Dune II:");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_skip_introduction;
+	snprintf(si->text, sizeof(si->text), "Skip introduction video");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_brutal_ai;
 	snprintf(si->text, sizeof(si->text), "Brutal AI");
 

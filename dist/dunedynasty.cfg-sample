@@ -68,6 +68,7 @@ raise_scenario_unit_cap=0
 repeat_reinforcements=1
 smooth_unit_animation=1
 attack_dir_consistency=0
+skip_introduction=0
 true_game_speed=1
 # subtitle_override is one of: eu, us, dynasty
 subtitle_override=dynasty

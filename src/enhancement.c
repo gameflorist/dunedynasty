@@ -219,6 +219,11 @@ bool enhancement_true_unit_movement_speed = false;
  */
 bool enhancement_attack_dir_consistency = false;
 
+/**
+ * Skip introduction video
+ */
+bool enhancement_skip_introduction = false;
+
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 

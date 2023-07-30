@@ -1303,7 +1303,10 @@ Menu_DrawFadeOut(int64_t fade_start)
 void
 Menu_Run(void)
 {
-	enum MenuAction curr_menu = MENU_FADE_IN | MENU_MAIN_MENU;
+	enum MenuAction curr_menu = MENU_REPLAY_INTRODUCTION;
+	if (enhancement_skip_introduction == true) {
+		curr_menu = MENU_FADE_IN | MENU_MAIN_MENU;		
+	}
 	enum MenuAction next_menu = curr_menu;
 	int64_t fade_start = Timer_GetTicks();
 	int64_t last_redraw_time = 0;
