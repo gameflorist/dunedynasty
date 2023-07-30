@@ -349,9 +349,10 @@ The steps below will build the release-version. You can change value of the `DCM
 #### Windows
 
 1. Download and install [MSYS2](https://www.msys2.org/#installation).
-2. Launch `MSYS2 UCRT64` from the startmenu.
+2. For a 64bit executable, launch `MSYS2 UCRT64` from the startmenu. For 32bit, launch ``MSYS2 MINGW32`.
 3. Install dependencies:
 
+    For 64bit:
     ```shell
     pacman -S mingw-w64-ucrt-x86_64-cmake
     pacman -S mingw-w64-ucrt-x86_64-gcc
@@ -360,6 +361,17 @@ The steps below will build the release-version. You can change value of the `DCM
     pacman -S mingw-w64-ucrt-x86_64-enet
     pacman -S mingw-w64-ucrt-x86_64-fluidsynth
     pacman -S mingw-w64-ucrt-x86_64-libmad
+    ```
+
+    For 32bit:
+    ```shell
+    pacman -S mingw-w64-i686-cmake
+    pacman -S mingw-w64-i686-gcc
+    pacman -S mingw-w64-i686-gdb
+    pacman -S mingw-w64-i686-allegro
+    pacman -S mingw-w64-i686-enet
+    pacman -S mingw-w64-i686-fluidsynth
+    pacman -S mingw-w64-i686-libmad
     ```
 
 4. Perform build:
@@ -372,8 +384,16 @@ The steps below will build the release-version. You can change value of the `DCM
 
 5. For packaging, you have to copy all required .dll files to the `dist` folder. To do this, simply call the following script:
 
+    For 64bit:
+
     ```shell
-    ./scripts/copy-dlls.sh
+    ./scripts/copy-dlls-ucrt64.sh
+    ```
+
+    For 32bit:
+
+    ```shell
+    ./scripts/copy-dlls-mingw32.sh
     ```
 
 #### Debian, Ubuntu
