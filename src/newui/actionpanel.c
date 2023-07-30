@@ -659,7 +659,7 @@ ActionPanel_ClickPalace(const Widget *widget, Structure *s, uint16 scancode)
 static void
 ActionPanel_DrawStructureLayout(enum StructureType s, int x1, int y1)
 {
-	if (!(s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG))
+	if (!(s_factory_panel_layout))
 		return;
 
 	const StructureInfo *si = &g_table_structureInfo[s];
@@ -669,6 +669,10 @@ ActionPanel_DrawStructureLayout(enum StructureType s, int x1, int y1)
 
 	x1 += 31;
 	y1 += 4;
+
+	if (!(s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG)) {
+		x1 += 5;
+	}
 
 	/* Use shadow effect for transluscent outline. */
 	Shape_Draw(SHAPE_STRUCTURE_LAYOUT_OUTLINE, x1 - 1, y1 - 1, 0, 0x340);
@@ -960,11 +964,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			GUI_DrawText_Wrapper(name, xcentre, y1 - 9, 5, 0, 0x161);
 
 		/* Draw credits. */
-		if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
-			GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);			
-		} else if ((s->objectType != object_type) || (g_productionStringID != STR_PLACE_IT)) {
-			GUI_DrawText_Wrapper("%d", widget->offsetX + widget->width - 3, y1 + 2, fg, 0, 0x231, g_factoryWindowItems[item].credits);
-		}
+		GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);	
 
 		/* Draw keyboard shortcut. */
 		GUI_DrawText_Wrapper("%c", x1 + 1, y1 + 2, fg, 0, 0x31, GUI_Widget_ScancodeToChar(g_factoryWindowItems[item].shortcut));

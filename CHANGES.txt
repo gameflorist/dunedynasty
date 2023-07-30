@@ -7,6 +7,7 @@ Version 1.6.1 (unreleased)
     (see enhancement.txt for details)
     (thanks @gerwin!)
   - Autoplay introduction video on launch and add option to disable it
+  - Display structure layout also on high sidebar scales
 
 Version 1.6.0
 -------------------------
