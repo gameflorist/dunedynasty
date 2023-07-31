@@ -349,7 +349,7 @@ The steps below will build the release-version. You can change value of the `DCM
 #### Windows
 
 1. Download and install [MSYS2](https://www.msys2.org/#installation).
-2. For a 64bit executable, launch `MSYS2 UCRT64` from the startmenu. For 32bit, launch ``MSYS2 MINGW32`.
+2. For a 64bit executable, launch `MSYS2 UCRT64` from the startmenu. For 32bit, launch `MSYS2 MINGW32`.
 3. Install dependencies:
 
     For 64bit:
