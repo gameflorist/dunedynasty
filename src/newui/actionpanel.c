@@ -964,7 +964,11 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			GUI_DrawText_Wrapper(name, xcentre, y1 - 9, 5, 0, 0x161);
 
 		/* Draw credits. */
-		GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);	
+		if ((s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) || s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+			GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);			
+		} else if ((s->objectType != object_type) || (g_productionStringID != STR_PLACE_IT)) {
+			GUI_DrawText_Wrapper("%d", widget->offsetX + widget->width - 3, y1 + 2, fg, 0, 0x231, g_factoryWindowItems[item].credits);
+		}
 
 		/* Draw keyboard shortcut. */
 		GUI_DrawText_Wrapper("%c", x1 + 1, y1 + 2, fg, 0, 0x31, GUI_Widget_ScancodeToChar(g_factoryWindowItems[item].shortcut));
