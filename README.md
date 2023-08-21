@@ -434,6 +434,7 @@ GUI_DisplayText("my debug info:%u, my other debug info:%u", 2, my_value, my_othe
 
 Thank you to:
 
+- David Wang, the original author of _Dune Dynasty_
 - The OpenDUNE team:
   - Albert Hofkamp (Alberth)
   - Loic Guilloux (glx)
@@ -442,6 +443,7 @@ Thank you to:
 - The Allegro 5 developers.
 - The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else
 who worked on the AdLib/OPL/MIDI player code.
+- rcblanke, ShaiWa, Nyerguds, Stefan Hendriks and DOS Nostalgia for their soundtrack recordings.
 - Peter, for help on various bits of the code, the music code, and AUDlib.
 - Nyerguds, for his Dune II editor.
 - Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
