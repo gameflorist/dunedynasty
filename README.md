@@ -8,8 +8,10 @@
 
 ## About
 
+(This fork is a continuation of the abandoned [sourceforge project](https://sourceforge.net/projects/dunedynasty/) - see [development history](#development-history) for details.)
+
 _Dune Dynasty_ is an enhancement of the classic real-time strategy game
-_Dune II_ by Westwood Studios. It is not a remake. It builds upon the
+_Dune II_ by Westwood Studios. It's goal is to make _Dune II_ playable on modern systems with additional features, bugfixes and QoL-improvements. It is not a remake. It builds upon the
 original game engine as reverse-engineered by the [OpenDUNE](https://github.com/OpenDUNE/OpenDUNE) project.
 
 _Dune Dynasty_ features these modern enhancements for _Dune II_:
