@@ -116,8 +116,8 @@ A5_InitTransform(bool screen_size_changed)
 	/* Hud. */
 	{
 		ScreenDiv *div = &g_screenDiv[SCREENDIV_HUD];
-		div->scalex = min(scale, 2.0);
-		div->scaley = min(scale, 2.0);
+		div->scalex = scale / 2;
+		div->scaley = (scale / 2) * pixel_aspect_ratio;
 		div->width  = TRUE_DISPLAY_WIDTH / div->scalex;
 		div->height = TRUE_DISPLAY_HEIGHT / div->scaley;
 		div->x = 0;
