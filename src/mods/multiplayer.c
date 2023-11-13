@@ -130,6 +130,20 @@ Multiplayer_Prepare(void)
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		g_table_houseAlliance[h][h] = HOUSEALLIANCE_ALLIES;
 	}
+	
+
+	/* Make sure, Fremen and Saboteurs belong to the houses that spawned them. */
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		HouseInfo *hi = &g_table_houseInfo[h];
+
+		if (hi->specialWeapon == HOUSE_WEAPON_FREMEN) {
+			hi->superWeapon.fremen.owner = h;
+		}
+		
+		if (hi->specialWeapon == HOUSE_WEAPON_SABOTEUR) {
+			hi->superWeapon.saboteur.owner = h;
+		}
+	}
 }
 
 bool Multiplayer_IsAnyHouseLeftPlaying(void)
