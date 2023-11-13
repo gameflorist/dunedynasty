@@ -132,6 +132,7 @@ extern void House_Server_ReassignToAI(enum HouseType houseID);
 extern void House_Client_UpdateRadarState(void);
 extern void House_UpdateCreditsStorage(uint8 houseID);
 extern void House_CalculatePowerAndCredit(struct House *h);
+extern void House_Server_Eliminate(enum HouseType houseID);
 extern bool House_StarportQueueEmpty(const House *h);
 extern const char *House_GetWSAHouseFilename(uint8 houseID);
 

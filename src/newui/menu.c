@@ -435,21 +435,6 @@ MainMenu_Initialise(Widget *w)
 	}
 }
 
-static void
-MainMenu_Draw(Widget *widget)
-{
-	VideoA5_DrawCPSCoordinates(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("TITLE"),0,-20);
-
-	MainMenu_DrawSubtitle(widget);
-
-	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
-	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
-	GUI_Widget_DrawAll(widget);
-
-	GUI_DrawText_Wrapper("dd" DUNE_DYNASTY_VERSION,
-			SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x221);
-}
-
 void
 MainMenu_DrawSubtitle(Widget *widget)
 {
@@ -513,6 +498,21 @@ MainMenu_DrawSubtitle(Widget *widget)
 
 		Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 	}
+}
+
+static void
+MainMenu_Draw(Widget *widget)
+{
+	VideoA5_DrawCPSCoordinates(SEARCHDIR_GLOBAL_DATA_DIR, String_GenerateFilename("TITLE"),0,-20);
+
+	MainMenu_DrawSubtitle(widget);
+
+	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
+	GUI_Widget_DrawBorder(WINDOWID_MAINMENU_FRAME, 2, 1);
+	GUI_Widget_DrawAll(widget);
+
+	GUI_DrawText_Wrapper("dd" DUNE_DYNASTY_VERSION,
+			SCREEN_WIDTH, SCREEN_HEIGHT - 9, 133, 0, 0x221);
 }
 
 static void
