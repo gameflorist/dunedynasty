@@ -30,6 +30,8 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Select all units of same type in viewport via double-click (or CTRL-LMB)
   - Save/load unit control groups via keyboard hotkeys
   - Set rally points for buildings
+  - Pan viewport by keeping RMB pressed
+  - Zoom in/out viewport via mousewheel
   - [Windows Touchscreen Support](#touchscreen-support)
 - __Skirmish and Multiplayer:__
   - With 3 additional factions: Fremen, Sardaukar and Mercenaries
@@ -167,10 +169,12 @@ You might want to increase or decrease the scaling factors of the menubar, sideb
 ## Controls
 
 The controls should be similar to most real-time strategy games.
-You can finally select multiple units by dragging a rectangle,
-or shift clicking. You can also select all units of the same type in the current viewscreen via a double click or via `Ctrl + LMB`.
+
+You can finally select multiple units by dragging a rectangle, or shift clicking. You can also select all units of the same type in the current viewport via a double click or via `Ctrl + LMB`.
 
 Right click issues commands to units, and sets the rally point on buildings. You can also change this to Left Click (which is very useful for touchscreen input).
+
+You can pan the viewport by keeping your right mouse-button pressed, and zoom in/out via the mouse-wheel.
 
 Keyboard shortcuts are mostly just the first letter of the action.
 
