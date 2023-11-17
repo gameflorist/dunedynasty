@@ -72,7 +72,7 @@ A more detailed list of changes by _Dune Dynasty_ and OpenDUNE from the original
 
 ### Development History
 
-_Dune Dynasty_ was initially developed by __David Wang__, with the source code hosted on [SourceForge](https://sourceforge.net/projects/dunedynasty/). Its last official version was v1.5.7 from 2013. After that __David Wang__ added lots of new features (mainly multiplayer) up until 2015, but never released a new version. Later some github-repos emerged with additional fixes and improvements (by [1oom-fork](https://github.com/1oom-fork) and [neg3ntropy](https://github.com/neg3ntropy/dunedynasty)), but again no new release. This fork is intended to merge these improvements, fix further bugs, add minor features, and provide new releases (v1.6.0+) with binary download-packages for Windows and Linux (see [this fork](https://github.com/YuriyGuts/dunedynasty-macos) for Mac).
+_Dune Dynasty_ was initially developed by __David Wang__, with the source code hosted on [SourceForge](https://sourceforge.net/projects/dunedynasty/). Its last official version was v1.5.7 from 2013. After that __David Wang__ added lots of new features (mainly multiplayer) up until 2015, but never released a new version. Later some github-repos emerged with additional fixes and improvements (by [1oom-fork](https://github.com/1oom-fork) and [neg3ntropy](https://github.com/neg3ntropy/dunedynasty)), but again no new release. This fork is intended to merge these improvements, fix further bugs, add minor features, and provide new releases (v1.6.0+) with binary download-packages for Windows, macOS and Linux.
 
 ## Screenshots
 
@@ -88,7 +88,7 @@ Here are some alternatives for enjoying _Dune II_ on modern systems:
 - There is also a [___Dune II mod for OpenRA___](https://github.com/OpenRA/d2/wiki), an open source engine for the early _Command & Conquer_ games.
 - _Dune II_ is also perfectly playable using [DOSBox](https://dosbox-staging.github.io/).
 - There is a well done _Dune II_ clone for Android on [Google Play Store](https://play.google.com/store/apps/details?id=de.morphbot.dune).
-- There is also [a fork of _Dune Dynasty_ explicitly for MacOS](https://github.com/YuriyGuts/dunedynasty-macos).
+- [This fork of _Dune Dynasty_](https://github.com/YuriyGuts/dunedynasty-macos) has an Apple M1 Arm executable of v1.5.7.
 
 _Dune Dynasty_'s unique selling points are probably it's faithfulness to the look and feel of the original (due to it basing on an [engine re-creation](https://github.com/OpenDUNE/OpenDUNE) of the original) combined with many control modernizations, it's support for [fan-generated campaigns](#custom-campaigns), [various music soundtracks](#external-music-sets) and multiplayer.
 
@@ -98,12 +98,9 @@ You can find the list of changes between versions in the file [CHANGES.txt](CHAN
 
 ## Download
 
-The most current Windows and Linux binaries and source code can be downloaded from the Github release page:
+The most current Windows, macOS and Linux binaries and source code can be downloaded from the Github release page:
 
 [![Latest Release](https://img.shields.io/github/v/release/gameflorist/dunedynasty?display_name=tag&label=Latest%20Release&style=for-the-badge)](https://github.com/gameflorist/dunedynasty/releases)
-
-For MacOS, check out this fork:  
-[https://github.com/YuriyGuts/dunedynasty-macos](https://github.com/YuriyGuts/dunedynasty-macos)
 
 ## Installation
 
@@ -115,15 +112,19 @@ Place them into one of the following places:
     This is the simplest option.
 
  2. In your personal data directory.
-    The location depends on your operating system.
+    The location depends on your operating system:
 
-    On Unix, this will be `~/.local/share/dunedynasty/data`.
+    - Windows 64bit:  
+      `C:\users\<your user>\AppData\Roaming\Dune Dynasty\data`
 
-    On Windows 32bit, this will be something like:  
-    `C:\users\<your user>\Application Data\Dune Dynasty\data`
+    - Windows 32bit:  
+      `C:\users\<your user>\Application Data\Dune Dynasty\data`
 
-    And on Windows 64bit it will be:  
-    `C:\users\<your user>\AppData\Roaming\Dune Dynasty\data`
+    - macOS:  
+      `$HOME/Library/Application Support/dunedynasty/data`
+
+    - Unix:  
+      `~/.local/share/dunedynasty/data`
 
 Once the data files are in place, you may start the game by running
 `dunedynasty.exe` or `dunedynasty`.
@@ -143,15 +144,19 @@ Just as the data-files, the configuration file `dunedynasty.cfg` will be read fr
  1. In the same directory as the dunedynasty executable.
 
  2. In a personal data directory. This is the default behaviour - meaning `dunedynasty.cfg` will be created here on initial launch.
+    The location depends on your operating system:
 
-    On Unix the configuration file is located at:  
-    `~/.config/dunedynasty/dunedynasty.cfg`
+    - Windows 64bit:  
+      `C:\users\<your user>\AppData\Roaming\Dune Dynasty\dunedynasty.cfg`
 
-    On Windows 32bit, this will be something like:  
-    `C:\users\<your user>\Application Data\Dune Dynasty\dunedynasty.cfg`
+    - Windows 32bit:  
+      `C:\users\<your user>\Application Data\Dune Dynasty\dunedynasty.cfg`
 
-    And on Windows 64bit it will be:  
-    `C:\users\<your user>\AppData\Roaming\Dune Dynasty\dunedynasty.cfg`
+    - macOS:  
+      `$HOME/Library/Application Support/dunedynasty/dunedynasty.cfg`
+
+    - Unix:  
+      `~/.config/dunedynasty/dunedynasty.cfg`
 
 See the sample file `dunedynasty.cfg-sample` for a list of configuration
 options.  You can modify the existing `dunedynasty.cfg` file or
@@ -222,16 +227,22 @@ _Dune Dynasty_ works very well with touchscreens (e.g. like Microsoft Surface Pr
 ## Saved games
 
 Saved games are located in the `save` directory next to `dunedynasty.cfg`.
-If no configuration file exists, they will be in placed in a personal
+If no configuration file exists in the same directory as the executable, they will be in placed in a personal
 data directory.
 
-On Unix, this will be `~/.config/dunedynasty/save`.
+The location depends on your operating system:
 
-On Windows 32bit, this will be something like:  
-`C:\users\<your user>\Application Data\Dune Dynasty\save`
+- Windows 64bit:  
+  `C:\users\<your user>\AppData\Roaming\Dune Dynasty\save`
 
-And on Windows 64bit it will be:  
-`C:\users\<your user>\AppData\Roaming\Dune Dynasty\save`
+- Windows 32bit:  
+  `C:\users\<your user>\Application Data\Dune Dynasty\save`
+
+- macOS:  
+  `$HOME/Library/Application Support/dunedynasty/save`
+
+- Unix:  
+  `~/.config/dunedynasty/save`
 
 Saved games from _Dune II_ should work if placed there.
 
@@ -424,6 +435,13 @@ The steps below will build the release-version. You can change value of the `DCM
     ```shell
     ./scripts/bundle-libs-macos.sh
     ```
+
+    The script requires the brew package `dylibbundler`, so install it first:
+
+    ```shell
+    brew install dylibbundler
+    ```
+
 
 #### Linux (Debian, Ubuntu)
 
