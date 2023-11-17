@@ -3,7 +3,7 @@
 [![Latest Release](https://img.shields.io/github/v/release/gameflorist/dunedynasty?display_name=tag&label=Download%20Latest%20Release&style=for-the-badge)](https://github.com/gameflorist/dunedynasty/releases)
 
 [![Windows Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-build.yml)
-[![macOS Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-build.yml)
+[![macOS Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-build.yml?label=macOS%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-build.yml)
 [![Linux Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-build.yml?label=Linux%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-build.yml)
 
 ![Dune Dynasty](/docs/banner.jpg)
