@@ -1,10 +1,12 @@
 # Dune Dynasty sample config file.
 #
-# Copy this file to your personal data directory:
+# The config file gets auto-generated on first launch in the following location:
 # - On Linux: ~/.config/dunedynasty/dunedynasty.cfg
 # - On Windows 32bit: C:\users\<your user>\Application Data\Dune Dynasty\dunedynasty.cfg
 # - On Windows 64bit: C:\users\<your user>\AppData\Roaming\Dune Dynasty\dunedynasty.cfg
-# Or copy/rename in current Dune Dynasty directory as dunedynasty.cfg for portable mode.
+# - On Mac OS: /Users/<your user>/Library/Application\ Support/dunedynasty/dunedynasty.cfg
+#
+# You can copy/rename in current Dune Dynasty directory as dunedynasty.cfg for portable mode.
 
 [game]
 # language is one of: ENG, FRE, GER, ITA, SPA
@@ -17,7 +19,7 @@ campaign=
 # driver is one of: opengl, direct3d
 driver=opengl
 # window_mode is one of: windowed, fullscreen, fullscreenwindow
-window_mode=windowed
+window_mode=fullscreenwindow
 screen_width=640
 screen_height=480
 # scale is from 1.00, 2.00, 3.00... up to 8.00
@@ -55,21 +57,24 @@ music_volume=0.90
 sound_volume=0.75
 voice_volume=1.00
 opl_mame=true
-sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
+
+# state location of your soundfont for use with fluidsynth
+# e.g. sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
+sound_font=
 
 [enhancement]
 brutal_ai=0
 fog_of_war=0
 health_bars=selected
 hi_res_overlays=1
+true_game_speed=1
 infantry_squad_death_anim=1
 insatiable_sandworms=0
-raise_scenario_unit_cap=0
-repeat_reinforcements=1
-smooth_unit_animation=1
 attack_dir_consistency=0
 skip_introduction=0
-true_game_speed=1
+raise_scenario_unit_cap=0
+repeat_reinforcements=1
+smooth_unit_animation=0
 # subtitle_override is one of: eu, us, dynasty
 subtitle_override=dynasty
 
