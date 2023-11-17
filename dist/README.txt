@@ -1,20 +1,23 @@
 ============
 Dune Dynasty
-(v1.6.0)
+(v1.6.1)
 ============
 
 About
 =====
 
+(This fork is a continuation of the abandoned sourceforge project
+[https://sourceforge.net/projects/dunedynasty/] - see development history below for details.)
+
 Dune Dynasty is an enhancement of the classic real-time strategy game Dune II by
-Westwood Studios. It is not a remake. It builds upon the original game engine as
-reverse-engineered by the OpenDUNE [https://github.com/OpenDUNE/OpenDUNE]
-project.
+Westwood Studios. It's goal is to make Dune II playable on modern systems with
+additional features, bugfixes and QoL-improvements. It is not a remake. It
+builds upon the original game engine as reverse-engineered by the OpenDUNE
+[https://github.com/OpenDUNE/OpenDUNE] project.
 
 Dune Dynasty features these modern enhancements for Dune II:
 
- * Runs natively on Linux and Windows (OpenGL or Direct3D)
-   (for MacOS see this port [https://github.com/YuriyGuts/dunedynasty-macos])
+ * Runs natively on Windows, macOS and Linux (OpenGL or Direct3D)
  * Graphics Enhancements:
    * High-resolution widescreen graphics
    * Separate customizable scaling of menubar, sidebar and map/viewport for
@@ -28,6 +31,8 @@ Dune Dynasty features these modern enhancements for Dune II:
    * Select all units of same type in viewport via double-click (or CTRL-LMB)
    * Save/load unit control groups via keyboard hotkeys
    * Set rally points for buildings
+   * Pan viewport by keeping RMB pressed
+   * Zoom in/out viewport via mousewheel
    * Windows Touchscreen Support [#touchscreen-support]
  * Skirmish and Multiplayer:
    * With 3 additional factions: Fremen, Sardaukar and Mercenaries
@@ -59,6 +64,8 @@ Dune Dynasty features these modern enhancements for Dune II:
    * Infantry squad corpses
    * Raise scenario unit cap
    * Start level selection
+   * Consistent directional damage (always enabled in multiplayer due to
+     balancing)
  * Support for Custom campaigns [#custom-campaigns]:
    * Dune 2 eXtended
      [http://forum.dune2k.com/topic/18360-dune-2-extended-project/]
@@ -80,12 +87,11 @@ on SourceForge [https://sourceforge.net/projects/dunedynasty/]. Its last
 official version was v1.5.7 from 2013. After that David Wang added lots of new
 features (mainly multiplayer) up until 2015, but never released a new version.
 Later some github-repos emerged with additional fixes and improvements (by
-1oom-fork [https://github.com/1oom-fork/dunedynasty] and neg3ntropy
+1oom-fork [https://github.com/1oom-fork] and neg3ntropy
 [https://github.com/neg3ntropy/dunedynasty]), but again no new release. This
 fork is intended to merge these improvements, fix further bugs, add minor
 features, and provide new releases (v1.6.0+) with binary download-packages for
-Windows and Linux (see this fork
-[https://github.com/YuriyGuts/dunedynasty-macos] for Mac).
+Windows, macOS and Linux.
 
 Screenshots
 ===========
@@ -114,7 +120,8 @@ Here are some alternatives for enjoying Dune II on modern systems:
    [https://dosbox-staging.github.io/].
  * There is a well done Dune II clone for Android on Google Play Store
    [https://play.google.com/store/apps/details?id=de.morphbot.dune].
- * There is also a fork of [https://github.com/YuriyGuts/dunedynasty-macos].
+ * This fork of [https://github.com/YuriyGuts/dunedynasty-macos] has an Apple M1
+   Arm executable of v1.5.7.
 
 Dune Dynasty's unique selling points are probably it's faithfulness to the look
 and feel of the original (due to it basing on an engine re-creation
@@ -131,13 +138,10 @@ You can find the list of changes between versions in the file CHANGES.txt.
 Download
 ========
 
-The most current Windows and Linux binaries and source code can be downloaded
-from the Github release page:
+The most current Windows, macOS and Linux binaries and source code can be
+downloaded from the Github release page:
 
 https://github.com/gameflorist/dunedynasty/releases
-
-For MacOS, check out this fork:
-https://github.com/YuriyGuts/dunedynasty-macos
 
 Installation
 ============
@@ -151,15 +155,19 @@ Place them into one of the following places:
     simplest option.
 
  2. In your personal data directory. The location depends on your operating
-    system.
+    system:
     
-    On Unix, this will be ~/.local/share/dunedynasty/data.
+    * Windows 64bit:
+      C:\users\<your user>\AppData\Roaming\Dune Dynasty\data
     
-    On Windows 32bit, this will be something like:
-    C:\users\<your user>\Application Data\Dune Dynasty\data
+    * Windows 32bit:
+      C:\users\<your user>\Application Data\Dune Dynasty\data
     
-    And on Windows 64bit it will be:
-    C:\users\<your user>\AppData\Roaming\Dune Dynasty\data
+    * macOS:
+      $HOME/Library/Application Support/dunedynasty/data
+    
+    * Unix:
+      ~/.local/share/dunedynasty/data
 
 Once the data files are in place, you may start the game by running
 dunedynasty.exe or dunedynasty.
@@ -180,16 +188,20 @@ one of two places:
  1. In the same directory as the dunedynasty executable.
 
  2. In a personal data directory. This is the default behaviour - meaning
-    dunedynasty.cfg will be created here on initial launch.
+    dunedynasty.cfg will be created here on initial launch. The location depends
+    on your operating system:
     
-    On Unix the configuration file is located at:
-    ~/.config/dunedynasty/dunedynasty.cfg
+    * Windows 64bit:
+      C:\users\<your user>\AppData\Roaming\Dune Dynasty\dunedynasty.cfg
     
-    On Windows 32bit, this will be something like:
-    C:\users\<your user>\Application Data\Dune Dynasty\dunedynasty.cfg
+    * Windows 32bit:
+      C:\users\<your user>\Application Data\Dune Dynasty\dunedynasty.cfg
     
-    And on Windows 64bit it will be:
-    C:\users\<your user>\AppData\Roaming\Dune Dynasty\dunedynasty.cfg
+    * macOS:
+      $HOME/Library/Application Support/dunedynasty/dunedynasty.cfg
+    
+    * Unix:
+      ~/.config/dunedynasty/dunedynasty.cfg
 
 See the sample file dunedynasty.cfg-sample for a list of configuration options.
 You can modify the existing dunedynasty.cfg file or replace it with
@@ -215,13 +227,17 @@ sidebar and viewport. You can do this in-game in the Game Control menu.
 Controls
 ========
 
-The controls should be similar to most real-time strategy games. You can finally
-select multiple units by dragging a rectangle, or shift clicking. You can also
-select all units of the same type in the current viewscreen via a double click
-or via Ctrl + LMB.
+The controls should be similar to most real-time strategy games.
+
+You can finally select multiple units by dragging a rectangle, or shift
+clicking. You can also select all units of the same type in the current viewport
+via a double click or via Ctrl + LMB.
 
 Right click issues commands to units, and sets the rally point on buildings. You
 can also change this to Left Click (which is very useful for touchscreen input).
+
+You can pan the viewport by keeping your right mouse-button pressed, and zoom
+in/out via the mouse-wheel.
 
 Keyboard shortcuts are mostly just the first letter of the action.
 
@@ -275,15 +291,22 @@ Saved games
 ===========
 
 Saved games are located in the save directory next to dunedynasty.cfg. If no
-configuration file exists, they will be in placed in a personal data directory.
+configuration file exists in the same directory as the executable, they will be
+in placed in a personal data directory.
 
-On Unix, this will be ~/.config/dunedynasty/save.
+The location depends on your operating system:
 
-On Windows 32bit, this will be something like:
-C:\users\<your user>\Application Data\Dune Dynasty\save
+ * Windows 64bit:
+   C:\users\<your user>\AppData\Roaming\Dune Dynasty\save
 
-And on Windows 64bit it will be:
-C:\users\<your user>\AppData\Roaming\Dune Dynasty\save
+ * Windows 32bit:
+   C:\users\<your user>\Application Data\Dune Dynasty\save
+
+ * macOS:
+   $HOME/Library/Application Support/dunedynasty/save
+
+ * Unix:
+   ~/.config/dunedynasty/save
 
 Saved games from Dune II should work if placed there.
 
@@ -322,7 +345,6 @@ sound font (.sf2) file, e.g.
 
 [audio]
 sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
-
 
 Popular SoundFonts are e.g.:
 
@@ -450,9 +472,12 @@ Windows
 
  1. Download and install MSYS2 [https://www.msys2.org/#installation].
 
- 2. Launch MSYS2 UCRT64 from the startmenu.
+ 2. For a 64bit executable, launch MSYS2 UCRT64 from the startmenu. For 32bit,
+    launch MSYS2 MINGW32.
 
  3. Install dependencies:
+    
+    For 64bit:
     
     pacman -S mingw-w64-ucrt-x86_64-cmake
     pacman -S mingw-w64-ucrt-x86_64-gcc
@@ -462,21 +487,63 @@ Windows
     pacman -S mingw-w64-ucrt-x86_64-fluidsynth
     pacman -S mingw-w64-ucrt-x86_64-libmad
     
+    
+    For 32bit:
+    
+    pacman -S mingw-w64-i686-cmake
+    pacman -S mingw-w64-i686-gcc
+    pacman -S mingw-w64-i686-gdb
+    pacman -S mingw-w64-i686-allegro
+    pacman -S mingw-w64-i686-enet
+    pacman -S mingw-w64-i686-fluidsynth
+    pacman -S mingw-w64-i686-libmad
+    
 
  4. Perform build:
     
-    cd <path-to-dune-dynasty-src>
-    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
-    ninja
+    ./scripts/build-windows.sh
     
 
  5. For packaging, you have to copy all required .dll files to the dist folder.
     To do this, simply call the following script:
     
-    ./scripts/copy-dlls.sh
+    For 64bit:
     
-Debian, Ubuntu
---------------
+    ./scripts/bundle-libs-ucrt64.sh
+    
+    
+    For 32bit:
+    
+    ./scripts/bundle-libs-mingw32.sh
+    
+
+MacOs
+-----
+
+ 1. Install Homebrew [https://brew.sh/] package manager.
+
+ 2. Install dependencies:
+    
+    brew install cmake allegro fluid-synth mad enet
+    
+
+ 3. Perform build:
+    
+    ./scripts/build-macos.sh
+    
+
+ 4. To package all required dynlibs into the ./dist/libs folder and patch the
+    executable, call this script:
+    
+    ./scripts/bundle-libs-macos.sh    
+    
+    The script requires the brew package dylibbundler, so install it first:
+    
+    brew install dylibbundler
+    
+
+Linux (Debian, Ubuntu)
+----------------------
 
  1. Install dependencies:
     
@@ -485,8 +552,7 @@ Debian, Ubuntu
 
  2. Perform build:
     
-    cmake -DCMAKE_BUILD_TYPE=Release .
-    make
+    ./scripts/build-linux.sh
     
 
  3. When packaging, there is the problem, that the fluidsynth-library is called
@@ -494,19 +560,23 @@ Debian, Ubuntu
     mitigate, call this script, which will copy the library-file to dist/libs
     and patch the executable to use the inlcuded library instead:
     
-    ./scripts/copy-libs.sh
+    ./scripts/bundle-libs-linux.sh
     
-MacOs
------
 
-Check out this fork of Dune Dynasty explicitly for MacOS:
-https://github.com/YuriyGuts/dunedynasty-macos
+Debugging
+---------
+
+You can use the function GUI_DisplayText to display debugging info in the status
+bar. E.g.:
+
+GUI_DisplayText("my debug info:%u, my other debug info:%u", 2, my_value, my_other_value);
 
 Acknowledgements
 ================
 
 Thank you to:
 
+ * David Wang, the original author of Dune Dynasty
  * The OpenDUNE team:
    * Albert Hofkamp (Alberth)
    * Loic Guilloux (glx)
@@ -515,6 +585,8 @@ Thank you to:
  * The Allegro 5 developers.
  * The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else who
    worked on the AdLib/OPL/MIDI player code.
+ * rcblanke, ShaiWa, Nyerguds, Stefan Hendriks and DOS Nostalgia for their
+   soundtrack recordings.
  * Peter, for help on various bits of the code, the music code, and AUDlib.
  * Nyerguds, for his Dune II editor.
  * Bug reporters and other improvement suggestions: MrFlibble, Nyerguds, Zocom7,

@@ -1,0 +1,332 @@
+==================================================================
+==      Differences Between Dune 2 v1.0 and v1.07               ==
+==================================================================
+
+References:
+http://forum.dune2k.com/topic/20343-info-differences-between-dune-ii-v10-and-v107/
+http://forum.dune2k.com/topic/23786-different-versions-amipc1017useuhs/
+
+
+Bug/error fixes
+---------------
+- Fixed the "Frigate arrival in T-0" Starport bug.
+- The numbers of units in stock at the Starport that are defined in
+    each mission are now used correctly.
+- Fixed a bug that sometimes caused Carryalls that drop scripted
+    reinforcements to get stuck at the border of the map.
+- Fixed a small graphical glitch on the Atreides Mentat screen.
+- Fixed a broken frame in the Gun Turret animation.
+- The corners of the map are no longer revealed from shroud at the
+    beginning of the mission.
+- Fixed some minor errors in briefing texts.
+
+
+Gameplay changes
+----------------
+- The AI now rebuilds destroyed structures more actively and frequently.
+- Building repair cost has been reduced.
+
+- Palace repairs now cost nothing. This is actually a bug, read more here.
+    *** Fixed: palace repairs now cost 2 per tick.
+
+- The maximum overall number of buildings that can be present on the
+    map reduced from 81 to 80.
+- The player can now build concrete slabs and wall segments even if
+    the building-per-map limit is reached.
+- The saboteur is now visible to the player.
+
+- The maximum number of saboteurs that can be present on the map at
+    any given time reduced from 3 to 2.
+    *** Reverted this change.
+
+- Ornithopter hit points increased from 10 to 25.
+- Troopers and Launchers are now able to fire at air units.
+
+- The maximum number of Sandworms that can be present on the map at a
+    time reduced from 3 to 2.
+    *** Reverted this change.
+
+- The number of units a Sandworm will swallow before disappearing
+    reduced from 4 to 3.
+- Fremen units and Sandworms are no longer ignored by turrets.
+
+
+Interface changes
+-----------------
+- The "Repair" button on the sidebar now starts flashing red when a
+    building is below 50% its original HP.
+- Most unit orders can now be correctly issued from keyboard by
+    pressing the first letter of the corresponding order's name.
+
+- Pressing the "A" key no longer can be used to issue a "Harvest"
+    order to a Harvester.
+    *** Reverted since "H" is now a shortcut for construction yard.
+
+- Pressing the "G" key now orders a combat unit to guard.
+- Pressing the "H" key no longer orders a combat unit to retreat.
+- The wormsign is now announced for the Atreides player.
+
+
+Miscellaneous
+-------------
+- Added two more player ranks ("Chief Warlord" and "Emperor") to the
+    scoring system.
+- The Fremen colour scheme has been made a bit brighter.
+- Removed several animation frames of the Heavy Factory, Repair
+    Facility and High-Tech Factory.
+
+- Removed two Mentat database entries: "Sardaukar" and "Frigate".
+    *** Restored the English text.
+
+- Certain characters from the 6p font (used on the game sidebar) have
+    been narrowed down by 1 pixel.  These include C, E, F and L.
+
+
+==================================================================
+==      OpenDUNE: Enhancement over Dune 2                       ==
+==================================================================
+
+When OpenDUNE is started in enhanced mode (default), a lot of bugs and
+ problems which are in the original Dune2 version, are fixed.
+
+Below is the complete listing of all those bugs and problems, per category.
+ Every entry describes the problem, where the solution is in all cases
+ obvious by the way the problem is described and therefore the solution is
+ not mentioned as such.
+
+
+Structure
+---------
+- When building a Wall, the owner-bits are not cleared correctly, which in
+    theory could mean a Wall build by you could show up as owned by Sadukar.
+- When building a structure completely on slabs, it still degrades. This seems
+    in contrast with the idea of slabs.
+- When building a structure, only the fog is removed (with a radius of 2) from
+    the first tile defined in the layout of the structure. This is mostly
+    noticable with Palace and Oil Refinery, leaving parts of them in the fog.
+- Windtraps that have less than 50% hp still produce 50% of the power, even so
+    the GUI tells you differently. Of course the GUI makes more sense in this
+    case.
+
+- Repair cost calculation is unfair. Dune2 uses a 256 float-resolution,
+    meaning that you get rounding errors very fast. In result, Palace costs
+    nothing to repair, and a windtrap costs 2 credits instead of 3 credits per
+    repair tick. In detail: ((2 * 256 / hitpoints) * credits + 128) / 256. The
+    first part causes rounding errors.
+    *** Reverted this change, with fix for palaces.
+
+- If one structure gives a script error, all structures after it in the linked
+    list are not handled. This doesn't really seem correct.
+- In Script function which finds the closest unit to target, it doesn't pick
+    the closest unit within range, but the one with the highest index within
+    range.
+- Too many tile colours are remapped with house colours, causing graphical
+    issues with the IX building. It maps 0x90 .. 0xA0 instead of 0x90 .. 0x96.
+- When taking over a building (by having an infantry walk in it while the
+    structure is on low hitpoints), your own units keep firing at it, and will
+    most likely destroy it.
+- When you attack the structure of the AI, the idea is that they massively
+    start to attack you (payback and stuff). To do this, Dune2 searches all
+    Units with type 0 (Carry-alls), instead of type 0xFFFF (all units).
+    WARNING: this glitch makes the game much easier in its original form.
+- A structure in production also counts towards your storable spice,
+    producing power, and/or requiring power. It does not check if the structure
+    is in fact placed on the map.
+- If a structure gets damaged during upgrading, pressing the "Upgrading" button
+    silently starts the repair of the structure, and doesn't cancel upgrading.
+- Fog is removed around the top left corner instead of the center of a
+    structure.
+- The range of a turret was calculated from the top left corner instead of the
+    center of the structure.
+- Fog was not removed from around captured structures.
+
+
+Unit
+----
+- Once a Unit enters a tile on which it starts to wobble, it will never stop
+    wobbling, even if it enters a tile where it shouldn't wobble.
+- When a Unit enters a Structure, the last tile the Unit was on becomes
+    selected rather than the entire Structure.
+- Deviated units always belong to Ordos, no matter who did the deviating.
+- Saboteurs tend to forget their goal, depending on terrain and game speed:
+    to blow up on reaching their destination.
+
+
+Scenario
+--------
+- A mistake in reading the '+' causes repeat for reinforcements to be always
+    false. In result reinforcement is only send once.
+
+- The structure '% hitpoints' is ignored. In result all structures always
+    have 100% hitpoints.
+    *** Reverted this change.
+
+
+House
+-----
+- When you have a refinery and lost all your harvesters, you get a new one even
+    if you are currently building one in heavy vehicle factory.
+- Silo credit capping is done outside the main house loop, causing it to only
+    update the house which owns the latest structure. This allows you to go
+    over your silo capacity most of the time, and then losing it all of a
+    sudden (when you start building a structure).
+
+
+Teams
+-----
+- If a team gives a script error, all other teams are aborted.
+
+
+SaveLoad
+--------
+- The save routine allowed a NAME chunk up to 65536 bytes, where 255 bytes
+    should be sufficient for any sane name (both excluding the \0).
+
+
+General
+-------
+- The screen telling if you have the security question wrong/right is there
+    for such short time, you never really see it.
+- When loading a game, the fadein is barely visible because it is against the
+    screen how it will turn out, minus the selection of an active building.
+- After visiting Mentat (the help) window, auto-repeat of keys gets disabled.
+- Dune2 depends on slow CPUs to limit the rate mouse clicks are handled.
+
+
+Map
+---
+- When a unit moves over the top of a mound, you never get abandoned vehicles
+    nor hiding enemy units
+- When getting free Trikes on the map, you never got ownership of them. The
+    parameter order is switched, where the type of the unit becomes the number
+    of the house, and the house becomes the value of Trike (13). This also
+    means that these vehicles read/write outside the house struct, which in
+    terms results in random artifects.
+
+
+==================================================================
+==      Dune Dynasty Enhancements                               ==
+==================================================================
+
+Many of the fixes to the scenario files from the "v1.07 fix" patch
+have been incorporated.  (Bugs are fixed in the code.)
+
+References:
+http://forum.dune2k.com/topic/20168-dune-2-v107-fix/
+http://forum.opendune.org/viewtopic.php?f=7&t=21
+http://forum.opendune.org/viewtopic.php?f=8&t=150
+
+
+Gameplay fixes
+--------------
+- Fixed the internal syntax error which prevented the AI from
+    assembling attack teams of vehicles ("team bug").
+
+- Looped reinforcements are now enabled in certain missions.
+    *** This is enabled by OpenDUNE.
+
+[n] Remove the Gun Turret's ability to fire at Carryalls (happens in the
+    EU version of Dune II, and also in the Sega Mega Drive version).
+    *** See: http://forum.dune2k.com/topic/20490-dune-2-scenario-format/page__st__40
+
+- Fix the bug with the Saboteur occasionally detonating when ordered
+    to move to a rock cell immediately adjacent to the rock/sand border.
+- Fix the bug that happens sometimes when a Saboteur is destroyed, it
+    somehow leaves a "trace" on the map: a green dot is still shown on
+    the minimap, and the tile itself can not be built upon or occupied
+    by other units.
+- Perhaps it is a good idea to disable the AI's ability to place its
+    rebuilt structures over the player's buildings.
+
+
+Glitches and improvement suggestions
+------------------------------------
+- Fix the graphical glitch with large sprites that cuts the top part
+    of a units' image.
+
+- Use the special Fremen and Sardaukar Trooper sidebar icons.
+    *** Note: makes deviated Fremen and Sardaukar distinguishable.
+
+[n] Maybe also double the Fremen Troopers' hit points compared to the
+    regular Troopers, as in the Sega version.
+
+- Add the "infantry squad remains" tile to the situation when an
+    infantry/trooper squad spawns a single soldier/trooper, like in
+    the Sega version.
+
+[n] Add a proper follow (escort) mode (in Dune II, a unit will only
+    follow another unit until either of the units stops moving).
+    *** Units on escort mode don't fire, potential source of confusion.
+
+[n] Make ground vehicles' shadows transparent, like the air units' shadows.
+    *** Shadows are drawn into the original sprites.
+
+- Restore unused speech clips and sound effects.
+- Restore the "special bloom" map feature.
+
+- If you start building up your base, build a Windtrap and start
+   building a Refinery, then save your game and load it, you're very
+   likely to lose all your credits before the Refinery is completed,
+   making further progress impossible.
+   *** Fixed by OpenDUNE.
+
+- If you have no buildings at the start, but only an MCV, you lose all
+    your money when deploying the MCV.
+
+- In Dune II, attack damage is heavily dependent on the direction:
+    U=Target, F=Attacker making full damage, H=Attacker making half damage
+    ---F---
+    -HHFHH-
+    -HHFHH-
+    HHHUHHH
+    -HFFFH-
+    -HFFFH-
+    ---F---
+    It is unknown, if this is an unintended bug or a hidden feature.
+
+    More info:
+    https://forum.dune2k.com/topic/19996-info-dune-2-half-damage-bugtip-plus-question-on-fremensarduakar/
+    http://nyerguds.arsaneus-design.com/manuals/Dune%20II/Dune%20II%20-%20Insider's%20Guide.pdf (Page 279)
+
+    Dune Dynasty has the option to enable consistent directional damage.
+    ("attack_dir_consistency" in config, also available in in-game options)
+    This is always enabled in multiplayer due to balancing.
+
+
+Mission-specific fixes
+----------------------
+- Fixed invalid spice bloom placement in SCENA005.
+- Fixed the error that disabled Devastator reinforcements.
+
+- Fixed incorrect hit point values for pre-placed buildings in SCENH006.
+    *** Note that, by default, structure hit points are ignored.
+
+[n] Changed the player's starting credits from 1500 to 1000 in SCENO022.
+    *** Could be justified by saying Ordos is a wealthy house.  Use
+    MrFlibble's fixed scenarios if desired (harder Ordos campaign).
+
+[n] Changed Atreides Troopers to Atreides Infantry.
+    *** Doesn't really hurt, but maybe they should be Fremen?
+
+- Changed the Atreides WOR to Atreides Barracks, so that the Atreides
+    can produce infantry.
+- Fixed all missions where the MaxUnit value name was misspelled as
+    MaxUnits for an AI player.
+- Fixed the error which prevented the player from buying Ornithopters
+    at the Starport.
+
+
+Mentat information and spelling fixes
+-------------------------------------
+- Fixed incorrect power consumption values for the Barracks and the
+    Starport.
+
+- Removed two obsolete entries in German from the English Mentat database.
+    *** Restored the English text for the Sardaukar and Frigate entries.
+
+- Fixed the spelling of the word "Ornithopter".
+- Fixed the spelling of the word "incompatible".
+- Fixed the spelling of the word "Starport" in the building hints section.
+- Fixed Harkonnen mentat description for Devastator.
+- Fixed Harkonnen mentat description for Siege tank.
+- Fixed Ordos mentat description for Ornithopter.
