@@ -393,13 +393,13 @@ The steps below will build the release-version. You can change value of the `DCM
     For 64bit:
 
     ```shell
-    ./scripts/copy-dlls-ucrt64.sh
+    ./scripts/bundle-libs-ucrt64.sh
     ```
 
     For 32bit:
 
     ```shell
-    ./scripts/copy-dlls-mingw32.sh
+    ./scripts/bundle-libs-mingw32.sh
     ```
 
 #### Debian, Ubuntu
@@ -420,7 +420,7 @@ The steps below will build the release-version. You can change value of the `DCM
 3. When packaging, there is the problem, that the fluidsynth-library is called `libfluidsynth2` on some distributions, and `libfluidsynth3` on others. To mitigate, call this script, which will copy the library-file to `dist/libs` and patch the executable to use the inlcuded library instead:
 
     ```shell
-    ./scripts/copy-libs.sh
+    ./scripts/bundle-libs-linux.sh
     ```
 
 #### MacOs
