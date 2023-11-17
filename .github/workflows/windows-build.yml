@@ -14,7 +14,5 @@ jobs:
           msystem: MINGW64
           update: true
           install: mingw-w64-x86_64-cmake mingw-w64-x86_64-gcc mingw-w64-x86_64-gdb mingw-w64-x86_64-allegro mingw-w64-x86_64-enet mingw-w64-x86_64-fluidsynth mingw-w64-x86_64-libmad
-      - name: CI-Build
-        run: |
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
-          ninja
+      - name: Build
+        run: ./scripts/build-windows.sh

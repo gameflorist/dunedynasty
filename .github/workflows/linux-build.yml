@@ -9,6 +9,4 @@ jobs:
       - name: Install dependencies
         run: sudo apt -y install cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
       - name: Build
-        run: |
-          cmake -DCMAKE_BUILD_TYPE=Release .
-          make
+        run: ./scripts/build-linux.sh

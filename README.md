@@ -383,9 +383,7 @@ The steps below will build the release-version. You can change value of the `DCM
 4. Perform build:
 
     ```shell
-    cd <path-to-dune-dynasty-src>
-    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
-    ninja
+    ./scripts/build-windows.sh
     ```
 
 5. For packaging, you have to copy all required .dll files to the `dist` folder. To do this, simply call the following script:
@@ -413,8 +411,7 @@ The steps below will build the release-version. You can change value of the `DCM
 2. Perform build:
 
     ```shell
-    cmake -DCMAKE_BUILD_TYPE=Release .
-    make
+    ./scripts/build-linux.sh
     ```
 
 3. When packaging, there is the problem, that the fluidsynth-library is called `libfluidsynth2` on some distributions, and `libfluidsynth3` on others. To mitigate, call this script, which will copy the library-file to `dist/libs` and patch the executable to use the inlcuded library instead:
