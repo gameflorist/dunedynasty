@@ -1,7 +1,9 @@
 # Dune Dynasty
 
-[![Latest Release](https://img.shields.io/github/v/release/gameflorist/dunedynasty?display_name=tag&label=Download%20Latest%20Release&style=flat-square)](https://github.com/gameflorist/dunedynasty/releases)
+[![Latest Release](https://img.shields.io/github/v/release/gameflorist/dunedynasty?display_name=tag&label=Download%20Latest%20Release&style=for-the-badge)](https://github.com/gameflorist/dunedynasty/releases)
+
 [![Windows Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-build.yml)
+[![macOS Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-build.yml)
 [![Linux Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-build.yml?label=Linux%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-build.yml)
 
 ![Dune Dynasty](/docs/banner.jpg)
@@ -16,8 +18,7 @@ original game engine as reverse-engineered by the [OpenDUNE](https://github.com/
 
 _Dune Dynasty_ features these modern enhancements for _Dune II_:
 
-- __Runs natively on Linux and Windows (OpenGL or Direct3D)__  
-    (for MacOS see [this port](https://github.com/YuriyGuts/dunedynasty-macos))
+- __Runs natively on Windows, macOS and Linux (OpenGL or Direct3D)__  
 - __Graphics Enhancements:__
   - High-resolution widescreen graphics
   - Separate customizable scaling of menubar, sidebar and map/viewport for HiDPI displays
@@ -291,7 +292,7 @@ Here is a list of supported Music packs:
   Unfortunately, this game cannot be purchased anymore at the moment.
 - ___Dune___ (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:  
    The excellent award-winning soundtrack for _Dune II_'s predecessor - the 1992 _Dune_ game by _Cryo_. It is very atmospheric, and makes _Dune II_ a much more relaxing and chill experience. Two versions are supported:
- 
+
   - [AdLib Gold recording by DOS Nostalgia](https://www.dosnostalgia.com/?p=542)
   - ___Spice Opera___ by Exxos  
      A remastered CD release of the soundtrack. Unfortunately it is not available for purchase anymore (but Google might be your friend here).
@@ -359,6 +360,7 @@ The steps below will build the release-version. You can change value of the `DCM
 3. Install dependencies:
 
     For 64bit:
+
     ```shell
     pacman -S mingw-w64-ucrt-x86_64-cmake
     pacman -S mingw-w64-ucrt-x86_64-gcc
@@ -370,6 +372,7 @@ The steps below will build the release-version. You can change value of the `DCM
     ```
 
     For 32bit:
+
     ```shell
     pacman -S mingw-w64-i686-cmake
     pacman -S mingw-w64-i686-gcc
@@ -400,7 +403,29 @@ The steps below will build the release-version. You can change value of the `DCM
     ./scripts/bundle-libs-mingw32.sh
     ```
 
-#### Debian, Ubuntu
+#### MacOs
+
+1. Install [Homebrew](https://brew.sh/) package manager.
+
+2. Install dependencies:
+
+    ```shell
+    brew install cmake allegro fluid-synth mad enet
+    ```
+
+3. Perform build:
+
+    ```shell
+    ./scripts/build-macos.sh
+    ```
+
+4. To package all required dynlibs into the `./dist/libs` folder and patch the executable, call this script:
+
+    ```shell
+    ./scripts/bundle-libs-macos.sh
+    ```
+
+#### Linux (Debian, Ubuntu)
 
 1. Install dependencies:
 
@@ -420,16 +445,11 @@ The steps below will build the release-version. You can change value of the `DCM
     ./scripts/bundle-libs-linux.sh
     ```
 
-#### MacOs
-
-Check out this fork of _Dune Dynasty_ explicitly for MacOS:  
-[https://github.com/YuriyGuts/dunedynasty-macos](https://github.com/YuriyGuts/dunedynasty-macos)
-
 ### Debugging
 
 You can use the function `GUI_DisplayText` to display debugging info in the status bar. E.g.:
 
-```
+```c
 GUI_DisplayText("my debug info:%u, my other debug info:%u", 2, my_value, my_other_value);
 ```
 
