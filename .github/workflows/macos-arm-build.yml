@@ -8,7 +8,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: brew install cmake allegro fluid-synth mad enet
+        run: brew install cmake allegro fluid-synth mad enet dylibbundler
 
       - name: Build
         run: ./scripts/build-macos.sh
