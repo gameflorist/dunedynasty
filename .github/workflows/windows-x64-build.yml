@@ -1,20 +1,26 @@
-name: macOS ARM Build
+name: Windows x64 Build
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: brew install cmake allegro fluid-synth mad enet
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb mingw-w64-ucrt-x86_64-allegro mingw-w64-ucrt-x86_64-enet mingw-w64-ucrt-x86_64-fluidsynth mingw-w64-ucrt-x86_64-libmad
 
       - name: Build
-        run: ./scripts/build-macos.sh
+        run: ./scripts/build-windows.sh
 
       - name: Bundle libs
-        run: ./scripts/bundle-libs-macos.sh
+        run: ./scripts/bundle-libs-ucrt64.sh
 
       - name: Delete Old Artifacts
         uses: actions/github-script@v6
@@ -27,7 +33,7 @@ jobs:
             })
 
             res.data.artifacts
-                .filter(({ name }) => name === 'macos-arm-build')
+                .filter(({ name }) => name === 'windows-x64-build')
                 .forEach(({ id }) => {
                   github.rest.actions.deleteArtifact({
                       owner: context.repo.owner,
@@ -39,5 +45,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: macos-arm-build
+          name: windows-x64-build
           path: dist

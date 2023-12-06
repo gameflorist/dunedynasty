@@ -1,4 +1,4 @@
-name: macOS ARM Build
+name: macOS Intel Build
 on: [push, pull_request]
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
             })
 
             res.data.artifacts
-                .filter(({ name }) => name === 'macos-arm-build')
+                .filter(({ name }) => name === 'macos-intel-build')
                 .forEach(({ id }) => {
                   github.rest.actions.deleteArtifact({
                       owner: context.repo.owner,
@@ -39,5 +39,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: macos-arm-build
+          name: macos-intel-build
           path: dist

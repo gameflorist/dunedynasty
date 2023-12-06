@@ -2,8 +2,9 @@
 
 [![Latest Release](https://img.shields.io/github/v/release/gameflorist/dunedynasty?display_name=tag&label=Download%20Latest%20Release&style=for-the-badge)](https://github.com/gameflorist/dunedynasty/releases)
 
-[![Windows Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-build.yml)
-[![macOS Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-build.yml?label=macOS%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-build.yml)
+[![Windows x64 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-x64-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-x64-build.yml)
+[![Windows x86 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-x86-build.yml?label=Windows%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-x86-build.yml)
+[![macOS Intel Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-intel-build.yml?label=macOS%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-intel-build.yml)
 [![Linux Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-build.yml?label=Linux%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-build.yml)
 
 ![Dune Dynasty](/docs/banner.jpg)

@@ -6,7 +6,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Install dependencies
         run: sudo apt -y install cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
+
       - name: Build
         run: ./scripts/build-linux.sh
+
+      - name: Bundle libs
+        run: ./scripts/bundle-libs-linux.sh
+
+      - name: Delete Old Artifacts
+        uses: actions/github-script@v6
+        id: artifact
+        with:
+          script: |
+            const res = await github.rest.actions.listArtifactsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+            })
+
+            res.data.artifacts
+                .filter(({ name }) => name === 'linux-build')
+                .forEach(({ id }) => {
+                  github.rest.actions.deleteArtifact({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      artifact_id: id,
+                  })
+                })
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-build
+          path: dist
