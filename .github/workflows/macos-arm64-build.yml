@@ -12,9 +12,13 @@ jobs:
       - name: Install dependencies
         run: | 
           brew install cmake dylibbundler
-          brew uninstall sox mad
-          brew fetch --force --bottle-tag=arm64_monterey argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet
-          brew install $(brew --cache --bottle-tag=arm64_monterey argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet)
+          PACKAGES=(argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet)
+          for PACKAGE in "${PACKAGES[@]}"
+          do
+            brew uninstall --force --ignore-dependencies $PACKAGE
+            brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
+            brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
+          done
 
       - name: Build
         run: ./scripts/build-macos-arm64.sh
