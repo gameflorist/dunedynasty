@@ -4,6 +4,8 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      actions: write
     defaults:
       run:
         shell: msys2 {0}

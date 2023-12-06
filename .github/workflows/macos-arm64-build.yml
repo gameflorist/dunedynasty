@@ -1,17 +1,23 @@
-name: macOS ARM Build
+name: macOS ARM64 Build
 on: [push, pull_request]
 
 jobs:
   build:
     runs-on: macos-latest
+    permissions:
+      actions: write
     steps:
       - uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: brew install cmake allegro fluid-synth mad enet dylibbundler
+        run: | 
+          brew install cmake dylibbundler
+          brew uninstall sox mad
+          brew fetch --force --bottle-tag=arm64_monterey argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet
+          brew install $(brew --cache --bottle-tag=arm64_monterey argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet)
 
       - name: Build
-        run: ./scripts/build-macos.sh
+        run: ./scripts/build-macos-arm64.sh
 
       - name: Bundle libs
         run: ./scripts/bundle-libs-macos.sh
@@ -27,7 +33,7 @@ jobs:
             })
 
             res.data.artifacts
-                .filter(({ name }) => name === 'macos-arm-build')
+                .filter(({ name }) => name === 'macos-arm64-build')
                 .forEach(({ id }) => {
                   github.rest.actions.deleteArtifact({
                       owner: context.repo.owner,
@@ -39,5 +45,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: macos-arm-build
+          name: macos-arm64-build
           path: dist
