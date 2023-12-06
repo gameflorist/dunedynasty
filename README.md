@@ -43,7 +43,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Settings for starting credits, amount of spice fields and lose condition
 - __Sound and Music Enhancements:__
   - Emulated AdLib sound and music playback
-  - [General MIDI playback via FluidSynth](#general-midi-music) (supporting SoundFonts)
+  - [General MIDI playback via FluidSynth](#fluidsynth) (supporting SoundFonts)
   - [Support for external music sets](#external-music-sets):
     - Recorded AdLib, MT-32 and SC-55 packs
     - Sega Mega Drive soundtrack (mostly different songs, but also ___very___ good!)
@@ -442,7 +442,6 @@ The steps below will build the release-version. You can change value of the `DCM
     ```shell
     brew install dylibbundler
     ```
-
 
 #### Linux (Debian, Ubuntu)
 
