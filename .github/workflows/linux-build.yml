@@ -18,6 +18,16 @@ jobs:
       - name: Bundle libs
         run: ./scripts/bundle-libs-linux.sh
 
+      - name: Test executable
+        run: |
+          cd dist
+          ./dunedynasty | grep "data directory"
+
+      - name: Zip dist folder
+        run: |
+          cd dist
+          zip -r dist.zip .
+
       - name: Delete Old Artifacts
         uses: actions/github-script@v6
         id: artifact
@@ -42,4 +52,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: linux-build
-          path: dist
+          path: dist/dist.zip

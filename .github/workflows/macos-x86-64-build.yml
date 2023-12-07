@@ -1,4 +1,4 @@
-name: macOS Intel Build
+name: macOS X86-64 Build
 on: [push, pull_request]
 
 jobs:
@@ -18,6 +18,17 @@ jobs:
       - name: Bundle libs
         run: ./scripts/bundle-libs-macos.sh
 
+      - name: Test executable
+        run: |
+          brew uninstall --force --ignore-dependencies argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet
+          cd dist
+          ./dunedynasty | grep "data directory"
+
+      - name: Zip dist folder
+        run: |
+          cd dist
+          zip -r dist.zip .
+
       - name: Delete Old Artifacts
         uses: actions/github-script@v6
         id: artifact
@@ -29,7 +40,7 @@ jobs:
             })
 
             res.data.artifacts
-                .filter(({ name }) => name === 'macos-intel-build')
+                .filter(({ name }) => name === 'macos-x86-64-build')
                 .forEach(({ id }) => {
                   github.rest.actions.deleteArtifact({
                       owner: context.repo.owner,
@@ -41,5 +52,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: macos-intel-build
-          path: dist
+          name: macos-x86-64-build
+          path: dist/dist.zip

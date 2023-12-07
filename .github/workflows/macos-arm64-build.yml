@@ -26,6 +26,11 @@ jobs:
       - name: Bundle libs
         run: ./scripts/bundle-libs-macos.sh
 
+      - name: Zip dist folder
+        run: |
+          cd dist
+          zip -r dist.zip .
+
       - name: Delete Old Artifacts
         uses: actions/github-script@v6
         id: artifact
@@ -50,4 +55,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: macos-arm64-build
-          path: dist
+          path: dist/dist.zip
