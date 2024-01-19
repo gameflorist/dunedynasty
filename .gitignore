@@ -28,6 +28,7 @@ dist/*.log
 dist/*.cfg
 dist/libs
 dist/save
+dist/soundfonts
 dist/music/*/*.mp3
 dist/music/*/*.flac
 dist/music/*/*.zip
