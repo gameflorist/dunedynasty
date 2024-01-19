@@ -759,17 +759,18 @@ MultiplayerLobby_InitWidgets(void)
 	multiplayer_lobby_widgets = GUI_Widget_Link(multiplayer_lobby_widgets, w);
 
 	/* Name entry. */
-	w = GUI_Widget_Allocate(8, 0, 76, 42, 0xFFFE, STR_NULL);
-	w->width = 168;
-	w->height = 10;
+	w = GUI_Widget_Allocate(8, 0, 230, 87, 0xFFFE, STR_NULL);
+	w->width  = 74;
+	w->height = 12;
+	memset(&w->flags, 0, sizeof(w->flags));
 	w->flags.requiresClick = true;
 	w->flags.clickAsHover = true;
 	w->flags.loseSelect = true;
 	w->flags.buttonFilterLeft = 4;
 	w->flags.buttonFilterRight = 4;
-	w->drawParameterNormal.proc = EditBox_DrawCentred;
-	w->drawParameterSelected.proc = EditBox_DrawCentred;
-	w->drawParameterDown.proc = EditBox_DrawCentred;
+	w->drawParameterNormal.proc = EditBox_DrawWithBorder;
+	w->drawParameterSelected.proc = EditBox_DrawWithBorder;
+	w->drawParameterDown.proc = EditBox_DrawWithBorder;
 	w->data = g_net_name;
 	multiplayer_lobby_widgets = GUI_Widget_Link(multiplayer_lobby_widgets, w);
 
@@ -1272,6 +1273,8 @@ MultiplayerLobby_Draw(void)
 
 	ChatBox_Draw(g_chat_buf,
 			!GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 8)->state.selected);
+
+	GUI_DrawText_Wrapper("Name:", 200, 89, 0xF, 0, 0x21);
 
 	/* XXX -- GUI_Widget_TextButton2_Draw changes the shortcuts. */
 	GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 20)->shortcut = 0;

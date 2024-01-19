@@ -13,7 +13,7 @@ enum NetEvent {
 
 enum {
 	MAX_CLIENTS = HOUSE_MAX,
-	MAX_NAME_LEN = 14,
+	MAX_NAME_LEN = 12,
 	MAX_CHAT_LEN = 60,
 	MAX_ADDR_LEN = 1023,
 	MAX_PORT_LEN = 5,

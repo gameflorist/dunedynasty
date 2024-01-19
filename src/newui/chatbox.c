@@ -20,7 +20,7 @@
 enum {
 	CHAT_IN_GAME_DURATION   = 60 * 10,
 	CHAT_FADEOUT_DURATION   = 60 * 1,
-	MAX_CHAT_LINES = 9 + 1
+	MAX_CHAT_LINES = 7 + 1
 };
 
 typedef struct ChatEntry {
@@ -244,11 +244,11 @@ ChatBox_DrawHistory(int x, int y, int style, int64_t curr_ticks)
 void
 ChatBox_Draw(const char *buf, bool draw_cursor)
 {
-	Prim_DrawBorder(200, 90, 100 + 4, 63 + 5, 1, false, true, 0);
-	ChatBox_DrawHistory(202, 92, 0x11, 0);
+	Prim_DrawBorder(200, 100, 100 + 4, 53 + 5, 1, false, true, 0);
+	ChatBox_DrawHistory(202, 102, 0x11, 0);
 
-	Prim_DrawBorder(200, 159, 100 + 4, 11, 1, false, true, 0);
-	EditBox_Draw(buf, 202, 161, 100, 7, 4, 31, 0x11, draw_cursor);
+	Prim_DrawBorder(200, 159, 100 + 4, 11, 1, false, true, 4);
+	EditBox_Draw(buf, 202, 161, 100, 7, 4, 0xF, 0x21, draw_cursor);
 }
 
 void
