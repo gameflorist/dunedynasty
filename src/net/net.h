@@ -65,6 +65,8 @@ extern bool Net_CreateServer(const char *addr, int port, const char *name);
 extern bool Net_ConnectToServer(const char *hostname, int port, const char *name);
 extern void Net_Disconnect(void);
 extern bool Net_IsPlayable(void);
+extern bool Net_HasAtLeastTwoPlayers(void);
+extern bool Net_HasAllPlayersAssigned(void);
 extern bool Net_HasClientRole(void);
 extern bool Net_HasServerRole(void);
 extern void Net_Synchronise(void);

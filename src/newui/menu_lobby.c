@@ -1018,7 +1018,6 @@ MapOptionsLobby_Draw(void)
 {
 	const bool is_skirmish = (g_campaign_selected == CAMPAIGNID_SKIRMISH);
 	const int lineHeight = MAP_OPTIONS_GUI_LINE_HEIGHT;
-	const int errorX = MAP_OPTIONS_GUI_ERROR_X, errorY = MAP_OPTIONS_GUI_ERROR_Y;
 	bool issuesFound = false;
 	int offsetY;
 
@@ -1037,13 +1036,13 @@ MapOptionsLobby_Draw(void)
 	uint16 credits_proposed = atoi(map_options_starting_credits);
 	if (credits_proposed < MAP_OPTIONS_STARTING_CREDITS_MIN) {
 		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 52, MAP_OPTIONS_GUI_MAIN_Y + 1*lineHeight + 2, 0xE7, 0, 0x21);
-		GUI_DrawText_Wrapper("Assign at least %u credits", errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_STARTING_CREDITS_MIN);
+		GUI_DrawText_Wrapper("Assign at least %u credits", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122, MAP_OPTIONS_STARTING_CREDITS_MIN);
 		issuesFound = true;
 	}
 	if (credits_proposed > MAP_OPTIONS_STARTING_CREDITS_MAX) {
 		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 52, MAP_OPTIONS_GUI_MAIN_Y + 1*lineHeight + 2, 0xE7, 0, 0x21);
 		if (!issuesFound) {
-			GUI_DrawText_Wrapper("Assign at most %u credits", errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_STARTING_CREDITS_MAX);
+			GUI_DrawText_Wrapper("Assign at most %u credits", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122, MAP_OPTIONS_STARTING_CREDITS_MAX);
 			issuesFound = true;
 		}
 	}
@@ -1081,7 +1080,7 @@ MapOptionsLobby_Draw(void)
 		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 97, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[2], 0xE7, 0, 0x21);
 		if (!issuesFound) {
 			GUI_DrawText_Wrapper("Map rejected. Enough build space?",
-					errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_STARTING_CREDITS_MAX);
+					MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122, MAP_OPTIONS_STARTING_CREDITS_MAX);
 			issuesFound = true;
 		}
 	}
@@ -1095,7 +1094,8 @@ MapOptionsLobby_Draw(void)
 	if (spice_min < MAP_OPTIONS_SPICE_MIN) {
 		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 110, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[5], 0xE7, 0, 0x21);
 		if (!issuesFound) {
-			GUI_DrawText_Wrapper("Min. %u spice field spawn points", errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_SPICE_MIN);
+			GUI_DrawText_Wrapper("Enter at least %u of min.", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122, MAP_OPTIONS_SPICE_MIN);
+			GUI_DrawText_Wrapper("spice field spawn points", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
 			issuesFound = true;
 		}
 	}
@@ -1103,14 +1103,15 @@ MapOptionsLobby_Draw(void)
 	if (spice_max > MAP_OPTIONS_SPICE_MAX) {
 		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 110, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[5], 0xE7, 0, 0x21);
 		if (!issuesFound) {
-			GUI_DrawText_Wrapper("Max. %u spice field spawn points", errorX, errorY, 0xE7, 0, 0x21, MAP_OPTIONS_SPICE_MAX);
+			GUI_DrawText_Wrapper("Enter at most %u of max.", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122, MAP_OPTIONS_SPICE_MAX);
+			GUI_DrawText_Wrapper("spice field spawn points", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
 			issuesFound = true;
 		}
 	}
 	if (spice_min > spice_max) {
 		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAP_X + 110, MAP_OPTIONS_GUI_MAP_Y + mapOffsetY[5], 0xE7, 0, 0x21);
 		if (!issuesFound) {
-			GUI_DrawText_Wrapper("Min. spice larger than max.", errorX, errorY, 0xE7, 0, 0x21);
+			GUI_DrawText_Wrapper("Min. spice larger than max.", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122);
 			issuesFound = true;
 		}
 	}
@@ -1270,6 +1271,20 @@ MultiplayerLobby_Draw(void)
 	Lobby_Draw("Multiplayer",
 			g_multiplayer.next_seed,
 			multiplayer_lobby_widgets);
+	
+	if (!can_issue_start && Net_HasServerRole()) {
+		if (!Net_HasAtLeastTwoPlayers()) {
+			GUI_DrawText_Wrapper("At least 2 human", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
+			GUI_DrawText_Wrapper("players required", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
+		}
+		else if (!Net_HasAllPlayersAssigned()) {
+			GUI_DrawText_Wrapper("All players must", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
+			GUI_DrawText_Wrapper("select their House", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
+		}
+	}
+	if (!Net_HasServerRole() && Net_GetClientHouse(g_local_client_id) == HOUSE_INVALID) {
+		GUI_DrawText_Wrapper("Select your House!", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122);
+	}
 
 	ChatBox_Draw(g_chat_buf,
 			!GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 8)->state.selected);

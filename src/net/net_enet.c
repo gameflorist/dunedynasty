@@ -281,6 +281,25 @@ Net_Disconnect(void)
 bool
 Net_IsPlayable(void)
 {
+	return Net_HasAtLeastTwoPlayers() && Net_HasAllPlayersAssigned();
+}
+
+bool
+Net_HasAtLeastTwoPlayers(void)
+{
+	int total_players = 0;
+
+	for (int i = 0; i < MAX_CLIENTS; i++) {
+		if (g_peer_data[i].state == CLIENTSTATE_IN_LOBBY)
+			total_players++;
+	}
+
+	return total_players > 1;
+}
+
+bool
+Net_HasAllPlayersAssigned(void)
+{
 	int assigned_players = 0;
 	int total_players = 0;
 
