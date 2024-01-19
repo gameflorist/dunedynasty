@@ -1002,6 +1002,11 @@ Lobby_Draw(const char *heading, uint32 next_seed, Widget *w)
 
 	Lobby_DrawRadar(w, next_seed);
 
+	if ((g_campaign_selected == CAMPAIGNID_SKIRMISH) && !Skirmish_IsPlayable()) {
+		GUI_DrawText_Wrapper("Choose your House", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
+		GUI_DrawText_Wrapper("and at least 1 enemy", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
+	}
+
 	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
 	GUI_Widget_DrawAll(w);
 
@@ -1271,8 +1276,11 @@ MultiplayerLobby_Draw(void)
 	Lobby_Draw("Multiplayer",
 			g_multiplayer.next_seed,
 			multiplayer_lobby_widgets);
-	
-	if (!can_issue_start && Net_HasServerRole()) {
+
+	if (Net_GetClientHouse(g_local_client_id) == HOUSE_INVALID) {
+		GUI_DrawText_Wrapper("Select your House!", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122);
+	}	
+	else if (!can_issue_start && Net_HasServerRole()) {
 		if (!Net_HasAtLeastTwoPlayers()) {
 			GUI_DrawText_Wrapper("At least 2 human", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
 			GUI_DrawText_Wrapper("players required", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
@@ -1281,9 +1289,6 @@ MultiplayerLobby_Draw(void)
 			GUI_DrawText_Wrapper("All players must", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
 			GUI_DrawText_Wrapper("select their House", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
 		}
-	}
-	if (!Net_HasServerRole() && Net_GetClientHouse(g_local_client_id) == HOUSE_INVALID) {
-		GUI_DrawText_Wrapper("Select your House!", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122);
 	}
 
 	ChatBox_Draw(g_chat_buf,
