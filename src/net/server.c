@@ -799,6 +799,8 @@ Server_Send_Scenario(unsigned char **buf)
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		Net_Encode_uint8(buf, g_multiplayer.client[h]);
+		Net_Encode_uint8(buf, g_multiplayer.player_config[h].brain);
+		Net_Encode_uint8(buf, g_multiplayer.player_config[h].team);
 	}
 
 	g_sendScenario = false;
@@ -1423,6 +1425,7 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 			return;
 
 		g_multiplayer.client[houseID] = data->id;
+		g_multiplayer.player_config[houseID].brain = BRAIN_HUMAN;
 
 		if (g_local_client_id != 0
 		 && g_local_client_id == g_multiplayer.client[houseID]) {
@@ -1433,6 +1436,7 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 
 	if (old_house != HOUSE_INVALID) {
 		g_multiplayer.client[old_house] = 0;
+		g_multiplayer.player_config[old_house].brain = BRAIN_NONE;
 	}
 
 	lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_RAND;

@@ -281,7 +281,7 @@ Net_Disconnect(void)
 bool
 Net_IsPlayable(void)
 {
-	return Net_HasAtLeastTwoPlayers() && Net_HasAllPlayersAssigned();
+	return Net_HasAtLeastTwoPlayers() && Net_HasAllPlayersAssigned() && Net_HasAtLeastTwoTeams();
 }
 
 bool
@@ -319,6 +319,22 @@ Net_HasAllPlayersAssigned(void)
 	} else {
 		return false;
 	}
+}
+
+bool
+Net_HasAtLeastTwoTeams(void)
+{
+	int team_count = 0;
+	for (enum PlayerTeam t = TEAM_1; t < TEAM_MAX; t++) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+			if (g_multiplayer.player_config[h].brain != BRAIN_NONE && g_multiplayer.player_config[h].team == t) {
+				team_count++;
+				break;
+			}
+		}
+	}
+
+	return team_count > 1;
 }
 
 bool

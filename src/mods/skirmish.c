@@ -130,6 +130,15 @@ Skirmish_Initialise(void)
 
 	g_skirmish.landscape_params.min_spice_fields = 24;
 	g_skirmish.landscape_params.max_spice_fields = 48;
+	
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		PlayerConfig pc;
+		pc.brain = BRAIN_NONE;
+		pc.team = (enum PlayerTeam)((int)h +1);
+		pc.houseID = h;
+		pc.matchType = MATCHTYPE_SKIRMISH;
+		g_skirmish.player_config[h] = pc;
+	}
 }
 
 bool
@@ -137,11 +146,17 @@ Skirmish_IsPlayable(void)
 {
 	bool found_human = false;
 	bool found_enemy = false;
+	enum PlayerTeam human_team;
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		if (g_skirmish.brain[h] == BRAIN_HUMAN) {
+		if (g_skirmish.player_config[h].brain == BRAIN_HUMAN) {
 			found_human = true;
-		} else if (g_skirmish.brain[h] == BRAIN_CPU_ENEMY) {
+			human_team = g_skirmish.player_config[h].team;
+		}
+	}
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_skirmish.player_config[h].brain == BRAIN_CPU && g_skirmish.player_config[h].team != human_team) {
 			found_enemy = true;
 		}
 	}
@@ -221,20 +236,19 @@ Skirmish_ResetAlliances(void)
 
 	/* Assign alliances. */
 	for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_MAX; h1++) {
-		if (g_skirmish.brain[h1] == BRAIN_NONE)
+		if (g_skirmish.player_config[h1].brain == BRAIN_NONE)
 			continue;
 
-		if (g_skirmish.brain[h1] == BRAIN_HUMAN)
+		if (g_skirmish.player_config[h1].brain == BRAIN_HUMAN)
 			playerHouseID = h1;
 
 		g_table_houseAlliance[h1][h1] = HOUSEALLIANCE_ALLIES;
 
 		for (enum HouseType h2 = h1 + 1; h2 < HOUSE_MAX; h2++) {
-			if (g_skirmish.brain[h2] == BRAIN_NONE)
+			if (g_skirmish.player_config[h2].brain == BRAIN_NONE)
 				continue;
 
-			if ((g_skirmish.brain[h1] == BRAIN_CPU_ENEMY && g_skirmish.brain[h2] == BRAIN_CPU_ENEMY)
-			 || (g_skirmish.brain[h1] != BRAIN_CPU_ENEMY && g_skirmish.brain[h2] != BRAIN_CPU_ENEMY)) {
+			if (g_skirmish.player_config[h1].team == g_skirmish.player_config[h2].team) {
 				g_table_houseAlliance[h1][h2] = HOUSEALLIANCE_ALLIES;
 				g_table_houseAlliance[h2][h1] = HOUSEALLIANCE_ALLIES;
 			} else {
@@ -489,19 +503,40 @@ Skirmish_BuildOrder_Sorter(const void *a, const void *b)
 static bool
 Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 {
+	const bool is_multiplayer = (g_campaign_selected == CAMPAIGNID_MULTIPLAYER);
+
+	PlayerConfig *pc = g_skirmish.player_config;
+	if (is_multiplayer) {
+		pc = g_multiplayer.player_config;
+	}
+
+	int team_count = 0;
+	for (enum PlayerTeam t = TEAM_1; t < TEAM_MAX; t++) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+			if (pc[h].brain != BRAIN_NONE && pc[h].team == t) {
+				team_count++;
+				break;
+			}
+		}
+	}
+
 	uint16 tech_level = 0;
 	uint16 structure = 0;
 	int structure_count = 0;
 	int structure_threshold = 100;
+	bool is_cpu_allied_with_player = pc[houseID].brain == BRAIN_CPU && pc[g_playerHouseID].brain == pc[houseID].brain;
 
 	int cpu_count = 0;
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		if (g_skirmish.brain[h] == BRAIN_CPU_ENEMY || g_skirmish.brain[h] == BRAIN_CPU_ALLY)
+		if (pc[h].brain == BRAIN_CPU)
 			cpu_count++;
 	}
 	assert(cpu_count != 0);
 
-	const int max_structure_count = 60 / cpu_count;
+	int max_structure_count = 60 / cpu_count;
+	if (is_multiplayer) {
+		max_structure_count = 10;
+	}
 
 	/* First pass finds out what to build. */
 	tech_level = 0;
@@ -510,7 +545,7 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 	for (structure = 0; (structure < lengthof(buildorder)) && (tech_level <= g_campaignID); structure++) {
 		if (buildorder[structure].type == STRUCTURE_INVALID) {
 			tech_level++;
-		} else if (!buildorder[structure].availableToAlly && (g_skirmish.brain[houseID] == BRAIN_CPU_ALLY)) {
+		} else if (!buildorder[structure].availableToAlly && is_cpu_allied_with_player) {
 		} else if ((buildorder[structure].availableHouse & (1 << houseID)) == 0) {
 		} else {
 			structure_count++;
@@ -530,6 +565,18 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 		free(bo);
 	}
 
+	/* Max/min distance to ally/enemy becomes difficult with many teams. */
+	int max_dist_ally = 16;
+	int min_dist_enemy = 24;
+	if (team_count == 5) {
+		max_dist_ally = 20;
+		min_dist_enemy = 20;
+	}
+	if (team_count == 6) {
+		max_dist_ally = 25;
+		min_dist_enemy = 15;
+	}
+
 	/* Second pass builds structures below the threshold priority. */
 	tech_level = 0;
 	structure = 0;
@@ -546,8 +593,8 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 			uint16 dist_ally, dist_enemy;
 			Skirmish_FindClosestStructures(houseID, sd->buildable[r].packed, &dist_ally, &dist_enemy);
 
-			if ((dist_ally > 16 && dist_ally != 0xFFFF) ||
-			    (dist_enemy < 24))
+			if ((dist_ally > max_dist_ally && dist_ally != 0xFFFF) ||
+			    (dist_enemy < min_dist_enemy))
 				continue;
 
 			const int area = Skirmish_FindBuildableArea(island, sd->buildable[r].x, sd->buildable[r].y,
@@ -571,7 +618,7 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 				tech_level++;
 				structure++;
 				continue;
-			} else if (!buildorder[structure].availableToAlly && (g_skirmish.brain[houseID] == BRAIN_CPU_ALLY)) {
+			} else if (!buildorder[structure].availableToAlly && is_cpu_allied_with_player) {
 				structure++;
 				structure_count--;
 				continue;
@@ -738,7 +785,7 @@ Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
 	return true;
 }
 
-static void
+void
 Skirmish_GenUnitsAI(enum HouseType houseID)
 {
 	const uint16 unacceptableLst = (1 << LST_WALL) | (1 << LST_STRUCTURE) | (1 << LST_BLOOM_FIELD);
@@ -798,17 +845,26 @@ Skirmish_GenUnitsAI(enum HouseType houseID)
 	}
 }
 
-static bool
+bool
 Skirmish_GenHouses(SkirmishData *sd)
 {
+	const bool is_multiplayer = (g_campaign_selected == CAMPAIGNID_MULTIPLAYER);
+
+	PlayerConfig *pc = g_skirmish.player_config;
+	uint16 credits = g_skirmish.credits;
+	if (is_multiplayer) {
+		pc = g_multiplayer.player_config;
+		credits = g_multiplayer.credits;
+	}
+	
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		if (g_skirmish.brain[houseID] == BRAIN_NONE)
+		if (pc[houseID].brain == BRAIN_NONE)
 			continue;
 
-		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
-			Scenario_Create_House(houseID, g_skirmish.brain[houseID], g_skirmish.credits, 0, 25);
+		if (pc[houseID].brain == BRAIN_HUMAN) {
+			Scenario_Create_House(houseID, BRAIN_HUMAN, credits, 0, 25);
 		} else {
-			House *h = Scenario_Create_House(houseID, g_skirmish.brain[houseID], 1000, 0, 25);
+			House *h = Scenario_Create_House(houseID, pc[houseID].brain, 1000, 0, 25);
 
 			h->flags.isAIActive = true;
 
@@ -817,11 +873,17 @@ Skirmish_GenHouses(SkirmishData *sd)
 		}
 	}
 
+	return true;
+}
+
+static bool
+Skirmish_GenUnits(SkirmishData *sd)
+{
 	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-		if (g_skirmish.brain[houseID] == BRAIN_NONE)
+		if (g_skirmish.player_config[houseID].brain == BRAIN_NONE)
 			continue;
 
-		if (g_skirmish.brain[houseID] == BRAIN_HUMAN) {
+		if (g_skirmish.player_config[houseID].brain == BRAIN_HUMAN) {
 			if (!Skirmish_GenUnitsHuman(houseID, sd))
 				return false;
 		} else {
@@ -872,7 +934,7 @@ Skirmish_GenReinforcements(void)
 
 	uint8 index = 0;
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX && index < 16; h++) {
-		if (g_skirmish.brain[h] == BRAIN_NONE)
+		if (g_skirmish.player_config[h].brain == BRAIN_NONE)
 			continue;
 
 		enum UnitType type[2];
@@ -891,7 +953,7 @@ Skirmish_GenReinforcements(void)
 			}
 		}
 
-		const bool repeat = (g_skirmish.brain[h] != BRAIN_HUMAN);
+		const bool repeat = (g_skirmish.player_config[h].brain != BRAIN_HUMAN);
 
 		if (h == HOUSE_SARDAUKAR) {
 			/* Sardaukar always get four sets of troopers in the enemy base.  That's just how it is! */
@@ -899,7 +961,7 @@ Skirmish_GenReinforcements(void)
 			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
 			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
 			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
-		} else if (g_skirmish.brain[h] == BRAIN_HUMAN) {
+		} else if (g_skirmish.player_config[h].brain == BRAIN_HUMAN) {
 			/* Players always get reinforcements at home base. */
 			Scenario_Create_Reinforcement(index++, h, UNIT_TANK, 7,  6 * 6, repeat);
 			Scenario_Create_Reinforcement(index++, h, type[0],   7,  6 * 6, repeat);
@@ -978,6 +1040,8 @@ Skirmish_GenerateMap2(bool only_landscape, SkirmishData *sd)
 
 	if (is_skirmish) {
 		if (!Skirmish_GenHouses(sd))
+			return false;
+		if (!Skirmish_GenUnits(sd))
 			return false;
 	} else {
 		if (!Multiplayer_GenHouses(sd))

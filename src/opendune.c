@@ -132,12 +132,6 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
 
-			if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER
-					&& (g_multiplayer.state[s->o.houseID] == MP_HOUSE_UNUSED
-					 || g_multiplayer.state[s->o.houseID] == MP_HOUSE_LOST)) {
-				continue;
-			}
-
 			if (House_AreAllied(s->o.houseID, houseID)) {
 				foundFriendly = true;
 			} else {
@@ -165,11 +159,6 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 					continue;
 
 				const enum HouseType h2 = Unit_GetHouseID(u);
-				if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER
-						&& (g_multiplayer.state[h2] == MP_HOUSE_UNUSED
-						 || g_multiplayer.state[h2] == MP_HOUSE_LOST)) {
-					continue;
-				}
 
 				if (House_AreAllied(h2, houseID)) {
 					foundFriendly = true;

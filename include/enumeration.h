@@ -8,9 +8,31 @@
 enum Brain {
 	BRAIN_NONE,
 	BRAIN_HUMAN,
-	BRAIN_CPU_ENEMY,
-	BRAIN_CPU_ALLY,
+	BRAIN_CPU,
 };
+
+enum PlayerTeam {
+	TEAM_NONE,
+	TEAM_1,
+	TEAM_2,
+	TEAM_3,
+	TEAM_4,
+	TEAM_5,
+	TEAM_6,
+	TEAM_MAX,
+};
+
+enum MatchType {
+	MATCHTYPE_SKIRMISH,
+	MATCHTYPE_MULTIPLAYER,
+};
+
+typedef struct PlayerConfig {
+	enum Brain brain;
+	enum PlayerTeam team;
+	enum HouseType houseID;
+	enum MatchType matchType;
+} PlayerConfig;
 
 enum TileUnveilCause {
 	UNVEILCAUSE_UNCHANGED,

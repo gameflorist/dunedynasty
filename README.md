@@ -41,9 +41,9 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - [Windows Touchscreen Support](#touchscreen-support)
 - __Skirmish and Multiplayer:__
   - With 3 additional factions: Fremen, Sardaukar and Mercenaries
-  - For up to 6 players/AI
-  - Alliances (skirmish only)
-  - Random maps (or enter fixed map seed)
+  - For up to 6 human or AI players
+  - Fully custom alliances with up to 6 teams
+  - Random generated maps (or enter fixed map seed)
   - Settings for starting credits, amount of spice fields and lose condition
 - __Sound and Music Enhancements:__
   - Emulated AdLib sound and music playback

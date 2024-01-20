@@ -37,6 +37,8 @@ typedef struct Multiplayer {
 	LandscapeGeneratorParams landscape_params;
 
 	enum MultiplayerHouseState state[HOUSE_MAX];
+
+	PlayerConfig player_config[HOUSE_MAX];
 } Multiplayer;
 
 struct SkirmishData;

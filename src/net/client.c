@@ -560,6 +560,8 @@ Client_Recv_Scenario(const unsigned char **buf)
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		g_multiplayer.client[h] = Net_Decode_uint8(buf);
+		g_multiplayer.player_config[h].brain = Net_Decode_uint8(buf);
+		g_multiplayer.player_config[h].team = Net_Decode_uint8(buf);
 
 		if (g_local_client_id != 0
 		 && g_local_client_id == g_multiplayer.client[h]) {

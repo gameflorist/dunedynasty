@@ -12,7 +12,8 @@ typedef struct Skirmish {
 	uint32 seed;
 	LandscapeGeneratorParams landscape_params;
 
-	enum Brain brain[HOUSE_MAX];
+	PlayerConfig player_config[HOUSE_MAX];
+	
 } Skirmish;
 
 struct SkirmishData;
@@ -27,5 +28,7 @@ extern void Skirmish_Prepare(void);
 extern void Skirmish_StartScenario(void);
 extern bool Skirmish_GenerateMap1(bool is_playable);
 extern bool Skirmish_GenerateMap(enum MapGeneratorMode mode);
+extern bool Skirmish_GenHouses(struct SkirmishData *sd);
+void Skirmish_GenUnitsAI(enum HouseType houseID);
 
 #endif

@@ -34,13 +34,22 @@ Multiplayer_Init(void)
 
 	g_multiplayer.landscape_params.min_spice_fields = 24;
 	g_multiplayer.landscape_params.max_spice_fields = 48;
+	
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		PlayerConfig pc;
+		pc.brain = BRAIN_NONE;
+		pc.team = (enum PlayerTeam)((int)h +1);
+		pc.houseID = h;
+		pc.matchType = MATCHTYPE_MULTIPLAYER;
+		g_multiplayer.player_config[h] = pc;
+	}
 }
 
 bool
 Multiplayer_IsHouseAvailable(enum HouseType houseID)
 {
 	assert(houseID < HOUSE_MAX);
-	return (g_multiplayer.client[houseID] == 0);
+	return (g_multiplayer.player_config[houseID].brain == BRAIN_NONE);
 }
 
 /*--------------------------------------------------------------*/
@@ -94,26 +103,29 @@ Multiplayer_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd)
 bool
 Multiplayer_GenHouses(struct SkirmishData *sd)
 {
+	// If anything goes wrong, we need to restore the original player house.
 	const enum HouseType playerHouseID = g_playerHouseID;
 
-	/* Note: create all the houses first to avoid Scenario_Create_Unit
-	 * thinking that later human houses belong to AIs.
-	 */
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		if (g_multiplayer.client[h] == 0)
-			continue;
-
-		Scenario_Create_House(h, BRAIN_HUMAN, g_multiplayer.credits, 0, 25);
+	if (!Skirmish_GenHouses(sd)) {
+		g_playerHouseID = playerHouseID;
+		g_playerHouse = House_Get_ByIndex(g_playerHouseID);
+		return false;
 	}
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		if (g_multiplayer.client[h] == 0)
+		if (g_multiplayer.client[h] == 0 || g_multiplayer.player_config[h].brain != BRAIN_HUMAN)
 			continue;
 
 		if (!Multiplayer_GenUnitsHuman(h, sd)) {
 			g_playerHouseID = playerHouseID;
 			g_playerHouse = House_Get_ByIndex(g_playerHouseID);
 			return false;
+		}
+	}
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		if (g_multiplayer.player_config[h].brain == BRAIN_CPU) {
+			Skirmish_GenUnitsAI(h);
 		}
 	}
 
@@ -127,10 +139,26 @@ Multiplayer_Prepare(void)
 {
 	memset(g_table_houseAlliance, 0, sizeof(g_table_houseAlliance));
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		g_table_houseAlliance[h][h] = HOUSEALLIANCE_ALLIES;
-	}
-	
+	/* Assign alliances. */
+	for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_MAX; h1++) {
+		if (g_multiplayer.player_config[h1].brain == BRAIN_NONE)
+			continue;
+
+		g_table_houseAlliance[h1][h1] = HOUSEALLIANCE_ALLIES;
+
+		for (enum HouseType h2 = h1 + 1; h2 < HOUSE_MAX; h2++) {
+			if (g_multiplayer.player_config[h2].brain == BRAIN_NONE)
+				continue;
+
+			if (g_multiplayer.player_config[h1].team == g_multiplayer.player_config[h2].team) {
+				g_table_houseAlliance[h1][h2] = HOUSEALLIANCE_ALLIES;
+				g_table_houseAlliance[h2][h1] = HOUSEALLIANCE_ALLIES;
+			} else {
+				g_table_houseAlliance[h1][h2] = HOUSEALLIANCE_ENEMIES;
+				g_table_houseAlliance[h2][h1] = HOUSEALLIANCE_ENEMIES;
+			}
+		}
+	}	
 
 	/* Make sure, Fremen and Saboteurs belong to the houses that spawned them. */
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {

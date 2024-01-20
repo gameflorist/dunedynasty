@@ -540,8 +540,8 @@ ScrollListArea_Draw(Widget *w)
 		const int n = ws->scrollPosition + i;
 		const ScrollbarItem *si = &s_scrollbar_item[n];
 
-		if (si->type == SCROLLBAR_BRAIN
-		 || si->type == SCROLLBAR_CLIENT) {
+		if (si->type == SCROLLBAR_PLAYER_CONFIG
+		 || si->type == SCROLLBAR_PLAYER_CONFIG) {
 			const int len = Font_GetStringWidth(si->text);
 			if (maxlen < len)
 				maxlen = len;
@@ -598,39 +598,64 @@ ScrollListArea_Draw(Widget *w)
 				GUI_DrawText_Wrapper(si->text, x + 14, y, colour, 0, 0x12);
 				break;
 
-			case SCROLLBAR_BRAIN:
-			case SCROLLBAR_CLIENT:
+			case SCROLLBAR_PLAYER_CONFIG:
 				colour = (n == s_selectedHelpSubject) ? 8 : 31;
 
-				const int width = w->width - maxlen - 8;
-				const char *str = NULL;
+				const PlayerConfig *pc = si->d.player_config;
 
-				if (si->type == SCROLLBAR_BRAIN) {
-					     if (*(si->d.brain) == BRAIN_HUMAN)     str = "You";
-					else if (*(si->d.brain) == BRAIN_CPU_ENEMY) str = "Enemy";
-					else if (*(si->d.brain) == BRAIN_CPU_ALLY)  str = "Ally";
-					else str = NULL;
-				} else {
-					str = Net_GetClientName(si->d.offset);
-				}
+				int hPadding = 2;
+				
+				/* Draw Team Selection */
+				const char *strTeam = NULL;
+				int teamWidth = 10;
 
-				Prim_Rect_i(x - 2, y, x + width + 2, y + 8, colour);
+				if (pc->brain == BRAIN_NONE) strTeam = NULL;
+				else if (pc->team == TEAM_1)     strTeam = "T1";
+				else if (pc->team == TEAM_2)     strTeam = "T2";
+				else if (pc->team == TEAM_3)     strTeam = "T3";
+				else if (pc->team == TEAM_4)     strTeam = "T4";
+				else if (pc->team == TEAM_5)     strTeam = "T5";
+				else if (pc->team == TEAM_6)     strTeam = "T6";
+
+				Prim_Rect_i(x - hPadding, y, x + teamWidth + hPadding, y + 8, colour);
 
 				Video_SetClippingArea(div->scalex * x + div->x, 0,
-						div->scalex * width, TRUE_DISPLAY_HEIGHT);
+						div->scalex * teamWidth, TRUE_DISPLAY_HEIGHT);
+
+				GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x11);
+				GUI_DrawText_Wrapper(strTeam, x + teamWidth / 2, y + 1, colour, 0, 0x111);
+
+				Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
+
+				/* Draw Player Name */
+				const int playerNameWidth = w->width - maxlen - 8;
+				const char *str = NULL;
+				int xPlayerName = x + teamWidth + (2 * hPadding) + 2;
+
+				if (pc->brain == BRAIN_CPU) str = "AI";
+				else if (pc->brain == BRAIN_HUMAN && pc->matchType == MATCHTYPE_SKIRMISH) str = "You";
+				else if (pc->brain == BRAIN_HUMAN && pc->matchType == MATCHTYPE_MULTIPLAYER) str = Net_GetClientName(pc->houseID);
+				else str = NULL;
+
+				Prim_Rect_i(xPlayerName - hPadding, y, xPlayerName + playerNameWidth + hPadding, y + 8, colour);
+
+				Video_SetClippingArea(div->scalex * xPlayerName + div->x, 0,
+						div->scalex * playerNameWidth, TRUE_DISPLAY_HEIGHT);
 
 				GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x11);
 				const int string_width = Font_GetStringWidth(str);
-				if (string_width >= width) {
-					GUI_DrawText_Wrapper(str, x, y + 1, colour, 0, 0x11);
+				if (string_width >= playerNameWidth) {
+					GUI_DrawText_Wrapper(str, xPlayerName, y + 1, colour, 0, 0x11);
 				} else {
-					GUI_DrawText_Wrapper(str, x + width / 2, y + 1, colour, 0, 0x111);
+					GUI_DrawText_Wrapper(str, xPlayerName + playerNameWidth / 2, y + 1, colour, 0, 0x111);
 				}
 
 				Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
 
+				/* Draw House Name */
+				int xHouseName = xPlayerName + playerNameWidth + hPadding * 2;
 				colour = (n == s_selectedHelpSubject) ? 8 : 15;
-				GUI_DrawText_Wrapper(si->text, x + w->width - maxlen, y, colour, 0, 0x22);
+				GUI_DrawText_Wrapper(si->text, xHouseName, y, colour, 0, 0x21);
 				break;
 		}
 	}

@@ -67,7 +67,7 @@ static bool Load_Main(FILE *fp)
 
 	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
 		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-			g_skirmish.brain[h] = BRAIN_NONE;
+			g_skirmish.player_config[h].brain = BRAIN_NONE;
 		}
 	}
 

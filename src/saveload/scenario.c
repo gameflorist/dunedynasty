@@ -88,10 +88,9 @@ Scenario_Load2(FILE *fp, uint32 length)
 		char c;
 		fread(&c, sizeof(char), 1, fp);
 
-		     if (c == ' ') g_skirmish.brain[h] = BRAIN_NONE;
-		else if (c == 'H') g_skirmish.brain[h] = BRAIN_HUMAN;
-		else if (c == 'C') g_skirmish.brain[h] = BRAIN_CPU_ENEMY;
-		else if (c == 'A') g_skirmish.brain[h] = BRAIN_CPU_ALLY;
+		     if (c == ' ') g_skirmish.player_config[h].brain = BRAIN_NONE;
+		else if (c == 'H') g_skirmish.player_config[h].brain = BRAIN_HUMAN;
+		else if (c == 'C') g_skirmish.player_config[h].brain = BRAIN_CPU;
 	}
 
 	return true;
@@ -100,10 +99,10 @@ Scenario_Load2(FILE *fp, uint32 length)
 bool
 Scenario_Save2(FILE *fp)
 {
-	const char brain_char[4] = { ' ', 'H', 'C', 'A' };
+	const char brain_char[3] = { ' ', 'H', 'C' };
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		char c = brain_char[g_skirmish.brain[h]];
+		char c = brain_char[g_skirmish.player_config[h].brain];
 		fwrite(&c, sizeof(char), 1, fp);
 	}
 

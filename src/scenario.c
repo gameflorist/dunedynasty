@@ -1059,7 +1059,7 @@ static void Scenario_Load_House(uint8 houseID)
 	houseType = strstr("HUMAN$CPU", buf);
 	if (houseType == NULL) return;
 
-	enum Brain brain = (*houseType == 'H') ? BRAIN_HUMAN : BRAIN_CPU_ENEMY;
+	enum Brain brain = (*houseType == 'H') ? BRAIN_HUMAN : BRAIN_CPU;
 	uint16 credits;
 	uint16 creditsQuota;
 	uint16 unitCountMax;

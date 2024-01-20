@@ -9,8 +9,7 @@ enum ScrollbarItemType {
 	SCROLLBAR_ITEM,
 	SCROLLBAR_CHECKBOX,
 	SCROLLBAR_RADIO,
-	SCROLLBAR_BRAIN,
-	SCROLLBAR_CLIENT,
+	SCROLLBAR_PLAYER_CONFIG,
 	SCROLLBAR_INFO,
 	SCROLLBAR_INDENTED_INFO
 };
@@ -20,7 +19,7 @@ typedef struct ScrollbarItem {
 	enum ScrollbarItemType type;
 	bool no_desc;
 
-	union {
+	union d {
 		uint32 offset;
 		bool *checkbox;
 		struct radio {
@@ -28,7 +27,7 @@ typedef struct ScrollbarItem {
 			int value;
 			int *currentValue;
 		} radio;
-		enum Brain *brain;
+		PlayerConfig *player_config;
 	} d;
 } ScrollbarItem;
 

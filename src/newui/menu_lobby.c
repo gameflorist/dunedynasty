@@ -75,7 +75,7 @@ PickLobby_InitWidgets(void)
 
 	/* Skirmish. */
 	width = Font_GetStringWidth(String_Get_ByIndex(STR_START)) + 20;
-	w = GUI_Widget_Allocate(10, 0, 11 + (102 - width) / 2, 148, 0xFFFE, STR_LAUNCH);
+	w = GUI_Widget_Allocate(10, 0, 11 + (102 - width) / 2, 148, 0xFFFE, STR_START);
 	w->width  = width;
 	w->height = 12;
 	memset(&w->flags, 0, sizeof(w->flags));
@@ -697,7 +697,7 @@ SkirmishLobby_InitWidgets(void)
 	skirmish_lobby_widgets = GUI_Widget_Link(skirmish_lobby_widgets, w);
 
 	/* House allegiance selection. */
-	skirmish_lobby_widgets = Scrollbar_Allocate(skirmish_lobby_widgets, 0, 50, 0, 74, false);
+	skirmish_lobby_widgets = Scrollbar_Allocate(skirmish_lobby_widgets, 0, 30, 0, 74, false);
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(skirmish_lobby_widgets, 15));
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(skirmish_lobby_widgets, 16));
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(skirmish_lobby_widgets, 17));
@@ -780,6 +780,7 @@ MultiplayerLobby_InitWidgets(void)
 	w->height = 62;
 	multiplayer_lobby_widgets = GUI_Widget_Link(multiplayer_lobby_widgets, w);
 
+	/* House selection. */
 	multiplayer_lobby_widgets = Scrollbar_Allocate(multiplayer_lobby_widgets, 0, -6, 0, 74, false);
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 15));
 	GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 16));
@@ -831,6 +832,8 @@ PickLobby_Draw(void)
 
 	// make texts shadowed
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x1);
+
+	GUI_DrawText_Wrapper("Skirmish and Multiplayer", SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
 
 	/* Skirmish */
 	Prim_DrawBorder( 11, 86, 102, 83, 1, false, false, 3);
@@ -935,7 +938,7 @@ Lobby_DrawRadar(Widget *w, uint32 next_seed)
 		}
 	}
 
-	const int x1 = GUI_Widget_Get_ByIndex(w, 9)->offsetX - 1;
+	const int x1 = GUI_Widget_Get_ByIndex(w, 9)->offsetX + 1;
 	const int y1 = GUI_Widget_Get_ByIndex(w, 9)->offsetY - 1;
 	const int x2 = x1 + 63;
 	const int y2 = y1 + 63;
@@ -983,8 +986,8 @@ SkirmishLobby_Initialise(void)
 	ws->scrollMax = 0;
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		si = Scrollbar_AllocItem(w, SCROLLBAR_BRAIN);
-		si->d.brain = &g_skirmish.brain[h];
+		si = Scrollbar_AllocItem(w, SCROLLBAR_PLAYER_CONFIG);
+		si->d.player_config = &g_skirmish.player_config[h];
 		snprintf(si->text, sizeof(si->text), "%s", g_table_houseInfo[h].name);
 	}
 
@@ -1001,11 +1004,6 @@ Lobby_Draw(const char *heading, uint32 next_seed, Widget *w)
 	GUI_DrawText_Wrapper(heading, SCREEN_WIDTH / 2, 15, 15, 0, 0x122);
 
 	Lobby_DrawRadar(w, next_seed);
-
-	if ((g_campaign_selected == CAMPAIGNID_SKIRMISH) && !Skirmish_IsPlayable()) {
-		GUI_DrawText_Wrapper("Choose your House", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
-		GUI_DrawText_Wrapper("and at least 1 enemy", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
-	}
 
 	GUI_DrawText_Wrapper(NULL, 0, 0, 15, 0, 0x11);
 	GUI_Widget_DrawAll(w);
@@ -1141,6 +1139,11 @@ SkirmishLobby_Draw(void)
 			g_skirmish.seed,
 			skirmish_lobby_widgets);
 
+	if (!Skirmish_IsPlayable()) {
+		GUI_DrawText_Wrapper("Choose your House", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
+		GUI_DrawText_Wrapper("and at least 1 enemy", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
+	}
+
 	GUI_HallOfFame_SetColourScheme(false);
 }
 
@@ -1168,7 +1171,7 @@ SkirmishLobby_Loop(void)
 				g_playerHouseID = HOUSE_INVALID;
 
 				for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-					if (g_skirmish.brain[h] == BRAIN_HUMAN) {
+					if (g_skirmish.player_config[h].brain == BRAIN_HUMAN) {
 						g_playerHouseID = h;
 						break;
 					}
@@ -1188,24 +1191,35 @@ SkirmishLobby_Loop(void)
 			{
 				w = GUI_Widget_Get_ByIndex(skirmish_lobby_widgets, 3);
 				ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
-				enum Brain new_brain = *(si->d.brain);
+				PlayerConfig *pc = si->d.player_config;
+				enum Brain new_brain = pc->brain;
+				enum PlayerTeam new_team = pc->team;				
+				bool clickedOnTeam = g_mouseX < w->offsetX + 14;
 
-				if (Input_Test(SCANCODE_MOUSE_RMB)) {
-					new_brain = BRAIN_NONE;
+				if (clickedOnTeam) {
+					const int change_team = (widgetID == SCANCODE_KEYPAD_4) | Input_Test(SCANCODE_MOUSE_RMB) ? -1 : 1;
+					new_team = ((new_team + change_team) % (TEAM_6 + 1));
+					if (new_team == TEAM_NONE)
+						new_team = Input_Test(SCANCODE_MOUSE_RMB) ? TEAM_6 : TEAM_1;
 				} else {
 					const int change_player = (widgetID == SCANCODE_KEYPAD_4) ? -1 : 1;
 
-					new_brain = ((new_brain + change_player) % (BRAIN_CPU_ALLY + 1));
+					new_brain = ((new_brain + change_player) % (BRAIN_CPU + 1));
 
 					/* Skip over human player if one is already selected. */
 					for (enum HouseType h = HOUSE_HARKONNEN; (new_brain == BRAIN_HUMAN) && (h < HOUSE_MAX); h++) {
-						if (g_skirmish.brain[h] == BRAIN_HUMAN)
-							new_brain = ((new_brain + change_player) % (BRAIN_CPU_ALLY + 1));
+						if (g_skirmish.player_config[h].brain == BRAIN_HUMAN)
+							new_brain = ((new_brain + change_player) % (BRAIN_CPU + 1));
 					}
 				}
 
-				if (*(si->d.brain) != new_brain) {
-					*(si->d.brain) = new_brain;
+				if (pc->brain != new_brain) {
+					pc->brain = new_brain;
+					lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
+				}
+
+				if (pc->team != new_team) {
+					pc->team = new_team;
 					lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
 				}
 			}
@@ -1245,8 +1259,8 @@ MultiplayerLobby_Initialise(void)
 	ws->scrollMax = 0;
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
-		si = Scrollbar_AllocItem(w, SCROLLBAR_CLIENT);
-		si->d.offset = h;
+		si = Scrollbar_AllocItem(w, SCROLLBAR_PLAYER_CONFIG);
+		si->d.player_config = &g_multiplayer.player_config[h];
 		snprintf(si->text, sizeof(si->text), "%s", g_table_houseInfo[h].name);
 	}
 
@@ -1261,15 +1275,11 @@ MultiplayerLobby_Initialise(void)
 void
 MultiplayerLobby_Draw(void)
 {
-	bool can_issue_start;
 
 	GUI_HallOfFame_SetColourScheme(true);
 
-	if (Net_HasServerRole()) {
-		can_issue_start = Net_IsPlayable();
-	} else {
-		can_issue_start = false;
-	}
+	bool is_playable = Net_IsPlayable();
+	bool can_issue_start = Net_HasServerRole() && is_playable;
 
 	Lobby_ShowHideStartButton(multiplayer_lobby_widgets, can_issue_start);
 
@@ -1280,7 +1290,7 @@ MultiplayerLobby_Draw(void)
 	if (Net_GetClientHouse(g_local_client_id) == HOUSE_INVALID) {
 		GUI_DrawText_Wrapper("Select your House!", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122);
 	}	
-	else if (!can_issue_start && Net_HasServerRole()) {
+	else if (!is_playable && Net_HasServerRole()) {
 		if (!Net_HasAtLeastTwoPlayers()) {
 			GUI_DrawText_Wrapper("At least 2 human", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
 			GUI_DrawText_Wrapper("players required", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
@@ -1288,6 +1298,9 @@ MultiplayerLobby_Draw(void)
 		else if (!Net_HasAllPlayersAssigned()) {
 			GUI_DrawText_Wrapper("All players must", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_1, 0xE7, 0, 0x122);
 			GUI_DrawText_Wrapper("select their House", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y_LINE_2, 0xE7, 0, 0x122);
+		}
+		else if (!Net_HasAtLeastTwoTeams()) {
+			GUI_DrawText_Wrapper("At least 2 teams required", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122);
 		}
 	}
 
@@ -1361,12 +1374,55 @@ MultiplayerLobby_Loop(void)
 			{
 				w = GUI_Widget_Get_ByIndex(multiplayer_lobby_widgets, 3);
 				ScrollbarItem *si = Scrollbar_GetSelectedItem(w);
+				PlayerConfig *pc = si->d.player_config;
+				enum Brain new_brain = pc->brain;
+				enum PlayerTeam new_team = pc->team;
+				bool clickedOnTeam = g_mouseX < w->offsetX + 14;
 
-				if (widgetID == SCANCODE_KEYPAD_4 || Input_Test(SCANCODE_MOUSE_RMB)) {
-					if (Net_GetClientHouse(g_local_client_id) == si->d.offset)
-						Client_Send_PrefHouse(HOUSE_INVALID);
-				} else {
-					Client_Send_PrefHouse(si->d.offset);
+				if (Net_HasServerRole() && clickedOnTeam) {
+					const int change_team = (widgetID == SCANCODE_KEYPAD_4) | Input_Test(SCANCODE_MOUSE_RMB) ? -1 : 1;
+					new_team = ((pc->team + change_team) % (TEAM_6 + 1));
+					if (new_team == TEAM_NONE)
+						new_team = Input_Test(SCANCODE_MOUSE_RMB) ? TEAM_6 : TEAM_1;
+
+					if (pc->team != new_team) {
+						pc->team = new_team;
+						lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
+					}
+					break;
+				}
+
+				bool send_pref_house = true;
+				const bool clientHasHouseSelected = Net_GetClientHouse(g_local_client_id) != HOUSE_INVALID;
+				enum HouseType prefHouse = pc->houseID;
+
+				if (Net_HasServerRole()) {
+					if (pc->brain == BRAIN_CPU || Input_Test(SCANCODE_MOUSE_RMB)) {
+						new_brain = BRAIN_NONE;
+					}
+					else if (pc->brain == BRAIN_NONE && !clientHasHouseSelected) {
+						new_brain = BRAIN_HUMAN;
+					}
+					else {
+						new_brain = BRAIN_CPU;
+					}
+
+					if (new_brain != BRAIN_HUMAN) {
+						g_multiplayer.client[pc->houseID] = 0;
+						pc->brain = new_brain;
+						lobby_map_generator_mode = MAP_GENERATOR_TRY_TEST_ELSE_RAND;
+						send_pref_house = false;
+					}
+				}
+				else if (Input_Test(SCANCODE_MOUSE_RMB)) {
+					prefHouse = HOUSE_INVALID;
+				}
+				else {
+					prefHouse = pc->houseID;
+				}
+				
+				if (send_pref_house) {
+					Client_Send_PrefHouse(prefHouse);
 				}
 			}
 			break;
