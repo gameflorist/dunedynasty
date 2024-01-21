@@ -130,6 +130,7 @@ Skirmish_Initialise(void)
 
 	g_skirmish.landscape_params.min_spice_fields = 24;
 	g_skirmish.landscape_params.max_spice_fields = 48;
+	g_skirmish.worm_count = MAP_WORM_COUNT_2;
 	
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		PlayerConfig pc;
@@ -894,8 +895,8 @@ Skirmish_GenUnits(SkirmishData *sd)
 	return true;
 }
 
-static void
-Skirmish_GenSandworms(void)
+static int
+Skirmish_GenSandworms(int worm_count)
 {
 	const enum HouseType houseID = (g_playerHouseID == HOUSE_FREMEN) ? HOUSE_ATREIDES : HOUSE_FREMEN;
 	const enum UnitType type = UNIT_SANDWORM;
@@ -904,8 +905,8 @@ Skirmish_GenSandworms(void)
 		= (1 << LST_NORMAL_SAND) | (1 << LST_ENTIRELY_DUNE) | (1 << LST_PARTIAL_DUNE)
 		| (1 << LST_SPICE) | (1 << LST_THICK_SPICE) | (1 << LST_BLOOM_FIELD);
 
-	/* Create two sandworms. */
-	for (int count = 2; count > 0;) {
+	/* Create sandworms. */
+	for (int count = worm_count; count > 0;) {
 		const uint16 packed = Skirmish_PickRandomLocation(acceptableLst, 0);
 		if (packed == 0)
 			continue;
@@ -1051,8 +1052,11 @@ Skirmish_GenerateMap2(bool only_landscape, SkirmishData *sd)
 	Skirmish_GenSpiceBlooms();
 
 	if (is_skirmish) {
-		Skirmish_GenSandworms();
+		Skirmish_GenSandworms(g_skirmish.worm_count);
 		Skirmish_GenReinforcements();
+	}
+	else {
+		Skirmish_GenSandworms(g_multiplayer.worm_count);
 	}
 
 	Skirmish_GenCHOAM();

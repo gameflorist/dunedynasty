@@ -39,6 +39,8 @@ typedef struct Multiplayer {
 	enum MultiplayerHouseState state[HOUSE_MAX];
 
 	PlayerConfig player_config[HOUSE_MAX];
+
+	enum MapWormCount worm_count;
 } Multiplayer;
 
 struct SkirmishData;

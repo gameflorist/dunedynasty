@@ -794,6 +794,7 @@ Server_Send_Scenario(unsigned char **buf)
 	Net_Encode_uint32(buf, g_multiplayer.lose_condition);
 	Net_Encode_uint32(buf, g_multiplayer.landscape_params.min_spice_fields);
 	Net_Encode_uint32(buf, g_multiplayer.landscape_params.max_spice_fields);
+	Net_Encode_uint32(buf, g_multiplayer.worm_count);
 	Net_Encode_uint8 (buf, enhancement_fog_of_war);
 	Net_Encode_uint8 (buf, enhancement_insatiable_sandworms);
 

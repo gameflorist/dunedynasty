@@ -31,6 +31,7 @@ Multiplayer_Init(void)
 	g_multiplayer.next_seed = g_multiplayer.curr_seed;
 	g_multiplayer.seed_mode = MAP_SEED_MODE_RANDOM;
 	g_multiplayer.lose_condition = MAP_LOSE_CONDITION_STRUCTURES;
+	g_multiplayer.worm_count = MAP_WORM_COUNT_2;
 
 	g_multiplayer.landscape_params.min_spice_fields = 24;
 	g_multiplayer.landscape_params.max_spice_fields = 48;

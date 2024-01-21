@@ -44,7 +44,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - For up to 6 human or AI players
   - Fully custom alliances with up to 6 teams
   - Random generated maps (or enter fixed map seed)
-  - Settings for starting credits, amount of spice fields and lose condition
+  - Settings for starting credits, amount of spice fields, worm count and lose condition (structures/units)
 - __Sound and Music Enhancements:__
   - Emulated AdLib sound and music playback
   - [General MIDI playback via FluidSynth](#fluidsynth) (supporting SoundFonts)

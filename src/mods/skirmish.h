@@ -13,6 +13,8 @@ typedef struct Skirmish {
 	LandscapeGeneratorParams landscape_params;
 
 	PlayerConfig player_config[HOUSE_MAX];
+
+	enum MapWormCount worm_count;
 	
 } Skirmish;
 

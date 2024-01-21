@@ -39,6 +39,13 @@ enum MapLoseCondition {
 	MAP_LOSE_CONDITION_UNITS = 1
 };
 
+enum MapWormCount {
+	MAP_WORM_COUNT_0 = 0,
+	MAP_WORM_COUNT_1 = 1,
+	MAP_WORM_COUNT_2 = 2,
+	MAP_WORM_COUNT_3 = 3,
+};
+
 extern enum MapGeneratorMode MapGenerator_TransitionState(enum MapGeneratorMode mode, bool success);
 extern uint32 MapGenerator_PickRandomSeed(void);
 
