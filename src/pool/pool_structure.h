@@ -6,6 +6,7 @@
 #include "enum_house.h"
 #include "enum_structure.h"
 #include "types.h"
+#include "../enhancement.h"
 
 enum {
 	STRUCTURE_INDEX_MAX_SOFT    = 79, /* Highest index for normal Structure. */
@@ -15,6 +16,9 @@ enum {
 	STRUCTURE_INDEX_SLAB_2x2    = 80, /* Index for 2x2 slabs. */
 	STRUCTURE_INDEX_SLAB_1x1    = 81, /* Index for 1x1 slabs. */
 
+	// Amount to raise indices for enhancement_raise_structure_cap.
+	STRUCTURE_INDEX_RAISED_AMOUNT = 100,
+	
 	STRUCTURE_INDEX_INVALID     = 0xFFFF
 };
 
@@ -35,5 +39,6 @@ extern void Structure_Free(struct Structure *s);
 
 extern struct StructurePool *StructurePool_Save(void);
 extern void StructurePool_Load(struct StructurePool *pool);
+extern int StructurePool_GetIndex(int index);
 
 #endif

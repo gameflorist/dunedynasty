@@ -12,6 +12,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "pool_structure.h"
 
@@ -20,19 +21,20 @@
 #include "../house.h"
 #include "../opendune.h"
 #include "../structure.h"
+#include "../newui/menubar.h"
 
 typedef struct StructurePool {
-	Structure pool[STRUCTURE_INDEX_MAX_HARD];
-	Structure *find[STRUCTURE_INDEX_MAX_SOFT];
+	Structure pool[STRUCTURE_INDEX_MAX_HARD + STRUCTURE_INDEX_RAISED_AMOUNT];
+	Structure *find[STRUCTURE_INDEX_MAX_SOFT + STRUCTURE_INDEX_RAISED_AMOUNT];
 	uint16 count;
 	bool allocated;
 } StructurePool;
 
 /** variable_35F4. */
-static Structure s_structureArray[STRUCTURE_INDEX_MAX_HARD];
+static Structure s_structureArray[STRUCTURE_INDEX_MAX_HARD + STRUCTURE_INDEX_RAISED_AMOUNT];
 
 /** variable_8622. */
-static Structure *s_structureFindArray[STRUCTURE_INDEX_MAX_SOFT];
+static Structure *s_structureFindArray[STRUCTURE_INDEX_MAX_SOFT + STRUCTURE_INDEX_RAISED_AMOUNT];
 
 /** variable_35F8. */
 static uint16 s_structureFindCount;
@@ -60,7 +62,12 @@ Structure_SharesPoolElement(enum StructureType type)
 Structure *
 Structure_Get_ByIndex(uint16 index)
 {
-	assert(index < STRUCTURE_INDEX_MAX_HARD);
+	if (index >= StructurePool_GetIndex(STRUCTURE_INDEX_MAX_HARD)) {
+		GUI_DisplayModalMessage("Savegame was saved with raised structure cap. Enable the enhancement in gameplay options and try again! Game will now exit.", 0xFFFF);
+		exit(0);
+	}
+	assert(index < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_HARD));
+	
 	return &s_structureArray[index];
 }
 
@@ -97,23 +104,23 @@ Structure_FindNext(PoolFindStruct *find)
 	/* First, go to the next index. */
 	find->index++;
 
-	assert(s_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
+	assert(s_structureFindCount <= StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT));
 	for (; find->index < s_structureFindCount + 3; find->index++) {
 		Structure *s = NULL;
 
 		if (find->index < s_structureFindCount) {
 			s = s_structureFindArray[find->index];
 		} else if (find->index == s_structureFindCount + 0) {
-			s = Structure_Get_ByIndex(STRUCTURE_INDEX_WALL);
-			assert(s->o.index == STRUCTURE_INDEX_WALL
+			s = Structure_Get_ByIndex(StructurePool_GetIndex(STRUCTURE_INDEX_WALL));
+			assert(s->o.index == StructurePool_GetIndex(STRUCTURE_INDEX_WALL)
 			    && s->o.type == STRUCTURE_WALL);
 		} else if (find->index == s_structureFindCount + 1) {
-			s = Structure_Get_ByIndex(STRUCTURE_INDEX_SLAB_2x2);
-			assert(s->o.index == STRUCTURE_INDEX_SLAB_2x2
+			s = Structure_Get_ByIndex(StructurePool_GetIndex(STRUCTURE_INDEX_SLAB_2x2));
+			assert(s->o.index == StructurePool_GetIndex(STRUCTURE_INDEX_SLAB_2x2)
 			    && s->o.type == STRUCTURE_SLAB_2x2);
 		} else if (find->index == s_structureFindCount + 2) {
-			s = Structure_Get_ByIndex(STRUCTURE_INDEX_SLAB_1x1);
-			assert(s->o.index == STRUCTURE_INDEX_SLAB_1x1
+			s = Structure_Get_ByIndex(StructurePool_GetIndex(STRUCTURE_INDEX_SLAB_1x1));
+			assert(s->o.index == StructurePool_GetIndex(STRUCTURE_INDEX_SLAB_1x1)
 			    && s->o.type == STRUCTURE_SLAB_1x1);
 		}
 
@@ -147,7 +154,7 @@ Structure_Init(void)
 	s_structureFindCount = 0;
 
 	/* ENHANCEMENT -- Ensure the index is always valid. */
-	for (unsigned int i = 0; i < STRUCTURE_INDEX_MAX_HARD; i++) {
+	for (unsigned int i = 0; i < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_HARD); i++) {
 		s_structureArray[i].o.index = i;
 	}
 
@@ -175,7 +182,7 @@ Structure_Recount(void)
 
 	s_structureFindCount = 0;
 
-	for (unsigned int i = 0; i < STRUCTURE_INDEX_MAX_SOFT; i++) {
+	for (unsigned int i = 0; i < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT); i++) {
 		Structure *s = Structure_Get_ByIndex(i);
 
 		if (s->o.flags.s.used) {
@@ -197,39 +204,39 @@ Structure_Allocate(uint16 index, enum StructureType type)
 
 	switch (type) {
 		case STRUCTURE_SLAB_1x1:
-			index = STRUCTURE_INDEX_SLAB_1x1;
+			index = StructurePool_GetIndex(STRUCTURE_INDEX_SLAB_1x1);
 			s = Structure_Get_ByIndex(index);
 			break;
 
 		case STRUCTURE_SLAB_2x2:
-			index = STRUCTURE_INDEX_SLAB_2x2;
+			index = StructurePool_GetIndex(STRUCTURE_INDEX_SLAB_2x2);
 			s = Structure_Get_ByIndex(index);
 			break;
 
 		case STRUCTURE_WALL:
-			index = STRUCTURE_INDEX_WALL;
+			index = StructurePool_GetIndex(STRUCTURE_INDEX_WALL);
 			s = Structure_Get_ByIndex(index);
 			break;
 
 		default:
-			assert(index < STRUCTURE_INDEX_MAX_SOFT || index == STRUCTURE_INDEX_INVALID);
+			assert(index < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT) || index == STRUCTURE_INDEX_INVALID);
 
-			if (index < STRUCTURE_INDEX_MAX_SOFT) {
+			if (index < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT)) {
 				s = Structure_Get_ByIndex(index);
 				if (s->o.flags.s.used)
 					return NULL;
 			} else {
 				/* Find the first unused index. */
-				for (index = 0; index < STRUCTURE_INDEX_MAX_SOFT; index++) {
+				for (index = 0; index < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT); index++) {
 					s = Structure_Get_ByIndex(index);
 					if (!s->o.flags.s.used)
 						break;
 				}
-				if (index == STRUCTURE_INDEX_MAX_SOFT)
+				if (index == StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT))
 					return NULL;
 			}
 
-			assert(s_structureFindCount < STRUCTURE_INDEX_MAX_SOFT);
+			assert(s_structureFindCount < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT));
 			s_structureFindArray[s_structureFindCount] = s;
 			s_structureFindCount++;
 			break;
@@ -266,7 +273,7 @@ Structure_Free(Structure *s)
 		return;
 
 	/* Find the Structure to remove. */
-	assert(s_structureFindCount <= STRUCTURE_INDEX_MAX_SOFT);
+	assert(s_structureFindCount <= StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT));
 	for (i = 0; i < s_structureFindCount; i++) {
 		if (s_structureFindArray[i] == s)
 			break;
@@ -320,4 +327,13 @@ StructurePool_Load(StructurePool *pool)
 	s_structureFindCount = pool->count;
 
 	pool->allocated = false;
+}
+
+int
+StructurePool_GetIndex(int index)
+{
+	if (enhancement_raise_structure_cap)
+		return index + STRUCTURE_INDEX_RAISED_AMOUNT;
+
+	return index;
 }

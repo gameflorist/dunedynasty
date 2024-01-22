@@ -521,7 +521,7 @@ who worked on the AdLib/OPL/MIDI player code.
 - Nyerguds, for his Dune II editor.
 - Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
 Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine,
-Wesker.
+Wesker, WillSo.
 - Westwood Studios, for an amazing game!
 
 ## License

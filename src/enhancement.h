@@ -63,6 +63,7 @@ extern bool enhancement_nonordos_deviation;
 extern bool enhancement_permanent_follow_mode;
 extern bool enhancement_play_additional_voices;
 extern bool enhancement_raise_scenario_unit_cap;
+extern bool enhancement_raise_structure_cap;
 extern bool enhancement_repeat_reinforcements;
 extern enum SecurityQuestionMode enhancement_security_question;
 extern enum SmoothUnitAnimationMode enhancement_smooth_unit_animation;

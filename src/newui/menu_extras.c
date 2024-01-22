@@ -845,6 +845,10 @@ GameplayOptions_Initialize(void)
 	snprintf(si->text, sizeof(si->text), "Raise scenario unit cap");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_raise_structure_cap;
+	snprintf(si->text, sizeof(si->text), "Raise structure cap");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_true_game_speed_adjustment;
 	snprintf(si->text, sizeof(si->text), "True game speed adjustment");
 

@@ -86,7 +86,7 @@ typedef struct UnitDelta {
 
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
 static int64_t s_choamLastUpdate;
-static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD];
+static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD + STRUCTURE_INDEX_RAISED_AMOUNT];
 static UnitDelta s_unitCopy[UNIT_INDEX_MAX];
 static int s_explosionLastCount;
 
@@ -370,7 +370,7 @@ Server_Send_UpdateStructures(unsigned char **buf)
 	uint8 count = 0;
 
 	for (int i = 0;
-			i < STRUCTURE_INDEX_MAX_HARD && count < max;
+			i < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_HARD) && count < max;
 			i++) {
 		const Structure *s = Structure_Get_ByIndex(i);
 		StructureDelta d;
@@ -869,7 +869,7 @@ Server_Recv_RepairUpgradeStructure(enum HouseType houseID, const unsigned char *
 
 	SERVER_LOG("objectID=%d", objectID);
 
-	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+	if (objectID >= StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT))
 		return;
 
 	Structure *s = Structure_Get_ByIndex(objectID);
@@ -888,7 +888,7 @@ Server_Recv_SetRallyPoint(enum HouseType houseID, const unsigned char *buf)
 
 	SERVER_LOG("objectID=%d, packed=%d", objectID, packed);
 
-	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+	if (objectID >= StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT))
 		return;
 
 	Structure *s = Structure_Get_ByIndex(objectID);
@@ -1021,7 +1021,7 @@ Server_Recv_PurchaseResumeItem(enum HouseType houseID, const unsigned char *buf)
 
 	SERVER_LOG("objectID=%d, objectType=%d", objectID, objectType);
 
-	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+	if (objectID >= StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT))
 		return;
 
 	Structure *s = Structure_Get_ByIndex(objectID);
@@ -1078,7 +1078,7 @@ Server_Recv_PauseCancelItem(enum HouseType houseID, const unsigned char *buf)
 
 	SERVER_LOG("objectID=%d, objectType=%d", objectID, objectType);
 
-	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+	if (objectID >= StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT))
 		return;
 
 	Structure *s = Structure_Get_ByIndex(objectID);
@@ -1114,7 +1114,7 @@ Server_Recv_EnterLeavePlacementMode(enum HouseType houseID, const unsigned char 
 
 	SERVER_LOG("objectID=%d", objectID);
 
-	if (objectID < STRUCTURE_INDEX_MAX_SOFT) {
+	if (objectID < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT)) {
 		Structure *s = Structure_Get_ByIndex(objectID);
 		if ((s->o.type != STRUCTURE_CONSTRUCTION_YARD)
 				|| !Server_PlayerCanControlStructure(houseID, s))
@@ -1173,7 +1173,7 @@ Server_Recv_ActivateStructureAbility(enum HouseType houseID, const unsigned char
 
 	SERVER_LOG("objectID=%d", objectID);
 
-	if (objectID >= STRUCTURE_INDEX_MAX_SOFT)
+	if (objectID >= StructurePool_GetIndex(STRUCTURE_INDEX_MAX_SOFT))
 		return;
 
 	Structure *s = Structure_Get_ByIndex(objectID);

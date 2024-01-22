@@ -146,6 +146,12 @@ bool enhancement_play_additional_voices = true;
 bool enhancement_raise_scenario_unit_cap = false;
 
 /**
+ * Dune II limits total structures on a map to about 70.
+ * This raises that limit by 100.
+ */
+bool enhancement_raise_structure_cap = false;
+
+/**
  * A mistake in reading the scenario script causes reinforcements to
  * only be sent once.
  */

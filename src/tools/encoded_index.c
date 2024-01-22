@@ -79,7 +79,7 @@ Tools_Index_IsValid_Defensive(uint16 encoded)
 				&& Tools_Index_IsValid(encoded);
 
 		case IT_STRUCTURE:
-			return (index < STRUCTURE_INDEX_MAX_HARD)
+			return (index < StructurePool_GetIndex(STRUCTURE_INDEX_MAX_HARD))
 				&& Tools_Index_IsValid(encoded);
 
 		case IT_TILE:
