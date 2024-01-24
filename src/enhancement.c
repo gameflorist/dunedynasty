@@ -72,6 +72,17 @@ bool const enhancement_fix_selection_after_entering_structure = true;
 bool const enhancement_fix_typos = true;
 
 /**
+ * Show info about active/standby/maximum units in outpost text.
+ * Standby units are either:
+ * - in production
+ * - ordered in factory
+ * - outstanding reinforcements
+ * - usually 1 backup-harvester
+ * This is always enabled in multiplayer.
+ */
+bool enhancement_show_outpost_unit_info = false;
+
+/**
  * In the original game, fog is drawn underneath units, at the same
  * time as other overlays, making units suddenly appear and disappear.
  */

@@ -74,6 +74,7 @@ attack_dir_consistency=0
 skip_introduction=0
 raise_scenario_unit_cap=0
 raise_structure_cap=0
+show_outpost_unit_info=0
 repeat_reinforcements=1
 smooth_unit_animation=0
 # subtitle_override is one of: eu, us, dynasty

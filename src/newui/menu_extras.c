@@ -849,6 +849,10 @@ GameplayOptions_Initialize(void)
 	snprintf(si->text, sizeof(si->text), "Raise structure cap");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_show_outpost_unit_info;
+	snprintf(si->text, sizeof(si->text), "Show unit control info in outpost");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_true_game_speed_adjustment;
 	snprintf(si->text, sizeof(si->text), "True game speed adjustment");
 

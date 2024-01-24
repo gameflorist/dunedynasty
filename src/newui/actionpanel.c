@@ -32,6 +32,7 @@
 #include "../timer/timer.h"
 #include "../unit.h"
 #include "../video/video.h"
+#include "../scenario.h"
 
 enum {
 	SMALL_PRODUCTION_ICON_WIDTH         = 32,
@@ -267,6 +268,39 @@ ActionPanel_DrawStructureDescription(Structure *s)
 					GUI_DrawText_Wrapper("%d", 72, y + 3 * g_fontCurrent->height, 29, 0, 0x211, h->unitCountEnemy);
 				} else {
 					GUI_DrawText_Wrapper(String_Get_ByIndex(STR_RADAR_SCANFRIEND_2DENEMY_2D), 18, y + 8, 29, 0, 0x11, h->unitCountAllied, h->unitCountEnemy);
+				}
+				if (enhancement_show_outpost_unit_info || g_campaign_selected == CAMPAIGNID_SKIRMISH || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
+
+					/* Count units, including units in production and units deviated. */
+					int units_total = 0;
+					int units_not_on_map = 0;
+
+					for (int i = 0; i < g_unitFindCount; i++) {
+						Unit *u = g_unitFindArray[i];
+
+						if (u == NULL)
+							continue;
+
+						if ((u->o.houseID == g_playerHouseID) && (u->o.type < UNIT_MISSILE_HOUSE)) {
+							units_total++;
+
+							if (u->o.flags.s.isNotOnMap) {
+								units_not_on_map++;
+							}						
+						}
+					}
+
+					int yOffset = 26;
+					Prim_Hline(21, y + yOffset + 15, 72, 16);
+					uint8 fg = (h->unitCountMax >= units_total) ? 29 : 6;
+					
+					GUI_DrawText_Wrapper("Unit Control", 46, y + yOffset + 8, 29, 0, 0x111);
+					GUI_DrawText_Wrapper("Active:", 21, y + yOffset + 2 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 72, y + yOffset + 2 * g_fontCurrent->height, 29, 0, 0x211, units_total - units_not_on_map);
+					GUI_DrawText_Wrapper("Standby:", 21, y + yOffset + 3 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 72, y + yOffset + 3 * g_fontCurrent->height, 29, 0, 0x211, units_not_on_map);
+					GUI_DrawText_Wrapper("Max:", 21, y + yOffset + 4 * g_fontCurrent->height, 29, 0, 0x11);
+					GUI_DrawText_Wrapper("%d", 72, y + yOffset + 4 * g_fontCurrent->height, fg, 0, 0x211, h->unitCountMax);
 				}
 			}
 			break;
