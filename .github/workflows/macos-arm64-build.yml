@@ -26,6 +26,9 @@ jobs:
       - name: Bundle libs
         run: ./scripts/bundle-libs-macos.sh
 
+      - name: Copy OS specific files
+        run: cp -r ./dist-os-specific/macos/* ./dist
+
       - name: Zip dist folder
         run: |
           cd dist
