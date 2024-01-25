@@ -864,9 +864,9 @@ Skirmish_GenHouses(SkirmishData *sd)
 			continue;
 
 		if (pc[houseID].brain == BRAIN_HUMAN) {
-			Scenario_Create_House(houseID, BRAIN_HUMAN, credits, 0, 25);
+			Scenario_Create_House(houseID, BRAIN_HUMAN, credits, 0, UNIT_MAX_PER_HOUSE_RAISED);
 		} else {
-			House *h = Scenario_Create_House(houseID, pc[houseID].brain, 1000, 0, 25);
+			House *h = Scenario_Create_House(houseID, pc[houseID].brain, 1000, 0, UNIT_MAX_PER_HOUSE_RAISED);
 
 			h->flags.isAIActive = true;
 

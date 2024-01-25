@@ -14,6 +14,7 @@
 #include "../house.h"
 #include "../opendune.h"
 #include "../unit.h"
+#include "../scenario.h"
 
 typedef struct UnitPool {
 	Unit pool[UNIT_INDEX_MAX_RAISED];
@@ -296,7 +297,7 @@ UnitPool_Load(UnitPool *pool)
 int
 UnitPool_GetMaxIndex()
 {
-	if (enhancement_raise_unit_cap)
+	if (enhancement_raise_unit_cap || g_campaign_selected == CAMPAIGNID_SKIRMISH || g_campaign_selected == CAMPAIGNID_MULTIPLAYER)
 		return UNIT_INDEX_MAX_RAISED;
 
 	return UNIT_INDEX_MAX;
@@ -310,7 +311,7 @@ int
 UnitPool_GetIndexEnd(enum UnitType type)
 {
 	const UnitInfo *ui = &g_table_unitInfo[type];
-	if (enhancement_raise_unit_cap) {
+	if (enhancement_raise_unit_cap || g_campaign_selected == CAMPAIGNID_SKIRMISH || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
 		if (type >= UNIT_INFANTRY && type <= UNIT_MCV && type != UNIT_SABOTEUR)
 			return UNIT_INDEX_MAX_RAISED - 1;
 	}

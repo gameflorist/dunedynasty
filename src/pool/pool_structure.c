@@ -22,6 +22,7 @@
 #include "../opendune.h"
 #include "../structure.h"
 #include "../newui/menubar.h"
+#include "../scenario.h"
 
 typedef struct StructurePool {
 	Structure pool[STRUCTURE_INDEX_MAX_HARD + STRUCTURE_INDEX_RAISED_AMOUNT];
@@ -332,7 +333,7 @@ StructurePool_Load(StructurePool *pool)
 int
 StructurePool_GetIndex(int index)
 {
-	if (enhancement_raise_structure_cap)
+	if (enhancement_raise_structure_cap || g_campaign_selected == CAMPAIGNID_SKIRMISH || g_campaign_selected == CAMPAIGNID_MULTIPLAYER)
 		return index + STRUCTURE_INDEX_RAISED_AMOUNT;
 
 	return index;
