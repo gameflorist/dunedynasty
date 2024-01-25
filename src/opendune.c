@@ -146,7 +146,9 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 			// we only search for MCVs to determine, if house is still alive.
 			// It it is set to units, we search for all units,
 			// and filter out non-ground-units in the loop.
-			uint8 findUnitType = g_multiplayer.lose_condition == MAP_LOSE_CONDITION_STRUCTURES ? UNIT_MCV : 0xFFFF;
+			bool loseCondition = g_campaign_selected == CAMPAIGNID_MULTIPLAYER
+				? g_multiplayer.lose_condition : g_skirmish.lose_condition;
+			uint8 findUnitType = loseCondition == MAP_LOSE_CONDITION_STRUCTURES ? UNIT_MCV : 0xFFFF;
 
 			for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, findUnitType);
 					u != NULL;

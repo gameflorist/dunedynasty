@@ -273,6 +273,11 @@ MapOptionsLobby_ChangeLoseCondition(enum MapLoseCondition lose_condition)
 		w->drawParameterNormal.sprite = ((int)lose_condition == m) ? SHAPE_RADIO_BUTTON_ON: SHAPE_RADIO_BUTTON_OFF;
 		w->state.selected = ((int)lose_condition == m) ? 1: 0;
 	}
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+		g_skirmish.lose_condition = lose_condition;
+	} else {
+		g_multiplayer.lose_condition = lose_condition;
+	}
 	map_options_lose_condition = lose_condition;
 }
 

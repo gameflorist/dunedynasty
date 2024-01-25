@@ -10,6 +10,10 @@ typedef struct Skirmish {
 	uint16 credits;
 
 	uint32 seed;
+
+	/* Win condition can be structures or units. */
+	uint32 lose_condition;
+	
 	LandscapeGeneratorParams landscape_params;
 
 	PlayerConfig player_config[HOUSE_MAX];

@@ -130,6 +130,7 @@ Skirmish_Initialise(void)
 
 	g_skirmish.landscape_params.min_spice_fields = 24;
 	g_skirmish.landscape_params.max_spice_fields = 48;
+	g_multiplayer.lose_condition = MAP_LOSE_CONDITION_STRUCTURES;
 	g_skirmish.worm_count = MAP_WORM_COUNT_2;
 	
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
