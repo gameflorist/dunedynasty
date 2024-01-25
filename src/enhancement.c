@@ -151,10 +151,21 @@ bool enhancement_permanent_follow_mode = false;
 bool enhancement_play_additional_voices = true;
 
 /**
- * Dune II usually limits the player to 25 units, and the CPU to 20
- * units per house.  Allow larger armies if possible.
+ * Dune II has 2 types of unit caps:
+ * - A unit cap defined per house by the scenario (usually 25 for the player, and 20 for the CPU)
+ * - A hard-coded overall cap via the UNIT_INDEX_MAX constant (default 102)
+ * - And a hard-coded cap per unit/group of units via the indexStart and indexEnd properties of UnitTypes:
+ *     - Caryalls and Ornithopters: 11
+ *     - Frigates: 1
+ *     - Projectiles: 4 (bullets, rockets, missiles, sonic blasts)
+ *     - Sandworms: 3
+ *     - Saboteurs: 3
+ *     - All others (ground units): 80
+ * This sets the scenario unit cap for all houses to 50, raises UNIT_INDEX_MAX to 322
+ * and indexEnd of all ground units (incl. saboteurs) to allow a total of 300.
+ * This will always be active with skirmish/multiplayer.
  */
-bool enhancement_raise_scenario_unit_cap = false;
+bool enhancement_raise_unit_cap = false;
 
 /**
  * Dune II limits total structures on a map to about 70.

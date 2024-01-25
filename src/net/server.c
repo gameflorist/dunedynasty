@@ -87,7 +87,7 @@ typedef struct UnitDelta {
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
 static int64_t s_choamLastUpdate;
 static StructureDelta s_structureCopy[STRUCTURE_INDEX_MAX_HARD + STRUCTURE_INDEX_RAISED_AMOUNT];
-static UnitDelta s_unitCopy[UNIT_INDEX_MAX];
+static UnitDelta s_unitCopy[UNIT_INDEX_MAX_RAISED];
 static int s_explosionLastCount;
 
 static void Server_ReturnToLobbyNow(bool win);
@@ -431,7 +431,7 @@ Server_Send_UpdateUnits(unsigned char **buf)
 	uint8 count = 0;
 
 	for (int i = 0;
-			i < UNIT_INDEX_MAX && count < max;
+			i < UnitPool_GetMaxIndex() && count < max;
 			i++) {
 		const Unit *u = Unit_Get_ByIndex(i);
 		UnitDelta d;
@@ -1321,7 +1321,7 @@ Server_Recv_IssueUnitAction(enum HouseType houseID, const unsigned char *buf)
 			actionID, encoded, objectID);
 
 	if ((actionID >= ACTION_MAX && actionID != ACTION_CANCEL)
-			|| (objectID >= UNIT_INDEX_MAX))
+			|| (objectID >= UnitPool_GetMaxIndex()))
 		return;
 
 	Unit *u = Unit_Get_ByIndex(objectID);

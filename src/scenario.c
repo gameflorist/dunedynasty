@@ -1069,7 +1069,7 @@ static void Scenario_Load_House(uint8 houseID)
 	unitCountMax = Ini_GetInteger(houseName, "MaxUnit", 39, s_scenarioBuffer);
 
 	/* ENHANCEMENT -- "MaxUnits" instead of MaxUnit. */
-	if (enhancement_fix_scenario_typos || enhancement_raise_scenario_unit_cap) {
+	if (enhancement_fix_scenario_typos || enhancement_raise_unit_cap) {
 		if (unitCountMax == 0)
 			unitCountMax = Ini_GetInteger(houseName, "MaxUnits", 39, s_scenarioBuffer);
 	}
@@ -1129,29 +1129,12 @@ static void Scenario_Load_Houses(void)
 		h->unitCountMax = max;
 	}
 
-	if (enhancement_raise_scenario_unit_cap) {
-		/* Leave some room for reinforcements. */
-		int free_units = 70;
-		int num_houses = 0;
-
-		for (houseID = 0; houseID < HOUSE_MAX; houseID++) {
-			House *h2 = House_Get_ByIndex(houseID);
-
-			if (h2->unitCountMax > 0) {
-				free_units -= h2->unitCountMax;
-				num_houses++;
-			}
-		}
-
-		const int inc = free_units / num_houses;
-		if (inc <= 0)
-			return;
-
+	if (enhancement_raise_unit_cap) {
 		for (houseID = 0; houseID < HOUSE_MAX; houseID++) {
 			House *h2 = House_Get_ByIndex(houseID);
 
 			if (h2->unitCountMax > 0)
-				h2->unitCountMax += inc;
+				h2->unitCountMax = UNIT_MAX_PER_HOUSE_RAISED;
 		}
 	}
 }

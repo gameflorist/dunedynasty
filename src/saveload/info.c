@@ -62,7 +62,7 @@ static uint32 SaveLoad_UnitActive(void *object, uint32 value, bool loading)
 	VARIABLE_NOT_USED(object);
 
 	if (loading) {
-		if ((uint16)value != 0xFFFF && value < UNIT_INDEX_MAX) {
+		if ((uint16)value != 0xFFFF && value < UnitPool_GetMaxIndex()) {
 			g_unitActive = Unit_Get_ByIndex((uint16)value);
 		} else {
 			g_unitActive = NULL;

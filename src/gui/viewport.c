@@ -53,10 +53,14 @@ void GUI_Widget_Viewport_Draw(void)
 	for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
 			u != NULL;
 			u = Unit_FindNext(&find)) {
-		if ((19 <= u->o.index && u->o.index <= 21 && !enhancement_invisible_saboteurs)
-		 || (22 <= u->o.index && u->o.index <= 101)) {
-			Viewport_DrawUnit(u, 0, 0, false);
-		}
+
+		if (u->o.index < 20 || u->o.index > UnitPool_GetMaxIndex() -1 )
+			continue;
+
+		if (enhancement_invisible_saboteurs && u->o.type == UNIT_SABOTEUR)
+			continue;
+
+		Viewport_DrawUnit(u, 0, 0, false);
 	}
 
 	Explosion_Draw();

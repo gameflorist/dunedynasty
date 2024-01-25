@@ -75,7 +75,7 @@ Tools_Index_IsValid_Defensive(uint16 encoded)
 	uint16 index = Tools_Index_Decode(encoded);
 	switch (Tools_Index_GetType(encoded)) {
 		case IT_UNIT:
-			return (index < UNIT_INDEX_MAX)
+			return (index < UnitPool_GetMaxIndex())
 				&& Tools_Index_IsValid(encoded);
 
 		case IT_STRUCTURE:

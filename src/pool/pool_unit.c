@@ -16,17 +16,17 @@
 #include "../unit.h"
 
 typedef struct UnitPool {
-	Unit pool[UNIT_INDEX_MAX];
-	Unit *find[UNIT_INDEX_MAX];
+	Unit pool[UNIT_INDEX_MAX_RAISED];
+	Unit *find[UNIT_INDEX_MAX_RAISED];
 	uint16 count;
 	bool allocated;
 } UnitPool;
 
 /** variable_35E8. */
-static Unit s_unitArray[UNIT_INDEX_MAX];
+static Unit s_unitArray[UNIT_INDEX_MAX_RAISED];
 
 /** variable_843E. */
-struct Unit *g_unitFindArray[UNIT_INDEX_MAX];
+struct Unit *g_unitFindArray[UNIT_INDEX_MAX_RAISED];
 
 /** variable_35EC. */
 uint16 g_unitFindCount;
@@ -42,7 +42,7 @@ assert_compile(sizeof(s_unitPoolBackup.find) == sizeof(g_unitFindArray));
 Unit *
 Unit_Get_ByIndex(uint16 index)
 {
-	assert(index < UNIT_INDEX_MAX);
+	assert(index < UnitPool_GetMaxIndex());
 	return &s_unitArray[index];
 }
 
@@ -112,7 +112,7 @@ Unit_Init(void)
 	g_unitFindCount = 0;
 
 	/* ENHANCEMENT -- Ensure the index is always valid. */
-	for (unsigned int i = 0; i < UNIT_INDEX_MAX; i++) {
+	for (unsigned int i = 0; i < UnitPool_GetMaxIndex(); i++) {
 		s_unitArray[i].o.index = i;
 	}
 }
@@ -134,7 +134,7 @@ Unit_Recount(void)
 
 	g_unitFindCount = 0;
 
-	for (unsigned int index = 0; index < UNIT_INDEX_MAX; index++) {
+	for (unsigned int index = 0; index < UnitPool_GetMaxIndex(); index++) {
 		Unit *u = Unit_Get_ByIndex(index);
 
 		if (u->o.flags.s.used) {
@@ -170,18 +170,18 @@ Unit_Allocate(uint16 index, enum UnitType type, enum HouseType houseID)
 			}
 		}
 
-		if (0 < index && index < UNIT_INDEX_MAX) {
+		if (0 < index && index < UnitPool_GetMaxIndex()) {
 			u = Unit_Get_ByIndex(index);
 			if (u->o.flags.s.used)
 				return NULL;
 		} else {
 			/* Find the first unused index. */
-			for (index = ui->indexStart; index <= ui->indexEnd; index++) {
+			for (index = ui->indexStart; index <= UnitPool_GetIndexEnd(type); index++) {
 				u = Unit_Get_ByIndex(index);
 				if (!u->o.flags.s.used)
 					break;
 			}
-			if (index > ui->indexEnd)
+			if (index > UnitPool_GetIndexEnd(type))
 				return NULL;
 		}
 
@@ -287,4 +287,32 @@ UnitPool_Load(UnitPool *pool)
 	g_unitFindCount = pool->count;
 
 	pool->allocated = false;
+}
+
+/**
+ * @brief   Get maximum unit index.
+ * @details Introduced for raise_unit_cap.
+ */
+int
+UnitPool_GetMaxIndex()
+{
+	if (enhancement_raise_unit_cap)
+		return UNIT_INDEX_MAX_RAISED;
+
+	return UNIT_INDEX_MAX;
+}
+
+/**
+ * @brief   Get maximum unit index.
+ * @details Introduced for raise_unit_cap.
+ */
+int
+UnitPool_GetIndexEnd(enum UnitType type)
+{
+	const UnitInfo *ui = &g_table_unitInfo[type];
+	if (enhancement_raise_unit_cap) {
+		if (type >= UNIT_INFANTRY && type <= UNIT_MCV && type != UNIT_SABOTEUR)
+			return UNIT_INDEX_MAX_RAISED - 1;
+	}
+	return ui->indexEnd;
 }

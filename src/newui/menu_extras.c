@@ -841,8 +841,8 @@ GameplayOptions_Initialize(void)
 	snprintf(si->text, sizeof(si->text), "Insatiable sandworms");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
-	si->d.checkbox = &enhancement_raise_scenario_unit_cap;
-	snprintf(si->text, sizeof(si->text), "Raise scenario unit cap");
+	si->d.checkbox = &enhancement_raise_unit_cap;
+	snprintf(si->text, sizeof(si->text), "Raise unit cap");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_raise_structure_cap;

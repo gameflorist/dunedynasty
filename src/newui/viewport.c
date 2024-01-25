@@ -1801,13 +1801,15 @@ Viewport_RenderBrush(int x, int y, int blurx)
 				continue;
 
 			const int index = t->index - 1;
-			if ((19 <= index && index <= 21 && !enhancement_invisible_saboteurs)
-			 || (22 <= index && index <= 101)) {
-			} else {
+			
+			if (index < 20 || index > UnitPool_GetMaxIndex() -1 )
 				continue;
-			}
 
 			const Unit *u = Unit_Get_ByIndex(index);
+
+			if (enhancement_invisible_saboteurs && u->o.type == UNIT_SABOTEUR)
+				continue;
+
 			const UnitInfo *ui = &g_table_unitInfo[u->o.type];
 
 			if (ui->o.flags.blurTile)
