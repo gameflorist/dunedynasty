@@ -7,7 +7,7 @@ jobs:
     permissions:
       actions: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: brew install cmake allegro fluid-synth mad enet dylibbundler
@@ -33,7 +33,7 @@ jobs:
           zip -r dist.zip .
 
       - name: Delete Old Artifacts
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         id: artifact
         with:
           script: |
@@ -53,7 +53,7 @@ jobs:
                 })
                 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-x86-64-build
           path: dist/dist.zip
