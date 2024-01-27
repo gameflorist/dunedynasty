@@ -396,7 +396,7 @@ static MusicInfo s_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2000     ("SPICESCT", "Spice Scouting"),
 	ADD_MUSIC_FROM_DUNE2000     ("WAITGAME", "The Waiting Game"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Chani's Eyes", "Chani's Eyes"),
-	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Dune Variation.mp3", "Dune Variation"),
+	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Dune Variation", "Dune Variation"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Free Men", "Free Men"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Sietch Tuek", "Sietch Tuek"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Sign of the Worm", "Sign of the Worm"),
