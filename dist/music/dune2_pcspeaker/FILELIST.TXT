@@ -1,0 +1,32 @@
+Put PC-speaker soundtrack here.
+
+Download from:
+https://forum.dune2k.com/files/file/1517-pc-speaker-recording-all-tracks/
+
+Make sure, file-names are exactly as listed below.
+
+List of files:
+
+Into the Heat (Attack Music 1) [dune10-7].mp3
+Epic War (Attack Music 2) [dune11-7].mp3
+Humans Fall (Attack Music 3) [dune12-7].mp3
+Adrenaline Rush (Attack Music 4) [dune13-7].mp3
+Only the Strongest Survives (Attack Music 5) [dune14-7].mp3
+Marching Towards the End (Attack Music 6) [dune15-7].mp3
+Destructive Minds (Strategic Map) [dune16-7].mp3
+Atreides Defeat [dune1-5].mp3
+Harkonnen Defeat [dune1-4].mp3
+Ordos Defeat [dune1-3].mp3
+The Long Sleep (Emperor's Theme) [dune16-8].mp3
+Noble Atreides (Atreides Ending) [dune19-2].mp3
+Evil Harkonnen (Harkonnen Ending) [dune19-4].mp3
+Insidious Ordos (Ordos Ending) [dune19-3].mp3
+Intro [dune0-2].mp3
+The Council (Atreides Briefing) [dune7-3].mp3
+Arid Sands (Harkonnen Briefing) [dune7-2].mp3
+Disturbed Thoughts (Ordos Briefing) [dune7-4].mp3
+Hope Fades (Main Menu) [dune7-6].mp3
+Victory (Atreides Victory) [dune8-2].mp3
+Victory 2 (Harkonnen Victory) [dune8-3].mp3
+Abuse (Ordos Victory) [dune17-4].mp3
+Westwood Associates Logo [dune0-4].mp3

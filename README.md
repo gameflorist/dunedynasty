@@ -307,6 +307,7 @@ Here is a list of supported Music packs:
   - [Dune II - The Maker AdLib recording](https://dune2themaker.fundynamic.com/downloads/mp3adlib.zip)
   - [Dune II - The Maker MT-32 recording](https://dune2themaker.fundynamic.com/downloads/mp3mt32.zip)
   - [Dune II - The Maker SC-55 recording](https://dune2themaker.fundynamic.com/downloads/mp3sc55.zip)
+  - [PC speaker recording](https://forum.dune2k.com/files/file/1517-pc-speaker-recording-all-tracks/)
 - [___Dune II___ Sega Mega Drive music](http://nyerguds.arsaneus-design.com/dune/dunesega/)  
   Mostly different songs from PC version, but also ___very___ good!
 - ___Dune 2000___ game music  
