@@ -4,7 +4,8 @@
 
 [![Windows x64 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-x64-build.yml?label=Windows%20x64%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-x64-build.yml)
 [![Windows x86 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-x86-build.yml?label=Windows%20x86%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-x86-build.yml)
-[![macOS Intel Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-intel-build.yml?label=macOS%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-intel-build.yml)
+[![macOS x86-64 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-x86-64-build.yml?label=macOS%20x86-64%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-x86-64-build.yml)
+[![macOS ARM64 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-arm64-build.yml?label=macOS%20ARM64%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-arm64-build.yml)
 [![Linux Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-build.yml?label=Linux%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-build.yml)
 
 ![Dune Dynasty](/docs/banner.jpg)
@@ -19,7 +20,10 @@ original game engine as reverse-engineered by the [OpenDUNE](https://github.com/
 
 _Dune Dynasty_ features these modern enhancements for _Dune II_:
 
-- __Runs natively on Windows, macOS and Linux (OpenGL or Direct3D)__  
+- __Runs natively on modern machines (OpenGL or Direct3D):__
+  - Windows (both 32bit and 64bit)
+  - macOS (both Intel x86_64 and Apple Silicon M1 ARM64)
+  - Linux
 - __Graphics Enhancements:__
   - High-resolution widescreen graphics
   - Separate customizable scaling of menubar, sidebar and map/viewport for HiDPI displays
@@ -89,7 +93,6 @@ Here are some alternatives for enjoying _Dune II_ on modern systems:
 - There is also a [___Dune II mod for OpenRA___](https://github.com/OpenRA/d2/wiki), an open source engine for the early _Command & Conquer_ games.
 - _Dune II_ is also perfectly playable using [DOSBox](https://dosbox-staging.github.io/).
 - There is a well done _Dune II_ clone for Android on [Google Play Store](https://play.google.com/store/apps/details?id=de.morphbot.dune).
-- [This fork of _Dune Dynasty_](https://github.com/YuriyGuts/dunedynasty-macos) has an Apple M1 Arm executable of v1.5.7.
 
 _Dune Dynasty_'s unique selling points are probably it's faithfulness to the look and feel of the original (due to it basing on an [engine re-creation](https://github.com/OpenDUNE/OpenDUNE) of the original) combined with many control modernizations, it's support for [fan-generated campaigns](#custom-campaigns), [various music soundtracks](#external-music-sets) and multiplayer.
 
@@ -129,6 +132,12 @@ Place them into one of the following places:
 
 Once the data files are in place, you may start the game by running
 `dunedynasty.exe` or `dunedynasty`.
+
+### Special installation instructions for macOS
+
+Due to the executable and included dylibs not being build with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. a `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start `dunedynasty` without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
+
+### Special installation instructions for Linux
 
 On Linux you will also have to install the libraries __Dune Dynasty__ depends on:
 
@@ -425,10 +434,28 @@ The steps below will build the release-version. You can change value of the `DCM
     brew install cmake allegro fluid-synth mad enet
     ```
 
+    If you are building for ARM64 on a x86-64 machine, you have to make sure, all required packages and their dependencies are the arm64 variant by reinstalling them using the `--bottle-tag=arm64_monterey`:
+
+    ```shell
+    PACKAGES=(argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet)
+    for PACKAGE in "${PACKAGES[@]}"
+    do
+      brew uninstall --force --ignore-dependencies $PACKAGE
+      brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
+      brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
+    done
+    ```
+
 3. Perform build:
 
     ```shell
     ./scripts/build-macos.sh
+    ```
+
+    If you are building for ARM64 on a x86-64 machine, call this script instead:
+
+    ```shell
+    ./scripts/build-macos-arm64.sh
     ```
 
 4. To package all required dynlibs into the `./dist/libs` folder and patch the executable, call this script:
@@ -442,6 +469,8 @@ The steps below will build the release-version. You can change value of the `DCM
     ```shell
     brew install dylibbundler
     ```
+
+5. Due to the executable and included dylibs not being build with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. a `setup` script to lift quarantine on all files is included in [dist-per-os/macos](dist-per-os/macos).
 
 #### Linux (Debian, Ubuntu)
 
