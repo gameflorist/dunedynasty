@@ -13,6 +13,7 @@
 #define SHAIWA_MT32_PREFIX  		"fed2k_mt32"
 #define RCBLANKE_SC55_PREFIX    	"rcblanke_sc55"
 #define DUNE1992_ADLIB_PREFIX    	"dune1992_adlib"
+#define DUNE1992_SCDB_PREFIX    	"dune1992_scdb"
 #define DUNE1992_SPICEOPERA_PREFIX	"dune1992_spiceopera"
 #define DUNE1984_OST_PREFIX    		"dune1984_ost"
 #define DUNE2021_OST_PREFIX    		"dune2021_ost"
@@ -30,6 +31,7 @@
 #define ADD_MUSIC_FROM_DUNE2_SMD(FILENAME,SONGNAME) 			{ MUSIC_WANT,   MUSICSET_DUNE2_SMD,     		SONGNAME,"music/"DUNE2_SMD_PREFIX   "/" FILENAME, 0, 0.50f }
 #define ADD_MUSIC_FROM_DUNE2000(FILENAME,SONGNAME)  			{ MUSIC_WANT,   MUSICSET_DUNE2000,      		SONGNAME,"music/"DUNE2000_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE1992_ADLIB(FILENAME,SONGNAME)		{ MUSIC_WANT,   MUSICSET_DUNE1992_ADLIB,      	SONGNAME,"music/"DUNE1992_ADLIB_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE1992_SCDB(FILENAME,SONGNAME)			{ MUSIC_WANT,   MUSICSET_DUNE1992_SCDB,      	SONGNAME,"music/"DUNE1992_SCDB_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE1992_SPICEOPERA(FILENAME,SONGNAME)  	{ MUSIC_WANT,   MUSICSET_DUNE1992_SPICEOPERA,	SONGNAME,"music/"DUNE1992_SPICEOPERA_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE1984_OST(FILENAME,SONGNAME)  		{ MUSIC_WANT,   MUSICSET_DUNE1984_OST,      	SONGNAME,"music/"DUNE1984_OST_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE2021_OST(FILENAME,SONGNAME)  		{ MUSIC_WANT,   MUSICSET_DUNE2021_OST,      	SONGNAME,"music/"DUNE2021_OST_PREFIX    "/" FILENAME, 0, 1.00f }
@@ -47,6 +49,7 @@ MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, DUNE2_SMD_PREFIX,   		"Sega Mega Drive" },
 	{ true, DUNE2000_PREFIX,    		"Dune 2000" },
 	{ true, DUNE1992_ADLIB_PREFIX,    	"Dune Adlib" },
+	{ true, DUNE1992_SCDB_PREFIX,    	"Dune SCDB Mix" },
 	{ true, DUNE1992_SPICEOPERA_PREFIX,	"Dune Spice Opera" },
 	{ true, DUNE1984_OST_PREFIX,    	"Dune 1984 OST" },
 	{ true, DUNE2021_OST_PREFIX,    	"Dune 2021 OST" },
@@ -121,6 +124,7 @@ static MusicInfo s_table_music_main_menu[] = {
 	ADD_MUSIC_FROM_DUNE2_SMD    		("12_chosendestiny", "Chosen Destiny"),
 	ADD_MUSIC_FROM_DUNE2000     		("OPTIONS", "Options"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB     	("Spice Opera", "Spice Opera"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB     	("06 - Worm Suit (Spice Opera)", "Worm Suit (Spice Opera)"),
 	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("01 - Spice Opera", "Spice Opera"),
 	ADD_MUSIC_FROM_DUNE1984_OST     	("02 - Main Title", "Main Title"),
 	ADD_MUSIC_FROM_DUNE2021_OST     	("01 - Dream of Arrakis", "Dream of Arrakis"),
@@ -399,6 +403,14 @@ static MusicInfo s_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Too", "Too"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Wake Up", "Wake Up"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Water", "Water"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB	("02 - Morning (Chani's Eyes)", "Morning (Chani's Eyes)"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB	("01 - Arrakis (Dune Theme)", "Arrakis (Dune Theme)"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB	("03 - Bagdad (Free Men)", "Bagdad (Free Men)"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB	("07 - Sietch", "Sietch"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB	("05 - Worm Intro (Sign of the Worm)", "Worm Intro (Sign of the Worm)"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB	("08 - War Song (Too)", "War Song (Too)"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB	("04 - Sequence (Wake Up)", "Sequence (Wake Up)"),
+	ADD_MUSIC_FROM_DUNE1992_SCDB	("09 - Water (Water)", "Water"),
 	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("02 - Emotion Control", "Emotion Control"),
 	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("03 - Ecolove", "Ecolove"),
 	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("04 - Water", "Water"),

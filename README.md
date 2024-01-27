@@ -52,7 +52,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
     - Recorded AdLib, MT-32 and SC-55 packs
     - Sega Mega Drive soundtrack (mostly different songs, but also ___very___ good!)
     - _Dune 2000_ game soundtrack
-    - _Dune_ (1992) game by Cryo (an excellent, award winning, much more chill soundtrack of _Dune II_'s predecessor both as AdLib Gold recording and the remastered _Spice Opera_ soundtrack by Exxos)
+    - _Dune_ (1992) game by Cryo (an excellent, award winning, much more chill soundtrack of _Dune II_'s predecessor in three different flavours)
     - _Dune_ (1984) Original Motion Picture Soundtrack
     - _Dune: Part One_ (2021) Original Motion Picture Soundtrack and "_The Dune Sketchbook_" soundtrack
     - ...with many options for randomly combining them during gameplay
@@ -312,11 +312,13 @@ Here is a list of supported Music packs:
 - ___Dune 2000___ game music  
   Unfortunately, this game cannot be purchased anymore at the moment.
 - ___Dune___ (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:  
-   The excellent award-winning soundtrack for _Dune II_'s predecessor - the 1992 _Dune_ game by _Cryo_. It is very atmospheric, and makes _Dune II_ a much more relaxing and chill experience. Two versions are supported:
+   The excellent award-winning soundtrack for _Dune II_'s predecessor - the 1992 _Dune_ game by _Cryo_. It is very atmospheric, and makes _Dune II_ a much more relaxing and chill experience. Three versions are supported:
 
   - [AdLib Gold recording by DOS Nostalgia](https://www.dosnostalgia.com/?p=542)
   - ___Spice Opera___ by Exxos  
      A remastered CD release of the soundtrack. Unfortunately it is not available for purchase anymore (but Google might be your friend here).
+  - [SCDB Mix (AdLib + MT-32 + AdLib Gold)](https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/)  
+     An amazing 3-card mix by _the Sound Card database_ (see [https://www.youtube.com/watch?v=o-Q_UO6Hp7U](https://www.youtube.com/watch?v=o-Q_UO6Hp7U))
 
 - ___Dune (1984)___ Original Motion Picture Soundtrack by Toto and Brian Eno  
   Seems to be only available on CD. Purchase e.g. from [amazon.com](https://www.amazon.com/-/de/dp/B000006YDD/) or [amazon.de](https://www.amazon.de/Dune-Toto/dp/B000006YDD/) and rip files to MP3.
@@ -513,7 +515,7 @@ Thank you to:
 - The Allegro 5 developers.
 - The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else
 who worked on the AdLib/OPL/MIDI player code.
-- rcblanke, ShaiWa, Nyerguds, Stefan Hendriks and DOS Nostalgia for their soundtrack recordings.
+- rcblanke, ShaiWa, Nyerguds, Stefan Hendriks, the Sound Card database and DOS Nostalgia for their soundtrack recordings.
 - Peter, for help on various bits of the code, the music code, and AUDlib.
 - Nyerguds, for his Dune II editor.
 - Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,

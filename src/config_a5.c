@@ -140,6 +140,7 @@ static const GameOption s_game_option[] = {
 	{ "music",  "dune2_smd",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_SMD].enable },
 	{ "music",  "dune2000",         	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2000].enable },
 	{ "music",  "dune1992_adlib",   	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1992_ADLIB].enable },
+	{ "music",  "dune1992_scdb",   		CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1992_SCDB].enable },
 	{ "music",  "dune1992_spiceopera",	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1992_SPICEOPERA].enable },
 	{ "music",  "dune1984_ost",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1984_OST].enable },
 	{ "music",  "dune2021_ost",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2021_OST].enable },
