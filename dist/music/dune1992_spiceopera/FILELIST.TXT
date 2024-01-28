@@ -1,22 +1,31 @@
 Put Dune (1992) Spice Opera soundtrack here.
 
-No legal download or purchase possible.
-(Google is your friend.)
+Purchase from:
+https://stphanepicq.bandcamp.com/album/dune-spice-opera-2024-remaster
 
-Make sure, file-names are exactly as listed below.
+Rename the file-names, so they are exactly as listed below.
 
-List of files:
+List of files (flac or ogg are also possible):
 
-01 - Spice Opera.mp3
+01 - Dune Theme.mp3
 02 - Emotion Control.mp3
 03 - Ecolove.mp3
-04 - Water.mp3
+04 - Water Of Life.mp3
 05 - Revelation.mp3
 06 - Free Men.mp3
 07 - Wake Up.mp3
-08 - Dune Theme.mp3
+08 - Too.mp3
 09 - Chani's Eyes.mp3
-10 - Sign of the Worm.mp3
-11 - Too.mp3
+10 - Sign Of The Worm.mp3
+11 - Spice Opera.mp3
 12 - Dune Variation.mp3
-13 - Cryogenia.mp3
+13 - Arrakis (PC).mp3
+14 - Bagdad (PC).mp3
+15 - Morning (PC).mp3
+16 - Sequence (PC).mp3
+17 - Sietch (PC).mp3
+18 - War Song (PC).mp3
+19 - Water (PC).mp3
+20 - Worm Intro (PC).mp3
+21 - Dune Theme (overclocked).mp3
+22 - Cryogenia.mp3

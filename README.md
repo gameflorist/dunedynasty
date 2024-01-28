@@ -316,8 +316,8 @@ Here is a list of supported Music packs:
    The excellent award-winning soundtrack for _Dune II_'s predecessor - the 1992 _Dune_ game by _Cryo_. It is very atmospheric, and makes _Dune II_ a much more relaxing and chill experience. Three versions are supported:
 
   - [AdLib Gold recording by DOS Nostalgia](https://www.dosnostalgia.com/?p=542)
-  - ___Spice Opera___ by Exxos  
-     A remastered CD release of the soundtrack. Unfortunately it is not available for purchase anymore (but Google might be your friend here).
+  - [___Spice Opera___ by Exxos](https://stphanepicq.bandcamp.com/album/dune-spice-opera-2024-remaster)  
+     A remastered CD release of the soundtrack (re-released in 2024).
   - [SCDB Mix (AdLib + MT-32 + AdLib Gold)](https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/)  
      An amazing 3-card mix by _the Sound Card database_ (see [https://www.youtube.com/watch?v=o-Q_UO6Hp7U](https://www.youtube.com/watch?v=o-Q_UO6Hp7U))
 
