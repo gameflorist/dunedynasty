@@ -135,7 +135,6 @@ static const GameOption s_game_option[] = {
 	{ "music",  "fed2k_mt32",       	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_SHAIWA_MT32].enable },
 	{ "music",  "rcblanke_sc55",    	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_RCBLANKE_SC55].enable },
 	{ "music",  "d2tm_adlib",       	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_ADLIB].enable },
-	{ "music",  "d2tm_mt32",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_MT32].enable },
 	{ "music",  "d2tm_sc55",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_SC55].enable },
 	{ "music",  "dune2_pcspeaker",    	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_PCSPEAKER].enable },
 	{ "music",  "dune2_smd",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_SMD].enable },

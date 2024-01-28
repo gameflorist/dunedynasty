@@ -98,7 +98,6 @@ fluidsynth=1
 fed2k_mt32=1
 rcblanke_sc55=1
 d2tm_adlib=1
-d2tm_mt32=1 # Subset of fed2k_mt32.
 d2tm_sc55=1
 dune2_smd=1
 dune2_pcspeaker=1
