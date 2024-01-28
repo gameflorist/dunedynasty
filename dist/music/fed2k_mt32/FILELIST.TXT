@@ -1,5 +1,5 @@
-Put ShaiWa's MT-32 addon here (previously called "FED2k MT-32").
-http://dune2k.com/Download/783
+Put ShaiWa's (FED2k) MT-32 addon here.
+https://forum.dune2k.com/files/file/116-dune2_mt32zip/
 
 dune2_mt32_00_2.mp3
 dune2_mt32_00_4.mp3

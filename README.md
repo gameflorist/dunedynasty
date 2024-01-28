@@ -303,7 +303,7 @@ Here is a list of supported Music packs:
 
 - Original _Dune II_ (PC) music:
   - [rcblanke's SC-55 recording](https://www.vogons.org/viewtopic.php?t=33823&start=42)
-  - [ShaiWa's MT-32 recording](https://dune2k.com/Download/783)
+  - [ShaiWa's (FED2k) MT-32 recording](https://forum.dune2k.com/files/file/116-dune2_mt32zip/)
   - [Dune II - The Maker AdLib recording](https://dune2themaker.fundynamic.com/downloads/mp3adlib.zip)
   - [Dune II - The Maker MT-32 recording](https://dune2themaker.fundynamic.com/downloads/mp3mt32.zip)
   - [Dune II - The Maker SC-55 recording](https://dune2themaker.fundynamic.com/downloads/mp3sc55.zip)
