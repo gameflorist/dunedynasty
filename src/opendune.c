@@ -117,13 +117,14 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 	if ((g_scenario.winFlags & 0x3) || (g_scenario.loseFlags & 0x3)) {
 		PoolFindStruct find;
 		bool foundFriendly = false;
+		bool foundOwn = false;
 		bool foundEnemy = false;
 
 		/* Calculate how many structures are left on the map */
 		for (const Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
 				s != NULL;
 				s = Structure_FindNext(&find)) {
-			if (foundFriendly && foundEnemy)
+			if (foundFriendly && foundEnemy && foundOwn)
 				break;
 
 			if (Structure_SharesPoolElement(s->o.type))
@@ -131,6 +132,9 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 
 			if (s->o.type == STRUCTURE_TURRET) continue;
 			if (s->o.type == STRUCTURE_ROCKET_TURRET) continue;
+
+			if (s->o.houseID == houseID)
+				foundOwn = true;
 
 			if (House_AreAllied(s->o.houseID, houseID)) {
 				foundFriendly = true;
@@ -144,7 +148,7 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 
 			// If lose condition is set to structures,
 			// we only search for MCVs to determine, if house is still alive.
-			// It it is set to units, we search for all units,
+			// It it is set to units, we search for all units on the map,
 			// and filter out non-ground-units in the loop.
 			bool loseCondition = g_campaign_selected == CAMPAIGNID_MULTIPLAYER
 				? g_multiplayer.lose_condition : g_skirmish.lose_condition;
@@ -153,14 +157,18 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 			for (const Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, findUnitType);
 					u != NULL;
 					u = Unit_FindNext(&find)) {
-				if (foundFriendly && foundEnemy)
+				if (foundFriendly && foundEnemy && foundOwn)
 					break;
 				
-				// Only ground units count for lose condition.
-				if (u->o.type < UNIT_INFANTRY || u->o.type > UNIT_MCV)
+				// Only ground units on the map count for lose condition.
+				// We also filter out isNotOnMap units (e.g. reinforcements)
+				if (u->o.type < UNIT_INFANTRY || u->o.type > UNIT_MCV || u->o.flags.s.isNotOnMap)
 					continue;
 
 				const enum HouseType h2 = Unit_GetHouseID(u);
+
+				if (h2 == houseID)
+					foundOwn = true;
 
 				if (House_AreAllied(h2, houseID)) {
 					foundFriendly = true;
@@ -168,6 +176,12 @@ GameLoop_Server_IsHouseFinished(enum HouseType houseID)
 					foundEnemy = true;
 				}
 			}
+
+			// Human player in skirmish/multiplayer also loses,
+			// if allies are still alive.
+			if (House_IsHuman(houseID) && !foundOwn)
+				foundFriendly = false;
+			
 		}
 
 		if (g_scenario.winFlags & 0x3) {
