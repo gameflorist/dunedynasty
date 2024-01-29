@@ -260,35 +260,19 @@ Skirmish_ResetAlliances(void)
 		}
 	}
 
-	/* Make Fremen and saboteur superweapons usable for houses. */
+	/* Make sure, Fremen and Saboteurs belong to the houses that spawned them. */
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
 		HouseInfo *hi = &g_table_houseInfo[h];
 
-		if ((hi->specialWeapon != HOUSE_WEAPON_FREMEN) &&
-		    (hi->specialWeapon != HOUSE_WEAPON_SABOTEUR))
+		if (g_skirmish.player_config[h].brain == BRAIN_NONE)
 			continue;
-
-		enum HouseType h2;
-		enum HouseType *hp;
 
 		if (hi->specialWeapon == HOUSE_WEAPON_FREMEN) {
-			hp = &(hi->superWeapon.fremen.owner);
-		} else {
-			hp = &(hi->superWeapon.saboteur.owner);
+			hi->superWeapon.fremen.owner = h;
 		}
-
-		if (g_table_houseAlliance[h][*hp] == HOUSEALLIANCE_ENEMIES) {
-			*hp = h;
-			continue;
-		} else {
-			h2 = *hp;
-		}
-
-		for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_MAX; h1++) {
-			if (g_table_houseAlliance[h][h1] == HOUSEALLIANCE_ALLIES) {
-				g_table_houseAlliance[h1][h2] = HOUSEALLIANCE_ALLIES;
-				g_table_houseAlliance[h2][h1] = HOUSEALLIANCE_ALLIES;
-			}
+		
+		if (hi->specialWeapon == HOUSE_WEAPON_SABOTEUR) {
+			hi->superWeapon.saboteur.owner = h;
 		}
 	}
 
