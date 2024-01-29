@@ -71,6 +71,9 @@ const text = htmlToText(html, {
       else if (href.startsWith("/")) {
         href = "https://github.com/codeflorist/dunedynasty/blob/master" + href;
       }
+      else if (href.startsWith("#")) {
+        href = "see below";
+      }
       const text = elem.children[0].data;
       if (href === text || href === null) {
         builder.addInline(text);
