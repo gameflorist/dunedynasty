@@ -58,22 +58,20 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
     - ...with many options for randomly combining them during gameplay
     - ...all playable in in-game jukebox
   - Multiple sound channels
-- __Gameplay Enhancements (optional):__
+- __[Gameplay Enhancements](#gameplay-enhancements) (optional):__
   - Health bars
   - Fog of war
   - Brutal AI mode
   - Infantry squad corpses
-  - Raise scenario unit cap
+  - Raise structure and unit limits
   - Start level selection
-  - Consistent directional damage (always enabled in multiplayer due to balancing)
+  - Consistent directional damage
 - __[Support for Custom campaigns](#custom-campaigns):__
   - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
   - [MrFlibble's Alternate Scenarios](https://www.mediafire.com/file/9vs75nukou8o3wq/Dune2-MrFlibble%2527sAlternateScenarios.zip/file)
   - [Stefan Henriks' Atreides campaign](http://arrakis.dune2k.com/downloads.html)
   - [Super Dune II](http://forum.dune2k.com/topic/20065-super-dune-ii-classic/)
 - __Various bug fixes__
-
-A more detailed list of changes by _Dune Dynasty_ and OpenDUNE from the original Dune II can be found in the file [enhancement.txt](enhancement.txt).
 
 ### Development History
 
@@ -233,6 +231,78 @@ There are also keyboard shortcuts for constructing buildings with the constructi
 ### Touchscreen Support
 
 _Dune Dynasty_ works very well with touchscreens (e.g. like Microsoft Surface Pro), since most actions are performed using the left mouse button. You can perform a right button click via a long (ca. 1 sec.) press. Commands are issued via the right button by default, but you can change this by setting `Control Style` to `Left Click` in the Game Control options. Then you can quickly select and command your units via short taps with your finger. To deselect units or structures perform a long press or simply _draw_ an empty rectangle into the sand. You can even zoom the viewport with a _pinch_ finger-movement.
+
+## Gameplay Enhancements
+
+_Dune Dynasty_ (and it's parent project _OpenDUNE_) feature several optional as well as always active enhancements and fixes over the original _Dune II_. A detailed list of can be found in the file [enhancement.txt](enhancement.txt).
+
+Here is an explanation of all optional enhancements, that can be enabled in-game in the main menu or game control options. They are disabled by default (except otherwise noted).
+
+### Gameplay options (main menu)
+
+- __Skip introduction video:__  
+  Should be self explanatory.
+
+- __Brutal AI:__  
+  Various AI changes to make the game tougher. Includes double production rate, half cost, flanking attacks, etc.
+
+- __Fog of war:__  
+  Regrowing (_Warcraft_-style) shroud.
+
+- __Insatiable sandworms:__  
+  In the original game, sandworms disappear after eating a set number of units. This makes them insatiable.
+
+- __Raise unit cap:__  
+  _Dune II_ has 3 types of unit caps:
+  - A unit cap defined per house by the scenario (usually 25 for the player, and 20 for the CPU)
+  - A hard-coded overall cap of 102
+  - And a hard-coded cap per unit/group of units:
+    - Caryalls and Ornithopters: 11
+    - Saboteurs: 3
+    - All others (ground units): 80  
+
+  This enhancement sets the scenario unit cap for all houses to 50, raises the overall cap to 322 and allows a total of 300 ground units (incl. saboteurs).
+  This enhancement is always enabled in multiplayer.
+
+- __Raise structure cap:__  
+  _Dune II_ limits total structures on a map to about 70. This enhancement raises that limit by 100. This enhancement is always enabled in multiplayer.  
+
+  __Note:__ Games saved with this option enabled will throw an error, when loaded without this option enabled!
+
+- __Show unit control info in outpost:__  
+  Shows info about active/standby/max units to outpost text. Standby units are either:
+
+  - in production
+  - ordered in factory
+  - outstanding reinforcements
+  - usually 1 backup-harvester
+  
+  This will always be enabled in skirmish/multiplayer.
+
+- __True game speed adjustment:__  
+  _Dune II_'s game speed implementation doesn't affect scripts and other things. This enhancement takes care of that. It also fixes a bug with the range of the sonic tank.  
+  (Enabled by default.)
+
+- __Consistent directional damage:__  
+  In Dune II, attack damage is heavily dependent on the direction. Horizontal attacks make only half damage, while attacks from top or bottom make full damage. This enhancement makes attack damage consistent from all directions. It is always enabled in multiplayer.
+
+### Game control options (in-game)
+
+- __Health bars:__  
+  Show health bars either for selected or all units.  
+  (Enabled for selected units by default.)
+
+- __Hi-res overlays:__  
+  Displays hi-res instead of pixelated overlays (e.g. selected unit overlay).  
+  (Enabled by default.)
+
+- __Smooth unit animation:__
+  Smoother unit animations by rendering units (and bullets) as if they move every frame, and rotating top-down units to arbitrary angles.  
+  (Enabled by default.)
+
+- __Infantry squad corpses:__
+  Display decaying infantry corpses.  
+  (Enabled by default.)
 
 ## Saved games
 
