@@ -1,13 +1,14 @@
 ============
 Dune Dynasty
-(v1.6.1)
+(v1.6.2)
 ============
 
 About
 =====
 
 (This fork is a continuation of the abandoned sourceforge project
-[https://sourceforge.net/projects/dunedynasty/] - see development history below for details.)
+[https://sourceforge.net/projects/dunedynasty/] - see development history [see
+below] for details.)
 
 Dune Dynasty is an enhancement of the classic real-time strategy game Dune II by
 Westwood Studios. It's goal is to make Dune II playable on modern systems with
@@ -17,7 +18,10 @@ builds upon the original game engine as reverse-engineered by the OpenDUNE
 
 Dune Dynasty features these modern enhancements for Dune II:
 
- * Runs natively on Windows, macOS and Linux (OpenGL or Direct3D)
+ * Runs natively on modern machines (OpenGL or Direct3D):
+   * Windows (both 32bit and 64bit)
+   * macOS (both Intel x86_64 and Apple Silicon M1 ARM64)
+   * Linux
  * Graphics Enhancements:
    * High-resolution widescreen graphics
    * Separate customizable scaling of menubar, sidebar and map/viewport for
@@ -33,40 +37,38 @@ Dune Dynasty features these modern enhancements for Dune II:
    * Set rally points for buildings
    * Pan viewport by keeping RMB pressed
    * Zoom in/out viewport via mousewheel
-   * Windows Touchscreen Support [#touchscreen-support]
+   * Windows Touchscreen Support [see below]
  * Skirmish and Multiplayer:
    * With 3 additional factions: Fremen, Sardaukar and Mercenaries
-   * For up to 6 players/AI
-   * Alliances (skirmish only)
-   * Random maps (or enter fixed map seed)
-   * Settings for starting credits, amount of spice fields and lose condition
+   * For up to 6 human or AI players
+   * Fully custom alliances with up to 6 teams
+   * Random generated maps (or enter fixed map seed)
+   * Settings for starting credits, amount of spice fields, worm count and lose
+     condition (structures/units)
  * Sound and Music Enhancements:
    * Emulated AdLib sound and music playback
-   * General MIDI playback via FluidSynth [#general-midi-music] (supporting
-     SoundFonts)
-   * Support for external music sets [#external-music-sets]:
+   * General MIDI playback via FluidSynth [see below] (supporting SoundFonts)
+   * Support for external music sets [see below]:
      * Recorded AdLib, MT-32 and SC-55 packs
      * Sega Mega Drive soundtrack (mostly different songs, but also very good!)
      * Dune 2000 game soundtrack
      * Dune (1992) game by Cryo (an excellent, award winning, much more chill
-       soundtrack of Dune II's predecessor both as AdLib Gold recording and the
-       remastered Spice Opera soundtrack by Exxos)
+       soundtrack of Dune II's predecessor in three different flavours)
      * Dune (1984) Original Motion Picture Soundtrack
      * Dune: Part One (2021) Original Motion Picture Soundtrack and "The Dune
        Sketchbook" soundtrack
      * ...with many options for randomly combining them during gameplay
      * ...all playable in in-game jukebox
    * Multiple sound channels
- * Gameplay Enhancements (optional):
+ * Gameplay Enhancements [see below] (optional):
    * Health bars
    * Fog of war
    * Brutal AI mode
    * Infantry squad corpses
-   * Raise scenario unit cap
+   * Raise structure and unit limits
    * Start level selection
-   * Consistent directional damage (always enabled in multiplayer due to
-     balancing)
- * Support for Custom campaigns [#custom-campaigns]:
+   * Consistent directional damage
+ * Support for Custom campaigns [see below]:
    * Dune 2 eXtended
      [http://forum.dune2k.com/topic/18360-dune-2-extended-project/]
    * MrFlibble's Alternate Scenarios
@@ -75,9 +77,6 @@ Dune Dynasty features these modern enhancements for Dune II:
      [http://arrakis.dune2k.com/downloads.html]
    * Super Dune II [http://forum.dune2k.com/topic/20065-super-dune-ii-classic/]
  * Various bug fixes
-
-A more detailed list of changes by Dune Dynasty and OpenDUNE from the original
-Dune II can be found in the file enhancement.txt.
 
 Development History
 -------------------
@@ -118,17 +117,12 @@ Here are some alternatives for enjoying Dune II on modern systems:
    the early Command & Conquer games.
  * Dune II is also perfectly playable using DOSBox
    [https://dosbox-staging.github.io/].
- * There is a well done Dune II clone for Android on Google Play Store
-   [https://play.google.com/store/apps/details?id=de.morphbot.dune].
- * This fork of [https://github.com/YuriyGuts/dunedynasty-macos] has an Apple M1
-   Arm executable of v1.5.7.
 
 Dune Dynasty's unique selling points are probably it's faithfulness to the look
 and feel of the original (due to it basing on an engine re-creation
 [https://github.com/OpenDUNE/OpenDUNE] of the original) combined with many
-control modernizations, it's support for fan-generated campaigns
-[#custom-campaigns], various music soundtracks [#external-music-sets] and
-multiplayer.
+control modernizations, it's support for fan-generated campaigns [see below],
+various music soundtracks [see below] and multiplayer.
 
 Changes
 =======
@@ -171,6 +165,21 @@ Place them into one of the following places:
 
 Once the data files are in place, you may start the game by running
 dunedynasty.exe or dunedynasty.
+
+Special installation instructions for macOS
+-------------------------------------------
+
+Due to the executable and included dylibs not being build with an Apple
+Developer ID, the Gatekeeper service will put them in a quarantine. a setup
+script is included to lift quarantine from all files. You will have to open the
+script with the right- or control-click menu, then choose Open in the warning
+dialog. After the script has run, you should be able to start dunedynasty
+without problems. If you get a disallowed by system policy error, your system
+policy does not allow to load the included libraries (mainly to happen with
+company macs).
+
+Special installation instructions for Linux
+-------------------------------------------
 
 On Linux you will also have to install the libraries Dune Dynasty depends on:
 
@@ -287,6 +296,98 @@ command your units via short taps with your finger. To deselect units or
 structures perform a long press or simply draw an empty rectangle into the sand.
 You can even zoom the viewport with a pinch finger-movement.
 
+Gameplay Enhancements
+=====================
+
+Dune Dynasty (and it's parent project OpenDUNE) feature several optional as well
+as always active enhancements and fixes over the original Dune II. A detailed
+list of can be found in the file enhancement.txt.
+
+Here is an explanation of all optional enhancements, that can be enabled in-game
+in the main menu or game control options. They are disabled by default (except
+otherwise noted).
+
+Gameplay options (main menu)
+----------------------------
+
+ * Skip introduction video:
+   Should be self explanatory.
+
+ * Brutal AI:
+   Various AI changes to make the game tougher. Includes double production rate,
+   half cost, flanking attacks, etc.
+
+ * Fog of war:
+   Regrowing (Warcraft-style) shroud.
+
+ * Insatiable sandworms:
+   In the original game, sandworms disappear after eating a set number of units.
+   This makes them insatiable.
+
+ * Raise unit cap:
+   Dune II has 3 types of unit caps:
+   
+   * A unit cap defined per house by the scenario (usually 25 for the player,
+     and 20 for the CPU)
+   * A hard-coded overall cap of 102
+   * And a hard-coded cap per unit/group of units:
+     * Caryalls and Ornithopters: 11
+     * Saboteurs: 3
+     * All others (ground units): 80
+   
+   This enhancement sets the scenario unit cap for all houses to 50, raises the
+   overall cap to 322 and allows a total of 300 ground units (incl. saboteurs).
+   This enhancement is always enabled in multiplayer.
+
+ * Raise structure cap:
+   Dune II limits total structures on a map to about 70. This enhancement raises
+   that limit by 100. This enhancement is always enabled in multiplayer.
+   
+   Note: Games saved with this option enabled will throw an error, when loaded
+   without this option enabled!
+
+ * Show unit control info in outpost:
+   Shows info about active/standby/max units to outpost text. Standby units are
+   either:
+   
+   * in production
+   * ordered in factory
+   * outstanding reinforcements
+   * usually 1 backup-harvester
+   
+   This will always be enabled in skirmish/multiplayer.
+
+ * True game speed adjustment:
+   Dune II's game speed implementation doesn't affect scripts and other things.
+   This enhancement takes care of that. It also fixes a bug with the range of
+   the sonic tank.
+   (Enabled by default.)
+
+ * Consistent directional damage:
+   In Dune II, attack damage is heavily dependent on the direction. Horizontal
+   attacks make only half damage, while attacks from top or bottom make full
+   damage. This enhancement makes attack damage consistent from all directions.
+   It is always enabled in multiplayer.
+
+Game control options (in-game)
+------------------------------
+
+ * Health bars:
+   Show health bars either for selected or all units.
+   (Enabled for selected units by default.)
+
+ * Hi-res overlays:
+   Displays hi-res instead of pixelated overlays (e.g. selected unit overlay).
+   (Enabled by default.)
+
+ * Smooth unit animation: Smoother unit animations by rendering units (and
+   bullets) as if they move every frame, and rotating top-down units to
+   arbitrary angles.
+   (Enabled by default.)
+
+ * Infantry squad corpses: Display decaying infantry corpses.
+   (Enabled by default.)
+
 Saved games
 ===========
 
@@ -318,7 +419,7 @@ Dune Dynasty supports the following music sources:
  * Midi (using your machine's default Midi device)
  * AdLib (built-in emulation)
  * FluidSynth (General Midi via SoundFonts)
- * Various External music sets (see below [#external-music-sets])
+ * Various External music sets (see below)
 
 By default, Dune Dynasty will randomly mix music from all the available sources.
 You can disable any sources in the game's "Options and Extras"-menu (changes
@@ -340,7 +441,7 @@ FluidSynth
 ----------
 
 FluidSynth allows playing music via a specified SoundFont. You will need to set
-the sound_font path in the configuration file [#configuration] to an appropriate
+the sound_font path in the configuration file [see below] to an appropriate
 sound font (.sf2) file, e.g.
 
 [audio]
@@ -368,13 +469,14 @@ Here is a list of supported Music packs:
    
    * rcblanke's SC-55 recording
      [https://www.vogons.org/viewtopic.php?t=33823&start=42]
-   * ShaiWa's MT-32 recording [https://dune2k.com/Download/783]
+   * ShaiWa's (FED2k) MT-32 recording
+     [https://forum.dune2k.com/files/file/116-dune2_mt32zip/]
    * Dune II - The Maker AdLib recording
      [https://dune2themaker.fundynamic.com/downloads/mp3adlib.zip]
-   * Dune II - The Maker MT-32 recording
-     [https://dune2themaker.fundynamic.com/downloads/mp3mt32.zip]
    * Dune II - The Maker SC-55 recording
      [https://dune2themaker.fundynamic.com/downloads/mp3sc55.zip]
+   * PC speaker recording
+     [https://forum.dune2k.com/files/file/1517-pc-speaker-recording-all-tracks/]
 
  * http://nyerguds.arsaneus-design.com/dune/dunesega/
    Mostly different songs from PC version, but also very good!
@@ -385,12 +487,15 @@ Here is a list of supported Music packs:
  * Dune (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:
    The excellent award-winning soundtrack for Dune II's predecessor - the 1992
    Dune game by Cryo. It is very atmospheric, and makes Dune II a much more
-   relaxing and chill experience. Two versions are supported:
+   relaxing and chill experience. Three versions are supported:
    
    * AdLib Gold recording by DOS Nostalgia [https://www.dosnostalgia.com/?p=542]
-   * Spice Opera by Exxos
-     A remastered CD release of the soundtrack. Unfortunately it is not
-     available for purchase anymore (but Google might be your friend here).
+   * https://stphanepicq.bandcamp.com/album/dune-spice-opera-2024-remaster
+     A remastered CD release of the soundtrack (re-released in 2024).
+   * SCDB Mix (AdLib + MT-32 + AdLib Gold)
+     [https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/]
+     An amazing 3-card mix by the Sound Card database (see
+     https://www.youtube.com/watch?v=o-Q_UO6Hp7U)
 
  * Dune (1984) Original Motion Picture Soundtrack by Toto and Brian Eno
    Seems to be only available on CD. Purchase e.g. from amazon.com
@@ -515,7 +620,6 @@ Windows
     For 32bit:
     
     ./scripts/bundle-libs-mingw32.sh
-    
 
 MacOs
 -----
@@ -526,21 +630,39 @@ MacOs
     
     brew install cmake allegro fluid-synth mad enet
     
+    If you are building for ARM64 on a x86-64 machine, you have to make sure,
+    all required packages and their dependencies are the arm64 variant by
+    reinstalling them using the --bottle-tag=arm64_monterey:
+    
+    PACKAGES=(argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet)
+    for PACKAGE in "${PACKAGES[@]}"
+    do
+      brew uninstall --force --ignore-dependencies $PACKAGE
+      brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
+      brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
+    done
+    
 
  3. Perform build:
     
     ./scripts/build-macos.sh
     
+    If you are building for ARM64 on a x86-64 machine, call this script instead:
+    
+    ./scripts/build-macos-arm64.sh
 
  4. To package all required dynlibs into the ./dist/libs folder and patch the
     executable, call this script:
     
-    ./scripts/bundle-libs-macos.sh    
+    ./scripts/bundle-libs-macos.sh
     
     The script requires the brew package dylibbundler, so install it first:
     
     brew install dylibbundler
-    
+
+ 5. Due to the executable and included dylibs not being build with an Apple
+    Developer ID, the Gatekeeper service will put them in a quarantine. a setup
+    script to lift quarantine on all files is included in dist-per-os/macos.
 
 Linux (Debian, Ubuntu)
 ----------------------
@@ -548,12 +670,10 @@ Linux (Debian, Ubuntu)
  1. Install dependencies:
     
     sudo apt -y install build-essential cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
-    
 
  2. Perform build:
     
     ./scripts/build-linux.sh
-    
 
  3. When packaging, there is the problem, that the fluidsynth-library is called
     libfluidsynth2 on some distributions, and libfluidsynth3 on others. To
@@ -561,15 +681,15 @@ Linux (Debian, Ubuntu)
     and patch the executable to use the inlcuded library instead:
     
     ./scripts/bundle-libs-linux.sh
-    
 
 Debugging
 ---------
 
-You can use the function GUI_DisplayText to display debugging info in the status
-bar. E.g.:
+You can display debugging info via the function GUI_DisplayText in the status
+bar, or via GUI_DisplayModalMessage as a modal message. E.g.:
 
 GUI_DisplayText("my debug info:%u, my other debug info:%u", 2, my_value, my_other_value);
+GUI_DisplayModalMessage("my debug info:%u, my other debug info:%u", 0xFFFF, my_value, my_other_value);
 
 Acknowledgements
 ================
@@ -585,12 +705,12 @@ Thank you to:
  * The Allegro 5 developers.
  * The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else who
    worked on the AdLib/OPL/MIDI player code.
- * rcblanke, ShaiWa, Nyerguds, Stefan Hendriks and DOS Nostalgia for their
-   soundtrack recordings.
+ * rcblanke, ShaiWa, Nyerguds, Stefan Hendriks, the Sound Card database and DOS
+   Nostalgia for their soundtrack recordings.
  * Peter, for help on various bits of the code, the music code, and AUDlib.
  * Nyerguds, for his Dune II editor.
  * Bug reporters and other improvement suggestions: MrFlibble, Nyerguds, Zocom7,
-   EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine, Wesker.
+   EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine, Wesker, WillSo.
  * Westwood Studios, for an amazing game!
 
 License
