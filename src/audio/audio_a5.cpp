@@ -733,11 +733,11 @@ AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan)
 	} else if (SAMPLE_AFFIRMATIVE <= sampleID && sampleID <= SAMPLE_MOVING_OUT) {
 		idx_start = 1;
 		idx_end = 1;
-		gain = sound_volume * volume;
+		gain = voice_volume * volume;
 	} else {
 		idx_start = 2;
 		idx_end = MAX_SAMPLE_INSTANCES - 1;
-		gain = sound_volume * volume;
+		gain = voice_volume * volume;
 	}
 
 	return AudioA5_PlaySampleRaw(sampleID, gain, pan, idx_start, idx_end);
