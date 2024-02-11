@@ -792,9 +792,8 @@ Skirmish_GenUnitsAI(enum HouseType houseID)
 				continue;
 		}
 
-		const enum UnitActionType actionType = ((Tools_Random_256() & 0x3) == 0) ? ACTION_AMBUSH : ACTION_AREA_GUARD;
 		const tile32 position = Tile_UnpackTile(packed);
-		Scenario_Create_Unit(houseID, type, 256, position, 127, actionType);
+		Scenario_Create_Unit(houseID, type, 256, position, 127, ACTION_AREA_GUARD);
 		count--;
 	}
 }
