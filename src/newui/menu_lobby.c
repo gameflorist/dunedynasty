@@ -1340,7 +1340,7 @@ MultiplayerLobby_Draw(void)
 
 	GUI_HallOfFame_SetColourScheme(true);
 
-	bool is_playable = Net_IsPlayable();
+	bool is_playable = Net_IsPlayable() && (lobby_map_generator_mode == MAP_GENERATOR_STOP);
 	bool can_issue_start = Net_HasServerRole() && is_playable;
 
 	Lobby_ShowHideStartButton(multiplayer_lobby_widgets, can_issue_start);
