@@ -35,6 +35,7 @@ extern void Skirmish_StartScenario(void);
 extern bool Skirmish_GenerateMap1(bool is_playable);
 extern bool Skirmish_GenerateMap(enum MapGeneratorMode mode);
 extern bool Skirmish_GenHouses(struct SkirmishData *sd);
+extern bool Skirmish_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd);
 void Skirmish_GenUnitsAI(enum HouseType houseID);
 
 #endif

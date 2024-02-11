@@ -736,36 +736,52 @@ Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, Skirmi
 	return 0;
 }
 
-static bool
-Skirmish_GenUnitsHuman(enum HouseType houseID, SkirmishData *sd)
+bool
+Skirmish_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd)
 {
+	enum UnitType units[7] = {
+		UNIT_MCV, House_GetInfantrySquad(houseID), UNIT_SIEGE_TANK, UNIT_QUAD, UNIT_QUAD, UNIT_TANK, UNIT_SIEGE_TANK
+	};
+
 	static const int delta[7] = {
 		0, -4, 4,
 		-MAP_SIZE_MAX * 3 - 2, -MAP_SIZE_MAX * 3 + 2,
 		 MAP_SIZE_MAX * 3 - 2,  MAP_SIZE_MAX * 3 + 2,
 	};
 
-	const uint16 start_location = Skirmish_FindStartLocation(houseID, 24, sd);
+	assert_compile(lengthof(delta) == lengthof(units));
+
+	const uint16 start_location = Skirmish_FindStartLocation(houseID, 32, sd);
 	if (!Map_IsValidPosition(start_location))
 		return false;
 
-	for (unsigned int i = 0; i < lengthof(delta); i++) {
-		const uint16 packed = start_location + delta[i];
-		const tile32 position = Tile_UnpackTile(packed);
+	static const int unitRowDelta[3] = {0, -1, 1};
+	static const int unitColDelta[7] = {0, -1, 1, -2, 2, -3, 3};
 
-		enum UnitType type = (i == 0) ? UNIT_MCV : House_GetLightVehicle(houseID);
+	for (unsigned int i = 0; i < lengthof(units); i++) {
 
-		enum LandscapeType lst = Map_GetLandscapeType(packed);
+		const uint16 unit_init_location = start_location + delta[i];
+		uint16 final_unit_location = 0;
 
-		/* If there's a structure or a bloom here, tough luck. */
-		if (lst == LST_STRUCTURE || lst == LST_BLOOM_FIELD)
-			continue;
+		for (unsigned int r = 0; r < lengthof(unitRowDelta); r++) {
+			for (unsigned int c = 0; c < lengthof(unitColDelta); c++) {
+				const uint16 try_unit_location = unit_init_location + (unitRowDelta[r] * MAP_SIZE_MAX) + unitColDelta[c];
+				const enum LandscapeType lst = Map_GetLandscapeType(try_unit_location);
+				if (lst != LST_ENTIRELY_MOUNTAIN && lst != LST_PARTIAL_MOUNTAIN && lst != LST_WALL && lst != LST_STRUCTURE && lst != LST_BLOOM_FIELD) {
+					final_unit_location = try_unit_location;
+					break;
+				}
+			}
+			if (final_unit_location != 0)
+				break;
+		}
 
-		/* If there's a mountain here, build infantry instead. */
-		if (lst == LST_ENTIRELY_MOUNTAIN || lst == LST_PARTIAL_MOUNTAIN)
-			type = House_GetInfantrySquad(houseID);
+		// If we didn't find a suitable location, use the initial (MCV) location.
+		if (final_unit_location == 0)
+			final_unit_location = start_location;
 
-		Scenario_Create_Unit(houseID, type, 256, position, 127, g_table_unitInfo[type].o.actionsPlayer[3]);
+		Scenario_Create_Unit(houseID, units[i], 256, Tile_UnpackTile(final_unit_location), 127,
+				g_table_unitInfo[units[i]].o.actionsPlayer[3]);
 	}
 
 	return true;
