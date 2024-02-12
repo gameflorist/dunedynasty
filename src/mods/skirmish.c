@@ -486,8 +486,8 @@ Skirmish_BuildOrder_Sorter(const void *a, const void *b)
 	return pa->priority - pb->priority;
 }
 
-static bool
-Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
+int
+Skirmish_GetTeamCount()
 {
 	const bool is_multiplayer = (g_campaign_selected == CAMPAIGNID_MULTIPLAYER);
 
@@ -505,6 +505,20 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 			}
 		}
 	}
+	return team_count;
+}
+
+static bool
+Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
+{
+	const bool is_multiplayer = (g_campaign_selected == CAMPAIGNID_MULTIPLAYER);
+
+	PlayerConfig *pc = g_skirmish.player_config;
+	if (is_multiplayer) {
+		pc = g_multiplayer.player_config;
+	}
+
+	int team_count = Skirmish_GetTeamCount();
 
 	uint16 tech_level = 0;
 	uint16 structure = 0;
@@ -751,7 +765,20 @@ Skirmish_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd)
 
 	assert_compile(lengthof(delta) == lengthof(units));
 
-	const uint16 start_location = Skirmish_FindStartLocation(houseID, 32, sd);
+	int team_count = Skirmish_GetTeamCount();
+
+	// Adjust distance threshold based on team count.
+	// Higher team counts need lower thresholds
+	// to increase map generation success.
+	int dist_threshold = 32;
+	if (team_count == 5) {
+		dist_threshold = 28;
+	}
+	if (team_count == 6) {
+		dist_threshold = 24;
+	}
+
+	const uint16 start_location = Skirmish_FindStartLocation(houseID, dist_threshold, sd);
 	if (!Map_IsValidPosition(start_location))
 		return false;
 
