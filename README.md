@@ -496,10 +496,11 @@ The steps below will build the release-version. You can change value of the `DCM
 
 ### Debugging
 
-You can use the function `GUI_DisplayText` to display debugging info in the status bar. E.g.:
+You can display debugging info via the function `GUI_DisplayText` in the status bar, or via `GUI_DisplayModalMessage` as a modal message. E.g.:
 
 ```c
 GUI_DisplayText("my debug info:%u, my other debug info:%u", 2, my_value, my_other_value);
+GUI_DisplayModalMessage("my debug info:%u, my other debug info:%u", 0xFFFF, my_value, my_other_value);
 ```
 
 ## Acknowledgements
