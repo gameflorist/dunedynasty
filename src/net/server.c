@@ -791,6 +791,7 @@ Server_Send_Scenario(unsigned char **buf)
 	Net_Encode_uint16(buf, g_multiplayer.credits);
 	Net_Encode_uint32(buf, g_multiplayer.next_seed);
 	Net_Encode_uint32(buf, g_multiplayer.seed_mode);
+	Net_Encode_uint32(buf, g_multiplayer.starting_army);
 	Net_Encode_uint32(buf, g_multiplayer.lose_condition);
 	Net_Encode_uint32(buf, g_multiplayer.landscape_params.min_spice_fields);
 	Net_Encode_uint32(buf, g_multiplayer.landscape_params.max_spice_fields);

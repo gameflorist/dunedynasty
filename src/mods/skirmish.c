@@ -130,7 +130,8 @@ Skirmish_Initialise(void)
 
 	g_skirmish.landscape_params.min_spice_fields = 24;
 	g_skirmish.landscape_params.max_spice_fields = 48;
-	g_multiplayer.lose_condition = MAP_LOSE_CONDITION_STRUCTURES;
+	g_skirmish.starting_army = MAP_STARTING_ARMY_LARGE;
+	g_skirmish.lose_condition = MAP_LOSE_CONDITION_STRUCTURES;
 	g_skirmish.worm_count = MAP_WORM_COUNT_2;
 	
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
@@ -753,8 +754,16 @@ Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, Skirmi
 bool
 Skirmish_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd)
 {
+
+	const bool is_multiplayer = (g_campaign_selected == CAMPAIGNID_MULTIPLAYER);
+
+	enum MapStartingArmy starting_army = g_skirmish.starting_army;
+	if (is_multiplayer) {
+		starting_army = g_multiplayer.starting_army;
+	}
+
 	enum UnitType units[7] = {
-		UNIT_MCV, House_GetInfantrySquad(houseID), UNIT_SIEGE_TANK, UNIT_QUAD, UNIT_QUAD, UNIT_TANK, UNIT_SIEGE_TANK
+		UNIT_MCV, UNIT_TROOPERS, UNIT_QUAD, UNIT_QUAD, UNIT_TANK, UNIT_SIEGE_TANK, UNIT_SIEGE_TANK
 	};
 
 	static const int delta[7] = {
@@ -809,6 +818,9 @@ Skirmish_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd)
 
 		Scenario_Create_Unit(houseID, units[i], 256, Tile_UnpackTile(final_unit_location), 127,
 				g_table_unitInfo[units[i]].o.actionsPlayer[3]);
+		
+		if (starting_army == MAP_STARTING_ARMY_SMALL && i > 1)
+			break;
 	}
 
 	return true;

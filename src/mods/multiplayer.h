@@ -31,8 +31,11 @@ typedef struct Multiplayer {
 	/* Map seed modes include random, user-defined and hidden from user. */
 	uint32 seed_mode;
 
+	/* Starting army can be small or large. */
+	enum MapStartingArmy starting_army;
+
 	/* Win condition can be structures or units. */
-	uint32 lose_condition;
+	enum MapLoseCondition lose_condition;
 
 	LandscapeGeneratorParams landscape_params;
 

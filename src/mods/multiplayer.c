@@ -30,6 +30,7 @@ Multiplayer_Init(void)
 	g_multiplayer.curr_seed = MapGenerator_PickRandomSeed();
 	g_multiplayer.next_seed = g_multiplayer.curr_seed;
 	g_multiplayer.seed_mode = MAP_SEED_MODE_RANDOM;
+	g_multiplayer.starting_army = MAP_STARTING_ARMY_SMALL;
 	g_multiplayer.lose_condition = MAP_LOSE_CONDITION_STRUCTURES;
 	g_multiplayer.worm_count = MAP_WORM_COUNT_2;
 

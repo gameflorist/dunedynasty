@@ -41,6 +41,7 @@ enum MapGeneratorMode lobby_map_generator_mode;
 
 char map_options_fixed_seed[5 + 1] = "";
 char map_options_starting_credits[5 + 1] = "0";
+enum MapStartingArmy map_options_starting_army = MAP_STARTING_ARMY_SMALL;
 enum MapLoseCondition map_options_lose_condition = MAP_LOSE_CONDITION_STRUCTURES;
 enum MapSeedMode map_options_seed_mode = MAP_SEED_MODE_RANDOM;
 char map_options_spice_fields_min[3 + 1] = "0";
@@ -51,6 +52,7 @@ enum MapWormCount map_options_worm_count = MAP_WORM_COUNT_2;
 Skirmish map_options_saved_skirmish;
 Multiplayer map_options_saved_multiplayer;
 enum MapSeedMode map_options_saved_seed_mode;
+enum MapStartingArmy map_options_saved_starting_army;
 enum MapLoseCondition map_options_saved_lose_condition;
 enum MapWormCount map_options_saved_worm_count;
 
@@ -266,6 +268,22 @@ MapOptionsLobby_ChangeSeedMode(enum MapSeedMode seed_mode)
 }
 
 static void
+MapOptionsLobby_ChangeStartingArmy(enum MapStartingArmy starting_army)
+{
+	for(int m = 0; m < 2; m++) {
+		Widget *w = GUI_Widget_Get_ByIndex(map_options_lobby_widgets, MAP_OPTIONS_WIDGET_STARTING_ARMY_SMALL + m);
+		w->drawParameterNormal.sprite = ((int)starting_army == m) ? SHAPE_RADIO_BUTTON_ON: SHAPE_RADIO_BUTTON_OFF;
+		w->state.selected = ((int)starting_army == m) ? 1: 0;
+	}
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+		g_skirmish.starting_army = starting_army;
+	} else {
+		g_multiplayer.starting_army = starting_army;
+	}
+	map_options_starting_army = starting_army;
+}
+
+static void
 MapOptionsLobby_ChangeLoseCondition(enum MapLoseCondition lose_condition)
 {
 	for(int m = 0; m < 2; m++) {
@@ -320,6 +338,11 @@ MapOptionsLobby_UpdateReadOnlyView(void)
 			MapOptionsLobby_ChangeSeedMode(map_options_seed_mode);
 		}
 
+		if (map_options_starting_army != g_multiplayer.starting_army) {
+			map_options_starting_army = g_multiplayer.starting_army;
+			MapOptionsLobby_ChangeStartingArmy(map_options_starting_army);
+		}
+
 		if (map_options_lose_condition != g_multiplayer.lose_condition) {
 			map_options_lose_condition = g_multiplayer.lose_condition;
 			MapOptionsLobby_ChangeLoseCondition(map_options_lose_condition);
@@ -336,6 +359,14 @@ static bool
 MapOptionsLobby_ClickMapSeedRadioButton(Widget *radio)
 {
 	MapOptionsLobby_ChangeSeedMode(radio->index - MAP_OPTIONS_WIDGET_SEED_RANDOM);
+
+	return true;
+}
+
+static bool
+MapOptionsLobby_ClickStartingArmyRadioButton(Widget *radio)
+{
+	MapOptionsLobby_ChangeStartingArmy(radio->index - MAP_OPTIONS_WIDGET_STARTING_ARMY_SMALL);
 
 	return true;
 }
@@ -365,7 +396,7 @@ MapOptionsLobby_InitWidgets(void)
 	int offsetY;
 
 	/* Starting credits. */
-	w = GUI_Widget_Allocate(24, 0, MAP_OPTIONS_GUI_MAIN_X + 4, MAP_OPTIONS_GUI_MAIN_Y + 1*lineHeight, 0xFFFE, STR_NULL);
+	w = GUI_Widget_Allocate(24, 0, MAP_OPTIONS_GUI_MAIN_X + Font_GetStringWidth("Credits: "), MAP_OPTIONS_GUI_MAIN_Y, 0xFFFE, STR_NULL);
 	w->width  = 46;
 	w->height = 12;
 	memset(&w->flags, 0, sizeof(w->flags));
@@ -382,11 +413,24 @@ MapOptionsLobby_InitWidgets(void)
 	w->flags.invisible = true;
 	map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
 
+	/* starting army radio buttons. */
+	const int startingArmyRadioOffsetX[] = {0,45};
+	for (int choice = 0; choice < 2; choice++) {
+		w = GUI_Widget_Allocate(MAP_OPTIONS_WIDGET_STARTING_ARMY_SMALL + choice, 0, MAP_OPTIONS_GUI_MAIN_X + startingArmyRadioOffsetX[choice],
+				MAP_OPTIONS_GUI_MAIN_Y + 27, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
+		w->width = (choice == MAP_OPTIONS_WIDGET_STARTING_ARMY_SMALL) ? 84 : 46;
+		w->clickProc = MapOptionsLobby_ClickStartingArmyRadioButton;
+		w->drawParameterNormal.sprite = (choice == (int)map_options_starting_army) ? SHAPE_RADIO_BUTTON_ON: SHAPE_RADIO_BUTTON_OFF;
+		w->state.selected = (choice == (int)map_options_starting_army) ? 1: 0;
+		w->flags.greyWhenInvisible = true;
+		map_options_lobby_widgets = GUI_Widget_Link(map_options_lobby_widgets, w);
+	}
+
 	/* lose condition radio buttons. */
 	const int loseConditionRadioOffsetX[] = {0,68};
 	for (int choice = 0; choice < 2; choice++) {
 		w = GUI_Widget_Allocate(MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES + choice, 0, MAP_OPTIONS_GUI_MAIN_X + loseConditionRadioOffsetX[choice],
-				MAP_OPTIONS_GUI_MAIN_Y + 44, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
+				MAP_OPTIONS_GUI_MAIN_Y + 50, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
 		w->width = (choice == MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES) ? 84 : 46;
 		w->clickProc = MapOptionsLobby_ClickLoseConditionRadioButton;
 		w->drawParameterNormal.sprite = (choice == (int)map_options_lose_condition) ? SHAPE_RADIO_BUTTON_ON: SHAPE_RADIO_BUTTON_OFF;
@@ -476,7 +520,7 @@ MapOptionsLobby_InitWidgets(void)
 	}
 
 	/* Enhancement: Fog of War */
-	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 13;
+	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 15;
 	w = GUI_Widget_Allocate(5, 0, MAP_OPTIONS_GUI_MAIN_X, offsetY + 4 * lineHeight,
 			SHAPE_CHECKBOX_OFF, STR_NULL);
 	w->width = 110;
@@ -547,10 +591,12 @@ MapOptionsLobby_Initialise(void)
 	map_options_saved_skirmish = g_skirmish;
 	map_options_saved_multiplayer = g_multiplayer;
 	map_options_saved_seed_mode = map_options_seed_mode;
+	map_options_saved_starting_army = map_options_starting_army;
 	map_options_saved_lose_condition = map_options_lose_condition;
 	map_options_saved_worm_count = map_options_worm_count;
 
 	int widgetIDs[] = {3, 4, 5, 6, 23, 24,
+		MAP_OPTIONS_WIDGET_STARTING_ARMY_SMALL, MAP_OPTIONS_WIDGET_STARTING_ARMY_SMALL+1,
 		MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES, MAP_OPTIONS_WIDGET_LOSE_CONDITION_STRUCTURES+1,
 		MAP_OPTIONS_WIDGET_WORM_COUNT_0, MAP_OPTIONS_WIDGET_WORM_COUNT_0+1, MAP_OPTIONS_WIDGET_WORM_COUNT_0+2, MAP_OPTIONS_WIDGET_WORM_COUNT_0+3,
 		MAP_OPTIONS_WIDGET_SEED_RANDOM,	MAP_OPTIONS_WIDGET_SEED_RANDOM+1, MAP_OPTIONS_WIDGET_SEED_RANDOM+2, -1};
@@ -574,6 +620,7 @@ MapOptionsLobby_Initialise(void)
 	widgetApply->flags.greyWhenInvisible = !MapOptionsLobby_IsReadOnly();
 
 	MapOptionsLobby_ChangeSeedMode(map_options_seed_mode);
+	MapOptionsLobby_ChangeStartingArmy(map_options_starting_army);
 	MapOptionsLobby_ChangeLoseCondition(map_options_lose_condition);
 	MapOptionsLobby_ChangeWormCount(map_options_worm_count);
 }
@@ -1090,29 +1137,35 @@ MapOptionsLobby_Draw(void)
 	/* Starting credits */
 	Prim_DrawBorder(MAP_OPTIONS_GUI_MAIN_X - 2, MAP_OPTIONS_GUI_MAIN_Y - 2,
 			MAP_OPTIONS_GUI_MAIN_W + 4, MAP_OPTIONS_GUI_MAIN_H + 4, 1, false, false, 4);
-	GUI_DrawText_Wrapper("Starting credits:", MAP_OPTIONS_GUI_MAIN_X, MAP_OPTIONS_GUI_MAIN_Y, 0xF, 0, 0x22);
+	GUI_DrawText_Wrapper("Credits:", MAP_OPTIONS_GUI_MAIN_X, MAP_OPTIONS_GUI_MAIN_Y, 0xF, 0, 0x22);
 	uint16 credits_proposed = atoi(map_options_starting_credits);
 	if (credits_proposed < MAP_OPTIONS_STARTING_CREDITS_MIN) {
-		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 52, MAP_OPTIONS_GUI_MAIN_Y + 1*lineHeight + 2, 0xE7, 0, 0x21);
+		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 92, MAP_OPTIONS_GUI_MAIN_Y + 2, 0xE7, 0, 0x21);
 		GUI_DrawText_Wrapper("Assign at least %u credits", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122, MAP_OPTIONS_STARTING_CREDITS_MIN);
 		issuesFound = true;
 	}
 	if (credits_proposed > MAP_OPTIONS_STARTING_CREDITS_MAX) {
-		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 52, MAP_OPTIONS_GUI_MAIN_Y + 1*lineHeight + 2, 0xE7, 0, 0x21);
+		GUI_DrawText_Wrapper("x", MAP_OPTIONS_GUI_MAIN_X + 92, MAP_OPTIONS_GUI_MAIN_Y + 2, 0xE7, 0, 0x21);
 		if (!issuesFound) {
 			GUI_DrawText_Wrapper("Assign at most %u credits", MAP_OPTIONS_GUI_ERROR_X, MAP_OPTIONS_GUI_ERROR_Y, 0xE7, 0, 0x122, MAP_OPTIONS_STARTING_CREDITS_MAX);
 			issuesFound = true;
 		}
 	}
 
+	/* Starting army */
+	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 3 + 1*lineHeight;
+	GUI_DrawText_Wrapper("Starting Army:", MAP_OPTIONS_GUI_MAIN_X, offsetY, 0xF, 0, 0x22);
+	GUI_DrawText_Wrapper("Small", MAP_OPTIONS_GUI_MAIN_X + 10, offsetY + 1*lineHeight, (map_options_starting_army == MAP_STARTING_ARMY_SMALL) ? 0x8: 0xF, 0, 0x21);
+	GUI_DrawText_Wrapper("Large", MAP_OPTIONS_GUI_MAIN_X + 55, offsetY + 1*lineHeight, (map_options_starting_army == MAP_STARTING_ARMY_LARGE) ? 0x8: 0xF, 0, 0x21);
+
 	/* Win Condition */
-	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 6;
-	GUI_DrawText_Wrapper("Lose condition:", MAP_OPTIONS_GUI_MAIN_X, offsetY + 2*lineHeight, 0xF, 0, 0x22);
-	GUI_DrawText_Wrapper("Structures", MAP_OPTIONS_GUI_MAIN_X + 10, offsetY + 3*lineHeight + 2, (map_options_lose_condition == MAP_LOSE_CONDITION_STRUCTURES) ? 0x8: 0xF, 0, 0x21);
-	GUI_DrawText_Wrapper("Units", MAP_OPTIONS_GUI_MAIN_X + 78, offsetY + 3*lineHeight + 2, (map_options_lose_condition == MAP_LOSE_CONDITION_UNITS) ? 0x8: 0xF, 0, 0x21);
+	offsetY = offsetY + 11 + 1*lineHeight;
+	GUI_DrawText_Wrapper("Lose condition:", MAP_OPTIONS_GUI_MAIN_X, offsetY, 0xF, 0, 0x22);
+	GUI_DrawText_Wrapper("Structures", MAP_OPTIONS_GUI_MAIN_X + 10, offsetY + 1*lineHeight, (map_options_lose_condition == MAP_LOSE_CONDITION_STRUCTURES) ? 0x8: 0xF, 0, 0x21);
+	GUI_DrawText_Wrapper("Units", MAP_OPTIONS_GUI_MAIN_X + 78, offsetY + 1*lineHeight, (map_options_lose_condition == MAP_LOSE_CONDITION_UNITS) ? 0x8: 0xF, 0, 0x21);
 
 	/* Enhancement: Fog of War */
-	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 12;
+	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 14;
 	GUI_DrawText_Wrapper("Fog of War", MAP_OPTIONS_GUI_MAIN_X + 12, offsetY + 4*lineHeight, 0xF, 0, 0x22);
 	offsetY = MAP_OPTIONS_GUI_MAIN_Y + 16;
 	GUI_DrawText_Wrapper("Insatiable worms", MAP_OPTIONS_GUI_MAIN_X + 12, offsetY + 5*lineHeight, 0xF, 0, 0x22);

@@ -39,6 +39,11 @@ enum MapLoseCondition {
 	MAP_LOSE_CONDITION_UNITS = 1
 };
 
+enum MapStartingArmy {
+	MAP_STARTING_ARMY_SMALL = 0,
+	MAP_STARTING_ARMY_LARGE = 1
+};
+
 enum MapWormCount {
 	MAP_WORM_COUNT_0 = 0,
 	MAP_WORM_COUNT_1 = 1,
