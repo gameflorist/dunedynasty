@@ -210,7 +210,7 @@ void GFX_DrawSprite_(uint16 spriteID, uint16 x, uint16 y, uint8 houseID)
 	uint8 *rptr;
 	uint8 palette[16];
 
-	assert(houseID < HOUSE_MAX);
+	assert(houseID < HOUSE_NEUTRAL);
 
 	iconRTBL = g_iconRTBL + spriteID;
 	iconRPAL = g_iconRPAL + ((*iconRTBL) << 4);

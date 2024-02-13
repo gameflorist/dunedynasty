@@ -81,10 +81,10 @@ Structure *
 Structure_FindFirst(PoolFindStruct *find,
 		enum HouseType houseID, enum StructureType type)
 {
-	assert(houseID < HOUSE_MAX || houseID == HOUSE_INVALID);
+	assert(houseID < HOUSE_NEUTRAL || houseID == HOUSE_INVALID);
 	assert(type < STRUCTURE_MAX || type == STRUCTURE_INVALID);
 
-	find->houseID = (houseID < HOUSE_MAX) ? houseID : HOUSE_INVALID;
+	find->houseID = (houseID < HOUSE_NEUTRAL) ? houseID : HOUSE_INVALID;
 	find->type    = (type < STRUCTURE_MAX) ? type : 0xFFFF;
 	find->index   = 0xFFFF;
 

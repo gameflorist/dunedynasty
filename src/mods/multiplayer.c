@@ -37,7 +37,7 @@ Multiplayer_Init(void)
 	g_multiplayer.landscape_params.min_spice_fields = 24;
 	g_multiplayer.landscape_params.max_spice_fields = 48;
 	
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		PlayerConfig pc;
 		pc.brain = BRAIN_NONE;
 		pc.team = (enum PlayerTeam)((int)h +1);
@@ -50,7 +50,7 @@ Multiplayer_Init(void)
 bool
 Multiplayer_IsHouseAvailable(enum HouseType houseID)
 {
-	assert(houseID < HOUSE_MAX);
+	assert(houseID < HOUSE_NEUTRAL);
 	return (g_multiplayer.player_config[houseID].brain == BRAIN_NONE);
 }
 
@@ -68,7 +68,7 @@ Multiplayer_GenHouses(struct SkirmishData *sd)
 		return false;
 	}
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (g_multiplayer.client[h] == 0 || g_multiplayer.player_config[h].brain != BRAIN_HUMAN)
 			continue;
 
@@ -79,7 +79,7 @@ Multiplayer_GenHouses(struct SkirmishData *sd)
 		}
 	}
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (g_multiplayer.player_config[h].brain == BRAIN_CPU) {
 			Skirmish_GenUnitsAI(h);
 		}
@@ -96,13 +96,13 @@ Multiplayer_Prepare(void)
 	memset(g_table_houseAlliance, 0, sizeof(g_table_houseAlliance));
 
 	/* Assign alliances. */
-	for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_MAX; h1++) {
+	for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_NEUTRAL; h1++) {
 		if (g_multiplayer.player_config[h1].brain == BRAIN_NONE)
 			continue;
 
 		g_table_houseAlliance[h1][h1] = HOUSEALLIANCE_ALLIES;
 
-		for (enum HouseType h2 = h1 + 1; h2 < HOUSE_MAX; h2++) {
+		for (enum HouseType h2 = h1 + 1; h2 < HOUSE_NEUTRAL; h2++) {
 			if (g_multiplayer.player_config[h2].brain == BRAIN_NONE)
 				continue;
 
@@ -117,7 +117,7 @@ Multiplayer_Prepare(void)
 	}	
 
 	/* Make sure, Fremen and Saboteurs belong to the houses that spawned them. */
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		HouseInfo *hi = &g_table_houseInfo[h];
 
 		if (hi->specialWeapon == HOUSE_WEAPON_FREMEN) {
@@ -133,7 +133,7 @@ Multiplayer_Prepare(void)
 bool Multiplayer_IsAnyHouseLeftPlaying(void)
 {
 	bool houseLeft = false;
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (g_multiplayer.state[h] == MP_HOUSE_PLAYING)
 			houseLeft = true;
 	}

@@ -112,10 +112,10 @@ typedef struct HouseInfo {
 	} superWeapon;
 } HouseInfo;
 
-extern const HouseInfo g_table_houseInfo_original[HOUSE_MAX];
-extern HouseInfo g_table_houseInfo[HOUSE_MAX];
-extern enum HouseAlliance g_table_houseAlliance[HOUSE_MAX][HOUSE_MAX];
-extern const enum HouseType g_table_houseRemap6to3[HOUSE_MAX];
+extern const HouseInfo g_table_houseInfo_original[HOUSE_NEUTRAL];
+extern HouseInfo g_table_houseInfo[HOUSE_NEUTRAL];
+extern enum HouseAlliance g_table_houseAlliance[HOUSE_NEUTRAL][HOUSE_NEUTRAL];
+extern const enum HouseType g_table_houseRemap6to3[HOUSE_NEUTRAL];
 
 extern House *g_playerHouse;
 extern enum HouseType g_playerHouseID;

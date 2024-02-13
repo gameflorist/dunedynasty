@@ -134,7 +134,7 @@ Skirmish_Initialise(void)
 	g_skirmish.lose_condition = MAP_LOSE_CONDITION_STRUCTURES;
 	g_skirmish.worm_count = MAP_WORM_COUNT_2;
 	
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		PlayerConfig pc;
 		pc.brain = BRAIN_NONE;
 		pc.team = (enum PlayerTeam)((int)h +1);
@@ -151,14 +151,14 @@ Skirmish_IsPlayable(void)
 	bool found_enemy = false;
 	enum PlayerTeam human_team;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (g_skirmish.player_config[h].brain == BRAIN_HUMAN) {
 			found_human = true;
 			human_team = g_skirmish.player_config[h].team;
 		}
 	}
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (g_skirmish.player_config[h].brain == BRAIN_CPU && g_skirmish.player_config[h].team != human_team) {
 			found_enemy = true;
 		}
@@ -238,7 +238,7 @@ Skirmish_ResetAlliances(void)
 	memset(g_table_houseAlliance, 0, sizeof(g_table_houseAlliance));
 
 	/* Assign alliances. */
-	for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_MAX; h1++) {
+	for (enum HouseType h1 = HOUSE_HARKONNEN; h1 < HOUSE_NEUTRAL; h1++) {
 		if (g_skirmish.player_config[h1].brain == BRAIN_NONE)
 			continue;
 
@@ -247,7 +247,7 @@ Skirmish_ResetAlliances(void)
 
 		g_table_houseAlliance[h1][h1] = HOUSEALLIANCE_ALLIES;
 
-		for (enum HouseType h2 = h1 + 1; h2 < HOUSE_MAX; h2++) {
+		for (enum HouseType h2 = h1 + 1; h2 < HOUSE_NEUTRAL; h2++) {
 			if (g_skirmish.player_config[h2].brain == BRAIN_NONE)
 				continue;
 
@@ -262,7 +262,7 @@ Skirmish_ResetAlliances(void)
 	}
 
 	/* Make sure, Fremen and Saboteurs belong to the houses that spawned them. */
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		HouseInfo *hi = &g_table_houseInfo[h];
 
 		if (g_skirmish.player_config[h].brain == BRAIN_NONE)
@@ -499,7 +499,7 @@ Skirmish_GetTeamCount()
 
 	int team_count = 0;
 	for (enum PlayerTeam t = TEAM_1; t < TEAM_MAX; t++) {
-		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 			if (pc[h].brain != BRAIN_NONE && pc[h].team == t) {
 				team_count++;
 				break;
@@ -528,7 +528,7 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 	bool is_cpu_allied_with_player = pc[houseID].brain == BRAIN_CPU && pc[g_playerHouseID].brain == pc[houseID].brain;
 
 	int cpu_count = 0;
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (pc[h].brain == BRAIN_CPU)
 			cpu_count++;
 	}
@@ -898,7 +898,7 @@ Skirmish_GenHouses(SkirmishData *sd)
 		credits = g_multiplayer.credits;
 	}
 	
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		if (pc[houseID].brain == BRAIN_NONE)
 			continue;
 
@@ -920,7 +920,7 @@ Skirmish_GenHouses(SkirmishData *sd)
 static bool
 Skirmish_GenUnits(SkirmishData *sd)
 {
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		if (g_skirmish.player_config[houseID].brain == BRAIN_NONE)
 			continue;
 
@@ -938,7 +938,7 @@ Skirmish_GenUnits(SkirmishData *sd)
 static int
 Skirmish_GenSandworms(int worm_count)
 {
-	const enum HouseType houseID = (g_playerHouseID == HOUSE_FREMEN) ? HOUSE_ATREIDES : HOUSE_FREMEN;
+	const enum HouseType houseID = HOUSE_NEUTRAL;
 	const enum UnitType type = UNIT_SANDWORM;
 	const enum UnitActionType actionType = enhancement_insatiable_sandworms ? ACTION_AREA_GUARD : ACTION_AMBUSH;
 	const uint16 acceptableLst
@@ -974,7 +974,7 @@ Skirmish_GenReinforcements(void)
 	assert(g_campaignID < 9);
 
 	uint8 index = 0;
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX && index < 16; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL && index < 16; h++) {
 		if (g_skirmish.player_config[h].brain == BRAIN_NONE)
 			continue;
 

@@ -170,8 +170,8 @@ static ALLEGRO_BITMAP *icon_texture48;    /* 48x48 tiles. */
 static ALLEGRO_BITMAP *shape_texture;     /* in game shapes. */
 static ALLEGRO_BITMAP *mentat_texture;    /* XXX - temporary bitmap for mentats. */
 static ALLEGRO_BITMAP *region_texture;    /* strategic map shapes. */
-static IconCoord s_icon[ICONID_MAX][HOUSE_MAX];
-static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_MAX];
+static IconCoord s_icon[ICONID_MAX][HOUSE_NEUTRAL];
+static ALLEGRO_BITMAP *s_shape[SHAPEID_MAX][HOUSE_NEUTRAL];
 static ALLEGRO_BITMAP *s_font[FONTID_MAX][256];
 static ALLEGRO_MOUSE_CURSOR *s_cursor[CURSOR_MAX];
 
@@ -450,10 +450,10 @@ VideoA5_UninitCPSStore(void)
 void
 VideoA5_Uninit(void)
 {
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		for (enum ShapeID shapeID = 0; shapeID < SHAPEID_MAX; shapeID++) {
 			if (s_shape[shapeID][houseID] != NULL) {
-				if ((houseID + 1 == HOUSE_MAX) || (s_shape[shapeID][houseID] != s_shape[shapeID][houseID + 1]))
+				if ((houseID + 1 == HOUSE_NEUTRAL) || (s_shape[shapeID][houseID] != s_shape[shapeID][houseID + 1]))
 					al_destroy_bitmap(s_shape[shapeID][houseID]);
 
 				s_shape[shapeID][houseID] = NULL;
@@ -1292,7 +1292,7 @@ VideoA5_InitCPS(void)
 	coord = &cps_special_coord[CPS_STATUSBAR_RIGHT];
 	al_draw_filled_rectangle(coord->tx - 1.0f, coord->ty + coord->h, coord->tx + coord->w + 1.5f, coord->ty + coord->h + 1.0f, al_map_rgb(0, 0, 0));
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", SCREEN_1, NULL);
 		GUI_Palette_CreateRemap(houseID);
 		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_1, g_remap);
@@ -1363,11 +1363,11 @@ VideoA5_DrawCPSRegion(enum SearchDirectory dir, const char *filename, int sx, in
 void
 VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y)
 {
-	const unsigned char tint[HOUSE_MAX][3] = {
+	const unsigned char tint[HOUSE_NEUTRAL][3] = {
 		{ 0x98, 0x00, 0x00 }, { 0x28, 0x3C, 0x98 }, { 0x24, 0x98, 0x24 }, { 0x98, 0x4C, 0x04 }, { 0xA8, 0x30, 0xA8 }, { 0x98, 0x68, 0x00 }
 	};
 	assert(cpsID < CPS_SPECIAL_MAX);
-	assert(houseID < HOUSE_MAX);
+	assert(houseID < HOUSE_NEUTRAL);
 
 	const struct CPSSpecialCoord *coord = &cps_special_coord[cpsID];
 
@@ -1400,7 +1400,7 @@ VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int
 {
 	/* This is only used to draw interface when rendering the blur brush. */
 	assert(CPS_SIDEBAR_TOP <= cpsID && cpsID <= CPS_SIDEBAR_BOTTOM);
-	assert(houseID < HOUSE_MAX);
+	assert(houseID < HOUSE_NEUTRAL);
 
 	const struct CPSSpecialCoord *coord = &cps_special_coord[cpsID];
 	int sx = coord->tx + 17 * houseID;
@@ -1484,7 +1484,7 @@ VideoA5_ExportIconGroup(enum IconMapEntries group, int num_common,
 	if (num_common < 0)
 		num_common = num;
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		GUI_Palette_CreateRemap(houseID);
 
 		for (int idx = 0; idx < num; idx++) {
@@ -1528,7 +1528,7 @@ VideoA5_DrawIconPadding(ALLEGRO_BITMAP *membmp, IconConnectivity *connect)
 		if (targ->sx == 0 && targ->sy == 0)
 			continue;
 
-		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 			const IconCoord *src;
 			targ = &s_icon[iconID][houseID];
 
@@ -1596,7 +1596,7 @@ VideoA5_ExportWindtrapOverlay(unsigned char *buf, uint16 iconID,
 	VideoA5_GetNextXY(WINDOW_W, WINDOW_H, x, y, TILE_SIZE, TILE_SIZE, TILE_SIZE, &x, &y);
 	GFX_DrawSprite_(iconID, x, y, HOUSE_HARKONNEN);
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		s_icon[idx][houseID].sx = x;
 		s_icon[idx][houseID].sy = y;
 	}
@@ -1664,7 +1664,7 @@ VideoA5_InitExternalTiles(const char *mapfile, const char *bmpfile, int size)
 			continue;
 		}
 
-		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 			IconCoord *coord = &s_icon[iconID][houseID];
 
 			if (houseID != HOUSE_HARKONNEN &&
@@ -1924,7 +1924,7 @@ void
 VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y)
 {
 	assert(iconID < ICONID_MAX);
-	assert(houseID < HOUSE_MAX);
+	assert(houseID < HOUSE_NEUTRAL);
 
 	const IconCoord *coord = &s_icon[iconID][houseID];
 	assert(coord->sx != 0 && coord->sy != 0);
@@ -2136,7 +2136,7 @@ VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
 	assert(s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN] != NULL);
 	assert(s_shape[SHAPE_RESUME_GAME + 1][HOUSE_HARKONNEN] != NULL);
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN + 1; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN + 1; houseID < HOUSE_NEUTRAL; houseID++) {
 	//	s_shape[SHAPE_SEND_ORDER  + 0][houseID] = s_shape[SHAPE_SEND_ORDER  + 0][HOUSE_HARKONNEN];
 	//	s_shape[SHAPE_SEND_ORDER  + 1][houseID] = s_shape[SHAPE_SEND_ORDER  + 1][HOUSE_HARKONNEN];
 		s_shape[SHAPE_RESUME_GAME + 0][houseID] = s_shape[SHAPE_RESUME_GAME + 0][HOUSE_HARKONNEN];
@@ -2209,7 +2209,7 @@ VideoA5_InitShapes(unsigned char *buf)
 			continue;
 		}
 
-		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 			if (shape_data[group].start == SHAPE_DEVIATOR_GAS_CLOUD) {
 				GUI_Palette_CreateRemapDeviatorGas(houseID);
 			} else {
@@ -2388,7 +2388,7 @@ void
 VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, int flags)
 {
 	assert(shapeID < SHAPEID_MAX);
-	assert(houseID < HOUSE_MAX);
+	assert(houseID < HOUSE_NEUTRAL);
 	assert(s_shape[shapeID][houseID] != NULL);
 
 	int al_flags = 0;
@@ -2441,7 +2441,7 @@ VideoA5_DrawShapeRotate(enum ShapeID shapeID, enum HouseType houseID, int x, int
 {
 	ALLEGRO_BITMAP *bmp = s_shape[shapeID][houseID];
 	assert(shapeID < SHAPEID_MAX);
-	assert(houseID < HOUSE_MAX);
+	assert(houseID < HOUSE_NEUTRAL);
 	assert(bmp != NULL);
 	assert((flags & 0x300) != 0x100);
 	assert((flags & 0x300) != 0x200);
@@ -2505,7 +2505,7 @@ FadeInAux *
 Video_InitFadeInShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y)
 {
 	assert(shapeID < SHAPEID_MAX);
-	assert(houseID < HOUSE_MAX);
+	assert(houseID < HOUSE_NEUTRAL);
 	assert(s_shape[shapeID][houseID] != NULL);
 
 	ALLEGRO_BITMAP *src = s_shape[shapeID][houseID];

@@ -58,10 +58,10 @@ House_Get_ByIndex(uint8 index)
 House *
 House_FindFirst(PoolFindStruct *find, enum HouseType houseID)
 {
-	assert(houseID < HOUSE_MAX || houseID == HOUSE_INVALID);
+	assert(houseID < HOUSE_NEUTRAL || houseID == HOUSE_INVALID);
 
 	/* Note: houseID isn't actually used. */
-	find->houseID = (houseID < HOUSE_MAX) ? houseID : HOUSE_INVALID;
+	find->houseID = (houseID < HOUSE_NEUTRAL) ? houseID : HOUSE_INVALID;
 	find->type    = 0xFFFF;
 	find->index   = 0xFFFF;
 

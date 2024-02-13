@@ -409,7 +409,7 @@ House_GetAIs(void)
 {
 	enum HouseFlag houses = 0;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (!House_IsHuman(h))
 			houses |= (1 << h);
 	}
@@ -458,7 +458,7 @@ House_GetAllies(enum HouseType houseID)
 {
 	enum HouseFlag allies = 0;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (House_AreAllied(houseID, h))
 			allies |= (1 << h);
 	}
@@ -632,12 +632,12 @@ House_StarportQueueEmpty(const House *h)
 
 const char *House_GetWSAHouseFilename(uint8 houseID)
 {
-	static const char *houseWSAFileNames[HOUSE_MAX] = {
+	static const char *houseWSAFileNames[HOUSE_NEUTRAL] = {
 		"FHARK.WSA", "FARTR.WSA", "FORDOS.WSA",
 		"FFREMN.WSA", "FSARD.WSA", "FMERC.WSA"
 	};
 
-	if (houseID >= HOUSE_MAX) return NULL;
+	if (houseID >= HOUSE_NEUTRAL) return NULL;
 	return houseWSAFileNames[houseID];
 }
 

@@ -1087,7 +1087,7 @@ SkirmishLobby_Initialise(void)
 
 	ws->scrollMax = 0;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		si = Scrollbar_AllocItem(w, SCROLLBAR_PLAYER_CONFIG);
 		si->d.player_config = &g_skirmish.player_config[h];
 		snprintf(si->text, sizeof(si->text), "%s", g_table_houseInfo[h].name);
@@ -1285,7 +1285,7 @@ SkirmishLobby_Loop(void)
 			if (SkirmishLobby_IsPlayable()) {
 				g_playerHouseID = HOUSE_INVALID;
 
-				for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+				for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 					if (g_skirmish.player_config[h].brain == BRAIN_HUMAN) {
 						g_playerHouseID = h;
 						break;
@@ -1322,7 +1322,7 @@ SkirmishLobby_Loop(void)
 					new_brain = ((new_brain + change_player) % (BRAIN_CPU + 1));
 
 					/* Skip over human player if one is already selected. */
-					for (enum HouseType h = HOUSE_HARKONNEN; (new_brain == BRAIN_HUMAN) && (h < HOUSE_MAX); h++) {
+					for (enum HouseType h = HOUSE_HARKONNEN; (new_brain == BRAIN_HUMAN) && (h < HOUSE_NEUTRAL); h++) {
 						if (g_skirmish.player_config[h].brain == BRAIN_HUMAN)
 							new_brain = ((new_brain + change_player) % (BRAIN_CPU + 1));
 					}
@@ -1373,7 +1373,7 @@ MultiplayerLobby_Initialise(void)
 
 	ws->scrollMax = 0;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		si = Scrollbar_AllocItem(w, SCROLLBAR_PLAYER_CONFIG);
 		si->d.player_config = &g_multiplayer.player_config[h];
 		snprintf(si->text, sizeof(si->text), "%s", g_table_houseInfo[h].name);

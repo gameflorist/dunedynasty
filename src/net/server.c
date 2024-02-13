@@ -202,7 +202,7 @@ Server_ResetCache(void)
 {
 	memset(g_server_broadcast_message_buf, 0, MAX_SERVER_BROADCAST_MESSAGE_LEN);
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		memset(g_server2client_message_buf[h], 0, MAX_SERVER_TO_CLIENT_MESSAGE_LEN);
 		g_server2client_message_len[h] = 0;
 	}
@@ -502,7 +502,7 @@ Server_Send_UpdateExplosions(unsigned char **buf)
 static void
 Server_BufferGameEvent(enum HouseFlag houses, int len, const unsigned char *src)
 {
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		if (!(houses & (1 << houseID)))
 			continue;
 
@@ -799,7 +799,7 @@ Server_Send_Scenario(unsigned char **buf)
 	Net_Encode_uint8 (buf, enhancement_fog_of_war);
 	Net_Encode_uint8 (buf, enhancement_insatiable_sandworms);
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		Net_Encode_uint8(buf, g_multiplayer.client[h]);
 		Net_Encode_uint8(buf, g_multiplayer.player_config[h].brain);
 		Net_Encode_uint8(buf, g_multiplayer.player_config[h].team);
@@ -816,7 +816,7 @@ Server_ReturnToLobbyNow(bool win)
 	/* XXX - assume two teams for now.  Ideally the server enters
 	 * observer mode, or runs the game from the lobby, or both.
 	 */
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (g_multiplayer.state[h] != MP_HOUSE_PLAYING)
 			continue;
 
@@ -1422,7 +1422,7 @@ Server_Recv_PrefHouse(int peerID, enum HouseType houseID)
 	if (old_house == houseID)
 		return;
 
-	if (houseID < HOUSE_MAX) {
+	if (houseID < HOUSE_NEUTRAL) {
 		if (!Multiplayer_IsHouseAvailable(houseID))
 			return;
 

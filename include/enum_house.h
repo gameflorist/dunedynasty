@@ -11,7 +11,8 @@ enum HouseType {
 	HOUSE_SARDAUKAR = 4,
 	HOUSE_MERCENARY = 5,
 
-	HOUSE_MAX       = 6,
+	HOUSE_NEUTRAL   = 6,
+	HOUSE_MAX       = 7,
 	HOUSE_INVALID   = 0xFF
 };
 

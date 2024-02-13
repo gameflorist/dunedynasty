@@ -282,7 +282,7 @@ void GameLoop_LevelEnd(void)
 			&& g_campaign_selected != CAMPAIGNID_MULTIPLAYER)
 		return;
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		if (!House_IsHuman(houseID))
 			continue;
 

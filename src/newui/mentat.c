@@ -44,7 +44,7 @@ static const MentatData mentat_data[MENTAT_MAX - 1] = {
 	{ 0x40,0x50, 0x38,0x60, 0x00,0x00, 0x00,0x00 }  /* Bene Gesserit. */
 };
 
-static MentatData custom_mentat_data[HOUSE_MAX] = {
+static MentatData custom_mentat_data[HOUSE_NEUTRAL] = {
 	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 },
 	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 },
 	{ 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00 },
@@ -228,7 +228,7 @@ Mentat_GetMouthPositions(enum MentatID mentatID, int *left, int *top, int *right
 void
 Mentat_DrawBackground(enum MentatID mentatID)
 {
-	const char *background[HOUSE_MAX] = {
+	const char *background[HOUSE_NEUTRAL] = {
 		"MENTATH.CPS", "MENTATA.CPS", "MENTATO.CPS",
 		"MENTATF.CPS", "MENTATS.CPS", "MENTATM.CPS"
 	};

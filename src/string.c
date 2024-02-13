@@ -26,7 +26,7 @@
 
 static char **s_strings = NULL;
 static uint16 s_stringsCount = 0;
-static char *s_strings_mentat[HOUSE_MAX][40];
+static char *s_strings_mentat[HOUSE_NEUTRAL][40];
 
 const char * const g_gameSubtitle[] = {
 	"The Battle for Arrakis",
@@ -209,7 +209,7 @@ String_ReloadCampaignStrings(void)
 {
 	String_Load(SEARCHDIR_CAMPAIGN_DIR, "DUNE", false, 1, 339);
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		for (unsigned int i = 0; i < 40; i++) {
 			/* Default string. */
 			const uint16 stringID

@@ -64,9 +64,9 @@ enum ServerClientMsg {
 struct Object;
 
 extern unsigned char g_server_broadcast_message_buf[MAX_SERVER_BROADCAST_MESSAGE_LEN];
-extern unsigned char g_server2client_message_buf[HOUSE_MAX][MAX_SERVER_TO_CLIENT_MESSAGE_LEN];
+extern unsigned char g_server2client_message_buf[HOUSE_NEUTRAL][MAX_SERVER_TO_CLIENT_MESSAGE_LEN];
 extern unsigned char g_client2server_message_buf[MAX_CLIENT_MESSAGE_LEN];
-extern int g_server2client_message_len[HOUSE_MAX];
+extern int g_server2client_message_len[HOUSE_NEUTRAL];
 extern int g_client2server_message_len;
 
 extern void   Net_Encode_uint8 (unsigned char **buf, uint8 val);

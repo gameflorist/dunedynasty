@@ -1005,7 +1005,7 @@ uint16 Script_Unit_GetInfo(ScriptEngine *script)
 			/* This function is used (by the AI) to transition a unit
 			 * scouted by the human from ACTION_AMBUSH to ACTION_HUNT.
 			 */
-			for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+			for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 				if (House_IsHuman(h) && (u->o.seenByHouses & (1 << h)))
 					return 1;
 			}

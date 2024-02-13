@@ -159,7 +159,7 @@ Map_Load2(FILE *fp, uint32 length)
 
 		FogOfWarTile *f = &g_mapVisible[packed];
 
-		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++)
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++)
 			f->timeout[h]   = (timeout == 0) ? 0 : (g_timerGame + timeout);
 
 		f->groundSpriteID   = (spriteID & 0x1FF);

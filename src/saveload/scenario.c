@@ -38,10 +38,10 @@ const SaveLoadDesc g_saveScenario[] = {
 };
 
 static const SaveLoadDesc s_saveScenario3[] = {
-	SLD_ARRAY(Scenario, SLDT_UINT32, score,          HOUSE_MAX),
-	SLD_ARRAY(Scenario, SLDT_UINT16, unitsLost,      HOUSE_MAX),
-	SLD_ARRAY(Scenario, SLDT_UINT16, structuresLost, HOUSE_MAX),
-	SLD_ARRAY(Scenario, SLDT_UINT16, spiceHarvested, HOUSE_MAX),
+	SLD_ARRAY(Scenario, SLDT_UINT32, score,          HOUSE_NEUTRAL),
+	SLD_ARRAY(Scenario, SLDT_UINT16, unitsLost,      HOUSE_NEUTRAL),
+	SLD_ARRAY(Scenario, SLDT_UINT16, structuresLost, HOUSE_NEUTRAL),
+	SLD_ARRAY(Scenario, SLDT_UINT16, spiceHarvested, HOUSE_NEUTRAL),
 	SLD_END
 };
 
@@ -53,7 +53,7 @@ Scenario_Load_OldStats(void)
 	enum HouseType human = g_playerHouseID;
 	enum HouseType enemy = HOUSE_INVALID;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (!House_AreAllied(human, h)) {
 			enemy = h;
 			break;
@@ -81,10 +81,10 @@ Scenario_Save_OldStats(void)
 bool
 Scenario_Load2(FILE *fp, uint32 length)
 {
-	if (length != HOUSE_MAX)
+	if (length != HOUSE_NEUTRAL)
 		return false;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		char c;
 		fread(&c, sizeof(char), 1, fp);
 
@@ -101,7 +101,7 @@ Scenario_Save2(FILE *fp)
 {
 	const char brain_char[3] = { ' ', 'H', 'C' };
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		char c = brain_char[g_skirmish.player_config[h].brain];
 		fwrite(&c, sizeof(char), 1, fp);
 	}

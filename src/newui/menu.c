@@ -235,9 +235,9 @@ Menu_AddCampaign(ALLEGRO_PATH *path)
 		return;
 	}
 
-	if (!(HOUSE_HARKONNEN <= house[0] && house[0] < HOUSE_MAX)) house[0] = HOUSE_INVALID;
-	if (!(HOUSE_HARKONNEN <= house[1] && house[1] < HOUSE_MAX)) house[1] = HOUSE_INVALID;
-	if (!(HOUSE_HARKONNEN <= house[2] && house[2] < HOUSE_MAX)) house[2] = HOUSE_INVALID;
+	if (!(HOUSE_HARKONNEN <= house[0] && house[0] < HOUSE_NEUTRAL)) house[0] = HOUSE_INVALID;
+	if (!(HOUSE_HARKONNEN <= house[1] && house[1] < HOUSE_NEUTRAL)) house[1] = HOUSE_INVALID;
+	if (!(HOUSE_HARKONNEN <= house[2] && house[2] < HOUSE_NEUTRAL)) house[2] = HOUSE_INVALID;
 
 	if ((house[0] == HOUSE_INVALID) && (house[1] == HOUSE_INVALID) && (house[2] == HOUSE_INVALID)) {
 		free(source);
@@ -658,7 +658,7 @@ PickHouse_Initialise(void)
 {
 	const int offsetX[3] = { 16, 112, 208 };
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		Widget *w = GUI_Widget_Get_ByIndex(pick_house_widgets, houseID);
 		GUI_Widget_MakeInvisible(w);
 	}

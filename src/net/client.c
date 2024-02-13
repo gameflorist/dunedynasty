@@ -427,7 +427,7 @@ Client_Recv_UpdateExplosions(const unsigned char **buf)
 		e->position.y   = Net_Decode_uint16(buf);
 		e->houseID      = Net_Decode_uint8 (buf);
 
-		if (e->houseID >= HOUSE_MAX)
+		if (e->houseID >= HOUSE_NEUTRAL)
 			e->houseID = HOUSE_HARKONNEN;
 	}
 }
@@ -537,7 +537,7 @@ Client_Recv_ClientList(const unsigned char **buf)
 			houses |= (1 << houseID);
 	}
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (houses & (1 << h))
 			continue;
 
@@ -560,7 +560,7 @@ Client_Recv_Scenario(const unsigned char **buf)
 	enhancement_fog_of_war = Net_Decode_uint8(buf);
 	enhancement_insatiable_sandworms = Net_Decode_uint8(buf);
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		g_multiplayer.client[h] = Net_Decode_uint8(buf);
 		g_multiplayer.player_config[h].brain = Net_Decode_uint8(buf);
 		g_multiplayer.player_config[h].team = Net_Decode_uint8(buf);

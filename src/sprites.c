@@ -390,7 +390,7 @@ Sprites_InitMentat(enum MentatID mentatID)
 	static enum HouseType l_houseID = HOUSE_INVALID;
 	static int l_campaign_selected = -1;
 
-	const char *shapes[HOUSE_MAX] = {
+	const char *shapes[HOUSE_NEUTRAL] = {
 		"MENSHPH.SHP", "MENSHPA.SHP", "MENSHPO.SHP",
 		"MENSHPF.SHP", "MENSHPS.SHP", "MENSHPM.SHP"
 	};

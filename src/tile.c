@@ -10,7 +10,7 @@ static void
 Map_UnveilTileForHouses(enum HouseFlag houses, enum TileUnveilCause cause,
 		uint16 packed, bool unveil)
 {
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (houses & (1 << h)) {
 			if (unveil) {
 				Map_UnveilTile(h, cause, packed);
@@ -29,7 +29,7 @@ Tile_RefreshFogInRadius(enum HouseFlag houses, enum TileUnveilCause cause,
 	if (!Map_IsValidPosition(packed))
 		return;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (!House_IsHuman(h))
 			houses &= ~(1 << h);
 	}

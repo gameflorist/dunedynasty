@@ -56,10 +56,10 @@ Unit *
 Unit_FindFirst(PoolFindStruct *find,
 		enum HouseType houseID, enum UnitType type)
 {
-	assert(houseID < HOUSE_MAX || houseID == HOUSE_INVALID);
+	assert(houseID < HOUSE_NEUTRAL || houseID == HOUSE_INVALID);
 	assert(type < UNIT_MAX || type == UNIT_INVALID);
 
-	find->houseID = (houseID < HOUSE_MAX) ? houseID : HOUSE_INVALID;
+	find->houseID = (houseID < HOUSE_NEUTRAL) ? houseID : HOUSE_INVALID;
 	find->type    = (type < UNIT_MAX) ? type : 0xFFFF;
 	find->index   = 0xFFFF;
 

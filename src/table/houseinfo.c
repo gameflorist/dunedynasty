@@ -3,7 +3,7 @@
 #include "sound.h"
 #include "../house.h"
 
-const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
+const HouseInfo g_table_houseInfo_original[HOUSE_NEUTRAL] = {
 	{ /* 0 */
 		/* name                 */ "Harkonnen",
 		/* toughness            */ 200,
@@ -119,10 +119,10 @@ const HouseInfo g_table_houseInfo_original[HOUSE_MAX] = {
 	}
 };
 
-HouseInfo g_table_houseInfo[HOUSE_MAX];
-enum HouseAlliance g_table_houseAlliance[HOUSE_MAX][HOUSE_MAX];
+HouseInfo g_table_houseInfo[HOUSE_NEUTRAL];
+enum HouseAlliance g_table_houseAlliance[HOUSE_NEUTRAL][HOUSE_NEUTRAL];
 
-const enum HouseType g_table_houseRemap6to3[HOUSE_MAX] = {
+const enum HouseType g_table_houseRemap6to3[HOUSE_NEUTRAL] = {
 	HOUSE_HARKONNEN, HOUSE_ATREIDES, HOUSE_ORDOS,
 	HOUSE_ATREIDES, HOUSE_HARKONNEN, HOUSE_ORDOS
 };

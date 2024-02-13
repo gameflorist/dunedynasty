@@ -2165,7 +2165,7 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
 
 		if (data[i].score == 0) break;
 		if (data[i].rank >= MAX_RANKS) break;
-		if (data[i].houseID >= HOUSE_MAX) break;
+		if (data[i].houseID >= HOUSE_NEUTRAL) break;
 
 		if (g_table_languageInfo[g_gameConfig.language].noun_before_adj) {
 			p1 = HallOfFame_GetRankString(data[i].rank);

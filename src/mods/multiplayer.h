@@ -14,7 +14,7 @@ enum MultiplayerHouseState {
 };
 
 typedef struct Multiplayer {
-	int client[HOUSE_MAX];
+	int client[HOUSE_NEUTRAL];
 
 	/* Initial credits. */
 	uint16 credits;
@@ -39,9 +39,9 @@ typedef struct Multiplayer {
 
 	LandscapeGeneratorParams landscape_params;
 
-	enum MultiplayerHouseState state[HOUSE_MAX];
+	enum MultiplayerHouseState state[HOUSE_NEUTRAL];
 
-	PlayerConfig player_config[HOUSE_MAX];
+	PlayerConfig player_config[HOUSE_NEUTRAL];
 
 	enum MapWormCount worm_count;
 } Multiplayer;

@@ -103,15 +103,15 @@ static void
 Campaign_ReadCPSTweaks(char *source, const char *key, char *value, size_t size,
 		unsigned int *dest)
 {
-	unsigned int tmp[HOUSE_MAX];
+	unsigned int tmp[HOUSE_NEUTRAL];
 
 	Ini_GetString("CPS", key, NULL, value, size, source);
 
 	if (sscanf(value, "%u,%u,%u,%u,%u,%u",
 				&tmp[HOUSE_HARKONNEN], &tmp[HOUSE_ATREIDES], &tmp[HOUSE_ORDOS],
 				&tmp[HOUSE_FREMEN], &tmp[HOUSE_SARDAUKAR], &tmp[HOUSE_MERCENARY]) == 6) {
-		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
-			dest[houseID] = min(tmp[houseID], HOUSE_MAX);
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
+			dest[houseID] = min(tmp[houseID], HOUSE_NEUTRAL);
 		}
 	}
 }
@@ -121,7 +121,7 @@ Campaign_ResetAlliances(void)
 {
 	memset(g_table_houseAlliance, 0, sizeof(g_table_houseAlliance));
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		g_table_houseAlliance[h][HOUSE_FREMEN] = HOUSEALLIANCE_ENEMIES;
 		g_table_houseAlliance[HOUSE_FREMEN][h] = HOUSEALLIANCE_ENEMIES;
 
@@ -391,7 +391,7 @@ Campaign_ApplyDefaultHouseTraits(void)
 		const enum HouseType ref =
 			(s == STRUCTURE_LIGHT_VEHICLE) ? HOUSE_HARKONNEN : HOUSE_MERCENARY;
 
-		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 			if (si->o.availableCampaign[h] & 0x8000) {
 				const int delta = original->o.availableCampaign[h] - original->o.availableCampaign[ref];
 
@@ -436,7 +436,7 @@ Campaign_ReadHouseIni(void)
 	keys = source + strlen(source) + 5000;
 	*keys = '\0';
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		const char *category = g_table_houseInfo_original[houseID].name;
 		const HouseInfo *original = &g_table_houseInfo_original[houseID];
 		HouseInfo *hi = &g_table_houseInfo[houseID];
@@ -511,7 +511,7 @@ Campaign_ReadHouseIni(void)
 		enum HouseType h1 = HOUSE_INVALID;
 		enum HouseType h2 = HOUSE_INVALID;
 
-		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 			if (*key == g_table_houseInfo_original[houseID].name[0])
 				h1 = houseID;
 
@@ -530,7 +530,7 @@ Campaign_ReadHouseIni(void)
 		}
 	}
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		HouseInfo *hi = &g_table_houseInfo[houseID];
 		char category[32];
 
@@ -563,7 +563,7 @@ Campaign_ReadHouseIni(void)
 						continue;
 					}
 
-					hi->superWeapon.fremen.owner = (owner < HOUSE_MAX) ? owner : houseID;
+					hi->superWeapon.fremen.owner = (owner < HOUSE_NEUTRAL) ? owner : houseID;
 					hi->superWeapon.fremen.unit75 = (unit75 <= UNIT_MCV || unit75 == UNIT_SANDWORM) ? unit75 : UNIT_TROOPERS;
 					hi->superWeapon.fremen.unit25 = (unit25 <= UNIT_MAX || unit25 == UNIT_SANDWORM) ? unit25 : UNIT_TROOPER;
 				} else if (hi->specialWeapon == HOUSE_WEAPON_SABOTEUR) {
@@ -576,7 +576,7 @@ Campaign_ReadHouseIni(void)
 						continue;
 					}
 
-					hi->superWeapon.saboteur.owner = (owner < HOUSE_MAX) ? owner : houseID;
+					hi->superWeapon.saboteur.owner = (owner < HOUSE_NEUTRAL) ? owner : houseID;
 					hi->superWeapon.saboteur.unit = (unit <= UNIT_MCV || unit == UNIT_SANDWORM) ? unit : UNIT_SABOTEUR;
 				}
 			}
@@ -744,7 +744,7 @@ Campaign_ReadProfileIni(void)
 
 						const ObjectInfo *original = (ui != NULL) ? &g_table_unitInfo_original[type].o : &g_table_structureInfo_original[type].o;
 
-						for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+						for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 							oi->availableCampaign[h] = min(availableCampaign, 99);
 
 							if (original->availableCampaign[h] - original->availableCampaign[ref] != 0)
@@ -796,7 +796,7 @@ Campaign_ReadProfileIni(void)
 						oi->availableHouse = availableHouse;
 						oi->structuresRequired = structuresRequired;
 
-						for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+						for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 							oi->upgradeLevelRequired[h] = upgradeLevelRequired;
 						}
 					}
@@ -830,7 +830,7 @@ Campaign_ReadProfileIni(void)
 						const StructureInfo *original = &g_table_structureInfo_original[type];
 
 						for (int i = 0; i < 3; i++) {
-							for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+							for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 								si->upgradeCampaign[i][h] = min(upgradeCampaign[i], 99);
 
 								if (original->upgradeCampaign[i][h] - original->upgradeCampaign[i][HOUSE_MERCENARY] != 0)
@@ -1107,7 +1107,7 @@ static void Scenario_Load_Houses(void)
 	House *h;
 	uint8 houseID;
 
-	for (houseID = 0; houseID < HOUSE_MAX; houseID++) {
+	for (houseID = 0; houseID < HOUSE_NEUTRAL; houseID++) {
 		Scenario_Load_House(houseID);
 	}
 
@@ -1130,7 +1130,7 @@ static void Scenario_Load_Houses(void)
 	}
 
 	if (enhancement_raise_unit_cap) {
-		for (houseID = 0; houseID < HOUSE_MAX; houseID++) {
+		for (houseID = 0; houseID < HOUSE_NEUTRAL; houseID++) {
 			House *h2 = House_Get_ByIndex(houseID);
 
 			if (h2->unitCountMax > 0)
@@ -1616,7 +1616,7 @@ bool Scenario_Load(uint16 scenarioID, uint8 houseID)
 	char filename[14];
 	int i;
 
-	if (houseID >= HOUSE_MAX) return false;
+	if (houseID >= HOUSE_NEUTRAL) return false;
 
 	g_scenarioID = scenarioID;
 
@@ -1670,7 +1670,7 @@ Scenario_GetOldStats(enum HouseType houseID, OldScenarioStats *stats)
 	stats->harvestedAllied  = 0;
 	stats->harvestedEnemy   = 0;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (House_AreAllied(houseID, h)) {
 			stats->score += g_scenario.score[h];
 			stats->killedAllied += g_scenario.unitsLost[h];

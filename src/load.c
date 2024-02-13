@@ -66,7 +66,7 @@ static bool Load_Main(FILE *fp)
 	if (BETOH32(header) != CC_SCEN) return false;
 
 	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
-		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 			g_skirmish.player_config[h].brain = BRAIN_NONE;
 		}
 	}

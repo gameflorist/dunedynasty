@@ -104,7 +104,7 @@ Net_GetClientHouse(int peerID)
 	if (peerID == 0)
 		return HOUSE_INVALID;
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (g_multiplayer.client[h] == peerID)
 			return h;
 	}
@@ -304,7 +304,7 @@ Net_HasAllPlayersAssigned(void)
 	int total_players = 0;
 
 	/* XXX - check alliances. */
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		if (g_multiplayer.client[h] != 0)
 			assigned_players++;
 	}
@@ -326,7 +326,7 @@ Net_HasAtLeastTwoTeams(void)
 {
 	int team_count = 0;
 	for (enum PlayerTeam t = TEAM_1; t < TEAM_MAX; t++) {
-		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 			if (g_multiplayer.player_config[h].brain != BRAIN_NONE && g_multiplayer.player_config[h].team == t) {
 				team_count++;
 				break;
@@ -366,7 +366,7 @@ Net_Synchronise(void)
 	 || g_host_type == HOSTTYPE_CLIENT_SERVER) {
 		Server_ResetCache();
 
-		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_MAX; h++) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 			if (g_multiplayer.client[h] == 0) {
 				g_multiplayer.state[h] = MP_HOUSE_UNUSED;
 			} else {
@@ -490,7 +490,7 @@ Server_SendMessages(void)
 
 	unsigned char * const buf_start_client_specific = buf;
 
-	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+	for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 		if (g_multiplayer.client[houseID] == 0)
 			continue;
 

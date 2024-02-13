@@ -461,7 +461,7 @@ Structure *Structure_Create(uint16 index, uint8 typeID, uint8 houseID, uint16 po
 	const StructureInfo *si;
 	Structure *s;
 
-	if (houseID >= HOUSE_MAX) return NULL;
+	if (houseID >= HOUSE_NEUTRAL) return NULL;
 	if (typeID >= STRUCTURE_MAX) return NULL;
 
 	si = &g_table_structureInfo[typeID];

@@ -247,7 +247,7 @@ StrategicMap_ReadOwnership(int campaignID, StrategicMapData *map)
 		char category[16];
 		snprintf(category, sizeof(category), "GROUP%d", i);
 
-		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_MAX; houseID++) {
+		for (enum HouseType houseID = HOUSE_HARKONNEN; houseID < HOUSE_NEUTRAL; houseID++) {
 			char key[4];
 			strncpy(key, g_table_houseInfo[houseID].name, 3);
 			key[3] = '\0';
@@ -280,8 +280,8 @@ StrategicMap_ReadProgression(enum HouseType houseID, int campaignID, StrategicMa
 	char category[16];
 	snprintf(category, sizeof(category), "GROUP%d", campaignID);
 
-	for (int i = 0; i < HOUSE_MAX; i++) {
-		const enum HouseType h = (houseID + i) % HOUSE_MAX;
+	for (int i = 0; i < HOUSE_NEUTRAL; i++) {
+		const enum HouseType h = (houseID + i) % HOUSE_NEUTRAL;
 
 		char key[16];
 		strncpy(key, g_table_houseInfo[h].name, 3);

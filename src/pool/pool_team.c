@@ -55,9 +55,9 @@ Team_Get_ByIndex(uint16 index)
 Team *
 Team_FindFirst(PoolFindStruct *find, enum HouseType houseID)
 {
-	assert(houseID < HOUSE_MAX || houseID == HOUSE_INVALID);
+	assert(houseID < HOUSE_NEUTRAL || houseID == HOUSE_INVALID);
 
-	find->houseID = (houseID < HOUSE_MAX) ? houseID : HOUSE_INVALID;
+	find->houseID = (houseID < HOUSE_NEUTRAL) ? houseID : HOUSE_INVALID;
 	find->type    = 0xFFFF;
 	find->index   = 0xFFFF;
 
