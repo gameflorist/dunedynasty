@@ -158,9 +158,11 @@ Skirmish_IsPlayable(void)
 		}
 	}
 
-	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
-		if (g_skirmish.player_config[h].brain == BRAIN_CPU && g_skirmish.player_config[h].team != human_team) {
-			found_enemy = true;
+	if (found_human) {
+		for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
+			if (g_skirmish.player_config[h].brain == BRAIN_CPU && g_skirmish.player_config[h].team != human_team) {
+				found_enemy = true;
+			}
 		}
 	}
 
@@ -487,8 +489,8 @@ Skirmish_BuildOrder_Sorter(const void *a, const void *b)
 	return pa->priority - pb->priority;
 }
 
-int
-Skirmish_GetTeamCount()
+static int
+Skirmish_GetTeamCount(void)
 {
 	const bool is_multiplayer = (g_campaign_selected == CAMPAIGNID_MULTIPLAYER);
 
@@ -935,7 +937,7 @@ Skirmish_GenUnits(SkirmishData *sd)
 	return true;
 }
 
-static int
+static void
 Skirmish_GenSandworms(int worm_count)
 {
 	const enum HouseType houseID = HOUSE_NEUTRAL;

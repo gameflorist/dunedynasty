@@ -14,6 +14,8 @@ typedef struct DisplayMode {
    int height;         // Screen height
 } DisplayMode;
 
+#define DISPLAY_MODE_INITIALIZER { .width = 0, .height = 0 }
+
 extern enum GraphicsDriver g_graphics_driver;
 
 extern bool VideoA5_Init(void);
@@ -52,6 +54,6 @@ extern int VideoA5_GetWidth(enum ShapeID shapeID);
 
 struct DisplayMode* VideoA5_GetDisplayModes(void);
 int VideoA5_GetNumDisplayModes(void);
-int* VideoA5_GetCurrentDisplayMode(void);
+int VideoA5_GetCurrentDisplayMode(void);
 
 #endif

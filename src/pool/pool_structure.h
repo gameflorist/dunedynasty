@@ -39,6 +39,6 @@ extern void Structure_Free(struct Structure *s);
 
 extern struct StructurePool *StructurePool_Save(void);
 extern void StructurePool_Load(struct StructurePool *pool);
-extern int StructurePool_GetIndex(int index);
+extern uint16 StructurePool_GetIndex(int index);
 
 #endif

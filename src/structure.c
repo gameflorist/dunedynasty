@@ -1167,7 +1167,10 @@ static void Structure_Destroy(Structure *s)
 
 				const bool found_unit
 					= BuildQueue_RemoveTail(&h->starportQueue, u->o.type, &credits);
-				assert(found_unit);
+				
+				if (!found_unit) {
+					assert(false);
+				}
 
 				h->credits += credits;
 

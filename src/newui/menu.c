@@ -441,7 +441,6 @@ MainMenu_DrawSubtitle(Widget *widget)
 
 	// Draw subtitle
 	const int64_t curr_ticks = Timer_GetTicks();
-	const Widget *w = GUI_Widget_Get_ByIndex(widget, 100);
 	const char *subtitle;
 	int alpha = 0;
 	int colour = 192;

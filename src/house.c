@@ -494,7 +494,6 @@ House_Server_ReassignToAI(enum HouseType houseID)
 void
 House_Server_Eliminate(enum HouseType houseID)
 {
-	House *h = House_Get_ByIndex(houseID);
 
 	PoolFindStruct find;
 

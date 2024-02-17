@@ -294,8 +294,8 @@ UnitPool_Load(UnitPool *pool)
  * @brief   Get maximum unit index.
  * @details Introduced for raise_unit_cap.
  */
-int
-UnitPool_GetMaxIndex()
+uint16
+UnitPool_GetMaxIndex(void)
 {
 	if (enhancement_raise_unit_cap || g_campaign_selected == CAMPAIGNID_SKIRMISH || g_campaign_selected == CAMPAIGNID_MULTIPLAYER)
 		return UNIT_INDEX_MAX_RAISED;
@@ -307,7 +307,7 @@ UnitPool_GetMaxIndex()
  * @brief   Get maximum unit index.
  * @details Introduced for raise_unit_cap.
  */
-int
+uint16
 UnitPool_GetIndexEnd(enum UnitType type)
 {
 	const UnitInfo *ui = &g_table_unitInfo[type];

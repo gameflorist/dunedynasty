@@ -35,7 +35,7 @@ extern void Unit_Free(struct Unit *u);
 
 extern struct UnitPool *UnitPool_Save(void);
 extern void UnitPool_Load(struct UnitPool *pool);
-extern int UnitPool_GetMaxIndex(void);
-extern int UnitPool_GetIndexEnd(enum UnitType type);
+extern uint16 UnitPool_GetMaxIndex(void);
+extern uint16 UnitPool_GetIndexEnd(enum UnitType type);
 
 #endif

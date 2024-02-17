@@ -330,7 +330,7 @@ StructurePool_Load(StructurePool *pool)
 	pool->allocated = false;
 }
 
-int
+uint16
 StructurePool_GetIndex(int index)
 {
 	if (enhancement_raise_structure_cap || g_campaign_selected == CAMPAIGNID_SKIRMISH || g_campaign_selected == CAMPAIGNID_MULTIPLAYER)

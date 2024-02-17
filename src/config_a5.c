@@ -92,6 +92,7 @@ GameCfg g_gameConfig = {
 #else
 	true,   /* hardwareCursor */
 #endif
+	DISPLAY_MODE_INITIALIZER
 };
 
 /*--------------------------------------------------------------*/

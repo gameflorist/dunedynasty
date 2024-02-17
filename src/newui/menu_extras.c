@@ -615,7 +615,7 @@ VideoOptions_Initialize(void)
 		si = Scrollbar_AllocItem(w, SCROLLBAR_RADIO);
 		si->d.radio.group = "windowMode";
 		si->d.radio.value = (int)windowMode;
-		si->d.radio.currentValue = &g_gameConfig.windowMode;
+		si->d.radio.currentValue = (int*)&g_gameConfig.windowMode;
 
 		snprintf(si->text, sizeof(si->text), "%s", windowModeTexts[windowMode]);
 	}
@@ -665,10 +665,10 @@ VideoOptions_Loop(int widgetID)
 					*(si->d.checkbox) = !(*(si->d.checkbox));
 				}
 				else if (si->type == SCROLLBAR_RADIO) {
-					if (si->d.radio.group == "windowMode") {
+					if (strcmp( si->d.radio.group, "windowMode" ) == 0) {
 						g_gameConfig.windowMode = si->d.radio.value;
 					}
-					else if (si->d.radio.group == "resolution") {
+					else if (strcmp( si->d.radio.group, "resolution" ) == 0) {
 						struct DisplayMode* resolutions = VideoA5_GetDisplayModes();
 						g_gameConfig.displayMode.width = resolutions[si->d.radio.value].width;
 						g_gameConfig.displayMode.height = resolutions[si->d.radio.value].height;

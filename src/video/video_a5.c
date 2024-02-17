@@ -3087,7 +3087,7 @@ int VideoA5_GetNumDisplayModes(void)
 	return al_get_num_display_modes();
 }
 
-int* VideoA5_GetCurrentDisplayMode(void)
+int VideoA5_GetCurrentDisplayMode(void)
 {
 	struct DisplayMode* resolutions = VideoA5_GetDisplayModes();
 	int numDisplayModes = VideoA5_GetNumDisplayModes();
@@ -3097,4 +3097,5 @@ int* VideoA5_GetCurrentDisplayMode(void)
 			return i;
 		}
 	}
+	return 0;
 }

@@ -35,7 +35,6 @@ extern void Skirmish_Initialise(void);
 extern bool Skirmish_IsPlayable(void);
 extern void Skirmish_Prepare(void);
 extern void Skirmish_StartScenario(void);
-extern int Skirmish_GetTeamCount(void);
 extern bool Skirmish_GenerateMap1(bool is_playable);
 extern bool Skirmish_GenerateMap(enum MapGeneratorMode mode);
 extern bool Skirmish_GenHouses(struct SkirmishData *sd);
