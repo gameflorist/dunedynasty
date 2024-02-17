@@ -9,6 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Update package index
+        run: sudo apt-get update
+
+      - name: Install dependencies
+        run: sudo apt -y install cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
+
       - name: Install dependencies
         run: sudo apt -y install cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
 
