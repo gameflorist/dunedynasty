@@ -693,12 +693,26 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 }
 
 uint16
-Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, SkirmishData *sd)
+Skirmish_FindStartLocation(enum HouseType houseID, SkirmishData *sd)
 {
 	const MapInfo *mi = &g_mapInfos[0];
 
+	int team_count = Skirmish_GetTeamCount();
+
+	// Adjust distance threshold based on team count.
+	// Higher team counts need lower thresholds
+	// to increase map generation success.
+	int dist_threshold_allies = 5;
+	int dist_threshold_enemies = 32;
+	if (team_count == 5) {
+		dist_threshold_enemies = 28;
+	}
+	if (team_count == 6) {
+		dist_threshold_enemies = 24;
+	}
+
 	/* Pick a tile that is not too close to the edge, and not too
-	 * close to the enemy.
+	 * close to the enemy or ally.
 	 */
 	for (int attempts = 0; attempts < 100; attempts++) {
 		const int island = Skirmish_PickRandomIsland(sd);
@@ -722,11 +736,14 @@ Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, Skirmi
 			if (Structure_SharesPoolElement(s->o.type))
 				continue;
 
-			if (House_AreAllied(houseID, s->o.houseID))
-				continue;
+			const bool is_allied = House_AreAllied(houseID, s->o.houseID);
 
 			const uint16 dist = Tile_GetDistancePacked(Tile_PackTile(s->o.position), sd->buildable[r].packed);
-			if (dist < dist_threshold)
+
+			if (!is_allied && dist < dist_threshold_enemies)
+				break;
+			
+			if (is_allied && dist < dist_threshold_allies)
 				break;
 		}
 
@@ -736,11 +753,15 @@ Skirmish_FindStartLocation(enum HouseType houseID, uint16 dist_threshold, Skirmi
 		for (u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
 				u != NULL;
 				u = Unit_FindNext(&find)) {
-			if (House_AreAllied(houseID, u->o.houseID))
-				continue;
+
+			const bool is_allied = House_AreAllied(houseID, u->o.houseID);
 
 			const uint16 dist = Tile_GetDistancePacked(Tile_PackTile(u->o.position), sd->buildable[r].packed);
-			if (dist < dist_threshold)
+
+			if (!is_allied && dist < dist_threshold_enemies)
+				break;
+			
+			if (is_allied && dist < dist_threshold_allies)
 				break;
 		}
 
@@ -776,20 +797,7 @@ Skirmish_GenUnitsHuman(enum HouseType houseID, struct SkirmishData *sd)
 
 	assert_compile(lengthof(delta) == lengthof(units));
 
-	int team_count = Skirmish_GetTeamCount();
-
-	// Adjust distance threshold based on team count.
-	// Higher team counts need lower thresholds
-	// to increase map generation success.
-	int dist_threshold = 32;
-	if (team_count == 5) {
-		dist_threshold = 28;
-	}
-	if (team_count == 6) {
-		dist_threshold = 24;
-	}
-
-	const uint16 start_location = Skirmish_FindStartLocation(houseID, dist_threshold, sd);
+	const uint16 start_location = Skirmish_FindStartLocation(houseID, sd);
 	if (!Map_IsValidPosition(start_location))
 		return false;
 
