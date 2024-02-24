@@ -24,6 +24,9 @@ jobs:
       - name: Bundle libs
         run: ./scripts/bundle-libs-linux.sh
 
+      - name: Copy OS specific files
+        run: cp -r ./dist-os-specific/linux/* ./dist
+
       - name: Test executable
         run: |
           cd dist
