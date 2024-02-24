@@ -281,6 +281,7 @@ F7          Increase music volume
 F11         Toggle windowed mode
 F12         Save screenshot into data directory
 
+
 There are also keyboard shortcuts for constructing buildings with the
 construction yard. They are displayed in the build-panel.
 
@@ -337,11 +338,12 @@ Gameplay options (main menu)
    
    This enhancement sets the scenario unit cap for all houses to 50, raises the
    overall cap to 322 and allows a total of 300 ground units (incl. saboteurs).
-   This enhancement is always enabled in multiplayer.
+   This enhancement is always enabled in multiplayer/skirmish.
 
  * Raise structure cap:
    Dune II limits total structures on a map to about 70. This enhancement raises
-   that limit by 100. This enhancement is always enabled in multiplayer.
+   that limit by 100. This enhancement is always enabled in
+   multiplayer/skirmish.
    
    Note: Games saved with this option enabled will throw an error, when loaded
    without this option enabled!
@@ -355,7 +357,7 @@ Gameplay options (main menu)
    * outstanding reinforcements
    * usually 1 backup-harvester
    
-   This will always be enabled in skirmish/multiplayer.
+   This will always be enabled in multiplayer/skirmish.
 
  * True game speed adjustment:
    Dune II's game speed implementation doesn't affect scripts and other things.

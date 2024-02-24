@@ -261,10 +261,10 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
     - All others (ground units): 80  
 
   This enhancement sets the scenario unit cap for all houses to 50, raises the overall cap to 322 and allows a total of 300 ground units (incl. saboteurs).
-  This enhancement is always enabled in multiplayer.
+  This enhancement is always enabled in multiplayer/skirmish.
 
 - __Raise structure cap:__  
-  _Dune II_ limits total structures on a map to about 70. This enhancement raises that limit by 100. This enhancement is always enabled in multiplayer.  
+  _Dune II_ limits total structures on a map to about 70. This enhancement raises that limit by 100. This enhancement is always enabled in multiplayer/skirmish.  
 
   __Note:__ Games saved with this option enabled will throw an error, when loaded without this option enabled!
 
@@ -276,7 +276,7 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
   - outstanding reinforcements
   - usually 1 backup-harvester
   
-  This will always be enabled in skirmish/multiplayer.
+  This will always be enabled in multiplayer/skirmish.
 
 - __True game speed adjustment:__  
   _Dune II_'s game speed implementation doesn't affect scripts and other things. This enhancement takes care of that. It also fixes a bug with the range of the sonic tank.  
