@@ -76,6 +76,8 @@ void midi_uninit(void)
 	if (s_graph == 0) return;
 
 	AUGraphStop(s_graph);
+	AUGraphUninitialize(s_graph);
+	AUGraphClose(s_graph);
 	DisposeAUGraph(s_graph);
 	s_graph = 0;
 }
@@ -95,5 +97,7 @@ void midi_reset(void)
 	if (s_graph == 0) return;
 
 	AUGraphStop(s_graph);
+	AUGraphUninitialize(s_graph);
+	AUGraphClose(s_graph);
 	AUGraphStart(s_graph);
 }
