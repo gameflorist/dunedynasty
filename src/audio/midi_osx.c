@@ -94,6 +94,6 @@ void midi_reset(void)
 {
 	if (s_graph == 0) return;
 
-	AUGraphStop(s_graph);
-	AUGraphStart(s_graph);
+	midi_uninit();
+	midi_init();
 }
