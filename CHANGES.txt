@@ -1,6 +1,10 @@
 Dune Dynasty
 ============
 
+Version 1.6.3, TBD
+-------------------------
+  - Fix hanging notes after song-change with MIDI-playback on macOS.
+
 Version 1.6.2, 2024-02-24
 -------------------------
   - Make enhancement "Raise unit cap" more effective.
