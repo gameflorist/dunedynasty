@@ -27,6 +27,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
 - __Graphics Enhancements:__
   - High-resolution widescreen graphics
   - Separate customizable scaling of menubar, sidebar and map/viewport for HiDPI displays
+  - [Aspect-ratio correction](#aspect-ratio-correction)
   - Smoother unit animation (optional)
   - High-res overlay (optional)
 - __Control Enhancements (Command & Conquer style):__
@@ -178,6 +179,25 @@ If you place `dunedynasty.cfg` in the same directory as the dunedynasty executab
 Display mode and resolution can be changed in the game's "Options and Extras" menu. The game initially launches in _Fullscreen Window_ mode (using your Desktop-resolution).
 
 You might want to increase or decrease the scaling factors of the menubar, sidebar and viewport. You can do this in-game in the __Game Control__ menu.
+
+### Aspect ratio correction
+
+In contrast to modern displays, old CRT-monitors had rectangular non-square pixels. All non-in-game graphics (menus, cutscenes, mentat screens, etc.) were designed with rectangular pixels in mind. The game/map/command-screen itself however seems to have been designed for square pixels (presumably due to targetting multiple platforms), meaning it always had a rather stretched look in the original DOS version - with a tile or the construction yard not being a perfect square.
+
+Dune Dynasty allows various options to deal with aspect ratio via the `correct_aspect_ratio` option. It's value consists of 2 parts: the mode and the height multiplier, and can be:
+
+```ini
+#     none
+#     menu,(height multiplier)
+#     full,(height multiplier)
+#     auto,(height multiplier)
+```
+
+With `menu` and `auto`, non-square pixels are used for non-in-game graphics and square pixels for the game. `full` will also use them during the game. `auto` is the same as `menu` except when the screen height is less than 800 pixels.
+
+The default value is `auto,1.2`, which means the aspect ratio of non-in-game graphics will be corrected by a factor of 1.2 for modern square-pixel monitors. But it will keep the square aspect ratio for the game-screen. This is presumably the originally envisioned look.
+
+If you want to play with the stretched game-screen just like in the old days, add the option `correct_aspect_ratio=full,1.2` in the `[graphics]` section of [`dunedynasty.cfg`](#configuration).
 
 ## Controls
 
