@@ -1,0 +1,42 @@
+Put Dune 2 SCDB Mix (PC Speaker, Tandy 3-voice, AdLib, MT-32 and SC-55) here.
+
+Download from:
+https://www.moddb.com/downloads/dune-ii-soundtrack-5-device-scdb-mix
+
+Make sure, file-names are exactly as listed below.
+
+List of files:
+
+01 - Westwood Studios Logo.flac
+02 - Introduction.flac
+03 - Main Menu.flac
+04.1 - Mentat (Atreides) - The Council.flac
+04.2 - Mentat (Ordos) - Disturbed Thoughts.flac
+04.3 - Mentat (Harkonnen).flac
+05 - Map Screen.flac
+06 - The Building of a Dynasty.flac
+07 - Dark Technology.flac
+08 - Rulers of Arrakis.flac
+09 - Desert of Doom.flac
+10 - Faithful Warriors.flac
+11 - Spice Melange.flac
+12 - The Prophecy (part 1).flac
+13 - The Prophecy (part 2).flac
+14 - For Those Fallen.flac
+15.1 - Win Theme (Atreides).flac
+15.2 - Win Theme (Ordos).flac
+15.3 - Win Theme (Harkonnen).flac
+16 - Emperor Theme.flac
+17.1 - Defeat (Atreides).flac
+17.2 - Defeat (Ordos).flac
+17.3 - Defeat (Harkonnen).flac
+18 - Into the Heat.flac
+19 - Epic War.flac
+20 - Humans Fall.flac
+21 - Adrenaline Rush.flac
+22 - Only the Strongest Survives.flac
+23 - Marching Towards the End.flac
+24.1 - Ending (Atreides).flac
+24.2 - Ending (Ordos).flac
+24.3 - Ending (Harkonnen).flac
+25 - Credits Theme.flac

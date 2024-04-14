@@ -97,6 +97,7 @@ Harkonnen=0
 dune2_adlib=1
 dune2_midi=0
 fluidsynth=1
+scdb_mix=1
 fed2k_mt32=1
 rcblanke_sc55=1
 d2tm_adlib=1

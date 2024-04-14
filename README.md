@@ -48,9 +48,10 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Settings for starting credits, amount of spice fields, worm count and lose condition (structures/units)
 - __Sound and Music Enhancements:__
   - Emulated AdLib sound and music playback
-  - [General MIDI playback via FluidSynth](#fluidsynth) (supporting SoundFonts)
+  - MIDI playback via the system's MIDI output or via [FluidSynth](#fluidsynth) (supporting SoundFonts)
   - [Support for external music sets](#external-music-sets):
-    - Recorded AdLib, MT-32 and SC-55 packs
+    - Recorded AdLib, MT-32, SC-55 and PC speaker versions of the original soundtrack
+    - [SCDB's excellent 5-Device Mix](https://www.youtube.com/watch?v=k_Mlozm6fZY)
     - Sega Mega Drive soundtrack (mostly different songs, but also ___very___ good!)
     - _Dune 2000_ game soundtrack
     - _Dune_ (1992) game by Cryo (an excellent, award winning, much more chill soundtrack of _Dune II_'s predecessor in three different flavours)
@@ -391,6 +392,9 @@ Each of these have their own subdirectory in the `music` directory. Instructions
 Here is a list of supported Music packs:
 
 - Original _Dune II_ (PC) music:
+  - [SCDB's 5-Device Mix](https://www.moddb.com/downloads/dune-ii-soundtrack-5-device-scdb-mix)  
+     A highly recommended mix of the PC Speaker, Tandy, AdLib,  MT-32 and SC-55 tracks by _the Sound Card database_
+     (listen to it on [YouTube](https://www.youtube.com/watch?v=k_Mlozm6fZY) with additional details, information and visuals!)
   - [rcblanke's SC-55 recording](https://www.vogons.org/viewtopic.php?t=33823&start=42)
   - [ShaiWa's (FED2k) MT-32 recording](https://forum.dune2k.com/files/file/116-dune2_mt32zip/)
   - [Dune II - The Maker AdLib recording](https://dune2themaker.fundynamic.com/downloads/mp3adlib.zip)
