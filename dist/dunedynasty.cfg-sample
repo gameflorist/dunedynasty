@@ -56,7 +56,7 @@ enable_subtitles=0
 music_volume=0.90
 sound_volume=0.75
 voice_volume=1.00
-opl_mame=true
+opl_mame=1
 
 # state location of your soundfont for use with fluidsynth
 # e.g. sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
@@ -76,7 +76,7 @@ raise_unit_cap=0
 raise_structure_cap=0
 show_outpost_unit_info=0
 repeat_reinforcements=1
-smooth_unit_animation=0
+smooth_unit_animation=1
 # subtitle_override is one of: eu, us, dynasty
 subtitle_override=dynasty
 
@@ -95,7 +95,7 @@ Harkonnen=0
 # The relative volumes of external songs can be adjusted in the
 # volume.cfg file of each music pack.
 dune2_adlib=1
-dune2_midi=0
+dune2_midi=1
 fluidsynth=1
 scdb_mix=1
 fed2k_mt32=1
