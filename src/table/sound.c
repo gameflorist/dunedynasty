@@ -12,6 +12,7 @@
 #define SCDB_MIX_PREFIX  			"scdb_mix"
 #define SHAIWA_MT32_PREFIX  		"fed2k_mt32"
 #define RCBLANKE_SC55_PREFIX    	"rcblanke_sc55"
+#define DUNE2_AMIGA_PREFIX    		"dune2_amiga"
 #define DUNE2_PCSPEAKER_PREFIX    	"dune2_pcspeaker"
 #define DUNE1992_ADLIB_PREFIX    	"dune1992_adlib"
 #define DUNE1992_SCDB_PREFIX    	"dune1992_scdb"
@@ -31,6 +32,7 @@
 #define ADD_MUSIC_FROM_D2TM_SC55(FILENAME,VOLUME)   			{ MUSIC_WANT,   MUSICSET_D2TM_SC55,     		NULL,   "music/" D2TM_SC55_PREFIX   "/" FILENAME, 0, VOLUME }
 #define ADD_MUSIC_FROM_DUNE2_PCSPEAKER(FILENAME)      			{ MUSIC_WANT,   MUSICSET_DUNE2_PCSPEAKER, 		NULL,   "music/" DUNE2_PCSPEAKER_PREFIX   "/"   FILENAME, 0, 0.50f }
 #define ADD_MUSIC_FROM_DUNE2_SMD(FILENAME,SONGNAME) 			{ MUSIC_WANT,   MUSICSET_DUNE2_SMD,     		SONGNAME,"music/"DUNE2_SMD_PREFIX   "/" FILENAME, 0, 0.50f }
+#define ADD_MUSIC_FROM_DUNE2_AMIGA(FILENAME,SONGNAME)			{ MUSIC_WANT,   MUSICSET_DUNE2_AMIGA, 			SONGNAME,"music/"DUNE2_AMIGA_PREFIX   "/"   FILENAME, 0, 0.50f }
 #define ADD_MUSIC_FROM_DUNE2000(FILENAME,SONGNAME)  			{ MUSIC_WANT,   MUSICSET_DUNE2000,      		SONGNAME,"music/"DUNE2000_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE1992_ADLIB(FILENAME,SONGNAME)		{ MUSIC_WANT,   MUSICSET_DUNE1992_ADLIB,      	SONGNAME,"music/"DUNE1992_ADLIB_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE1992_SCDB(FILENAME,SONGNAME)			{ MUSIC_WANT,   MUSICSET_DUNE1992_SCDB,      	SONGNAME,"music/"DUNE1992_SCDB_PREFIX    "/" FILENAME, 0, 1.00f }
@@ -50,6 +52,7 @@ MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, D2TM_SC55_PREFIX,   		"D2TM SC-55" },
 	{ true, DUNE2_PCSPEAKER_PREFIX,   	"PC Speaker" },
 	{ true, DUNE2_SMD_PREFIX,   		"Sega Mega Drive" },
+	{ true, DUNE2_AMIGA_PREFIX,   		"Amiga" },
 	{ true, DUNE2000_PREFIX,    		"Dune 2000" },
 	{ true, DUNE1992_ADLIB_PREFIX,    	"Dune Adlib" },
 	{ true, DUNE1992_SCDB_PREFIX,    	"Dune SCDB Mix" },
@@ -83,6 +86,7 @@ static MusicInfo s_table_music_logos[] = {
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_00_4"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("westwood_logo"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER("Westwood Associates Logo [dune0-4]"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("01_Westwood Studios", "Westwood Studios Logo"),
 };
 
 static MusicInfo s_table_music_intro[] = {
@@ -132,6 +136,7 @@ static MusicInfo s_table_music_main_menu[] = {
 	ADD_MUSIC_FROM_D2TM_SC55    		("menu", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Hope Fades (Main Menu) [dune7-6]"),
 	ADD_MUSIC_FROM_DUNE2_SMD    		("12_chosendestiny", "Chosen Destiny"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA			("05_Intro Part 1", "Intro Part 1"),
 	ADD_MUSIC_FROM_DUNE2000     		("OPTIONS", "Options"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB     	("Spice Opera", "Spice Opera"),
 	ADD_MUSIC_FROM_DUNE1992_SCDB     	("06 - Worm Suit (Spice Opera)", "Worm Suit (Spice Opera)"),
@@ -206,7 +211,7 @@ static MusicInfo s_table_music_win_harkonnen[] = {
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("win3"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("win2", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Victory 2 (Harkonnen Victory) [dune8-3]"),
-	ADD_MUSIC_FROM_DUNE2_SMD    ("15_harkonnenrules", "Harkonnen Rules"),
+	ADD_MUSIC_FROM_DUNE2_SMD    ("15_harkonnenrules", "Harkonnen Rules"),	
 };
 
 static MusicInfo s_table_music_win_atreides[] = {
@@ -282,6 +287,7 @@ static MusicInfo s_table_music_end_game_harkonnen[] = {
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_23"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Evil Harkonnen (Harkonnen Ending) [dune19-4]"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_harkonnen"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("10_Ending", "Ending"),
 };
 
 static MusicInfo s_table_music_end_game_atreides[] = {
@@ -292,6 +298,7 @@ static MusicInfo s_table_music_end_game_atreides[] = {
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_21"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Noble Atreides (Atreides Ending) [dune19-2]"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_atreides"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("10_Ending", "Ending"),
 };
 
 static MusicInfo s_table_music_end_game_ordos[] = {
@@ -302,6 +309,7 @@ static MusicInfo s_table_music_end_game_ordos[] = {
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_22"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Insidious Ordos (Ordos Ending) [dune19-3]"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_ordos"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("10_Ending", "Ending"),
 };
 
 static MusicInfo s_table_music_idle1[] = {
@@ -412,6 +420,8 @@ static MusicInfo s_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2_SMD    ("07_spicetrip", "Spice Trip"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("08_commandpost", "Command Post"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("09_trenching", "Trenching"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("08_In-Game BGM 1", "Background Music 1"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("09_In-Game BGM 2", "Background Music 2"),
 	ADD_MUSIC_FROM_DUNE2000     ("AMBUSH",   "The Ambush"),
 	ADD_MUSIC_FROM_DUNE2000     ("ENTORDOS", "Enter the Ordos"),
 	ADD_MUSIC_FROM_DUNE2000     ("FREMEN",   "The Fremen"),

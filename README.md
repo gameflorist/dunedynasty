@@ -53,6 +53,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
     - Recorded AdLib, MT-32, SC-55 and PC speaker versions of the original soundtrack
     - [SCDB's excellent 5-Device Mix](https://www.youtube.com/watch?v=k_Mlozm6fZY)
     - Sega Mega Drive soundtrack (mostly different songs, but also ___very___ good!)
+    - Amiga soundtrack
     - _Dune 2000_ game soundtrack
     - _Dune_ (1992) game by Cryo (an excellent, award winning, much more chill soundtrack of _Dune II_'s predecessor in three different flavours)
     - _Dune_ (1984) Original Motion Picture Soundtrack
@@ -402,6 +403,7 @@ Here is a list of supported Music packs:
   - [PC speaker recording](https://forum.dune2k.com/files/file/1517-pc-speaker-recording-all-tracks/)
 - [___Dune II___ Sega Mega Drive music](http://nyerguds.arsaneus-design.com/dune/dunesega/)  
   Mostly different songs from PC version, but also ___very___ good!
+- [___Dune II___ Amiga music](https://downloads.khinsider.com/game-soundtracks/album/dune-2-amiga)
 - ___Dune 2000___ game music  
   Unfortunately, this game cannot be purchased anymore at the moment.
 - ___Dune___ (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:  

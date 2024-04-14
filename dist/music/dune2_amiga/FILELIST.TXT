@@ -1,0 +1,15 @@
+Put Dune 2 Amiga Soundtrack here.
+
+Download from:
+https://downloads.khinsider.com/game-soundtracks/album/dune-2-amiga
+
+The only tracks used are: Westwood Studios Logo, both Background Music tracks, the Ending track
+and the Intro Part 1 (used for Main Menu Title).
+
+List of files:
+
+01_Westwood Studios.mp3
+05_Intro Part 1.mp3
+08_In-Game BGM 1.mp3
+09_In-Game BGM 2.mp3
+10_Ending.mp3
