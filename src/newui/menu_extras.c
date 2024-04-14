@@ -699,45 +699,14 @@ MusicOptions_Initialize(void)
 	si = Scrollbar_AllocItem(w, SCROLLBAR_INFO);
 	snprintf(si->text, sizeof(si->text), "%s", "Restart game to apply changes.");
 
-	// Get lists of available and unavailable music sets (midi and adlib are always available).
-	enum MusicSet availableSets[NUM_MUSIC_SETS] = { 
-		MUSICSET_DUNE2_ADLIB,
-		MUSICSET_DUNE2_MIDI,
-		MUSICSET_FLUIDSYNTH,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID
-	};
-	enum MusicSet unavailableSets[NUM_MUSIC_SETS] = {
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID
-		};
+	// Get lists of available and unavailable music sets (midi, adlib and fluidsynth are always available).
+	enum MusicSet availableSets[NUM_MUSIC_SETS];
+	enum MusicSet unavailableSets[NUM_MUSIC_SETS];
+	for (int i = MUSICSET_DUNE2_ADLIB; i < NUM_MUSIC_SETS; i++) {
+		availableSets[i] = i <= MUSICSET_FLUIDSYNTH ? i : MUSICSET_INVALID;
+		unavailableSets[i] = MUSICSET_INVALID;
+	}
+
 	int unavailableSetsCount = 0;
 	// Use main menu music to determine existance of music sets, since this song is present in all sets.
 	const MusicList *l = &g_table_music[MUSIC_MAIN_MENU];
