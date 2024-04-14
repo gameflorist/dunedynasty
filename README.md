@@ -39,7 +39,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Pan viewport by keeping RMB pressed
   - Zoom in/out viewport via mousewheel
   - [Windows Touchscreen Support](#touchscreen-support)
-- __Skirmish and Multiplayer:__
+- __Skirmish and [Multiplayer](#multiplayer):__
   - With 3 additional factions: Fremen, Sardaukar and Mercenaries
   - For up to 6 human or AI players
   - Fully custom alliances with up to 6 teams
@@ -434,6 +434,12 @@ Finally, the scenarios can either be distributed as loose INI files or
 as a single PAK file.  Data stored in PAK files must be listed in `META.INI`.
 See _MrFlibble's Alternative Scenarios_ (subfolder `mfas`) as a simple example of
 scenarios stored in a PAK file.
+
+## Multiplayer
+
+For ___hosting___ online multiplayer matches, make sure to forward the UDP port `10700` via our NAT-router to your hosting machine's local IP address. On the multiplayer menu-screen, you can leave the default `0.0.0.0` HOST IP address in most cases, as this will listen to all your network-connections. If this is not working, try setting it to the IP address of the network card connected to the internet.
+
+For ___joining___ an online multiplayer match, use the host's public IP address.
 
 ## Development
 
