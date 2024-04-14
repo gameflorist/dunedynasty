@@ -636,6 +636,22 @@ VideoOptions_Initialize(void)
 	}
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "Aspect Ratio Correction");
+
+	const char *aspectCorrectionTexts[4] = {
+		"None", "Menu Only", "Full", "Auto"
+	};
+
+	for(enum AspectRatioCorrection aspectCorrection = ASPECT_RATIO_CORRECTION_NONE; aspectCorrection <= ASPECT_RATIO_CORRECTION_AUTO; aspectCorrection++) {
+		si = Scrollbar_AllocItem(w, SCROLLBAR_RADIO);
+		si->d.radio.group = "aspectCorrection";
+		si->d.radio.value = (int)aspectCorrection;
+		si->d.radio.currentValue = (int*)&g_aspect_correction;
+
+		snprintf(si->text, sizeof(si->text), "%s", aspectCorrectionTexts[aspectCorrection]);
+	}
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
 	snprintf(si->text, sizeof(si->text), "%s", "Other Options");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
@@ -667,6 +683,9 @@ VideoOptions_Loop(int widgetID)
 				else if (si->type == SCROLLBAR_RADIO) {
 					if (strcmp( si->d.radio.group, "windowMode" ) == 0) {
 						g_gameConfig.windowMode = si->d.radio.value;
+					}
+					if (strcmp( si->d.radio.group, "aspectCorrection" ) == 0) {
+						g_aspect_correction = si->d.radio.value;
 					}
 					else if (strcmp( si->d.radio.group, "resolution" ) == 0) {
 						struct DisplayMode* resolutions = VideoA5_GetDisplayModes();

@@ -186,20 +186,15 @@ You might want to increase or decrease the scaling factors of the menubar, sideb
 
 In contrast to modern displays, old CRT-monitors had rectangular non-square pixels. All non-in-game graphics (menus, cutscenes, mentat screens, etc.) were designed with rectangular pixels in mind. The game/map/command-screen itself however seems to have been designed for square pixels (presumably due to targetting multiple platforms), meaning it always had a rather stretched look in the original DOS version - with a tile or the construction yard not being a perfect square.
 
-Dune Dynasty allows various options to deal with aspect ratio via the `correct_aspect_ratio` option. It's value consists of 2 parts: the mode and the height multiplier, and can be:
+Dune Dynasty allows various options to deal with aspect ratio via the "Aspect Ratio Correction" option in the Video Options (`correct_aspect_ratio` in the config-file). It's value can be:
 
-```ini
-#     none
-#     menu,(height multiplier)
-#     full,(height multiplier)
-#     auto,(height multiplier)
-```
+- __None__ (`none`): No aspect ratio correction is applied, meaning all pixels will be displayed as square pixels. This means, the game will appear squashed on modern monitors. Use this setting, if you are playing on an old CRT-monitor.
+- __Menu Only__ (`menu`): Non-square pixels are used for non-in-game graphics (menu, cutscenes, mentat screens, etc.) and square pixels for the game itself. This will display all graphics in the (presumably) intended aspect ratio on modern displays.
+- __Full__ (`full`): This will apply the aspect ratio correction on all graphics - essentially displaying everything as in the original DOS version on a CRT-monitor. It will retain the stretched look of the in-game graphics.
+- __Auto__ (`auto`): Same as option `menu`, except when the screen height is less than 800 pixels, option `none` will be used for better readability.  
+This is the default setting.
 
-With `menu` and `auto`, non-square pixels are used for non-in-game graphics and square pixels for the game. `full` will also use them during the game. `auto` is the same as `menu` except when the screen height is less than 800 pixels.
-
-The default value is `auto,1.2`, which means the aspect ratio of non-in-game graphics will be corrected by a factor of 1.2 for modern square-pixel monitors. But it will keep the square aspect ratio for the game-screen. This is presumably the originally envisioned look.
-
-If you want to play with the stretched game-screen just like in the old days, add the option `correct_aspect_ratio=full,1.2` in the `[graphics]` section of [`dunedynasty.cfg`](#configuration).
+The applied correction ratio is 1.2.
 
 ## Controls
 

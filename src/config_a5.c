@@ -192,22 +192,16 @@ Config_CreateConfigFile(void)
 static void
 Config_GetAspectCorrection(const char *str, enum AspectRatioCorrection *value)
 {
-	const char *aspect_str = strchr(str, ',');
 	const char c = tolower(str[0]);
 
-	     if (c == 'n') { g_pixel_aspect_ratio = 1.0f; *value = ASPECT_RATIO_CORRECTION_NONE; }
+	     if (c == 'n') { *value = ASPECT_RATIO_CORRECTION_NONE; }
 
 	/* menu or partial. */
-	else if (c == 'm') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
-	else if (c == 'p') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
+	else if (c == 'm') { *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
+	else if (c == 'p') { *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
 
-	else if (c == 'f') { g_pixel_aspect_ratio = 1.2f; *value = ASPECT_RATIO_CORRECTION_FULL; }
-	else if (c == 'a') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_AUTO; }
-
-	if (aspect_str != NULL) {
-		sscanf(aspect_str + 1, "%f", &g_pixel_aspect_ratio);
-		g_pixel_aspect_ratio = clamp(0.5f, g_pixel_aspect_ratio, 2.0f);
-	}
+	else if (c == 'f') { *value = ASPECT_RATIO_CORRECTION_FULL; }
+	else if (c == 'a') { *value = ASPECT_RATIO_CORRECTION_AUTO; }
 }
 
 void
@@ -495,6 +489,17 @@ Config_GetWindowMode(const char *str, enum WindowMode *value)
 }
 
 static void
+Config_SetAspectCorrection(ALLEGRO_CONFIG *config, const char *section, const char *key, enum AspectRatioCorrection value)
+{
+	const char *str[] = { "none", "menu", "full", "auto" };
+
+	if (value > ASPECT_RATIO_CORRECTION_AUTO)
+		value = ASPECT_RATIO_CORRECTION_AUTO;
+
+	al_set_config_value(config, section, key, str[value]);
+}
+
+static void
 Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *key, enum WindowMode value)
 {
 	const char *str[] = { "windowed", "fullscreen", "fullscreenwindow" };
@@ -504,6 +509,7 @@ Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *ke
 
 	al_set_config_value(config, section, key, str[value]);
 }
+
 
 static void
 Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *key, MusicInfo *ext)
@@ -840,6 +846,9 @@ GameOptions_Save(void)
 				break;
 
 			case CONFIG_ASPECT_CORRECTION:
+				Config_SetAspectCorrection(s_configFile, opt->section, opt->key, *(opt->d._aspect_correction));
+				break;
+
 			case CONFIG_SUBTITLE:
 				/* Not saved (hidden). */
 				break;

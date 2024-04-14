@@ -27,17 +27,13 @@ menubar_scale=1.00
 sidebar_scale=1.00
 viewport_scale=2.00
 hardware_cursor=1
-
 # correct_aspect_ratio is one of:
 #
-#     none
-#     menu,(height multiplier)
-#     full,(height multiplier)
-#     auto,(height multiplier)
-#
-# where auto is the same as menu except when the screen height is less
-# than 800 pixels.
-correct_aspect_ratio=auto,1.1
+#     none: Square pixels.
+#     menu: Non-square pixels for non-in-game graphics (menus cutscenes, etc.), square pixels in game.
+#     full: Non-square pixels throughout the game.
+#     auto: Same as `menu` except when the screen height is less than 800 pixels.
+correct_aspect_ratio=auto
 
 [controls]
 auto_scroll=1
