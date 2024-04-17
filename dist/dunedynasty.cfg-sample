@@ -61,6 +61,13 @@ sound_font=
 # the midi device id used on windows
 midi_device_id=0
 
+# format of midi files to be played is one of:
+#     pcs: PC Speaker
+#     tan: Tandy 3 voices
+#     gm: General Midi (SC-55)
+#     mt32: MT-32
+midi_format=gm
+
 [enhancement]
 brutal_ai=0
 fog_of_war=0

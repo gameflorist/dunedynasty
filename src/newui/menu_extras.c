@@ -718,6 +718,23 @@ MusicOptions_Initialize(void)
 	si = Scrollbar_AllocItem(w, SCROLLBAR_INFO);
 	snprintf(si->text, sizeof(si->text), "%s", "Restart game to apply changes.");
 
+	// MIDI Format
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "MIDI Format");
+
+	const char *midiFormatTexts[4] = {
+		"PC Speaker", "Tandy 3 voices", "General Midi", "Roland MT-32"
+	};
+
+	for(enum MidiFormat midiFormat = MIDI_FORMAT_PCS; midiFormat < NUM_MIDI_FORMATS; midiFormat++) {
+		si = Scrollbar_AllocItem(w, SCROLLBAR_RADIO);
+		si->d.radio.group = "midiFormat";
+		si->d.radio.value = (int)midiFormat;
+		si->d.radio.currentValue = (int*)&g_midi_format;
+
+		snprintf(si->text, sizeof(si->text), "%s", midiFormatTexts[midiFormat]);
+	}
+
 	// Get lists of available and unavailable music sets (midi, adlib and fluidsynth are always available).
 	enum MusicSet availableSets[NUM_MUSIC_SETS];
 	enum MusicSet unavailableSets[NUM_MUSIC_SETS];
@@ -788,8 +805,15 @@ MusicOptions_Loop(int widgetID)
 		case SCANCODE_KEYPAD_5:
 		case SCANCODE_SPACE:
 			si = Scrollbar_GetSelectedItem(scrollbar);
-			if ((si != NULL) && (si->type == SCROLLBAR_CHECKBOX)) {
-				*(si->d.checkbox) = !(*(si->d.checkbox));
+			if (si != NULL) {
+				if (si->type == SCROLLBAR_CHECKBOX) {
+					*(si->d.checkbox) = !(*(si->d.checkbox));
+				}
+				else if (si->type == SCROLLBAR_RADIO) {
+					if (strcmp( si->d.radio.group, "midiFormat" ) == 0) {
+						g_midi_format = si->d.radio.value;
+					}
+				}
 			}
 
 			break;

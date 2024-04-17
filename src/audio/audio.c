@@ -42,6 +42,7 @@ float voice_volume = 1.0f;
 bool g_opl_mame = true;
 char sound_font_path[1024];
 int g_midi_device_id = 0;
+enum MidiFormat g_midi_format = MIDI_FORMAT_GM;
 
 enum MusicSet default_music_pack;
 static MusicInfo *curr_music;

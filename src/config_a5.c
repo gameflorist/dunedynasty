@@ -48,7 +48,8 @@ typedef struct GameOption {
 		CONFIG_LANGUAGE,
 		CONFIG_MUSIC_PACK,
 		CONFIG_SUBTITLE,
-		CONFIG_WINDOW_MODE
+		CONFIG_WINDOW_MODE,
+		CONFIG_MIDI_FORMAT
 	} type;
 
 	union {
@@ -57,6 +58,7 @@ typedef struct GameOption {
 		float *_float;
 		char *_string;
 		enum AspectRatioCorrection *_aspect_correction;
+		enum MidiFormat *_midi_format;
 		enum GraphicsDriver *_graphics_driver;
 		enum HealthBarMode *_health_bar;
 		enum Language *_language;
@@ -129,7 +131,8 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "voice_volume",     CONFIG_FLOAT,   .d._float = &voice_volume },
 	{ "audio",  "opl_mame",         CONFIG_BOOL,    .d._bool = &g_opl_mame },
 	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
-	{ "audio",  "midi_device_id",       CONFIG_INT,  .d._int = &g_midi_device_id },
+	{ "audio",  "midi_device_id",   CONFIG_INT,  	.d._int = &g_midi_device_id },
+	{ "audio",  "midi_format",     	CONFIG_MIDI_FORMAT,  	.d._midi_format = &g_midi_format },
 
 	{ "music",  "dune2_adlib",      	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_ADLIB].enable },
 	{ "music",  "dune2_midi",       	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_MIDI].enable },
@@ -188,6 +191,17 @@ Config_CreateConfigFile(void)
 	}
 
 	return config;
+}
+
+static void
+Config_GetMidiFormat(const char *str, enum MidiFormat *value)
+{
+	const char c = tolower(str[0]);
+
+	     if (c == 'p') { *value = MIDI_FORMAT_PCS; }
+	else if (c == 't') { *value = MIDI_FORMAT_TAN; }
+	else if (c == 'g') { *value = MIDI_FORMAT_GM; }
+	else if (c == 'm') { *value = MIDI_FORMAT_MT32; }
 }
 
 static void
@@ -501,6 +515,17 @@ Config_SetAspectCorrection(ALLEGRO_CONFIG *config, const char *section, const ch
 }
 
 static void
+Config_SetMidiFormat(ALLEGRO_CONFIG *config, const char *section, const char *key, enum MidiFormat value)
+{
+	const char *str[] = { "pcs", "tan", "gm", "mt32" };
+
+	if (value >= NUM_MIDI_FORMATS)
+		value = MIDI_FORMAT_GM;
+
+	al_set_config_value(config, section, key, str[value]);
+}
+
+static void
 Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *key, enum WindowMode value)
 {
 	const char *str[] = { "windowed", "fullscreen", "fullscreenwindow" };
@@ -627,6 +652,10 @@ GameOptions_Load(void)
 			continue;
 
 		switch (opt->type) {
+			case CONFIG_MIDI_FORMAT:
+				Config_GetMidiFormat(str, opt->d._midi_format);
+				break;
+
 			case CONFIG_ASPECT_CORRECTION:
 				Config_GetAspectCorrection(str, opt->d._aspect_correction);
 				break;
@@ -848,6 +877,10 @@ GameOptions_Save(void)
 
 			case CONFIG_ASPECT_CORRECTION:
 				Config_SetAspectCorrection(s_configFile, opt->section, opt->key, *(opt->d._aspect_correction));
+				break;
+
+			case CONFIG_MIDI_FORMAT:
+				Config_SetMidiFormat(s_configFile, opt->section, opt->key, *(opt->d._midi_format));
 				break;
 
 			case CONFIG_SUBTITLE:

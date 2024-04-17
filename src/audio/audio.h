@@ -10,6 +10,16 @@ enum SoundEffectSources {
 	SOUNDEFFECTS_SYNTH_AND_SAMPLES
 };
 
+enum MidiFormat {
+	MIDI_FORMAT_PCS,
+	MIDI_FORMAT_TAN,
+	MIDI_FORMAT_GM,
+	MIDI_FORMAT_MT32,
+
+	NUM_MIDI_FORMATS,
+	MIDI_FORMAT_INVALID = 0xFFFF
+};
+
 extern bool g_enable_audio;
 extern bool g_enable_music;
 extern enum SoundEffectSources g_enable_sound_effects;
@@ -23,6 +33,7 @@ extern float voice_volume;
 extern bool g_opl_mame;
 extern char sound_font_path[1024];
 extern int g_midi_device_id;
+extern enum MidiFormat g_midi_format;
 extern enum MusicSet default_music_pack;
 extern char music_message[128];
 
