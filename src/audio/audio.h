@@ -22,6 +22,7 @@ extern float voice_volume;
 
 extern bool g_opl_mame;
 extern char sound_font_path[1024];
+extern int g_midi_device_id;
 extern enum MusicSet default_music_pack;
 extern char music_message[128];
 

@@ -58,6 +58,9 @@ opl_mame=1
 # e.g. sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
 sound_font=
 
+# the midi device id used on windows
+midi_device_id=0
+
 [enhancement]
 brutal_ai=0
 fog_of_war=0

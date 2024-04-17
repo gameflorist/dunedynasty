@@ -8,12 +8,13 @@
 #include "types.h"
 
 #include "midi.h"
+#include "audio.h"
 
 static HMIDIOUT s_midi = NULL;
 
 bool midi_init(void)
 {
-	if (midiOutOpen(&s_midi, 0, 0, 0, CALLBACK_NULL) != MMSYSERR_NOERROR) {
+	if (midiOutOpen(&s_midi, g_midi_device_id, 0, 0, CALLBACK_NULL) != MMSYSERR_NOERROR) {
 		Warning("Failed to initialise MIDI\n");
 		s_midi = NULL;
 		return false;

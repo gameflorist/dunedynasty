@@ -357,7 +357,15 @@ There you will also find a __Jukebox__ to listen to all available songs from all
 
 ### Midi
 
-_Dune Dynasty_ can play music via the system MIDI output on Windows and Linux (ALSA). If you use [Timidity++] as an ALSA sequencer client on Linux you should start it with smaller buffer sizes to avoid the "drunk drummer" problem:
+_Dune Dynasty_ can play music via the system MIDI output on Windows, macOS (Core Audio) and Linux (ALSA).
+
+#### Windows
+
+You can specify the MIDI device ID to use via the `midi_device_id` config parameter (default is `0`). To find out the correct device ID, you can use the tool [ListMIDI32.exe](https://www.vcode.no/VCFiles.nsf/viewByKey/ListMIDI32).
+
+#### Linux
+
+If you use [Timidity++] as an ALSA sequencer client on Linux you should start it with smaller buffer sizes to avoid the "drunk drummer" problem:
 
 ```txt
 timidity -iA -B 4,8
