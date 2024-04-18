@@ -83,6 +83,11 @@ bool const enhancement_fix_typos = true;
 bool enhancement_show_outpost_unit_info = false;
 
 /**
+ * Reduce building time of walls to 0.
+ */
+bool enhancement_instant_walls = false;
+
+/**
  * In the original game, fog is drawn underneath units, at the same
  * time as other overlays, making units suddenly appear and disappear.
  */

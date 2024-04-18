@@ -295,6 +295,9 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
   
   This will always be enabled in multiplayer/skirmish.
 
+- __Instant wall construction:__  
+  Reduces build time of walls to 0.
+
 - __True game speed adjustment:__  
   _Dune II_'s game speed implementation doesn't affect scripts and other things. This enhancement takes care of that. It also fixes a bug with the range of the sonic tank.  
   (Enabled by default.)
