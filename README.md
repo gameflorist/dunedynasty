@@ -92,6 +92,7 @@ Here are some alternatives for enjoying _Dune II_ on modern systems:
 - [___Dune Legacy___](https://dunelegacy.sourceforge.net/): A _Dune II_ clone / engine recreation / remake with a similar feature-set as _Dune Dynasty_, but deviating more from the original's look and feel. Has multiplayer support and map editor.
 - [___Dune II - The Maker___](https://dune2themaker.fundynamic.com/): Another _Dune II_ remake with modern features and upscaled graphics. Also deviates quite a bit from the original's look and feel.
 - There is also a [___Dune II mod for OpenRA___](https://github.com/OpenRA/d2/wiki), an open source engine for the early _Command & Conquer_ games.
+- A unique and amazing take on the game is [___UnDUNE II___](https://liquidream.itch.io/undune2) - a de-make re-created from scratch in PICO-8.
 - _Dune II_ is also perfectly playable using [DOSBox](https://dosbox-staging.github.io/).
 
 _Dune Dynasty_'s unique selling points are probably it's faithfulness to the look and feel of the original (due to it basing on an [engine re-creation](https://github.com/OpenDUNE/OpenDUNE) of the original) combined with many control modernizations, it's support for [fan-generated campaigns](#custom-campaigns), [various music soundtracks](#external-music-sets) and multiplayer.
