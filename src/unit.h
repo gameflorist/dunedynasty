@@ -191,6 +191,7 @@ extern void Unit_AddToTile(Unit *unit, uint16 packed);
 extern void Unit_Server_LaunchHouseMissile(struct House *h, uint16 packed);
 extern void Unit_HouseUnitCount_Remove(Unit *unit);
 extern void Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID);
+extern uint16 Unit_GetFogUncoverRadius(enum UnitType unitType, uint16 fogUncoverRadius);
 
 extern uint16 Unit_GetTargetUnitPriority(Unit *unit, Unit *target);
 extern uint16 Unit_GetTargetStructurePriority(Unit *unit, const struct Structure *s);

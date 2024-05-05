@@ -257,6 +257,11 @@ bool enhancement_attack_dir_consistency = false;
  */
 bool enhancement_skip_introduction = false;
 
+/**
+ * Increase fog uncover radius of trikes and quads from 2 to 4 tiles.
+ */
+bool enhancement_extend_sight_range = false;
+
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 

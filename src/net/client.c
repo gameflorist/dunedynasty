@@ -559,6 +559,7 @@ Client_Recv_Scenario(const unsigned char **buf)
 	g_multiplayer.worm_count = Net_Decode_uint32(buf);
 	enhancement_fog_of_war = Net_Decode_uint8(buf);
 	enhancement_insatiable_sandworms = Net_Decode_uint8(buf);
+	enhancement_extend_sight_range = Net_Decode_uint8(buf);
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		g_multiplayer.client[h] = Net_Decode_uint8(buf);

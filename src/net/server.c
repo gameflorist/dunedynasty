@@ -798,6 +798,7 @@ Server_Send_Scenario(unsigned char **buf)
 	Net_Encode_uint32(buf, g_multiplayer.worm_count);
 	Net_Encode_uint8 (buf, enhancement_fog_of_war);
 	Net_Encode_uint8 (buf, enhancement_insatiable_sandworms);
+	Net_Encode_uint8 (buf, enhancement_extend_sight_range);
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
 		Net_Encode_uint8(buf, g_multiplayer.client[h]);

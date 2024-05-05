@@ -1484,7 +1484,7 @@ Unit_RefreshFog(enum TileUnveilCause cause, const Unit *unit, bool unveil)
 	if (unit->o.flags.s.inTransport) return;
 	if ((unit->o.position.x == 0xFFFF && unit->o.position.y == 0xFFFF) || (unit->o.position.x == 0 && unit->o.position.y == 0)) return;
 
-	fogUncoverRadius = g_table_unitInfo[unit->o.type].o.fogUncoverRadius;
+	fogUncoverRadius = Unit_GetFogUncoverRadius(unit->o.type, g_table_unitInfo[unit->o.type].o.fogUncoverRadius);
 	if (fogUncoverRadius == 0) return;
 
 	Tile_RefreshFogInRadius(House_GetAllies(Unit_GetHouseID(unit)), cause,
@@ -2940,7 +2940,7 @@ void Unit_UpdateMap(uint16 type, Unit *unit)
 	if (type == 1) {
 		if (unit->o.type != UNIT_SANDWORM) {
 			Tile_RemoveFogInRadius(House_GetAllies(Unit_GetHouseID(unit)),
-					UNVEILCAUSE_UNIT_UPDATE, position, g_table_unitInfo[unit->o.type].o.fogUncoverRadius);
+					UNVEILCAUSE_UNIT_UPDATE, position, Unit_GetFogUncoverRadius(unit->o.type, g_table_unitInfo[unit->o.type].o.fogUncoverRadius));
 		}
 
 		if (Object_GetByPackedTile(packed) == NULL) {
@@ -3195,4 +3195,23 @@ Unit_HouseUnitCount_Add(Unit *unit, uint8 houseID)
 	} else {
 		Unit_Client_HouseUnitCount_Add(unit, houseID);
 	}
+}
+
+uint16
+Unit_GetFogUncoverRadius(enum UnitType unitType, uint16 fogUncoverRadius)
+{
+	
+	if (enhancement_extend_sight_range) {
+		switch(unitType)
+		{
+			case UNIT_TRIKE:
+			case UNIT_QUAD:
+			case UNIT_RAIDER_TRIKE:
+				return 4;
+			default:
+				return fogUncoverRadius;
+		}
+	}
+
+	return fogUncoverRadius;
 }
