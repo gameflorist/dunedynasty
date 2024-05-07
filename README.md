@@ -55,6 +55,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
     - Sega Mega Drive soundtrack (mostly different songs, but also ___very___ good!)
     - Amiga soundtrack
     - _Dune 2000_ game soundtrack
+    - _Emperor: Battle for Dune_ game soundtrack
     - _Dune_ (1992) game by Cryo (an excellent, award winning, much more chill soundtrack of _Dune II_'s predecessor in three different flavours)
     - _Dune_ (1984) Original Motion Picture Soundtrack
     - _Dune: Part One_ (2021) Original Motion Picture Soundtrack and "_The Dune Sketchbook_" soundtrack
@@ -416,6 +417,8 @@ Here is a list of supported Music packs:
   Mostly different songs from PC version, but also ___very___ good!
 - [___Dune II___ Amiga music](https://downloads.khinsider.com/game-soundtracks/album/dune-2-amiga)
 - ___Dune 2000___ game music  
+  Unfortunately, this game cannot be purchased anymore at the moment.
+- ___Emperor: Battle for Dune___ game music  
   Unfortunately, this game cannot be purchased anymore at the moment.
 - ___Dune___ (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:  
    The excellent award-winning soundtrack for _Dune II_'s predecessor - the 1992 _Dune_ game by _Cryo_. It is very atmospheric, and makes _Dune II_ a much more relaxing and chill experience. Three versions are supported:

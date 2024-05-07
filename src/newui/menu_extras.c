@@ -750,12 +750,24 @@ MusicOptions_Initialize(void)
 		const MusicInfo *m = &l->song[i];
 		if (m->music_set == MUSICSET_DUNE2_ADLIB || m->music_set == MUSICSET_DUNE2_MIDI || m->music_set == MUSICSET_FLUIDSYNTH)
 			continue;
+
+		// Some soundtracks contains multiple tracks for main menu (e.g. Emperor: Battle for Dune).
+		// So we make sure, this set is not already checked.
+		bool musicSetAlreadyChecked = false;
+		for (int j = 0; j < NUM_MUSIC_SETS; j++) {
+			if (availableSets[j] == m->music_set || unavailableSets[j] == m->music_set) {
+				musicSetAlreadyChecked = true;
+			}
+		}
+		if (musicSetAlreadyChecked)
+			continue;
+			
 		const bool musicSetFound = m->enable & MUSIC_FOUND;
 		if (musicSetFound) {
-			availableSets[i] = m->music_set;
+			availableSets[m->music_set] = m->music_set;
 		}
 		else {
-			unavailableSets[i] = m->music_set;
+			unavailableSets[m->music_set] = m->music_set;
 			unavailableSetsCount++;
 		}
 	}
