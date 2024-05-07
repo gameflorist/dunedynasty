@@ -1,6 +1,8 @@
 Put Dune (1992) SCDB Mix (AdLib + MT-32 + AdLib Gold) soundtrack here.
 
 Download from:
+https://www.moddb.com/downloads/dune-soundtrack-3-card-scdb-mix
+or
 https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/
 
 Make sure, file-names are exactly as listed below.

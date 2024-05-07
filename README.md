@@ -422,8 +422,8 @@ Here is a list of supported Music packs:
   - [AdLib Gold recording by DOS Nostalgia](https://www.dosnostalgia.com/?p=542)
   - [___Spice Opera___ by Exxos](https://stphanepicq.bandcamp.com/album/dune-spice-opera-2024-remaster)  
      A remastered CD release of the soundtrack (re-released in 2024).
-  - [SCDB Mix (AdLib + MT-32 + AdLib Gold)](https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/)  
-     An amazing 3-card mix by _the Sound Card database_ (see [https://www.youtube.com/watch?v=o-Q_UO6Hp7U](https://www.youtube.com/watch?v=o-Q_UO6Hp7U))
+  - [SCDB Mix (AdLib + MT-32 + AdLib Gold)](https://www.moddb.com/downloads/dune-soundtrack-3-card-scdb-mix) ([mirror](https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/))  
+     An amazing 3-card mix by _the Sound Card database_ (listen to it on [YouTube](https://www.youtube.com/watch?v=o-Q_UO6Hp7U) with additional details, information and visuals!)
 
 - ___Dune (1984)___ Original Motion Picture Soundtrack by Toto and Brian Eno  
   Seems to be only available on CD. Purchase e.g. from [amazon.com](https://www.amazon.com/-/de/dp/B000006YDD/) or [amazon.de](https://www.amazon.de/Dune-Toto/dp/B000006YDD/) and rip files to MP3.
