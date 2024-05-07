@@ -58,6 +58,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
     - _Dune_ (1992) game by Cryo (an excellent, award winning, much more chill soundtrack of _Dune II_'s predecessor in three different flavours)
     - _Dune_ (1984) Original Motion Picture Soundtrack
     - _Dune: Part One_ (2021) Original Motion Picture Soundtrack and "_The Dune Sketchbook_" soundtrack
+    - _Dune: Part Two_ (2024) Original Motion Picture Soundtrack
     - ...with many options for randomly combining them during gameplay
     - ...all playable in in-game jukebox
   - Multiple sound channels

@@ -20,6 +20,7 @@
 #define DUNE1984_OST_PREFIX    		"dune1984_ost"
 #define DUNE2021_OST_PREFIX    		"dune2021_ost"
 #define DUNE2021_SKETCHBOOK_PREFIX	"dune2021_sketchbook"
+#define DUNE_PART_TWO_OST_PREFIX	"dune_part_two_ost"
 
 #define ADD_MUSIC_LIST(TABLE,SONGNAME)  { 0, 0, 0, SONGNAME, lengthof(TABLE), TABLE }
 #define ADD_MUSIC_FROM_DUNE2_ADLIB(FILENAME,TRACK)  			{ MUSIC_ENABLE, MUSICSET_DUNE2_ADLIB,   		NULL,   FILENAME, TRACK, 1.0f }
@@ -40,6 +41,7 @@
 #define ADD_MUSIC_FROM_DUNE1984_OST(FILENAME,SONGNAME)  		{ MUSIC_WANT,   MUSICSET_DUNE1984_OST,      	SONGNAME,"music/"DUNE1984_OST_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE2021_OST(FILENAME,SONGNAME)  		{ MUSIC_WANT,   MUSICSET_DUNE2021_OST,      	SONGNAME,"music/"DUNE2021_OST_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK(FILENAME,SONGNAME)	{ MUSIC_WANT,   MUSICSET_DUNE2021_SKETCHBOOK,	SONGNAME,"music/"DUNE2021_SKETCHBOOK_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE_PART_TWO_OST(FILENAME,SONGNAME)		{ MUSIC_WANT,   MUSICSET_DUNE_PART_TWO_OST,		SONGNAME,"music/"DUNE_PART_TWO_OST_PREFIX    "/" FILENAME, 0, 1.00f }
 
 MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, "dune2_adlib",  			"AdLib" },
@@ -60,6 +62,7 @@ MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, DUNE1984_OST_PREFIX,    	"Dune 1984 OST" },
 	{ true, DUNE2021_OST_PREFIX,    	"Dune 2021 OST" },
 	{ true, DUNE2021_SKETCHBOOK_PREFIX,	"Dune 2021 Sketchbook" },
+	{ true, DUNE_PART_TWO_OST_PREFIX,	"Dune: Part Two OST" },
 };
 
 static MusicInfo s_table_music_stop[] = {
@@ -144,6 +147,7 @@ static MusicInfo s_table_music_main_menu[] = {
 	ADD_MUSIC_FROM_DUNE1984_OST     	("02 - Main Title", "Main Title"),
 	ADD_MUSIC_FROM_DUNE2021_OST     	("01 - Dream of Arrakis", "Dream of Arrakis"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK	("05 - Paul's Dream", "Paul's Dream"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST	("01 - Beginnings Are Such Delicate Times", "Beginnings Are Such Delicate Times"),
 
 	/* Dune 2000 battle summary as alternative menu music. */
 	{ 0, MUSICSET_DUNE2000,     "Score", "music/" DUNE2000_PREFIX "/SCORE", 0, 1.0f },
@@ -498,6 +502,23 @@ static MusicInfo s_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("05 - Paul's Dream", "Paul's Dream"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("06 - Moon over Caladan", "Moon over Caladan"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("07 - Shai-hulud", "Shai-hulud"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("02 - Eclipse", "Eclipse"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("03 - The Sietch", "The Sietch"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("04 - Water of Life", "Water of Life"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("05 - A Time of Quiet Between the Storms", "A Time of Quiet Between the Storms"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("07 - Worm Ride", "Worm Ride"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("09 - Each Man Is a Little War", "Each Man Is a Little War"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("11 - Spice", "Spice"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("12 - Seduction", "Seduction"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("13 - Never Lose Me", "Never Lose Me"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("15 - Paul Drinks", "Paul Drinks"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("16 - Resurrection", "Resurrection"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("18 - Southern Messiah", "Southern Messiah"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("19 - The Emperor", "The Emperor"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("22 - You Fought Well", "You Fought Well"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("23 - Kiss the Ring", "Kiss the Ring"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("24 - Only I Will Remain", "Only I Will Remain"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("25 - Lisan al Gaib", "Lisan al Gaib"),
 };
 
 static MusicInfo s_table_music_bonus[] = { /* Disabled by default. */
@@ -597,6 +618,13 @@ static MusicInfo s_table_music_attack_other[] = {
 	ADD_MUSIC_FROM_DUNE2021_OST ("20 - Sandstorm", "Sandstorm"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("08 - Mind-killer", "Mind-killer"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("09 - Grains of Sand", "Grains of Sand"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("06 - Harvester Attack", "Harvester Attack"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("08 - Ornithopter Attack", "Ornithopter Attack"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("10 - Harkonnen Arena", "Harkonnen Arena"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("14 - Travel South", "Travel South"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("17 - Arrival", "Arrival"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("20 - Worm Army", "Worm Army"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("21 - Gurney Battle", "Gurney Battle"),
 };
 
 MusicList g_table_music[MUSICID_MAX] = {

@@ -152,6 +152,7 @@ static const GameOption s_game_option[] = {
 	{ "music",  "dune1984_ost",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1984_OST].enable },
 	{ "music",  "dune2021_ost",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2021_OST].enable },
 	{ "music",  "dune2021_sketchbook", 	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2021_SKETCHBOOK].enable },
+	{ "music",  "dune_part_two_ost", 	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE_PART_TWO_OST].enable },
 	{ "music",  "default",          	CONFIG_MUSIC_PACK,  .d._music_set = &default_music_pack },
 
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },

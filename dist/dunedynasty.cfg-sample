@@ -118,4 +118,5 @@ dune1992_spiceopera=1
 dune1984_ost=1
 dune2021_ost=1
 dune2021_sketchbook=1
+dune_part_two_ost=1
 default=dune2_adlib
