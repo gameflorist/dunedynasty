@@ -71,7 +71,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Consistent directional damage
 - __[Support for Custom campaigns](#custom-campaigns):__
   - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
-  - [MrFlibble's Alternate Scenarios](https://www.mediafire.com/file/9vs75nukou8o3wq/Dune2-MrFlibble%2527sAlternateScenarios.zip/file)
+  - [MrFlibble's Alternate Scenarios](https://mega.nz/file/gGUUSZbI#DwUrH3AL6sABUX2Y2wlXfblTNM_h41jq0HQnC2sLjnA)
   - [Stefan Henriks' Atreides campaign](http://arrakis.dune2k.com/downloads.html)
   - [Super Dune II](http://forum.dune2k.com/topic/20065-super-dune-ii-classic/)
 - __Various bug fixes__
@@ -448,7 +448,7 @@ ROBOTIX=0
 _Dune Dynasty_ supports various fan-made campaigns:
 
 - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
-- [MrFlibble's Alternate Scenarios](https://www.mediafire.com/file/9vs75nukou8o3wq/Dune2-MrFlibble%2527sAlternateScenarios.zip/file)
+- [MrFlibble's Alternate Scenarios](https://mega.nz/file/gGUUSZbI#DwUrH3AL6sABUX2Y2wlXfblTNM_h41jq0HQnC2sLjnA)
 - [Stefan Henriks' Atreides campaign](http://arrakis.dune2k.com/downloads.html)
 - [Super Dune II](http://forum.dune2k.com/topic/20065-super-dune-ii-classic/)
 
