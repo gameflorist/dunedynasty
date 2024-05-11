@@ -438,7 +438,7 @@ scenarios stored in a PAK file.
 
 ## Multiplayer
 
-For ___hosting___ online multiplayer matches, make sure to forward the UDP port `10700` via our NAT-router to your hosting machine's local IP address. On the multiplayer menu-screen, you can leave the default `0.0.0.0` HOST IP address in most cases, as this will listen to all your network-connections. If this is not working, try setting it to the IP address of the network card connected to the internet.
+For ___hosting___ online multiplayer matches, make sure to forward the UDP port `10700` via your NAT-router to your hosting machine's local IP address. On the multiplayer menu-screen, you can leave the default `0.0.0.0` HOST IP address in most cases, as this will listen to all your network-connections. If this is not working, try setting it to the IP address of the network card connected to the internet.
 
 For ___joining___ an online multiplayer match, use the host's public IP address.
 
