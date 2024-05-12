@@ -3,31 +3,29 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-14
     permissions:
       actions: write
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: | 
-          brew install cmake dylibbundler
-          PACKAGES=(argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet)
-          for PACKAGE in "${PACKAGES[@]}"
-          do
-            brew uninstall --force --ignore-dependencies $PACKAGE
-            brew fetch --force --bottle-tag=arm64_monterey $PACKAGE
-            brew install $(brew --cache --bottle-tag=arm64_monterey $PACKAGE)
-          done
+        run: brew install cmake allegro fluid-synth mad enet dylibbundler
 
       - name: Build
-        run: ./scripts/build-macos-arm64.sh
+        run: ./scripts/build-macos.sh
 
       - name: Bundle libs
         run: ./scripts/bundle-libs-macos.sh
 
       - name: Copy OS specific files
         run: cp -r ./dist-os-specific/macos/* ./dist
+
+      - name: Test executable
+        run: |
+          brew uninstall --force --ignore-dependencies argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet
+          cd dist
+          ./dunedynasty | grep "data directory"
 
       - name: Zip dist folder
         run: |

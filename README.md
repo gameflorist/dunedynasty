@@ -569,10 +569,10 @@ The steps below will build the release-version. You can change value of the `DCM
     ./scripts/build-macos.sh
     ```
 
-    If you are building for ARM64 on a x86-64 machine, call this script instead:
+    If you are building for ARM64 on a x86-64 machine (or vice versa), you have to state the wanted architecture via the `CMAKE_OSX_ARCHITECTURES` flag in the cmake command. E.g.:
 
     ```shell
-    ./scripts/build-macos-arm64.sh
+    cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64 .
     ```
 
 4. To package all required dynlibs into the `./dist/libs` folder and patch the executable, call this script:
