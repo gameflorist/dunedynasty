@@ -63,8 +63,8 @@ MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, DUNE1992_SCDB_PREFIX,    	"Dune SCDB Mix" },
 	{ true, DUNE1992_SPICEOPERA_PREFIX,	"Dune Spice Opera" },
 	{ true, DUNE1984_OST_PREFIX,    	"Dune 1984 OST" },
-	{ true, DUNE2021_OST_PREFIX,    	"Dune 2021 OST" },
-	{ true, DUNE2021_SKETCHBOOK_PREFIX,	"Dune 2021 Sketchbook" },
+	{ true, DUNE2021_OST_PREFIX,    	"Dune: Part One OST" },
+	{ true, DUNE2021_SKETCHBOOK_PREFIX,	"Dune: Part One Sketchbook" },
 	{ true, DUNE_PART_TWO_OST_PREFIX,	"Dune: Part Two OST" },
 };
 
