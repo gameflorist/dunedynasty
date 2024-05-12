@@ -1,6 +1,78 @@
 Dune Dynasty
 ============
 
+Version 1.6.3, 2024-05-12
+-------------------------
+  - Add new enhancement option for instant wall construction.
+    The config-key is "instant_walls".
+    This enhancement is disabled by default.
+  - Add new enhancement option to increase light vehicle sight range (from 2 to 4 tiles).
+    The config-key is "extend_sight_range".
+    This enhancement is disabled by default.
+  - Add support for new soundtracks:
+     o Dune II Amiga Soundtrack.
+     o Dune II 5-device mix (PC Speaker, Tandy 3-voice, AdLib, Roland MT-32 and SC-55) by the Sound Card database.
+     o Emperor: Battle for Dune Soundtrack.
+     o Dune: Part Two (2024) Original Motion Picture Soundtrack
+  - Add in-game option "Aspect Ratio Correction". Also changes the config option to not include the ratio anymore (it is now hardcoded to 1.2).
+  - Add config option "midi_device_id" to select the MIDI device to be used on Windows (default=0).
+  - Add Midi Format option to Music Options to allow type of midi files to be played (config key is `midi_format`):
+     o pcs: PC Speaker
+     o tan: Tandy 3 voices
+     o gm: General Midi (SC-55) (=default)
+     o mt32: Roland MT-32
+  - Fix hanging notes after song-change with MIDI-playback on macOS.
+  - Fix aspect ratio of menus/cutscenes/mentat-screens for modern monitors by using a default ratio of 1.2 instead of 1.1.
+
+Version 1.6.2, 2024-02-24
+-------------------------
+  - Make enhancement "Raise unit cap" more effective.
+    Dune II has 3 types of unit caps:
+     o A unit cap defined per house by the scenario (usually 25 for the player, and 20 for the CPU)
+     o A hard-coded overall cap of 102
+     o And a hard-coded cap per unit/group of units (caryalls and ornithopters: 11, saboteurs: 3, all others/ground units: 80)
+    This enhancement sets the scenario unit cap for all houses to 50, raises the overall cap to 322 and allows a total of 300 ground units (incl. saboteurs).
+    This enhancement is disabled by default and always enabled in multiplayer/skirmish.
+  - Add enhancement option to raise structure cap. (thanks WillSo!):
+    Dune II limits total structures on a map to about 70. This enhancement raises that limit by 100.
+    This enhancement is disabled by default and always enabled in multiplayer/skirmish.
+    NOTE: Games saved with this option enabled will not be able to load, when the option is disabled! An error will be shown in this case.
+  - Add teams and AI to multiplayer and skirmish.
+    You can now setup matches with up to 6 teams with completely custom human/AI player configurations.
+  - Enable worms in multiplayer and add worm-count option (0-3) to multiplayer/skirmish options.
+  - Add option to choose starting army in skirmish/multiplayer options:
+     o Small option is: 1 trooper, 1 quad
+     o Large option is: 1 trooper, 2 quads, 1 tank, 2 siege tanks
+  - Add enhancement to show additional info in Outpost text.
+    Shows active, standby and max units. 
+    Standby units are e.g. in production, ordered in factory, outstanding reinforcements, usually 1 backup-harvester.
+    This enhancement is always enabled in multiplayer/skirmish, to provide the actual owned unit count in addition to the default allied count.  
+  - Provide macOS ARM64 (Apple Silicon M1) package.
+  - Add `setup` script to macOS packages to remove the executable and included libraries from Gatekeeper quarantine.
+  - Add support for new soundtracks:
+     o Dune II PC speaker recording.
+     o 3-card mix (AdLib + MT-32 + AdLib Gold) of Cryo's Dune (1992) by the Sound Card database.
+     o 2024 re-release of the Spice Opera soundtrack of Cryo's Dune (1992) by EXXOS.
+       (Replacing support for old version.)
+  - Remove support for Dune II - The Maker MT-32 soundtrack, since it is a subset of _Shaiwa's_ (FED2k) MT-32 recordings.  
+  - Further fixes and improvements:
+     o Fix units occasionally not blinking on attack command with true game speed enhancement enabled.
+       This particularily happened after loading a savegame more than once per game session.
+     o Move name-input-field in lobby to a more prominent location and instead display errors on the top.
+     o Display error on invalid house setup in multiplayer/skirmish lobby.
+     o Fix lose-condition (structures/units) setting not working in in skirmish mode.
+     o Fix multiplayer/skirmish game continuing, if player is dead but ally is still alive.
+     o Fix fremen and saboteur superweapons spawning for the wrong house in skirmish.
+     o Fix "Dune Variation" from Dune (1992) Adlib soundtrack not playing.
+     o Lower "Dune II - The Maker" AdLib recording volume.
+     o Fix detection of available music sets in extras menu.
+     o Fix some voice samples being played with wrong volume.
+     o Fix map generation efficiency with 5 and 6 players/teams.
+     o Fix units spawning in structures in multiplayer/skirmish.
+     o Change behaviour of initial AI units in multiplayer/skirmish to area guard.
+     o Fix several compile warnings.
+     o Add minimal distance to allies for human players in multiplayer/skirmish.
+  
 Version 1.6.1, 2023-11-17
 -------------------------
   - Provide macOS package.

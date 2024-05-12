@@ -27,6 +27,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
 - __Graphics Enhancements:__
   - High-resolution widescreen graphics
   - Separate customizable scaling of menubar, sidebar and map/viewport for HiDPI displays
+  - [Aspect-ratio correction](#aspect-ratio-correction)
   - Smoother unit animation (optional)
   - High-res overlay (optional)
 - __Control Enhancements (Command & Conquer style):__
@@ -47,14 +48,18 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Settings for starting credits, amount of spice fields, worm count and lose condition (structures/units)
 - __Sound and Music Enhancements:__
   - Emulated AdLib sound and music playback
-  - [General MIDI playback via FluidSynth](#fluidsynth) (supporting SoundFonts)
+  - MIDI playback via the system's MIDI output or via [FluidSynth](#fluidsynth) (supporting SoundFonts)
   - [Support for external music sets](#external-music-sets):
-    - Recorded AdLib, MT-32 and SC-55 packs
+    - Recorded AdLib, MT-32, SC-55 and PC speaker versions of the original soundtrack
+    - [SCDB's excellent 5-Device Mix](https://www.youtube.com/watch?v=k_Mlozm6fZY)
     - Sega Mega Drive soundtrack (mostly different songs, but also ___very___ good!)
+    - Amiga soundtrack
     - _Dune 2000_ game soundtrack
+    - _Emperor: Battle for Dune_ game soundtrack
     - _Dune_ (1992) game by Cryo (an excellent, award winning, much more chill soundtrack of _Dune II_'s predecessor in three different flavours)
     - _Dune_ (1984) Original Motion Picture Soundtrack
     - _Dune: Part One_ (2021) Original Motion Picture Soundtrack and "_The Dune Sketchbook_" soundtrack
+    - _Dune: Part Two_ (2024) Original Motion Picture Soundtrack
     - ...with many options for randomly combining them during gameplay
     - ...all playable in in-game jukebox
   - Multiple sound channels
@@ -68,7 +73,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Consistent directional damage
 - __[Support for Custom campaigns](#custom-campaigns):__
   - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
-  - [MrFlibble's Alternate Scenarios](https://www.mediafire.com/file/9vs75nukou8o3wq/Dune2-MrFlibble%2527sAlternateScenarios.zip/file)
+  - [MrFlibble's Alternate Scenarios](https://mega.nz/file/gGUUSZbI#DwUrH3AL6sABUX2Y2wlXfblTNM_h41jq0HQnC2sLjnA)
   - [Stefan Henriks' Atreides campaign](http://arrakis.dune2k.com/downloads.html)
   - [Super Dune II](http://forum.dune2k.com/topic/20065-super-dune-ii-classic/)
 - __Various bug fixes__
@@ -180,6 +185,20 @@ Display mode and resolution can be changed in the game's "Options and Extras" me
 
 You might want to increase or decrease the scaling factors of the menubar, sidebar and viewport. You can do this in-game in the __Game Control__ menu.
 
+### Aspect ratio correction
+
+In contrast to modern displays, old CRT-monitors had rectangular non-square pixels. All non-in-game graphics (menus, cutscenes, mentat screens, etc.) were designed with rectangular pixels in mind. The game/map/command-screen itself however seems to have been designed for square pixels (presumably due to targetting multiple platforms), meaning it always had a rather stretched look in the original DOS version - with a tile or the construction yard not being a perfect square.
+
+Dune Dynasty allows various options to deal with aspect ratio via the "Aspect Ratio Correction" option in the Video Options (`correct_aspect_ratio` in the config-file). It's value can be:
+
+- __None__ (`none`): No aspect ratio correction is applied, meaning all pixels will be displayed as square pixels. This means, the game will appear squashed on modern monitors. Use this setting, if you are playing on an old CRT-monitor.
+- __Menu Only__ (`menu`): Non-square pixels are used for non-in-game graphics (menu, cutscenes, mentat screens, etc.) and square pixels for the game itself. This will display all graphics in the (presumably) intended aspect ratio on modern displays.
+- __Full__ (`full`): This will apply the aspect ratio correction on all graphics - essentially displaying everything as in the original DOS version on a CRT-monitor. It will retain the stretched look of the in-game graphics.
+- __Auto__ (`auto`): Same as option `menu`, except when the screen height is less than 800 pixels, option `none` will be used for better readability.  
+This is the default setting.
+
+The applied correction ratio is 1.2.
+
 ## Controls
 
 The controls should be similar to most real-time strategy games.
@@ -279,6 +298,12 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
   
   This will always be enabled in multiplayer/skirmish.
 
+- __Instant wall construction:__  
+  Reduces build time of walls to 0.
+
+- __Extend light vehicle sight range:__  
+  Increases fog uncover radius of trikes and quads from 2 to 4 tiles.
+
 - __True game speed adjustment:__  
   _Dune II_'s game speed implementation doesn't affect scripts and other things. This enhancement takes care of that. It also fixes a bug with the range of the sonic tank.  
   (Enabled by default.)
@@ -341,7 +366,15 @@ There you will also find a __Jukebox__ to listen to all available songs from all
 
 ### Midi
 
-_Dune Dynasty_ can play music via the system MIDI output on Windows and Linux (ALSA). If you use [Timidity++] as an ALSA sequencer client on Linux you should start it with smaller buffer sizes to avoid the "drunk drummer" problem:
+_Dune Dynasty_ can play music via the system MIDI output on Windows, macOS (Core Audio) and Linux (ALSA).
+
+#### Windows
+
+You can specify the MIDI device ID to use via the `midi_device_id` config parameter (default is `0`). To find out the correct device ID, you can use the tool [ListMIDI32.exe](https://www.vcode.no/VCFiles.nsf/viewByKey/ListMIDI32).
+
+#### Linux
+
+If you use [Timidity++] as an ALSA sequencer client on Linux you should start it with smaller buffer sizes to avoid the "drunk drummer" problem:
 
 ```txt
 timidity -iA -B 4,8
@@ -372,6 +405,9 @@ Each of these have their own subdirectory in the `music` directory. Instructions
 Here is a list of supported Music packs:
 
 - Original _Dune II_ (PC) music:
+  - [SCDB's 5-Device Mix](https://www.moddb.com/downloads/dune-ii-soundtrack-5-device-scdb-mix)  
+     A highly recommended mix of the PC Speaker, Tandy, AdLib,  MT-32 and SC-55 tracks by _the Sound Card database_
+     (listen to it on [YouTube](https://www.youtube.com/watch?v=k_Mlozm6fZY) with additional details, information and visuals!)
   - [rcblanke's SC-55 recording](https://www.vogons.org/viewtopic.php?t=33823&start=42)
   - [ShaiWa's (FED2k) MT-32 recording](https://forum.dune2k.com/files/file/116-dune2_mt32zip/)
   - [Dune II - The Maker AdLib recording](https://dune2themaker.fundynamic.com/downloads/mp3adlib.zip)
@@ -379,7 +415,10 @@ Here is a list of supported Music packs:
   - [PC speaker recording](https://forum.dune2k.com/files/file/1517-pc-speaker-recording-all-tracks/)
 - [___Dune II___ Sega Mega Drive music](http://nyerguds.arsaneus-design.com/dune/dunesega/)  
   Mostly different songs from PC version, but also ___very___ good!
+- [___Dune II___ Amiga music](https://downloads.khinsider.com/game-soundtracks/album/dune-2-amiga)
 - ___Dune 2000___ game music  
+  Unfortunately, this game cannot be purchased anymore at the moment.
+- ___Emperor: Battle for Dune___ game music  
   Unfortunately, this game cannot be purchased anymore at the moment.
 - ___Dune___ (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:  
    The excellent award-winning soundtrack for _Dune II_'s predecessor - the 1992 _Dune_ game by _Cryo_. It is very atmospheric, and makes _Dune II_ a much more relaxing and chill experience. Three versions are supported:
@@ -387,8 +426,8 @@ Here is a list of supported Music packs:
   - [AdLib Gold recording by DOS Nostalgia](https://www.dosnostalgia.com/?p=542)
   - [___Spice Opera___ by Exxos](https://stphanepicq.bandcamp.com/album/dune-spice-opera-2024-remaster)  
      A remastered CD release of the soundtrack (re-released in 2024).
-  - [SCDB Mix (AdLib + MT-32 + AdLib Gold)](https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/)  
-     An amazing 3-card mix by _the Sound Card database_ (see [https://www.youtube.com/watch?v=o-Q_UO6Hp7U](https://www.youtube.com/watch?v=o-Q_UO6Hp7U))
+  - [SCDB Mix (AdLib + MT-32 + AdLib Gold)](https://www.moddb.com/downloads/dune-soundtrack-3-card-scdb-mix) ([mirror](https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/))  
+     An amazing 3-card mix by _the Sound Card database_ (listen to it on [YouTube](https://www.youtube.com/watch?v=o-Q_UO6Hp7U) with additional details, information and visuals!)
 
 - ___Dune (1984)___ Original Motion Picture Soundtrack by Toto and Brian Eno  
   Seems to be only available on CD. Purchase e.g. from [amazon.com](https://www.amazon.com/-/de/dp/B000006YDD/) or [amazon.de](https://www.amazon.de/Dune-Toto/dp/B000006YDD/) and rip files to MP3.
@@ -413,7 +452,7 @@ ROBOTIX=0
 _Dune Dynasty_ supports various fan-made campaigns:
 
 - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
-- [MrFlibble's Alternate Scenarios](https://www.mediafire.com/file/9vs75nukou8o3wq/Dune2-MrFlibble%2527sAlternateScenarios.zip/file)
+- [MrFlibble's Alternate Scenarios](https://mega.nz/file/gGUUSZbI#DwUrH3AL6sABUX2Y2wlXfblTNM_h41jq0HQnC2sLjnA)
 - [Stefan Henriks' Atreides campaign](http://arrakis.dune2k.com/downloads.html)
 - [Super Dune II](http://forum.dune2k.com/topic/20065-super-dune-ii-classic/)
 

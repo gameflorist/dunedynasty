@@ -636,6 +636,22 @@ VideoOptions_Initialize(void)
 	}
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "Aspect Ratio Correction");
+
+	const char *aspectCorrectionTexts[4] = {
+		"None", "Menu Only", "Full", "Auto"
+	};
+
+	for(enum AspectRatioCorrection aspectCorrection = ASPECT_RATIO_CORRECTION_NONE; aspectCorrection <= ASPECT_RATIO_CORRECTION_AUTO; aspectCorrection++) {
+		si = Scrollbar_AllocItem(w, SCROLLBAR_RADIO);
+		si->d.radio.group = "aspectCorrection";
+		si->d.radio.value = (int)aspectCorrection;
+		si->d.radio.currentValue = (int*)&g_aspect_correction;
+
+		snprintf(si->text, sizeof(si->text), "%s", aspectCorrectionTexts[aspectCorrection]);
+	}
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
 	snprintf(si->text, sizeof(si->text), "%s", "Other Options");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
@@ -668,6 +684,9 @@ VideoOptions_Loop(int widgetID)
 					if (strcmp( si->d.radio.group, "windowMode" ) == 0) {
 						g_gameConfig.windowMode = si->d.radio.value;
 					}
+					if (strcmp( si->d.radio.group, "aspectCorrection" ) == 0) {
+						g_aspect_correction = si->d.radio.value;
+					}
 					else if (strcmp( si->d.radio.group, "resolution" ) == 0) {
 						struct DisplayMode* resolutions = VideoA5_GetDisplayModes();
 						g_gameConfig.displayMode.width = resolutions[si->d.radio.value].width;
@@ -699,43 +718,31 @@ MusicOptions_Initialize(void)
 	si = Scrollbar_AllocItem(w, SCROLLBAR_INFO);
 	snprintf(si->text, sizeof(si->text), "%s", "Restart game to apply changes.");
 
-	// Get lists of available and unavailable music sets (midi and adlib are always available).
-	enum MusicSet availableSets[NUM_MUSIC_SETS] = { 
-		MUSICSET_DUNE2_ADLIB,
-		MUSICSET_DUNE2_MIDI,
-		MUSICSET_FLUIDSYNTH,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID
+	// MIDI Format
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "MIDI Format");
+
+	const char *midiFormatTexts[4] = {
+		"PC Speaker", "Tandy 3 voices", "General Midi", "Roland MT-32"
 	};
-	enum MusicSet unavailableSets[NUM_MUSIC_SETS] = {
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID,
-		MUSICSET_INVALID
-		};
+
+	for(enum MidiFormat midiFormat = MIDI_FORMAT_PCS; midiFormat < NUM_MIDI_FORMATS; midiFormat++) {
+		si = Scrollbar_AllocItem(w, SCROLLBAR_RADIO);
+		si->d.radio.group = "midiFormat";
+		si->d.radio.value = (int)midiFormat;
+		si->d.radio.currentValue = (int*)&g_midi_format;
+
+		snprintf(si->text, sizeof(si->text), "%s", midiFormatTexts[midiFormat]);
+	}
+
+	// Get lists of available and unavailable music sets (midi, adlib and fluidsynth are always available).
+	enum MusicSet availableSets[NUM_MUSIC_SETS];
+	enum MusicSet unavailableSets[NUM_MUSIC_SETS];
+	for (int i = MUSICSET_DUNE2_ADLIB; i < NUM_MUSIC_SETS; i++) {
+		availableSets[i] = i <= MUSICSET_FLUIDSYNTH ? i : MUSICSET_INVALID;
+		unavailableSets[i] = MUSICSET_INVALID;
+	}
+
 	int unavailableSetsCount = 0;
 	// Use main menu music to determine existance of music sets, since this song is present in all sets.
 	const MusicList *l = &g_table_music[MUSIC_MAIN_MENU];
@@ -743,12 +750,24 @@ MusicOptions_Initialize(void)
 		const MusicInfo *m = &l->song[i];
 		if (m->music_set == MUSICSET_DUNE2_ADLIB || m->music_set == MUSICSET_DUNE2_MIDI || m->music_set == MUSICSET_FLUIDSYNTH)
 			continue;
+
+		// Some soundtracks contains multiple tracks for main menu (e.g. Emperor: Battle for Dune).
+		// So we make sure, this set is not already checked.
+		bool musicSetAlreadyChecked = false;
+		for (int j = 0; j < NUM_MUSIC_SETS; j++) {
+			if (availableSets[j] == m->music_set || unavailableSets[j] == m->music_set) {
+				musicSetAlreadyChecked = true;
+			}
+		}
+		if (musicSetAlreadyChecked)
+			continue;
+			
 		const bool musicSetFound = m->enable & MUSIC_FOUND;
 		if (musicSetFound) {
-			availableSets[i] = m->music_set;
+			availableSets[m->music_set] = m->music_set;
 		}
 		else {
-			unavailableSets[i] = m->music_set;
+			unavailableSets[m->music_set] = m->music_set;
 			unavailableSetsCount++;
 		}
 	}
@@ -798,8 +817,15 @@ MusicOptions_Loop(int widgetID)
 		case SCANCODE_KEYPAD_5:
 		case SCANCODE_SPACE:
 			si = Scrollbar_GetSelectedItem(scrollbar);
-			if ((si != NULL) && (si->type == SCROLLBAR_CHECKBOX)) {
-				*(si->d.checkbox) = !(*(si->d.checkbox));
+			if (si != NULL) {
+				if (si->type == SCROLLBAR_CHECKBOX) {
+					*(si->d.checkbox) = !(*(si->d.checkbox));
+				}
+				else if (si->type == SCROLLBAR_RADIO) {
+					if (strcmp( si->d.radio.group, "midiFormat" ) == 0) {
+						g_midi_format = si->d.radio.value;
+					}
+				}
 			}
 
 			break;
@@ -851,6 +877,14 @@ GameplayOptions_Initialize(void)
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_show_outpost_unit_info;
 	snprintf(si->text, sizeof(si->text), "Show unit control info in outpost");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_instant_walls;
+	snprintf(si->text, sizeof(si->text), "Instant wall construction");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_extend_sight_range;
+	snprintf(si->text, sizeof(si->text), "Double light vehicle sight range");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_true_game_speed_adjustment;

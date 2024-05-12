@@ -8,9 +8,12 @@
 #define D2TM_ADLIB_PREFIX   		"d2tm_adlib"
 #define D2TM_SC55_PREFIX    		"d2tm_sc55"
 #define DUNE2000_PREFIX     		"dune2000"
+#define EMPEROR_PREFIX     			"emperor"
 #define DUNE2_SMD_PREFIX    		"dune2_smd"
+#define SCDB_MIX_PREFIX  			"scdb_mix"
 #define SHAIWA_MT32_PREFIX  		"fed2k_mt32"
 #define RCBLANKE_SC55_PREFIX    	"rcblanke_sc55"
+#define DUNE2_AMIGA_PREFIX    		"dune2_amiga"
 #define DUNE2_PCSPEAKER_PREFIX    	"dune2_pcspeaker"
 #define DUNE1992_ADLIB_PREFIX    	"dune1992_adlib"
 #define DUNE1992_SCDB_PREFIX    	"dune1992_scdb"
@@ -18,42 +21,51 @@
 #define DUNE1984_OST_PREFIX    		"dune1984_ost"
 #define DUNE2021_OST_PREFIX    		"dune2021_ost"
 #define DUNE2021_SKETCHBOOK_PREFIX	"dune2021_sketchbook"
+#define DUNE_PART_TWO_OST_PREFIX	"dune_part_two_ost"
 
 #define ADD_MUSIC_LIST(TABLE,SONGNAME)  { 0, 0, 0, SONGNAME, lengthof(TABLE), TABLE }
 #define ADD_MUSIC_FROM_DUNE2_ADLIB(FILENAME,TRACK)  			{ MUSIC_ENABLE, MUSICSET_DUNE2_ADLIB,   		NULL,   FILENAME, TRACK, 1.0f }
 #define ADD_MUSIC_FROM_DUNE2_MIDI(FILENAME,TRACK)   			{ MUSIC_ENABLE, MUSICSET_DUNE2_MIDI,    		NULL,   FILENAME, TRACK, 1.0f }
 #define ADD_MUSIC_FROM_FLUIDSYNTH(FILENAME,TRACK)   			{ MUSIC_ENABLE, MUSICSET_FLUIDSYNTH,    		NULL,   FILENAME, TRACK, 1.0f }
+#define ADD_MUSIC_FROM_SCDB_MIX(FILENAME)        				{ MUSIC_WANT,   MUSICSET_SCDB_MIX,   			NULL,   "music/" SCDB_MIX_PREFIX "/" FILENAME, 0, 0.50f }
 #define ADD_MUSIC_FROM_SHAIWA_MT32(FILENAME)        			{ MUSIC_WANT,   MUSICSET_SHAIWA_MT32,   		NULL,   "music/" SHAIWA_MT32_PREFIX "/" FILENAME, 0, 0.65f }
 #define ADD_MUSIC_FROM_RCBLANKE_SC55(FILENAME)      			{ MUSIC_WANT,   MUSICSET_RCBLANKE_SC55, 		NULL,   "music/" RCBLANKE_SC55_PREFIX"/"FILENAME, 0, 0.80f }
 #define ADD_MUSIC_FROM_D2TM_ADLIB(FILENAME)  					{ MUSIC_WANT,   MUSICSET_D2TM_ADLIB,    		NULL,   "music/" D2TM_ADLIB_PREFIX  "/" FILENAME, 0, 0.40f }
 #define ADD_MUSIC_FROM_D2TM_SC55(FILENAME,VOLUME)   			{ MUSIC_WANT,   MUSICSET_D2TM_SC55,     		NULL,   "music/" D2TM_SC55_PREFIX   "/" FILENAME, 0, VOLUME }
 #define ADD_MUSIC_FROM_DUNE2_PCSPEAKER(FILENAME)      			{ MUSIC_WANT,   MUSICSET_DUNE2_PCSPEAKER, 		NULL,   "music/" DUNE2_PCSPEAKER_PREFIX   "/"   FILENAME, 0, 0.50f }
 #define ADD_MUSIC_FROM_DUNE2_SMD(FILENAME,SONGNAME) 			{ MUSIC_WANT,   MUSICSET_DUNE2_SMD,     		SONGNAME,"music/"DUNE2_SMD_PREFIX   "/" FILENAME, 0, 0.50f }
+#define ADD_MUSIC_FROM_DUNE2_AMIGA(FILENAME,SONGNAME)			{ MUSIC_WANT,   MUSICSET_DUNE2_AMIGA, 			SONGNAME,"music/"DUNE2_AMIGA_PREFIX   "/"   FILENAME, 0, 0.50f }
 #define ADD_MUSIC_FROM_DUNE2000(FILENAME,SONGNAME)  			{ MUSIC_WANT,   MUSICSET_DUNE2000,      		SONGNAME,"music/"DUNE2000_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_EMPEROR(FILENAME,SONGNAME)  				{ MUSIC_WANT,   MUSICSET_EMPEROR,      			SONGNAME,"music/"EMPEROR_PREFIX    "/" FILENAME, 0, 0.70f }
 #define ADD_MUSIC_FROM_DUNE1992_ADLIB(FILENAME,SONGNAME)		{ MUSIC_WANT,   MUSICSET_DUNE1992_ADLIB,      	SONGNAME,"music/"DUNE1992_ADLIB_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE1992_SCDB(FILENAME,SONGNAME)			{ MUSIC_WANT,   MUSICSET_DUNE1992_SCDB,      	SONGNAME,"music/"DUNE1992_SCDB_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE1992_SPICEOPERA(FILENAME,SONGNAME)  	{ MUSIC_WANT,   MUSICSET_DUNE1992_SPICEOPERA,	SONGNAME,"music/"DUNE1992_SPICEOPERA_PREFIX    "/" FILENAME, 0, 0.80f }
 #define ADD_MUSIC_FROM_DUNE1984_OST(FILENAME,SONGNAME)  		{ MUSIC_WANT,   MUSICSET_DUNE1984_OST,      	SONGNAME,"music/"DUNE1984_OST_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE2021_OST(FILENAME,SONGNAME)  		{ MUSIC_WANT,   MUSICSET_DUNE2021_OST,      	SONGNAME,"music/"DUNE2021_OST_PREFIX    "/" FILENAME, 0, 1.00f }
 #define ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK(FILENAME,SONGNAME)	{ MUSIC_WANT,   MUSICSET_DUNE2021_SKETCHBOOK,	SONGNAME,"music/"DUNE2021_SKETCHBOOK_PREFIX    "/" FILENAME, 0, 1.00f }
+#define ADD_MUSIC_FROM_DUNE_PART_TWO_OST(FILENAME,SONGNAME)		{ MUSIC_WANT,   MUSICSET_DUNE_PART_TWO_OST,		SONGNAME,"music/"DUNE_PART_TWO_OST_PREFIX    "/" FILENAME, 0, 1.00f }
 
 MusicSetInfo g_table_music_set[NUM_MUSIC_SETS] = {
 	{ true, "dune2_adlib",  			"AdLib" },
 	{ true, "dune2_midi",   			"MIDI" },
 	{ true, "fluidsynth",   			"FluidSynth" },
+	{ true, SCDB_MIX_PREFIX,     		"SCDB Mix" },
 	{ true, SHAIWA_MT32_PREFIX,     	"ShaiWa MT-32" },
 	{ true, RCBLANKE_SC55_PREFIX,   	"RCBlanke SC-55" },
 	{ true, D2TM_ADLIB_PREFIX,  		"D2TM AdLib" },
 	{ true, D2TM_SC55_PREFIX,   		"D2TM SC-55" },
 	{ true, DUNE2_PCSPEAKER_PREFIX,   	"PC Speaker" },
 	{ true, DUNE2_SMD_PREFIX,   		"Sega Mega Drive" },
+	{ true, DUNE2_AMIGA_PREFIX,   		"Amiga" },
 	{ true, DUNE2000_PREFIX,    		"Dune 2000" },
+	{ true, EMPEROR_PREFIX,    			"Emperor: Battle for Dune" },
 	{ true, DUNE1992_ADLIB_PREFIX,    	"Dune Adlib" },
 	{ true, DUNE1992_SCDB_PREFIX,    	"Dune SCDB Mix" },
 	{ true, DUNE1992_SPICEOPERA_PREFIX,	"Dune Spice Opera" },
 	{ true, DUNE1984_OST_PREFIX,    	"Dune 1984 OST" },
 	{ true, DUNE2021_OST_PREFIX,    	"Dune 2021 OST" },
 	{ true, DUNE2021_SKETCHBOOK_PREFIX,	"Dune 2021 Sketchbook" },
+	{ true, DUNE_PART_TWO_OST_PREFIX,	"Dune: Part Two OST" },
 };
 
 static MusicInfo s_table_music_stop[] = {
@@ -76,15 +88,18 @@ static MusicInfo s_table_music_logos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune0.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune0.C55", 4),
+	ADD_MUSIC_FROM_SCDB_MIX  	("01 - Westwood Studios Logo"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_00_4"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("westwood_logo"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER("Westwood Associates Logo [dune0-4]"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("01_Westwood Studios", "Westwood Studios Logo"),
 };
 
 static MusicInfo s_table_music_intro[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune0.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune0.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune0.C55", 2),
+	ADD_MUSIC_FROM_SCDB_MIX  	("02 - Introduction"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_00_2"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("intro"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("intro", 1.0f),
@@ -98,6 +113,7 @@ static MusicInfo s_table_music_cutscene[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune16.ADL", 8),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune16.C55", 8),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune16.C55", 8),
+	ADD_MUSIC_FROM_SCDB_MIX  	("16 - Emperor Theme"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_16_24"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("emperors_theme"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER("The Long Sleep (Emperor's Theme) [dune16-8]"),
@@ -107,6 +123,7 @@ static MusicInfo s_table_music_credits[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  		("dune20.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_MIDI   		("dune20.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   		("dune20.C55", 2),
+	ADD_MUSIC_FROM_SCDB_MIX  			("25 - Credits Theme"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  		("dune2_mt32_20_22"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55		("credits"),
 	ADD_MUSIC_FROM_DUNE2_SMD    		("20_credits", NULL),
@@ -118,19 +135,25 @@ static MusicInfo s_table_music_main_menu[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  		("dune7.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_MIDI   		("dune7.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   		("dune7.C55", 6),
+	ADD_MUSIC_FROM_SCDB_MIX  			("03 - Main Menu"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  		("dune2_mt32_07_13"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55		("title"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   		("menu"),
 	ADD_MUSIC_FROM_D2TM_SC55    		("menu", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Hope Fades (Main Menu) [dune7-6]"),
 	ADD_MUSIC_FROM_DUNE2_SMD    		("12_chosendestiny", "Chosen Destiny"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA			("05_Intro Part 1", "Intro Part 1"),
 	ADD_MUSIC_FROM_DUNE2000     		("OPTIONS", "Options"),
+	ADD_MUSIC_FROM_EMPEROR     			("AT_Menu1", "Atreides Menu"),
+	ADD_MUSIC_FROM_EMPEROR     			("HK_Menu1", "Harkonnen Menu"),
+	ADD_MUSIC_FROM_EMPEROR     			("OR_Menu1", "Ordos Menu"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB     	("Spice Opera", "Spice Opera"),
 	ADD_MUSIC_FROM_DUNE1992_SCDB     	("06 - Worm Suit (Spice Opera)", "Worm Suit (Spice Opera)"),
 	ADD_MUSIC_FROM_DUNE1992_SPICEOPERA	("11 - Spice Opera", "Spice Opera"),
 	ADD_MUSIC_FROM_DUNE1984_OST     	("02 - Main Title", "Main Title"),
 	ADD_MUSIC_FROM_DUNE2021_OST     	("01 - Dream of Arrakis", "Dream of Arrakis"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK	("05 - Paul's Dream", "Paul's Dream"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST	("01 - Beginnings Are Such Delicate Times", "Beginnings Are Such Delicate Times"),
 
 	/* Dune 2000 battle summary as alternative menu music. */
 	{ 0, MUSICSET_DUNE2000,     "Score", "music/" DUNE2000_PREFIX "/SCORE", 0, 1.0f },
@@ -140,18 +163,23 @@ static MusicInfo s_table_music_strategic_map[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune16.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune16.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune16.C55", 7),
+	ADD_MUSIC_FROM_SCDB_MIX  	("05 - Map Screen"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_16_23"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("conquest_map"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("nextconq"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("nextconq", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("11_evasiveaction", "Evasive Action"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Destructive Minds (Strategic Map) [dune16-7]"),
+	ADD_MUSIC_FROM_EMPEROR     	("AT_Map1", "Atreides Map"),
+	ADD_MUSIC_FROM_EMPEROR     	("HK_Map1", "Harkonnen Map"),
+	ADD_MUSIC_FROM_EMPEROR     	("OR_Map1", "Ordos Map"),
 };
 
 static MusicInfo s_table_music_briefing_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune7.C55", 2),
-	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 2),
+	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 2),	
+	ADD_MUSIC_FROM_SCDB_MIX  	("04.3 - Mentat (Harkonnen)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_07_09"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("mentat_harkonnen"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("mentath"),
@@ -164,6 +192,7 @@ static MusicInfo s_table_music_briefing_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 3),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune7.C55", 3),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 3),
+	ADD_MUSIC_FROM_SCDB_MIX  	("04.1 - Mentat (Atreides) - The Council"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_07_10"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("mentat_atreides"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("mentata"),
@@ -176,6 +205,7 @@ static MusicInfo s_table_music_briefing_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune7.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune7.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune7.C55", 4),
+	ADD_MUSIC_FROM_SCDB_MIX  	("04.2 - Mentat (Ordos) - Disturbed Thoughts"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_07_11"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("mentat_ordos"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("mentato"),
@@ -188,42 +218,49 @@ static MusicInfo s_table_music_win_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune8.ADL", 3),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune8.C55", 3),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune8.C55", 3),
+	ADD_MUSIC_FROM_SCDB_MIX  	("15.3 - Win Theme (Harkonnen)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_08_11"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("victory_harkonnen"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("win3"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("win2", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Victory 2 (Harkonnen Victory) [dune8-3]"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("15_harkonnenrules", "Harkonnen Rules"),
+	ADD_MUSIC_FROM_EMPEROR     	("HK_Score1", "Harkonnen Score"),
 };
 
 static MusicInfo s_table_music_win_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune8.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune8.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune8.C55", 2),
+	ADD_MUSIC_FROM_SCDB_MIX  	("15.1 - Win Theme (Atreides)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_08_10"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("victory_atreides"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("win1"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("win1", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Victory (Atreides Victory) [dune8-2]"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("13_conquest", "Conquest"),
+	ADD_MUSIC_FROM_EMPEROR     	("AT_Score1a", "Atreides Score"),
 };
 
 static MusicInfo s_table_music_win_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune17.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune17.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune17.C55", 4),
+	ADD_MUSIC_FROM_SCDB_MIX  	("15.2 - Win Theme (Ordos)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_17_21"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("victory_ordos"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("win2"),
 	ADD_MUSIC_FROM_D2TM_SC55    ("win3", 1.0f),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Abuse (Ordos Victory) [dune17-4]"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("14_slitherin", "Slitherin"),
+	ADD_MUSIC_FROM_EMPEROR     	("OR_Score1", "Ordos Score"),
 };
 
 static MusicInfo s_table_music_lose_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune1.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 4),
+	ADD_MUSIC_FROM_SCDB_MIX  	("17.3 - Defeat (Harkonnen)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_01_4"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("defeat_harkonnen"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("lose2"),
@@ -236,6 +273,7 @@ static MusicInfo s_table_music_lose_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 5),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune1.C55", 5),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 5),
+	ADD_MUSIC_FROM_SCDB_MIX  	("17.1 - Defeat (Atreides)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_01_5"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("defeat_atreides"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("lose1"),
@@ -248,6 +286,7 @@ static MusicInfo s_table_music_lose_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 3),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune1.C55", 3),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 3),
+	ADD_MUSIC_FROM_SCDB_MIX  	("17.2 - Defeat (Ordos)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_01_6"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("defeat_ordos"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("lose3"),
@@ -260,33 +299,40 @@ static MusicInfo s_table_music_end_game_harkonnen[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune19.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune19.C55", 4),
+	ADD_MUSIC_FROM_SCDB_MIX  	("24.3 - Ending (Harkonnen)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_23"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Evil Harkonnen (Harkonnen Ending) [dune19-4]"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_harkonnen"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("10_Ending", "Ending"),
 };
 
 static MusicInfo s_table_music_end_game_atreides[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 2),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune19.C55", 2),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune19.C55", 2),
+	ADD_MUSIC_FROM_SCDB_MIX  	("24.1 - Ending (Atreides)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_21"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Noble Atreides (Atreides Ending) [dune19-2]"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_atreides"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("10_Ending", "Ending"),
 };
 
 static MusicInfo s_table_music_end_game_ordos[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune19.ADL", 3),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune19.C55", 3),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune19.C55", 3),
+	ADD_MUSIC_FROM_SCDB_MIX  	("24.2 - Ending (Ordos)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_19_22"),
 	ADD_MUSIC_FROM_DUNE2_PCSPEAKER		("Insidious Ordos (Ordos Ending) [dune19-3]"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ending_ordos"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("10_Ending", "Ending"),
 };
 
 static MusicInfo s_table_music_idle1[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune1.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune1.C55", 6),
-	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 6),
+	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune1.C55", 6),	
+	ADD_MUSIC_FROM_SCDB_MIX  	("06 - The Building of a Dynasty"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_01_7"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient02"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace2"),
@@ -297,6 +343,7 @@ static MusicInfo s_table_music_idle2[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune2.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune2.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune2.C55", 6),
+	ADD_MUSIC_FROM_SCDB_MIX  	("07 - Dark Technology"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_02_8"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient03"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace5"),
@@ -307,6 +354,7 @@ static MusicInfo s_table_music_idle3[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune3.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune3.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune3.C55", 6),
+	ADD_MUSIC_FROM_SCDB_MIX  	("08 - Rulers of Arrakis"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_03_9"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient04"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace4"),
@@ -318,6 +366,7 @@ static MusicInfo s_table_music_idle4[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune4.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune4.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune4.C55", 6),
+	ADD_MUSIC_FROM_SCDB_MIX  	("09 - Desert of Doom"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_04_10"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient05"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace1"),
@@ -328,6 +377,7 @@ static MusicInfo s_table_music_idle5[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune5.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune5.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune5.C55", 6),
+	ADD_MUSIC_FROM_SCDB_MIX  	("10 - Faithful Warriors"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_05_11"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient06"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace9"),
@@ -339,6 +389,7 @@ static MusicInfo s_table_music_idle6[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune6.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune6.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune6.C55", 6),
+	ADD_MUSIC_FROM_SCDB_MIX  	("11 - Spice Melange"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_06_12"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient07"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace8"),
@@ -350,6 +401,7 @@ static MusicInfo s_table_music_idle7[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune9.ADL", 4),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune9.C55", 4),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune9.C55", 4),
+	ADD_MUSIC_FROM_SCDB_MIX  	("12 - The Prophecy (part 1)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_09_13"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient08"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace7"),
@@ -360,6 +412,7 @@ static MusicInfo s_table_music_idle8[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune9.ADL", 5),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune9.C55", 5),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune9.C55", 5),
+	ADD_MUSIC_FROM_SCDB_MIX  	("13 - The Prophecy (part 2)"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_09_14"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient09"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace6"),
@@ -370,6 +423,7 @@ static MusicInfo s_table_music_idle9[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune18.ADL", 6),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune18.C55", 6),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune18.C55", 6),
+	ADD_MUSIC_FROM_SCDB_MIX  	("14 - For Those Fallen"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_18_24"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("ambient10"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("peace3"),
@@ -382,6 +436,8 @@ static MusicInfo s_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2_SMD    ("07_spicetrip", "Spice Trip"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("08_commandpost", "Command Post"),
 	ADD_MUSIC_FROM_DUNE2_SMD    ("09_trenching", "Trenching"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("08_In-Game BGM 1", "Background Music 1"),
+	ADD_MUSIC_FROM_DUNE2_AMIGA	("09_In-Game BGM 2", "Background Music 2"),
 	ADD_MUSIC_FROM_DUNE2000     ("AMBUSH",   "The Ambush"),
 	ADD_MUSIC_FROM_DUNE2000     ("ENTORDOS", "Enter the Ordos"),
 	ADD_MUSIC_FROM_DUNE2000     ("FREMEN",   "The Fremen"),
@@ -391,6 +447,24 @@ static MusicInfo s_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2000     ("SOLDAPPR", "The Soldiers Approach"),
 	ADD_MUSIC_FROM_DUNE2000     ("SPICESCT", "Spice Scouting"),
 	ADD_MUSIC_FROM_DUNE2000     ("WAITGAME", "The Waiting Game"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT02)Sand_Excursion", "Sand Excursion"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT03)Assembling_the_Troops", "Assembling the Troops"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT04)The_Spice_Must_Flow", "The Spice Must Flow"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT05)The_Overseer", "The Overseer"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT10)Fremen_Alliance", "Fremen Alliance"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT11)Assassination_Attempt", "Assassination Attempt"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK02)Surrounded", "Surrounded"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK03)Tribute_to_Evil", "Tribute to Evil"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK06)Unstoppable", "Unstoppable"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK10)House_Harkonnen", "House Harkonnen"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK11)Invincible", "Invincible"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK12)Victory_is_Inevitable", "Victory is Inevitable"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR02)The_Strategist", "The Strategist"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR03)House_Ordos", "House Ordos"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR04)Ghola", "Ghola"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR05)Executronic", "Executronic"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR06)Deception", "Deception"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR11)The_Specimen", "The Specimen"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Chani's Eyes", "Chani's Eyes"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Dune Variation", "Dune Variation"),
 	ADD_MUSIC_FROM_DUNE1992_ADLIB	("Free Men", "Free Men"),
@@ -458,6 +532,23 @@ static MusicInfo s_table_music_idle_other[] = {
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("05 - Paul's Dream", "Paul's Dream"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("06 - Moon over Caladan", "Moon over Caladan"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("07 - Shai-hulud", "Shai-hulud"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("02 - Eclipse", "Eclipse"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("03 - The Sietch", "The Sietch"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("04 - Water of Life", "Water of Life"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("05 - A Time of Quiet Between the Storms", "A Time of Quiet Between the Storms"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("07 - Worm Ride", "Worm Ride"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("09 - Each Man Is a Little War", "Each Man Is a Little War"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("11 - Spice", "Spice"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("12 - Seduction", "Seduction"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("13 - Never Lose Me", "Never Lose Me"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("15 - Paul Drinks", "Paul Drinks"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("16 - Resurrection", "Resurrection"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("18 - Southern Messiah", "Southern Messiah"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("19 - The Emperor", "The Emperor"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("22 - You Fought Well", "You Fought Well"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("23 - Kiss the Ring", "Kiss the Ring"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("24 - Only I Will Remain", "Only I Will Remain"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("25 - Lisan al Gaib", "Lisan al Gaib"),
 };
 
 static MusicInfo s_table_music_bonus[] = { /* Disabled by default. */
@@ -473,6 +564,7 @@ static MusicInfo s_table_music_attack1[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune10.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune10.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune10.C55", 7),
+	ADD_MUSIC_FROM_SCDB_MIX  	("18 - Into the Heat"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_10_17"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack01"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack5"),
@@ -485,6 +577,7 @@ static MusicInfo s_table_music_attack2[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune11.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune11.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune11.C55", 7),
+	ADD_MUSIC_FROM_SCDB_MIX  	("19 - Epic War"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_11_18"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack02"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack3"),
@@ -496,6 +589,7 @@ static MusicInfo s_table_music_attack3[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune12.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune12.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune12.C55", 7),
+	ADD_MUSIC_FROM_SCDB_MIX  	("20 - Humans Fall"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_12_19"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack03"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack6"),
@@ -508,6 +602,7 @@ static MusicInfo s_table_music_attack4[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune13.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune13.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune13.C55", 7),
+	ADD_MUSIC_FROM_SCDB_MIX  	("21 - Adrenaline Rush"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_13_20"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack04"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack2"),
@@ -519,6 +614,7 @@ static MusicInfo s_table_music_attack5[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune14.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune14.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune14.C55", 7),
+	ADD_MUSIC_FROM_SCDB_MIX  	("22 - Only the Strongest Survives"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_14_21"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack05"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack4"),
@@ -531,6 +627,7 @@ static MusicInfo s_table_music_attack6[] = {
 	ADD_MUSIC_FROM_DUNE2_ADLIB  ("dune15.ADL", 7),
 	ADD_MUSIC_FROM_DUNE2_MIDI   ("dune15.C55", 7),
 	ADD_MUSIC_FROM_FLUIDSYNTH   ("dune15.C55", 7),
+	ADD_MUSIC_FROM_SCDB_MIX  	("23 - Marching Towards the End"),
 	ADD_MUSIC_FROM_SHAIWA_MT32  ("dune2_mt32_15_22"),
 	ADD_MUSIC_FROM_RCBLANKE_SC55("attack06"),
 	ADD_MUSIC_FROM_D2TM_ADLIB   ("attack1"),
@@ -551,6 +648,25 @@ static MusicInfo s_table_music_attack_other[] = {
 	ADD_MUSIC_FROM_DUNE2021_OST ("20 - Sandstorm", "Sandstorm"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("08 - Mind-killer", "Mind-killer"),
 	ADD_MUSIC_FROM_DUNE2021_SKETCHBOOK ("09 - Grains of Sand", "Grains of Sand"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("06 - Harvester Attack", "Harvester Attack"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("08 - Ornithopter Attack", "Ornithopter Attack"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("10 - Harkonnen Arena", "Harkonnen Arena"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("14 - Travel South", "Travel South"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("17 - Arrival", "Arrival"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("20 - Worm Army", "Worm Army"),
+	ADD_MUSIC_FROM_DUNE_PART_TWO_OST ("21 - Gurney Battle", "Gurney Battle"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT06)Battle_of_the_Atreides", "Battle of the Atreides"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT08)Infiltrating_HK", "Infiltrating HK"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT09)Unsuspected_Attack", "Unsuspected Attack"),
+	ADD_MUSIC_FROM_EMPEROR     	("(AT12)Fight_in_the_Dunes", "Fight in the Dunes"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK04)Harkonnen_Force", "Harokonnen Force"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK07)Dark_Alliance", "Dark Alliance"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK08)War_for_the_Spice", "War for the Spice"),
+	ADD_MUSIC_FROM_EMPEROR     	("(HK09)Defenders_of_Arrakis", "Defenders of Arrakis"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR07)Sabotage", "Sabotage"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR08)Dream_of_the_Executrix", "Dream of the Executrix"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR10)Ordos_Control", "Ordos Control"),
+	ADD_MUSIC_FROM_EMPEROR     	("(OR12)Infiltrators", "Infiltrators"),
 };
 
 MusicList g_table_music[MUSICID_MAX] = {

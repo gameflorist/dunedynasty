@@ -27,17 +27,13 @@ menubar_scale=1.00
 sidebar_scale=1.00
 viewport_scale=2.00
 hardware_cursor=1
-
 # correct_aspect_ratio is one of:
 #
-#     none
-#     menu,(height multiplier)
-#     full,(height multiplier)
-#     auto,(height multiplier)
-#
-# where auto is the same as menu except when the screen height is less
-# than 800 pixels.
-correct_aspect_ratio=auto,1.1
+#     none: Square pixels.
+#     menu: Non-square pixels for non-in-game graphics (menus cutscenes, etc.), square pixels in game.
+#     full: Non-square pixels throughout the game.
+#     auto: Same as `menu` except when the screen height is less than 800 pixels.
+correct_aspect_ratio=auto
 
 [controls]
 auto_scroll=1
@@ -56,11 +52,21 @@ enable_subtitles=0
 music_volume=0.90
 sound_volume=0.75
 voice_volume=1.00
-opl_mame=true
+opl_mame=1
 
 # state location of your soundfont for use with fluidsynth
 # e.g. sound_font=/usr/share/sounds/sf2/FluidR3_GM.sf2
 sound_font=
+
+# the midi device id used on windows
+midi_device_id=0
+
+# format of midi files to be played is one of:
+#     pcs: PC Speaker
+#     tan: Tandy 3 voices
+#     gm: General Midi (SC-55)
+#     mt32: MT-32
+midi_format=gm
 
 [enhancement]
 brutal_ai=0
@@ -76,7 +82,7 @@ raise_unit_cap=0
 raise_structure_cap=0
 show_outpost_unit_info=0
 repeat_reinforcements=1
-smooth_unit_animation=0
+smooth_unit_animation=1
 # subtitle_override is one of: eu, us, dynasty
 subtitle_override=dynasty
 
@@ -95,19 +101,23 @@ Harkonnen=0
 # The relative volumes of external songs can be adjusted in the
 # volume.cfg file of each music pack.
 dune2_adlib=1
-dune2_midi=0
+dune2_midi=1
 fluidsynth=1
+scdb_mix=1
 fed2k_mt32=1
 rcblanke_sc55=1
 d2tm_adlib=1
 d2tm_sc55=1
-dune2_smd=1
 dune2_pcspeaker=1
+dune2_smd=1
+dune2_amiga=1
 dune2000=1
+emperor=1
 dune1992_adlib=1
 dune1992_scdb=1
 dune1992_spiceopera=1
 dune1984_ost=1
 dune2021_ost=1
 dune2021_sketchbook=1
+dune_part_two_ost=1
 default=dune2_adlib

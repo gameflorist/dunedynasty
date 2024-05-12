@@ -259,7 +259,24 @@ AudioA5_Uninit(void)
 static char *
 AudioA5_LoadInternalMusic(const MusicInfo *mid, uint32 *ret_length)
 {
-	const char *filename = mid->filename;
+	char* filename;
+	filename = (char*)calloc(strlen(mid->filename)+1, sizeof(char));
+	strcpy(filename,mid->filename);
+	if (mid->music_set == MUSICSET_DUNE2_MIDI) {
+		if (g_midi_format == MIDI_FORMAT_PCS) {
+			filename[strlen(filename) - 3] = 'P';
+			filename[strlen(filename) - 2] = 'C';
+			filename[strlen(filename) - 1] = 'S';
+		} else if (g_midi_format == MIDI_FORMAT_TAN) {
+			filename[strlen(filename) - 3] = 'T';
+			filename[strlen(filename) - 2] = 'A';
+			filename[strlen(filename) - 1] = 'N';
+		} else if (g_midi_format == MIDI_FORMAT_MT32) {
+			filename[strlen(filename) - 3] = 'X';
+			filename[strlen(filename) - 2] = 'M';
+			filename[strlen(filename) - 1] = 'I';
+		}
+	}
 	uint16 file_index = File_Open(filename, FILE_MODE_READ);
 
 	if (file_index == FILE_INVALID) {

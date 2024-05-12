@@ -78,6 +78,10 @@ const text = htmlToText(html, {
       if (href === text || href === null) {
         builder.addInline(text);
       }
+      else if (!text && elem.children[0].children) {
+        walk(elem.children, builder);
+        builder.addInline(" [" + href + "]");
+      }
       else if (!text) {
         builder.addInline(href);
       }

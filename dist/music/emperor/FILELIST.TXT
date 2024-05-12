@@ -1,0 +1,54 @@
+Put Emperor: Battle for Dune soundtrack here.
+
+Follow these steps to extract the tracks from the original game CDs:
+1. Download and install DuneEx from https://dune2k.com/Duniverse/Games/Emperor/Downloads/Editors
+2. Open the MUSIC.BAG files of each house-CD (discs 2-4) in DuneEX and extract the tracks.
+
+Make sure, file-names are exactly as listed below.
+
+List of files:
+
+Atreides Disc (Disc 2):
+AT_Map1.mp3
+AT_Menu1.mp3
+AT_Score1a.mp3
+(AT02)Sand_Excursion.mp3
+(AT03)Assembling_the_Troops.mp3
+(AT04)The_Spice_Must_Flow.mp3
+(AT05)The_Overseer.mp3
+(AT06)Battle_of_the_Atreides.mp3
+(AT08)Infiltrating_HK.mp3
+(AT09)Unsuspected_Attack.mp3
+(AT10)Fremen_Alliance.mp3
+(AT11)Assassination_Attempt.mp3
+(AT12)Fight_in_the_Dunes.mp3
+
+Harkonnen Disc (Disc 3):
+HK_Map1.mp3
+HK_Menu1.mp3
+HK_Score1.mp3
+(HK02)Surrounded.mp3
+(HK03)Tribute_to_Evil.mp3
+(HK04)Harkonnen_Force.mp3
+(HK06)Unstoppable.mp3
+(HK07)Dark_Alliance.mp3
+(HK08)War_for_the_Spice.mp3
+(HK09)Defenders_of_Arrakis.mp3
+(HK10)House_Harkonnen.mp3
+(HK11)Invincible.mp3
+(HK12)Victory_is_Inevitable.mp3
+
+Ordos Disc (Disc 4):
+OR_Map1.mp3
+OR_Menu1.mp3
+OR_Score1.mp3
+(OR02)The_Strategist.mp3
+(OR03)House_Ordos.mp3
+(OR04)Ghola.mp3
+(OR05)Executronic.mp3
+(OR06)Deception.mp3
+(OR07)Sabotage.mp3
+(OR08)Dream_of_the_Executrix.mp3
+(OR10)Ordos_Control.mp3
+(OR11)The_Specimen.mp3
+(OR12)Infiltrators.mp3

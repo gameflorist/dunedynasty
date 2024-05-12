@@ -76,7 +76,9 @@ extern bool enhancement_true_game_speed_adjustment;
 extern bool enhancement_true_unit_movement_speed;
 extern bool enhancement_attack_dir_consistency;
 extern bool enhancement_skip_introduction;
+extern bool enhancement_extend_sight_range;
 extern bool enhancement_show_outpost_unit_info;
+extern bool enhancement_instant_walls;
 
 extern bool enhancement_fix_scenario_typos;
 extern bool enhancement_read_scenario_structure_health;

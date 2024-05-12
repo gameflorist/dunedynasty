@@ -48,7 +48,8 @@ typedef struct GameOption {
 		CONFIG_LANGUAGE,
 		CONFIG_MUSIC_PACK,
 		CONFIG_SUBTITLE,
-		CONFIG_WINDOW_MODE
+		CONFIG_WINDOW_MODE,
+		CONFIG_MIDI_FORMAT
 	} type;
 
 	union {
@@ -57,6 +58,7 @@ typedef struct GameOption {
 		float *_float;
 		char *_string;
 		enum AspectRatioCorrection *_aspect_correction;
+		enum MidiFormat *_midi_format;
 		enum GraphicsDriver *_graphics_driver;
 		enum HealthBarMode *_health_bar;
 		enum Language *_language;
@@ -129,23 +131,29 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "voice_volume",     CONFIG_FLOAT,   .d._float = &voice_volume },
 	{ "audio",  "opl_mame",         CONFIG_BOOL,    .d._bool = &g_opl_mame },
 	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
+	{ "audio",  "midi_device_id",   CONFIG_INT,  	.d._int = &g_midi_device_id },
+	{ "audio",  "midi_format",     	CONFIG_MIDI_FORMAT,  	.d._midi_format = &g_midi_format },
 
 	{ "music",  "dune2_adlib",      	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_ADLIB].enable },
 	{ "music",  "dune2_midi",       	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_MIDI].enable },
 	{ "music",  "fluidsynth",       	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_FLUIDSYNTH].enable },
+	{ "music",  "scdb_mix",       		CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_SCDB_MIX].enable },
 	{ "music",  "fed2k_mt32",       	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_SHAIWA_MT32].enable },
 	{ "music",  "rcblanke_sc55",    	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_RCBLANKE_SC55].enable },
 	{ "music",  "d2tm_adlib",       	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_ADLIB].enable },
 	{ "music",  "d2tm_sc55",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_D2TM_SC55].enable },
 	{ "music",  "dune2_pcspeaker",    	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_PCSPEAKER].enable },
 	{ "music",  "dune2_smd",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_SMD].enable },
+	{ "music",  "dune2_amiga",    		CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_AMIGA].enable },
 	{ "music",  "dune2000",         	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2000].enable },
+	{ "music",  "emperor",         		CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_EMPEROR].enable },
 	{ "music",  "dune1992_adlib",   	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1992_ADLIB].enable },
 	{ "music",  "dune1992_scdb",   		CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1992_SCDB].enable },
 	{ "music",  "dune1992_spiceopera",	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1992_SPICEOPERA].enable },
 	{ "music",  "dune1984_ost",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE1984_OST].enable },
 	{ "music",  "dune2021_ost",        	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2021_OST].enable },
 	{ "music",  "dune2021_sketchbook", 	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2021_SKETCHBOOK].enable },
+	{ "music",  "dune_part_two_ost", 	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE_PART_TWO_OST].enable },
 	{ "music",  "default",          	CONFIG_MUSIC_PACK,  .d._music_set = &default_music_pack },
 
 	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
@@ -159,7 +167,9 @@ static const GameOption s_game_option[] = {
 	{ "enhancement",    "skip_introduction",   		CONFIG_BOOL,.d._bool = &enhancement_skip_introduction },
 	{ "enhancement",    "raise_unit_cap",			CONFIG_BOOL,.d._bool = &enhancement_raise_unit_cap },
 	{ "enhancement",    "raise_structure_cap",  	CONFIG_BOOL,.d._bool = &enhancement_raise_structure_cap },
-	{ "enhancement",    "show_outpost_unit_info",	CONFIG_BOOL,.d._bool = &enhancement_show_outpost_unit_info },	
+	{ "enhancement",    "show_outpost_unit_info",	CONFIG_BOOL,.d._bool = &enhancement_show_outpost_unit_info },
+	{ "enhancement",    "instant_walls",			CONFIG_BOOL,.d._bool = &enhancement_instant_walls },
+	{ "enhancement",    "extend_sight_range",	CONFIG_BOOL,.d._bool = &enhancement_extend_sight_range },
 	{ "enhancement",    "repeat_reinforcements",    CONFIG_BOOL,.d._bool = &enhancement_repeat_reinforcements },
 	{ "enhancement",    "smooth_unit_animation",    CONFIG_SMOOTH_ANIM, .d._smooth_anim = &enhancement_smooth_unit_animation },
 	{ "enhancement",    "subtitle_override",        CONFIG_SUBTITLE,.d._subtitle = &enhancement_subtitle_override },
@@ -188,24 +198,29 @@ Config_CreateConfigFile(void)
 }
 
 static void
-Config_GetAspectCorrection(const char *str, enum AspectRatioCorrection *value)
+Config_GetMidiFormat(const char *str, enum MidiFormat *value)
 {
-	const char *aspect_str = strchr(str, ',');
 	const char c = tolower(str[0]);
 
-	     if (c == 'n') { g_pixel_aspect_ratio = 1.0f; *value = ASPECT_RATIO_CORRECTION_NONE; }
+	     if (c == 'p') { *value = MIDI_FORMAT_PCS; }
+	else if (c == 't') { *value = MIDI_FORMAT_TAN; }
+	else if (c == 'g') { *value = MIDI_FORMAT_GM; }
+	else if (c == 'm') { *value = MIDI_FORMAT_MT32; }
+}
+
+static void
+Config_GetAspectCorrection(const char *str, enum AspectRatioCorrection *value)
+{
+	const char c = tolower(str[0]);
+
+	     if (c == 'n') { *value = ASPECT_RATIO_CORRECTION_NONE; }
 
 	/* menu or partial. */
-	else if (c == 'm') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
-	else if (c == 'p') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
+	else if (c == 'm') { *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
+	else if (c == 'p') { *value = ASPECT_RATIO_CORRECTION_PARTIAL; }
 
-	else if (c == 'f') { g_pixel_aspect_ratio = 1.2f; *value = ASPECT_RATIO_CORRECTION_FULL; }
-	else if (c == 'a') { g_pixel_aspect_ratio = 1.1f; *value = ASPECT_RATIO_CORRECTION_AUTO; }
-
-	if (aspect_str != NULL) {
-		sscanf(aspect_str + 1, "%f", &g_pixel_aspect_ratio);
-		g_pixel_aspect_ratio = clamp(0.5f, g_pixel_aspect_ratio, 2.0f);
-	}
+	else if (c == 'f') { *value = ASPECT_RATIO_CORRECTION_FULL; }
+	else if (c == 'a') { *value = ASPECT_RATIO_CORRECTION_AUTO; }
 }
 
 void
@@ -493,6 +508,28 @@ Config_GetWindowMode(const char *str, enum WindowMode *value)
 }
 
 static void
+Config_SetAspectCorrection(ALLEGRO_CONFIG *config, const char *section, const char *key, enum AspectRatioCorrection value)
+{
+	const char *str[] = { "none", "menu", "full", "auto" };
+
+	if (value > ASPECT_RATIO_CORRECTION_AUTO)
+		value = ASPECT_RATIO_CORRECTION_AUTO;
+
+	al_set_config_value(config, section, key, str[value]);
+}
+
+static void
+Config_SetMidiFormat(ALLEGRO_CONFIG *config, const char *section, const char *key, enum MidiFormat value)
+{
+	const char *str[] = { "pcs", "tan", "gm", "mt32" };
+
+	if (value >= NUM_MIDI_FORMATS)
+		value = MIDI_FORMAT_GM;
+
+	al_set_config_value(config, section, key, str[value]);
+}
+
+static void
 Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *key, enum WindowMode value)
 {
 	const char *str[] = { "windowed", "fullscreen", "fullscreenwindow" };
@@ -502,6 +539,7 @@ Config_SetWindowMode(ALLEGRO_CONFIG *config, const char *section, const char *ke
 
 	al_set_config_value(config, section, key, str[value]);
 }
+
 
 static void
 Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *key, MusicInfo *ext)
@@ -618,6 +656,10 @@ GameOptions_Load(void)
 			continue;
 
 		switch (opt->type) {
+			case CONFIG_MIDI_FORMAT:
+				Config_GetMidiFormat(str, opt->d._midi_format);
+				break;
+
 			case CONFIG_ASPECT_CORRECTION:
 				Config_GetAspectCorrection(str, opt->d._aspect_correction);
 				break;
@@ -838,6 +880,13 @@ GameOptions_Save(void)
 				break;
 
 			case CONFIG_ASPECT_CORRECTION:
+				Config_SetAspectCorrection(s_configFile, opt->section, opt->key, *(opt->d._aspect_correction));
+				break;
+
+			case CONFIG_MIDI_FORMAT:
+				Config_SetMidiFormat(s_configFile, opt->section, opt->key, *(opt->d._midi_format));
+				break;
+
 			case CONFIG_SUBTITLE:
 				/* Not saved (hidden). */
 				break;
