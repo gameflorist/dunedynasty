@@ -368,9 +368,15 @@ There you will also find a __Jukebox__ to listen to all available songs from all
 
 _Dune Dynasty_ can play music via the system MIDI output on Windows, macOS (Core Audio) and Linux (ALSA).
 
+_Dune II_ includes midi tracks for various devices (PC Speaker, Tandy 3 voices, General Midi, MT-32). By default the General Midi (SC-55) tracks are played. You can switch to a different format in the game's Music Options (e.g. if you want to play the MT-32 tracks on real hardware or via the [MUNT](https://github.com/munt/munt/tree/master/mt32emu_win32drv_setup) emulator).
+
 #### Windows
 
 You can specify the MIDI device ID to use via the `midi_device_id` config parameter (default is `0`). To find out the correct device ID, you can use the tool [ListMIDI32.exe](https://www.vcode.no/VCFiles.nsf/viewByKey/ListMIDI32).
+
+#### macOS
+
+For macOS only Core Audio is supported. Core MIDI, which is required to play midi on external MIDI devices (e.g. real MT-32 hardware) is not supported at the moment. You can use the MT-32 (or any other) recorded music pack as a workaround instead (see [External music sets](#external-music-sets) below).
 
 #### Linux
 
