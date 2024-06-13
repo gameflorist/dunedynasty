@@ -440,7 +440,9 @@ Here is a list of supported Music packs:
 - ___Dune: Part One (2021)___ Original Motion Picture Soundtrack by Hans Zimmer  
   Purchase e.g. from [amazon.com](https://www.amazon.com/music/player/albums/B09F1Y3NCK/) or [amazon.de](https://www.amazon.de/music/player/albums/B09F2HWHGJ).
 - ___Dune: Part One (2021)___ "The Dune Sketchbook" soundtrack by Hans Zimmer  
-  Purchase e.g. from [amazon.com](https://www.amazon.com/music/player/albums/B09C3YS6DX) or [amazon.de](https://www.amazon.de/music/player/albums/B09C3YZZPW).
+  Purchase e.g. from [amazon.com](https://www.amazon.com/music/player/albums/B09C3YS6DX) or [amazon.de](https://www.amazon.de/music/player/albums/B0CW28Y532).
+- ___Dune: Part Two (2024)___ Original Motion Picture Soundtrack by Hans Zimmer  
+  Purchase e.g. from [amazon.com](https://www.amazon.com/Dune-Original-Motion-Picture-Soundtrack/dp/B0CW2BH4TS) or [amazon.de](https://www.amazon.de/music/player/albums/B0CW28Y532).
 
 After installation of a music set, you can check it's availability in the "Music" section of the game's "Options and Extras" menu. There you can also enable/disable music sets for random play.
 
