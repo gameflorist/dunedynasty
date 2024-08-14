@@ -71,6 +71,8 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Raise structure and unit limits
   - Start level selection
   - Consistent directional damage
+  - Instant wall construction
+  - Extend light vehicle sight range
 - __[Support for Custom campaigns](#custom-campaigns):__
   - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
   - [MrFlibble's Alternate Scenarios](https://mega.nz/file/gGUUSZbI#DwUrH3AL6sABUX2Y2wlXfblTNM_h41jq0HQnC2sLjnA)
@@ -138,7 +140,7 @@ Once the data files are in place, you may start the game by running
 
 ### Special installation instructions for macOS
 
-Due to the executable and included dylibs not being build with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. a `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start `dunedynasty` without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
+Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start `dunedynasty` without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
 
 ### Special installation instructions for Linux
 
