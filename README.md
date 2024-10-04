@@ -597,7 +597,7 @@ The steps below will build the release-version. You can change value of the `DCM
     brew install dylibbundler
     ```
 
-5. Due to the executable and included dylibs not being build with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. a `setup` script to lift quarantine on all files is included in [dist-per-os/macos](dist-per-os/macos).
+5. Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script to lift quarantine on all files is included in [dist-per-os/macos](dist-per-os/macos).
 
 #### Linux (Debian, Ubuntu)
 
@@ -641,7 +641,7 @@ Thank you to:
 - The Allegro 5 developers.
 - The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else
 who worked on the AdLib/OPL/MIDI player code.
-- rcblanke, ShaiWa, Nyerguds, Stefan Hendriks, the Sound Card database and DOS Nostalgia for their soundtrack recordings.
+- rcblanke, ShaiWa, Nyerguds, Stefan Hendriks, the Sound Card Database and DOS Nostalgia for their soundtrack recordings.
 - Peter, for help on various bits of the code, the music code, and AUDlib.
 - Nyerguds, for his Dune II editor.
 - Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
