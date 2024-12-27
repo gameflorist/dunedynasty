@@ -1,26 +1,29 @@
 #!/bin/sh
 
-# clean
+CONTENTS=../dist/DuneDynasty.app/Contents
+
+# Clean
 rm -rf ../dist/DuneDynasty.app
+rm -rf "../dist/Dune Dynasty.app"
 
 # Build file structure
-mkdir -p ../dist/DuneDynasty.app/Contents/MacOS
-mkdir ../dist/DuneDynasty.app/Contents/Resources
-mkdir ../dist/DuneDynasty.app/Contents/libs
+mkdir -p $CONTENTS/MacOS
+mkdir $CONTENTS/Resources
+mkdir $CONTENTS/libs
 
 # Executable
-cp ../dist/dunedynasty ../dist/DuneDynasty.app/Contents/MacOS/
+cp ../dist/dunedynasty $CONTENTS/MacOS/
 
 # Resources
-cp -r ../dist/campaign ../dist/DuneDynasty.app/Contents/Resources/
-cp -r ../dist/data ../dist/DuneDynasty.app/Contents/Resources/
-cp -r ../dist/music ../dist/DuneDynasty.app/Contents/Resources/
+cp -r ../dist/campaign $CONTENTS/Resources/
+cp -r ../dist/data $CONTENTS/Resources/
+cp -r ../dist/music $CONTENTS/Resources/
 
 # Icon
-cp ../src/icon/dune2_icon.icns ../dist/DuneDynasty.app/Contents/Resources/
+cp ../src/icon/dune2_icon.icns $CONTENTS/Resources/
 
 # Info.plist
-ex ../dist/DuneDynasty.app/Contents/Info.plist <<eof
+ex $CONTENTS/Info.plist <<eof
 1 insert
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -41,8 +44,11 @@ xit
 eof
 
 # Bundle dylibs
-dylibbundler -of -b -x ../dist/DuneDynasty.app/Contents/MacOS/dunedynasty -d ../dist/DuneDynasty.app/Contents/libs/
-otool -L ../dist/DuneDynasty.app/Contents/MacOS/dunedynasty
+dylibbundler -of -b -x $CONTENTS/MacOS/dunedynasty -d $CONTENTS/libs/
+otool -L $CONTENTS/MacOS/dunedynasty
 
 # Hack, libmad require SDL2 ???
-cp -r /opt/local/lib/SDL2.framework ../dist/DuneDynasty.app/Contents/libs/
+cp -r /opt/local/lib/SDL2.framework $CONTENTS/libs/
+
+# Rename
+mv ../dist/DuneDynasty.app "../dist/Dune Dynasty.app"
