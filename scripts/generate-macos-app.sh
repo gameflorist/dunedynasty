@@ -1,33 +1,25 @@
-#!/bin/sh
-
+#!/bin/bash -e
 CONTENTS=../dist/DuneDynasty.app/Contents
 
 # Clean
-rm -rf ../dist/DuneDynasty.app
-rm -rf "../dist/Dune Dynasty.app"
+rm -rf ../dist/Dune*.app
 
 # Build file structure
-mkdir -p $CONTENTS/MacOS
-mkdir $CONTENTS/Resources
-mkdir $CONTENTS/libs
+mkdir -p $CONTENTS/MacOS $CONTENTS/Resources $CONTENTS/libs
 
 # Executable
 cp ../dist/dunedynasty $CONTENTS/MacOS/
 
 # Resources
-cp -r ../dist/campaign $CONTENTS/Resources/
-cp -r ../dist/data $CONTENTS/Resources/
-cp -r ../dist/music $CONTENTS/Resources/
+cp -r ../dist/campaign ../dist/data ../dist/music $CONTENTS/Resources/
 
 # Icon
 cp ../src/icon/dune2_icon.icns $CONTENTS/Resources/
 
 # Info.plist
-ex $CONTENTS/Info.plist <<eof
-1 insert
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleExecutable</key>
 	<string>dunedynasty</string>
@@ -38,17 +30,21 @@ ex $CONTENTS/Info.plist <<eof
 	<key>NSHighResolutionCapable</key>
     <false/>
 </dict>
-</plist>
-.
-xit
-eof
+</plist>" > $CONTENTS/Info.plist
 
 # Bundle dylibs
 dylibbundler -of -b -x $CONTENTS/MacOS/dunedynasty -d $CONTENTS/libs/
 otool -L $CONTENTS/MacOS/dunedynasty
 
-# Hack, libmad require SDL2 ???
-cp -r /opt/local/lib/SDL2.framework $CONTENTS/libs/
+# Hack, fix for libfluidsynth needing SDL2 ???:
+# Termination Reason:    Namespace DYLD, Code 1 Library missing
+# Library not loaded: @rpath/SDL2.framework/Versions/A/SDL2
+# Referenced from: <xxx> /Users/USER/Documents/*/Dune Dynasty.app/Contents/libs/libfluidsynth.3.2.2.dylib
+# Reason: tried: '/Users/USER/Documents/dunedynasty/dist/Dune Dynasty.app/Contents/libs/SDL2.framework/Versions/A/SDL2' (no such file)
+# (terminated at launch; ignore backtrace)
+# Another way to fix is to disable compiling with libfluidsynth
+# cp -r /opt/local/lib/SDL2.framework $CONTENTS/libs/
 
-# Rename
+# Rename bundle with space in the name, as a final step.
+# dylibbundler has problems with paths containing spaces
 mv ../dist/DuneDynasty.app "../dist/Dune Dynasty.app"
