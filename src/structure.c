@@ -243,7 +243,7 @@ void GameLoop_Structure(void)
 					if (buildCost / 256 <= h->credits) {
 						s->buildCostRemainder = buildCost & 0xFF;
 
-						if (enhancement_instant_walls && s->objectType == STRUCTURE_WALL && h->credits >= oi->buildCredits) {
+						if (enhancement_instant_walls && s->o.type == STRUCTURE_CONSTRUCTION_YARD && s->objectType == STRUCTURE_WALL && h->credits >= oi->buildCredits) {
 							h->credits -= oi->buildCredits;
 							s->countDown = 0;
 						}
