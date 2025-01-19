@@ -26,9 +26,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 	<key>CFBundleIconFile</key>
 	<string>dune2_icon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>dunedynasty.dunedynasty</string>
+	<string>io.github.gameflorist.dunedynasty</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.0.0</string>
 	<key>NSHighResolutionCapable</key>
-    <false/>
+	<false/>
 </dict>
 </plist>" > $CONTENTS/Info.plist
 
