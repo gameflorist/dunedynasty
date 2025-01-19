@@ -28,7 +28,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 	<key>CFBundleIdentifier</key>
 	<string>io.github.gameflorist.dunedynasty</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>10.0.0</string>
+	<string>10.12.0</string>
 	<key>NSHighResolutionCapable</key>
 	<false/>
 </dict>
