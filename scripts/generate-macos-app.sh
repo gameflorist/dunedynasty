@@ -31,12 +31,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 	<string>10.12.0</string>
 	<key>NSHighResolutionCapable</key>
 	<false/>
-	<key>CFBundleVersion</key>
-	<string>1.6.3</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.6.3</string>
-	<key>CFBundleName</key>
-	<string>Dune Dynasty</string>
 </dict>
 </plist>" > $CONTENTS/Info.plist
 
