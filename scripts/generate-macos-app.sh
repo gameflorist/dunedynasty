@@ -7,16 +7,16 @@ rm -rf ./dist/Dune*.app
 # Build file structure
 mkdir -p $CONTENTS/MacOS $CONTENTS/Resources $CONTENTS/libs
 
-# Executable
-cp ./dist/dunedynasty $CONTENTS/MacOS/
+# Move executable
+mv ./dist/dunedynasty $CONTENTS/MacOS/
 
-# Resources
-cp -r ./dist/campaign ./dist/data ./dist/music $CONTENTS/Resources/
+# Move resources
+mv ./dist/campaign ./dist/data ./dist/music ./dist/gfx ./dist/dunedynasty.cfg-sample $CONTENTS/Resources/
 
-# Icon
+# Copy icon
 cp ./src/icon/dune2_icon.icns $CONTENTS/Resources/
 
-# Info.plist
+# Create Info.plist
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
