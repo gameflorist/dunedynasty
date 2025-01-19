@@ -1,17 +1,17 @@
 #!/bin/bash -e
-CONTENTS=./dist-macos-app/DuneDynasty.app/Contents
+CONTENTS=./dist/DuneDynasty.app/Contents
 
 # Clean
-rm -rf ./dist-macos-app/Dune*.app
+rm -rf ./dist/Dune*.app
 
 # Build file structure
 mkdir -p $CONTENTS/MacOS $CONTENTS/Resources $CONTENTS/libs
 
 # Executable
-mv ./dist/dunedynasty $CONTENTS/MacOS/
+cp ./dist/dunedynasty $CONTENTS/MacOS/
 
 # Resources
-cp -r ./dist/. $CONTENTS/Resources/
+cp -r ./dist/campaign ./dist/data ./dist/music $CONTENTS/Resources/
 
 # Icon
 cp ./src/icon/dune2_icon.icns $CONTENTS/Resources/
@@ -38,4 +38,4 @@ otool -L $CONTENTS/MacOS/dunedynasty
 
 # Rename bundle with space in the name, as a final step.
 # dylibbundler has problems with paths containing spaces
-mv ./dist-macos-app/DuneDynasty.app "./dist-macos-app/Dune Dynasty.app"
+mv ./dist/DuneDynasty.app "./dist/Dune Dynasty.app"

@@ -21,12 +21,12 @@ jobs:
       - name: Test executable
         run: |
           brew uninstall --force --ignore-dependencies argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet
-          cd dist-macos-app/"Dune Dynasty.app"/Contents/MacOS
+          cd dist/"Dune Dynasty.app"/Contents/MacOS
           ./dunedynasty | grep "data directory"
 
       - name: Zip dist folder
         run: |
-          cd dist-macos-app
+          cd dist
           zip -r dist.zip .
 
       - name: Delete Old Artifacts
@@ -53,4 +53,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-x86-64-build
-          path: dist-macos-app/dist.zip
+          path: dist/dist.zip
