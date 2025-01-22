@@ -7,6 +7,7 @@
 #include "buildcfg.h"
 #include "os/math.h"
 #include "os/strings.h"
+#include "errorlog.h"
 
 #include "config.h"
 
@@ -565,17 +566,18 @@ Config_GetMusicVolume(ALLEGRO_CONFIG *config, const char *category, const char *
 void
 ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 {
-	ALLEGRO_PATH *dune_data_path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+	ALLEGRO_PATH *resources_path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
 	ALLEGRO_PATH *user_data_path = al_get_standard_path(ALLEGRO_USER_DATA_PATH);
 	ALLEGRO_PATH *user_settings_path = al_get_standard_path(ALLEGRO_USER_SETTINGS_PATH);
-	const char *dune_data_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
+	const char *resources_cstr = al_path_cstr(resources_path, ALLEGRO_NATIVE_PATH_SEP);
 	const char *user_data_cstr = al_path_cstr(user_data_path, ALLEGRO_NATIVE_PATH_SEP);
 	const char *user_settings_cstr = al_path_cstr(user_settings_path, ALLEGRO_NATIVE_PATH_SEP);
 	char filename[PATH_MAX];
+	bool data_not_found = false;
 	FILE *fp;
 
-	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
-	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir)-1, "%s", dune_data_cstr);
+	snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", resources_cstr);
+	snprintf(g_personal_data_dir, sizeof(g_personal_data_dir)-1, "%s", resources_cstr);
 
 	/* Find global data directory.  Test we can read DUNE.PAK. */
 
@@ -590,17 +592,18 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 
 	/* 3. If /something/bin/dunedynasty, try /something/share/dunedynasty/data/DUNE.PAK. */
 	if (fp == NULL) {
-		if (strcmp(al_get_path_tail(dune_data_path), "bin") == 0) {
-			al_replace_path_component(dune_data_path, -1, "share/dunedynasty");
-			dune_data_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
-			snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
+		if (strcmp(al_get_path_tail(resources_path), "bin") == 0) {
+			al_replace_path_component(resources_path, -1, "share/dunedynasty");
+			resources_cstr = al_path_cstr(resources_path, ALLEGRO_NATIVE_PATH_SEP);
+			snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", resources_cstr);
 			fp = File_Open_CaseInsensitive(SEARCHDIR_GLOBAL_DATA_DIR, "DUNE.PAK", "rb");
 		}
 	}
 
 	/* 4. Try DUNE_DATA_DIR/data/DUNE.PAK. */
 	if (fp == NULL) {
-		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
+		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);		
+		data_not_found = true;
 	} else {
 		fclose(fp);
 	}
@@ -625,10 +628,28 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 		fprintf(stderr, "Could not create %s!\n", filename);
 	}
 
-	al_destroy_path(dune_data_path);
+	if (data_not_found) {
+		Error(
+			"--------------------------\n"
+			"ERROR: Dune II data files not found.\n"
+			"\n"
+			"Did you copy the Dune2 1.07eu data files into the data directory? The data directory can be placed in one of the following locations:\n"
+			"\n"
+			"- %sdata\n"
+			"- %sdata\n"
+			"- %s/data\n"
+			"\n",
+			resources_cstr,
+			user_data_cstr,
+			DUNE_DATA_DIR
+		);
+		exit(1);
+	}
+
+	al_destroy_path(resources_path);
 	al_destroy_path(user_data_path);
 	al_destroy_path(user_settings_path);
-	fprintf(stdout, "Dune data directory: %s\n", g_dune_data_dir);
+	fprintf(stdout, "Resource data directory: %s\n", g_dune_data_dir);
 	fprintf(stdout, "Personal data directory: %s\n", g_personal_data_dir);
 }
 

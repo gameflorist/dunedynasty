@@ -602,10 +602,7 @@ static bool Unknown_25C4_000E(void)
 			"--------------------------\n"
 			"ERROR LOADING DATA FILE\n"
 			"\n"
-			"Did you copy the Dune2 1.07eu data files into the data directory\n"
-			"%s/data ?\n"
-			"\n",
-			g_dune_data_dir
+			"DUNE.PAK does not seem to be a valid Dune2 1.07eu data file\n"
 		);
 
 		return false;
