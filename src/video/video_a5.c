@@ -360,19 +360,6 @@ VideoA5_Init(void)
 
 	flags_str[0] = '\0';
 
-	switch (g_graphics_driver) {
-		case GRAPHICS_DRIVER_OPENGL:
-		default:
-			APPEND_FLAG(ALLEGRO_OPENGL);
-			break;
-
-#ifdef ALLEGRO_WINDOWS
-		case GRAPHICS_DRIVER_DIRECT3D:
-			APPEND_FLAG(ALLEGRO_DIRECT3D);
-			break;
-#endif
-	}
-
 	if (g_gameConfig.windowMode == WM_FULLSCREEN) {
 		APPEND_FLAG(ALLEGRO_FULLSCREEN);
 	} else if (g_gameConfig.windowMode == WM_FULLSCREEN_WINDOW) {
