@@ -54,7 +54,7 @@ void GUI_Widget_Viewport_Draw(void)
 			u != NULL;
 			u = Unit_FindNext(&find)) {
 
-		if (u->o.index < 20 || u->o.index > UnitPool_GetMaxIndex() -1 )
+		if (u->o.index < 19 || u->o.index > UnitPool_GetMaxIndex() -1 )
 			continue;
 
 		if (enhancement_invisible_saboteurs && u->o.type == UNIT_SABOTEUR)
