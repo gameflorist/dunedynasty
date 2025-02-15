@@ -165,7 +165,7 @@ MenuBar_Draw(enum HouseType houseID)
 	GUI_Widget_Draw(w);
 
 	Video_SetClippingArea(0, menubar->scaley * 4, TRUE_DISPLAY_WIDTH, menubar->scaley * 9);
-	GUI_DrawCredits(g_playerHouse->credits, (g_playerCredits == 0xFFFF) ? 2 : 1, TRUE_DISPLAY_WIDTH / menubar->scalex);
+	GUI_DrawCredits(g_playerHouse->credits, (g_playerCredits == 0xFFFF) ? 2 : 1, ceil(TRUE_DISPLAY_WIDTH / menubar->scalex));
 	GUI_DrawStatusBarText(statusbar->xBase, statusbar->yBase);
 
 	Video_SetClippingArea(0, 0, TRUE_DISPLAY_WIDTH, TRUE_DISPLAY_HEIGHT);
