@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "enum_string.h"
 #include "../os/common.h"
 #include "../os/math.h"
