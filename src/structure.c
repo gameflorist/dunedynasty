@@ -1209,7 +1209,9 @@ static void Structure_Destroy(Structure *s)
 
 	si = &g_table_structureInfo[s->o.type];
 
-	h->credits -= (h->creditsStorage == 0) ? h->credits : min(h->credits, (h->credits * 256 / h->creditsStorage) * si->creditsStorage / 256);
+	if (si->creditsStorage > 0) {
+		h->credits -= (h->creditsStorage == 0) ? h->credits : min(h->credits, (h->credits * 256 / h->creditsStorage) * si->creditsStorage / 256);
+	}
 
 	if (!h->flags.human)
 		h->credits += si->o.buildCredits + (g_campaignID > 7 ? si->o.buildCredits / 2 : 0);
