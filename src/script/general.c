@@ -21,6 +21,7 @@
 #include "../tools/random_general.h"
 #include "../tools/random_lcg.h"
 #include "../unit.h"
+#include "../enhancement.h"
 
 /**
  * Suspend the script execution for a set amount of ticks.
@@ -330,7 +331,7 @@ uint16 Script_General_SearchSpice(ScriptEngine *script)
 
 	position = g_scriptCurrentObject->position;
 
-	packedSpicePos = Map_SearchSpice(Tile_PackTile(position), STACK_PEEK(1));
+	packedSpicePos = Map_SearchSpice(Tile_PackTile(position), enhancement_extend_spice_sensor == true ? 64 : STACK_PEEK(1));
 
 	if (packedSpicePos == 0) return 0;
 	return Tools_Index_Encode(packedSpicePos, IT_TILE);
