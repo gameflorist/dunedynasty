@@ -288,7 +288,7 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 				u->targetMove = Tools_Index_Encode(Tile_PackTile(u2->targetLast), IT_TILE);
 			} else if (u2->o.type == UNIT_HARVESTER
 					&& !House_IsHuman(Unit_GetHouseID(u2))) {
-				u->targetMove = Tools_Index_Encode(Map_SearchSpice(Tile_PackTile(u->o.position), 20), IT_TILE);
+				u->targetMove = Tools_Index_Encode(Map_SearchSpice(Tile_PackTile(u->o.position), enhancement_extend_spice_sensor == true ? 64 : 20), IT_TILE);
 			}
 
 			Unit_UpdateMap(2, u);
