@@ -35,7 +35,7 @@ jobs:
             })
 
             res.data.artifacts
-                .filter(({ name }) => name === 'windows-x86-build')
+                .filter(({ name }) => name === '${{ github.ref_name }}-windows-x86-build')
                 .forEach(({ id }) => {
                   github.rest.actions.deleteArtifact({
                       owner: context.repo.owner,
@@ -47,5 +47,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-x86-build
+          name: ${{ github.ref_name }}-windows-x86-build
           path: dist
