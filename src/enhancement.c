@@ -262,6 +262,13 @@ bool enhancement_skip_introduction = false;
  */
 bool enhancement_extend_sight_range = false;
 
+/**
+ * This enhancement extends the spice sensing ranges in these cases:
+ * - Harvesters searching for spice (from about 3-4 to 64)
+ * - Carryalls searching for spice (from 20 to 64)
+ */
+bool enhancement_extend_spice_sensor = false;
+
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 

@@ -171,6 +171,7 @@ static const GameOption s_game_option[] = {
 	{ "enhancement",    "raise_structure_cap",  	CONFIG_BOOL,.d._bool = &enhancement_raise_structure_cap },
 	{ "enhancement",    "show_outpost_unit_info",	CONFIG_BOOL,.d._bool = &enhancement_show_outpost_unit_info },
 	{ "enhancement",    "instant_walls",			CONFIG_BOOL,.d._bool = &enhancement_instant_walls },
+	{ "enhancement",    "extend_spice_sensor",		CONFIG_BOOL,.d._bool = &enhancement_extend_spice_sensor },
 	{ "enhancement",    "extend_sight_range",	CONFIG_BOOL,.d._bool = &enhancement_extend_sight_range },
 	{ "enhancement",    "repeat_reinforcements",    CONFIG_BOOL,.d._bool = &enhancement_repeat_reinforcements },
 	{ "enhancement",    "smooth_unit_animation",    CONFIG_SMOOTH_ANIM, .d._smooth_anim = &enhancement_smooth_unit_animation },
