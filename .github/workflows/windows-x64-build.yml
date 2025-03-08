@@ -19,10 +19,7 @@ jobs:
           install: mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb mingw-w64-ucrt-x86_64-allegro mingw-w64-ucrt-x86_64-enet mingw-w64-ucrt-x86_64-fluidsynth mingw-w64-ucrt-x86_64-libmad
 
       - name: Build
-        run: ./scripts/build-windows.sh
-
-      - name: Bundle libs
-        run: ./scripts/bundle-libs-ucrt64.sh
+        run: ./scripts/build-windows-x64.sh
 
       - name: Delete Old Artifacts
         uses: actions/github-script@v7
