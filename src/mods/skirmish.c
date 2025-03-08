@@ -537,9 +537,6 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 	assert(cpu_count != 0);
 
 	int max_structure_count = 60 / cpu_count;
-	if (is_multiplayer) {
-		max_structure_count = 10;
-	}
 
 	/* First pass finds out what to build. */
 	tech_level = 0;
