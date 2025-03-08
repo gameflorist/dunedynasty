@@ -209,6 +209,13 @@ StructureAI_FilterBuildOptions_Original(enum StructureType s, enum HouseType hou
 		case STRUCTURE_HIGH_TECH:
 			if (Unit_FindFirst(&find, houseID, UNIT_CARRYALL))
 				buildable &= ~FLAG_UNIT_CARRYALL;
+
+			// Do not build ornithopters within the first 10 minutes of the game in skirmish or multiplayer.
+			if 	((g_campaign_selected == CAMPAIGNID_SKIRMISH || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) && 
+				(((g_timerGame - g_tickScenarioStart) / 60 / 60) < 10)) {
+				buildable &= ~FLAG_UNIT_ORNITHOPTER;
+			}
+
 			break;
 
 		default:
