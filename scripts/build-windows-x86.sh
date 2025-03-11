@@ -1,7 +1,14 @@
 #!/bin/bash -e
-echo "Removing existing dlls..."
-rm -rf ./dist/*.dll
-echo "Copying new dlls..."
+
+echo "Clearing dist folder..."
+rm -rf dist
+mkdir dist
+
+echo "Performing build..."
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
+ninja
+
+echo "Bundling dlls..."
 cp /mingw32/bin/allegro_acodec-5.2.dll ./dist
 cp /mingw32/bin/allegro-5.2.dll ./dist
 cp /mingw32/bin/allegro_audio-5.2.dll ./dist
@@ -38,3 +45,6 @@ cp /mingw32/bin/libpcre2-8-0.dll ./dist
 cp /mingw32/bin/libintl-8.dll ./dist
 cp /mingw32/bin/libiconv-2.dll ./dist
 cp /mingw32/bin/libgmodule-2.0-0.dll ./dist
+
+echo "Copying static files..."
+cp -r ./static/general/* ./dist
