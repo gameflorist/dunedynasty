@@ -138,10 +138,6 @@ Place them into one of the following places:
 Once the data files are in place, you may start the game by running
 `dunedynasty.exe` or `dunedynasty`.
 
-### Special installation instructions for macOS
-
-Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start `dunedynasty` without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
-
 ### Special installation instructions for Linux
 
 On Linux you will also have to install the libraries __Dune Dynasty__ depends on:
@@ -533,22 +529,16 @@ The steps below will build the release-version. You can change value of the `DCM
 
 4. Perform build:
 
-    ```shell
-    ./scripts/build-windows.sh
-    ```
-
-5. For packaging, you have to copy all required .dll files to the `dist` folder. To do this, simply call the following script:
-
     For 64bit:
 
     ```shell
-    ./scripts/bundle-libs-ucrt64.sh
+    ./scripts/build-windows-x64.sh
     ```
 
     For 32bit:
 
     ```shell
-    ./scripts/bundle-libs-mingw32.sh
+    ./scripts/build-windows-x86.sh
     ```
 
 #### MacOs
@@ -585,20 +575,6 @@ The steps below will build the release-version. You can change value of the `DCM
     cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64 .
     ```
 
-4. To package all required dynlibs into the `./dist/libs` folder and patch the executable, call this script:
-
-    ```shell
-    ./scripts/bundle-libs-macos.sh
-    ```
-
-    The script requires the brew package `dylibbundler`, so install it first:
-
-    ```shell
-    brew install dylibbundler
-    ```
-
-5. Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script to lift quarantine on all files is included in [dist-per-os/macos](dist-per-os/macos).
-
 #### Linux (Debian, Ubuntu)
 
 1. Install dependencies:
@@ -611,12 +587,6 @@ The steps below will build the release-version. You can change value of the `DCM
 
     ```shell
     ./scripts/build-linux.sh
-    ```
-
-3. When packaging, there is the problem, that the fluidsynth-library is called `libfluidsynth2` on some distributions, and `libfluidsynth3` on others. To mitigate, call this script, which will copy the library-file to `dist/libs` and patch the executable to use the inlcuded library instead:
-
-    ```shell
-    ./scripts/bundle-libs-linux.sh
     ```
 
 ### Debugging

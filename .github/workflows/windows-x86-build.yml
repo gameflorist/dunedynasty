@@ -19,10 +19,7 @@ jobs:
           install: mingw-w64-i686-cmake mingw-w64-i686-gcc mingw-w64-i686-gdb mingw-w64-i686-allegro mingw-w64-i686-enet mingw-w64-i686-fluidsynth mingw-w64-i686-libmad
 
       - name: Build
-        run: ./scripts/build-windows.sh
-
-      - name: Bundle libs
-        run: ./scripts/bundle-libs-mingw32.sh
+        run: ./scripts/build-windows-x86.sh
 
       - name: Delete Old Artifacts
         uses: actions/github-script@v7
