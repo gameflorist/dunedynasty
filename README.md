@@ -117,7 +117,7 @@ You will need the `\*.PAK` data files from the EU v1.07 release of _Dune II_. Se
 
 Place them into one of the following places:
 
- 1. In a directory named `data` next to the dunedynasty executable.
+ 1. In a directory named `data` next to the dunedynasty executable (or `Dune Dynasty.app` using the MacOS App-Bundle).
     This is the simplest option.
 
  2. In your personal data directory.
@@ -152,7 +152,7 @@ If `libfluidsynth3` is not available on your distribution, try `libfluidsynth2` 
 
 Just as the data-files, the configuration file `dunedynasty.cfg` will be read from one of two places:
 
- 1. In the same directory as the dunedynasty executable.
+ 1. In the same directory as the dunedynasty executable (or `Dune Dynasty.app` using the MacOS App-Bundle).
 
  2. In a personal data directory. This is the default behaviour - meaning `dunedynasty.cfg` will be created here on initial launch.
     The location depends on your operating system:
@@ -175,7 +175,7 @@ replace it with `dunedynasty.cfg-sample`.
 
 ### Portable mode
 
-If you place `dunedynasty.cfg` in the same directory as the dunedynasty executable, _Dune Dynasty_ will operate in portable mode - keeping everything (e.g. savegames) inside the install directory.
+If you place `dunedynasty.cfg` in the same directory as the dunedynasty executable (or `Dune Dynasty.app` using the MacOS App-Bundle), _Dune Dynasty_ will operate in portable mode - keeping everything (e.g. savegames) inside the install directory.
 
 ### Video Settings
 
@@ -330,8 +330,7 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
 ## Saved games
 
 Saved games are located in the `save` directory next to `dunedynasty.cfg`.
-If no configuration file exists in the same directory as the executable, they will be in placed in a personal
-data directory.
+If no configuration file exists in the same directory as the executable (or `Dune Dynasty.app` using the MacOS App-Bundle), they will be in placed in a personal data directory.
 
 The location depends on your operating system:
 

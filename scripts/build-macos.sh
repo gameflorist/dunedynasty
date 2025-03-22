@@ -13,10 +13,9 @@ LIBRARY_PATH="${FLUIDSYNTH_INSTALL_PATH}/lib:${MAD_INSTALL_PATH}/lib:${ENET_INST
 
 echo "Copying static files and creating app-structure..."
 cp -r ./static/macos/* ./dist
+cp -r ./static/general/* ./dist
 CONTENTS=./dist/DuneDynasty.app/Contents
 mkdir -p $CONTENTS/MacOS $CONTENTS/MacOS/libs
-cp -r ./static/general/campaign ./static/general/data ./static/general/music ./static/general/gfx ./static/general/dunedynasty.cfg-sample $CONTENTS/Resources/
-cp -r ./static/general/licences ./static/general/*.txt ./dist/
 mv ./dist/dunedynasty $CONTENTS/MacOS/
 
 echo "Bundling dylibs..."

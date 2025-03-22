@@ -598,7 +598,23 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 		}
 	}
 
-	/* 4. Try DUNE_DATA_DIR/data/DUNE.PAK. */
+	/* 4. If inside a /something/Dune Dynasty.app/Contents/MacOS folder, try /something/data/DUNE.PAK. */
+	if (fp == NULL) {
+		if (
+			(strcmp(al_get_path_tail(dune_data_path), "MacOS") == 0) &&
+			(strcmp(al_get_path_component(dune_data_path,-2), "Contents") == 0) &&
+			(strcmp(al_get_path_component(dune_data_path,-3), "Dune Dynasty.app") == 0)
+		) {
+			al_drop_path_tail(dune_data_path);
+			al_drop_path_tail(dune_data_path);
+			al_drop_path_tail(dune_data_path);
+			dune_data_cstr = al_path_cstr(dune_data_path, ALLEGRO_NATIVE_PATH_SEP);
+			snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), "%s", dune_data_cstr);
+			fp = File_Open_CaseInsensitive(SEARCHDIR_GLOBAL_DATA_DIR, "DUNE.PAK", "rb");
+		}
+	}
+
+	/* 5. Try DUNE_DATA_DIR/data/DUNE.PAK. */
 	if (fp == NULL) {
 		snprintf(g_dune_data_dir, sizeof(g_dune_data_dir), DUNE_DATA_DIR);
 	} else {
@@ -613,7 +629,14 @@ ConfigA5_InitDataDirectoriesAndLoadConfigFile(void)
 	snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
 	s_configFile = al_load_config_file(filename);
 
-	/* 2. Try ~/.config/dunedynasty/dunedynasty.cfg. */
+	/* 2. Try g_dune_data_dir. */
+	if (s_configFile == NULL) {
+		snprintf(g_personal_data_dir, sizeof(g_personal_data_dir)-1, "%s", g_dune_data_dir);
+		snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
+		s_configFile = al_load_config_file(filename);
+	}
+
+	/* 3. Try ~/.config/dunedynasty/dunedynasty.cfg. */
 	if (s_configFile == NULL) {
 		snprintf(g_personal_data_dir, sizeof(g_personal_data_dir)-1, "%s", user_settings_cstr);
 		snprintf(filename, sizeof(filename), "%s/%s", g_personal_data_dir, CONFIG_FILENAME);
