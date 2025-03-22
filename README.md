@@ -138,6 +138,12 @@ Place them into one of the following places:
 Once the data files are in place, you may start the game by running
 `dunedynasty.exe` or `dunedynasty`.
 
+### Special installation instructions for MacOS
+
+Using the MacOS app bundle, the `data`, `music` and `campaign` directories are located inside the app package under `Dune Dynasty.app/Contents/Resources`. You have to right click on the `Dune Dynasty` app and click `Show Package Contents` in the context menu to be able to access it and copy your data (as well as music-sets and campaigns) there.
+
+Since the app is not built using a developer licence, a warning will be displayed trying to launch the game. You need to right click on the `Dune Dynasty` app and click `Open` in the context menu the first time you start the game to circumvent this.
+
 ### Special installation instructions for Linux
 
 On Linux you will also have to install the libraries __Dune Dynasty__ depends on:
@@ -152,7 +158,7 @@ If `libfluidsynth3` is not available on your distribution, try `libfluidsynth2` 
 
 Just as the data-files, the configuration file `dunedynasty.cfg` will be read from one of two places:
 
- 1. In the same directory as the dunedynasty executable.
+ 1. In the same directory as the dunedynasty executable. (Using the MacOS bundle you have to use the `Dune Dynasty.app/Contents/Resources` folder inside the app).
 
  2. In a personal data directory. This is the default behaviour - meaning `dunedynasty.cfg` will be created here on initial launch.
     The location depends on your operating system:
@@ -176,6 +182,8 @@ replace it with `dunedynasty.cfg-sample`.
 ### Portable mode
 
 If you place `dunedynasty.cfg` in the same directory as the dunedynasty executable, _Dune Dynasty_ will operate in portable mode - keeping everything (e.g. savegames) inside the install directory.
+
+Using the MacOS bundle you have to use the `Dune Dynasty.app/Contents/Resources` folder inside the app.
 
 ### Video Settings
 
