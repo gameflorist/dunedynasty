@@ -13,6 +13,7 @@
 #include "editbox.h"
 #include "halloffame.h"
 #include "scrollbar.h"
+#include "savemenu.h"
 #include "../audio/audio.h"
 #include "../enhancement.h"
 #include "../gui/font.h"
@@ -77,9 +78,22 @@ PickLobby_InitWidgets(void)
 	w->flags.buttonFilterRight = 4;
 	pick_lobby_widgets = GUI_Widget_Link(pick_lobby_widgets, w);
 
-	/* Skirmish. */
+	/* Start Skirmish. */
 	width = Font_GetStringWidth(String_Get_ByIndex(STR_START)) + 20;
-	w = GUI_Widget_Allocate(10, 0, 11 + (102 - width) / 2, 148, 0xFFFE, STR_START);
+	w = GUI_Widget_Allocate(10, 0, 11 + (102 - width) / 2, 128, 0xFFFE, STR_START);
+	w->width  = width;
+	w->height = 12;
+	memset(&w->flags, 0, sizeof(w->flags));
+	w->flags.requiresClick = true;
+	w->flags.clickAsHover = true;
+	w->flags.loseSelect = true;
+	w->flags.buttonFilterLeft = 4;
+	w->flags.buttonFilterRight = 4;
+	pick_lobby_widgets = GUI_Widget_Link(pick_lobby_widgets, w);
+
+	/* Load Skirmish. */
+	width = Font_GetStringWidth(String_Get_ByIndex(STR_LOAD)) + 20;
+	w = GUI_Widget_Allocate(15, 0, 11 + (102 - width) / 2, 148, 0xFFFE, STR_LOAD);
 	w->width  = width;
 	w->height = 12;
 	memset(&w->flags, 0, sizeof(w->flags));
@@ -941,9 +955,6 @@ PickLobby_Draw(void)
 	Prim_DrawBorder( 11, 86, 102, 83, 1, false, false, 3);
 	GUI_DrawText_Wrapper("Skirmish", 61, 96, 0xF, 0, 0x122);
 
-	Shape_Draw(SHAPE_INFANTRY, 46, 118, WINDOWID_MAINMENU_FRAME, 0);
-	Prim_DrawBorder(46, 118, 32, 24, 1, false, false, 4);
-
 	/* Multiplayer. */
 	Prim_DrawBorder(120, 86, 189, 83, 1, false, false, 3);
 	GUI_DrawText("Multiplayer", 186, 96, 0xF, 0);
@@ -995,9 +1006,16 @@ PickLobby_Loop(void)
 			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 1), false);
 			return MENU_MAIN_MENU;
 
-		case 0x8000 | 10: /* skirmish. */
+		case 0x8000 | 10: /* start skirmish. */
 			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 10), false);
 			return MENU_NO_TRANSITION | MENU_SKIRMISH_LOBBY;
+
+		case 0x8000 | 15: /* load skirmish. */
+			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 15), false);
+			g_campaign_selected = CAMPAIGNID_SKIRMISH;
+			Campaign_Load();
+			SaveMenu_InitSaveLoad(false);
+			return MENU_NO_TRANSITION | MENU_LOAD_GAME;
 
 		case 0x8000 | 20: /* host */
 			GUI_Widget_MakeNormal(GUI_Widget_Get_ByIndex(pick_lobby_widgets, 20), false);
