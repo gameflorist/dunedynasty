@@ -175,6 +175,8 @@ extern bool Scenario_Load2(FILE *fp, uint32 length);
 extern bool Scenario_Save2(FILE *fp);
 extern bool Scenario_Load3(FILE *fp, uint32 length);
 extern bool Scenario_Save3(FILE *fp);
+extern bool Scenario_Load4(FILE *fp, uint32 length);
+extern bool Scenario_Save4(FILE *fp);
 extern bool Structure_Load(FILE *fp, uint32 length);
 extern bool Structure_Save(FILE *fp);
 extern bool Structure_Load2(FILE *fp, uint32 length);

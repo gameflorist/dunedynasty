@@ -113,6 +113,7 @@ Save_Main(FILE *fp, const char *description)
 	/* Store Dune Dynasty extensions. */
 	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
 		if (!Save_Chunk(fp, "DDS2", &Scenario_Save2)) return false;
+		if (!Save_Chunk(fp, "DDS4", &Scenario_Save4)) return false;
 	}
 
 	if (!Save_Chunk(fp, "DDS3", &Scenario_Save3)) return false;

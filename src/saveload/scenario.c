@@ -123,3 +123,38 @@ Scenario_Save3(FILE *fp)
 {
 	return SaveLoad_Save(s_saveScenario3, fp, &g_scenario);
 }
+
+bool
+Scenario_Load4(FILE *fp, uint32 length)
+{
+	if (length != HOUSE_NEUTRAL)
+		return false;
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
+		char c;
+		fread(&c, sizeof(char), 1, fp);
+
+		     if (c == ' ') g_skirmish.player_config[h].team = TEAM_NONE;
+		else if (c == '1') g_skirmish.player_config[h].team = TEAM_1;
+		else if (c == '2') g_skirmish.player_config[h].team = TEAM_2;
+		else if (c == '3') g_skirmish.player_config[h].team = TEAM_3;
+		else if (c == '4') g_skirmish.player_config[h].team = TEAM_4;
+		else if (c == '5') g_skirmish.player_config[h].team = TEAM_5;
+		else if (c == '6') g_skirmish.player_config[h].team = TEAM_6;
+	}
+
+	return true;
+}
+
+bool
+Scenario_Save4(FILE *fp)
+{
+	const char team_char[7] = { ' ', '1', '2', '3', '4', '5', '6' };
+
+	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
+		char c = team_char[g_skirmish.player_config[h].team];
+		fwrite(&c, sizeof(char), 1, fp);
+	}
+
+	return true;
+}

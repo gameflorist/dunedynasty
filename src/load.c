@@ -166,6 +166,11 @@ static bool Load_Main(FILE *fp)
 				abort = !skip && !Unit_Load2(fp, length);
 				break;
 
+			case CC_DDS4:
+				skip  = g_campaign_selected != CAMPAIGNID_SKIRMISH;
+				abort = !skip && !Scenario_Load4(fp, length);
+				break;
+
 			default:
 				skip  = true;
 				abort = false;
