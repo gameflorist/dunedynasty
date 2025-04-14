@@ -22,11 +22,6 @@ driver=opengl
 window_mode=fullscreenwindow
 screen_width=640
 screen_height=480
-# scale is from 1.00, 2.00, 3.00... up to 8.00
-menubar_scale=1.00
-sidebar_scale=1.00
-viewport_scale=2.00
-hardware_cursor=1
 # correct_aspect_ratio is one of:
 #
 #     none: Square pixels.
@@ -34,6 +29,11 @@ hardware_cursor=1
 #     full: Non-square pixels throughout the game.
 #     auto: Same as `menu` except when the screen height is less than 800 pixels.
 correct_aspect_ratio=auto
+# scale is from 1.00, 2.00, 3.00... up to 8.00
+menubar_scale=1.00
+sidebar_scale=1.00
+viewport_scale=1.00
+hardware_cursor=1
 
 [controls]
 auto_scroll=1
@@ -68,29 +68,6 @@ midi_device_id=0
 #     mt32: MT-32
 midi_format=gm
 
-[enhancement]
-brutal_ai=0
-fog_of_war=0
-health_bars=selected
-hi_res_overlays=1
-true_game_speed=1
-infantry_squad_death_anim=1
-insatiable_sandworms=0
-attack_dir_consistency=0
-skip_introduction=0
-raise_unit_cap=0
-raise_structure_cap=0
-show_outpost_unit_info=0
-repeat_reinforcements=1
-smooth_unit_animation=1
-# subtitle_override is one of: eu, us, dynasty
-subtitle_override=dynasty
-
-[completion]
-Atreides=0
-Ordos=0
-Harkonnen=0
-
 [music]
 # MUSIC CONFIGURATION
 # Enable or disable entire music sets here.
@@ -112,7 +89,9 @@ dune2_pcspeaker=1
 dune2_smd=1
 dune2_amiga=1
 dune2000=1
-emperor=1
+emperor_atreides=1
+emperor_harkonnen=1
+emperor_ordos=1
 dune1992_adlib=1
 dune1992_scdb=1
 dune1992_spiceopera=1
@@ -121,3 +100,28 @@ dune2021_ost=1
 dune2021_sketchbook=1
 dune_part_two_ost=1
 default=dune2_adlib
+
+[enhancement]
+brutal_ai=0
+fog_of_war=0
+health_bars=selected
+hi_res_overlays=1
+true_game_speed=1
+infantry_squad_death_anim=1
+insatiable_sandworms=0
+attack_dir_consistency=0
+skip_introduction=0
+raise_unit_cap=0
+raise_structure_cap=0
+show_outpost_unit_info=0
+instant_walls=0
+extend_sight_range=0
+repeat_reinforcements=1
+smooth_unit_animation=1
+# subtitle_override is one of: eu, us, dynasty
+subtitle_override=dynasty
+
+[completion]
+Atreides=0
+Ordos=0
+Harkonnen=0
