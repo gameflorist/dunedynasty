@@ -452,13 +452,15 @@ Here is a list of supported Music packs:
 
 After installation of a music set, you can check it's availability in the "Music" section of the game's "Options and Extras" menu. There you can also enable/disable music sets for random play.
 
-You can also disable individual songs from music sets. You have to do this by editing your config-file though.
+#### Disabling individual songs
 
-Example: If you want to include Dune 2000 music, but exclude "Robotix":
+You can also disable individual songs from music sets. This is done by setting the volume of the track to 0 inside a `volume.cfg` file situated inside the set-specific subfolder of the `/music` directory (where the actual music-files reside). This file is not present for every music set, so you might have to create it.
+
+Example: If you want to exclude the track `05 - Revelation.mp3` of the `dune1992_spiceopera` music-set, create a `volume.cfg` file inside the folder `music/dune1992_spiceopera` with the following content:
 
 ```ini
-[music/dune2000]
-ROBOTIX=0
+[volume]
+05 - Revelation = 0
 ```
 
 ## Custom campaigns
