@@ -1,0 +1,19 @@
+#!/bin/bash -e
+cd -- "$(dirname "$0")"
+
+echo "This script will remove the Dune Dynasty executable and included .dylib files from macOS quarantine."
+read -n1 -s -r -p $'Press (y)es to continue or any other key to exit...\n' key
+
+if [ "$key" = 'y' ]; then
+    qstr="$(xattr -p com.apple.quarantine Dune\ Dynasty.app/Contents/MacOS/dunedynasty)" 2>/dev/null
+    if [[ $qstr ]]; then
+        echo "Removing Dune Dynasty executable and included .dylib files from quarantine..."
+        qstr="00c1${qstr:4}"
+        xattr -w com.apple.quarantine $qstr Dune\ Dynasty.app
+        xattr -w com.apple.quarantine $qstr Dune\ Dynasty.app/Contents/MacOS/dunedynasty
+        xattr -w com.apple.quarantine $qstr Dune\ Dynasty.app/Contents/MacOS/libs/*.dylib
+    fi
+    echo "All finished..."
+else
+    echo "Exiting without doing anything..."
+fi

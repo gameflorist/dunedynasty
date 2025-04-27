@@ -1,8 +1,7 @@
 #!/bin/bash -e
 
-echo "Clearing dist folder..."
-rm -rf dist
-mkdir dist
+echo "Cleaning up build..."
+./scripts/cleanup-build.sh
 
 echo "Performing build..."
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
@@ -45,6 +44,3 @@ cp /mingw32/bin/libpcre2-8-0.dll ./dist
 cp /mingw32/bin/libintl-8.dll ./dist
 cp /mingw32/bin/libiconv-2.dll ./dist
 cp /mingw32/bin/libgmodule-2.0-0.dll ./dist
-
-echo "Copying static files..."
-cp -r ./static/general/* ./dist

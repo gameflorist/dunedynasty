@@ -154,19 +154,41 @@ target_link_libraries(dunedynasty
 	${OPENGL_LIBRARIES}
 	)
 
+if(CMAKE_MACOSX_BUNDLE)
+	set_target_properties(dunedynasty PROPERTIES
+		BUNDLE True
+		MACOSX_BUNDLE_BUNDLE_VERSION ${DUNE_DYNASTY_VERSION}
+		MACOSX_BUNDLE_SHORT_VERSION_STRING ${DUNE_DYNASTY_VERSION}
+		MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/include/MacOSXBundleInfo.plist.in
+	)
+endif()
+
+# Copy general static files
+file(GLOB STATIC_DOC_FILES "${CMAKE_SOURCE_DIR}/LICENSE.txt" "${CMAKE_SOURCE_DIR}/README.txt"  "${CMAKE_SOURCE_DIR}/CHANGES.txt" "${CMAKE_SOURCE_DIR}/enhancement.txt" "${CMAKE_SOURCE_DIR}/static/general/dunedynasty.cfg-sample")
+file(GLOB STATIC_LICENCE_FOLDER "${CMAKE_SOURCE_DIR}/licences")
+file(GLOB STATIC_RESOURCE_FOLDERS "${CMAKE_SOURCE_DIR}/static/general/campaign" "${CMAKE_SOURCE_DIR}/static/general/data" "${CMAKE_SOURCE_DIR}/static/general/gfx" "${CMAKE_SOURCE_DIR}/static/general/music")
+file(COPY ${STATIC_DOC_FILES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/dist")
+file(COPY ${STATIC_LICENCE_FOLDER} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/dist")
+if(CMAKE_MACOSX_BUNDLE)
+	file(COPY ${STATIC_RESOURCE_FOLDERS} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/dist/dunedynasty.app/Contents/Resources")
+	file(GLOB STATIC_MACOSX_BUNDLE_FILES "${CMAKE_SOURCE_DIR}/static/macos-bundle/**")
+	file(COPY ${STATIC_MACOSX_BUNDLE_FILES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/dist")
+else()
+	file(COPY ${STATIC_RESOURCE_FOLDERS} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/dist")
+endif()
+
+# Copy static files for Linux
+if(UNIX AND NOT APPLE)
+	file(GLOB LINUX_STATIC_FILES "${CMAKE_SOURCE_DIR}/static/linux/**")
+	file(COPY ${LINUX_STATIC_FILES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/dist")
+endif()
+
 install(TARGETS dunedynasty DESTINATION "bin")
-install(FILES
-	${CMAKE_SOURCE_DIR}/CHANGES.txt
-	${CMAKE_SOURCE_DIR}/LICENSE.txt
-	${CMAKE_SOURCE_DIR}/enhancement.txt
-	${CMAKE_SOURCE_DIR}/opendune.txt
-	${CMAKE_SOURCE_DIR}/dist/dunedynasty.cfg-sample
-	DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
+install(FILES ${STATIC_DOC_FILES} DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
+install(DIRECTORY ${STATIC_LICENCE_FOLDER} DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
 
 if(IS_ABSOLUTE ${DUNE_DATA_DIR})
-    foreach(subdir campaign data gfx music)
-	install(DIRECTORY "${CMAKE_SOURCE_DIR}/dist/${subdir}" DESTINATION "${DUNE_DATA_DIR}")
-    endforeach(subdir)
+	install(DIRECTORY ${STATIC_RESOURCE_FOLDERS} DESTINATION "${DUNE_DATA_DIR}")
 endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
 
 # ----------------------------------------------------------------

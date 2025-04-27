@@ -142,7 +142,7 @@ Once the data files are in place, you may start the game by running
 
 Using the MacOS app bundle, the `data`, `music` and `campaign` directories are located inside the app package under `Dune Dynasty.app/Contents/Resources`. You have to right click on the `Dune Dynasty` app and click `Show Package Contents` in the context menu to be able to access it and copy your data (as well as music-sets and campaigns) there.
 
-Since the app is not built using a developer licence, a warning will be displayed trying to launch the game. You need to right click on the `Dune Dynasty` app and click `Open` in the context menu the first time you start the game to circumvent this.
+Due to the executable and included dylibs not being build with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start the app without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
 
 ### Special installation instructions for Linux
 

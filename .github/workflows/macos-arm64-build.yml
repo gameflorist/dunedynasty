@@ -13,7 +13,7 @@ jobs:
         run: brew install cmake allegro fluid-synth mad enet dylibbundler
 
       - name: Build
-        run: ./scripts/build-macos.sh
+        run: ./scripts/build-macos-bundle.sh
 
       - name: Test executable
         run: |

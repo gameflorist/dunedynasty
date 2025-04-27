@@ -8,6 +8,10 @@
 	<string>dune2_icon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>io.github.gameflorist.dunedynasty</string>
+	<key>CFBundleVersion</key>
+	<string>${MACOSX_BUNDLE_BUNDLE_VERSION}</string>
+	<key>CFBundleShortVersionString</key>
+	<string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.12.0</string>
 	<key>NSHighResolutionCapable</key>

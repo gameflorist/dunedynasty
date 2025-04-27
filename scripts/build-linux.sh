@@ -1,8 +1,7 @@
 #!/bin/bash -e
 
-echo "Clearing dist folder..."
-rm -rf dist
-mkdir dist
+echo "Cleaning up build..."
+./scripts/cleanup-build.sh
 
 echo "Performing build..."
 cmake -DCMAKE_BUILD_TYPE=Release .
@@ -17,7 +16,3 @@ do
     patchelf --remove-needed $file ./dist/dunedynasty
     patchelf --add-needed ./libs/$file ./dist/dunedynasty
 done
-
-echo "Copying static files..."
-cp -r ./static/general/* ./dist
-cp -r ./static/linux/* ./dist
