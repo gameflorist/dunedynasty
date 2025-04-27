@@ -814,7 +814,6 @@ static ThreadStatus WINAPI MPU_ThreadProc(void *data)
 
 bool MPU_Init(void)
 {
-	uint8 old_volume[9];
 	uint8 i;
 
 #if 0
@@ -838,11 +837,6 @@ bool MPU_Init(void)
 	s_mpu_msdataCurrent = 0;
 	memset(s_mpu_msdata, 0, sizeof(s_mpu_msdata));
 
-	for (i = 0; i < 9; i++) {
-		uint8 chan = i + 1;
-		old_volume[i] = s_mpu_controls[chan].volume;
-	}
-
 	memset(s_mpu_controls,   0xFF, sizeof(s_mpu_controls));
 	memset(s_mpu_programs,   0xFF, sizeof(s_mpu_programs));
 	memset(s_mpu_pitchWheel, 0xFF, sizeof(s_mpu_pitchWheel));
@@ -858,7 +852,7 @@ bool MPU_Init(void)
 		static const uint8 defaultPrograms[9] = { 68, 48, 95, 78, 41, 3, 110, 122, 255 };
 		uint8 chan = i + 1;
 
-		s_mpu_controls[chan].volume      = old_volume[i];
+		s_mpu_controls[chan].volume      = 127;
 		s_mpu_controls[chan].variable_01 = 0;
 		s_mpu_controls[chan].variable_02 = 64;
 		s_mpu_controls[chan].variable_03 = 127;
