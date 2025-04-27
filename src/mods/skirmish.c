@@ -537,9 +537,6 @@ Skirmish_GenStructuresAI(enum HouseType houseID, SkirmishData *sd)
 	assert(cpu_count != 0);
 
 	int max_structure_count = 60 / cpu_count;
-	if (is_multiplayer) {
-		max_structure_count = 10;
-	}
 
 	/* First pass finds out what to build. */
 	tech_level = 0;
@@ -1006,13 +1003,7 @@ Skirmish_GenReinforcements(void)
 
 		const bool repeat = (g_skirmish.player_config[h].brain != BRAIN_HUMAN);
 
-		if (h == HOUSE_SARDAUKAR) {
-			/* Sardaukar always get four sets of troopers in the enemy base.  That's just how it is! */
-			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
-			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
-			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
-			Scenario_Create_Reinforcement(index++, h, UNIT_TROOPERS, 6, 10 * 6, repeat);
-		} else if (g_skirmish.player_config[h].brain == BRAIN_HUMAN) {
+		if (g_skirmish.player_config[h].brain == BRAIN_HUMAN) {
 			/* Players always get reinforcements at home base. */
 			Scenario_Create_Reinforcement(index++, h, UNIT_TANK, 7,  6 * 6, repeat);
 			Scenario_Create_Reinforcement(index++, h, type[0],   7,  6 * 6, repeat);
