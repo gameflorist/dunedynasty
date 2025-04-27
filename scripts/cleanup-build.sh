@@ -4,3 +4,5 @@ rm -f CMakeCache.txt
 rm -f cmake_install.cmake
 rm -f Makefile
 rm -f include/buildcfg.h
+rm -rf dist
+rm -rf build
