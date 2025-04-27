@@ -142,7 +142,7 @@ Once the data files are in place, you may start the game by running
 
 Using the MacOS app bundle, the `data`, `music` and `campaign` directories are located inside the app package under `Dune Dynasty.app/Contents/Resources`. You have to right click on the `Dune Dynasty` app and click `Show Package Contents` in the context menu to be able to access it and copy your data (as well as music-sets and campaigns) there.
 
-Due to the executable and included dylibs not being build with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start the app without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
+Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start the app without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
 
 ### Special installation instructions for Linux
 
@@ -576,14 +576,16 @@ The steps below will build the release-version. You can change value of the `DCM
 3. Perform build:
 
     ```shell
-    ./scripts/build-macos.sh
+    ./scripts/build-macos-bundle.sh
     ```
 
     If you are building for ARM64 on a x86-64 machine (or vice versa), you have to state the wanted architecture via the `CMAKE_OSX_ARCHITECTURES` flag in the cmake command. E.g.:
 
     ```shell
-    cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64 .
+    cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MACOSX_BUNDLE=YES -DCMAKE_OSX_ARCHITECTURES=arm64 .
     ```
+
+4. Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script to lift quarantine on all files is included in [static/macos-bundle/](static/macos-bundle/).
 
 #### Linux (Debian, Ubuntu)
 
