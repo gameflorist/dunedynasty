@@ -109,7 +109,7 @@ extern void Map_ChangeSpiceAmount(uint16 packed, int16 dir);
 extern void Map_Bloom_ExplodeSpecial(uint16 packed, uint8 houseID);
 extern uint16 Map_Server_FindLocationTile(uint16 locationID, enum HouseType houseID);
 extern void Map_UpdateAround(uint16 radius, tile32 position, struct Unit *unit, uint8 function);
-extern uint16 Map_SearchSpice(uint16 packed, uint16 radius);
+extern uint16 Map_SearchSpice(uint16 packed, uint16 radius, enum HouseType visibleToHouseID);
 extern void Map_UnveilTile(enum HouseType houseID, enum TileUnveilCause cause, uint16 packed);
 extern void Map_RefreshTile(enum HouseType houseID, enum TileUnveilCause cause, uint16 packed);
 extern void Map_ResetFogOfWar(void);

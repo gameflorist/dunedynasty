@@ -1064,9 +1064,10 @@ void Map_UpdateAround(uint16 radius, tile32 position, Unit *unit, uint8 function
  * Search for spice around a position. Thick spice is preferred if it is not too far away.
  * @param packed Center position.
  * @param radius Radius of the search.
+ * @param visibleToHouseID Only search tiles visible to this house (use HOUSE_INVALID to disable).
  * @return Best position with spice, or \c 0 if no spice found.
  */
-uint16 Map_SearchSpice(uint16 packed, uint16 radius)
+uint16 Map_SearchSpice(uint16 packed, uint16 radius, enum HouseType visibleToHouseID)
 {
 	uint16 radius1;
 	uint16 radius2;
@@ -1104,6 +1105,7 @@ uint16 Map_SearchSpice(uint16 packed, uint16 radius)
 			if (!Map_IsValidPosition(curPacked)) continue;
 			if (g_map[curPacked].hasStructure) continue;
 			if (Unit_Get_ByPackedTile(curPacked) != NULL) continue;
+			if (visibleToHouseID < HOUSE_NEUTRAL && !Map_IsUnveiledToHouse(g_playerHouseID, curPacked)) continue;
 
 			type = Map_GetLandscapeType(curPacked);
 			distance = Tile_GetDistancePacked(curPacked, packed);

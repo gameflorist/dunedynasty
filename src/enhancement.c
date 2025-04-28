@@ -266,6 +266,7 @@ bool enhancement_extend_sight_range = false;
  * This enhancement extends the spice sensing ranges in these cases:
  * - Harvesters searching for spice (from about 3-4 to 64)
  * - Carryalls searching for spice (from 20 to 64)
+ * The extended search will only work for unveiled tiles visible to the house.
  */
 bool enhancement_extend_spice_sensor = false;
 

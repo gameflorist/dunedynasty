@@ -1510,7 +1510,7 @@ uint16 Structure_FindFreePosition(Structure *s, bool checkForSpice)
 	si = &g_table_structureInfo[s->o.type];
 	packed = Tile_PackTile(Tile_Center(s->o.position));
 
-	spicePacked = (checkForSpice) ? Map_SearchSpice(packed, 10) : 0;
+	spicePacked = (checkForSpice) ? Map_SearchSpice(packed, 10, HOUSE_INVALID) : 0;
 	bestPacked = 0;
 	bestDistance = 0;
 
