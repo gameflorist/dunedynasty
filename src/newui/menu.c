@@ -1036,14 +1036,42 @@ LoadGame_Draw(void)
 }
 
 static enum MenuAction
+PlaySkirmish_Loop(bool new_game)
+{
+	
+	do {
+		if (new_game && !Skirmish_GenerateMap(MAP_GENERATOR_FINAL))
+			return MENU_SKIRMISH_LOBBY;
+
+		PlayAGame_StartGame(new_game);
+	} while (g_gameMode == GM_RESTART);
+
+	if (g_gameMode == GM_WIN) {
+		Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicWin);
+		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
+	} else if (g_gameMode == GM_LOSE) {
+		Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicLose);
+		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
+	} else {
+		return MENU_SKIRMISH_LOBBY;
+	}
+}
+
+static enum MenuAction
 LoadGame_Loop(void)
 {
 	const int ret = SaveMenu_SaveLoad_Click(false);
 	bool redraw = false;
 
 	if (ret == -1) {
+		if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+			return MENU_PICK_LOBBY;
+		}
 		return MENU_MAIN_MENU;
 	} else if (ret == -2) {
+		if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+			return PlaySkirmish_Loop(false);
+		}
 		return PlayAGame_Loop(false);
 	} else if (ret == -3) {
 		redraw = true;
@@ -1061,27 +1089,6 @@ LoadGame_Loop(void)
 	}
 
 	return (redraw ? MENU_REDRAW : 0) | MENU_LOAD_GAME;
-}
-
-static enum MenuAction
-PlaySkirmish_Loop(void)
-{
-	do {
-		if (!Skirmish_GenerateMap(MAP_GENERATOR_FINAL))
-			return MENU_SKIRMISH_LOBBY;
-
-		PlayAGame_StartGame(false);
-	} while (g_gameMode == GM_RESTART);
-
-	if (g_gameMode == GM_WIN) {
-		Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicWin);
-		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
-	} else if (g_gameMode == GM_LOSE) {
-		Audio_PlayMusic(g_table_houseInfo[g_playerHouseID].musicLose);
-		return MENU_FADE_IN | MENU_SKIRMISH_SUMMARY;
-	} else {
-		return MENU_SKIRMISH_LOBBY;
-	}
 }
 
 static enum MenuAction
@@ -1510,7 +1517,7 @@ Menu_Run(void)
 				break;
 
 			case MENU_PLAY_SKIRMISH:
-				res = PlaySkirmish_Loop();
+				res = PlaySkirmish_Loop(true);
 				break;
 
 			case MENU_PLAY_MULTIPLAYER:

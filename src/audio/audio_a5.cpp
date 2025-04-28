@@ -599,7 +599,7 @@ AudioA5_SetMusicVolume(float volume)
 
 	if (curr_music_stream_type == MUSICSTREAM_MIDI) {
 		for (int i = 0; i < 8; i++)
-			MPU_SetVolume(i, 100 * volume, 1000);
+			MPU_SetVolume(i, ((uint16)(volume*100) * 90) / 256, 0);
 	}
 }
 

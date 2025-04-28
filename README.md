@@ -138,9 +138,11 @@ Place them into one of the following places:
 Once the data files are in place, you may start the game by running
 `dunedynasty.exe` or `dunedynasty`.
 
-### Special installation instructions for macOS
+### Special installation instructions for MacOS
 
-Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start `dunedynasty` without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
+Using the MacOS app bundle, the `data`, `music` and `campaign` directories are located inside the app package under `Dune Dynasty.app/Contents/Resources`. You have to right click on the `Dune Dynasty` app and click `Show Package Contents` in the context menu to be able to access it and copy your data (as well as music-sets and campaigns) there.
+
+Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start the app without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
 
 ### Special installation instructions for Linux
 
@@ -156,7 +158,7 @@ If `libfluidsynth3` is not available on your distribution, try `libfluidsynth2` 
 
 Just as the data-files, the configuration file `dunedynasty.cfg` will be read from one of two places:
 
- 1. In the same directory as the dunedynasty executable.
+ 1. In the same directory as the dunedynasty executable. (Using the MacOS bundle you have to use the `Dune Dynasty.app/Contents/Resources` folder inside the app).
 
  2. In a personal data directory. This is the default behaviour - meaning `dunedynasty.cfg` will be created here on initial launch.
     The location depends on your operating system:
@@ -180,6 +182,8 @@ replace it with `dunedynasty.cfg-sample`.
 ### Portable mode
 
 If you place `dunedynasty.cfg` in the same directory as the dunedynasty executable, _Dune Dynasty_ will operate in portable mode - keeping everything (e.g. savegames) inside the install directory.
+
+Using the MacOS bundle you have to use the `Dune Dynasty.app/Contents/Resources` folder inside the app.
 
 ### Video Settings
 
@@ -448,13 +452,15 @@ Here is a list of supported Music packs:
 
 After installation of a music set, you can check it's availability in the "Music" section of the game's "Options and Extras" menu. There you can also enable/disable music sets for random play.
 
-You can also disable individual songs from music sets. You have to do this by editing your config-file though.
+#### Disabling individual songs
 
-Example: If you want to include Dune 2000 music, but exclude "Robotix":
+You can also disable individual songs from music sets. This is done by setting the volume of the track to 0 inside a `volume.cfg` file situated inside the set-specific subfolder of the `/music` directory (where the actual music-files reside). This file is not present for every music set, so you might have to create it.
+
+Example: If you want to exclude the track `05 - Revelation.mp3` of the `dune1992_spiceopera` music-set, create a `volume.cfg` file inside the folder `music/dune1992_spiceopera` with the following content:
 
 ```ini
-[music/dune2000]
-ROBOTIX=0
+[volume]
+05 - Revelation = 0
 ```
 
 ## Custom campaigns
@@ -533,22 +539,16 @@ The steps below will build the release-version. You can change value of the `DCM
 
 4. Perform build:
 
-    ```shell
-    ./scripts/build-windows.sh
-    ```
-
-5. For packaging, you have to copy all required .dll files to the `dist` folder. To do this, simply call the following script:
-
     For 64bit:
 
     ```shell
-    ./scripts/bundle-libs-ucrt64.sh
+    ./scripts/build-windows-x64.sh
     ```
 
     For 32bit:
 
     ```shell
-    ./scripts/bundle-libs-mingw32.sh
+    ./scripts/build-windows-x86.sh
     ```
 
 #### MacOs
@@ -576,28 +576,16 @@ The steps below will build the release-version. You can change value of the `DCM
 3. Perform build:
 
     ```shell
-    ./scripts/build-macos.sh
+    ./scripts/build-macos-bundle.sh
     ```
 
     If you are building for ARM64 on a x86-64 machine (or vice versa), you have to state the wanted architecture via the `CMAKE_OSX_ARCHITECTURES` flag in the cmake command. E.g.:
 
     ```shell
-    cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_OSX_ARCHITECTURES=arm64 .
+    cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MACOSX_BUNDLE=YES -DCMAKE_OSX_ARCHITECTURES=arm64 .
     ```
 
-4. To package all required dynlibs into the `./dist/libs` folder and patch the executable, call this script:
-
-    ```shell
-    ./scripts/bundle-libs-macos.sh
-    ```
-
-    The script requires the brew package `dylibbundler`, so install it first:
-
-    ```shell
-    brew install dylibbundler
-    ```
-
-5. Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script to lift quarantine on all files is included in [dist-per-os/macos](dist-per-os/macos).
+4. Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script to lift quarantine on all files is included in [static/macos-bundle/](static/macos-bundle/).
 
 #### Linux (Debian, Ubuntu)
 
@@ -611,12 +599,6 @@ The steps below will build the release-version. You can change value of the `DCM
 
     ```shell
     ./scripts/build-linux.sh
-    ```
-
-3. When packaging, there is the problem, that the fluidsynth-library is called `libfluidsynth2` on some distributions, and `libfluidsynth3` on others. To mitigate, call this script, which will copy the library-file to `dist/libs` and patch the executable to use the inlcuded library instead:
-
-    ```shell
-    ./scripts/bundle-libs-linux.sh
     ```
 
 ### Debugging

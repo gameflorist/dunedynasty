@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "*.php": "php",
+        "*.css": "css",
+        "xlocale": "c",
+        "xstring": "c",
+        "string.h": "c",
+        "audio.h": "c",
+        "common.h": "c",
+        "sound.h": "c",
+        "enum_string.h": "c",
+        "types.h": "c",
+        "sprites.h": "c",
+        "video.h": "c",
+        "random_general.h": "c"
+    }
+}
