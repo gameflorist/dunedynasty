@@ -598,8 +598,12 @@ AudioA5_SetMusicVolume(float volume)
 		al_set_audio_stream_gain(s_music_stream, volume);
 
 	if (curr_music_stream_type == MUSICSTREAM_MIDI) {
-		for (int i = 0; i < 8; i++)
-			MPU_SetVolume(i, ((uint16)(volume*100) * 90) / 256, 0);
+		for (int i = 0; i < 8; i++) {
+			// ((uint16)(volume*100) * 90) / 256 seems to work fine for non max-volumes,
+			// but is a bit too low for max volume (1.0f). So we set it to the actual
+			// max volume (127) instead in this case.
+			MPU_SetVolume(i, volume == 1.0f ? 127 : ((uint16)(volume*100) * 90) / 256, 0);
+		}
 	}
 }
 
