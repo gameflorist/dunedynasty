@@ -19,7 +19,7 @@ jobs:
         run: |
           brew uninstall --force --ignore-dependencies argtable sdl2 dumb libogg flac libpng freetype libvorbis ca-certificates openssl@3 opus opusfile physfs theora giflib jpeg-turbo xz lz4 zstd libtiff webp pcre2 gettext glib lame mpg123 libsndfile portaudio readline allegro fluid-synth mad enet
           cd dist/"Dune Dynasty.app"/Contents/MacOS
-          ./dunedynasty | grep "data directory"
+          ./dunedynasty 2>&1 | grep "data directory"
 
       - name: Zip dist folder
         run: |

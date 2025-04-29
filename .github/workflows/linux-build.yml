@@ -24,7 +24,7 @@ jobs:
       - name: Test executable
         run: |
           cd dist
-          ./dunedynasty | grep "data directory"
+          ./dunedynasty 2>&1 | grep "data directory"
 
       - name: Zip dist folder
         run: |
