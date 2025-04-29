@@ -113,7 +113,7 @@ The most current Windows, macOS and Linux binaries and source code can be downlo
 
 ## Installation
 
-You will need the `\*.PAK` data files from the EU v1.07 release of _Dune II_. See the file [data/FILELIST.TXT](/dist/data/FILELIST.TXT) for a complete list of needed files.
+You will need the `\*.PAK` data files from the EU v1.07 release of _Dune II_. See the file [data/FILELIST.TXT](/static/general/data/FILELIST.TXT) for a complete list of needed files.
 
 Place them into one of the following places:
 
