@@ -82,7 +82,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
 
 ### Development History
 
-_Dune Dynasty_ was initially developed by __David Wang__, with the source code hosted on [SourceForge](https://sourceforge.net/projects/dunedynasty/). Its last official version was v1.5.7 from 2013. After that __David Wang__ added lots of new features (mainly multiplayer) up until 2015, but never released a new version. Later some github-repos emerged with additional fixes and improvements (by [1oom-fork](https://github.com/1oom-fork) and [neg3ntropy](https://github.com/neg3ntropy/dunedynasty)), but again no new release. This fork is intended to merge these improvements, fix further bugs, add minor features, and provide new releases (v1.6.0+) with binary download-packages for Windows, macOS and Linux.
+_Dune Dynasty_ was initially developed by __David Wang__, with the source code hosted on [SourceForge](https://sourceforge.net/projects/dunedynasty/). Its last official version was v1.5.7 from 2013. After that David added lots of new features (mainly multiplayer) up until 2015, but never released a new version. Later some github-repos emerged with additional fixes and improvements (by [1oom-fork](https://github.com/1oom-fork) and [neg3ntropy](https://github.com/neg3ntropy/dunedynasty)), but again no new release. This fork is intended to merge these improvements, fix further bugs, add minor features, and provide new releases (v1.6.0+) with binary download-packages for Windows, macOS and Linux.
 
 ## Screenshots
 
@@ -115,38 +115,47 @@ The most current Windows, macOS and Linux binaries and source code can be downlo
 
 You will need the `\*.PAK` data files from the EU v1.07 release of _Dune II_. See the file [data/FILELIST.TXT](/static/general/data/FILELIST.TXT) for a complete list of needed files.
 
-Place them into one of the following places:
+The location to put the files depends on the OS / release bundle (see below).
 
- 1. In a directory named `data` next to the dunedynasty executable.
-    This is the simplest option.
+### Installation on Windows
 
- 2. In your personal data directory.
-    The location depends on your operating system:
+The recommended place is the directory named `data` next to the dunedynasty executable.
 
-    - Windows 64bit:  
-      `C:\users\<your user>\AppData\Roaming\Dune Dynasty\data`
+As an alternative, you can also use the personal data directory, which depends on the 64bit or 32bit version:
 
-    - Windows 32bit:  
-      `C:\users\<your user>\Application Data\Dune Dynasty\data`
+- 64bit: `C:\users\<your user>\AppData\Roaming\Dune Dynasty\data`
+- 32bit: `C:\users\<your user>\Application Data\Dune Dynasty\data`
 
-    - macOS:  
-      `$HOME/Library/Application Support/dunedynasty/data`
+### Installation on macOS
 
-    - Unix:  
-      `~/.local/share/dunedynasty/data`
+Using the macOS app-bundle, the `data` folder is located inside the app package under the following folder:  
+`Dune Dynasty.app/Contents/Resources/data`
 
-Once the data files are in place, you may start the game by running
-`dunedynasty.exe` or `dunedynasty`.
+You have to right click on the `Dune Dynasty` app and click `Show Package Contents` in the context menu to be able to access it and copy your data there.
 
-### Special installation instructions for MacOS
+As an alternative, you can also use/create a personal data directory at `$HOME/Library/dunedynasty/data`.
 
-Using the MacOS app bundle, the `data`, `music` and `campaign` directories are located inside the app package under `Dune Dynasty.app/Contents/Resources`. You have to right click on the `Dune Dynasty` app and click `Show Package Contents` in the context menu to be able to access it and copy your data (as well as music-sets and campaigns) there.
+Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service might put them in a quarantine after download. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, choose `Open` in the warning dialog, and then `y` on the terminal-prompt. After the script has run, you should be able to start the app without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
 
-Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script is included to lift quarantine from all files. You will have to open the script with the right- or control-click menu, then choose `Open` in the warning dialog. After the script has run, you should be able to start the app without problems. If you get a `disallowed by system policy` error, your system policy does not allow to load the included libraries (mainly to happen with company macs).
+### Installation on Linux
 
-### Special installation instructions for Linux
+#### Linux Flatpak package
 
-On Linux you will also have to install the libraries __Dune Dynasty__ depends on:
+The recommended package for Linux is the Flatpak package. For this you need to have Flatpak installed (see [setup instructions](https://flatpak.org/setup/)).
+
+Now you can install the Flatpak package by calling:  
+`flatpak install --user DuneDynasty.vX.X.X.flatpak`  
+(replace `X.X.X` with the actual downloaded version)
+
+Next start the Flatpak app once using:  
+`flatpak run io.github.gameflorist.dunedynasty`
+
+This will create the needed resource folders. Now you can place the data files at:  
+`~/.var/app/io.github.gameflorist.dunedynasty/data/dunedynasty/data`
+
+#### Linux regular package
+
+Using the regular Linux package, you will also have to install the libraries __Dune Dynasty__ depends on:
 
 ```shell
 sudo apt install liballegro5.2 liballegro-acodec5.2 liballegro-image5.2 libenet7 libfluidsynth3 libmad0 libgl1
@@ -154,11 +163,16 @@ sudo apt install liballegro5.2 liballegro-acodec5.2 liballegro-image5.2 libenet7
 
 If `libfluidsynth3` is not available on your distribution, try `libfluidsynth2` instead.
 
+The data-files can be placed at one of the following locations:
+
+- The directory named `data` next to the dunedynasty executable,
+- or `~/.local/share/dunedynasty/data`.
+
 ## Configuration
 
 Just as the data-files, the configuration file `dunedynasty.cfg` will be read from one of two places:
 
- 1. In the same directory as the dunedynasty executable. (Using the MacOS bundle you have to use the `Dune Dynasty.app/Contents/Resources` folder inside the app).
+ 1. In the same directory as the dunedynasty executable. (Using the macOS bundle you have to use the `Dune Dynasty.app/Contents/Resources` folder inside the app).
 
  2. In a personal data directory. This is the default behaviour - meaning `dunedynasty.cfg` will be created here on initial launch.
     The location depends on your operating system:
@@ -172,7 +186,10 @@ Just as the data-files, the configuration file `dunedynasty.cfg` will be read fr
     - macOS:  
       `$HOME/Library/Application Support/dunedynasty/dunedynasty.cfg`
 
-    - Unix:  
+    - Linux Flatpak package:  
+      `~/.var/app/io.github.gameflorist.dunedynasty/config/dunedynasty/dunedynasty.cfg`
+
+    - Linux regular package:  
       `~/.config/dunedynasty/dunedynasty.cfg`
 
 See the sample file `dunedynasty.cfg-sample` for a list of configuration
@@ -183,11 +200,13 @@ replace it with `dunedynasty.cfg-sample`.
 
 If you place `dunedynasty.cfg` in the same directory as the dunedynasty executable, _Dune Dynasty_ will operate in portable mode - keeping everything (e.g. savegames) inside the install directory.
 
-Using the MacOS bundle you have to use the `Dune Dynasty.app/Contents/Resources` folder inside the app.
+Using the macOS bundle you have to use the `Dune Dynasty.app/Contents/Resources` folder inside the app.
 
 ### Video Settings
 
 Display mode and resolution can be changed in the game's "Options and Extras" menu. The game initially launches in _Fullscreen Window_ mode (using your Desktop-resolution).
+
+Note that _Fullscreen_ mode does not work on Linux and macOS currently.
 
 You might want to increase or decrease the scaling factors of the menubar, sidebar and viewport. You can do this in-game in the __Game Control__ menu.
 
@@ -259,7 +278,7 @@ _Dune Dynasty_ works very well with touchscreens (e.g. like Microsoft Surface Pr
 
 ## Gameplay Enhancements
 
-_Dune Dynasty_ (and it's parent project _OpenDUNE_) feature several optional as well as always active enhancements and fixes over the original _Dune II_. A detailed list of can be found in the file [enhancement.txt](enhancement.txt).
+_Dune Dynasty_ (and it's parent project _OpenDUNE_) feature several optional as well as always active enhancements and fixes over the original _Dune II_. A detailed list of various fixes be found in the file [enhancement.txt](enhancement.txt).
 
 Here is an explanation of all optional enhancements, that can be enabled in-game in the main menu or game control options. They are disabled by default (except otherwise noted).
 
@@ -337,23 +356,7 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
 
 ## Saved games
 
-Saved games are located in the `save` directory next to `dunedynasty.cfg`.
-If no configuration file exists in the same directory as the executable, they will be in placed in a personal
-data directory.
-
-The location depends on your operating system:
-
-- Windows 64bit:  
-  `C:\users\<your user>\AppData\Roaming\Dune Dynasty\save`
-
-- Windows 32bit:  
-  `C:\users\<your user>\Application Data\Dune Dynasty\save`
-
-- macOS:  
-  `$HOME/Library/Application Support/dunedynasty/save`
-
-- Unix:  
-  `~/.config/dunedynasty/save`
+Saved games are located in the `save` directory next to wherever `dunedynasty.cfg` resides (see [Configuration](#configuration)).
 
 Saved games from _Dune II_ should work if placed there.
 
@@ -412,7 +415,7 @@ Popular SoundFonts are e.g.:
 
 _Dune Dynasty_ can play various external music sets, e.g. recordings of the original PC or Sega Mega Drive soundtrack, music from different Dune games like _Dune 2000_ or Cryo's 1992 _Dune_, or even the motion picture soundtracks.
 
-Each of these have their own subdirectory in the `music` directory. Instructions and download/purchase links are provided below and in the respective `FILELIST.TXT` files.
+Each of these have their own subdirectory in the `music` directory. The location of this directory is the same as the `data` directory (see [Installation](#installation)). Instructions and download/purchase links are provided below and in the respective `FILELIST.TXT` files.
 
 Here is a list of supported Music packs:
 
@@ -472,7 +475,7 @@ _Dune Dynasty_ supports various fan-made campaigns:
 - [Stefan Henriks' Atreides campaign](http://arrakis.dune2k.com/downloads.html)
 - [Super Dune II](http://forum.dune2k.com/topic/20065-super-dune-ii-classic/)
 
-These should be placed in the existing subdirectories inside the `campaign` directory.
+These should be placed in the existing subdirectories inside the `campaign` directory. The location of this directory is the same as the `data` directory (see [Installation](#installation)).
 
 Click the arrows next to the __"The Building of a Dynasty"__ subtitle in the main menu to switch between campaigns.
 
@@ -503,11 +506,11 @@ For ___joining___ an online multiplayer match, use the host's public IP address.
 
 #### General Info
 
-The binary will be placed in the `dist` directory.
+The binary will be placed in the `dist` directory. Copying of static content will handled depending on target platform (see `CMakeLists.txt`).
 
 The steps below will build the release-version. You can change value of the `DCMAKE_BUILD_TYPE` parameter to build different versions, with the possible options being: `Debug`, `Release`, `RelWithDebInfo` and `MinSizeRel`.
 
-#### Windows
+#### Building for Windows
 
 1. Download and install [MSYS2](https://www.msys2.org/#installation).
 2. For a 64bit executable, launch `MSYS2 UCRT64` from the startmenu. For 32bit, launch `MSYS2 MINGW32`.
@@ -551,7 +554,7 @@ The steps below will build the release-version. You can change value of the `DCM
     ./scripts/build-windows-x86.sh
     ```
 
-#### MacOs
+#### Building for macOS
 
 1. Install [Homebrew](https://brew.sh/) package manager.
 
@@ -587,7 +590,7 @@ The steps below will build the release-version. You can change value of the `DCM
 
 4. Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script to lift quarantine on all files is included in [static/macos-bundle/](static/macos-bundle/).
 
-#### Linux (Debian, Ubuntu)
+#### Building for Linux (Debian, Ubuntu)
 
 1. Install dependencies:
 
@@ -629,6 +632,7 @@ who worked on the AdLib/OPL/MIDI player code.
 - Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
 Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine,
 Wesker, WillSo.
+- Dracks for his help on the Flatpak package.
 - Westwood Studios, for an amazing game!
 
 ## License
