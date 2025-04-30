@@ -96,7 +96,7 @@ static void MPU_ApplyVolume(MSData *data)
 		volume = data->controls[i].volume;
 		/* if (volume == 0xFF) continue; */
 
-		volume = min((volume * data->variable_0024) / 100, 127);
+		volume = min((volume * data->variable_0024) / 100, MPU_MAX_VOLUME);
 
 		s_mpu_controls[i].volume = volume;
 
@@ -261,7 +261,7 @@ static void MPU_Control(MSData *data, uint8 chan, uint8 data1, uint8 data2)
 
 		case 7: /* Channel Volume */
 			if (data->variable_0024 == 100) break;
-			data2 = min(data->variable_0024 * data2 / 100, 127);
+			data2 = min(data->variable_0024 * data2 / 100, MPU_MAX_VOLUME);
 			s_mpu_controls[chan].volume = data2;
 			if ((s_mpu_lockStatus[chan] & 0x80) == 0) MPU_Send(0xB0 | data->chanMaps[chan], data1, data2);
 			break;
@@ -852,10 +852,10 @@ bool MPU_Init(void)
 		static const uint8 defaultPrograms[9] = { 68, 48, 95, 78, 41, 3, 110, 122, 255 };
 		uint8 chan = i + 1;
 
-		s_mpu_controls[chan].volume      = 127;
+		s_mpu_controls[chan].volume      = MPU_MAX_VOLUME;
 		s_mpu_controls[chan].variable_01 = 0;
 		s_mpu_controls[chan].variable_02 = 64;
-		s_mpu_controls[chan].variable_03 = 127;
+		s_mpu_controls[chan].variable_03 = MPU_MAX_VOLUME;
 		s_mpu_controls[chan].sustain     = 0;
 		s_mpu_controls[chan].variable_05 = 0;
 		s_mpu_controls[chan].variable_06 = 0;
