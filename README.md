@@ -123,16 +123,16 @@ Place them into one of the following places:
  2. In your personal data directory.
     The location depends on your operating system:
 
-    - Windows 64bit:  
+    - Windows 64bit:
       `C:\users\<your user>\AppData\Roaming\Dune Dynasty\data`
 
-    - Windows 32bit:  
+    - Windows 32bit:
       `C:\users\<your user>\Application Data\Dune Dynasty\data`
 
-    - macOS:  
+    - macOS:
       `$HOME/Library/Application Support/dunedynasty/data`
 
-    - Unix:  
+    - Unix:
       `~/.local/share/dunedynasty/data`
 
 Once the data files are in place, you may start the game by running
@@ -163,16 +163,16 @@ Just as the data-files, the configuration file `dunedynasty.cfg` will be read fr
  2. In a personal data directory. This is the default behaviour - meaning `dunedynasty.cfg` will be created here on initial launch.
     The location depends on your operating system:
 
-    - Windows 64bit:  
+    - Windows 64bit:
       `C:\users\<your user>\AppData\Roaming\Dune Dynasty\dunedynasty.cfg`
 
-    - Windows 32bit:  
+    - Windows 32bit:
       `C:\users\<your user>\Application Data\Dune Dynasty\dunedynasty.cfg`
 
-    - macOS:  
+    - macOS:
       `$HOME/Library/Application Support/dunedynasty/dunedynasty.cfg`
 
-    - Unix:  
+    - Unix:
       `~/.config/dunedynasty/dunedynasty.cfg`
 
 See the sample file `dunedynasty.cfg-sample` for a list of configuration
@@ -200,7 +200,7 @@ Dune Dynasty allows various options to deal with aspect ratio via the "Aspect Ra
 - __None__ (`none`): No aspect ratio correction is applied, meaning all pixels will be displayed as square pixels. This means, the game will appear squashed on modern monitors. Use this setting, if you are playing on an old CRT-monitor.
 - __Menu Only__ (`menu`): Non-square pixels are used for non-in-game graphics (menu, cutscenes, mentat screens, etc.) and square pixels for the game itself. This will display all graphics in the (presumably) intended aspect ratio on modern displays.
 - __Full__ (`full`): This will apply the aspect ratio correction on all graphics - essentially displaying everything as in the original DOS version on a CRT-monitor. It will retain the stretched look of the in-game graphics.
-- __Auto__ (`auto`): Same as option `menu`, except when the screen height is less than 800 pixels, option `none` will be used for better readability.  
+- __Auto__ (`auto`): Same as option `menu`, except when the screen height is less than 800 pixels, option `none` will be used for better readability.
 This is the default setting.
 
 The applied correction ratio is 1.2.
@@ -265,74 +265,74 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
 
 ### Gameplay options (main menu)
 
-- __Skip introduction video:__  
+- __Skip introduction video:__
   Should be self explanatory.
 
-- __Brutal AI:__  
+- __Brutal AI:__
   Various AI changes to make the game tougher. Includes double production rate, half cost, flanking attacks, etc.
 
-- __Fog of war:__  
+- __Fog of war:__
   Regrowing (_Warcraft_-style) shroud.
 
-- __Insatiable sandworms:__  
+- __Insatiable sandworms:__
   In the original game, sandworms disappear after eating a set number of units. This makes them insatiable.
 
-- __Raise unit cap:__  
+- __Raise unit cap:__
   _Dune II_ has 3 types of unit caps:
   - A unit cap defined per house by the scenario (usually 25 for the player, and 20 for the CPU)
   - A hard-coded overall cap of 102
   - And a hard-coded cap per unit/group of units:
     - Caryalls and Ornithopters: 11
     - Saboteurs: 3
-    - All others (ground units): 80  
+    - All others (ground units): 80
 
   This enhancement sets the scenario unit cap for all houses to 50, raises the overall cap to 322 and allows a total of 300 ground units (incl. saboteurs).
   This enhancement is always enabled in multiplayer/skirmish.
 
-- __Raise structure cap:__  
-  _Dune II_ limits total structures on a map to about 70. This enhancement raises that limit by 100. This enhancement is always enabled in multiplayer/skirmish.  
+- __Raise structure cap:__
+  _Dune II_ limits total structures on a map to about 70. This enhancement raises that limit by 100. This enhancement is always enabled in multiplayer/skirmish.
 
   __Note:__ Games saved with this option enabled will throw an error, when loaded without this option enabled!
 
-- __Show unit control info in outpost:__  
+- __Show unit control info in outpost:__
   Shows info about active/standby/max units to outpost text. Standby units are either:
 
   - in production
   - ordered in factory
   - outstanding reinforcements
   - usually 1 backup-harvester
-  
+
   This will always be enabled in multiplayer/skirmish.
 
-- __Instant wall construction:__  
+- __Instant wall construction:__
   Reduces build time of walls to 0.
 
-- __Extend light vehicle sight range:__  
+- __Extend light vehicle sight range:__
   Increases fog uncover radius of trikes and quads from 2 to 4 tiles.
 
-- __True game speed adjustment:__  
-  _Dune II_'s game speed implementation doesn't affect scripts and other things. This enhancement takes care of that. It also fixes a bug with the range of the sonic tank.  
+- __True game speed adjustment:__
+  _Dune II_'s game speed implementation doesn't affect scripts and other things. This enhancement takes care of that. It also fixes a bug with the range of the sonic tank.
   (Enabled by default.)
 
-- __Consistent directional damage:__  
+- __Consistent directional damage:__
   In Dune II, attack damage is heavily dependent on the direction. Horizontal attacks make only half damage, while attacks from top or bottom make full damage. This enhancement makes attack damage consistent from all directions. It is always enabled in multiplayer.
 
 ### Game control options (in-game)
 
-- __Health bars:__  
-  Show health bars either for selected or all units.  
+- __Health bars:__
+  Show health bars either for selected or all units.
   (Enabled for selected units by default.)
 
-- __Hi-res overlays:__  
-  Displays hi-res instead of pixelated overlays (e.g. selected unit overlay).  
+- __Hi-res overlays:__
+  Displays hi-res instead of pixelated overlays (e.g. selected unit overlay).
   (Enabled by default.)
 
 - __Smooth unit animation:__
-  Smoother unit animations by rendering units (and bullets) as if they move every frame, and rotating top-down units to arbitrary angles.  
+  Smoother unit animations by rendering units (and bullets) as if they move every frame, and rotating top-down units to arbitrary angles.
   (Enabled by default.)
 
 - __Infantry squad corpses:__
-  Display decaying infantry corpses.  
+  Display decaying infantry corpses.
   (Enabled by default.)
 
 ## Saved games
@@ -343,16 +343,16 @@ data directory.
 
 The location depends on your operating system:
 
-- Windows 64bit:  
+- Windows 64bit:
   `C:\users\<your user>\AppData\Roaming\Dune Dynasty\save`
 
-- Windows 32bit:  
+- Windows 32bit:
   `C:\users\<your user>\Application Data\Dune Dynasty\save`
 
-- macOS:  
+- macOS:
   `$HOME/Library/Application Support/dunedynasty/save`
 
-- Unix:  
+- Unix:
   `~/.config/dunedynasty/save`
 
 Saved games from _Dune II_ should work if placed there.
@@ -417,7 +417,7 @@ Each of these have their own subdirectory in the `music` directory. Instructions
 Here is a list of supported Music packs:
 
 - Original _Dune II_ (PC) music:
-  - [SCDB's 5-Device Mix](https://www.moddb.com/downloads/dune-ii-soundtrack-5-device-scdb-mix)  
+  - [SCDB's 5-Device Mix](https://www.moddb.com/downloads/dune-ii-soundtrack-5-device-scdb-mix)
      A highly recommended mix of the PC Speaker, Tandy, AdLib,  MT-32 and SC-55 tracks by _the Sound Card database_
      (listen to it on [YouTube](https://www.youtube.com/watch?v=k_Mlozm6fZY) with additional details, information and visuals!)
   - [rcblanke's SC-55 recording](https://www.vogons.org/viewtopic.php?t=33823&start=42)
@@ -425,29 +425,29 @@ Here is a list of supported Music packs:
   - [Dune II - The Maker AdLib recording](https://dune2themaker.fundynamic.com/downloads/mp3adlib.zip)
   - [Dune II - The Maker SC-55 recording](https://dune2themaker.fundynamic.com/downloads/mp3sc55.zip)
   - [PC speaker recording](https://forum.dune2k.com/files/file/1517-pc-speaker-recording-all-tracks/)
-- [___Dune II___ Sega Mega Drive music](http://nyerguds.arsaneus-design.com/dune/dunesega/)  
+- [___Dune II___ Sega Mega Drive music](http://nyerguds.arsaneus-design.com/dune/dunesega/)
   Mostly different songs from PC version, but also ___very___ good!
 - [___Dune II___ Amiga music](https://downloads.khinsider.com/game-soundtracks/album/dune-2-amiga)
-- ___Dune 2000___ game music  
+- ___Dune 2000___ game music
   Unfortunately, this game cannot be purchased anymore at the moment.
-- ___Emperor: Battle for Dune___ game music  
+- ___Emperor: Battle for Dune___ game music
   Unfortunately, this game cannot be purchased anymore at the moment.
-- ___Dune___ (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:  
+- ___Dune___ (1992) game (by Cryo) music by Stéphane Picq and Philippe Ulrich:
    The excellent award-winning soundtrack for _Dune II_'s predecessor - the 1992 _Dune_ game by _Cryo_. It is very atmospheric, and makes _Dune II_ a much more relaxing and chill experience. Three versions are supported:
 
   - [AdLib Gold recording by DOS Nostalgia](https://www.dosnostalgia.com/?p=542)
-  - [___Spice Opera___ by Exxos](https://stphanepicq.bandcamp.com/album/dune-spice-opera-2024-remaster)  
+  - [___Spice Opera___ by Exxos](https://stphanepicq.bandcamp.com/album/dune-spice-opera-2024-remaster)
      A remastered CD release of the soundtrack (re-released in 2024).
-  - [SCDB Mix (AdLib + MT-32 + AdLib Gold)](https://www.moddb.com/downloads/dune-soundtrack-3-card-scdb-mix) ([mirror](https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/))  
+  - [SCDB Mix (AdLib + MT-32 + AdLib Gold)](https://www.moddb.com/downloads/dune-soundtrack-3-card-scdb-mix) ([mirror](https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/))
      An amazing 3-card mix by _the Sound Card database_ (listen to it on [YouTube](https://www.youtube.com/watch?v=o-Q_UO6Hp7U) with additional details, information and visuals!)
 
-- ___Dune (1984)___ Original Motion Picture Soundtrack by Toto and Brian Eno  
+- ___Dune (1984)___ Original Motion Picture Soundtrack by Toto and Brian Eno
   Seems to be only available on CD. Purchase e.g. from [amazon.com](https://www.amazon.com/-/de/dp/B000006YDD/) or [amazon.de](https://www.amazon.de/Dune-Toto/dp/B000006YDD/) and rip files to MP3.
-- ___Dune: Part One (2021)___ Original Motion Picture Soundtrack by Hans Zimmer  
+- ___Dune: Part One (2021)___ Original Motion Picture Soundtrack by Hans Zimmer
   Purchase e.g. from [amazon.com](https://www.amazon.com/music/player/albums/B09F1Y3NCK/) or [amazon.de](https://www.amazon.de/music/player/albums/B09F2HWHGJ).
-- ___Dune: Part One (2021)___ "The Dune Sketchbook" soundtrack by Hans Zimmer  
+- ___Dune: Part One (2021)___ "The Dune Sketchbook" soundtrack by Hans Zimmer
   Purchase e.g. from [amazon.com](https://www.amazon.com/music/player/albums/B09C3YS6DX) or [amazon.de](https://www.amazon.de/music/player/albums/B0CW28Y532).
-- ___Dune: Part Two (2024)___ Original Motion Picture Soundtrack by Hans Zimmer  
+- ___Dune: Part Two (2024)___ Original Motion Picture Soundtrack by Hans Zimmer
   Purchase e.g. from [amazon.com](https://www.amazon.com/Dune-Original-Motion-Picture-Soundtrack/dp/B0CW2BH4TS) or [amazon.de](https://www.amazon.de/music/player/albums/B0CW28Y532).
 
 After installation of a music set, you can check it's availability in the "Music" section of the game's "Options and Extras" menu. There you can also enable/disable music sets for random play.
@@ -587,12 +587,15 @@ The steps below will build the release-version. You can change value of the `DCM
 
 4. Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script to lift quarantine on all files is included in [static/macos-bundle/](static/macos-bundle/).
 
-#### Linux (Debian, Ubuntu)
+#### Linux
 
 1. Install dependencies:
 
     ```shell
+    # Debian or Ubuntu
     sudo apt -y install build-essential cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
+    # Fedora
+    dnf install fluidsynth-devel libmad-devel cmake patchelf allegro5-devel
     ```
 
 2. Perform build:
