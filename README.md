@@ -149,7 +149,11 @@ Due to the executable and included dylibs not being built with an Apple Develope
 On Linux you will also have to install the libraries __Dune Dynasty__ depends on:
 
 ```shell
+# Debian/Ubuntu
 sudo apt install liballegro5.2 liballegro-acodec5.2 liballegro-image5.2 libenet7 libfluidsynth3 libmad0 libgl1
+
+# Fedora
+sudo dnf install allegro5 allegro5-addon-acodec allegro5-addon-image enet fluidsynth-libs
 ```
 
 If `libfluidsynth3` is not available on your distribution, try `libfluidsynth2` instead.
