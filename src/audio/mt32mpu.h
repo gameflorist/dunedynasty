@@ -3,6 +3,10 @@
 #ifndef MT32MPU_H
 #define MT32MPU_H
 
+enum {
+	MPU_MAX_VOLUME = 90,
+};
+
 extern void MPU_Interrupt(void);
 extern uint16 MPU_SetData(uint8 *file, uint16 index, void *msdata);
 extern void MPU_Play(uint16 index);

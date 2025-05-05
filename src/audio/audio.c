@@ -37,7 +37,7 @@ bool g_enable_subtitles = false;
 
 float music_volume = 0.85f;
 float sound_volume = 0.65f;
-float voice_volume = 1.0f;
+float cutscene_sound_volume = 1.0f;
 
 bool g_opl_mame = true;
 char sound_font_path[1024];
@@ -591,7 +591,7 @@ Audio_PlaySoundCutscene(enum SoundID soundID)
 
 	const enum SampleID sampleID = g_table_voiceMapping[soundID];
 	if (sampleID != SAMPLE_INVALID)
-		AudioA5_PlaySampleRaw(sampleID, voice_volume, -1000.0f, 1, 11);
+		AudioA5_PlaySampleRaw(sampleID, cutscene_sound_volume, -1000.0f, 1, 11);
 }
 
 static bool

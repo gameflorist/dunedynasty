@@ -51,7 +51,6 @@ enable_voices=1
 enable_subtitles=0
 music_volume=0.90
 sound_volume=0.75
-voice_volume=1.00
 opl_mame=1
 
 # state location of your soundfont for use with fluidsynth

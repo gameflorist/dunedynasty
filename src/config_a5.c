@@ -129,7 +129,6 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "enable_subtitles", CONFIG_BOOL,    .d._bool = &g_enable_subtitles },
 	{ "audio",  "music_volume",     CONFIG_FLOAT,   .d._float = &music_volume },
 	{ "audio",  "sound_volume",     CONFIG_FLOAT,   .d._float = &sound_volume },
-	{ "audio",  "voice_volume",     CONFIG_FLOAT,   .d._float = &voice_volume },
 	{ "audio",  "opl_mame",         CONFIG_BOOL,    .d._bool = &g_opl_mame },
 	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
 	{ "audio",  "midi_device_id",   CONFIG_INT,  	.d._int = &g_midi_device_id },

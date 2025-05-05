@@ -601,8 +601,8 @@ AudioA5_SetMusicVolume(float volume)
 		for (int i = 0; i < 8; i++) {
 			// ((uint16)(volume*100) * 90) / 256 seems to work fine for non max-volumes,
 			// but is a bit too low for max volume (1.0f). So we set it to the actual
-			// max volume (127) instead in this case.
-			MPU_SetVolume(i, volume == 1.0f ? 127 : ((uint16)(volume*100) * 90) / 256, 0);
+			// max volume instead in this case.
+			MPU_SetVolume(i, volume == 1.0f ? MPU_MAX_VOLUME : ((uint16)(volume*100) * 90) / 256, 0);
 		}
 	}
 }
@@ -744,21 +744,25 @@ AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan)
 	if (s_sample[sampleID] == NULL)
 		return true;
 
-	if ((SAMPLE_VOICE_FRAGMENT_ENEMY <= sampleID && sampleID <= SAMPLE_VOICE_FRAGMENT_YOUR_NEXT_CONQUEST) ||
-	    (SAMPLE_INTRO_THREE_HOUSES_FIGHT <= sampleID && sampleID <= SAMPLE_INTRO_YOUR) ||
+	if (SAMPLE_BLASTER <= sampleID && sampleID < SAMPLEID_MAX) {
+		idx_start = 0;
+		idx_end = 0;
+		gain = cutscene_sound_volume * volume;
+		pan = ALLEGRO_AUDIO_PAN_NONE;
+	} else if ((SAMPLE_VOICE_FRAGMENT_ENEMY <= sampleID && sampleID <= SAMPLE_VOICE_FRAGMENT_YOUR_NEXT_CONQUEST) ||
 	    (sampleID == SAMPLE_RADAR_STATIC)) {
 		idx_start = 0;
 		idx_end = 0;
-		gain = voice_volume * volume;
+		gain = sound_volume * volume;
 		pan = ALLEGRO_AUDIO_PAN_NONE;
 	} else if (SAMPLE_AFFIRMATIVE <= sampleID && sampleID <= SAMPLE_MOVING_OUT) {
 		idx_start = 1;
 		idx_end = 1;
-		gain = voice_volume * volume;
+		gain = sound_volume * volume;
 	} else {
 		idx_start = 2;
 		idx_end = MAX_SAMPLE_INSTANCES - 1;
-		gain = voice_volume * volume;
+		gain = sound_volume * volume;
 	}
 
 	return AudioA5_PlaySampleRaw(sampleID, gain, pan, idx_start, idx_end);

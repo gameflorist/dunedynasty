@@ -158,7 +158,11 @@ This will create the needed resource folders. Now you can place the data files a
 Using the regular Linux package, you will also have to install the libraries __Dune Dynasty__ depends on:
 
 ```shell
+# Debian/Ubuntu
 sudo apt install liballegro5.2 liballegro-acodec5.2 liballegro-image5.2 libenet7 libfluidsynth3 libmad0 libgl1
+
+# Fedora
+sudo dnf install allegro5 allegro5-addon-acodec allegro5-addon-image enet fluidsynth-libs
 ```
 
 If `libfluidsynth3` is not available on your distribution, try `libfluidsynth2` instead.
@@ -590,12 +594,15 @@ The steps below will build the release-version. You can change value of the `DCM
 
 4. Due to the executable and included dylibs not being built with an Apple Developer ID, the Gatekeeper service will put them in a quarantine. A `setup` script to lift quarantine on all files is included in [static/macos-bundle/](static/macos-bundle/).
 
-#### Building for Linux (Debian, Ubuntu)
+#### Building for Linux
 
 1. Install dependencies:
 
     ```shell
+    # Debian or Ubuntu
     sudo apt -y install build-essential cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
+    # Fedora
+    dnf install fluidsynth-devel libmad-devel cmake patchelf allegro5-devel
     ```
 
 2. Perform build:
