@@ -1,9 +1,9 @@
-name: Linux Build
+name: Linux X86-64 Build
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: write
     steps:
@@ -42,7 +42,7 @@ jobs:
             })
 
             res.data.artifacts
-                .filter(({ name }) => name === '${{ github.ref_name }}-linux-build')
+                .filter(({ name }) => name === '${{ github.ref_name }}-linux-x86-64-build')
                 .forEach(({ id }) => {
                   github.rest.actions.deleteArtifact({
                       owner: context.repo.owner,
@@ -54,5 +54,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.ref_name }}-linux-build
+          name: ${{ github.ref_name }}-linux-x86-64-build
           path: dist/dist.zip

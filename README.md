@@ -6,7 +6,8 @@
 [![Windows x86 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/windows-x86-build.yml?label=Windows%20x86%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/windows-x86-build.yml)
 [![macOS x86-64 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-x86-64-build.yml?label=macOS%20x86-64%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-x86-64-build.yml)
 [![macOS ARM64 Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/macos-arm64-build.yml?label=macOS%20ARM64%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/macos-arm64-build.yml)
-[![Linux Build Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-build.yml?label=Linux%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-build.yml)
+[![Linux Build x86-64 Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-x86-64-build.yml?label=Linux%20x86-64%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-x86-64-build.yml)
+[![Linux Build ARM64 Status](https://img.shields.io/github/actions/workflow/status/gameflorist/dunedynasty/linux-arm64-build.yml?label=Linux%20ARM64%20Build%20Status&style=flat-square)](https://github.com/gameflorist/dunedynasty/actions/workflows/linux-arm64-build.yml)
 
 ![Dune Dynasty](/docs/banner.jpg)
 
