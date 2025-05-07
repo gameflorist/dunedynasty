@@ -23,9 +23,9 @@ original game engine as reverse-engineered by the [OpenDUNE](https://github.com/
 _Dune Dynasty_ features these modern enhancements for _Dune II_:
 
 - __Runs natively on modern machines (OpenGL or Direct3D):__
-  - Windows (both 32bit and 64bit)
-  - macOS (both Intel x86_64 and Apple Silicon M1 ARM64)
-  - Linux
+  - Windows (32bit, 64bit and ARM64)
+  - macOS (Intel x86_64 and Apple Silicon M1 ARM64)
+  - Linux (x86_64 and ARM64)
 - __Graphics Enhancements:__
   - High-resolution widescreen graphics
   - Separate customizable scaling of menubar, sidebar and map/viewport for HiDPI displays
