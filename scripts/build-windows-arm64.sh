@@ -7,8 +7,6 @@ echo "Performing build..."
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
 ninja
 
-ntldd ./dist/dunedynasty.exe
-
 echo "Bundling dlls..."
 cp /clangarm64/bin/allegro_acodec-5.2.dll ./dist
 cp /clangarm64/bin/allegro-5.2.dll ./dist
