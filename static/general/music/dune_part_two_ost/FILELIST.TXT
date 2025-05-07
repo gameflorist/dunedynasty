@@ -5,6 +5,7 @@ https://www.amazon.com/Dune-Original-Motion-Picture-Soundtrack/dp/B0CW2BH4TS
 https://www.amazon.de/music/player/albums/B0CW28Y532
 
 Make sure, file-names are exactly as listed below.
+(The file-type can be either flac, mp3, ogg or aud.)
 
 List of files:
 

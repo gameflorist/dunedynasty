@@ -6,6 +6,7 @@ or
 https://forum.dune2k.com/files/file/1518-3-card-mix-of-cryos-dune-soundtrack/
 
 Make sure, file-names are exactly as listed below.
+(The file-type can be either flac, mp3, ogg or aud.)
 
 List of files:
 

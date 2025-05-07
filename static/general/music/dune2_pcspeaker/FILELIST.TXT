@@ -4,6 +4,7 @@ Download from:
 https://forum.dune2k.com/files/file/1517-pc-speaker-recording-all-tracks/
 
 Make sure, file-names are exactly as listed below.
+(The file-type can be either flac, mp3, ogg or aud.)
 
 List of files:
 

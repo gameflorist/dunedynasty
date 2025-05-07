@@ -5,6 +5,7 @@ https://www.amazon.com/music/player/albums/B09F1Y3NCK/
 https://www.amazon.de/music/player/albums/B09F2HWHGJ
 
 Make sure, file-names are exactly as listed below.
+(The file-type can be either flac, mp3, ogg or aud.)
 Note: Amazon files have a space at the end of the filenames. Remove it.
 
 List of files:

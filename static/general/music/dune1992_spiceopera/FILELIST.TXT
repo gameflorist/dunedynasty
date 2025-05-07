@@ -4,8 +4,9 @@ Purchase from:
 https://stphanepicq.bandcamp.com/album/dune-spice-opera-2024-remaster
 
 Rename the file-names, so they are exactly as listed below.
+(The file-type can be either flac, mp3, ogg or aud.)
 
-List of files (flac or ogg are also possible):
+List of files:
 
 01 - Dune Theme.mp3
 02 - Emotion Control.mp3
