@@ -7,7 +7,7 @@ echo "Performing build..."
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
 ninja
 
-pacman -S mingw-w64-i686-ntldd
+pacman -S mingw-w64-clang-aarch64-ntldd
 
 ntldd ./dist/dunedynasty.exe
 
