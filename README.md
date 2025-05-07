@@ -416,7 +416,7 @@ Popular SoundFonts are e.g.:
 
 _Dune Dynasty_ can play various external music sets, e.g. recordings of the original PC or Sega Mega Drive soundtrack, music from different Dune games like _Dune 2000_ or Cryo's 1992 _Dune_, or even the motion picture soundtracks.
 
-Each of these have their own subdirectory in the `music` directory. Instructions and download/purchase links are provided below and in the respective `FILELIST.TXT` files.
+Each of these have their own subdirectory in the `music` directory. Instructions and download/purchase links are provided below and in the respective `FILELIST.TXT` files. The file-types of all music files can be either `flac`, `mp3`, `ogg` or `aud`. Only the rest of the filename must match what is specified in the `FILELIST.TXT` files.
 
 Here is a list of supported Music packs:
 

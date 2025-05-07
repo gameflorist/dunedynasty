@@ -5,6 +5,7 @@ Follow these steps to extract the tracks from the original game CDs:
 2. Open the MUSIC.BAG files of each house-CD (discs 2-4) in DuneEX and extract the tracks.
 
 Make sure, file-names are exactly as listed below.
+(The file-type can be either flac, mp3, ogg or aud.)
 
 List of files:
 

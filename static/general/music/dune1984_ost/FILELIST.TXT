@@ -6,6 +6,7 @@ https://www.amazon.de/Dune-Toto/dp/B000006YDD/
 
 And Rip to MP3.
 Make sure, file-names are exactly as listed below.
+(The file-type can be either flac, mp3, ogg or aud.)
 Songs with speech are not used.
 
 List of files:
