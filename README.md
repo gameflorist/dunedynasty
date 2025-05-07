@@ -516,7 +516,7 @@ The steps below will build the release-version. You can change value of the `DCM
 #### Windows
 
 1. Download and install [MSYS2](https://www.msys2.org/#installation).
-2. For a 64bit executable, launch `MSYS2 UCRT64` from the startmenu. For 32bit, launch `MSYS2 MINGW32`.
+2. For a 64bit executable, launch `MSYS2 UCRT64` from the startmenu. For 32bit, launch `MSYS2 MINGW32`.  For ARM64, launch `MSYS2 CLANGARM64`.
 3. Install dependencies:
 
     For 64bit:
@@ -543,6 +543,17 @@ The steps below will build the release-version. You can change value of the `DCM
     pacman -S mingw-w64-i686-libmad
     ```
 
+    For ARM64 (`gdb` is not available for ARM64):
+
+    ```shell
+    pacman -S mingw-w64-clang-aarch64-cmake
+    pacman -S mingw-w64-clang-aarch64-gcc
+    pacman -S mingw-w64-clang-aarch64-allegro
+    pacman -S mingw-w64-clang-aarch64-enet
+    pacman -S mingw-w64-clang-aarch64-fluidsynth
+    pacman -S mingw-w64-clang-aarch64-libmad
+    ```
+
 4. Perform build:
 
     For 64bit:
@@ -555,6 +566,12 @@ The steps below will build the release-version. You can change value of the `DCM
 
     ```shell
     ./scripts/build-windows-x86.sh
+    ```
+
+    For ARM64:
+
+    ```shell
+    ./scripts/build-windows-arm64.sh
     ```
 
 #### MacOs
