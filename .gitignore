@@ -41,3 +41,4 @@ static/general/music/*/*.aud
 .ninja_log
 build.ninja
 node_modules
+.vscode
