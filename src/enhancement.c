@@ -262,6 +262,12 @@ bool enhancement_skip_introduction = false;
  */
 bool enhancement_extend_sight_range = false;
 
+/**
+ * Draw trajectory and target of movement/attack-order of selected units.
+ * (like in Homeworld or Total War series).
+ */
+bool enhancement_draw_selected_unit_trajectories = false;
+
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 

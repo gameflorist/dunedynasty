@@ -1234,7 +1234,10 @@ Viewport_DrawMovementIndicator(void)
 			if (target == 0) {
 				continue;
 			}
-			if (u->moveIndicatorCounter > 0 && u->moveIndicatorCounter < 10) {
+			if (enhancement_draw_selected_unit_trajectories) {
+				Viewport_DrawTargetMarker(u->o.position, Tools_Index_GetTile(target));
+			}
+			else if (u->moveIndicatorCounter > 0 && u->moveIndicatorCounter < 10) {
 				Viewport_DrawTargetIndicator(Tools_Index_GetTile(target));
 			}
 		}

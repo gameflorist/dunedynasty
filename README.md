@@ -39,6 +39,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Select all units of same type in viewport via double-click (or CTRL-LMB)
   - Save/load unit control groups via keyboard hotkeys
   - Set rally points for buildings
+  - Show trajectory and target of movement/attack-order of selected units (optional)
   - Pan viewport by keeping RMB pressed
   - Zoom in/out viewport via mousewheel
   - [Windows Touchscreen Support](#touchscreen-support)
@@ -333,13 +334,17 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
   Displays hi-res instead of pixelated overlays (e.g. selected unit overlay).  
   (Enabled by default.)
 
-- __Smooth unit animation:__
+- __Smooth unit animation:__  
   Smoother unit animations by rendering units (and bullets) as if they move every frame, and rotating top-down units to arbitrary angles.  
   (Enabled by default.)
 
-- __Infantry squad corpses:__
+- __Infantry squad corpses:__  
   Display decaying infantry corpses.  
   (Enabled by default.)
+
+- __Selected unit trajectories:__  
+  Show trajectory and target of movement/attack-order of selected units (like in Homeworld or Total War series).
+  (Disabled by default.)
 
 ## Saved games
 
