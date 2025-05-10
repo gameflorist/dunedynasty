@@ -242,7 +242,7 @@ Viewport_SelectRegion(void)
 }
 
 static void
-Viewport_Target(const Unit *u, enum UnitActionType action, uint16 packed)
+Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 {
 	uint16 encoded;
 
@@ -258,6 +258,8 @@ Viewport_Target(const Unit *u, enum UnitActionType action, uint16 packed)
 		encoded = Tools_Index_Encode(Unit_FindTargetAround(packed), IT_TILE);
 	} else {
 		encoded = Tools_Index_Encode(packed, IT_TILE);
+		g_tickUnitMoveIndicator = 0;
+		u->moveIndicatorCounter = 10;
 	}
 
 	Client_Send_IssueUnitAction(action, encoded, &u->o);
@@ -1158,6 +1160,14 @@ Structure_GetCenter(const Structure *s)
 }
 
 static void
+Viewport_DrawTargetIndicator(tile32 target)
+{
+	int x, y;
+	Map_IsPositionInViewport(target, &x, &y);
+	Shape_DrawTint(SHAPE_CURSOR_TARGET, x, y, 14, 0, 0x8000);
+}
+
+static void
 Viewport_DrawTargetMarker(tile32 from, tile32 to)
 {
 	int x1, x2, y1, y2;
@@ -1207,6 +1217,28 @@ Viewport_DrawRallyPoint(void)
 			Viewport_Structure_DrawRallyPoint(s);
 		}
 	}
+}
+
+void
+Viewport_DrawMovementIndicator(void)
+{
+	if (Unit_AnySelected()) {
+		int iter;
+		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
+			uint16 target = 0;
+			if (u->targetAttack != 0) {
+				target = u->targetAttack;
+			} else if (u->targetMove != 0) {
+				target = u->targetMove;
+			}
+			if (target == 0) {
+				continue;
+			}
+			if (u->moveIndicatorCounter > 0 && u->moveIndicatorCounter < 10) {
+				Viewport_DrawTargetIndicator(Tools_Index_GetTile(target));
+			}
+		}
+	}	
 }
 
 static void

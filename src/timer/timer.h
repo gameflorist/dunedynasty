@@ -34,6 +34,7 @@ extern int64_t g_tickTeamGameLoop;
 extern int64_t g_tickUnitMovement;
 extern int64_t g_tickUnitRotation;
 extern int64_t g_tickUnitBlinking;
+extern int64_t g_tickUnitMoveIndicator;
 extern int64_t g_tickUnitUnknown4;
 extern int64_t g_tickUnitScript;
 extern int64_t g_tickUnitUnknown5;

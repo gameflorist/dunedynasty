@@ -19,6 +19,7 @@ extern void Viewport_DrawSandworm(const Unit *u);
 extern void Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool render_for_blur_effect);
 extern void Viewport_DrawAirUnit(const Unit *u);
 extern void Viewport_DrawRallyPoint(void);
+extern void Viewport_DrawMovementIndicator(void);
 extern void Viewport_DrawSelectionHealthBars(void);
 extern void Viewport_DrawSelectionBox(void);
 extern void Viewport_DrawPanCursor(void);
