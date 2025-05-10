@@ -542,13 +542,15 @@ void GameLoop_Main(bool new_game)
 	Net_Synchronise();
 
 	if (new_game) {
-		if (g_campaign_selected == CAMPAIGNID_SKIRMISH
-	        || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
+		if (g_campaign_selected == CAMPAIGNID_SKIRMISH || g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
 			Skirmish_StartScenario();
 		} else {
 			Game_LoadScenario(g_playerHouseID, g_scenarioID);
 			GUI_ChangeSelectionType(g_debugScenario ? SELECTIONTYPE_DEBUG : SELECTIONTYPE_STRUCTURE);
 		}
+	}
+	else if (g_campaign_selected == CAMPAIGNID_MULTIPLAYER) {
+		Skirmish_StartScenario();
 	}
 
 	/* Note: original game chose only MUSIC_IDLE1 .. MUSIC_IDLE6. */
