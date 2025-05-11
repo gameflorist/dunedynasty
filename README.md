@@ -654,11 +654,11 @@ Thank you to:
 who worked on the AdLib/OPL/MIDI player code.
 - rcblanke, ShaiWa, Nyerguds, Stefan Hendriks, the Sound Card Database and DOS Nostalgia for their soundtrack recordings.
 - Peter, for help on various bits of the code, the music code, and AUDlib.
+- Dracks for his help on the Flatpak package and other things.
 - Nyerguds, for his Dune II editor.
-- Bug reporters and other improvement suggestions: MrFlibble, Nyerguds,
-Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine,
-Wesker, WillSo.
-- Dracks for his help on the Flatpak package.
+- Bug reports, improvement suggestions and testing: MrFlibble, Nyerguds, mellangr, clemorphy,
+Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine, blam666, whipowill, sviscapi,
+Wesker, WillSo, johnmx, Shotweb, chrcoluk, leorockway, All3n-Hunt3r, gyroplast.
 - Westwood Studios, for an amazing game!
 
 ## License
