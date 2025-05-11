@@ -1223,8 +1223,13 @@ Viewport_DrawMovementIndicator(void)
 	if (Unit_AnySelected()) {
 		int iter;
 		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
-
-			if (u->o.houseID != g_playerHouseID) {
+			
+			if (u->deviated) {
+				if (u->deviatedHouse != g_playerHouseID) {
+					continue;
+				}
+			}
+			else if (u->o.houseID != g_playerHouseID) {
 				continue;
 			}
 			
