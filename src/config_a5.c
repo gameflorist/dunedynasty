@@ -133,6 +133,7 @@ static const GameOption s_game_option[] = {
 	{ "audio",  "sound_font",       CONFIG_STRING,  .d._string = sound_font_path },
 	{ "audio",  "midi_device_id",   CONFIG_INT,  	.d._int = &g_midi_device_id },
 	{ "audio",  "midi_format",     	CONFIG_MIDI_FORMAT,  	.d._midi_format = &g_midi_format },
+	{ "audio",  "disable_attack_music",     CONFIG_BOOL,    .d._bool = &g_disable_attack_music },
 
 	{ "music",  "dune2_adlib",      	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_ADLIB].enable },
 	{ "music",  "dune2_midi",       	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE2_MIDI].enable },

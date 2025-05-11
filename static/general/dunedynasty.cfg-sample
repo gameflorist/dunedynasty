@@ -66,7 +66,7 @@ midi_device_id=0
 #     gm: General Midi (SC-55)
 #     mt32: MT-32
 midi_format=gm
-
+disable_attack_music=0
 [music]
 # MUSIC CONFIGURATION
 # Enable or disable entire music sets here.

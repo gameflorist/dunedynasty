@@ -772,6 +772,14 @@ MusicOptions_Initialize(void)
 		}
 	}
 
+	// Playback options	
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
+	snprintf(si->text, sizeof(si->text), "%s", "Playback Options");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &g_disable_attack_music;
+	snprintf(si->text, sizeof(si->text), "Disable attack music");
+
 	// List available music sets with checkboxes to enable them for random play.	
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
 	snprintf(si->text, sizeof(si->text), "%s", "Availabe Music Sets");

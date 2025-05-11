@@ -390,6 +390,8 @@ By default, _Dune Dynasty_ will randomly mix music from all the available source
 
 There you will also find a __Jukebox__ to listen to all available songs from all available sources.
 
+In the music options you will also be able disable the attack music, that dynamically starts playing, when an attack begins. Only the _Dune II_ and _Dune 2000_ music sets have such tracks. This is useful, if you want to mix _Dune II_ or _Dune 2000_ music with other music sets and don't want to have the music interrupted.
+
 ### Midi
 
 _Dune Dynasty_ can play music via the system MIDI output on Windows, macOS (Core Audio) and Linux (ALSA).

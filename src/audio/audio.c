@@ -34,6 +34,7 @@ bool g_enable_music = true;
 enum SoundEffectSources g_enable_sound_effects = SOUNDEFFECTS_SYNTH_AND_SAMPLES;
 bool g_enable_voices = true;
 bool g_enable_subtitles = false;
+bool g_disable_attack_music = false;
 
 float music_volume = 0.85f;
 float sound_volume = 0.65f;
@@ -165,7 +166,7 @@ Audio_PlayMusicGroup(enum MusicID musicID, bool respect_want_setting)
 	/* If there are no attack songs, as in the Sega Mega Drive and Amiga
 	 * versions of Dune II, do not switch songs for uninterrupted music.
 	 */
-	if ((musicID == MUSIC_RANDOM_ATTACK) && (num_songs <= 0))
+	if ((musicID == MUSIC_RANDOM_ATTACK) && (num_songs <= 0 || g_disable_attack_music))
 		return;
 
 	AudioA5_StopMusic();
