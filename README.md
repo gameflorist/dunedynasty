@@ -368,7 +368,7 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
   (Enabled by default.)
 
 - __Unit target lines:__  
-  Show trajectory and target of movement/attack-order of selected units (like in C&C: Tiberian Sun). The lines and target icon are red for attack orders and gray for any other orders.  
+  Show trajectory lines and target of selected units (like in C&C: Tiberian Sun). The lines and target icon are red for attack/harvest orders and gray for any other orders.  
   (Disabled by default.)
 
 ## Saved games
