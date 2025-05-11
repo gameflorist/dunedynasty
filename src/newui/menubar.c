@@ -705,7 +705,7 @@ MenuBar_CreateGameControls(void)
 	 * 61, 71   -- hi-res overlays label, off/on.
 	 * 62, 72   -- smooth unit animation label, off/on.
 	 * 63, 73   -- infantry squad death label, off/on.
-	 * 64, 74   -- hardware mouse cursor label, off/on.
+	 * 64, 74   -- unit target lines label, off/on.
 	 *
 	 * 25 -- previous.
 	 * 90, 91, 92, 93   -- radio buttons.
@@ -748,7 +748,7 @@ MenuBar_CreateGameControls(void)
 		{ 61, 1, "Hi-res overlays" },
 		{ 62, 2, "Smooth unit animation" },
 		{ 63, 3, "Infantry squad corpses" },
-		{ 64, 4, "Hardware mouse cursor" },
+		{ 64, 4, "Unit target lines" },
 	};
 
 	for (unsigned int i = 0; i < lengthof(label); i++) {
@@ -778,7 +778,7 @@ MenuBar_CreateGameControls(void)
 		{ 71, 1,  64 }, /* Hi-res vector graphics. */
 		{ 72, 2,  64 }, /* Smooth unit animation. */
 		{ 73, 3,  64 }, /* Infantry squad corpses. */
-		{ 74, 4,  64 }, /* Hardware mouse cursor. */
+		{ 74, 4,  64 }, /* Selected unit target lines. */
 	};
 
 	for (unsigned int i = 0; i < lengthof(button); i++) {
@@ -1010,10 +1010,7 @@ MenuBar_TickGameControls(void)
 		case 0x8000 | 71: enhancement_high_res_overlays ^= 0x1; break;
 		case 0x8000 | 72: enhancement_smooth_unit_animation = (enhancement_smooth_unit_animation == SMOOTH_UNIT_ANIMATION_DISABLE) ? SMOOTH_UNIT_ANIMATION_ENABLE : SMOOTH_UNIT_ANIMATION_DISABLE; break;
 		case 0x8000 | 73: enhancement_infantry_squad_death_animations ^= 0x1; break;
-		case 0x8000 | 74:
-			g_gameConfig.hardwareCursor ^= 0x1;
-			Mouse_SwitchHWCursor();
-			break;
+		case 0x8000 | 74: enhancement_draw_target_lines ^= 0x1; break;
 
 		default:
 			break;

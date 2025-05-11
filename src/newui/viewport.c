@@ -242,7 +242,7 @@ Viewport_SelectRegion(void)
 }
 
 static void
-Viewport_Target(const Unit *u, enum UnitActionType action, uint16 packed)
+Viewport_Target(Unit *u, enum UnitActionType action, uint16 packed)
 {
 	uint16 encoded;
 
@@ -1158,15 +1158,23 @@ Structure_GetCenter(const Structure *s)
 }
 
 static void
-Viewport_DrawTargetMarker(tile32 from, tile32 to)
+Viewport_DrawTargetIndicator(tile32 target, uint8 color)
+{
+	int x, y;
+	Map_IsPositionInViewport(target, &x, &y);
+	Shape_DrawTint(SHAPE_CURSOR_TARGET, x, y, color, 0, 0x8000);
+}
+
+static void
+Viewport_DrawTargetMarker(tile32 from, tile32 to, float lineThickness, uint8 color)
 {
 	int x1, x2, y1, y2;
 
 	Map_IsPositionInViewport(from, &x1, &y1);
 	Map_IsPositionInViewport(to, &x2, &y2);
 
-	Prim_Line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, 14, 1.0f);
-	Shape_DrawTint(SHAPE_CURSOR_TARGET, x2, y2, 14, 0, 0x8000);
+	Prim_Line(x1 + 0.5f, y1 + 0.5f, x2 + 0.5f, y2 + 0.5f, color, lineThickness);
+	Shape_DrawTint(SHAPE_CURSOR_TARGET, x2, y2, color, 0, 0x8000);
 }
 
 static void
@@ -1180,7 +1188,7 @@ Viewport_Structure_DrawRallyPoint(const Structure *s)
 			&& Structure_SupportsRallyPoints(s->o.type)) {
 		tile32 structure_center = Structure_GetCenter(s);
 
-		Viewport_DrawTargetMarker(structure_center, Tile_UnpackTile(s->rallyPoint));
+		Viewport_DrawTargetMarker(structure_center, Tile_UnpackTile(s->rallyPoint), 1.0f, 14);
 	}
 }
 
@@ -1207,6 +1215,43 @@ Viewport_DrawRallyPoint(void)
 			Viewport_Structure_DrawRallyPoint(s);
 		}
 	}
+}
+
+void
+Viewport_DrawMovementIndicator(void)
+{
+	if (Unit_AnySelected()) {
+		int iter;
+		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {
+
+			if (u->o.houseID != g_playerHouseID) {
+				continue;
+			}
+			
+			uint16 target = 0;
+			uint8 color;
+			if (u->targetAttack != 0) {
+				target = u->targetAttack;
+				color = 231;
+			} else if (u->targetMove != 0) {
+				target = u->targetMove;
+				if (u->nextActionID == ACTION_HARVEST) {
+					color = 231;
+				} else {
+					color = 14;
+				}
+			}
+			if (target == 0) {
+				continue;
+			}
+			if (enhancement_draw_target_lines) {
+				Viewport_DrawTargetMarker(u->o.position, Tools_Index_GetTile(target), 0.6f, color);
+			}
+			else if (u->showMoveIndicator) {
+				Viewport_DrawTargetIndicator(Tools_Index_GetTile(target), color);
+			}
+		}
+	}	
 }
 
 static void

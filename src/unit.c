@@ -355,6 +355,7 @@ void GameLoop_Unit(void)
 	bool tickMovement  = false;
 	bool tickRotation  = false;
 	bool tickBlinking  = false;
+	bool tickMoveIndicator  = false;
 	bool tickUnknown4  = false;
 	bool tickScript    = false;
 	bool tickUnknown5  = false;
@@ -375,6 +376,11 @@ void GameLoop_Unit(void)
 	if (g_tickUnitBlinking <= g_timerGame) {
 		tickBlinking = true;
 		g_tickUnitBlinking = g_timerGame + Tools_AdjustToGameSpeed(6, 3, 12, true);
+	}
+
+	if (g_tickUnitMoveIndicator <= g_timerGame) {
+		tickMoveIndicator = true;
+		g_tickUnitMoveIndicator = g_timerGame + 5;
 	}
 
 	if (g_tickUnitUnknown4 <= g_timerGame) {
@@ -457,6 +463,16 @@ void GameLoop_Unit(void)
 			}
 
 			Unit_UpdateMap(2, u);
+		}
+
+		if (tickMoveIndicator && u->moveIndicatorCounter != 0) {
+			u->moveIndicatorCounter--;
+			if (u->moveIndicatorCounter > 0 && u->moveIndicatorCounter < 10) {
+				u->showMoveIndicator = true;
+			}
+			else {
+				u->showMoveIndicator = false;
+			}
 		}
 
 		if (tickDeviation) Unit_Deviation_Decrease(u, 1);
@@ -681,6 +697,8 @@ Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, in
 	u->wobbleIndex   = 0;
 	u->spriteOffset  = 0;
 	u->blinkCounter  = 0;
+	u->showMoveIndicator = 0;
+	u->moveIndicatorCounter = 0;
 	u->timer   = 0;
 
 	Script_Reset(&u->o.script, g_scriptUnit);

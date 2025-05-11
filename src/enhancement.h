@@ -79,6 +79,7 @@ extern bool enhancement_skip_introduction;
 extern bool enhancement_extend_sight_range;
 extern bool enhancement_show_outpost_unit_info;
 extern bool enhancement_instant_walls;
+extern bool enhancement_draw_target_lines;
 
 extern bool enhancement_fix_scenario_typos;
 extern bool enhancement_read_scenario_structure_health;

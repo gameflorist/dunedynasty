@@ -262,6 +262,12 @@ bool enhancement_skip_introduction = false;
  */
 bool enhancement_extend_sight_range = false;
 
+/**
+ * Draw trajectory and target of movement/attack-order of selected units.
+ * (like in Tibarian Sun).
+ */
+bool enhancement_draw_target_lines = false;
+
 /*--------------------------------------------------------------*/
 /* Tweaks for campaigns. */
 

@@ -82,6 +82,9 @@ typedef struct UnitDelta {
 	uint8   wobbleIndex;
 	uint8   spriteOffset;
 	uint8   blinkHouse;
+	uint16  targetAttack;
+	uint16  targetMove;
+	uint8   showMoveIndicator;
 } UnitDelta;
 
 static Tile s_mapCopy[MAP_SIZE_MAX * MAP_SIZE_MAX];
@@ -195,6 +198,9 @@ Server_InitUnitDelta(const Unit *u, UnitDelta *d)
 	d->wobbleIndex          = u->wobbleIndex;
 	d->spriteOffset         = u->spriteOffset;
 	d->blinkHouse		   	= u->blinkHouse;
+	d->targetAttack		 	= u->targetAttack;
+	d->targetMove		 	= u->targetMove;
+	d->showMoveIndicator  	= u->showMoveIndicator;
 }
 
 void
@@ -463,6 +469,9 @@ Server_Send_UpdateUnits(unsigned char **buf)
 		Net_Encode_uint8 (buf, d.wobbleIndex);
 		Net_Encode_uint8 (buf, d.spriteOffset);
 		Net_Encode_uint8 (buf, d.blinkHouse);
+		Net_Encode_uint16(buf, d.targetAttack);
+		Net_Encode_uint16(buf, d.targetMove);
+		Net_Encode_uint8 (buf, d.showMoveIndicator);
 
 		count++;
 	}
@@ -1309,6 +1318,9 @@ Server_Recv_IssueUnitActionTargetted(Unit *u,
 	if (target != NULL) {
 		target->blinkCounter = 8;
 		target->blinkHouse = Unit_GetHouseID(u);
+	}
+	else {
+		u->moveIndicatorCounter = 10;
 	}
 }
 

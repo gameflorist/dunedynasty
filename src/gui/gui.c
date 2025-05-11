@@ -1667,7 +1667,7 @@ GUI_String_Get_ByIndex(int16 stringID)
 		case -71: onoff = enhancement_high_res_overlays; break;
 		case -72: onoff = enhancement_smooth_unit_animation; break;
 		case -73: onoff = enhancement_infantry_squad_death_animations; break;
-		case -74: onoff = g_gameConfig.hardwareCursor; break;
+		case -74: onoff = enhancement_draw_target_lines; break;
 
 		default: break;
 	}

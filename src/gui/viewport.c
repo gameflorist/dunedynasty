@@ -67,6 +67,7 @@ void GUI_Widget_Viewport_Draw(void)
 	Viewport_DrawTileFog();
 
 	Viewport_DrawRallyPoint();
+	Viewport_DrawMovementIndicator();	
 	Viewport_DrawSelectionHealthBars();
 	Viewport_DrawSelectionBox();
 	Viewport_DrawPanCursor();

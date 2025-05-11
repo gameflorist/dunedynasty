@@ -39,6 +39,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Select all units of same type in viewport via double-click (or CTRL-LMB)
   - Save/load unit control groups via keyboard hotkeys
   - Set rally points for buildings
+  - Show target lines of selected units like in Tibarian Sun (optional)
   - Pan viewport by keeping RMB pressed
   - Zoom in/out viewport via mousewheel
   - [Windows Touchscreen Support](#touchscreen-support)
@@ -352,13 +353,17 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
   Displays hi-res instead of pixelated overlays (e.g. selected unit overlay).  
   (Enabled by default.)
 
-- __Smooth unit animation:__
+- __Smooth unit animation:__  
   Smoother unit animations by rendering units (and bullets) as if they move every frame, and rotating top-down units to arbitrary angles.  
   (Enabled by default.)
 
-- __Infantry squad corpses:__
+- __Infantry squad corpses:__  
   Display decaying infantry corpses.  
   (Enabled by default.)
+
+- __Unit target lines:__  
+  Show trajectory and target of movement/attack-order of selected units (like in C&C: Tiberian Sun). The lines and target icon are red for attack orders and gray for any other orders.  
+  (Disabled by default.)
 
 ## Saved games
 
@@ -656,9 +661,7 @@ who worked on the AdLib/OPL/MIDI player code.
 - Peter, for help on various bits of the code, the music code, and AUDlib.
 - Dracks for his help on the Flatpak package and other things.
 - Nyerguds, for his Dune II editor.
-- Bug reports, improvement suggestions and testing: MrFlibble, Nyerguds, mellangr, clemorphy,
-Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine, blam666, whipowill, sviscapi,
-Wesker, WillSo, johnmx, Shotweb, chrcoluk, leorockway, All3n-Hunt3r, gyroplast.
+- Bug reports, improvement suggestions and testing: MrFlibble, Nyerguds, mellangr, clemorphy, Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine, blam666, whipowill, sviscapi, Wesker, WillSo, johnmx, Shotweb, chrcoluk, leorockway, All3n-Hunt3r, gyroplast and Tiddalick.
 - Westwood Studios, for an amazing game!
 
 ## License

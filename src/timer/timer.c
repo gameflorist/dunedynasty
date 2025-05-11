@@ -29,6 +29,7 @@ int64_t g_tickTeamGameLoop  = 0;
 int64_t g_tickUnitMovement  = 0;
 int64_t g_tickUnitRotation  = 0;
 int64_t g_tickUnitBlinking  = 0;
+int64_t g_tickUnitMoveIndicator  = 0;
 int64_t g_tickUnitUnknown4  = 0;
 int64_t g_tickUnitScript    = 0;
 int64_t g_tickUnitUnknown5  = 0;
@@ -57,6 +58,7 @@ Timer_ResetScriptTimers(void)
 	g_tickUnitMovement  = g_timerGame;
 	g_tickUnitRotation  = g_timerGame;
 	g_tickUnitBlinking  = g_timerGame;
+	g_tickUnitMoveIndicator  = g_timerGame;
 	g_tickUnitUnknown4  = g_timerGame;
 	g_tickUnitScript    = g_timerGame;
 	g_tickUnitUnknown5  = g_timerGame;
