@@ -1,0 +1,9 @@
+#!/bin/bash -e
+cd -- "$(dirname "$0")"
+if ! [ -f ../Resources/data/DUNE.PAK ]; then
+  DATA_FOLDER="$(cd ../Resources/data && pwd)"
+  ERROR_MSG="ERROR: Dune II data files not found.\n\nPlace your Dune2 1.07eu data files in this folder:\n$DATA_FOLDER\n\n(You can access the 'Dune Dynasty.app' folder by right-clicking on the app and selecting 'Show Package Contents'.)"
+  osascript -e 'display alert "Dune Dynasty" message "'"$ERROR_MSG"'"'
+else
+  ./dunedynasty
+fi
