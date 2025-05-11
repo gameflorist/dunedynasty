@@ -175,6 +175,12 @@ The data-files can be placed at one of the following locations:
 - The directory named `data` next to the dunedynasty executable,
 - or `~/.local/share/dunedynasty/data`.
 
+## Recommended mods
+
+### Normalized VOC.PAK
+
+Many sound effects in _Dune II_ were built with an DC offset. This leads to distortions when playing a lot of sounds together, such as pops and clicks. A fixed version of the affected `VOC.PAK` file was made by _Tiddalick_ and can be downloaded on [ModDB](https://www.moddb.com/games/dune-ii-the-building-of-a-dynasty/addons/vocpak-normalized).
+
 ## Configuration
 
 Just as the data-files, the configuration file `dunedynasty.cfg` will be read from one of two places:
