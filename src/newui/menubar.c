@@ -512,6 +512,12 @@ MenuBar_ClickOptions(Widget *w)
 		MenuBar_MakeDisabled(34); /* Pick another house. */
 	}
 
+	// Disable the "Restart scenario" for skirmish games,
+	// since it does not work for loaded games.
+	if (g_campaign_selected == CAMPAIGNID_SKIRMISH) {
+		MenuBar_MakeDisabled(33); /* Restart scenario. */
+	}
+
 	Mouse_TransformToDiv(SCREENDIV_MENU, &g_mouseX, &g_mouseY);
 	return true;
 }
