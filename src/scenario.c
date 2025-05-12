@@ -122,14 +122,12 @@ Campaign_ResetAlliances(void)
 	memset(g_table_houseAlliance, 0, sizeof(g_table_houseAlliance));
 
 	for (enum HouseType h = HOUSE_HARKONNEN; h < HOUSE_NEUTRAL; h++) {
-		g_table_houseAlliance[h][HOUSE_FREMEN] = HOUSEALLIANCE_ENEMIES;
-		g_table_houseAlliance[HOUSE_FREMEN][h] = HOUSEALLIANCE_ENEMIES;
-
 		g_table_houseAlliance[h][h] = HOUSEALLIANCE_ALLIES;
 	}
 
 	g_table_houseAlliance[HOUSE_ATREIDES][HOUSE_FREMEN] = HOUSEALLIANCE_ALLIES;
 	g_table_houseAlliance[HOUSE_FREMEN][HOUSE_ATREIDES] = HOUSEALLIANCE_ALLIES;
+
 }
 
 static void
