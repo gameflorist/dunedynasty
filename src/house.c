@@ -57,12 +57,18 @@ void GameLoop_House(void)
 	bool tickReinforcement        = false;
 	bool tickMissileCountdown     = false;
 	bool tickStarportAvailability = false;
+	bool tickSuperWeaponReadyMessage = false;
 
 	if (g_debugScenario) return;
 
 	if (g_tickHouseHouse <= g_timerGame) {
 		tickHouse = true;
 		g_tickHouseHouse = g_timerGame + 900;
+	}
+
+	if (g_tickHouseSuperWeaponReadyMessage <= g_timerGame) {
+		tickSuperWeaponReadyMessage = true;
+		g_tickHouseSuperWeaponReadyMessage = g_timerGame + 3750;
 	}
 
 	if (g_tickHousePowerMaintenance <= g_timerGame) {
@@ -279,6 +285,21 @@ void GameLoop_House(void)
 						= g_table_houseInfo[h->index].starportDeliveryTime;
 				} else {
 					h->starportTimeLeft = 1;
+				}
+			}
+		}
+
+		if (tickSuperWeaponReadyMessage) {
+			PoolFindStruct findPalace;
+			for (Structure *s = Structure_FindFirst(&findPalace, h->index, STRUCTURE_PALACE);
+					s != NULL;
+					s = Structure_FindNext(&findPalace)) {
+
+				if (s->o.flags.s.isNotOnMap) continue;
+
+				if (s->countDown == 0) {
+					Server_Send_StatusMessage1(1 << h->index, 1,
+							STR_SUPERWEAPON_READY);
 				}
 			}
 		}

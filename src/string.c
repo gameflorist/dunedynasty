@@ -103,6 +103,8 @@ char *String_Get_ByIndex(uint16 stringID)
 		return (char *)"Map Options";
 	} else if (stringID == STR_APPLY) {
 		return (char *)"Apply";
+	} else if (stringID == STR_SUPERWEAPON_READY) {
+		return (char *)"Palace Super Weapon is ready.";
 	} else if (STR_HOUSE_HARKONNEN <= stringID && stringID <= STR_HOUSE_MERCENARY) {
 		const enum HouseType houseID = stringID - STR_HOUSE_HARKONNEN;
 		return (char *)g_table_houseInfo[houseID].name;
