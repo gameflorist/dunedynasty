@@ -577,6 +577,7 @@ The steps below will build the release-version. You can change value of the `DCM
     pacman -S mingw-w64-clang-aarch64-enet
     pacman -S mingw-w64-clang-aarch64-fluidsynth
     pacman -S mingw-w64-clang-aarch64-libmad
+    pacman -S mingw-w64-clang-aarch64-llvm-openmp
     ```
 
 4. Perform build:
