@@ -18,6 +18,7 @@ extern int64_t g_tickScenarioStart;
 
 extern int64_t g_tickHousePowerMaintenance;
 extern int64_t g_tickHouseHouse;
+extern int64_t g_tickHouseSuperWeaponReadyMessage;
 extern int64_t g_tickHouseStarport;
 extern int64_t g_tickHouseReinforcement;
 extern int64_t g_tickHouseMissileCountdown;

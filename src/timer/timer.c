@@ -13,6 +13,7 @@ int64_t g_tickScenarioStart = 0;
 
 int64_t g_tickHousePowerMaintenance = 0;
 int64_t g_tickHouseHouse = 0;
+int64_t g_tickHouseSuperWeaponReadyMessage = 0;
 int64_t g_tickHouseStarport = 0;
 int64_t g_tickHouseReinforcement = 0;
 int64_t g_tickHouseMissileCountdown = 0;
@@ -42,6 +43,7 @@ Timer_ResetScriptTimers(void)
 
 	g_tickHousePowerMaintenance = g_timerGame;
 	g_tickHouseHouse = g_timerGame;
+	g_tickHouseSuperWeaponReadyMessage = g_timerGame;
 	g_tickHouseStarport = g_timerGame;
 	g_tickHouseReinforcement = g_timerGame;
 	g_tickHouseMissileCountdown = g_timerGame;
