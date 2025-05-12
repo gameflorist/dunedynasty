@@ -42,3 +42,6 @@ cp /clangarm64/bin/libpcre2-8-0.dll ./dist
 cp /clangarm64/bin/libintl-8.dll ./dist
 cp /clangarm64/bin/libiconv-2.dll ./dist
 cp /clangarm64/bin/libgmodule-2.0-0.dll ./dist
+cp /clangarm64/bin/libomp.dll ./dist
+mkdir ./dist/all-dll
+cp /clangarm64/bin/*.dll ./dist/all-dll
