@@ -32,7 +32,7 @@ jobs:
             })
 
             res.data.artifacts
-                .filter(({ name }) => name === '${{ github.ref_name }}-windows-arm64-build')
+                .filter(({ name }) => name === 'dune-dynasty-${{ github.ref_name }}-windows-arm64')
                 .forEach(({ id }) => {
                   github.rest.actions.deleteArtifact({
                       owner: context.repo.owner,
@@ -44,5 +44,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.ref_name }}-windows-arm64-build
+          name: dune-dynasty-${{ github.ref_name }}-windows-arm64
           path: dist
