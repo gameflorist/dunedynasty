@@ -67,6 +67,11 @@ static const uint16 values_32A4[8][2] = {
 static enum ViewportClickAction viewport_click_action = VIEWPORT_CLICK_NONE;
 static int64_t viewport_click_time;
 static int64_t viewport_last_click_time;
+static int64_t viewport_hotkey_time;
+static int64_t viewport_last_hotkey_time;
+static enum SquadID viewport_hotkey_squad;
+static enum SquadID viewport_last_hotkey_squad;
+static bool double_hotkey_tap_performed;
 static int viewport_click_x;
 static int viewport_click_y;
 static int viewport_last_click_x;
@@ -893,7 +898,19 @@ Viewport_Hotkey(enum SquadID squad)
 		Audio_PlaySample(SAMPLE_BUTTON, 128, 0.0f);
 	} else {
 		const bool key_shift = Input_Test(SCANCODE_LSHIFT);
-		bool modified_selection = false;
+
+		// Get current click info
+		viewport_hotkey_time = Timer_GetTicks();
+		viewport_hotkey_squad = squad;
+
+		// Check for double tap
+		double_hotkey_tap_performed =
+			(viewport_hotkey_time - viewport_last_hotkey_time <= 30) &&
+			(viewport_last_hotkey_squad == squad);
+
+		// Save old hotkey-info for double tap detection
+		viewport_last_hotkey_time = viewport_hotkey_time;
+		viewport_last_hotkey_squad = viewport_hotkey_squad;
 
 		for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
 				u != NULL;
@@ -903,12 +920,10 @@ Viewport_Hotkey(enum SquadID squad)
 			if ((u->squadID == squad) && is_controllable) {
 				if (!Unit_IsSelected(u)) {
 					Unit_Select(u);
-					modified_selection = true;
 				}
 			} else if (!key_shift || !is_controllable) {
 				if (Unit_IsSelected(u)) {
 					Unit_Unselect(u);
-					modified_selection = true;
 				}
 			}
 
@@ -927,9 +942,6 @@ Viewport_Hotkey(enum SquadID squad)
 					const StructureInfo *si = &g_table_structureInfo[s->o.type];
 					const XYSize *layout = &g_table_structure_layoutSize[si->layout];
 
-					if (Tile_PackTile(s->o.position) != g_selectionPosition)
-						modified_selection = true;
-
 					Map_SetSelection(Tile_PackTile(s->o.position));
 					cx = (s->o.position.x >> 4) + TILE_SIZE * layout->width / 2;
 					cy = (s->o.position.y >> 4) + TILE_SIZE * layout->height / 2;
@@ -939,7 +951,7 @@ Viewport_Hotkey(enum SquadID squad)
 			}
 		}
 
-		if (!modified_selection)
+		if (double_hotkey_tap_performed)
 			centre_on_selection = true;
 	}
 
