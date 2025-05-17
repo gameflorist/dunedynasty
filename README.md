@@ -20,6 +20,8 @@ _Dune Dynasty_ is an enhancement of the classic real-time strategy game
 _Dune II_ by Westwood Studios. It's goal is to make _Dune II_ playable on modern systems with additional features, bugfixes and QoL-improvements. It is not a remake. It builds upon the
 original game engine as reverse-engineered by the [OpenDUNE](https://github.com/OpenDUNE/OpenDUNE) project.
 
+__Note: The original _Dune II_ game data files are required to run _Dune Dynasty_.__
+
 _Dune Dynasty_ features these modern enhancements for _Dune II_:
 
 - __Runs natively on modern machines (OpenGL or Direct3D):__
