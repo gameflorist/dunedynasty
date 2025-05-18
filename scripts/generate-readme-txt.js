@@ -146,9 +146,9 @@ const text = htmlToText(html, {
   ],
 });
 
-writeFile("static/general/README.txt", text, function (err) {
+writeFile("README.txt", text, function (err) {
   if (err) {
     return console.log(err);
   }
-  console.log("static/general/README.txt was saved!");
+  console.log("README.txt was saved!");
 });
