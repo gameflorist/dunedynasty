@@ -286,9 +286,18 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 			/* Check if the unit has a return-to position or try to find spice in case of a harvester */
 			if (u2->targetLast.x != 0 || u2->targetLast.y != 0) {
 				u->targetMove = Tools_Index_Encode(Tile_PackTile(u2->targetLast), IT_TILE);
-			} else if (u2->o.type == UNIT_HARVESTER
-					&& !House_IsHuman(Unit_GetHouseID(u2))) {
-				u->targetMove = Tools_Index_Encode(Map_SearchSpice(Tile_PackTile(u->o.position), 20), IT_TILE);
+			} else if (u2->o.type == UNIT_HARVESTER && !House_IsHuman(Unit_GetHouseID(u2))) {
+				uint16 packedSpicePos;
+
+				// First search for spice in the immediate area (including tiles invisible to house).
+				packedSpicePos = Map_SearchSpice(Tile_PackTile(u->o.position), 20, HOUSE_INVALID);
+
+				// If enhancement_extend_spice_sensor is enabled, search for spice in a larger area
+				// but only in tiles visible to the house.
+				if (packedSpicePos == 0 && enhancement_extend_spice_sensor == true) {
+					packedSpicePos = Map_SearchSpice(Tile_PackTile(u->o.position), 64, Unit_GetHouseID(u2));
+				}	
+				u->targetMove = Tools_Index_Encode(packedSpicePos, IT_TILE);
 			}
 
 			Unit_UpdateMap(2, u);
@@ -349,7 +358,7 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 			if (u2->o.type != UNIT_HARVESTER) return 0;
 
 			/* Check if we want to return to this spice field later */
-			if (Map_SearchSpice(Tile_PackTile(u2->o.position), 2) == 0) {
+			if (Map_SearchSpice(Tile_PackTile(u2->o.position), 2, HOUSE_INVALID) == 0) {
 				u2->targetPreLast.x = 0;
 				u2->targetPreLast.y = 0;
 				u2->targetLast.x    = 0;

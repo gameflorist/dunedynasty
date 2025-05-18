@@ -78,6 +78,7 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Consistent directional damage
   - Instant wall construction
   - Extend light vehicle sight range
+  - Extend spice sensor range
 - __[Support for Custom campaigns](#custom-campaigns):__
   - [Dune 2 eXtended](http://forum.dune2k.com/topic/18360-dune-2-extended-project/)
   - [MrFlibble's Alternate Scenarios](https://mega.nz/file/gGUUSZbI#DwUrH3AL6sABUX2Y2wlXfblTNM_h41jq0HQnC2sLjnA)
@@ -343,6 +344,12 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
 
 - __Extend light vehicle sight range:__  
   Increases fog uncover radius of trikes and quads from 2 to 4 tiles.
+
+- __Extend spice sensor range:__
+  This enhancement extends the spice sensor ranges in these cases:
+  - Harvesters searching for spice (from about 3-4 to 64)
+  - Carryalls searching for spice (from 20 to 64)
+  The extended search will only work for unveiled tiles visible to the house.
 
 - __True game speed adjustment:__  
   _Dune II_'s game speed implementation doesn't affect scripts and other things. This enhancement takes care of that. It also fixes a bug with the range of the sonic tank.  

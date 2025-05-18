@@ -177,6 +177,7 @@ static const GameOption s_game_option[] = {
 	{ "enhancement",    "smooth_unit_animation",    CONFIG_SMOOTH_ANIM, .d._smooth_anim = &enhancement_smooth_unit_animation },
 	{ "enhancement",    "subtitle_override",        CONFIG_SUBTITLE,.d._subtitle = &enhancement_subtitle_override },	
 	{ "enhancement",    "target_lines", 			CONFIG_BOOL,.d._bool = &enhancement_draw_target_lines },
+	{ "enhancement",    "extend_spice_sensor",		CONFIG_BOOL,.d._bool = &enhancement_extend_spice_sensor },
 
 	{ "multiplayer",    "name",         CONFIG_STRING_NAME, .d._string = g_net_name },
 	{ "multiplayer",    "host_address", CONFIG_STRING,      .d._string = g_host_addr },

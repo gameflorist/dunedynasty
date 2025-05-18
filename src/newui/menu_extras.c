@@ -895,6 +895,10 @@ GameplayOptions_Initialize(void)
 	snprintf(si->text, sizeof(si->text), "Double light vehicle sight range");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_extend_spice_sensor;
+	snprintf(si->text, sizeof(si->text), "Extend spice sensor range");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_true_game_speed_adjustment;
 	snprintf(si->text, sizeof(si->text), "True game speed adjustment");
 

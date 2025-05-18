@@ -21,6 +21,7 @@
 #include "../tools/random_general.h"
 #include "../tools/random_lcg.h"
 #include "../unit.h"
+#include "../enhancement.h"
 
 /**
  * Suspend the script execution for a set amount of ticks.
@@ -330,7 +331,14 @@ uint16 Script_General_SearchSpice(ScriptEngine *script)
 
 	position = g_scriptCurrentObject->position;
 
-	packedSpicePos = Map_SearchSpice(Tile_PackTile(position), STACK_PEEK(1));
+	// First search for spice in the immediate area (including tiles invisible to house).
+	packedSpicePos = Map_SearchSpice(Tile_PackTile(position), STACK_PEEK(1), HOUSE_INVALID);
+
+	// If no spice was found and enhancement_extend_spice_sensor is enabled,
+	// search for spice in a larger area, but only in tiles visible to the house.
+	if (packedSpicePos == 0 && enhancement_extend_spice_sensor == true) {
+		packedSpicePos = Map_SearchSpice(Tile_PackTile(position), 64, g_scriptCurrentObject->houseID);
+	}	
 
 	if (packedSpicePos == 0) return 0;
 	return Tools_Index_Encode(packedSpicePos, IT_TILE);
