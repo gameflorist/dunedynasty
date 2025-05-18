@@ -177,19 +177,22 @@ else()
 	file(COPY ${STATIC_RESOURCE_FOLDERS} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/dist")
 endif()
 
-# Copy static files for Linux
+# Install files for Linux
 if(UNIX AND NOT APPLE)
-	file(GLOB LINUX_STATIC_FILES "${CMAKE_SOURCE_DIR}/static/linux/**")
-	file(COPY ${LINUX_STATIC_FILES} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/dist")
-endif()
+	install(TARGETS dunedynasty DESTINATION "bin")
+	install(PROGRAMS "${CMAKE_SOURCE_DIR}/static/linux/dunedynasty-launcher" DESTINATION "bin")
+	install(FILES ${STATIC_DOC_FILES} DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
+	install(DIRECTORY ${STATIC_LICENCE_FOLDER} DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
+	install(FILES "${CMAKE_SOURCE_DIR}/static/linux/io.github.gameflorist.dunedynasty.metainfo.xml" DESTINATION "share/metainfo")
+	install(FILES "${CMAKE_SOURCE_DIR}/static/linux/io.github.gameflorist.dunedynasty.desktop" DESTINATION "share/applications")
+	install(FILES "${CMAKE_SOURCE_DIR}/static/linux/io.github.gameflorist.dunedynasty.png" DESTINATION "share/icons/hicolor/512x512/apps")
 
-install(TARGETS dunedynasty DESTINATION "bin")
-install(FILES ${STATIC_DOC_FILES} DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
-install(DIRECTORY ${STATIC_LICENCE_FOLDER} DESTINATION "doc/dunedynasty-${DUNE_DYNASTY_VERSION}")
-
-if(IS_ABSOLUTE ${DUNE_DATA_DIR})
-	install(DIRECTORY ${STATIC_RESOURCE_FOLDERS} DESTINATION "${DUNE_DATA_DIR}")
-endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
+	if(IS_ABSOLUTE ${DUNE_DATA_DIR})
+		install(DIRECTORY ${STATIC_RESOURCE_FOLDERS} DESTINATION "${DUNE_DATA_DIR}")
+	else(IS_ABSOLUTE ${DUNE_DATA_DIR})
+		install(DIRECTORY ${STATIC_RESOURCE_FOLDERS} DESTINATION "share/dunedynasty")
+	endif(IS_ABSOLUTE ${DUNE_DATA_DIR})
+endif(UNIX AND NOT APPLE)
 
 # ----------------------------------------------------------------
 
