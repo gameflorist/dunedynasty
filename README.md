@@ -652,6 +652,10 @@ The steps below will build the release-version. You can change value of the `DCM
     ./scripts/build-linux.sh
     ```
 
+##### Linux Flatpak
+
+The Flatpak config is managed via a separate repository ([gameflorist/dunedynasty-flatpak](https://github.com/gameflorist/dunedynasty-flatpak)).
+
 ### Debugging
 
 You can display debugging info via the function `GUI_DisplayText` in the status bar, or via `GUI_DisplayModalMessage` as a modal message. E.g.:
