@@ -1,6 +1,62 @@
 Dune Dynasty
 ============
 
+Version 1.6.4, 2025-05-31
+-------------------------
+  
+  - Change/fix centering viewport on control group via hotkey:
+    - Now control group centering always works via double tapping the group hotkey (just like other modern RTS).
+    - Before it was checking, if group is already selected, leading to anwanted centering.
+    - This also fixes a bug, where centering would always occur (even on first tap of a currently unselected group) after playing a while.  
+  - Display a target-indicator for a short time after issuing a command:
+    - The indicator will be red for attack/harvest commands and grey for movement commands.
+    - The indicator is not shown on an attack unit command, since that has already a visual feedback by blinking.  
+  - Add option "Unit target lines":
+    - This option will show trajectory and target of selected units (like in C&C: Tiberian Sun).
+    - The lines and target icon are red for attack/harvest orders and gray for any other orders.  
+    - The option can be found in the in-game controls menu.
+    - This option is disabled by default.   
+  - Add enhancement option "Extend spice sensor range":
+    - This enhancement extends the spice sensing ranges in these cases:
+      - Harvesters searching for spice (from about 3-4 to 64 tiles)
+      - Carryalls searching for spice (from 20 to 64 tiles)
+    - The extended search will only work for unveiled tiles visible to the house.
+    - The option can be found in the gameplay-options of the main menu.
+    - This enhancement is disabled by default.  
+  - Skirmish & multiplayer changes:
+    - Add button to load a skirmish savegame to the Skirmish & Multiplayer menu.
+    - Save/load team-settings in skirmish savegames.
+    - Due to incompatibility with the load-functionality across differend game-sessions, the "Restart Scenario" option of the in-game control menu is now disabled for skirmish games. You can still restart a skirmish you've started in this game session by quitting the skirmish game, which will take you back to the lobby with the generated map still present. But if you do this with a loaded skirmish game from a previous game session, a new map will be generated.
+    - Do not let AI build ornithopters within the first 10 minutes of the game in skirmish or multiplayer. This should give enough time to build some rocket turrets as defense.
+    - Remove special Sardaukar reinforcements (troopers getting dropped in enemy base). Sardaukar will now get the same reinforcements as all other houses.  
+  - Music changes:
+    - Split "Emperor: Battle for Dune" music into 3 separate house-specific music sets:
+      - This way, the very distinct Atreides/Harkonnen/Ordos soundtracks can be enabled/disabled separately.
+    - Classify all movie- and Emperor-tracks as idle music:
+      - Previously some tracks were classified as attack music, for which they are not really suited. Now only the dedicated Dune II and Dune 2000 attack tracks are classified as attack music.
+    - Add option "Disable attack music" to music options in the main menu:
+      - This is useful, if you want to mix Dune II or Dune 2000 music with other music sets and don't want to have the music interrupted.
+      - The attack tracks will never play, not even during idle-mode.  
+  - Add new release-packages for various systems:
+    - Both Linux and Windows packages are now also available for ARM64 systems.
+    - The macOS packages are now available as App Bundles (thanks @bni!)  
+      (See Readme for installation instructions.)
+    - A Linux Flatpak package is now avaliable (thanks @Dracks!)  
+      This is now the recommended version for Linux, as it removes the requirement to install depending packages.  
+      (See Readme for installation instructions.)
+  - Add periodic status bar message, when palace super weapon is ready.
+  - Change icon to mentat-screen infantry soldier.  
+  - Bugfixes:
+    - Fix Fremen attacking allies in Harkonnen/Ordos campaign missions.
+    - Fix raider trikes also constructing instantly if the "Instant wall construction" enhancement is enabled.
+    - Fix the first saboteur being invisible.
+    - Fix wrong horizontal offset of credits with certain menubar scales.
+    - Fix credits dropping to 0, if a building with no spice-storage (e.g. windtrap) is destroyed, and no spice refinery/silo does yet exist.
+    - Fix too loud maximum MIDI music volume, so it is more in line with e.g. Adlib and OpenDune.
+    - Fix erratic music volume slider behaviour when using MIDI music.
+    - Fix volume changes on song change when using MIDI music with non-maximum volume.
+    - Fix sound volume slider. This removes the now obsolete `voice_volume` config option. Voice/sounds of intro/cutscenes will always have full volume.
+
 Version 1.6.3, 2024-05-12
 -------------------------
   - Add new enhancement option for instant wall construction.

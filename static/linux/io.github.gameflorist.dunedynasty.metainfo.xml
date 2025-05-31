@@ -54,24 +54,24 @@
   </content_rating>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/gameflorist/dunedynasty/refs/heads/v164/docs/screenshot-1.jpg</image>
+      <image>https://raw.githubusercontent.com/gameflorist/dunedynasty/refs/tags/v1.6.4/docs/screenshot-1.jpg</image>
       <caption>Dune II with scrollable sidebar</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/gameflorist/dunedynasty/refs/heads/v164/docs/screenshot-2.jpg</image>
+      <image>https://raw.githubusercontent.com/gameflorist/dunedynasty/refs/tags/v1.6.4/docs/screenshot-2.jpg</image>
       <caption>Selection of multiple units</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/gameflorist/dunedynasty/refs/heads/v164/docs/screenshot-3.jpg</image>
+      <image>https://raw.githubusercontent.com/gameflorist/dunedynasty/refs/tags/v1.6.4/docs/screenshot-3.jpg</image>
       <caption>Multiplayer lobby for up to 6 players/AI and teams</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/gameflorist/dunedynasty/refs/heads/v164/docs/screenshot-4.jpg</image>
+      <image>https://raw.githubusercontent.com/gameflorist/dunedynasty/refs/tags/v1.6.4/docs/screenshot-4.jpg</image>
       <caption>Jukebox for songs and support for external music packs</caption>
     </screenshot>
   </screenshots>
   <releases>
-    <release version="v1.6.4beta" date="2025-05-05">
+    <release version="v1.6.4" date="2025-05-31">
       <url type="details">https://github.com/gameflorist/dunedynasty/releases/tag/v1.6.4</url>
       <description>
         <p>Initial Flatpak release</p>

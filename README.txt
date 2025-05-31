@@ -1,6 +1,6 @@
 ============
 Dune Dynasty
-(v1.6.3)
+(v1.6.4)
 ============
 
 About
@@ -16,12 +16,14 @@ additional features, bugfixes and QoL-improvements. It is not a remake. It
 builds upon the original game engine as reverse-engineered by the OpenDUNE
 [https://github.com/OpenDUNE/OpenDUNE] project.
 
+Note: The original Dune II game data files are required to run Dune Dynasty.
+
 Dune Dynasty features these modern enhancements for Dune II:
 
  * Runs natively on modern machines (OpenGL or Direct3D):
-   * Windows (both 32bit and 64bit)
-   * macOS (both Intel x86_64 and Apple Silicon M1 ARM64)
-   * Linux
+   * Windows (32bit, 64bit and ARM64)
+   * macOS (Intel x86_64 and Apple Silicon M1 ARM64)
+   * Linux (x86_64 and ARM64)
  * Graphics Enhancements:
    * High-resolution widescreen graphics
    * Separate customizable scaling of menubar, sidebar and map/viewport for
@@ -36,6 +38,7 @@ Dune Dynasty features these modern enhancements for Dune II:
    * Select all units of same type in viewport via double-click (or CTRL-LMB)
    * Save/load unit control groups via keyboard hotkeys
    * Set rally points for buildings
+   * Show target lines of selected units like in Tibarian Sun (optional)
    * Pan viewport by keeping RMB pressed
    * Zoom in/out viewport via mousewheel
    * Windows Touchscreen Support [see below]
@@ -76,6 +79,9 @@ Dune Dynasty features these modern enhancements for Dune II:
    * Raise structure and unit limits
    * Start level selection
    * Consistent directional damage
+   * Instant wall construction
+   * Extend light vehicle sight range
+   * Extend spice sensor range
  * Support for Custom campaigns [see below]:
    * Dune 2 eXtended
      [http://forum.dune2k.com/topic/18360-dune-2-extended-project/]
@@ -91,7 +97,7 @@ Development History
 
 Dune Dynasty was initially developed by David Wang, with the source code hosted
 on SourceForge [https://sourceforge.net/projects/dunedynasty/]. Its last
-official version was v1.5.7 from 2013. After that David Wang added lots of new
+official version was v1.5.7 from 2013. After that David added lots of new
 features (mainly multiplayer) up until 2015, but never released a new version.
 Later some github-repos emerged with additional fixes and improvements (by
 1oom-fork [https://github.com/1oom-fork] and neg3ntropy
@@ -155,50 +161,94 @@ Installation
 You will need the \*.PAK data files from the EU v1.07 release of Dune II. See
 the file data/FILELIST.TXT for a complete list of needed files.
 
-Place them into one of the following places:
+The location to put the files depends on the OS / release bundle (see below).
 
- 1. In a directory named data next to the dunedynasty executable. This is the
-    simplest option.
+Installation on Windows
+-----------------------
 
- 2. In your personal data directory. The location depends on your operating
-    system:
-    
-    * Windows 64bit:
-      C:\users\<your user>\AppData\Roaming\Dune Dynasty\data
-    
-    * Windows 32bit:
-      C:\users\<your user>\Application Data\Dune Dynasty\data
-    
-    * macOS:
-      $HOME/Library/Application Support/dunedynasty/data
-    
-    * Unix:
-      ~/.local/share/dunedynasty/data
+The recommended place is the directory named data next to the dunedynasty
+executable.
 
-Once the data files are in place, you may start the game by running
-dunedynasty.exe or dunedynasty.
+As an alternative, you can also use the personal data directory, which depends
+on the 64bit or 32bit version:
 
-Special installation instructions for macOS
--------------------------------------------
+ * 64bit: C:\users\<your user>\AppData\Roaming\Dune Dynasty\data
+ * 32bit: C:\users\<your user>\Application Data\Dune Dynasty\data
 
-Due to the executable and included dylibs not being build with an Apple
-Developer ID, the Gatekeeper service will put them in a quarantine. a setup
-script is included to lift quarantine from all files. You will have to open the
-script with the right- or control-click menu, then choose Open in the warning
-dialog. After the script has run, you should be able to start dunedynasty
-without problems. If you get a disallowed by system policy error, your system
-policy does not allow to load the included libraries (mainly to happen with
-company macs).
+Installation on macOS
+---------------------
 
-Special installation instructions for Linux
--------------------------------------------
+Using the macOS app-bundle, the data folder is located inside the app package
+under the following folder:
+Dune Dynasty.app/Contents/Resources/data
 
-On Linux you will also have to install the libraries Dune Dynasty depends on:
+You have to right click on the Dune Dynasty app and click Show Package Contents
+in the context menu to be able to access it and copy your data there.
 
+As an alternative, you can also use/create a personal data directory at
+$HOME/Library/dunedynasty/data.
+
+Due to the executable and included dylibs not being built with an Apple
+Developer ID, the Gatekeeper service might put them in a quarantine after
+download. A setup script is included to lift quarantine from all files. You will
+have to open the script with the right- or control-click menu, choose Open in
+the warning dialog, and then y on the terminal-prompt. After the script has run,
+you should be able to start the app without problems. If you get a disallowed by
+system policy error, your system policy does not allow to load the included
+libraries (mainly to happen with company macs).
+
+Installation on Linux
+---------------------
+
+Linux Flatpak package
+---------------------
+
+The recommended package for Linux is the Flatpak package. For this you need to
+have Flatpak installed (see setup instructions [https://flatpak.org/setup/]).
+
+Now you can install the Flatpak package by calling:
+flatpak install --user DuneDynasty.vX.X.X.flatpak
+(replace X.X.X with the actual downloaded version)
+
+Next start the Flatpak app once using:
+flatpak run io.github.gameflorist.dunedynasty
+
+This will create the needed resource folders. Now you can place the data files
+at:
+~/.var/app/io.github.gameflorist.dunedynasty/data/dunedynasty/data
+
+Linux regular package
+---------------------
+
+Using the regular Linux package, you will also have to install the libraries
+Dune Dynasty depends on:
+
+# Debian/Ubuntu
 sudo apt install liballegro5.2 liballegro-acodec5.2 liballegro-image5.2 libenet7 libfluidsynth3 libmad0 libgl1
+
+# Fedora
+sudo dnf install allegro5 allegro5-addon-acodec allegro5-addon-image enet fluidsynth-libs
+
 
 If libfluidsynth3 is not available on your distribution, try libfluidsynth2
 instead.
+
+The data-files can be placed at one of the following locations:
+
+ * The directory named data next to the dunedynasty executable,
+ * or ~/.local/share/dunedynasty/data.
+
+Recommended mods
+================
+
+Normalized VOC.PAK
+------------------
+
+Many sound effects in Dune II were built with an DC offset. This leads to
+distortions when playing a lot of sounds together, such as pops and clicks. A
+fixed version of the affected VOC.PAK file was made by Tiddalick and can be
+downloaded on ModDB:
+https://www.moddb.com/games/dune-ii-the-building-of-a-dynasty/addons/vocpak-normalized
 
 Configuration
 =============
@@ -206,7 +256,9 @@ Configuration
 Just as the data-files, the configuration file dunedynasty.cfg will be read from
 one of two places:
 
- 1. In the same directory as the dunedynasty executable.
+ 1. In the same directory as the dunedynasty executable. (Using the macOS bundle
+    you have to use the Dune Dynasty.app/Contents/Resources folder inside the
+    app).
 
  2. In a personal data directory. This is the default behaviour - meaning
     dunedynasty.cfg will be created here on initial launch. The location depends
@@ -221,7 +273,10 @@ one of two places:
     * macOS:
       $HOME/Library/Application Support/dunedynasty/dunedynasty.cfg
     
-    * Unix:
+    * Linux Flatpak package:
+      ~/.var/app/io.github.gameflorist.dunedynasty/config/dunedynasty/dunedynasty.cfg
+    
+    * Linux regular package:
       ~/.config/dunedynasty/dunedynasty.cfg
 
 See the sample file dunedynasty.cfg-sample for a list of configuration options.
@@ -235,12 +290,17 @@ If you place dunedynasty.cfg in the same directory as the dunedynasty
 executable, Dune Dynasty will operate in portable mode - keeping everything
 (e.g. savegames) inside the install directory.
 
+Using the macOS bundle you have to use the Dune Dynasty.app/Contents/Resources
+folder inside the app.
+
 Video Settings
 --------------
 
 Display mode and resolution can be changed in the game's "Options and Extras"
 menu. The game initially launches in Fullscreen Window mode (using your
 Desktop-resolution).
+
+Note that Fullscreen mode does not work on Linux and macOS currently.
 
 You might want to increase or decrease the scaling factors of the menubar,
 sidebar and viewport. You can do this in-game in the Game Control menu.
@@ -345,7 +405,7 @@ Gameplay Enhancements
 
 Dune Dynasty (and it's parent project OpenDUNE) feature several optional as well
 as always active enhancements and fixes over the original Dune II. A detailed
-list of can be found in the file enhancement.txt.
+list of various fixes be found in the file enhancement.txt.
 
 Here is an explanation of all optional enhancements, that can be enabled in-game
 in the main menu or game control options. They are disabled by default (except
@@ -408,6 +468,13 @@ Gameplay options (main menu)
  * Extend light vehicle sight range:
    Increases fog uncover radius of trikes and quads from 2 to 4 tiles.
 
+ * Extend spice sensor range: This enhancement extends the spice sensor ranges
+   in these cases:
+   
+   * Harvesters searching for spice (from about 3-4 to 64)
+   * Carryalls searching for spice (from 20 to 64) The extended search will only
+     work for unveiled tiles visible to the house.
+
  * True game speed adjustment:
    Dune II's game speed implementation doesn't affect scripts and other things.
    This enhancement takes care of that. It also fixes a bug with the range of
@@ -431,34 +498,26 @@ Game control options (in-game)
    Displays hi-res instead of pixelated overlays (e.g. selected unit overlay).
    (Enabled by default.)
 
- * Smooth unit animation: Smoother unit animations by rendering units (and
-   bullets) as if they move every frame, and rotating top-down units to
-   arbitrary angles.
+ * Smooth unit animation:
+   Smoother unit animations by rendering units (and bullets) as if they move
+   every frame, and rotating top-down units to arbitrary angles.
    (Enabled by default.)
 
- * Infantry squad corpses: Display decaying infantry corpses.
+ * Infantry squad corpses:
+   Display decaying infantry corpses.
    (Enabled by default.)
+
+ * Unit target lines:
+   Show trajectory lines and target of selected units (like in C&C: Tiberian
+   Sun). The lines and target icon are red for attack/harvest orders and gray
+   for any other orders.
+   (Disabled by default.)
 
 Saved games
 ===========
 
-Saved games are located in the save directory next to dunedynasty.cfg. If no
-configuration file exists in the same directory as the executable, they will be
-in placed in a personal data directory.
-
-The location depends on your operating system:
-
- * Windows 64bit:
-   C:\users\<your user>\AppData\Roaming\Dune Dynasty\save
-
- * Windows 32bit:
-   C:\users\<your user>\Application Data\Dune Dynasty\save
-
- * macOS:
-   $HOME/Library/Application Support/dunedynasty/save
-
- * Unix:
-   ~/.config/dunedynasty/save
+Saved games are located in the save directory next to wherever dunedynasty.cfg
+resides (see Configuration [see below]).
 
 Saved games from Dune II should work if placed there.
 
@@ -479,11 +538,23 @@ require a restart).
 There you will also find a Jukebox to listen to all available songs from all
 available sources.
 
+In the music options you will also be able disable the attack music, that
+dynamically starts playing, when an attack begins. Only the Dune II and Dune
+2000 music sets have such tracks. This is useful, if you want to mix Dune II or
+Dune 2000 music with other music sets and don't want to have the music
+interrupted.
+
 Midi
 ----
 
 Dune Dynasty can play music via the system MIDI output on Windows, macOS (Core
 Audio) and Linux (ALSA).
+
+Dune II includes midi tracks for various devices (PC Speaker, Tandy 3 voices,
+General Midi, MT-32). By default the General Midi (SC-55) tracks are played. You
+can switch to a different format in the game's Music Options (e.g. if you want
+to play the MT-32 tracks on real hardware or via the MUNT
+[https://github.com/munt/munt/tree/master/mt32emu_win32drv_setup] emulator).
 
 Windows
 -------
@@ -491,6 +562,14 @@ Windows
 You can specify the MIDI device ID to use via the midi_device_id config
 parameter (default is 0). To find out the correct device ID, you can use the
 tool ListMIDI32.exe [https://www.vcode.no/VCFiles.nsf/viewByKey/ListMIDI32].
+
+macOS
+-----
+
+For macOS only Core Audio is supported. Core MIDI, which is required to play
+midi on external MIDI devices (e.g. real MT-32 hardware) is not supported at the
+moment. You can use the MT-32 (or any other) recorded music pack as a workaround
+instead (see External music sets [see below] below).
 
 Linux
 -----
@@ -522,9 +601,12 @@ Dune Dynasty can play various external music sets, e.g. recordings of the
 original PC or Sega Mega Drive soundtrack, music from different Dune games like
 Dune 2000 or Cryo's 1992 Dune, or even the motion picture soundtracks.
 
-Each of these have their own subdirectory in the music directory. Instructions
-and download/purchase links are provided below and in the respective
-FILELIST.TXT files.
+Each of these have their own subdirectory in the music directory. The location
+of this directory is the same as the data directory (see Installation [see
+below]). Instructions and download/purchase links are provided below and in the
+respective FILELIST.TXT files. The file-types of all music files can be either
+flac, mp3, ogg or aud. Only the rest of the filename must match what is
+specified in the FILELIST.TXT files.
 
 Here is a list of supported Music packs:
 
@@ -589,19 +671,32 @@ Here is a list of supported Music packs:
  * Dune: Part One (2021) "The Dune Sketchbook" soundtrack by Hans Zimmer
    Purchase e.g. from amazon.com
    [https://www.amazon.com/music/player/albums/B09C3YS6DX] or amazon.de
-   [https://www.amazon.de/music/player/albums/B09C3YZZPW].
+   [https://www.amazon.de/music/player/albums/B0CW28Y532].
+
+ * Dune: Part Two (2024) Original Motion Picture Soundtrack by Hans Zimmer
+   Purchase e.g. from amazon.com
+   [https://www.amazon.com/Dune-Original-Motion-Picture-Soundtrack/dp/B0CW2BH4TS]
+   or amazon.de [https://www.amazon.de/music/player/albums/B0CW28Y532].
 
 After installation of a music set, you can check it's availability in the
 "Music" section of the game's "Options and Extras" menu. There you can also
 enable/disable music sets for random play.
 
-You can also disable individual songs from music sets. You have to do this by
-editing your config-file though.
+Disabling individual songs
+--------------------------
 
-Example: If you want to include Dune 2000 music, but exclude "Robotix":
+You can also disable individual songs from music sets. This is done by setting
+the volume of the track to 0 inside a volume.cfg file situated inside the
+set-specific subfolder of the /music directory (where the actual music-files
+reside). This file is not present for every music set, so you might have to
+create it.
 
-[music/dune2000]
-ROBOTIX=0
+Example: If you want to exclude the track 05 - Revelation.mp3 of the
+dune1992_spiceopera music-set, create a volume.cfg file inside the folder
+music/dune1992_spiceopera with the following content:
+
+[volume]
+05 - Revelation = 0
 
 Custom campaigns
 ================
@@ -616,7 +711,8 @@ Dune Dynasty supports various fan-made campaigns:
  * Super Dune II [http://forum.dune2k.com/topic/20065-super-dune-ii-classic/]
 
 These should be placed in the existing subdirectories inside the campaign
-directory.
+directory. The location of this directory is the same as the data directory (see
+Installation).
 
 Click the arrows next to the "The Building of a Dynasty" subtitle in the main
 menu to switch between campaigns.
@@ -640,7 +736,7 @@ Multiplayer
 ===========
 
 For hosting online multiplayer matches, make sure to forward the UDP port 10700
-via our NAT-router to your hosting machine's local IP address. On the
+via your NAT-router to your hosting machine's local IP address. On the
 multiplayer menu-screen, you can leave the default 0.0.0.0 HOST IP address in
 most cases, as this will listen to all your network-connections. If this is not
 working, try setting it to the IP address of the network card connected to the
@@ -657,19 +753,20 @@ Compilation
 General Info
 ------------
 
-The binary will be placed in the dist directory.
+The binary will be placed in the dist directory. Copying of static content will
+handled depending on target platform (see CMakeLists.txt).
 
 The steps below will build the release-version. You can change value of the
 DCMAKE_BUILD_TYPE parameter to build different versions, with the possible
 options being: Debug, Release, RelWithDebInfo and MinSizeRel.
 
-Windows
--------
+Building for Windows
+--------------------
 
  1. Download and install MSYS2 [https://www.msys2.org/#installation].
 
  2. For a 64bit executable, launch MSYS2 UCRT64 from the startmenu. For 32bit,
-    launch MSYS2 MINGW32.
+    launch MSYS2 MINGW32. For ARM64, launch MSYS2 CLANGARM64.
 
  3. Install dependencies:
     
@@ -694,26 +791,36 @@ Windows
     pacman -S mingw-w64-i686-fluidsynth
     pacman -S mingw-w64-i686-libmad
     
+    
+    For ARM64 (gdb is not available for ARM64):
+    
+    pacman -S mingw-w64-clang-aarch64-cmake
+    pacman -S mingw-w64-clang-aarch64-gcc
+    pacman -S mingw-w64-clang-aarch64-allegro
+    pacman -S mingw-w64-clang-aarch64-enet
+    pacman -S mingw-w64-clang-aarch64-fluidsynth
+    pacman -S mingw-w64-clang-aarch64-libmad
+    
 
  4. Perform build:
     
-    ./scripts/build-windows.sh
-    
-
- 5. For packaging, you have to copy all required .dll files to the dist folder.
-    To do this, simply call the following script:
-    
     For 64bit:
     
-    ./scripts/bundle-libs-ucrt64.sh
+    ./scripts/build-windows-x64.sh
     
     
     For 32bit:
     
-    ./scripts/bundle-libs-mingw32.sh
+    ./scripts/build-windows-x86.sh
+    
+    
+    For ARM64:
+    
+    ./scripts/build-windows-arm64.sh
+    
 
-MacOs
------
+Building for macOS
+------------------
 
  1. Install Homebrew [https://brew.sh/] package manager.
 
@@ -736,42 +843,38 @@ MacOs
 
  3. Perform build:
     
-    ./scripts/build-macos.sh
+    ./scripts/build-macos-bundle.sh
     
-    If you are building for ARM64 on a x86-64 machine, call this script instead:
+    If you are building for ARM64 on a x86-64 machine (or vice versa), you have
+    to state the wanted architecture via the CMAKE_OSX_ARCHITECTURES flag in the
+    cmake command. E.g.:
     
-    ./scripts/build-macos-arm64.sh
+    cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MACOSX_BUNDLE=YES -DCMAKE_OSX_ARCHITECTURES=arm64 .
+    
 
- 4. To package all required dynlibs into the ./dist/libs folder and patch the
-    executable, call this script:
-    
-    ./scripts/bundle-libs-macos.sh
-    
-    The script requires the brew package dylibbundler, so install it first:
-    
-    brew install dylibbundler
+ 4. Due to the executable and included dylibs not being built with an Apple
+    Developer ID, the Gatekeeper service will put them in a quarantine. A setup
+    script to lift quarantine on all files is included in static/macos-bundle/.
 
- 5. Due to the executable and included dylibs not being build with an Apple
-    Developer ID, the Gatekeeper service will put them in a quarantine. a setup
-    script to lift quarantine on all files is included in dist-per-os/macos.
-
-Linux (Debian, Ubuntu)
-----------------------
+Building for Linux
+------------------
 
  1. Install dependencies:
     
+    # Debian or Ubuntu
     sudo apt -y install build-essential cmake liballegro5-dev libenet-dev libmad0-dev libfluidsynth-dev fluidsynth
+    # Fedora
+    dnf install fluidsynth-devel libmad-devel cmake patchelf allegro5-devel
 
  2. Perform build:
     
     ./scripts/build-linux.sh
 
- 3. When packaging, there is the problem, that the fluidsynth-library is called
-    libfluidsynth2 on some distributions, and libfluidsynth3 on others. To
-    mitigate, call this script, which will copy the library-file to dist/libs
-    and patch the executable to use the inlcuded library instead:
-    
-    ./scripts/bundle-libs-linux.sh
+Linux Flatpak
+-------------
+
+The Flatpak config is managed via a separate repository:
+https://github.com/gameflorist/dunedynasty-flatpak
 
 Debugging
 ---------
@@ -796,12 +899,15 @@ Thank you to:
  * The Allegro 5 developers.
  * The developers of DOSBox, MAME, ScummVM, Dune Legacy, and everyone else who
    worked on the AdLib/OPL/MIDI player code.
- * rcblanke, ShaiWa, Nyerguds, Stefan Hendriks, the Sound Card database and DOS
+ * rcblanke, ShaiWa, Nyerguds, Stefan Hendriks, the Sound Card Database and DOS
    Nostalgia for their soundtrack recordings.
  * Peter, for help on various bits of the code, the music code, and AUDlib.
+ * Dracks for his help on the Flatpak package and other things.
  * Nyerguds, for his Dune II editor.
- * Bug reporters and other improvement suggestions: MrFlibble, Nyerguds, Zocom7,
-   EagleEye, gerwin, Leolo, VileRancour, swt83, Paar, Akaine, Wesker, WillSo.
+ * Bug reports, improvement suggestions and testing: MrFlibble, Nyerguds,
+   mellangr, clemorphy, Zocom7, EagleEye, gerwin, Leolo, VileRancour, swt83,
+   Paar, Akaine, blam666, whipowill, sviscapi, Wesker, WillSo, johnmx, Shotweb,
+   chrcoluk, leorockway, All3n-Hunt3r, gyroplast and Tiddalick.
  * Westwood Studios, for an amazing game!
 
 License
