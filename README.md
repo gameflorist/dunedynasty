@@ -149,9 +149,10 @@ Due to the executable and included dylibs not being built with an Apple Develope
 
 The recommended package for Linux is the Flatpak package. For this you need to have Flatpak installed (see [setup instructions](https://flatpak.org/setup/)).
 
-Now you can install the Flatpak package by calling:  
-`flatpak install --user DuneDynasty.vX.X.X.flatpak`  
-(replace `X.X.X` with the actual downloaded version)
+On a GUI-distribution you can simply double-click `DuneDynasty.flatpak` to install it.
+
+Via command line you can install the Flatpak package by calling:  
+`flatpak install --user DuneDynasty.flatpak`
 
 Next start the Flatpak app once using:  
 `flatpak run io.github.gameflorist.dunedynasty`
