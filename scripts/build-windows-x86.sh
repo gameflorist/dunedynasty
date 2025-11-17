@@ -29,7 +29,6 @@ cp /mingw32/bin/libwinpthread-1.dll ./dist
 cp /mingw32/bin/libgomp-1.dll ./dist
 cp /mingw32/bin/libreadline8.dll ./dist
 cp /mingw32/bin/libportaudio.dll ./dist
-cp /mingw32/bin/SDL2.dll ./dist
 cp /mingw32/bin/libsndfile-1.dll ./dist
 cp /mingw32/bin/libogg-0.dll ./dist
 cp /mingw32/bin/libopus-0.dll ./dist

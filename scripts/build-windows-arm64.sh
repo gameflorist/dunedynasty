@@ -27,7 +27,6 @@ cp /clangarm64/bin/libwebp-7.dll ./dist
 cp /clangarm64/bin/libwinpthread-1.dll ./dist
 cp /clangarm64/bin/libreadline8.dll ./dist
 cp /clangarm64/bin/libportaudio.dll ./dist
-cp /clangarm64/bin/SDL2.dll ./dist
 cp /clangarm64/bin/libsndfile-1.dll ./dist
 cp /clangarm64/bin/libogg-0.dll ./dist
 cp /clangarm64/bin/libopus-0.dll ./dist
