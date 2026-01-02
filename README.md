@@ -548,37 +548,37 @@ The steps below will build the release-version. You can change value of the `DCM
     For 64bit:
 
     ```shell
-    pacman -S mingw-w64-ucrt-x86_64-cmake
-    pacman -S mingw-w64-ucrt-x86_64-gcc
-    pacman -S mingw-w64-ucrt-x86_64-gdb
-    pacman -S mingw-w64-ucrt-x86_64-allegro
-    pacman -S mingw-w64-ucrt-x86_64-enet
-    pacman -S mingw-w64-ucrt-x86_64-fluidsynth
-    pacman -S mingw-w64-ucrt-x86_64-libmad
+    pacman -S mingw-w64-ucrt-x86_64-cmake \
+              mingw-w64-ucrt-x86_64-gcc \
+              mingw-w64-ucrt-x86_64-gdb \
+              mingw-w64-ucrt-x86_64-allegro \
+              mingw-w64-ucrt-x86_64-enet \
+              mingw-w64-ucrt-x86_64-fluidsynth \
+              mingw-w64-ucrt-x86_64-libmad
     ```
 
     For 32bit:
 
     ```shell
-    pacman -S mingw-w64-i686-cmake
-    pacman -S mingw-w64-i686-gcc
-    pacman -S mingw-w64-i686-gdb
-    pacman -S mingw-w64-i686-allegro
-    pacman -S mingw-w64-i686-enet
-    pacman -S mingw-w64-i686-fluidsynth
-    pacman -S mingw-w64-i686-libmad
+    pacman -S mingw-w64-i686-cmake \
+              mingw-w64-i686-gcc \
+              mingw-w64-i686-gdb \
+              mingw-w64-i686-allegro \
+              mingw-w64-i686-enet \
+              mingw-w64-i686-fluidsynth \
+              mingw-w64-i686-libmad
     ```
 
     For ARM64 (`gdb` is not available for ARM64):
 
     ```shell
-    pacman -S mingw-w64-clang-aarch64-cmake
-    pacman -S mingw-w64-clang-aarch64-gcc
-    pacman -S mingw-w64-clang-aarch64-allegro
-    pacman -S mingw-w64-clang-aarch64-enet
-    pacman -S mingw-w64-clang-aarch64-fluidsynth
-    pacman -S mingw-w64-clang-aarch64-libmad
-    pacman -S mingw-w64-clang-aarch64-llvm-openmp
+    pacman -S mingw-w64-clang-aarch64-cmake \
+              mingw-w64-clang-aarch64-gcc \
+              mingw-w64-clang-aarch64-allegro \
+              mingw-w64-clang-aarch64-enet \
+              mingw-w64-clang-aarch64-fluidsynth \
+              mingw-w64-clang-aarch64-libmad \
+              mingw-w64-clang-aarch64-llvm-openmp
     ```
 
 4. Perform build:
