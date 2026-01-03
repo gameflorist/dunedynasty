@@ -1,6 +1,13 @@
 Dune Dynasty
 ============
 
+Version 1.6.5, ????-??-??
+-------------------------
+
+  - Add Roland MT-32 initialization:
+    - If Roland MT-32 is selected as the MIDI Format, the original MT-32 initialization is performed on start.
+    - This will make sure, the correct instruments will be used on real MT-32 hardware. 
+
 Version 1.6.4, 2025-05-31
 -------------------------
   

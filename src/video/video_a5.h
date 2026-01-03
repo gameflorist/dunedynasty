@@ -32,6 +32,7 @@ extern void VideoA5_DrawCPSCoordinates(enum SearchDirectory dir, const char *fil
 extern void VideoA5_DrawCPSRegion(enum SearchDirectory dir, const char *filename, int sx, int sy, int dx, int dy, int w, int h);
 extern void VideoA5_DrawCPSSpecial(enum CPSID cpsID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawCPSSpecialScale(enum CPSID cpsID, enum HouseType houseID, int x, int y, float scale);
+extern void VideoA5_DrawBlankScreen(void);
 extern void VideoA5_DrawIcon(uint16 iconID, enum HouseType houseID, int x, int y);
 extern void VideoA5_DrawIconAlpha(uint16 iconID, int x, int y, unsigned char alpha);
 extern void VideoA5_DrawRectCross(int x1, int y1, int w, int h, unsigned char c);

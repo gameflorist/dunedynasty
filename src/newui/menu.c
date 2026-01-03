@@ -56,6 +56,8 @@ static Widget *pick_house_widgets;
 static Widget *briefing_yes_no_widgets;
 static Widget *briefing_proceed_repeat_widgets;
 static int main_menu_campaign_selected;
+static bool main_menu_mt32_init_started;
+static int64_t main_menu_mt32_init_timer;
 
 /*--------------------------------------------------------------*/
 
@@ -1285,6 +1287,41 @@ StrategicMap_InputLoop(int campaignID, StrategicMapData *map)
 /*--------------------------------------------------------------*/
 
 static void
+MT32Init_Draw()
+{
+	VideoA5_DrawBlankScreen();
+
+	GUI_DrawText(String_Get_ByIndex(15), 0, 0, 15, 12); /* "Initializing the MT-32" */
+
+	int initProgress = (Timer_GetTicks() - main_menu_mt32_init_timer) / 100;
+
+	for (int i = 1; i < initProgress; i++) {
+		GUI_DrawText(".", 6 * i, 10, 15, 12);
+	}
+
+}
+
+static enum MenuAction MT32Init_Loop(void)
+{
+
+	if (!main_menu_mt32_init_started) {
+		AudioA5_InitMT32();
+		main_menu_mt32_init_started = true;
+		main_menu_mt32_init_timer = Timer_GetTicks();
+	}
+
+	int initProgress = (Timer_GetTicks() - main_menu_mt32_init_timer) / 100;
+
+	if (initProgress < 5 || AudioA5_MusicIsPlaying()) {
+		return MENU_REDRAW | MENU_INIT_MT32;
+	}
+
+	return enhancement_skip_introduction == true ? MENU_MAIN_MENU : MENU_REPLAY_INTRODUCTION;
+}
+
+/*--------------------------------------------------------------*/
+
+static void
 Menu_DrawFadeIn(int64_t fade_start)
 {
 	int alpha = 0xFF - 0xFF * (Timer_GetTicks() - fade_start) / MENU_FADE_TICKS;
@@ -1310,7 +1347,11 @@ void
 Menu_Run(void)
 {
 	enum MenuAction curr_menu = MENU_REPLAY_INTRODUCTION;
-	if (enhancement_skip_introduction == true) {
+
+	if (g_midi_format == MIDI_FORMAT_MT32) {
+		curr_menu = MENU_INIT_MT32;
+	}
+	else if (enhancement_skip_introduction == true) {
 		curr_menu = MENU_FADE_IN | MENU_MAIN_MENU;		
 	}
 	enum MenuAction next_menu = curr_menu;
@@ -1429,6 +1470,10 @@ Menu_Run(void)
 				case MENU_STRATEGIC_MAP:
 					StrategicMap_Draw(g_playerHouseID, &g_strategic_map_state, fade_start);
 					break;
+				
+				case MENU_INIT_MT32:
+					MT32Init_Draw();
+					break;
 
 				default:
 					break;
@@ -1491,7 +1536,7 @@ Menu_Run(void)
 				res = PlayAGame_Loop(true);
 				break;
 
-			case MENU_REPLAY_INTRODUCTION:				
+			case MENU_REPLAY_INTRODUCTION:
 				GameLoop_GameIntroAnimation();
 				res = MENU_MAIN_MENU;
 				break;
@@ -1577,6 +1622,10 @@ Menu_Run(void)
 			case MENU_STRATEGIC_MAP | MENU_BLINK_CONFIRM | MENU_FADE_OUT:
 				if (StrategicMap_BlinkLoop(&g_strategic_map_state, fade_start))
 					res &=~ MENU_BLINK_CONFIRM;
+				break;
+
+			case MENU_INIT_MT32:
+				res = MT32Init_Loop();
 				break;
 
 			case MENU_EXIT_GAME:

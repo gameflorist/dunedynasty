@@ -1426,6 +1426,12 @@ Video_InitFadeInCPS(const char *filename, int x, int y, int w, int h, bool fade_
 	return VideoA5_InitFadeInSprite(cps->bmp, x, y, w, h, fade_in);
 }
 
+void
+VideoA5_DrawBlankScreen()
+{
+	VideoA5_ExportCPS(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", GFX_Screen_Get_ByIndex(SCREEN_1));
+}
+
 /*--------------------------------------------------------------*/
 
 static int

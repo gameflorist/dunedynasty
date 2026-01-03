@@ -23,6 +23,7 @@ extern void AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32
 extern bool AudioA5_PlaySample(enum SampleID sampleID, float volume, float pan);
 extern bool AudioA5_PlaySampleRaw(enum SampleID sampleID, float volume, float pan, int idx_start, int idx_end);
 extern bool AudioA5_PollNarrator(void);
+extern void AudioA5_InitMT32(void);
 
 #if __cplusplus
 }

@@ -800,3 +800,10 @@ AudioA5_PollNarrator(void)
 {
 	return (al_get_sample_instance_playing(s_instance[0]));
 }
+
+void
+AudioA5_InitMT32(void)
+{
+	const MusicInfo duneInitTrack = { MUSIC_ENABLE, MUSICSET_DUNE2_MIDI, NULL, "DUNEINIT.XMI", 0, 0xFF };
+	AudioA5_InitMidiMusic(&duneInitTrack);
+}
