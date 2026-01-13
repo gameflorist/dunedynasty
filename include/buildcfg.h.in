@@ -8,6 +8,7 @@
 
 #cmakedefine WITH_ACODEC
 #cmakedefine WITH_AUD
+#cmakedefine WITH_ENET
 #cmakedefine WITH_FLUIDSYNTH
 #cmakedefine WITH_MAD
 

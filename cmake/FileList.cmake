@@ -41,7 +41,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/mods/skirmish.c
 	src/net/client.c
 	src/net/message.c
-	src/net/net_enet.c
 	src/net/server.c
 	src/newui/actionpanel.c
 	src/newui/chatbox.c
@@ -121,7 +120,7 @@ set(DUNEDYNASTY_SRC_FILES
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES} src/audio/midi_win32.c)
-elseif(APPLE)
+elseif(APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES} src/audio/midi_osx.c)
 elseif(WITH_ALSA_MIDI)
@@ -149,6 +148,11 @@ if(WITH_AUD)
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES} src/audio/audlib/audlib_a5.c)
 endif(WITH_AUD)
+
+if(WITH_ENET)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES} src/net/net_enet.c)
+endif(WITH_ENET)
 
 if(WIN32)
     set(DUNEDYNASTY_SRC_FILES

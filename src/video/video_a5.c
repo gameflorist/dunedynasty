@@ -15,7 +15,12 @@
 #include <assert.h>
 
 #ifdef __APPLE__
-# include <OpenGL/gl.h>
+# include <TargetConditionals.h>
+# if TARGET_OS_IPHONE
+#  include <OpenGLES/ES1/gl.h>
+# else
+#  include <OpenGL/gl.h>
+# endif /* TARGET_OS_IPHONE */
 #else
 # ifdef __PANDORA__
 #  include <GLES/gl.h>

@@ -44,25 +44,103 @@ include(FindPkgConfig)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 set(ALLEGRO_VERSION 5)
-pkg_check_modules(ALLEGRO5 allegro-${ALLEGRO_VERSION})
-if(NOT ALLEGRO5_FOUND)
-	set(ALLEGRO_VERSION 5.0)
-	pkg_check_modules(ALLEGRO5 REQUIRED allegro-${ALLEGRO_VERSION})
-endif(NOT ALLEGRO5_FOUND)
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+	# For iOS, pkg-config finds macOS libraries which can't be linked
+	# Prevent pkg-config from being used to avoid finding macOS libraries
+	set(PKG_CONFIG_EXECUTABLE "")
+	
+	# Look for iOS-built Allegro in the expected location
+	set(ALLEGRO_IOS_PREFIX "$ENV{ALLEGRO_IOS_PREFIX}" CACHE PATH "Path to iOS-built Allegro installation")
+	if(NOT ALLEGRO_IOS_PREFIX)
+		set(ALLEGRO_IOS_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../allegro-ios-install")
+	endif()
+	
+	# Find iOS-built Allegro libraries
+	find_library(ALLEGRO5_LIBRARY 
+		NAMES allegro allegro-5.2 allegro-5.0
+		PATHS ${ALLEGRO_IOS_PREFIX}/lib
+		NO_DEFAULT_PATH
+	)
+	find_library(ALLEGRO5_AUDIO_LIBRARY 
+		NAMES allegro_audio allegro_audio-5.2 allegro_audio-5.0
+		PATHS ${ALLEGRO_IOS_PREFIX}/lib
+		NO_DEFAULT_PATH
+	)
+	find_library(ALLEGRO5_IMAGE_LIBRARY 
+		NAMES allegro_image allegro_image-5.2 allegro_image-5.0
+		PATHS ${ALLEGRO_IOS_PREFIX}/lib
+		NO_DEFAULT_PATH
+	)
+	find_library(ALLEGRO5_MEMFILE_LIBRARY 
+		NAMES allegro_memfile allegro_memfile-5.2 allegro_memfile-5.0
+		PATHS ${ALLEGRO_IOS_PREFIX}/lib
+		NO_DEFAULT_PATH
+	)
+	find_library(ALLEGRO5_PRIMITIVES_LIBRARY 
+		NAMES allegro_primitives allegro_primitives-5.2 allegro_primitives-5.0
+		PATHS ${ALLEGRO_IOS_PREFIX}/lib
+		NO_DEFAULT_PATH
+	)
+	find_library(ALLEGRO5_MAIN_LIBRARY 
+		NAMES allegro_main allegro_main-5.2 allegro_main-5.0
+		PATHS ${ALLEGRO_IOS_PREFIX}/lib
+		NO_DEFAULT_PATH
+	)
+	
+	if(ALLEGRO5_LIBRARY AND ALLEGRO5_AUDIO_LIBRARY AND ALLEGRO5_IMAGE_LIBRARY AND ALLEGRO5_MEMFILE_LIBRARY AND ALLEGRO5_PRIMITIVES_LIBRARY)
+		set(ALLEGRO5_FOUND TRUE)
+		set(ALLEGRO5_LIBRARIES ${ALLEGRO5_LIBRARY})
+		set(ALLEGRO5_AUDIO_LIBRARIES ${ALLEGRO5_AUDIO_LIBRARY})
+		set(ALLEGRO5_IMAGE_LIBRARIES ${ALLEGRO5_IMAGE_LIBRARY})
+		set(ALLEGRO5_MEMFILE_LIBRARIES ${ALLEGRO5_MEMFILE_LIBRARY})
+		set(ALLEGRO5_PRIMITIVES_LIBRARIES ${ALLEGRO5_PRIMITIVES_LIBRARY})
+		if(ALLEGRO5_MAIN_LIBRARY)
+			set(ALLEGRO5_MAIN_LIBRARIES ${ALLEGRO5_MAIN_LIBRARY})
+		endif()
+		
+		# Set include directories
+		find_path(ALLEGRO5_INCLUDE_DIRS 
+			NAMES allegro5/allegro.h
+			PATHS ${ALLEGRO_IOS_PREFIX}/include
+			NO_DEFAULT_PATH
+		)
+		if(ALLEGRO5_INCLUDE_DIRS)
+			include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
+		else()
+			message(FATAL_ERROR "Allegro headers not found in ${ALLEGRO_IOS_PREFIX}/include")
+		endif()
+	else()
+		message(FATAL_ERROR "Allegro libraries not found for iOS in ${ALLEGRO_IOS_PREFIX}/lib.\n"
+			"Please build Allegro for iOS first. See the GitHub workflow for build steps.")
+	endif()
+else()
+	pkg_check_modules(ALLEGRO5 allegro-${ALLEGRO_VERSION})
+	if(NOT ALLEGRO5_FOUND)
+		set(ALLEGRO_VERSION 5.0)
+		pkg_check_modules(ALLEGRO5 REQUIRED allegro-${ALLEGRO_VERSION})
+	endif(NOT ALLEGRO5_FOUND)
 
-pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-${ALLEGRO_VERSION})
-pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-${ALLEGRO_VERSION})
-pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-${ALLEGRO_VERSION})
-pkg_check_modules(ALLEGRO5_PRIMITIVES REQUIRED allegro_primitives-${ALLEGRO_VERSION})
-if(APPLE)
-	pkg_check_modules(ALLEGRO5_MAIN REQUIRED allegro_main-${ALLEGRO_VERSION})
-endif(APPLE)
-include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
+	pkg_check_modules(ALLEGRO5_AUDIO REQUIRED allegro_audio-${ALLEGRO_VERSION})
+	pkg_check_modules(ALLEGRO5_IMAGE REQUIRED allegro_image-${ALLEGRO_VERSION})
+	pkg_check_modules(ALLEGRO5_MEMFILE REQUIRED allegro_memfile-${ALLEGRO_VERSION})
+	pkg_check_modules(ALLEGRO5_PRIMITIVES REQUIRED allegro_primitives-${ALLEGRO_VERSION})
+	if(APPLE)
+		pkg_check_modules(ALLEGRO5_MAIN REQUIRED allegro_main-${ALLEGRO_VERSION})
+	endif(APPLE)
+	include_directories(SYSTEM ${ALLEGRO5_INCLUDE_DIRS})
+endif()
 
 if(PANDORA)
 	find_package(OpenGLES)
 	include_directories(SYSTEM ${OPENGLES_INCLUDE_DIR})
 	set(OPENGL_LIBRARIES ${OPENGLES_LIBRARIES})
+elseif(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+	# iOS uses OpenGL ES, but Allegro handles graphics internally
+	# Link against OpenGLES framework
+	find_library(OPENGLES_LIBRARY OpenGLES)
+	if(OPENGLES_LIBRARY)
+		set(OPENGL_LIBRARIES ${OPENGLES_LIBRARY})
+	endif(OPENGLES_LIBRARY)
 else(PANDORA)
 	find_package(OpenGL)
 	include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
@@ -82,8 +160,21 @@ if(WIN32)
 	list(APPEND OPTIONAL_LIBRARIES winmm)
 elseif(APPLE)
 	find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
-	find_library(AUDIOUNIT_LIBRARY AudioUnit)
-	list(APPEND OPTIONAL_LIBRARIES ${AUDIOTOOLBOX_LIBRARY} ${AUDIOUNIT_LIBRARY})
+	if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+		# On iOS, AudioUnit is part of AudioToolbox, no need to link separately
+		if(AUDIOTOOLBOX_LIBRARY)
+			list(APPEND OPTIONAL_LIBRARIES ${AUDIOTOOLBOX_LIBRARY})
+		endif(AUDIOTOOLBOX_LIBRARY)
+	else()
+		# macOS: link both AudioToolbox and AudioUnit
+		find_library(AUDIOUNIT_LIBRARY AudioUnit)
+		if(AUDIOTOOLBOX_LIBRARY)
+			list(APPEND OPTIONAL_LIBRARIES ${AUDIOTOOLBOX_LIBRARY})
+		endif(AUDIOTOOLBOX_LIBRARY)
+		if(AUDIOUNIT_LIBRARY)
+			list(APPEND OPTIONAL_LIBRARIES ${AUDIOUNIT_LIBRARY})
+		endif(AUDIOUNIT_LIBRARY)
+	endif()
 elseif(WITH_ALSA_MIDI)
     pkg_check_modules(ALSA alsa)
     if(ALSA_FOUND)
@@ -143,16 +234,31 @@ include_directories("include" "${PROJECT_BINARY_DIR}/include")
 add_executable(dunedynasty WIN32
 	${DUNEDYNASTY_SRC_FILES} ${CMAKE_SOURCE_DIR}/src/icon/icon.rc)
 
-target_link_libraries(dunedynasty
-	${OPTIONAL_LIBRARIES}
-	${ALLEGRO5_AUDIO_LDFLAGS}
-	${ALLEGRO5_IMAGE_LDFLAGS}
-	${ALLEGRO5_MEMFILE_LDFLAGS}
-	${ALLEGRO5_PRIMITIVES_LDFLAGS}
-	${ALLEGRO5_MAIN_LDFLAGS}
-	${ALLEGRO5_LDFLAGS}
-	${OPENGL_LIBRARIES}
-	)
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+	# For iOS, use the directly found libraries
+	target_link_libraries(dunedynasty
+		${OPTIONAL_LIBRARIES}
+		${ALLEGRO5_LIBRARIES}
+		${ALLEGRO5_AUDIO_LIBRARIES}
+		${ALLEGRO5_IMAGE_LIBRARIES}
+		${ALLEGRO5_MEMFILE_LIBRARIES}
+		${ALLEGRO5_PRIMITIVES_LIBRARIES}
+		${ALLEGRO5_MAIN_LIBRARIES}
+		${OPENGL_LIBRARIES}
+		)
+else()
+	# For other platforms, use pkg-config LDFLAGS
+	target_link_libraries(dunedynasty
+		${OPTIONAL_LIBRARIES}
+		${ALLEGRO5_AUDIO_LDFLAGS}
+		${ALLEGRO5_IMAGE_LDFLAGS}
+		${ALLEGRO5_MEMFILE_LDFLAGS}
+		${ALLEGRO5_PRIMITIVES_LDFLAGS}
+		${ALLEGRO5_MAIN_LDFLAGS}
+		${ALLEGRO5_LDFLAGS}
+		${OPENGL_LIBRARIES}
+		)
+endif()
 
 if(CMAKE_MACOSX_BUNDLE)
 	set_target_properties(dunedynasty PROPERTIES

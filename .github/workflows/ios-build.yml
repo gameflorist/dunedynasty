@@ -1,0 +1,174 @@
+name: iOS Build
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: macos-14
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: brew install cmake autoconf automake libtool pkg-config
+
+      - name: Build Allegro for iOS
+        env:
+          ALLEGRO_IOS_PREFIX: ${{ github.workspace }}/allegro-ios-install
+        run: |
+          # Create installation directory
+          mkdir -p ${ALLEGRO_IOS_PREFIX}
+          
+          # Clone Allegro source
+          if [ ! -d "allegro5" ]; then
+            git clone --depth 1 https://github.com/liballeg/allegro5.git
+          fi
+          cd allegro5
+          # Checkout the 5.2 tag (or use latest stable)
+          git fetch --tags
+          git checkout 5.2.11.2 || git checkout 5.2.11 || git checkout 5.2 || git checkout master
+          
+          # Download and extract pre-built iPhone dependencies
+          # These are available from https://liballeg.org/download.html
+          # According to README_iphone.txt, dependencies should be in deps/include
+          mkdir -p deps/include
+          cd deps
+          
+          echo "Downloading pre-built iPhone dependencies..."
+          curl -L -o freetype-iphone.zip https://liballeg.org/files/freetype-iphone-2.3.12-bin.zip || echo "Warning: Could not download freetype"
+          curl -L -o physfs-iphone.zip https://liballeg.org/files/physfs-1.0.2-iphone.zip || echo "Warning: Could not download physfs"
+          curl -L -o vorbis-iphone.zip https://liballeg.org/files/vorbis-iphone.zip || echo "Warning: Could not download vorbis"
+          
+          # Extract dependencies - they should extract to include/ subdirectories
+          # The structure should be: deps/include/freetype2/, deps/include/physfs.h, etc.
+          unzip -q -o freetype-iphone.zip 2>/dev/null || echo "Could not extract freetype"
+          unzip -q -o physfs-iphone.zip 2>/dev/null || echo "Could not extract physfs"
+          unzip -q -o vorbis-iphone.zip 2>/dev/null || echo "Could not extract vorbis"
+          
+          # Move extracted files to proper structure if needed
+          # Some zips might extract to root, move to include/
+          if [ -d "freetype2" ] && [ ! -d "include/freetype2" ]; then
+            mv freetype2 include/ 2>/dev/null || true
+          fi
+          if [ -f "physfs.h" ] && [ ! -f "include/physfs.h" ]; then
+            mv physfs.h include/ 2>/dev/null || true
+          fi
+          if [ -d "vorbis" ] && [ ! -d "include/vorbis" ]; then
+            mv vorbis include/ 2>/dev/null || true
+          fi
+          
+          cd ..
+          
+          # Patch macOS header to make AppKit conditional for iOS builds
+          if [ -f "include/allegro5/platform/alosx.h" ]; then
+            python3 -c "import re; f=open('include/allegro5/platform/alosx.h','r'); c=f.read(); f.close(); c=c.replace('#include','#include <TargetConditionals.h>\n#include',1) if 'TargetConditionals.h' not in c else c; c=re.sub(r'#import <AppKit/AppKit.h>','#if !TARGET_OS_IPHONE\n#import <AppKit/AppKit.h>\n#endif',c) if re.search(r'#import <AppKit/AppKit.h>',c) else c; f=open('include/allegro5/platform/alosx.h','w'); f.write(c); f.close(); print('Patched alosx.h for iOS')"
+          fi
+          
+          # Build Allegro for iOS using the official toolchain file
+          # See README_iphone.txt for details: https://github.com/liballeg/allegro5/blob/master/README_iphone.txt
+          mkdir -p build-ios
+          cd build-ios
+          
+          # Use Allegro's official iOS toolchain file
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-iphone.cmake \
+            -DIOS_PLATFORM="iphoneos" \
+            -DCMAKE_INSTALL_PREFIX=${ALLEGRO_IOS_PREFIX} \
+            -DWANT_EXAMPLES=OFF \
+            -DWANT_DEMO=OFF \
+            -DWANT_TESTS=OFF \
+            -DWANT_DOCS=OFF \
+            -DWANT_TOOLS=OFF \
+            -DWANT_OPENGL=OFF \
+            -DWANT_OPENGLES=ON \
+            -DWANT_ALSA=OFF \
+            -DWANT_OSS=OFF \
+            -DWANT_PULSEAUDIO=OFF \
+            -DWANT_JACK=OFF \
+            -DWANT_OPENSL=OFF \
+            -DWANT_DSOUND=OFF \
+            -DWANT_WASAPI=OFF \
+            -DWANT_X11=OFF \
+            -DWANT_XCURSOR=OFF \
+            -DWANT_XFONT=OFF \
+            -DWANT_XRANDR=OFF \
+            -DWANT_XSYNC=OFF \
+            -DWANT_XINERAMA=OFF \
+            -DWANT_XPM=OFF \
+            -DWANT_XSHM=OFF \
+            -DWANT_DIRECTFB=OFF \
+            -G Xcode
+          
+          # Build using xcodebuild
+          # According to README_iphone.txt, this generates libraries in lib/RelWithDebInfo
+          xcodebuild \
+            -configuration RelWithDebInfo \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+          
+          # Install using cmake
+          # Note: The toolchain may use RelWithDebInfo as default, but install might need Release
+          cmake --install . --config RelWithDebInfo 2>/dev/null || cmake --install . --config Release 2>/dev/null || {
+            echo "cmake install failed, manually copying files..."
+            mkdir -p ${ALLEGRO_IOS_PREFIX}/lib ${ALLEGRO_IOS_PREFIX}/include
+            # According to README, libraries are in lib/RelWithDebInfo by default
+            if [ -d "lib/RelWithDebInfo" ]; then
+              cp lib/RelWithDebInfo/*.a ${ALLEGRO_IOS_PREFIX}/lib/ 2>/dev/null || true
+            fi
+            # Also check build directory
+            find . -name "*.a" -type f -exec cp {} ${ALLEGRO_IOS_PREFIX}/lib/ \; 2>/dev/null || true
+            # Copy headers from source
+            if [ -d "../include" ]; then
+              cp -r ../include ${ALLEGRO_IOS_PREFIX}/ 2>/dev/null || true
+            fi
+            # Copy addon headers
+            if [ -d "../addons" ]; then
+              mkdir -p ${ALLEGRO_IOS_PREFIX}/include/allegro5
+              for addon in audio image memfile primitives; do
+                if [ -d "../addons/${addon}" ]; then
+                  cp -r ../addons/${addon}/allegro5/* ${ALLEGRO_IOS_PREFIX}/include/allegro5/ 2>/dev/null || true
+                fi
+              done
+            fi
+          }
+          
+          echo "Allegro iOS build completed. Libraries in ${ALLEGRO_IOS_PREFIX}/lib"
+          ls -la ${ALLEGRO_IOS_PREFIX}/lib/ || true
+
+      - name: Build
+        env:
+          ALLEGRO_IOS_PREFIX: ${{ github.workspace }}/allegro-ios-install
+        run: ./scripts/build-ios.sh
+
+      - name: Zip dist folder
+        run: |
+          cd dist
+          zip -r dist.zip .
+
+      - name: Delete Old Artifacts
+        uses: actions/github-script@v7
+        id: artifact
+        with:
+          script: |
+            const res = await github.rest.actions.listArtifactsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+            })
+
+            res.data.artifacts
+                .filter(({ name }) => name === 'dunedynasty-${{ github.ref_name }}-ios')
+                .forEach(({ id }) => {
+                  github.rest.actions.deleteArtifact({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      artifact_id: id,
+                  })
+                })
+                
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dunedynasty-${{ github.ref_name }}-ios
+          path: dist/dist.zip
+  
