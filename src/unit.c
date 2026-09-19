@@ -388,6 +388,10 @@ void GameLoop_Unit(void)
 			// Replica Sandworm default is hunt mode
 			if (unit && unit->o.type == UNIT_SANDWORM) {
 				Unit_Server_SetAction(unit, ACTION_HUNT);
+				
+				/* ENHANCEMENT -- Make sandworms visible to all houses so they can
+				 * activate and perform actions even when spawned outside the player's view. */
+				unit->o.seenByHouses = 0xFF;
 			}
 		}
 	}
@@ -1312,12 +1316,10 @@ static uint16 Unit_Sandworm_GetTargetPriority(Unit *unit, Unit *target)
 	 */
 
 	// REPLICA Allow the sandworms to do whatever they want
-	/*
-	if (g_host_type == HOSTTYPE_NONE) {
+	/*if (g_host_type == HOSTTYPE_NONE) {
 		if (!Map_IsPositionUnveiled(g_playerHouseID, packed))
 			return 0;
-	}
-	*/
+	}*/
 
 	switch(g_table_unitInfo[target->o.type].movementType) {
 		case MOVEMENT_FOOT:      res = 0x64;   break;
@@ -3142,6 +3144,7 @@ Unit_HouseUnitCount_Remove(Unit *u)
 static void
 Unit_Server_HouseUnitCount_Add(Unit *unit, enum HouseType houseID)
 {
+
 	const UnitInfo *ui;
 	uint16 houseIDBit;
 	House *h;
