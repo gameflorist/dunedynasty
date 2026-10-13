@@ -73,6 +73,7 @@ Audio_ScanMusic(void)
 
 		l->count = 0;
 		l->count_default = 0;
+		l->count_found = 0;
 		for (int s = 0; s < l->length; s++) {
 			MusicInfo *m = &l->song[s];
 
@@ -223,6 +224,11 @@ Audio_PlayMusicGroup(enum MusicID musicID, bool respect_want_setting)
 		}
 	}
 
+	/* The fallback looks for a Dune II AdLib track, which some groups
+	 * (e.g. Idle (Others)) do not have. */
+	if (m == NULL)
+		return;
+
 	Audio_PlayMusicFile(l, m);
 }
 
@@ -288,10 +294,17 @@ Audio_PlayMusicNextInSequence(void)
 				curr_found = true;
 
 				if (musicID != MUSIC_IDLE_OTHER) {
-					musicID++;
+					/* Skip groups with nothing to play, e.g. external
+					 * music packs that are not installed. */
+					for (int i = 0; i < MUSICID_MAX; i++) {
+						musicID++;
 
-					if (musicID >= MUSICID_MAX)
-						musicID = MUSIC_LOGOS;
+						if (musicID >= MUSICID_MAX)
+							musicID = MUSIC_LOGOS;
+
+						if (g_table_music[musicID].count_found > 0)
+							break;
+					}
 
 					Audio_PlayMusicGroup(musicID, false);
 					return;
