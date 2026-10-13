@@ -437,6 +437,16 @@ GameLoop_TweakWidgetDimensions(void)
 
 	g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].offsetY = sidebar->height - g_table_gameWidgetInfo[GAME_WIDGET_MINIMAP].height;
 
+	/* The compact build list's two columns of 32 pixel icons use the
+	 * whole panel inside the sidebar's frame. */
+	if (enhancement_compact_build_list) {
+		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetX = 16;
+		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].width = 64;
+	} else {
+		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].offsetX = 258 - 240;
+		g_table_gameWidgetInfo[GAME_WIDGET_BUILD_PLACE].width = 60;
+	}
+
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].offsetY = 0;
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].width = viewport->width;
 	g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT].height = viewport->height;
