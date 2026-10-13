@@ -527,6 +527,7 @@ int AdLibDriver::callback(int opcode, ...) {
 	lock();
 	if (opcode >= _opcodesEntries || opcode < 0) {
 		warning("AdLibDriver: calling unknown opcode '%d'", opcode);
+		unlock();
 		return 0;
 	}
 
