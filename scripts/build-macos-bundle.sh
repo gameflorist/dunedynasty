@@ -5,9 +5,9 @@ echo "Cleaning up build..."
 
 echo "Performing build..."
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MACOSX_BUNDLE=YES .
-export FLUIDSYNTH_INSTALL_PATH=$(brew info fluid-synth | grep Cellar | head -n 1 | cut -f1 -d" ")
-export MAD_INSTALL_PATH=$(brew info mad | grep Cellar | head -n 1 | cut -f1 -d" ")
-export ENET_INSTALL_PATH=$(brew info enet | grep Cellar | head -n 1 | cut -f1 -d" ")
+export FLUIDSYNTH_INSTALL_PATH=$(brew --prefix fluid-synth)
+export MAD_INSTALL_PATH=$(brew --prefix mad)
+export ENET_INSTALL_PATH=$(brew --prefix enet)
 LIBRARY_PATH="${FLUIDSYNTH_INSTALL_PATH}/lib:${MAD_INSTALL_PATH}/lib:${ENET_INSTALL_PATH}/lib" make
 
 echo "Bundling dylibs..."
