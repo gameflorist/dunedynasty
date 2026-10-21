@@ -42,3 +42,4 @@ cp /clangarm64/bin/libintl-8.dll ./dist
 cp /clangarm64/bin/libiconv-2.dll ./dist
 cp /clangarm64/bin/libgmodule-2.0-0.dll ./dist
 cp /clangarm64/bin/libomp.dll ./dist
+cp /clangarm64/bin/SDL3.dll ./dist

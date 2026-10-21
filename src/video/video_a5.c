@@ -28,7 +28,7 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 
-#ifdef ALLEGRO_WINDOWS
+#ifdef ALLEGRO_CFG_D3D
 #include <allegro5/allegro_direct3d.h>
 #endif
 
@@ -366,7 +366,7 @@ VideoA5_Init(void)
 			APPEND_FLAG(ALLEGRO_OPENGL);
 			break;
 
-#ifdef ALLEGRO_WINDOWS
+#ifdef ALLEGRO_CFG_D3D
 		case GRAPHICS_DRIVER_DIRECT3D:
 			APPEND_FLAG(ALLEGRO_DIRECT3D);
 			break;
@@ -935,7 +935,7 @@ VideoA5_TickDissolve_GLStencil(FadeInAux *aux)
 }
 #endif
 
-#ifdef ALLEGRO_WINDOWS
+#ifdef ALLEGRO_CFG_D3D
 /* Requires Direct3D, stencil buffer. */
 static void
 VideoA5_InitDissolve_D3DStencil(ALLEGRO_BITMAP *src, FadeInAux *aux)
@@ -1076,7 +1076,7 @@ VideoA5_InitFadeInSprite(ALLEGRO_BITMAP *src, int x, int y, int w, int h, bool f
 			VideoA5_InitDissolve_GLStencil(src, aux);
 			break;
 
-#ifdef ALLEGRO_WINDOWS
+#ifdef ALLEGRO_CFG_D3D
 		case GRAPHICS_DRIVER_DIRECT3D:
 			VideoA5_InitDissolve_D3DStencil(src, aux);
 			break;
@@ -1098,7 +1098,7 @@ Video_DrawFadeIn(const FadeInAux *aux)
 			VideoA5_DrawDissolve_GLStencil(aux);
 			break;
 
-#ifdef ALLEGRO_WINDOWS
+#ifdef ALLEGRO_CFG_D3D
 		case GRAPHICS_DRIVER_DIRECT3D:
 			VideoA5_DrawDissolve_D3DStencil(aux);
 			break;
@@ -1125,7 +1125,7 @@ Video_TickFadeIn(FadeInAux *aux)
 			VideoA5_TickDissolve_GLStencil(aux);
 			break;
 
-#ifdef ALLEGRO_WINDOWS
+#ifdef ALLEGRO_CFG_D3D
 		case GRAPHICS_DRIVER_DIRECT3D:
 			VideoA5_TickDissolve_D3DStencil(aux);
 			break;
@@ -2351,7 +2351,7 @@ VideoA5_DrawBlur_GLStencil(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
 }
 #endif
 
-#ifdef ALLEGRO_WINDOWS
+#ifdef ALLEGRO_CFG_D3D
 /* Requires Direct3D, stencil buffer. */
 static void
 VideoA5_DrawBlur_D3DStencil(ALLEGRO_BITMAP *brush, int x, int y, int blurx)
@@ -2415,7 +2415,7 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 				VideoA5_DrawBlur_GLStencil(brush, x, y, s_variable_60[effect]);
 				break;
 
-#ifdef ALLEGRO_WINDOWS
+#ifdef ALLEGRO_CFG_D3D
 			case GRAPHICS_DRIVER_DIRECT3D:
 				VideoA5_DrawBlur_D3DStencil(brush, x, y, s_variable_60[effect]);
 				break;
