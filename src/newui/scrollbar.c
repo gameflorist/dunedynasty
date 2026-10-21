@@ -619,8 +619,11 @@ ScrollListArea_Draw(Widget *w)
 
 				Prim_Rect_i(x - hPadding, y, x + teamWidth + hPadding, y + 8, colour);
 
-				Video_SetClippingArea(div->scalex * x + div->x, 0,
-						div->scalex * teamWidth, TRUE_DISPLAY_HEIGHT);
+				/* Clip to the inside of the box: "T2" is wider than
+				 * teamWidth, so clipping to teamWidth cut off its last
+				 * column. */
+				Video_SetClippingArea(div->scalex * (x - hPadding + 1) + div->x, 0,
+						div->scalex * (teamWidth + 2 * hPadding - 1), TRUE_DISPLAY_HEIGHT);
 
 				GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x11);
 				GUI_DrawText_Wrapper(strTeam, x + teamWidth / 2, y + 1, colour, 0, 0x111);
