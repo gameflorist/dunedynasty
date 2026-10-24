@@ -559,13 +559,19 @@ The steps below will build the release-version. You can change value of the `DCM
 
     For 32bit (MSYS2 no longer provides 32-bit allegro, enet and libmad, so
     the second step builds the latest release of each from source and
-    installs it):
+    installs it; `gdb` is no longer available for 32-bit either):
+
+    > **Note:** MSYS2 is phasing out its 32-bit `MINGW32` environment and
+    > keeps removing packages from it. If a package the 32-bit build needs
+    > disappears, we may have to pin the 32-bit build to a specific MSYS2
+    > snapshot. The 32-bit build would then stop getting toolchain and
+    > library updates, and its compiler and dependency versions would drift
+    > away from the 64-bit build's.
 
     ```shell
     pacman -S git \
               mingw-w64-i686-cmake \
               mingw-w64-i686-gcc \
-              mingw-w64-i686-gdb \
               mingw-w64-i686-ninja \
               mingw-w64-i686-pkgconf \
               mingw-w64-i686-fluidsynth \
