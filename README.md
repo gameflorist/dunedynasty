@@ -557,16 +557,25 @@ The steps below will build the release-version. You can change value of the `DCM
               mingw-w64-ucrt-x86_64-libmad
     ```
 
-    For 32bit:
+    For 32bit (MSYS2 no longer provides 32-bit allegro, enet and libmad, so
+    the second step builds the latest release of each from source and
+    installs it):
 
     ```shell
-    pacman -S mingw-w64-i686-cmake \
+    pacman -S git \
+              mingw-w64-i686-cmake \
               mingw-w64-i686-gcc \
               mingw-w64-i686-gdb \
-              mingw-w64-i686-allegro \
-              mingw-w64-i686-enet \
+              mingw-w64-i686-ninja \
+              mingw-w64-i686-pkgconf \
               mingw-w64-i686-fluidsynth \
-              mingw-w64-i686-libmad
+              mingw-w64-i686-flac \
+              mingw-w64-i686-freetype \
+              mingw-w64-i686-libogg \
+              mingw-w64-i686-libvorbis \
+              mingw-w64-i686-libwebp \
+              mingw-w64-i686-opusfile
+    ./scripts/build-windows-x86-deps.sh deps-x86
     ```
 
     For ARM64 (`gdb` is not available for ARM64):
