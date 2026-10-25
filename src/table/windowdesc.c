@@ -82,7 +82,7 @@ WindowDesc g_gameControlWindowDesc = {
 	/* index       */ 16,
 	/* stringID    */ STR_GAME_CONTROLS,
 	/* addArrows   */ false,
-	/* widgetCount */ 6,
+	/* widgetCount */ 5,
 	{ /* widgets */
 		{ /* 0 */
 		/* stringID      */ -10, /* Music state. */
@@ -130,15 +130,6 @@ WindowDesc g_gameControlWindowDesc = {
 		/* shortcut2     */ 0,
 		},
 		{ /* 5 */
-		/* stringID      */ STR_PREVIOUS,
-		/* offsetX       */ 96,
-		/* offsetY       */ 110,
-		/* width         */ 136,
-		/* height        */ 15,
-		/* labelStringID */ STR_NULL,
-		/* shortcut2     */ SCANCODE_ESCAPE,
-		},
-		{ /* 6 */
 		/* stringID      */ STR_NULL,
 		/* offsetX       */ 0,
 		/* offsetY       */ 0,

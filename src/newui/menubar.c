@@ -367,10 +367,10 @@ MenuBar_DisplayWinLose(bool win)
 
 	if (!win && g_campaign_selected == CAMPAIGNID_MULTIPLAYER && Net_HasServerRole() && Multiplayer_IsAnyHouseLeftPlaying()) {
 		snprintf(
-			s_modal_message_buf,
-			sizeof(s_modal_message_buf), "%s %s",
-			String_Get_ByIndex(stringID),
-			"As host you will become observer until the other players finish the game."
+		 s_modal_message_buf,
+		 sizeof(s_modal_message_buf), "%s %s",
+		 String_Get_ByIndex(stringID),
+		 "As host you will become observer until the other players finish the game."
 		);
 	}
 	else {
@@ -537,21 +537,25 @@ MenuBar_DrawGameControlLabel(Widget *w)
 static bool
 MenuBar_ClickRadioButton(Widget *radio)
 {
-	const int visible_widgets[4][5 + 5*3 + 1] = {
-		{ 35, 90, 91, 92, 93,
+	const int visible_widgets[5][6 + 5*3 + 1] = {
+		{ 26, 90, 91, 92, 93, 94,
 		  20, 30, 100, 21, 31, 101, 22, 32, 102, 23, 33, 103, 24, 34, 104,
 		  -1
 		},
-		{ 35, 90, 91, 92, 93,
+		{ 26, 90, 91, 92, 93, 94,
 		  40, 50, 110, 41, 51, 111, 42, 52, 112, 43, 53, 113, 44, 54, 114,
 		  -1
 		},
-		{ 35, 90, 91, 92, 93,
+		{ 26, 90, 91, 92, 93, 94,
 		  60, 70, 120, 61, 71, 121, 62, 72, 122, 63, 73, 123, 64, 74, 124,
 		  -1
 		},
-		{ 35, 90, 91, 92, 93,
+		{ 26, 90, 91, 92, 93, 94,
 		  45, 55, 115, 46, 56, 116, 47, 57, 117,
+		  -1
+		},
+		{ 26, 90, 91, 92, 93, 94,
+		  25, 35,
 		  -1
 		},
 	};
@@ -696,13 +700,15 @@ MenuBar_CreateGameControls(void)
 	 * 22, 32       -- game speed label, button.
 	 * 23, 33       -- hint label, on/off.
 	 * 24, 34       -- subtitles label, on/off.
+	 * 25, 35       -- house colour label and cycle button.
+	 * 26           -- previous.
 	 *
 	 * 40, 50       -- control style label, mode.
 	 * 41, 51       -- mouse wheel label, mode.
 	 * 42, 52       -- scrolling edge label, on/off.
 	 * 43, 53, 113  -- auto scroll label, on/off, slider.
 	 * 44, 54, 114  -- pan sensitivity label, slider.
-	 * 
+	 *
 	 * 45, 55, 115  -- menubar scale label, slider.
 	 * 46, 56, 116  -- sidebar scale label, slider.
 	 * 47, 57, 117  -- viewport scale label, slider.
@@ -713,8 +719,7 @@ MenuBar_CreateGameControls(void)
 	 * 63, 73   -- infantry squad death label, off/on.
 	 * 64, 74   -- unit target lines label, off/on.
 	 *
-	 * 25 -- previous.
-	 * 90, 91, 92, 93   -- radio buttons.
+	 * 90, 91, 92, 93, 94   -- radio buttons.
 	 */
 
 	const WindowDesc *desc = &g_gameControlWindowDesc;
@@ -723,7 +728,7 @@ MenuBar_CreateGameControls(void)
 	GUI_Window_Create(&g_gameControlWindowDesc);
 
 	/* Radio buttons. */
-	for (int page = 0; page < 4; page++) {
+	for (int page = 0; page < 5; page++) {
 		w = GUI_Widget_Allocate(90 + page, 0, 8 + 10 * page, g_widgetProperties[g_gameControlWindowDesc.index].height - 17, SHAPE_RADIO_BUTTON_OFF, STR_NULL);
 		w->parentID = g_gameControlWindowDesc.index;
 		w->clickProc = MenuBar_ClickRadioButton;
@@ -742,6 +747,7 @@ MenuBar_CreateGameControls(void)
 		{ 22, 2, String_Get_ByIndex(STR_GAME_SPEED) },
 		{ 23, 3, String_Get_ByIndex(STR_HINTS_ARE) },
 		{ 24, 4, "Subtitles are" },
+		{ 25, 4, "House Color" },
 		{ 40, 0, "Control style" },
 		{ 41, 1, "Mouse wheel" },
 		{ 42, 2, "Scrolling edge" },
@@ -776,6 +782,7 @@ MenuBar_CreateGameControls(void)
 		uint16 index;
 		uint16 position, w;
 	} button[] = {
+		{ 35, 4, 104 }, /* House color palette. */
 		{ 50, 0, 104 }, /* Control style. */
 		{ 51, 1, 104 }, /* Mouse wheel. */
 		{ 52, 2, 104 }, /* Scrolling edge. */
@@ -802,6 +809,16 @@ MenuBar_CreateGameControls(void)
 
 		g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 	}
+
+	w = GUI_Widget_Allocate(26, SCANCODE_ESCAPE, 96, 110, -2, STR_PREVIOUS);
+	w->parentID = g_gameControlWindowDesc.index;
+	w->flags = g_table_windowWidgets[0].flags;
+	w->width = 136;
+	w->height = 15;
+	w->drawParameterNormal.proc = GUI_Widget_TextButton_Draw;
+	w->drawParameterSelected.proc = GUI_Widget_TextButton_Draw;
+	w->drawParameterDown.proc = GUI_Widget_TextButton_Draw;
+	g_widgetLinkedListTail = GUI_Widget_Link(g_widgetLinkedListTail, w);
 
 	/* Sliders. */
 	const struct {
@@ -989,13 +1006,26 @@ MenuBar_TickGameControls(void)
 		case 0x8000 | 33: g_gameConfig.hints ^= 0x1; break;
 		case 0x8000 | 34: g_enable_subtitles ^= 0x1; break;
 
-		case 0x8000 | 35: /* STR_PREVIOUS */
+		case 0x8000 | 35: /* House color palette */
+			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 35);
+			if (w->state.buttonState & 0x04) {
+				if (++g_gameConfig.houseColorPalette >= 6)
+					g_gameConfig.houseColorPalette = 0;
+			} else {
+				if (g_gameConfig.houseColorPalette == 0)
+					g_gameConfig.houseColorPalette = 5;
+				else
+					g_gameConfig.houseColorPalette--;
+			}
+			GUI_Palette_CreateRemap(g_playerHouseID);
+			VideoA5_RebuildHousePalette(g_playerHouseID);
+			GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, g_screenActiveID, g_remap);
+			break;
+
+		case 0x8000 | 26: /* STR_PREVIOUS */
 			g_gameOverlay = GAMEOVERLAY_OPTIONS;
 			MenuBar_UninitGameControls();
-
-			/* Reinitialise widget positions in case we change scroll along screen edge. */
 			GameLoop_TweakWidgetDimensions();
-
 			GUI_Window_Create(&g_optionsWindowDesc);
 			break;
 

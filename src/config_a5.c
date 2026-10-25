@@ -95,6 +95,7 @@ GameCfg g_gameConfig = {
 #else
 	true,   /* hardwareCursor */
 #endif
+	5,      /* houseColorPalette */
 	DISPLAY_MODE_INITIALIZER
 };
 

@@ -33,6 +33,7 @@ typedef struct GameCfg {
 	bool holdControlToZoom;
 	float panSensitivity;
 	bool hardwareCursor;
+	uint8 houseColorPalette;
 	struct DisplayMode displayMode;
 } GameCfg;
 

@@ -132,7 +132,6 @@ extern int16 g_starportAvailable[UNIT_MAX];
 
 static inline bool Unit_IsMoving(const Unit *u) { return u->currentDestination.x != 0 || u->currentDestination.y != 0; }
 
-static uint16 Unit_CountUnits(enum HouseType houseID, enum UnitType unit_type);
 extern Unit *Unit_FirstSelected(int *iter);
 extern Unit *Unit_NextSelected(int *iter);
 extern bool Unit_IsSelected(const Unit *unit);

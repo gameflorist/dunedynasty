@@ -318,7 +318,7 @@ VideoA5_InitWindowIcons(void)
 
 #ifdef MULTIPLE_WINDOW_ICONS
 	icon[1] = VideoA5_InitDisplayIcon(dune2_32x32_xpm, 32, 32, 23);
-	/* icon[1] = VideoA5_InitDisplayIcon(dune2_32x32a_xpm, 32, 32, 13); */
+	/* icon[1] = VideoA5_InitDisplayIcon(dune2_32x32a.xpm, 32, 32, 13); */
 
 	if (icon[1] != NULL) {
 		al_set_display_icons(display, 2, icon);
@@ -2400,7 +2400,7 @@ VideoA5_DrawShape(enum ShapeID shapeID, enum HouseType houseID, int x, int y, in
 		/* Highlight. */
 		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
 
-		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_ONE);
+		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
 		al_draw_bitmap(s_shape[shapeID][houseID], x, y, al_flags);
 		al_set_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA);
 	} else if ((flags & 0x300) == 0x200) {
@@ -3098,4 +3098,14 @@ int VideoA5_GetCurrentDisplayMode(void)
 		}
 	}
 	return 0;
+}
+
+void
+VideoA5_RebuildHousePalette(enum HouseType houseID)
+{
+	GUI_Palette_CreateRemap(houseID);
+
+	if (g_screenActiveID == SCREEN_0 || g_screenActiveID == SCREEN_1 || g_screenActiveID == SCREEN_2 || g_screenActiveID == SCREEN_3) {
+		GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, g_screenActiveID, g_remap);
+	}
 }

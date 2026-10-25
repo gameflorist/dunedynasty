@@ -45,6 +45,7 @@ extern void VideoA5_DrawChar(unsigned char c, const uint8 *pal, int x, int y);
 extern void VideoA5_DrawCharAlpha(unsigned char c, const uint8 *pal, int x, int y, unsigned char alpha);
 extern bool VideoA5_DrawWSA(void *wsa, int frame, int sx, int sy, int dx, int dy, int w, int h);
 extern void VideoA5_DrawWSAStatic(int frame, int x, int y);
+extern void VideoA5_RebuildHousePalette(enum HouseType houseID);
 
 extern int VideoA5_GetDesktopWidth(void);
 extern int VideoA5_GetDesktopHeight(void);

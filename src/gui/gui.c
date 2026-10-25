@@ -1652,6 +1652,24 @@ GUI_String_Get_ByIndex(int16 stringID)
 		case -13: onoff = g_gameConfig.hints; break;
 		case -14: onoff = g_enable_subtitles; break;
 
+		case -15: {
+			const char *paletteNames[] = {
+				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary"
+			};
+			if (g_gameConfig.houseColorPalette < 6)
+				return paletteNames[g_gameConfig.houseColorPalette];
+			return "Unknown";
+		}
+
+		case -35: {
+			const char *paletteNames[] = {
+				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary"
+			};
+			if (g_gameConfig.houseColorPalette < 6)
+				return paletteNames[g_gameConfig.houseColorPalette];
+			return "Unknown";
+		}
+
 		case -50: return (g_gameConfig.leftClickOrders) ? "Left-click" : "Right-click";
 		case -51: return (g_gameConfig.holdControlToZoom) ? "Scroll sidebar" : "Zoom viewport";
 		case -52: return (g_gameConfig.scrollAlongScreenEdge) ? "Screen" : "Viewport";
@@ -2030,6 +2048,9 @@ GUI_HallOfFame_Show(enum HouseType houseID, uint16 score)
 
 	w = GUI_HallOfFame_CreateButtons(data);
 
+	
+
+
 	/* Disable the clear button if no scores. */
 	if (data[0].score == 0) {
 		GUI_Widget_MakeInvisible(GUI_Widget_Get_ByIndex(w, 100));
@@ -2203,6 +2224,9 @@ void GUI_Palette_CreateRemap(uint8 houseID)
 	int16 loc4;
 	int16 loc6;
 	uint8 *remap;
+	const uint8 remapHouse = (houseID == g_playerHouseID && g_gameConfig.houseColorPalette < 6)
+		? g_gameConfig.houseColorPalette
+		: houseID;
 
 	remap = g_remap;
 	for (i = 0; i < 0x100; i++, remap++) {
@@ -2211,15 +2235,7 @@ void GUI_Palette_CreateRemap(uint8 houseID)
 		loc6 = i / 16;
 		loc4 = i % 16;
 		if (loc6 == 9 && loc4 <= 6) {
-			// Replica COLOUR PALETTE FOR HOUSE
-			if (houseID == 1){
-				*remap = (houseID << 4) + 0x90 + loc4;
-			} else {
-				*remap = (houseID << 4) + 0x90 + loc4;
-			}
-			
-
-
+			*remap = (remapHouse << 4) + 0x90 + loc4;
 		}
 	}
 }
