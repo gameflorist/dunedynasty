@@ -28,6 +28,9 @@ jobs:
         run: echo "ARTIFACT_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_ENV"
 
       - name: Delete Old Artifacts
+        # The token for pull requests from forks is read-only and cannot
+        # delete artifacts; their artifacts expire instead.
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         id: artifact
         with:
