@@ -535,6 +535,7 @@ void GameLoop_Main(bool new_game)
 	Sprites_LoadTiles();
 	Viewport_Init();
 
+	VideoA5_RebuildPlayerHouse();
 	GUI_Palette_CreateRemap(g_playerHouseID);
 	Audio_LoadSampleSet(g_table_houseInfo[g_playerHouseID].sampleSet);
 

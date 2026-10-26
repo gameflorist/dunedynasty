@@ -1815,44 +1815,44 @@ VideoA5_MaskDebrisTiles(ALLEGRO_BITMAP *membmp)
 	al_destroy_bitmap(mask);
 }
 
+static const struct {
+	int num_common;
+	enum IconMapEntries group;
+} icon_data[] = {
+	{ -1, ICM_ICONGROUP_ROCK_CRATERS },
+	{ -1, ICM_ICONGROUP_SAND_CRATERS },
+	{ -1, ICM_ICONGROUP_FLY_MACHINES_CRASH },
+	{ -1, ICM_ICONGROUP_SAND_TRACKS },
+	{ -1, ICM_ICONGROUP_WALLS },
+	{ -1, ICM_ICONGROUP_FOG_OF_WAR },
+	{ -1, ICM_ICONGROUP_CONCRETE_SLAB },
+	{ -1, ICM_ICONGROUP_LANDSCAPE },
+	{ -1, ICM_ICONGROUP_SPICE_BLOOM },
+	{ -1, ICM_ICONGROUP_BASE_DEFENSE_TURRET },
+	{ -1, ICM_ICONGROUP_BASE_ROCKET_TURRET },
+
+	{  0, ICM_ICONGROUP_SAND_DEAD_BODIES },
+	{ 18, ICM_ICONGROUP_HOUSE_PALACE },
+	{  8, ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY },
+	{ 12, ICM_ICONGROUP_HEAVY_VEHICLE_FACTORY },
+	{ 12, ICM_ICONGROUP_HI_TECH_FACTORY },
+	{  8, ICM_ICONGROUP_IX_RESEARCH },
+	{  8, ICM_ICONGROUP_WOR_TROOPER_FACILITY },
+	{  8, ICM_ICONGROUP_CONSTRUCTION_YARD },
+	{  8, ICM_ICONGROUP_INFANTRY_BARRACKS },
+	{  8, ICM_ICONGROUP_WINDTRAP_POWER },
+	{ 18, ICM_ICONGROUP_STARPORT_FACILITY },
+	{ 12, ICM_ICONGROUP_SPICE_REFINERY },
+	{ 12, ICM_ICONGROUP_VEHICLE_REPAIR_CENTRE },
+	{  8, ICM_ICONGROUP_SPICE_STORAGE_SILO },
+	{  8, ICM_ICONGROUP_RADAR_OUTPOST },
+
+	{  0, ICM_ICONGROUP_EOF }
+};
+
 static void
 VideoA5_InitIcons(unsigned char *buf)
 {
-	const struct {
-		int num_common;
-		enum IconMapEntries group;
-	} icon_data[] = {
-		{ -1, ICM_ICONGROUP_ROCK_CRATERS },
-		{ -1, ICM_ICONGROUP_SAND_CRATERS },
-		{ -1, ICM_ICONGROUP_FLY_MACHINES_CRASH },
-		{ -1, ICM_ICONGROUP_SAND_TRACKS },
-		{ -1, ICM_ICONGROUP_WALLS },
-		{ -1, ICM_ICONGROUP_FOG_OF_WAR },
-		{ -1, ICM_ICONGROUP_CONCRETE_SLAB },
-		{ -1, ICM_ICONGROUP_LANDSCAPE },
-		{ -1, ICM_ICONGROUP_SPICE_BLOOM },
-		{ -1, ICM_ICONGROUP_BASE_DEFENSE_TURRET },
-		{ -1, ICM_ICONGROUP_BASE_ROCKET_TURRET },
-
-		{  0, ICM_ICONGROUP_SAND_DEAD_BODIES },
-		{ 18, ICM_ICONGROUP_HOUSE_PALACE },
-		{  8, ICM_ICONGROUP_LIGHT_VEHICLE_FACTORY },
-		{ 12, ICM_ICONGROUP_HEAVY_VEHICLE_FACTORY },
-		{ 12, ICM_ICONGROUP_HI_TECH_FACTORY },
-		{  8, ICM_ICONGROUP_IX_RESEARCH },
-		{  8, ICM_ICONGROUP_WOR_TROOPER_FACILITY },
-		{  8, ICM_ICONGROUP_CONSTRUCTION_YARD },
-		{  8, ICM_ICONGROUP_INFANTRY_BARRACKS },
-		{  8, ICM_ICONGROUP_WINDTRAP_POWER },
-		{ 18, ICM_ICONGROUP_STARPORT_FACILITY },
-		{ 12, ICM_ICONGROUP_SPICE_REFINERY },
-		{ 12, ICM_ICONGROUP_VEHICLE_REPAIR_CENTRE },
-		{  8, ICM_ICONGROUP_SPICE_STORAGE_SILO },
-		{  8, ICM_ICONGROUP_RADAR_OUTPOST },
-
-		{  0, ICM_ICONGROUP_EOF }
-	};
-
 	IconConnectivity *connect = VideoA5_CreateIconConnectivities();
 	int x, y;
 
@@ -2144,39 +2144,39 @@ VideoA5_InitShapeCHOAMButtons(unsigned char *buf, int y1)
 	}
 }
 
+/* Check Sprites_Init. */
+static const struct {
+	int start, end;
+	bool remap;
+} shape_data[] = {
+	{   0,   6, false }, /* MOUSE.SHP */
+	{  12, 110, false }, /* SHAPES.SHP */
+	{   7,  11,  true }, /* BTTN */
+	/*355, 372,  true */ /* CHOAM */
+	{ 111, 140,  true }, /* UNITS2.SHP */
+	{ 141, 150, false }, /* UNITS2.SHP: sonic tank turret, launcher turret */
+	{ 151, 161, false }, /* UNITS1.SHP */
+	{ 162, 167,  true }, /* UNITS1.SHP: tanks */
+	{ 168, 207, false }, /* UNITS1.SHP */
+	{ 208, 212,  true }, /* UNITS1.SHP: deviator gas */
+	{ 213, 237, false }, /* UNITS1.SHP */
+	{ 238, 257,  true }, /* UNITS.SHP: quad .. mcv */
+	{ 258, 282, false }, /* UNITS.SHP: rockets */
+	{ 283, 300,  true }, /* UNITS.SHP: carryall .. frigate */
+	{ 301, 354,  true }, /* UNITS.SHP: saboteur .. landed ornithoper */
+	{ 373, 386, false }, /* MENTAT */
+	{ 525, 526, false }, /* SHAPE_CHECKBOX_OFF and SHAPE_CHECKBOX_ON */
+
+	{  -2,   0, false },
+	{ 477, 504,  true }, /* PIECES.SHP */
+	{ 505, 513, false }, /* ARROWS.SHP */
+
+	{  -1,   0, false }
+};
+
 static void
 VideoA5_InitShapes(unsigned char *buf)
 {
-	/* Check Sprites_Init. */
-	const struct {
-		int start, end;
-		bool remap;
-	} shape_data[] = {
-		{   0,   6, false }, /* MOUSE.SHP */
-		{  12, 110, false }, /* SHAPES.SHP */
-		{   7,  11,  true }, /* BTTN */
-		/*355, 372,  true */ /* CHOAM */
-		{ 111, 140,  true }, /* UNITS2.SHP */
-		{ 141, 150, false }, /* UNITS2.SHP: sonic tank turret, launcher turret */
-		{ 151, 161, false }, /* UNITS1.SHP */
-		{ 162, 167,  true }, /* UNITS1.SHP: tanks */
-		{ 168, 207, false }, /* UNITS1.SHP */
-		{ 208, 212,  true }, /* UNITS1.SHP: deviator gas */
-		{ 213, 237, false }, /* UNITS1.SHP */
-		{ 238, 257,  true }, /* UNITS.SHP: quad .. mcv */
-		{ 258, 282, false }, /* UNITS.SHP: rockets */
-		{ 283, 300,  true }, /* UNITS.SHP: carryall .. frigate */
-		{ 301, 354,  true }, /* UNITS.SHP: saboteur .. landed ornithoper */
-		{ 373, 386, false }, /* MENTAT */
-		{ 525, 526, false }, /* SHAPE_CHECKBOX_OFF and SHAPE_CHECKBOX_ON */
-
-		{  -2,   0, false },
-		{ 477, 504,  true }, /* PIECES.SHP */
-		{ 505, 513, false }, /* ARROWS.SHP */
-
-		{  -1,   0, false }
-	};
-
 	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
 	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
 
@@ -3100,9 +3100,127 @@ int VideoA5_GetCurrentDisplayMode(void)
 	return 0;
 }
 
+/* Redraw the pre-rendered shapes and icons of houseID in place.  The
+ * player's house uses the house colour option, other houses their own.
+ */
+static void
+VideoA5_RedrawHouseSprites(enum HouseType houseID, unsigned char *buf)
+{
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
+	const uint8 colourHouse = (houseID == g_playerHouseID && g_gameConfig.houseColorPalette < HOUSE_NEUTRAL)
+		? g_gameConfig.houseColorPalette
+		: houseID;
+
+	GUI_Palette_CreateRemapColour(colourHouse);
+
+	for (int group = 0; shape_data[group].start != -1; group++) {
+		if (shape_data[group].start == -2 || !shape_data[group].remap)
+			continue;
+
+		/* Deviator gas has its own remap, which does not depend on the colour option. */
+		if (shape_data[group].start == SHAPE_DEVIATOR_GAS_CLOUD)
+			continue;
+
+		for (int shapeID = shape_data[group].start; shapeID <= shape_data[group].end; shapeID++) {
+			ALLEGRO_BITMAP *bmp = s_shape[shapeID][houseID];
+			if (bmp == NULL)
+				continue;
+
+			memset(buf, 0, WINDOW_W * al_get_bitmap_height(bmp));
+
+			if (shapeID == SHAPE_RADIO_BUTTON_OFF || shapeID == SHAPE_RADIO_BUTTON_ON) {
+				const uint8 backup = g_remap[RADIO_BUTTON_BACKGROUND_COLOUR];
+				g_remap[RADIO_BUTTON_BACKGROUND_COLOUR] = 0;
+				GUI_DrawSprite_(SCREEN_0, g_sprites[shapeID], 0, 0, WINDOWID_RENDER_TEXTURE, 0x100, g_remap, 1);
+				g_remap[RADIO_BUTTON_BACKGROUND_COLOUR] = backup;
+			} else {
+				GUI_DrawSprite_(SCREEN_0, g_sprites[shapeID], 0, 0, WINDOWID_RENDER_TEXTURE, 0x100, g_remap, 1);
+			}
+
+			VideoA5_CopyBitmap(WINDOW_W, buf, bmp, TRANSPARENT_COLOUR_0);
+		}
+	}
+
+	for (int i = 0; icon_data[i].group < ICM_ICONGROUP_EOF; i++) {
+		const int num = VideoA5_NumIconsInGroup(icon_data[i].group);
+		const int num_common = (icon_data[i].num_common < 0) ? num : icon_data[i].num_common;
+
+		for (int idx = num_common; idx < num; idx++) {
+			const uint16 iconID = g_iconMap[g_iconMap[icon_data[i].group] + idx];
+			const IconCoord *coord = &s_icon[iconID][houseID];
+
+			if (coord->sx == 0 && coord->sy == 0)
+				continue;
+
+			memset(buf, 0, WINDOW_W * TILE_SIZE);
+			GFX_DrawSprite_(iconID, 0, 0, colourHouse);
+
+			ALLEGRO_BITMAP *tile = al_create_sub_bitmap(icon_texture, coord->sx, coord->sy, TILE_SIZE, TILE_SIZE);
+			if (tile == NULL)
+				continue;
+
+			VideoA5_CopyBitmap(WINDOW_W, buf, tile, TRANSPARENT_COLOUR_0);
+			al_destroy_bitmap(tile);
+		}
+	}
+}
+
+/* Redraw the sprites that depend on the player's house colour, after
+ * the house colour option or the player's house has changed.
+ */
+void
+VideoA5_RebuildPlayerHouse(void)
+{
+	static enum HouseType s_prevPlayerHouseID = HOUSE_INVALID;
+
+	if (shape_texture == NULL || icon_texture == NULL)
+		return;
+
+	const int WINDOW_W = g_widgetProperties[WINDOWID_RENDER_TEXTURE].width;
+	const int WINDOW_H = g_widgetProperties[WINDOWID_RENDER_TEXTURE].height;
+	const Screen oldScreenID = GFX_Screen_SetActive(SCREEN_0);
+	const enum WindowID old_widget = Widget_SetCurrentWidget(WINDOWID_RENDER_TEXTURE);
+	unsigned char *buf = GFX_Screen_GetActive();
+
+	ALLEGRO_STATE state;
+	al_store_state(&state, ALLEGRO_STATE_TARGET_BITMAP | ALLEGRO_STATE_BLENDER);
+
+	/* The sprites are drawn through SCREEN_0, so preserve its contents. */
+	unsigned char *backup = malloc(WINDOW_W * WINDOW_H);
+	if (backup != NULL) {
+		memcpy(backup, buf, WINDOW_W * WINDOW_H);
+
+		/* Return the previous player's house to its own colours. */
+		if (s_prevPlayerHouseID < HOUSE_NEUTRAL && s_prevPlayerHouseID != g_playerHouseID)
+			VideoA5_RedrawHouseSprites(s_prevPlayerHouseID, buf);
+
+		if (g_playerHouseID < HOUSE_NEUTRAL)
+			VideoA5_RedrawHouseSprites(g_playerHouseID, buf);
+
+		s_prevPlayerHouseID = g_playerHouseID;
+
+		/* Icon padding is copied from the edges of neighbouring icons. */
+		IconConnectivity *connect = VideoA5_CreateIconConnectivities();
+		VideoA5_DrawIconPadding(icon_texture, connect);
+		free(connect);
+
+		memcpy(buf, backup, WINDOW_W * WINDOW_H);
+		free(backup);
+	}
+
+	al_restore_state(&state);
+	Widget_SetCurrentWidget(old_widget);
+	GFX_Screen_SetActive(oldScreenID);
+
+	if (g_playerHouseID < HOUSE_NEUTRAL)
+		GUI_Palette_CreateRemap(g_playerHouseID);
+}
+
 void
 VideoA5_RebuildHousePalette(enum HouseType houseID)
 {
+	VideoA5_RebuildPlayerHouse();
+
 	GUI_Palette_CreateRemap(houseID);
 
 	if (g_screenActiveID == SCREEN_0 || g_screenActiveID == SCREEN_1 || g_screenActiveID == SCREEN_2 || g_screenActiveID == SCREEN_3) {

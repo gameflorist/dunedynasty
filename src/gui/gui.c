@@ -2220,13 +2220,24 @@ uint16 GUI_HallOfFame_DrawData(HallOfFameStruct *data, bool show)
  */
 void GUI_Palette_CreateRemap(uint8 houseID)
 {
+	const uint8 remapHouse = (houseID == g_playerHouseID && g_gameConfig.houseColorPalette < 6)
+		? g_gameConfig.houseColorPalette
+		: houseID;
+
+	GUI_Palette_CreateRemapColour(remapHouse);
+}
+
+/**
+ * Create the remap palette using the colours of the given house,
+ * ignoring the player's house colour option.
+ * @param remapHouse The house whose colours are used.
+ */
+void GUI_Palette_CreateRemapColour(uint8 remapHouse)
+{
 	int16 i;
 	int16 loc4;
 	int16 loc6;
 	uint8 *remap;
-	const uint8 remapHouse = (houseID == g_playerHouseID && g_gameConfig.houseColorPalette < 6)
-		? g_gameConfig.houseColorPalette
-		: houseID;
 
 	remap = g_remap;
 	for (i = 0; i < 0x100; i++, remap++) {
