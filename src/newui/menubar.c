@@ -1009,11 +1009,11 @@ MenuBar_TickGameControls(void)
 		case 0x8000 | 35: /* House color palette */
 			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 35);
 			if (w->state.buttonState & 0x04) {
-				if (++g_gameConfig.houseColorPalette >= 6)
+				if (++g_gameConfig.houseColorPalette >= 7)
 					g_gameConfig.houseColorPalette = 0;
 			} else {
 				if (g_gameConfig.houseColorPalette == 0)
-					g_gameConfig.houseColorPalette = 5;
+					g_gameConfig.houseColorPalette = 6;
 				else
 					g_gameConfig.houseColorPalette--;
 			}

@@ -2746,6 +2746,15 @@ VideoA5_DrawWSAStatic(int frame, int x, int y)
 
 /*--------------------------------------------------------------*/
 
+static int
+VideoA5_GetMinimapColour(enum HouseType houseID)
+{
+	if (houseID == g_playerHouseID && g_gameConfig.houseColorPalette < HOUSE_NEUTRAL)
+		return g_table_houseInfo[g_gameConfig.houseColorPalette].minimapColor;
+
+	return g_table_houseInfo[houseID].minimapColor;
+}
+
 void
 Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 {
@@ -2785,7 +2794,7 @@ Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 							num_sandworms++;
 						}
 					} else {
-						colour = g_table_houseInfo[Unit_GetHouseID(u)].minimapColor;
+						colour = VideoA5_GetMinimapColour(Unit_GetHouseID(u));
 					}
 				}
 
@@ -2793,7 +2802,7 @@ Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 					uint16 type = Map_GetLandscapeTypeVisible(packed);
 
 					if (g_table_landscapeInfo[type].radarColour == 0xFFFF) {
-						colour = g_table_houseInfo[t->houseID].minimapColor;
+						colour = VideoA5_GetMinimapColour(t->houseID);
 					} else if (enhancement_fog_of_war && g_mapVisible[packed].timeout[g_playerHouseID] <= g_timerGame) {
 						colour = -g_table_landscapeInfo[type].radarColour;
 					} else {
@@ -2801,7 +2810,7 @@ Video_DrawMinimap(int left, int top, int map_scale, enum MinimapDrawMode mode)
 					}
 				}
 			} else if (t->hasStructure && t->houseID == g_playerHouseID) {
-				colour = g_table_houseInfo[t->houseID].minimapColor;
+				colour = VideoA5_GetMinimapColour(t->houseID);
 			}
 
 			if (s_minimap_colour[i] != colour) {
@@ -3100,6 +3109,41 @@ int VideoA5_GetCurrentDisplayMode(void)
 	return 0;
 }
 
+/* Redraw the house coloured sidebar of houseID in the interface texture. */
+static void
+VideoA5_RedrawHouseSidebar(enum HouseType houseID, uint8 colourHouse)
+{
+	unsigned char *buf = GFX_Screen_Get_ByIndex(SCREEN_1);
+
+	VideoA5_SetBitmapFlags(ALLEGRO_MEMORY_BITMAP);
+	ALLEGRO_BITMAP *bmp = al_create_bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
+	VideoA5_SetBitmapFlags(ALLEGRO_VIDEO_BITMAP);
+
+	if (bmp == NULL)
+		return;
+
+	Sprites_LoadImage(SEARCHDIR_GLOBAL_DATA_DIR, "SCREEN.CPS", SCREEN_1, NULL);
+	GUI_Palette_CreateRemapColour(colourHouse);
+	GUI_Palette_RemapScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_1, g_remap);
+	VideoA5_CopyBitmap(SCREEN_WIDTH, buf, bmp, TRANSPARENT_COLOUR_0);
+
+	al_set_target_bitmap(interface_texture);
+	al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO);
+
+	const struct CPSSpecialCoord *coord;
+
+	coord = &cps_special_coord[CPS_SIDEBAR_TOP];
+	VideoA5_DrawBitmapRegion_Padded(bmp, coord, coord->tx + 17 * houseID, coord->ty + 4 * houseID, true, false);
+
+	coord = &cps_special_coord[CPS_SIDEBAR_MIDDLE];
+	VideoA5_DrawBitmapRegion_Padded(bmp, coord, coord->tx + 17 * houseID, coord->ty + 4 * houseID, true, true);
+
+	coord = &cps_special_coord[CPS_SIDEBAR_BOTTOM];
+	VideoA5_DrawBitmapRegion_Padded(bmp, coord, coord->tx + 17 * houseID, coord->ty + 23 * houseID, true, true);
+
+	al_destroy_bitmap(bmp);
+}
+
 /* Redraw the pre-rendered shapes and icons of houseID in place.  The
  * player's house uses the house colour option, other houses their own.
  */
@@ -3163,6 +3207,8 @@ VideoA5_RedrawHouseSprites(enum HouseType houseID, unsigned char *buf)
 			al_destroy_bitmap(tile);
 		}
 	}
+
+	VideoA5_RedrawHouseSidebar(houseID, colourHouse);
 }
 
 /* Redraw the sprites that depend on the player's house colour, after
@@ -3187,8 +3233,10 @@ VideoA5_RebuildPlayerHouse(void)
 
 	/* The sprites are drawn through SCREEN_0, so preserve its contents. */
 	unsigned char *backup = malloc(WINDOW_W * WINDOW_H);
-	if (backup != NULL) {
+	unsigned char *backup1 = malloc(SCREEN_WIDTH * SCREEN_HEIGHT);
+	if (backup != NULL && backup1 != NULL) {
 		memcpy(backup, buf, WINDOW_W * WINDOW_H);
+		memcpy(backup1, GFX_Screen_Get_ByIndex(SCREEN_1), SCREEN_WIDTH * SCREEN_HEIGHT);
 
 		/* Return the previous player's house to its own colours. */
 		if (s_prevPlayerHouseID < HOUSE_NEUTRAL && s_prevPlayerHouseID != g_playerHouseID)
@@ -3205,8 +3253,11 @@ VideoA5_RebuildPlayerHouse(void)
 		free(connect);
 
 		memcpy(buf, backup, WINDOW_W * WINDOW_H);
-		free(backup);
+		memcpy(GFX_Screen_Get_ByIndex(SCREEN_1), backup1, SCREEN_WIDTH * SCREEN_HEIGHT);
 	}
+
+	free(backup);
+	free(backup1);
 
 	al_restore_state(&state);
 	Widget_SetCurrentWidget(old_widget);

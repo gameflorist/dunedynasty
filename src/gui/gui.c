@@ -1654,18 +1654,18 @@ GUI_String_Get_ByIndex(int16 stringID)
 
 		case -15: {
 			const char *paletteNames[] = {
-				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary"
+				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary", "Default"
 			};
-			if (g_gameConfig.houseColorPalette < 6)
+			if (g_gameConfig.houseColorPalette < 7)
 				return paletteNames[g_gameConfig.houseColorPalette];
 			return "Unknown";
 		}
 
 		case -35: {
 			const char *paletteNames[] = {
-				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary"
+				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary", "Default"
 			};
-			if (g_gameConfig.houseColorPalette < 6)
+			if (g_gameConfig.houseColorPalette < 7)
 				return paletteNames[g_gameConfig.houseColorPalette];
 			return "Unknown";
 		}

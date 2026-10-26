@@ -95,7 +95,7 @@ GameCfg g_gameConfig = {
 #else
 	true,   /* hardwareCursor */
 #endif
-	5,      /* houseColorPalette */
+	6,      /* houseColorPalette, 6 = the player's own house. */
 	DISPLAY_MODE_INITIALIZER
 };
 
