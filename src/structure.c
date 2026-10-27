@@ -216,7 +216,7 @@ void GameLoop_Structure(void)
 
 					if (!House_IsHuman(s->o.houseID)) {
 						if (AI_IsBrutalAI(s->o.houseID)) {
-							/* For brutal AI, double production speed (except for ornithopters). */
+							/* For brutal AI, build 10% faster than the player (except for ornithopters). */
 							if (!(s->o.type == STRUCTURE_HIGH_TECH && s->objectType == UNIT_ORNITHOPTER))
 								buildSpeed *= 1.1;
 						} else if (buildSpeed > g_campaignID * 20 + 95) {
@@ -229,7 +229,8 @@ void GameLoop_Structure(void)
 
 					// Replica: COSTS 
 					if (AI_IsBrutalAI(s->o.houseID)) {
-						buildCost = buildSpeed * buildCost / (1.25*256);
+						/* The AI pays about 91% of the normal cost (was 80%) to offset its faster building. */
+						buildCost = buildSpeed * buildCost / (1.1*256);
 					} else if (buildSpeed < 256) {
 						buildCost = buildSpeed * buildCost / 256;
 					}
@@ -1745,6 +1746,8 @@ bool Structure_Server_BuildObject(Structure *s, uint16 objectType)
 
 		Unit *u = Unit_Create(UNIT_INDEX_INVALID, (uint8)objectType, s->o.houseID, tile, 0);
 		if (u != NULL) {
+			UnitAI_ClaimGuardPost(u);
+
 			o = &u->o;
 			oi = &g_table_unitInfo[objectType].o;
 		} else {
@@ -1951,9 +1954,34 @@ Structure_GetAvailable_Starport(enum UnitType type)
 	return (g_starportAvailable[type] == 0) ? 0 : 1;
 }
 
+/* Does the house of this construction yard have a palace other than the
+ * one the yard is building itself?
+ */
+static bool
+Structure_HasOtherPalace(const Structure *yard)
+{
+	PoolFindStruct find;
+
+	for (const Structure *p = Structure_FindFirst(&find, yard->o.houseID, STRUCTURE_PALACE);
+			p != NULL;
+			p = Structure_FindNext(&find)) {
+		if (yard->objectType == STRUCTURE_PALACE && yard->o.linkedID != 0xFF
+				&& (p->o.index & 0xFF) == yard->o.linkedID)
+			continue;
+
+		return true;
+	}
+
+	return false;
+}
+
 int
 Structure_GetAvailable_ConstructionYard(const Structure *s, enum StructureType type)
 {
+	/* Replica: a human house can only have one palace, placed or being built. */
+	if (type == STRUCTURE_PALACE && House_IsHuman(s->o.houseID) && Structure_HasOtherPalace(s))
+		return 0;
+
 	const StructureInfo *si = &g_table_structureInfo[type];
 	const uint16 availableCampaign = si->o.availableCampaign[s->o.houseID];
 	const uint32 structuresBuilt = House_Get_ByIndex(s->o.houseID)->structuresBuilt;

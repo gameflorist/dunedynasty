@@ -21,7 +21,8 @@ bool enhancement_ai_respects_structure_placement = true;
  * Various AI changes to make the game tougher.  Includes double
  * production rate, half cost, flanking attacks, etc.
  */
-bool enhancement_brutal_ai = false;
+/* Replica hard mode: always on, not configurable. */
+bool enhancement_brutal_ai = true;
 
 /**
  * In Dune II, construction automatically goes on hold when you run

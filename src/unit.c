@@ -18,6 +18,8 @@
 #include "config.h"
 #include "enhancement.h"
 #include "explosion.h"
+#include "newui/viewport.h"
+#include "video/video_a5.h"
 #include "gui/gui.h"
 #include "gui/widget.h"
 #include "house.h"
@@ -360,6 +362,502 @@ static uint16 Unit_CountUnits(enum HouseType houseID, enum UnitType unit_type) {
 	return count;
 }
 
+/* Sandworms that can't reach their target give up on it.  If a worm has a
+ * target it is not next to, and hasn't moved for a while, the target is
+ * ignored by that worm for a minute and it picks another one.
+ */
+#define SANDWORM_STUCK_SECONDS 12
+#define SANDWORM_IGNORE_SECONDS 60
+
+typedef struct SandwormProgress {
+	uint16 packed;          /* Tile the worm was last seen on. */
+	int64_t since;          /* When it arrived there. */
+	uint16 ignoredTarget;   /* Encoded target given up on. */
+	int64_t ignoreUntil;
+} SandwormProgress;
+
+static SandwormProgress s_wormProgress[UNIT_INDEX_MAX_RAISED];
+
+void
+Unit_Sandworm_ResetProgress(void)
+{
+	memset(s_wormProgress, 0, sizeof(s_wormProgress));
+}
+
+static bool
+Unit_Sandworm_IsIgnored(const Unit *worm, const Unit *target)
+{
+	const SandwormProgress *p = &s_wormProgress[worm->o.index];
+
+	return (p->ignoredTarget != 0)
+		&& (g_timerGame < p->ignoreUntil)
+		&& (p->ignoredTarget == Tools_Index_Encode(target->o.index, IT_UNIT));
+}
+
+static void
+Unit_Sandworm_CheckStuck(Unit *worm)
+{
+	SandwormProgress *p = &s_wormProgress[worm->o.index];
+	const uint16 packed = Tile_PackTile(worm->o.position);
+
+	if (packed != p->packed || p->since > g_timerGame) {
+		p->packed = packed;
+		p->since = g_timerGame;
+		return;
+	}
+
+	if (worm->targetAttack == 0)
+		return;
+
+	/* Next to the target: it is eating, not stuck. */
+	if (Tile_GetDistanceRoundedUp(worm->o.position, Tools_Index_GetTile(worm->targetAttack)) <= 2) {
+		p->since = g_timerGame;
+		return;
+	}
+
+	if (g_timerGame - p->since < Tools_AdjustToGameSpeed(60 * SANDWORM_STUCK_SECONDS, 1, 0xFFFF, true))
+		return;
+
+	p->ignoredTarget = worm->targetAttack;
+	p->ignoreUntil = g_timerGame + Tools_AdjustToGameSpeed(60 * SANDWORM_IGNORE_SECONDS, 1, 0xFFFF, true);
+	p->since = g_timerGame;
+
+	/* Drop the target and restart the script, which finds a new one. */
+	worm->targetAttack = 0;
+	worm->targetMove = 0;
+	worm->currentDestination.x = 0;
+	worm->currentDestination.y = 0;
+	Unit_Server_SetAction(worm, worm->actionID);
+}
+
+/* Debug test (--test-panel): select an enemy unit with the Locate line on,
+ * then one of the player's units, taking a screenshot of each.
+ */
+void
+Unit_DebugTestPanel(void)
+{
+	static int state = 0;
+	static int64_t stateTick;
+	static uint16 enemyIndex = UNIT_INDEX_INVALID;
+
+	if (state == 0) {
+		stateTick = g_timerGame;
+		state = 1;
+		return;
+	}
+
+	if (state == 1 && g_timerGame - stateTick > 180) {
+		PoolFindStruct find;
+		Unit *enemy = NULL;
+		const Structure *yard = Structure_FindFirst(&find, g_playerHouseID, STRUCTURE_CONSTRUCTION_YARD);
+
+		for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+				u != NULL;
+				u = Unit_FindNext(&find)) {
+			if (u->o.houseID == g_playerHouseID || u->o.type > UNIT_MCV || u->o.flags.s.isNotOnMap)
+				continue;
+
+			/* A tank, so the panel has stats worth showing. */
+			if (u->o.type != UNIT_TANK)
+				continue;
+
+			enemy = u;
+			break;
+		}
+
+		if (enemy == NULL || yard == NULL) {
+			FILE *log = fopen("panel_test.log", "w");
+
+			if (log != NULL) {
+				int total = 0;
+				for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID); u != NULL; u = Unit_FindNext(&find)) {
+					fprintf(log, "unit %u type %u house %u onMap %d\n", u->o.index, u->o.type, u->o.houseID, !u->o.flags.s.isNotOnMap);
+					total++;
+				}
+				fprintf(log, "%d units; enemy %s, yard %s\n", total, enemy ? "found" : "MISSING", yard ? "found" : "MISSING");
+				fclose(log);
+			}
+
+			exit(1);
+		}
+
+		/* Look at the player's base, so the line has some length. */
+		Map_CentreViewport(TILE_SIZE * Tile_GetPackedX(Tile_PackTile(yard->o.position)),
+				TILE_SIZE * Tile_GetPackedY(Tile_PackTile(yard->o.position)));
+
+		Unit_UnselectAll();
+		Unit_Select(enemy);
+		GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
+
+		/* Give it something to aim at, so there is a line to show. */
+		enemy->targetAttack = Tools_Index_Encode(yard->o.index, IT_STRUCTURE);
+
+		enemyIndex = enemy->o.index;
+		stateTick = g_timerGame;
+		state = 2;
+		return;
+	}
+
+	if (state == 2 && g_timerGame - stateTick > 120) {
+		VideoA5_CaptureScreenshot();
+		stateTick = g_timerGame;
+		state = 21;
+		return;
+	}
+
+	/* The same enemy unit again, now with the Locate line switched on. */
+	if (state == 21 && g_timerGame - stateTick > 120) {
+		Viewport_LocateToggle(Unit_Get_ByIndex(enemyIndex));
+		stateTick = g_timerGame;
+		state = 22;
+		return;
+	}
+
+	if (state == 22 && g_timerGame - stateTick > 120) {
+		VideoA5_CaptureScreenshot();
+		stateTick = g_timerGame;
+		state = 3;
+		return;
+	}
+
+	if (state == 3 && g_timerGame - stateTick > 120) {
+		PoolFindStruct find;
+		Unit *own = Unit_FindFirst(&find, g_playerHouseID, UNIT_TANK);
+
+		if (own == NULL) own = Unit_FindFirst(&find, g_playerHouseID, UNIT_INVALID);
+		if (own == NULL) exit(1);
+
+		Unit_UnselectAll();
+		Unit_Select(own);
+		GUI_ChangeSelectionType(SELECTIONTYPE_UNIT);
+
+		stateTick = g_timerGame;
+		state = 4;
+		return;
+	}
+
+	if (state == 4 && g_timerGame - stateTick > 120) {
+		VideoA5_CaptureScreenshot();
+		stateTick = g_timerGame;
+		state = 5;
+		return;
+	}
+
+	if (state == 5 && g_timerGame - stateTick > 120)
+		exit(0);
+
+	(void)enemyIndex;
+}
+
+/* Debug test (--test-worm): put worms with each of the three behaviours next
+ * to a stationary and to a moving tank, all on sand, and log what the worms
+ * do about it to worm_test.log.  --test-worm-harvesters instead gives the
+ * player five harvesters, and logs what the game's own worms do.
+ */
+#define WORM_TEST_SCENARIOS 6
+
+void
+Unit_DebugTestWorm(void)
+{
+	static int state = 0;
+	static int64_t startTick;
+	static FILE *log;
+	static uint16 tankIndex[WORM_TEST_SCENARIOS];
+	static uint16 wormIndex[WORM_TEST_SCENARIOS];
+	static uint16 eastTile[WORM_TEST_SCENARIOS];  /* Where a moving tank turns round. */
+	static uint16 westTile[WORM_TEST_SCENARIOS];
+	static int64_t eatenAt[WORM_TEST_SCENARIOS];
+	static int64_t nextReport;
+	const enum UnitActionType actions[3] = { ACTION_HUNT, ACTION_AMBUSH, ACTION_AREA_GUARD };
+	const enum UnitType testType[WORM_TEST_SCENARIOS] = {
+		UNIT_TRIKE, UNIT_QUAD, UNIT_RAIDER_TRIKE, UNIT_TRIKE, UNIT_QUAD, UNIT_RAIDER_TRIKE
+	};
+	const char *actionNames[3] = { "hunt", "ambush", "area guard" };
+
+	if (state == 0) {
+		log = fopen("worm_test.log", "w");
+		startTick = g_timerGame;
+		state = 1;
+		return;
+	}
+
+	if (state == 1) {
+		const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+		int found = 0;
+		int lastY = -100;
+
+		if (g_timerGame - startTick < 180)
+			return;
+
+		/* --test-worm-respawn: kill every worm, then watch them come back. */
+		if (g_debugTestWorm == 3) {
+			PoolFindStruct find;
+			int removed = 0;
+
+			for (Unit *u = Unit_FindFirst(&find, HOUSE_FREMEN, UNIT_SANDWORM); u != NULL; u = Unit_FindNext(&find)) {
+				Unit_Remove(u);
+				removed++;
+			}
+
+			fprintf(log, "removed %d worms; respawn wait is 10 seconds for this test\n", removed);
+			fflush(log);
+			startTick = g_timerGame;
+			nextReport = g_timerGame;
+			state = 4;
+			return;
+		}
+
+		/* Pairs of sand tiles 8 tiles apart, at least four rows from each other. */
+		uint16 tankTile[WORM_TEST_SCENARIOS], wormTile[WORM_TEST_SCENARIOS];
+
+		for (int y = mapInfo->minY + 2; y < mapInfo->minY + mapInfo->sizeY - 2 && found < WORM_TEST_SCENARIOS; y++) {
+			if (y - lastY < 3) continue;
+
+			for (int x = mapInfo->minX + 2; x < mapInfo->minX + mapInfo->sizeX - 14; x++) {
+				bool ok = true;
+
+				/* Sand and free all the way from the tank to the worm and a few tiles beyond. */
+				for (int k = 0; k <= 9 && ok; k++) {
+					const uint16 packed = Tile_PackXY(x + k, y);
+
+					if (g_map[packed].hasStructure || Unit_Get_ByPackedTile(packed) != NULL
+							|| Map_GetLandscapeType(packed) != LST_NORMAL_SAND)
+						ok = false;
+				}
+
+				if (!ok) continue;
+
+				tankTile[found] = Tile_PackXY(x + 1, y);
+				wormTile[found] = Tile_PackXY(x + 8, y);
+				westTile[found] = Tile_PackXY(x, y);
+				eastTile[found] = Tile_PackXY(x + 5, y);
+				found++;
+				lastY = y;
+				break;
+			}
+		}
+
+		fprintf(log, "found %d of %d places on sand\n", found, WORM_TEST_SCENARIOS);
+
+		if (g_debugTestWorm == 2) {
+			for (int i = 0; i < 5 && found > 0; i++) {
+				const uint16 packed = Tile_PackXY(Tile_GetPackedX(westTile[0]) + i, Tile_GetPackedY(westTile[0]));
+				Unit *h = Unit_Create(UNIT_INDEX_INVALID, UNIT_HARVESTER, g_playerHouseID, Tile_Center(Tile_UnpackTile(packed)), 0);
+
+				fprintf(log, "harvester %d at tile %d,%d: %s\n", i, Tile_GetPackedX(packed), Tile_GetPackedY(packed),
+						(h != NULL) ? "created" : "FAILED");
+			}
+
+			fflush(log);
+			startTick = g_timerGame;
+			nextReport = g_timerGame;
+			state = 3;
+			return;
+		}
+
+		for (int i = 0; i < found; i++) {
+			const bool moving = (i >= 3);
+			Unit *tank = Unit_Create(UNIT_INDEX_INVALID, testType[i], g_playerHouseID, Tile_Center(Tile_UnpackTile(tankTile[i])), 0);
+			Unit *worm = Unit_Create(UNIT_INDEX_INVALID, UNIT_SANDWORM, HOUSE_FREMEN, Tile_Center(Tile_UnpackTile(wormTile[i])), 0);
+
+			tankIndex[i] = (tank != NULL) ? tank->o.index : UNIT_INDEX_INVALID;
+			wormIndex[i] = (worm != NULL) ? worm->o.index : UNIT_INDEX_INVALID;
+
+			if (worm != NULL) {
+				worm->amount = 3;
+				worm->o.seenByHouses = 0xFF;
+				Unit_Server_SetAction(worm, actions[0]); /* All hunt, as the game's own worms do. */
+			}
+
+			if (tank != NULL && moving) {
+				Unit_Server_SetAction(tank, ACTION_MOVE);
+				tank->targetMove = Tools_Index_Encode(eastTile[i], IT_TILE);
+			}
+
+			fprintf(log, "scenario %d: %s worm %s, %s %s %s\n", i, actionNames[0], worm ? "created" : "FAILED",
+					moving ? "moving" : "stationary", g_table_unitInfo[testType[i]].o.name, tank ? "created" : "FAILED");
+		}
+
+		fflush(log);
+		startTick = g_timerGame;
+		nextReport = g_timerGame;
+		state = 2;
+		return;
+	}
+
+	if (state == 2 && g_timerGame >= nextReport) {
+		const int t = (int)((g_timerGame - startTick) / 60);
+
+		nextReport = g_timerGame + 60;
+		fprintf(log, "t=%d", t);
+
+		for (int i = 0; i < WORM_TEST_SCENARIOS; i++) {
+			const Unit *tank = (tankIndex[i] != UNIT_INDEX_INVALID) ? Unit_Get_ByIndex(tankIndex[i]) : NULL;
+			const Unit *worm = (wormIndex[i] != UNIT_INDEX_INVALID) ? Unit_Get_ByIndex(wormIndex[i]) : NULL;
+			const bool tankAlive = (tank != NULL && tank->o.flags.s.used && tank->o.type == testType[i]);
+			const bool wormAlive = (worm != NULL && worm->o.flags.s.used && worm->o.type == UNIT_SANDWORM);
+
+			if (!tankAlive && eatenAt[i] == 0) eatenAt[i] = t + 1;
+
+			fprintf(log, " | #%d %s", i, tankAlive ? "tank" : "EATEN");
+
+			if (wormAlive) {
+				fprintf(log, " worm %+d,%+d tgt %u fd %u d %d",
+						tankAlive ? ((int)worm->o.position.x - (int)tank->o.position.x) / 16 : 0,
+						tankAlive ? ((int)worm->o.position.y - (int)tank->o.position.y) / 16 : 0,
+						worm->targetAttack, worm->fireDelay, (int)worm->o.script.delay);
+			} else {
+				fprintf(log, " worm gone");
+			}
+
+			/* Keep the moving tanks moving back and forth. */
+			if (tankAlive && i >= 3 && !Unit_IsMoving(tank) && tank->targetMove == 0) {
+				Unit *mt = Unit_Get_ByIndex(tankIndex[i]);
+				const uint16 here = Tile_PackTile(mt->o.position);
+
+				Unit_Server_SetAction(mt, ACTION_MOVE);
+				mt->targetMove = Tools_Index_Encode((Tile_GetPackedX(here) >= Tile_GetPackedX(eastTile[i])) ? westTile[i] : eastTile[i], IT_TILE);
+			}
+		}
+
+		fprintf(log, "\n");
+		fflush(log);
+
+		if (t >= 80) {
+			fprintf(log, "finished; eaten at:");
+			for (int i = 0; i < WORM_TEST_SCENARIOS; i++) {
+				if (eatenAt[i] != 0) fprintf(log, " #%d t=%d", i, (int)eatenAt[i]); else fprintf(log, " #%d never", i);
+			}
+			fprintf(log, "\n");
+			fclose(log);
+			exit(0);
+		}
+	}
+
+	/* --test-worm-respawn: how many worms there are, second by second. */
+	if (state == 4) {
+		if (g_timerGame >= nextReport) {
+			PoolFindStruct find;
+
+			nextReport = g_timerGame + 60;
+			fprintf(log, "t=%d worms:", (int)((g_timerGame - startTick) / 60));
+
+			for (const Unit *u = Unit_FindFirst(&find, HOUSE_FREMEN, UNIT_SANDWORM); u != NULL; u = Unit_FindNext(&find)) {
+				fprintf(log, " [%u %s action %d amount %d]", u->o.index, u->o.flags.s.isNotOnMap ? "OFF-MAP" : "on map",
+						u->actionID, u->amount);
+			}
+
+			fprintf(log, "\n");
+			fflush(log);
+		}
+
+		if (g_timerGame - startTick > 60 * 40) {
+			fclose(log);
+			exit(0);
+		}
+
+		return;
+	}
+
+	/* --test-worm-harvesters: five harvesters, and the game's own worm logic. */
+	if (state == 3) {
+		if (g_timerGame >= nextReport) {
+			PoolFindStruct find;
+			int harvesters = 0;
+
+			nextReport = g_timerGame + 60;
+
+			for (const Unit *u = Unit_FindFirst(&find, g_playerHouseID, UNIT_HARVESTER); u != NULL; u = Unit_FindNext(&find))
+				harvesters++;
+
+			fprintf(log, "t=%d harvesters %d, worms:", (int)((g_timerGame - startTick) / 60), harvesters);
+
+			for (const Unit *u = Unit_FindFirst(&find, HOUSE_FREMEN, UNIT_SANDWORM); u != NULL; u = Unit_FindNext(&find)) {
+				fprintf(log, " [%u %s at %d,%d action %d target %u fireDelay %u delay %d amount %d speed %u]",
+						u->o.index, u->o.flags.s.isNotOnMap ? "OFF-MAP" : "on map",
+						Tile_GetPackedX(Tile_PackTile(u->o.position)), Tile_GetPackedY(Tile_PackTile(u->o.position)),
+						u->actionID, u->targetAttack, u->fireDelay, (int)u->o.script.delay, u->amount, u->speed);
+			}
+
+			fprintf(log, "\n");
+			fflush(log);
+		}
+
+		if (g_timerGame - startTick > 60 * 90) {
+			fclose(log);
+			exit(0);
+		}
+	}
+}
+
+/* Replica: when the sandworms are all gone, a couple come back after two to
+ * three minutes, hunting.  With many harvesters (the worm threat is high) the
+ * worms are spawned elsewhere, up to one per harvester, so this only applies
+ * when it is not.  It only brings worms back to a map that had some, and not
+ * in the first three missions.
+ */
+static int s_wormRespawnTestSeconds = 0;  /* --test-worm-respawn: a short wait instead. */
+
+void
+Unit_Debug_SetWormRespawnSeconds(int seconds)
+{
+	s_wormRespawnTestSeconds = seconds;
+}
+
+static void
+Unit_SandwormRespawn(void)
+{
+	static int64_t scenarioStart = -1;
+	static bool sawWorms = false;
+	static int64_t respawnAt = 0;
+
+	if (scenarioStart != g_tickScenarioStart) {
+		scenarioStart = g_tickScenarioStart;
+		sawWorms = false;
+		respawnAt = 0;
+	}
+
+	if (Unit_CountUnits(HOUSE_FREMEN, UNIT_SANDWORM) > 0) {
+		sawWorms = true;
+		respawnAt = 0;
+		return;
+	}
+
+	/* Not in the first three missions of a campaign (mission N is campaign
+	 * level N - 1), which are meant to be easy.
+	 */
+	if (g_campaignID < 3)
+		return;
+
+	if (!sawWorms || Unit_SandwormsHuntHarvesters(NULL))
+		return;
+
+	if (respawnAt == 0) {
+		const int seconds = (s_wormRespawnTestSeconds > 0) ? s_wormRespawnTestSeconds : 120 + (Tools_Random_256() % 61);
+
+		respawnAt = g_timerGame + 60 * seconds;
+		return;
+	}
+
+	if (g_timerGame < respawnAt)
+		return;
+
+	/* One or two. */
+	const int count = 1 + (Tools_Random_256() & 1);
+
+	for (int i = 0; i < count; i++) {
+		Unit *unit = Unit_CreateWrapper(HOUSE_FREMEN, UNIT_SANDWORM, 0);
+
+		if (unit != NULL && unit->o.type == UNIT_SANDWORM) {
+			unit->amount = 3;
+			Unit_Server_SetAction(unit, ACTION_HUNT);
+			unit->o.seenByHouses = 0xFF;
+		}
+	}
+
+	respawnAt = 0;
+}
+
 /**
  * Loop over all units, performing various of tasks.
  */
@@ -374,6 +872,8 @@ void GameLoop_Unit(void)
 	bool tickScript    = false;
 	bool tickUnknown5  = false;
 	bool tickDeviation = false;
+
+	Unit_SandwormRespawn();
 
 	// replica Sandworm create Count the player harvestors on the map and equal them
 	const int harvestor_count = Unit_CountUnits(g_playerHouseID, UNIT_HARVESTER);
@@ -464,6 +964,9 @@ void GameLoop_Unit(void)
 
 		if (tickMovement) {
 			Unit_MovementTick(u);
+
+			if (u->o.type == UNIT_SANDWORM && u->o.flags.s.allocated)
+				Unit_Sandworm_CheckStuck(u);
 
 			if (u->fireDelay != 0) {
 				if (ui->movementType == MOVEMENT_WINGER && !ui->flags.isNormalUnit) {
@@ -761,7 +1264,7 @@ Unit *Unit_Create(uint16 index, uint8 typeID, uint8 houseID, tile32 position, in
 	Unit_UpdateMap(1, u);
 
 	Unit_Server_SetAction(u,
-			House_IsHuman(houseID) ? ui->o.actionsPlayer[3] : ui->actionAI);
+			House_IsHuman(houseID) ? ui->o.actionsPlayer[3] : UnitAI_OpeningAction(u, ui->actionAI));
 
 	return u;
 }
@@ -780,11 +1283,13 @@ Unit_Server_SetAction(Unit *u, enum UnitActionType action)
 	if (u == NULL) return;
 	if (u->actionID == ACTION_DESTRUCT || u->actionID == ACTION_DIE || action == ACTION_INVALID) return;
 	
-	/* ENHANCEMENT -- When sandworms are insatiable, change ambush to
-	 * area guard to prevent eating too many units in quick succession.
+	/* Replica: sandworms are always on hunt, whatever the scenario or the
+	 * insatiable sandworms option says (it used to turn ambush into area
+	 * guard).
 	 */
-	if (enhancement_insatiable_sandworms && u->o.type == UNIT_SANDWORM && action == ACTION_AMBUSH)
-		action = ACTION_AREA_GUARD;
+	if (u->o.type == UNIT_SANDWORM
+			&& (action == ACTION_AMBUSH || action == ACTION_AREA_GUARD || action == ACTION_GUARD))
+		action = ACTION_HUNT;
 
 	ai = &g_table_actionInfo[action];
 
@@ -1195,7 +1700,7 @@ bool Unit_SetPosition(Unit *u, tile32 position)
 	if (!House_IsHuman(u->o.houseID)
 			|| u->o.type == UNIT_HARVESTER
 			|| u->o.type == UNIT_SABOTEUR) {
-		Unit_Server_SetAction(u, ui->actionAI);
+		Unit_Server_SetAction(u, UnitAI_OpeningAction(u, ui->actionAI));
 	} else {
 		Unit_Server_SetAction(u, ui->o.actionsPlayer[3]);
 	}
@@ -1340,6 +1845,32 @@ static uint16 Unit_Sandworm_GetTargetPriority(Unit *unit, Unit *target)
 }
 
 /**
+ * Sandworms go for the player's harvesters when there are too many of them.
+ *
+ * @param target If not NULL, receives the harvester to target.
+ * @return True if the player has more than 3 harvesters.
+ */
+bool Unit_SandwormsHuntHarvesters(Unit **target)
+{
+	PoolFindStruct find;
+	uint16 count = 0;
+	Unit *lastUnit = NULL;
+
+	for (Unit *u = Unit_FindFirst(&find, g_playerHouseID, UNIT_HARVESTER);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		lastUnit = u;
+		count++;
+	}
+
+	if (lastUnit == NULL || Unit_GetHouseID(lastUnit) != g_playerHouseID || count <= 3)
+		return false;
+
+	if (target != NULL) *target = lastUnit;
+	return true;
+}
+
+/**
  * Find the best target, based on the score. Only considers units on sand.
  *
  * @param unit The unit to search a target for.
@@ -1353,22 +1884,39 @@ Unit *Unit_Sandworm_FindBestTarget(Unit *unit)
 
 	if (unit == NULL) return NULL;
 
-	// Replica Harvestor count for sandworm
-	PoolFindStruct findMe;
-	uint16 count = 0;
-	Unit *lastUnit = NULL;
-	for (Unit *u = Unit_FindFirst(&findMe, g_playerHouseID, UNIT_HARVESTER);u != NULL;u = Unit_FindNext(&find)) {
-		lastUnit = u;
-		count++;
-	}
-	// Replica If the target is the player house and its a harvestor and the harvestor count is more than 3 target them as highest priority
-	if (lastUnit != NULL && Unit_GetHouseID(lastUnit) == g_playerHouseID && count > 3) {
-		return lastUnit;
+	// Replica If the player has too many harvesters, target them as highest priority
+	// (skipping any this worm has given up on because it can't reach them)
+	// Only harvesters that are on the map and on sand can be reached (a harvester in
+	// a refinery or a carryall has no position), and the nearest is the best.
+	if (Unit_SandwormsHuntHarvesters(NULL)) {
+		Unit *bestHarvester = NULL;
+		uint16 bestHarvesterPriority = 0;
+
+		for (Unit *u = Unit_FindFirst(&find, g_playerHouseID, UNIT_HARVESTER);
+				u != NULL;
+				u = Unit_FindNext(&find)) {
+			if (u->o.flags.s.isNotOnMap || Unit_Sandworm_IsIgnored(unit, u)) continue;
+
+			const uint16 priority = Unit_Sandworm_GetTargetPriority(unit, u);
+
+			if (priority >= bestHarvesterPriority && priority != 0) {
+				bestHarvester = u;
+				bestHarvesterPriority = priority;
+			}
+		}
+
+		if (bestHarvester != NULL) return bestHarvester;
 	}
 
 	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
 			u != NULL;
 			u = Unit_FindNext(&find)) {
+
+		// Replica units that are not on the map (in a refinery, a carryall, ...) can't be eaten
+		if (u->o.flags.s.isNotOnMap) continue;
+
+		// Replica skip targets this worm can't reach
+		if (Unit_Sandworm_IsIgnored(unit, u)) continue;
 
 		// Replica dont attack AI things that are area guarding
 		if (u->actionID == ACTION_AREA_GUARD && Unit_GetHouseID(u) != g_playerHouseID) continue;
@@ -1814,13 +2362,16 @@ bool Unit_Move(Unit *unit, uint16 distance)
 							static const int16 offsetX[17] = { 0, 0, 200, 256, 200, 0, -200, -256, -200, 0, 400, 512, 400, 0, -400, -512, -400 };
 							static const int16 offsetY[17] = { 0, -256, -200, 0, 200, 256, 200, 0, -200, -512, -400, 0, 400, 512, 400, 0, -400 };
 							tile32 p = newPosition;
-							p.y += offsetY[i];
-							p.x += offsetX[i];
+							p.y += offsetY[i] * 2; /* Death Hand: twice the radius. */
+							p.x += offsetX[i] * 2;
 
 							if (Tile_IsValid(p)) {
-								Map_MakeExplosion(ui->explosionType, p, 200, 0);
+								Map_MakeExplosion(ui->explosionType, p, 50, 0); /* Death Hand: 50 damage per blast (was 200). */
 							}
 						}
+
+						/* The blast leaves a toxic cloud behind. */
+						Explosion_ToxicCloud_Add(newPosition, 64 + 16, unit->o.houseID);
 					} else if (ui->explosionType != 0xFFFF) {
 						if (ui->flags.impactOnSand && g_map[Tile_PackTile(unit->o.position)].index == 0 && Map_GetLandscapeType(Tile_PackTile(unit->o.position)) == LST_NORMAL_SAND) {
 							Map_MakeExplosion(EXPLOSION_SAND_BURST, newPosition, unit->o.hitpoints, unit->originEncoded);
@@ -1957,6 +2508,9 @@ bool Unit_Damage(Unit *unit, uint16 damage, uint16 range)
 
 	if (unit->o.hitpoints == 0) {
 		const uint16 packed = Tile_PackTile(unit->o.position);
+
+		/* AI houses replace their fallen guards. */
+		UnitAI_RegisterGuardLoss(unit);
 
 		Unit_RemovePlayer(unit);
 
@@ -3096,7 +3650,10 @@ Unit_Server_LaunchHouseMissile(House *h, uint16 packed)
 	tile32 tile;
 
 	tile = Tile_UnpackTile(packed);
-	tile = Tile_MoveByRandom(tile, 160, false);
+	/* Death Hand: more accurate.  The scatter is up to 6.9 tiles and 4.2 on
+	 * average, down from 10 and 5.5 (spread 160).
+	 */
+	tile = Tile_MoveByRandom(tile, 110, false);
 	packed = Tile_PackTile(tile);
 	uint16 encoded = Tools_Index_Encode(packed, IT_TILE);
 

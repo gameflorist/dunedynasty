@@ -356,6 +356,15 @@ Viewport_ScrollMap(enum ShapeID *cursorID)
 	if (viewport_click_action == VIEWPORT_PAN_MINIMAP)
 		return;
 
+	if (g_gameConfig.wasdScroll && !g_isEnteringChat) {
+		const int kx = (Input_Test(SCANCODE_D) ? 1 : 0) - (Input_Test(SCANCODE_A) ? 1 : 0);
+		const int ky = (Input_Test(SCANCODE_S) ? 1 : 0) - (Input_Test(SCANCODE_W) ? 1 : 0);
+		const int kspeed = max(1, g_gameConfig.scrollSpeed) * (Input_Test(SCANCODE_LSHIFT) ? 2 : 1);
+
+		if (kx != 0 || ky != 0)
+			Map_MoveDirection(kspeed * kx, kspeed * ky);
+	}
+
 	wi = &g_table_gameWidgetInfo[GAME_WIDGET_SCROLL_UP];
 	if (Mouse_InRegion(wi->offsetX, wi->offsetY, wi->offsetX + wi->width - 1, wi->offsetY + wi->height - 1)) dy--;
 
@@ -1231,9 +1240,67 @@ Viewport_DrawRallyPoint(void)
 	}
 }
 
+/* The "Locate" button of the unit panel: while it is on, a line from the
+ * middle of the viewport points to the selected enemy unit.
+ */
+static uint16 s_locateUnitIndex = UNIT_INDEX_INVALID;
+
+bool
+Viewport_LocateActive(const Unit *u)
+{
+	return (u != NULL) && (u->o.index == s_locateUnitIndex);
+}
+
+void
+Viewport_LocateToggle(const Unit *u)
+{
+	if (u == NULL || Viewport_LocateActive(u)) {
+		s_locateUnitIndex = UNIT_INDEX_INVALID;
+	} else {
+		s_locateUnitIndex = u->o.index;
+	}
+}
+
+static void
+Viewport_DrawLocateLine(void)
+{
+	if (s_locateUnitIndex == UNIT_INDEX_INVALID)
+		return;
+
+	const Unit *u = Unit_Get_ByIndex(s_locateUnitIndex);
+
+	if (u == NULL || !u->o.flags.s.used || u->o.flags.s.isNotOnMap || !Unit_IsSelected(u)) {
+		s_locateUnitIndex = UNIT_INDEX_INVALID;
+		return;
+	}
+
+	/* Where it is aiming (red), or else where it is moving to (yellow), like the
+	 * target lines of the player's own units.
+	 */
+	uint16 target = 0;
+	uint8 color = 231;
+
+	if (u->targetAttack != 0) {
+		target = u->targetAttack;
+	} else if (u->targetMove != 0) {
+		target = u->targetMove;
+		color = 14;
+	}
+
+	if (target == 0 || !Tools_Index_IsValid(target)) {
+		/* Nothing to show, so at least mark the unit itself. */
+		Viewport_DrawTargetIndicator(u->o.position, 14);
+		return;
+	}
+
+	Viewport_DrawTargetMarker(u->o.position, Tools_Index_GetTile(target), 1.0f, color);
+}
+
 void
 Viewport_DrawMovementIndicator(void)
 {
+	Viewport_DrawLocateLine();
+
 	if (Unit_AnySelected()) {
 		int iter;
 		for (Unit *u = Unit_FirstSelected(&iter); u != NULL; u = Unit_NextSelected(&iter)) {

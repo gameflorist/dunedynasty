@@ -38,6 +38,14 @@ extern enum GameMode g_gameMode;
 extern enum GameOverlay g_gameOverlay;
 extern uint16 g_campaignID;
 extern uint16 g_scenarioID;
+extern int    g_startHouse;   /* From --house; HOUSE_INVALID if unset. */
+extern int    g_startMission; /* From --mission; 0 if unset. */
+extern int    g_startRegion;  /* From --region; 0..2. */
+extern int    g_debugTestDeathHand; /* From --test-deathhand (1) or --test-deathhand-cy (2). */
+extern bool   g_debugTestSpice;     /* From --test-spice. */
+extern int    g_debugTestWorm;      /* From --test-worm (1), --test-worm-harvesters (2) or --test-worm-respawn (3). */
+extern bool   g_debugTestPanel;     /* From --test-panel. */
+extern bool   g_debugTestColourMenu; /* From --test-colour-menu. */
 extern uint16 g_activeAction;
 extern bool   g_debugGame;
 extern bool   g_debugScenario;

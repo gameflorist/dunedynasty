@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <allegro5/allegro.h>
 #include <math.h>
+#include <stdlib.h>
 #include "os/common.h"
 #include "os/math.h"
 
@@ -78,6 +79,19 @@ GameLoop_Client_Unit(void)
 static void
 GameLoop_Server_Logic(void)
 {
+	if (g_debugTestDeathHand)
+		Explosion_DebugTestDeathHand();
+
+	if (g_debugTestWorm)
+		Unit_DebugTestWorm();
+
+	if (g_debugTestPanel)
+		Unit_DebugTestPanel();
+
+	/* --test-spice: play for a few minutes, logging the harvesters' spice choices. */
+	if (g_debugTestSpice && g_timerGame - g_tickScenarioStart > 60 * 240)
+		exit(0);
+
 	UnitAI_SquadLoop();
 	GameLoop_Team();
 	GameLoop_Unit();
@@ -343,6 +357,9 @@ GameLoop_Client_ProcessInput(void)
 {
 	const bool init_transform = GFX_ScreenShake_Tick();
 
+	if (g_debugTestColourMenu)
+		MenuBar_DebugTestColourMenu();
+
 	if (g_gameOverlay == GAMEOVERLAY_NONE) {
 		uint16 key = 0;
 
@@ -355,6 +372,10 @@ GameLoop_Client_ProcessInput(void)
 			if (g_isEnteringChat)
 				key = GameLoop_Client_ProcessChatInput(key);
 		}
+
+		/* The Locate button of the unit panel, for enemy units. */
+		if (ActionPanel_HandleLocateKey(key))
+			key = 0;
 
 		key = GUI_Widget_HandleEventsKey(g_widgetLinkedListHead, key);
 		GameLoop_Client_ProcessGameInput(init_transform, key);

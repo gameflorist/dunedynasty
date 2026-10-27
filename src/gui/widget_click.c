@@ -15,6 +15,7 @@
 #include "../map.h"
 #include "../net/client.h"
 #include "../newui/actionpanel.h"
+#include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../pool/pool_house.h"
 #include "../pool/pool_structure.h"

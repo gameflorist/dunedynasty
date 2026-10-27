@@ -5,6 +5,9 @@
 
 #include "input.h"
 
+#include "../config.h"
+#include "../opendune.h"
+
 static enum Scancode s_history[256];
 static int s_historyHead = 0;
 static int s_historyTail = 0;
@@ -56,6 +59,12 @@ Input_EventHandler(enum Scancode key)
 	} else {
 		s_activeInputMap[idx] |= bit;
 	}
+
+	/* WASD pans the map during play, so these keys are not also shortcuts. */
+	if (!(key & SCANCODE_RELEASE) && g_gameConfig.wasdScroll
+			&& g_inGame && g_gameOverlay == GAMEOVERLAY_NONE && !g_isEnteringChat
+			&& (key == SCANCODE_W || key == SCANCODE_A || key == SCANCODE_S || key == SCANCODE_D))
+		return;
 
 	Input_AddHistory(key);
 }

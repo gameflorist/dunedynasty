@@ -38,6 +38,7 @@
 #include "../newui/menu.h"
 #include "../newui/menubar.h"
 #include "../newui/savemenu.h"
+#include "../newui/viewport.h"
 #include "../opendune.h"
 #include "../pool/pool.h"
 #include "../pool/pool_house.h"
@@ -1648,24 +1649,23 @@ GUI_String_Get_ByIndex(int16 stringID)
 				break;
 			}
 
-		case -12: stringID = speedStrings[g_gameConfig.gameSpeed]; break;
-		case -13: onoff = g_gameConfig.hints; break;
+		case -12: stringID = speedStrings[g_gameConfig.gameSpeed]; break;		case -13: onoff = g_gameConfig.hints; break;
 		case -14: onoff = g_enable_subtitles; break;
 
 		case -15: {
 			const char *paletteNames[] = {
-				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary", "Default"
+				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary", "Default", "Custom"
 			};
-			if (g_gameConfig.houseColorPalette < 7)
+			if (g_gameConfig.houseColorPalette < 8)
 				return paletteNames[g_gameConfig.houseColorPalette];
 			return "Unknown";
 		}
 
 		case -35: {
 			const char *paletteNames[] = {
-				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary", "Default"
+				"Harkonnen", "Atreides", "Ordos", "Fremen", "Sardaukar", "Mercenary", "Default", "Custom"
 			};
-			if (g_gameConfig.houseColorPalette < 7)
+			if (g_gameConfig.houseColorPalette < 8)
 				return paletteNames[g_gameConfig.houseColorPalette];
 			return "Unknown";
 		}

@@ -41,6 +41,14 @@ struct FadeInAux;
 extern void Video_InitMentatSprites(bool use_benepal);
 
 extern void Video_SetPalette(const uint8 *palette, int from, int length);
+
+/* Custom player colour: houseColorPalette == HOUSE_COLOUR_CUSTOM recolours
+ * the player's own house ramp using the given 0xRRGGBB colour.
+ */
+#define HOUSE_COLOUR_CUSTOM 7
+extern void Video_SetCustomHouseColour(int rgb);
+extern int Video_GetCustomHouseColour(void);
+extern void Video_RefreshHouseColours(void);
 extern void Video_SetClippingArea(int x, int y, int w, int h);
 extern void Video_SetCursor(int cursor);
 extern void Video_ShowCursor(void);

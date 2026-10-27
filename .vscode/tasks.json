@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "UCRT64 Build",
+      "type": "shell",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "D:\\development\\msys64\\msys2_shell.cmd",
+        "-ucrt64",
+        "-defterm",
+        "-no-start",
+        "-here",
+        "-c",
+        "cd /d/development/dunedynasty/ && bash /d/development/dunedynasty/scripts/build-debug-windows-x64.sh"
+      ],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1924,7 +1924,7 @@ const UnitInfo g_table_unitInfo_original[UNIT_MAX] = {
 		/* dimension            */ 24,
 		/* movementType         */ MOVEMENT_SLITHER,
 		/* animationSpeed       */ 0,
-		/* movingSpeedFactor    */ 6,
+		/* movingSpeedFactor    */ 7, /* Replica: a little faster (was 6). */
 		/* turningSpeed         */ 2,
 		/* groundSpriteID       */ 161,
 		/* turretSpriteID       */ -1,

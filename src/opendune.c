@@ -82,6 +82,14 @@ enum GameMode g_gameMode = GM_NORMAL;
 enum GameOverlay g_gameOverlay;
 uint16 g_campaignID = 0;
 uint16 g_scenarioID = 1;
+int    g_startHouse = HOUSE_INVALID;
+int    g_startMission = 0;
+int    g_startRegion = 0;
+int    g_debugTestDeathHand = 0;
+bool   g_debugTestSpice = false;
+int    g_debugTestWorm = 0;
+bool   g_debugTestPanel = false;
+bool   g_debugTestColourMenu = false;
 uint16 g_activeAction = 0xFFFF;      /*!< Action the controlled unit will do. */
 
 bool   g_debugGame = true;        /*!< When true, you can control the AI. */
@@ -630,8 +638,51 @@ static bool Unknown_25C4_000E(void)
 
 int main(int argc, char **argv)
 {
-	VARIABLE_NOT_USED(argc);
-	VARIABLE_NOT_USED(argv);
+	/* Debug options: --house <atreides|ordos|harkonnen> --mission <1-9>
+	 * [--region <0-2>] jump straight into a Dune II mission. */
+	const char *cli_colour = NULL;
+
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "--test-deathhand") == 0)
+			g_debugTestDeathHand = 1;
+
+		if (strcmp(argv[i], "--test-deathhand-cy") == 0)
+			g_debugTestDeathHand = 2;
+
+		if (strcmp(argv[i], "--test-spice") == 0)
+			g_debugTestSpice = true;
+
+		if (strcmp(argv[i], "--test-worm") == 0)
+			g_debugTestWorm = 1;
+
+		if (strcmp(argv[i], "--test-worm-harvesters") == 0)
+			g_debugTestWorm = 2;
+
+		if (strcmp(argv[i], "--test-worm-respawn") == 0) {
+			g_debugTestWorm = 3;
+			Unit_Debug_SetWormRespawnSeconds(10);
+		}
+
+		if (strcmp(argv[i], "--test-panel") == 0)
+			g_debugTestPanel = true;
+
+		if (strcmp(argv[i], "--test-colour-menu") == 0)
+			g_debugTestColourMenu = true;	}
+
+	for (int i = 1; i + 1 < argc; i++) {
+		if (strcmp(argv[i], "--colour") == 0 || strcmp(argv[i], "--color") == 0) {
+			cli_colour = argv[++i];
+		} else if (strcmp(argv[i], "--house") == 0) {
+			const char *name = argv[++i];
+			if (strcasecmp(name, "harkonnen") == 0) g_startHouse = HOUSE_HARKONNEN;
+			else if (strcasecmp(name, "atreides") == 0) g_startHouse = HOUSE_ATREIDES;
+			else if (strcasecmp(name, "ordos") == 0) g_startHouse = HOUSE_ORDOS;
+		} else if (strcmp(argv[i], "--mission") == 0) {
+			g_startMission = atoi(argv[++i]);
+		} else if (strcmp(argv[i], "--region") == 0) {
+			g_startRegion = atoi(argv[++i]);
+		}
+	}
 
 	CrashLog_Init();
 	FileHash_Init();
@@ -646,6 +697,22 @@ int main(int argc, char **argv)
 
 	if (A5_Init() == false)
 		exit(1);
+
+	/* The game always starts with the default house colours.  The saved
+	 * [game] house_colour only seeds the custom colour of the picker, and
+	 * only an explicit --colour switches to it.
+	 */
+	{
+		const int saved = Config_ParseColour(g_house_colour);
+		if (saved >= 0)
+			Video_SetCustomHouseColour(saved);
+
+		const int rgb = Config_ParseColour(cli_colour);
+		if (rgb >= 0) {
+			Video_SetCustomHouseColour(rgb);
+			g_gameConfig.houseColorPalette = HOUSE_COLOUR_CUSTOM;
+		}
+	}
 
 	Input_Init();
 

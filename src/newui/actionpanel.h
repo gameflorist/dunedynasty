@@ -4,6 +4,7 @@
 #include "../gui/widget.h"
 #include "../shape.h"
 #include "../structure.h"
+#include "../unit.h"
 
 enum {
 	/* 18 units or 20 structures. */
@@ -33,6 +34,9 @@ extern void ActionPanel_HighlightIcon(enum HouseType houseID, int x1, int y1, bo
 extern void ActionPanel_DrawPortrait(uint16 action_type, enum ShapeID shapeID);
 extern void ActionPanel_DrawHealthBar(int curr, int max);
 extern void ActionPanel_DrawStructureDescription(Structure *s);
+extern void ActionPanel_DrawUnitStats(const Unit *u);
+extern Widget *ActionPanel_GetLocateButton(void);
+extern bool ActionPanel_HandleLocateKey(uint16 key);
 extern void ActionPanel_DrawActionDescription(uint16 stringID, int x, int y, uint8 fg);
 extern void ActionPanel_DrawMissileCountdown(uint8 fg, int count);
 extern void ActionPanel_DrawFactory(const Widget *widget, Structure *s);

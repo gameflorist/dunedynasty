@@ -14,6 +14,10 @@ language=ENG
 game_speed=2
 hints=1
 campaign=
+# house_colour is the custom colour of your own house, as hex RRGGBB (e.g. FF8000).
+# The game always starts with the default colours; pick "Custom" in the House
+# Color option (or the colour picker) to use it.
+house_colour=
 
 [graphics]
 # driver is one of: opengl, direct3d
@@ -39,6 +43,9 @@ hardware_cursor=1
 auto_scroll=1
 scroll_speed=4
 scroll_along_screen_edge=1
+# wasd_scroll pans the map with W/A/S/D (Shift for faster). While enabled, these
+# keys are no longer unit/structure shortcuts during play.
+wasd_scroll=1
 left_click_orders=0
 hold_control_to_zoom=0
 pan_sensitivity=1.00
@@ -101,7 +108,7 @@ dune_part_two_ost=1
 default=dune2_adlib
 
 [enhancement]
-brutal_ai=0
+# Replica hard mode (formerly brutal_ai) is always on and has no option.
 fog_of_war=0
 health_bars=selected
 hi_res_overlays=1

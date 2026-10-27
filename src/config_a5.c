@@ -4,6 +4,8 @@
 #include <allegro5/allegro.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "buildcfg.h"
 #include "os/math.h"
 #include "os/strings.h"
@@ -73,6 +75,29 @@ typedef struct GameOption {
 
 static ALLEGRO_CONFIG *s_configFile;
 
+char g_house_colour[1024];
+
+/* Parses "RRGGBB" or "#RRGGBB", returns 0xRRGGBB or -1 if invalid. */
+int
+Config_ParseColour(const char *str)
+{
+	if (str == NULL)
+		return -1;
+
+	if (str[0] == '#')
+		str++;
+
+	if (strlen(str) != 6)
+		return -1;
+
+	for (int i = 0; i < 6; i++) {
+		if (!isxdigit((unsigned char)str[i]))
+			return -1;
+	}
+
+	return (int)strtol(str, NULL, 16);
+}
+
 GameCfg g_gameConfig = {
 #ifdef __PANDORA__
 	WM_FULLSCREEN,
@@ -96,6 +121,7 @@ GameCfg g_gameConfig = {
 	true,   /* hardwareCursor */
 #endif
 	6,      /* houseColorPalette, 6 = the player's own house. */
+	true,   /* wasdScroll */
 	DISPLAY_MODE_INITIALIZER
 };
 
@@ -106,6 +132,7 @@ static const GameOption s_game_option[] = {
 	{ "game",   "game_speed",       CONFIG_INT_0_4, .d._int = &g_gameConfig.gameSpeed },
 	{ "game",   "hints",            CONFIG_BOOL,    .d._bool = &g_gameConfig.hints },
 	{ "game",   "campaign",         CONFIG_CAMPAIGN,.d._int = &g_campaign_selected },
+	{ "game",   "house_colour",     CONFIG_STRING,  .d._string = g_house_colour },
 
 	{ "graphics",   "driver",           CONFIG_GRAPHICS_DRIVER, .d._graphics_driver = &g_graphics_driver },
 	{ "graphics",   "window_mode",      CONFIG_WINDOW_MODE,     .d._window_mode = &g_gameConfig.windowMode },
@@ -120,6 +147,7 @@ static const GameOption s_game_option[] = {
 	{ "controls",   "auto_scroll",              CONFIG_BOOL,    .d._bool = &g_gameConfig.autoScroll },
 	{ "controls",   "scroll_speed",             CONFIG_INT_1_16,.d._int = &g_gameConfig.scrollSpeed },
 	{ "controls",   "scroll_along_screen_edge", CONFIG_BOOL,    .d._bool = &g_gameConfig.scrollAlongScreenEdge },
+	{ "controls",   "wasd_scroll",              CONFIG_BOOL,    .d._bool = &g_gameConfig.wasdScroll },
 	{ "controls",   "left_click_orders",        CONFIG_BOOL,    .d._bool = &g_gameConfig.leftClickOrders },
 	{ "controls",   "hold_control_to_zoom",     CONFIG_BOOL,    .d._bool = &g_gameConfig.holdControlToZoom },
 	{ "controls",   "pan_sensitivity",          CONFIG_FLOAT_05_2,  .d._float = &g_gameConfig.panSensitivity },
@@ -160,7 +188,6 @@ static const GameOption s_game_option[] = {
 	{ "music",  "dune_part_two_ost", 	CONFIG_BOOL,    .d._bool = &g_table_music_set[MUSICSET_DUNE_PART_TWO_OST].enable },
 	{ "music",  "default",          	CONFIG_MUSIC_PACK,  .d._music_set = &default_music_pack },
 
-	{ "enhancement",    "brutal_ai",                CONFIG_BOOL,.d._bool = &enhancement_brutal_ai },
 	{ "enhancement",    "fog_of_war",               CONFIG_BOOL,.d._bool = &enhancement_fog_of_war },
 	{ "enhancement",    "health_bars",              CONFIG_HEALTH_BAR,  .d._health_bar = &enhancement_draw_health_bars },
 	{ "enhancement",    "hi_res_overlays",          CONFIG_BOOL,.d._bool = &enhancement_high_res_overlays },

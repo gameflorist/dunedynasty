@@ -290,7 +290,10 @@ uint16 Script_Unit_Pickup(ScriptEngine *script)
 				uint16 packedSpicePos;
 
 				// First search for spice in the immediate area (including tiles invisible to house).
-				packedSpicePos = Map_SearchSpice(Tile_PackTile(u->o.position), 20, HOUSE_INVALID);
+				// Replica: go for the spice nearest to a refinery, away from the player's base.
+				packedSpicePos = Map_SearchSpiceForAIHarvester(u2);
+				if (packedSpicePos == 0)
+					packedSpicePos = Map_SearchSpice(Tile_PackTile(u->o.position), 20, HOUSE_INVALID);
 
 				// If enhancement_extend_spice_sensor is enabled, search for spice in a larger area
 				// but only in tiles visible to the house.
@@ -572,11 +575,18 @@ uint16 Script_Unit_ExplosionMultiple(ScriptEngine *script)
 
 	u = g_scriptCurrentUnit;
 
-	Map_MakeExplosion(EXPLOSION_DEATH_HAND, u->o.position, Tools_RandomLCG_Range(25, 50), 0);
+	/* Death Hand: a quarter of the damage over twice the radius, and the
+	 * blast leaves a toxic cloud behind.
+	 */
+	const uint16 spread = STACK_PEEK(1) * 2;
+
+	Map_MakeExplosion(EXPLOSION_DEATH_HAND, u->o.position, Tools_RandomLCG_Range(25, 50) / 4, 0);
 
 	for (i = 0; i < 7; i++) {
-		Map_MakeExplosion(EXPLOSION_DEATH_HAND, Tile_MoveByRandom(u->o.position, STACK_PEEK(1), false), Tools_RandomLCG_Range(75, 150), 0);
+		Map_MakeExplosion(EXPLOSION_DEATH_HAND, Tile_MoveByRandom(u->o.position, spread, false), Tools_RandomLCG_Range(75, 150) / 4, 0);
 	}
+
+	Explosion_ToxicCloud_Add(u->o.position, spread + 16, u->o.houseID);
 
 	return 0;
 }
@@ -621,7 +631,13 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 
 	distance = Object_GetDistanceToEncoded(&u->o, target);
 
-	if ((int16)(ui->fireDistance << 8) < (int16)distance) return 0;
+	/* Replica: a worm eats whatever is more or less under it.  Its fire
+	 * distance is 0, so it would have to be exactly on top of the unit, which
+	 * a moving unit never allows a slow worm to be.
+	 */
+	const uint16 maxDistance = (u->o.type == UNIT_SANDWORM) ? 384 : (ui->fireDistance << 8);
+
+	if ((int16)maxDistance < (int16)distance) return 0;
 
 	if (u->o.type != UNIT_SANDWORM && (Tools_Index_GetType(target) != IT_UNIT || g_table_unitInfo[Tools_Index_GetUnit(target)->o.type].movementType != MOVEMENT_WINGER)) {
 		int16 diff = 0;
@@ -671,8 +687,9 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 			//if (!enhancement_insatiable_sandworms)
 			u->amount--;
 
-			// Replica SANDWORM EAT DELAY
-			script->delay = 2000;
+			// Replica SANDWORM EAT DELAY: 10 seconds between meals (script ticks
+			// run 12 times a second; it used to be 2000, almost three minutes).
+			script->delay = 120;
 
 			if ((int8)u->amount < 1) {
 				Unit_Server_SetAction(u, ACTION_DIE);
@@ -726,6 +743,9 @@ uint16 Script_Unit_Fire(ScriptEngine *script)
 	}
 
 	u->fireDelay += Tools_Random_256() & 1;
+
+	/* No cooldown between a worm's meals. */
+	if (u->o.type == UNIT_SANDWORM) u->fireDelay = 0;
 
 	Unit_UpdateMap(2, u);
 
@@ -995,7 +1015,7 @@ uint16 Script_Unit_GetInfo(ScriptEngine *script)
 	switch (STACK_PEEK(1)) {
 		case 0x00: return u->o.hitpoints * 256 / ui->o.hitpoints;
 		case 0x01: return Tools_Index_IsValid(u->targetMove) ? u->targetMove : 0;
-		case 0x02: return ui->fireDistance << 8;
+		case 0x02: return (u->o.type == UNIT_SANDWORM) ? 384 : (ui->fireDistance << 8); /* Worms eat what is under them, see Script_Unit_Fire. */
 		case 0x03: return u->o.index;
 		case 0x04: return u->orientation[0].current;
 		case 0x05: return u->targetAttack;

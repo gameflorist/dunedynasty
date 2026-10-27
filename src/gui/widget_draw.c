@@ -16,6 +16,7 @@
 #include "../newui/actionpanel.h"
 #include "../newui/editbox.h"
 #include "../newui/savemenu.h"
+#include "../newui/viewport.h"
 #include "../pool/pool_house.h"
 #include "../pool/pool_unit.h"
 #include "../sprites.h"
@@ -409,6 +410,9 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 		widget34 = GUI_Widget_Get_ByIndex(w, 3);
 		GUI_Widget_MakeInvisible(widget34);
 
+		/* Shown again by the unit stats, for enemy units. */
+		GUI_Widget_MakeInvisible(ActionPanel_GetLocateButton());
+
 		/* Create the 4 buttons */
 		for (int i = 0; i < 4; i++) {
 			buttons[i] = GUI_Widget_Get_ByIndex(w, i + 8);
@@ -483,6 +487,10 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 		/* Unit / Structure */
 		if (actionType == 2 || actionType == 3) {
 			ActionPanel_DrawHealthBar(o->hitpoints, oi->hitpoints);
+		}
+
+		if (actionType == 2) {
+			ActionPanel_DrawUnitStats(u);
 		}
 
 		if (!isNotPlayerOwned || g_debugGame) {
@@ -598,6 +606,8 @@ void GUI_Widget_ActionPanel_Draw(bool forceDraw)
 		for (int i = 0; i < 4; i++) {
 			GUI_Widget_Draw(buttons[i]);
 		}
+
+		GUI_Widget_Draw(ActionPanel_GetLocateButton());
 	}
 
 	if (actionType > 1) {

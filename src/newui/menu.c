@@ -1321,6 +1321,21 @@ Menu_Run(void)
 
 	Menu_Init();
 
+	/* Command line (--house/--mission): skip the menus and start the mission. */
+	if (g_startHouse != HOUSE_INVALID && g_startMission >= 1 && g_startMission <= 9) {
+		g_campaign_selected = CAMPAIGNID_DUNE_II;
+		g_playerHouseID = g_startHouse;
+		g_campaignID = g_startMission - 1;
+		g_scenarioID = StrategicMap_CampaignChoiceToScenarioID(g_campaignID, g_startRegion % 3);
+
+		/* The main menu normally loads the palette (and the player's house
+		 * colours follow from it), so do it here as the menus are skipped.
+		 */
+		Menu_LoadPalette();
+		GUI_Palette_CreateRemap(g_playerHouseID);
+		curr_menu = next_menu = MENU_PLAY_A_GAME;
+	}
+
 	al_flush_event_queue(g_a5_input_queue);
 
 	while (curr_menu != MENU_EXIT_GAME) {

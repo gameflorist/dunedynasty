@@ -25,6 +25,7 @@ extern void MenuBar_DrawMentatOverlay(void);
 
 extern bool MenuBar_ClickOptions(struct Widget *w);
 extern void MenuBar_TickOptionsOverlay(void);
+extern void MenuBar_DebugTestColourMenu(void);
 extern void MenuBar_DrawOptionsOverlay(void);
 
 extern uint16 GUI_DisplayModalMessage(const char *str, uint16 shapeID, ...);

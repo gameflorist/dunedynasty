@@ -688,6 +688,75 @@ VideoA5_Tick(void)
 
 /*--------------------------------------------------------------*/
 
+/* The last palette set (6-bit), so the player's house ramp can be
+ * recoloured, or restored, independently of what the palette holds.
+ */
+static uint8 s_srcPalette[3 * 256];
+static bool s_srcValid[256];
+static int s_customHouseRGB = 0xFF8000;
+
+void
+Video_SetCustomHouseColour(int rgb)
+{
+	s_customHouseRGB = rgb & 0xFFFFFF;
+}
+
+int
+Video_GetCustomHouseColour(void)
+{
+	return s_customHouseRGB;
+}
+
+/* House ramps are palette entries 0x90 + 16 * house, 7 entries each.  For
+ * the player's house, the custom colour is scaled by each entry's
+ * brightness relative to the brightest entry of the original ramp.
+ */
+void
+Video_RefreshHouseColours(void)
+{
+	for (int h = 0; h < HOUSE_NEUTRAL; h++) {
+		const int base = 0x90 + 16 * h;
+		int lum[7];
+		int lum_max = 0;
+
+		for (int k = 0; k < 7; k++) {
+			const uint8 *s = &s_srcPalette[3 * (base + k)];
+			lum[k] = s[0] * 30 + s[1] * 59 + s[2] * 11;
+			if (lum[k] > lum_max)
+				lum_max = lum[k];
+		}
+
+		const bool custom = (h == (int)g_playerHouseID)
+			&& (g_gameConfig.houseColorPalette == HOUSE_COLOUR_CUSTOM)
+			&& (lum_max > 0);
+
+		for (int k = 0; k < 7; k++) {
+			const int i = base + k;
+			if (!s_srcValid[i])
+				continue;
+
+			int r, g, b;
+			if (custom) {
+				r = ((s_customHouseRGB >> 16) & 0xFF) * lum[k] / lum_max;
+				g = ((s_customHouseRGB >> 8) & 0xFF) * lum[k] / lum_max;
+				b = (s_customHouseRGB & 0xFF) * lum[k] / lum_max;
+			} else {
+				r = s_srcPalette[3 * i + 0];
+				g = s_srcPalette[3 * i + 1];
+				b = s_srcPalette[3 * i + 2];
+				r = (r << 2) | (r >> 4);
+				g = (g << 2) | (g >> 4);
+				b = (b << 2) | (b >> 4);
+			}
+
+			paltoRGB[i] = al_map_rgb(r, g, b);
+			paletteRGB[3 * i + 0] = r;
+			paletteRGB[3 * i + 1] = g;
+			paletteRGB[3 * i + 2] = b;
+		}
+	}
+}
+
 void
 Video_SetPalette(const uint8 *palette, int from, int length)
 {
@@ -699,6 +768,11 @@ Video_SetPalette(const uint8 *palette, int from, int length)
 		uint8 g = ((*p++) & 0x3F);
 		uint8 b = ((*p++) & 0x3F);
 
+		s_srcPalette[3 * i + 0] = r;
+		s_srcPalette[3 * i + 1] = g;
+		s_srcPalette[3 * i + 2] = b;
+		s_srcValid[i] = true;
+
 		r = (r << 2) | (r >> 4);
 		g = (g << 2) | (g >> 4);
 		b = (b << 2) | (b >> 4);
@@ -708,6 +782,8 @@ Video_SetPalette(const uint8 *palette, int from, int length)
 		paletteRGB[3*i + 1] = g;
 		paletteRGB[3*i + 2] = b;
 	}
+
+	Video_RefreshHouseColours();
 }
 
 void
@@ -3218,6 +3294,8 @@ void
 VideoA5_RebuildPlayerHouse(void)
 {
 	static enum HouseType s_prevPlayerHouseID = HOUSE_INVALID;
+
+	Video_RefreshHouseColours();
 
 	if (shape_texture == NULL || icon_texture == NULL)
 		return;

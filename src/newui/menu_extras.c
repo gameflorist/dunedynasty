@@ -864,7 +864,7 @@ GameplayOptions_Initialize(void)
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_brutal_ai;
-	snprintf(si->text, sizeof(si->text), "Brutal AI");
+	snprintf(si->text, sizeof(si->text), "Replica hard mode");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_fog_of_war;
@@ -924,7 +924,8 @@ GameplayOptions_Loop(int widgetID)
 		case SCANCODE_KEYPAD_5:
 		case SCANCODE_SPACE:
 			si = Scrollbar_GetSelectedItem(scrollbar);
-			if ((si != NULL) && (si->type == SCROLLBAR_CHECKBOX)) {
+			/* Replica hard mode is always on. */
+			if ((si != NULL) && (si->type == SCROLLBAR_CHECKBOX) && (si->d.checkbox != &enhancement_brutal_ai)) {
 				*(si->d.checkbox) = !(*(si->d.checkbox));
 
 				if (si->d.checkbox == &g_gameConfig.hardwareCursor)

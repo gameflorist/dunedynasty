@@ -331,6 +331,15 @@ uint16 Script_General_SearchSpice(ScriptEngine *script)
 
 	position = g_scriptCurrentObject->position;
 
+	// Replica: AI harvesters go for the spice nearest to a refinery, away from the player's base.
+	if (g_scriptCurrentUnit != NULL && g_scriptCurrentUnit->o.type == UNIT_HARVESTER
+			&& !House_IsHuman(g_scriptCurrentUnit->o.houseID)) {
+		packedSpicePos = Map_SearchSpiceForAIHarvester(g_scriptCurrentUnit);
+
+		if (packedSpicePos != 0)
+			return Tools_Index_Encode(packedSpicePos, IT_TILE);
+	}
+
 	// First search for spice in the immediate area (including tiles invisible to house).
 	packedSpicePos = Map_SearchSpice(Tile_PackTile(position), STACK_PEEK(1), HOUSE_INVALID);
 

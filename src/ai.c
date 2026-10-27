@@ -99,6 +99,7 @@ static const AISquadPlan aisquad_attack_plan[NUM_AISQUAD_ATTACK_PLANS] = {
 
 static AISquad s_aisquad[SQUADID_MAX + 1];
 
+static uint16 GuardPost_PickReplacement(enum HouseType houseID, uint32 buildable);
 static int UnitAI_CountUnits(enum HouseType houseID, enum UnitType unit_type);
 static Unit *UnitAI_SquadFindNext(PoolFindStruct *find, const AISquad *squad);
 
@@ -392,6 +393,11 @@ StructureAI_PickNextToBuild(const Structure *s)
 		buildable = StructureAI_FilterBuildOptions_Original(s->o.type, s->o.houseID, buildable);
 	}
 
+	/* Replace guards killed at their posts. */
+	const uint16 replacement = GuardPost_PickReplacement(s->o.houseID, buildable);
+	if (replacement != 0xFFFF)
+		return replacement;
+
 	uint16 type = 0xFFFF;
 	uint16 priority_type = 0;
 
@@ -563,11 +569,538 @@ UnitAI_ShouldDestructDevastator(const Unit *devastator)
 
 /*--------------------------------------------------------------*/
 
+static void GuardPost_Clear(void);
+static void HarvesterEscort_Clear(void);
+
+/*--------------------------------------------------------------*/
+
+/* Opening period: AI houses don't go on the offensive for the first
+ * couple of minutes of a mission.  Units they build stay at home (area
+ * guard) and attack teams wait, then everything is released together.
+ */
+#define AI_OPENING_SECONDS 180
+
+static int64_t s_openingReleasedFor = -1;
+
+static bool
+UnitAI_InOpeningPeriod(void)
+{
+	const int64_t opening = Tools_AdjustToGameSpeed(60 * AI_OPENING_SECONDS, 1, 0xFFFF, true);
+
+	return (g_timerGame - g_tickScenarioStart) < opening;
+}
+
+bool
+AI_IsInOpeningPeriod(void)
+{
+	return UnitAI_InOpeningPeriod();
+}
+
+/* The action a new AI unit takes by default, held back while the opening
+ * period lasts.
+ */
+enum UnitActionType
+UnitAI_OpeningAction(const Unit *u, enum UnitActionType action)
+{
+	if (action == ACTION_HUNT && !House_IsHuman(u->o.houseID) && UnitAI_InOpeningPeriod())
+		return ACTION_AREA_GUARD;
+
+	return action;
+}
+
+static void
+UnitAI_ReleaseOpeningUnits(void)
+{
+	PoolFindStruct find;
+
+	if (s_openingReleasedFor == g_tickScenarioStart || UnitAI_InOpeningPeriod())
+		return;
+
+	s_openingReleasedFor = g_tickScenarioStart;
+
+	for (Unit *u = Unit_FindFirst(&find, HOUSE_INVALID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		if (House_IsHuman(u->o.houseID) || u->o.flags.s.byScenario)
+			continue;
+
+		if (u->actionID != ACTION_AREA_GUARD || g_table_unitInfo[u->o.type].actionAI != ACTION_HUNT)
+			continue;
+
+		Unit_Server_SetAction(u, ACTION_HUNT);
+	}
+}
+
 void
 UnitAI_ClearSquads(void)
 {
 	for (enum SquadID aiSquad = SQUADID_1; aiSquad <= SQUADID_MAX; aiSquad++) {
 		s_aisquad[aiSquad].num_members = 0;
+	}
+
+	GuardPost_Clear();
+	HarvesterEscort_Clear();
+	Unit_Sandworm_ResetProgress();
+}
+
+/*--------------------------------------------------------------*/
+
+/* Replacement of fallen guards.  When a guarding unit of an AI house is
+ * killed, its post is remembered.  The house then builds a unit of the
+ * same type in a factory, which is sent to the post to take over guard
+ * duty.  The posts are not saved: a replacement under way is forgotten
+ * when a game is loaded.
+ */
+
+enum GuardPostState {
+	GUARDPOST_FREE,
+	GUARDPOST_NEEDED,   /* Waiting for a factory to build a replacement. */
+	GUARDPOST_QUEUED,   /* A factory has been told to build one. */
+	GUARDPOST_ASSIGNED  /* A replacement unit exists. */
+};
+
+typedef struct GuardPost {
+	enum GuardPostState state;
+	enum HouseType houseID;
+	enum UnitType type;
+	uint16 packed;
+	uint16 unitIndex;
+	bool sent;
+	int64_t timeout;
+} GuardPost;
+
+#define MAX_GUARD_POSTS 32
+#define MAX_GUARD_POSTS_PER_HOUSE 6
+
+static GuardPost s_guardpost[MAX_GUARD_POSTS];
+
+static void
+GuardPost_Clear(void)
+{
+	for (int i = 0; i < MAX_GUARD_POSTS; i++)
+		s_guardpost[i].state = GUARDPOST_FREE;
+}
+
+static bool HarvesterEscort_IsMember(const Unit *u);
+
+/* Can this unit be a guard with a post that gets replaced? */
+static bool
+GuardPost_IsGuard(const Unit *u)
+{
+	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+
+	if (House_IsHuman(u->o.houseID))
+		return false;
+
+	if (u->actionID != ACTION_GUARD && u->actionID != ACTION_AREA_GUARD)
+		return false;
+
+	if (u->o.flags.s.isNotOnMap || u->o.type == UNIT_SANDWORM)
+		return false;
+
+	return ui->flags.isNormalUnit && ui->flags.isGroundUnit && ui->damage != 0;
+}
+
+static void
+GuardPost_Add(enum HouseType houseID, enum UnitType type, uint16 packed)
+{
+	GuardPost *free_post = NULL;
+	int house_posts = 0;
+
+	for (int i = 0; i < MAX_GUARD_POSTS; i++) {
+		GuardPost *post = &s_guardpost[i];
+
+		if (post->state == GUARDPOST_FREE) {
+			if (free_post == NULL)
+				free_post = post;
+		} else if (post->houseID == houseID) {
+			house_posts++;
+
+			if (post->packed == packed)
+				return;
+		}
+	}
+
+	if (free_post == NULL || house_posts >= MAX_GUARD_POSTS_PER_HOUSE)
+		return;
+
+	free_post->state = GUARDPOST_NEEDED;
+	free_post->houseID = houseID;
+	free_post->type = type;
+	free_post->packed = packed;
+	free_post->sent = false;
+}
+
+void
+UnitAI_RegisterGuardLoss(const Unit *u)
+{
+	/* A guard sent off to escort a harvester already has its replacement. */
+	if (!GuardPost_IsGuard(u) || HarvesterEscort_IsMember(u))
+		return;
+
+	GuardPost_Add(u->o.houseID, u->o.type, Tile_PackTile(u->o.position));
+}
+
+/* A factory is picking what to build: build a replacement guard first. */
+static uint16
+GuardPost_PickReplacement(enum HouseType houseID, uint32 buildable)
+{
+	for (int i = 0; i < MAX_GUARD_POSTS; i++) {
+		GuardPost *post = &s_guardpost[i];
+
+		if (post->state != GUARDPOST_NEEDED || post->houseID != houseID)
+			continue;
+
+		if ((buildable & (1 << post->type)) == 0)
+			continue;
+
+		post->state = GUARDPOST_QUEUED;
+		post->timeout = g_timerGame + Tools_AdjustToGameSpeed(60 * 90, 1, 0xFFFF, true);
+		return post->type;
+	}
+
+	return 0xFFFF;
+}
+
+/* A factory of an AI house has started to build a unit. */
+void
+UnitAI_ClaimGuardPost(const Unit *u)
+{
+	if (House_IsHuman(u->o.houseID))
+		return;
+
+	for (int i = 0; i < MAX_GUARD_POSTS; i++) {
+		GuardPost *post = &s_guardpost[i];
+
+		if (post->state != GUARDPOST_NEEDED && post->state != GUARDPOST_QUEUED)
+			continue;
+
+		if (post->houseID != u->o.houseID || post->type != u->o.type)
+			continue;
+
+		post->state = GUARDPOST_ASSIGNED;
+		post->unitIndex = u->o.index;
+		post->sent = false;
+		return;
+	}
+}
+
+static void
+GuardPost_Update(void)
+{
+	for (int i = 0; i < MAX_GUARD_POSTS; i++) {
+		GuardPost *post = &s_guardpost[i];
+
+		if (post->state == GUARDPOST_QUEUED) {
+			if (g_timerGame > post->timeout)
+				post->state = GUARDPOST_NEEDED;
+
+			continue;
+		}
+
+		if (post->state != GUARDPOST_ASSIGNED)
+			continue;
+
+		Unit *u = Unit_Get_ByIndex(post->unitIndex);
+		if (u == NULL || !u->o.flags.s.used
+				|| u->o.type != post->type || u->o.houseID != post->houseID
+				|| u->actionID == ACTION_DIE) {
+			/* Cancelled or destroyed before taking over the post. */
+			post->state = GUARDPOST_NEEDED;
+			continue;
+		}
+
+		/* Still being built, or waiting to leave the factory. */
+		if (u->o.flags.s.isNotOnMap)
+			continue;
+
+		if (!post->sent) {
+			u->targetMove = Tools_Index_Encode(post->packed, IT_TILE);
+
+			/* We need the destination to be precise! */
+			Unit_Server_SetAction(u, ACTION_MOVE);
+
+			post->sent = true;
+			post->timeout = g_timerGame + Tools_AdjustToGameSpeed(60 * 180, 1, 0xFFFF, true);
+			continue;
+		}
+
+		const tile32 post_tile = Tile_Center(Tile_UnpackTile(post->packed));
+		const bool arrived = (Tile_GetDistanceRoundedUp(u->o.position, post_tile) <= 2);
+
+		if (arrived || g_timerGame > post->timeout) {
+			Unit_Server_SetAction(u, ACTION_GUARD);
+			post->state = GUARDPOST_FREE;
+		}
+	}
+}
+
+/*--------------------------------------------------------------*/
+
+/* Harvester escorts.  When a player attacks the harvester of an AI house,
+ * the nearest guards leave their posts and escort the harvester, until it
+ * has returned to a refinery or been picked up by a carryall.  They then
+ * go and attack the base of the house that attacked it.  Their posts are
+ * registered as soon as they leave, so that replacements get built.
+ */
+
+#define MAX_ESCORTS 8
+#define MAX_ESCORT_GUARDS 4
+#define ESCORT_CALL_DISTANCE 40  /* Guards further away are not called. */
+#define ESCORT_CLOSE_DISTANCE 5
+#define ESCORT_SECONDS 240
+
+typedef struct HarvesterEscort {
+	bool active;
+	enum HouseType houseID;
+	enum HouseType attackerHouseID;
+	uint16 harvesterIndex;
+	int num_guards;
+	uint16 guardIndex[MAX_ESCORT_GUARDS];
+	enum UnitType guardType[MAX_ESCORT_GUARDS];
+	int64_t timeout;
+	int64_t next_order;
+} HarvesterEscort;
+
+static HarvesterEscort s_escort[MAX_ESCORTS];
+
+static void
+HarvesterEscort_Clear(void)
+{
+	for (int i = 0; i < MAX_ESCORTS; i++)
+		s_escort[i].active = false;
+}
+
+static Unit *
+HarvesterEscort_GetGuard(const HarvesterEscort *e, int g)
+{
+	Unit *u = Unit_Get_ByIndex(e->guardIndex[g]);
+
+	if (u == NULL || !u->o.flags.s.used || u->o.type != e->guardType[g]
+			|| u->o.houseID != e->houseID || u->actionID == ACTION_DIE
+			|| u->o.flags.s.isNotOnMap)
+		return NULL;
+
+	return u;
+}
+
+static bool
+HarvesterEscort_IsMember(const Unit *u)
+{
+	for (int i = 0; i < MAX_ESCORTS; i++) {
+		const HarvesterEscort *e = &s_escort[i];
+
+		if (!e->active)
+			continue;
+
+		for (int g = 0; g < e->num_guards; g++) {
+			if (e->guardIndex[g] == u->o.index && e->guardType[g] == u->o.type)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+static void
+HarvesterEscort_OrderTowards(Unit *guard, const Unit *harvester)
+{
+	const uint16 packed = Tile_PackTile(harvester->o.position);
+
+	/* Don't restart a move that is already heading to the harvester. */
+	if (guard->actionID == ACTION_MOVE && guard->targetMove != 0
+			&& Tile_GetDistanceRoundedUp(Tools_Index_GetTile(guard->targetMove), harvester->o.position) <= 3)
+		return;
+
+	guard->targetMove = Tools_Index_Encode(packed, IT_TILE);
+
+	/* We need the destination to be precise! */
+	Unit_Server_SetAction(guard, ACTION_MOVE);
+}
+
+/* The guards are done escorting: attack the enemy base, or stay put. */
+static void
+HarvesterEscort_Dispatch(const HarvesterEscort *e)
+{
+	for (int g = 0; g < e->num_guards; g++) {
+		Unit *guard = HarvesterEscort_GetGuard(e, g);
+		const Structure *nearest = NULL;
+		int nearest_distance = 0;
+		PoolFindStruct find;
+
+		if (guard == NULL)
+			continue;
+
+		if (!UnitAI_InOpeningPeriod()) {
+			for (const Structure *s = Structure_FindFirst(&find, e->attackerHouseID, STRUCTURE_INVALID);
+					s != NULL;
+					s = Structure_FindNext(&find)) {
+				if (s->o.type == STRUCTURE_WALL || s->o.type == STRUCTURE_SLAB_1x1 || s->o.type == STRUCTURE_SLAB_2x2)
+					continue;
+
+				const int distance = Tile_GetDistanceRoundedUp(guard->o.position, s->o.position);
+				if (nearest == NULL || distance < nearest_distance) {
+					nearest = s;
+					nearest_distance = distance;
+				}
+			}
+		}
+
+		if (nearest == NULL) {
+			Unit_Server_SetAction(guard, ACTION_AREA_GUARD);
+			continue;
+		}
+
+		Unit_Server_SetAction(guard, ACTION_HUNT);
+		guard->targetAttack = Tools_Index_Encode(nearest->o.index, IT_STRUCTURE);
+	}
+}
+
+void
+UnitAI_HarvesterAttacked(Unit *harvester, const Unit *attacker)
+{
+	HarvesterEscort *escort = NULL;
+
+	if (harvester == NULL || attacker == NULL)
+		return;
+
+	if (harvester->o.type != UNIT_HARVESTER || House_IsHuman(harvester->o.houseID))
+		return;
+
+	if (harvester->o.hitpoints == 0 || harvester->o.flags.s.isNotOnMap)
+		return;
+
+	const enum HouseType attackerHouseID = Unit_GetHouseID(attacker);
+	if (!House_IsHuman(attackerHouseID) || House_AreAllied(harvester->o.houseID, attackerHouseID))
+		return;
+
+	for (int i = 0; i < MAX_ESCORTS; i++) {
+		HarvesterEscort *e = &s_escort[i];
+
+		if (e->active && e->harvesterIndex == harvester->o.index) {
+			/* Still under attack: keep the escort going. */
+			e->timeout = g_timerGame + Tools_AdjustToGameSpeed(60 * ESCORT_SECONDS, 1, 0xFFFF, true);
+			e->attackerHouseID = attackerHouseID;
+			return;
+		}
+
+		if (!e->active && escort == NULL)
+			escort = e;
+	}
+
+	if (escort == NULL)
+		return;
+
+	/* Call the nearest guards of the house. */
+	Unit *guards[MAX_ESCORT_GUARDS];
+	int guard_distance[MAX_ESCORT_GUARDS];
+	int num_guards = 0;
+	PoolFindStruct find;
+
+	for (Unit *u = Unit_FindFirst(&find, harvester->o.houseID, UNIT_INVALID);
+			u != NULL;
+			u = Unit_FindNext(&find)) {
+		if (!GuardPost_IsGuard(u) || HarvesterEscort_IsMember(u))
+			continue;
+
+		const int distance = Tile_GetDistanceRoundedUp(u->o.position, harvester->o.position);
+		if (distance > ESCORT_CALL_DISTANCE)
+			continue;
+
+		/* Insert, keeping the list sorted by distance. */
+		int pos = num_guards;
+		while (pos > 0 && guard_distance[pos - 1] > distance)
+			pos--;
+
+		if (pos >= MAX_ESCORT_GUARDS)
+			continue;
+
+		const int last = (num_guards < MAX_ESCORT_GUARDS) ? num_guards : MAX_ESCORT_GUARDS - 1;
+		for (int k = last; k > pos; k--) {
+			guards[k] = guards[k - 1];
+			guard_distance[k] = guard_distance[k - 1];
+		}
+
+		guards[pos] = u;
+		guard_distance[pos] = distance;
+
+		if (num_guards < MAX_ESCORT_GUARDS)
+			num_guards++;
+	}
+
+	if (num_guards == 0)
+		return;
+
+	escort->active = true;
+	escort->houseID = harvester->o.houseID;
+	escort->attackerHouseID = attackerHouseID;
+	escort->harvesterIndex = harvester->o.index;
+	escort->num_guards = num_guards;
+	escort->timeout = g_timerGame + Tools_AdjustToGameSpeed(60 * ESCORT_SECONDS, 1, 0xFFFF, true);
+	escort->next_order = 0;
+
+	for (int g = 0; g < num_guards; g++) {
+		escort->guardIndex[g] = guards[g]->o.index;
+		escort->guardType[g] = guards[g]->o.type;
+
+		/* Leaving the post: have it replaced. */
+		GuardPost_Add(guards[g]->o.houseID, guards[g]->o.type, Tile_PackTile(guards[g]->o.position));
+
+		HarvesterEscort_OrderTowards(guards[g], harvester);
+	}
+}
+
+static void
+HarvesterEscort_Update(void)
+{
+	for (int i = 0; i < MAX_ESCORTS; i++) {
+		HarvesterEscort *e = &s_escort[i];
+
+		if (!e->active)
+			continue;
+
+		Unit *harvester = Unit_Get_ByIndex(e->harvesterIndex);
+		const bool harvester_ok = (harvester != NULL && harvester->o.flags.s.used
+				&& harvester->o.type == UNIT_HARVESTER && harvester->o.houseID == e->houseID
+				&& harvester->actionID != ACTION_DIE && harvester->o.hitpoints != 0);
+
+		int alive = 0;
+		for (int g = 0; g < e->num_guards; g++) {
+			if (HarvesterEscort_GetGuard(e, g) != NULL)
+				alive++;
+		}
+
+		if (alive == 0) {
+			e->active = false;
+			continue;
+		}
+
+		/* The harvester is safe when it is in a refinery or carried away
+		 * by a carryall (both take it off the map), or it is lost.
+		 */
+		if (!harvester_ok || harvester->o.flags.s.isNotOnMap || g_timerGame > e->timeout) {
+			HarvesterEscort_Dispatch(e);
+			e->active = false;
+			continue;
+		}
+
+		if (g_timerGame < e->next_order)
+			continue;
+
+		e->next_order = g_timerGame + 60;
+
+		for (int g = 0; g < e->num_guards; g++) {
+			Unit *guard = HarvesterEscort_GetGuard(e, g);
+			if (guard == NULL)
+				continue;
+
+			if (Tile_GetDistanceRoundedUp(guard->o.position, harvester->o.position) > ESCORT_CLOSE_DISTANCE) {
+				HarvesterEscort_OrderTowards(guard, harvester);
+			} else if (guard->actionID != ACTION_AREA_GUARD && !Unit_IsMoving(guard)) {
+				/* Close enough: defend the harvester's surroundings. */
+				Unit_Server_SetAction(guard, ACTION_AREA_GUARD);
+			}
+		}
 	}
 }
 
@@ -922,6 +1455,10 @@ UnitAI_ArrangeBattleFormation(AISquad *squad)
 void
 UnitAI_SquadLoop(void)
 {
+	GuardPost_Update();
+	HarvesterEscort_Update();
+	UnitAI_ReleaseOpeningUnits();
+
 	for (enum SquadID aiSquad = SQUADID_1; aiSquad <= SQUADID_MAX; aiSquad++) {
 		AISquad *squad = &s_aisquad[aiSquad];
 

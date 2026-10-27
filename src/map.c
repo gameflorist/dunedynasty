@@ -10,6 +10,7 @@
 
 #include "map.h"
 
+#include "ai.h"
 #include "animation.h"
 #include "enhancement.h"
 #include "explosion.h"
@@ -429,9 +430,48 @@ static bool Map_UpdateWall(uint16 packed)
  * @param hitpoints The amount of hitpoints to give people in the neighbourhoud.
  * @param unitOriginEncoded The unit that fired the bullet.
  */
+/**
+ * Damage the buildings around a Death Hand blast, with the same falloff as
+ * for units: the damage halves every 8 units (half a tile) from the blast,
+ * measured to the nearest tile of the building, up to the blast radius.
+ * @param position The position of the blast.
+ * @param hitpoints The damage at the centre of the blast.
+ */
+static void Map_DeathHandDamageStructures(tile32 position, uint16 hitpoints)
+{
+	PoolFindStruct find;
+
+	for (Structure *s = Structure_FindFirst(&find, HOUSE_INVALID, STRUCTURE_INVALID);
+			s != NULL;
+			s = Structure_FindNext(&find)) {
+		if (Structure_SharesPoolElement(s->o.type)) continue;
+
+		const enum StructureLayout layout = g_table_structureInfo[s->o.type].layout;
+		const uint16 base = Tile_PackTile(s->o.position);
+		int nearest = 0x7FFF;
+
+		for (int i = 0; i < g_table_structure_layoutTileCount[layout]; i++) {
+			const tile32 tile = Tile_Center(Tile_UnpackTile(base + g_table_structure_layoutTiles[layout][i]));
+			const int distance = Tile_GetDistance(position, tile) >> 4;
+
+			if (distance < nearest) nearest = distance;
+		}
+
+		/* From the middle of the tile to its edge is 8 units. */
+		nearest = (nearest > 8) ? nearest - 8 : 0;
+		if (nearest >= 64) continue;
+
+		const uint16 damage = hitpoints >> (nearest >> 3);
+		if (damage == 0) continue;
+
+		Structure_HouseUnderAttack(s->o.houseID);
+		Structure_Damage(s, damage, 0);
+	}
+}
+
 void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 unitOriginEncoded)
 {
-	uint16 reactionDistance = (type == EXPLOSION_DEATH_HAND) ? 32 : 16;
+	uint16 reactionDistance = (type == EXPLOSION_DEATH_HAND) ? 64 : 16; /* Death Hand: double radius. */
 	uint16 positionPacked = Tile_PackTile(position);
 	const Unit *unit_origin = Tools_Index_GetUnit(unitOriginEncoded);
 	uint16 dist_adjust;
@@ -454,7 +494,10 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 			if (distance >= reactionDistance) continue;
 
 			uint16 hp_adjust = hitpoints;
-			dist_adjust=distance >> 2;
+			/* Damage halves every 4 units from the centre; the Death Hand's
+			 * falloff is twice as gentle, so its reach is doubled.
+			 */
+			dist_adjust = (type == EXPLOSION_DEATH_HAND) ? (distance >> 3) : (distance >> 2);
 			
 			if (!(u->o.type == UNIT_SANDWORM && type == EXPLOSION_SANDWORM_SWALLOW) && u->o.type != UNIT_FRIGATE) {
 			
@@ -482,6 +525,14 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 				}
 			
 				Unit_Damage(u, hp_adjust >> dist_adjust, 0);
+
+				/* The Death Hand kills infantry outright. */
+				if (type == EXPLOSION_DEATH_HAND && ui->movementType == MOVEMENT_FOOT && u->o.hitpoints != 0)
+					Unit_Damage(u, u->o.hitpoints, 0);
+
+				/* AI harvesters under attack get escorted by guards. */
+				if (u->o.type == UNIT_HARVESTER)
+					UnitAI_HarvesterAttacked(u, unit_origin);
 			}
 
 			if (House_IsHuman(u->o.houseID)) continue;
@@ -542,7 +593,10 @@ void Map_MakeExplosion(uint16 type, tile32 position, uint16 hitpoints, uint16 un
 	if (!s_debugNoExplosionDamage && hitpoints != 0) {
 		Structure *s = Structure_Get_ByPackedTile(positionPacked);
 
-		if (s != NULL) {
+		if (type == EXPLOSION_DEATH_HAND) {
+			/* Buildings take damage like units do, by distance. */
+			Map_DeathHandDamageStructures(position, hitpoints);
+		} else if (s != NULL) {
 			if (type == EXPLOSION_IMPACT_LARGE) {
 				const StructureInfo *si = &g_table_structureInfo[s->o.type];
 
@@ -1132,6 +1186,103 @@ uint16 Map_SearchSpice(uint16 packed, uint16 radius, enum HouseType visibleToHou
 	if (!found) return 0;
 
 	return (radius2 <= radius) ? packed2 : packed1;
+}
+
+/**
+ * Search for spice for an AI harvester.  The AI goes for the spice nearest
+ * to one of its refineries, but stays away from the player's base: spice
+ * close to it is only used when there is no other spice left.
+ * @param harvester The harvester.
+ * @return Position of the spice to harvest, or \c 0 if there is no spice.
+ */
+uint16 Map_SearchSpiceForAIHarvester(const Unit *harvester)
+{
+	/* Spice closer than this to the player's base (in tiles) is avoided. */
+	const int avoidDistance = 14;
+
+	const MapInfo *mapInfo = &g_mapInfos[g_scenario.mapScale];
+	PoolFindStruct find;
+	uint16 refinery[8];
+	int numRefineries = 0;
+	uint16 playerBase = 0;
+	bool havePlayerBase = false;
+	uint16 bestSafe = 0, bestAny = 0;
+	int bestSafeRef = 0x7FFF, bestSafePlayer = 0;
+	int bestAnyRef = 0x7FFF;
+
+	for (const Structure *s = Structure_FindFirst(&find, harvester->o.houseID, STRUCTURE_REFINERY);
+			s != NULL && numRefineries < 8;
+			s = Structure_FindNext(&find)) {
+		refinery[numRefineries++] = Tile_PackTile(s->o.position);
+	}
+
+	/* No refinery: measure from the harvester itself. */
+	if (numRefineries == 0)
+		refinery[numRefineries++] = Tile_PackTile(harvester->o.position);
+
+	const Structure *base = Structure_FindFirst(&find, g_playerHouseID, STRUCTURE_CONSTRUCTION_YARD);
+	if (base == NULL) base = Structure_FindFirst(&find, g_playerHouseID, STRUCTURE_INVALID);
+	if (base != NULL) {
+		playerBase = Tile_PackTile(base->o.position);
+		havePlayerBase = true;
+	}
+
+	for (int y = mapInfo->minY; y < mapInfo->minY + mapInfo->sizeY; y++) {
+		for (int x = mapInfo->minX; x < mapInfo->minX + mapInfo->sizeX; x++) {
+			const uint16 packed = Tile_PackXY(x, y);
+
+			if (!Map_IsValidPosition(packed)) continue;
+			if (g_map[packed].hasStructure) continue;
+			if (Unit_Get_ByPackedTile(packed) != NULL) continue;
+
+			const uint16 type = Map_GetLandscapeType(packed);
+			if (type != LST_SPICE && type != LST_THICK_SPICE) continue;
+
+			int distRef = 0x7FFF;
+			for (int i = 0; i < numRefineries; i++) {
+				const int d = Tile_GetDistancePacked(packed, refinery[i]);
+				if (d < distRef) distRef = d;
+			}
+
+			const int distPlayer = havePlayerBase ? Tile_GetDistancePacked(packed, playerBase) : 0x7FFF;
+
+			if (distRef < bestAnyRef) {
+				bestAnyRef = distRef;
+				bestAny = packed;
+			}
+
+			if (distPlayer < avoidDistance) continue;
+
+			/* Nearest to a refinery; of equal ones, furthest from the player. */
+			if (distRef < bestSafeRef || (distRef == bestSafeRef && distPlayer > bestSafePlayer)) {
+				bestSafeRef = distRef;
+				bestSafePlayer = distPlayer;
+				bestSafe = packed;
+			}
+		}
+	}
+
+	if (g_debugTestSpice) {
+		static FILE *log;
+		const uint16 chosen = (bestSafe != 0) ? bestSafe : bestAny;
+
+		if (log == NULL) log = fopen("spice_test.log", "w");
+
+		if (log != NULL) {
+			fprintf(log, "t=%d house %d harvester at %d,%d: %d refineries, player base %s at %d,%d; chose %d,%d (%s, %d tiles from a refinery, %d from the player's base)\n",
+					(int)((g_timerGame - g_tickScenarioStart) / 60), harvester->o.houseID,
+					Tile_GetPackedX(Tile_PackTile(harvester->o.position)), Tile_GetPackedY(Tile_PackTile(harvester->o.position)),
+					numRefineries, havePlayerBase ? "found" : "missing",
+					Tile_GetPackedX(playerBase), Tile_GetPackedY(playerBase),
+					Tile_GetPackedX(chosen), Tile_GetPackedY(chosen),
+					(bestSafe != 0) ? "away from the player" : "only spice left near the player or none",
+					(chosen != 0) ? Tile_GetDistancePacked(chosen, refinery[0]) : -1,
+					(chosen != 0 && havePlayerBase) ? Tile_GetDistancePacked(chosen, playerBase) : -1);
+			fflush(log);
+		}
+	}
+
+	return (bestSafe != 0) ? bestSafe : bestAny;
 }
 
 #if 0

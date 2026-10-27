@@ -34,10 +34,15 @@ typedef struct GameCfg {
 	float panSensitivity;
 	bool hardwareCursor;
 	uint8 houseColorPalette;
+	bool wasdScroll;
 	struct DisplayMode displayMode;
 } GameCfg;
 
 extern GameCfg g_gameConfig;
+
+/* [game] house_colour: "RRGGBB" for the custom house colour. */
+extern char g_house_colour[1024];
+extern int Config_ParseColour(const char *str);
 
 extern void Config_GetCampaign(void);
 extern void Config_SaveCampaignCompletion(void);

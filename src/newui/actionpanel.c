@@ -12,6 +12,7 @@
 
 #include "actionpanel.h"
 
+#include "viewport.h"
 #include "../audio/audio.h"
 #include "../config.h"
 #include "../enhancement.h"
@@ -304,6 +305,179 @@ ActionPanel_DrawStructureDescription(Structure *s)
 				}
 			}
 			break;
+	}
+}
+
+#define LOCATE_WIDGET_INDEX 60
+
+static bool
+ActionPanel_LocateClick(Widget *w)
+{
+	VARIABLE_NOT_USED(w);
+
+	const Unit *ref = Unit_GetForActionPanel();
+
+	if (ref != NULL && Unit_GetHouseID(ref) != g_playerHouseID)
+		Viewport_LocateToggle(ref);
+
+	return true;
+}
+
+/* A click on the Locate button.  The widget system did not deliver clicks to
+ * it, so the game loop passes mouse button presses on to this before the
+ * widgets get them.
+ * @return True if the click was on the button, and has been used.
+ */
+bool
+ActionPanel_HandleLocateKey(uint16 key)
+{
+	Widget *locate = ActionPanel_GetLocateButton();
+
+	if (key != SCANCODE_MOUSE_LMB || locate == NULL || locate->flags.invisible)
+		return false;
+
+	if (!Mouse_InRegion_Div(locate->div, locate->offsetX, locate->offsetY,
+			locate->offsetX + locate->width - 1, locate->offsetY + locate->height - 1))
+		return false;
+
+	ActionPanel_LocateClick(locate);
+	return true;
+}
+
+/* Drawn like the unit command buttons (GUI_Widget_TextButton2_Draw), but
+ * with its own text.
+ */
+static void
+ActionPanel_DrawLocateButton(Widget *w)
+{
+	const Screen oldScreenID = g_screenActiveID;
+	const bool active = Viewport_LocateActive(Unit_GetForActionPanel());
+	const bool buttonDown = w->state.hover2;
+	int y = w->offsetY;
+
+	if (oldScreenID == SCREEN_0)
+		GFX_Screen_SetActive(SCREEN_1);
+
+	Prim_DrawBorder(w->offsetX, w->offsetY, w->width, w->height, 1, true, true, buttonDown ? 0 : 1);
+
+	/* 20% taller pixels. */
+	y += (w->height >= 12) ? 2 : 1;
+
+	GUI_DrawText_Wrapper(active ? "Hide" : "Target",
+			w->offsetX + w->width / 2, y,
+			active ? 0x6 : (buttonDown ? 0xE : 0xF), 0, 0x121);
+
+	if (oldScreenID == SCREEN_0)
+		GFX_Screen_SetActive(SCREEN_0);
+}
+
+/* The button under the stats of an enemy unit that points at it with a line.
+ * It is made like the unit command buttons, and is linked to the game
+ * widgets again whenever those have been rebuilt.
+ */
+Widget *
+ActionPanel_GetLocateButton(void)
+{
+	static Widget *locate;
+
+	const Widget *base = GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, 8);
+
+	if (base == NULL)
+		return NULL;
+
+	if (locate == NULL) {
+		locate = GUI_Widget_Allocate(LOCATE_WIDGET_INDEX, 0, base->offsetX, base->offsetY, -2, STR_NULL);
+		locate->parentID = base->parentID;
+		locate->div = base->div;
+		locate->flags = base->flags;
+		locate->flags.invisible = true;
+		locate->width = base->width;
+		locate->height = base->height;
+		locate->drawParameterNormal.proc = ActionPanel_DrawLocateButton;
+		locate->drawParameterSelected.proc = ActionPanel_DrawLocateButton;
+		locate->drawParameterDown.proc = ActionPanel_DrawLocateButton;
+		locate->clickProc = NULL; /* Clicks come in through ActionPanel_HandleLocateKey. */
+	}
+
+	if (GUI_Widget_Get_ByIndex(g_widgetLinkedListHead, LOCATE_WIDGET_INDEX) != locate)
+		g_widgetLinkedListHead = GUI_Widget_Link(g_widgetLinkedListHead, locate);
+
+	return locate;
+}
+
+/* Statistics of the selected unit, below the command buttons.  Drawn in
+ * the style of the structure descriptions (header, line, label: value).
+ * For an enemy unit, a Locate button follows the stats.
+ */
+void
+ActionPanel_DrawUnitStats(const Unit *u)
+{
+	const UnitInfo *ui = &g_table_unitInfo[u->o.type];
+	const WidgetProperties *wi = &g_widgetProperties[WINDOWID_ACTIONPANEL_FRAME];
+	/* Enemy units have no commands, only the Locate button above the stats. */
+	const WidgetInfo *last = &g_table_gameWidgetInfo[(Unit_GetHouseID(u) != g_playerHouseID && !g_debugGame)
+			? GAME_WIDGET_UNIT_COMMAND_1 : GAME_WIDGET_UNIT_COMMAND_4];
+	const int fh = g_fontCurrent->height;
+
+	/* The header is drawn at y + 8, as for the structure descriptions. */
+	const int y = last->offsetY + last->height + 3 - 8;
+
+	struct {
+		const char *label;
+		int value;
+	} rows[5];
+	int num_rows = 0;
+
+	if (ui->damage != 0) {
+		rows[num_rows].label = "Damage:";
+		rows[num_rows++].value = ui->damage;
+		rows[num_rows].label = "Range:";
+		rows[num_rows++].value = ui->fireDistance;
+	}
+
+	rows[num_rows].label = "Sight:";
+	rows[num_rows++].value = ui->o.fogUncoverRadius;
+
+	if (ui->movingSpeedFactor != 0) {
+		rows[num_rows].label = "Speed:";
+		rows[num_rows++].value = ui->movingSpeedFactor * 100 / 256;
+	}
+
+	rows[num_rows].label = "Cost:";
+	rows[num_rows++].value = ui->o.buildCredits;
+
+	/* Only draw the rows that fit above the bottom of the panel. */
+	const int available = (wi->height - (y + 2 * fh)) / fh;
+	if (available < 1)
+		return;
+
+	if (num_rows > available)
+		num_rows = available;
+
+	Prim_Hline(21, y + 15, 72, 16);
+	GUI_DrawText_Wrapper("Unit Stats", 46, y + 8, 29, 0, 0x111);
+
+	for (int i = 0; i < num_rows; i++) {
+		GUI_DrawText_Wrapper(rows[i].label, 21, y + (2 + i) * fh, 29, 0, 0x11);
+		GUI_DrawText_Wrapper("%d", 72, y + (2 + i) * fh, 29, 0, 0x211, rows[i].value);
+	}
+
+	/* The Locate button, if it fits below the stats. */
+	Widget *locate = ActionPanel_GetLocateButton();
+
+	if (locate != NULL && Unit_GetHouseID(u) != g_playerHouseID) {
+		const int buttonY = y + (2 + num_rows) * fh + 3;
+
+		if (buttonY + locate->height <= wi->height - 1) {
+			locate->offsetY = buttonY;
+			GUI_Widget_MakeVisible(locate);
+
+			if (Viewport_LocateActive(u)) {
+				GUI_Widget_MakeSelected(locate, false);
+			} else {
+				locate->state.selected = false;
+			}
+		}
 	}
 }
 

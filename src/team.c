@@ -6,6 +6,7 @@
 
 #include "team.h"
 
+#include "ai.h"
 #include "opendune.h"
 #include "enhancement.h"
 #include "house.h"
@@ -23,6 +24,9 @@ void GameLoop_Team(void)
 	PoolFindStruct find;
 
 	if (g_tickTeamGameLoop > g_timerGame) return;
+
+	/* AI attack teams wait out the opening period. */
+	if (AI_IsInOpeningPeriod()) return;
 	g_tickTeamGameLoop = g_timerGame + (Tools_Random_256() & 7) + 5;
 
 	g_scriptCurrentObject    = NULL;

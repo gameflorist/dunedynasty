@@ -77,6 +77,11 @@ extern void Explosion_Start(uint16 explosionType, tile32 position, uint8 houseID
 extern void Explosion_Tick(void);
 extern void Explosion_Draw(void);
 
+/* Toxic cloud left by the Death Hand. The radius is in 1/16 tile units. */
+extern void Explosion_ToxicCloud_Add(tile32 position, uint16 radius, uint8 houseID);
+extern int Explosion_ToxicCloud_Count(void);
+extern void Explosion_DebugTestDeathHand(void);
+
 extern uint8 Explosion_Get_NumActive(void);
 extern void Explosion_Set_NumActive(int num);
 extern Explosion *Explosion_Get_ByIndex(int i);

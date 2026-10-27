@@ -20,6 +20,8 @@ extern void Viewport_DrawUnit(const Unit *u, int windowX, int windowY, bool rend
 extern void Viewport_DrawAirUnit(const Unit *u);
 extern void Viewport_DrawRallyPoint(void);
 extern void Viewport_DrawMovementIndicator(void);
+extern bool Viewport_LocateActive(const Unit *u);
+extern void Viewport_LocateToggle(const Unit *u);
 extern void Viewport_DrawSelectionHealthBars(void);
 extern void Viewport_DrawSelectionBox(void);
 extern void Viewport_DrawPanCursor(void);

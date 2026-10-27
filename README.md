@@ -1,12 +1,99 @@
 # My Changes off the fork
 
-The intention is to tune the Brutal AI to be less spammy with units / harvestors / discourage building infinite refineries
+This is a personal fork of [gameflorist/dunedynasty](https://github.com/gameflorist/dunedynasty). The intention is to tune the Brutal AI to be less spammy with units / harvesters and to discourage building infinite refineries. Everything else in this README describes the upstream project.
 
-- Harvestors are no longer given for free with refinery
-- Brutal AI less spammy and not so brutal
-- Worms have less HP, move slower, prioritise harvesters if theres more than 3 harvesters, Respawn elsewhere on the map when killed
-- Worms are nicer to AI opponents
-- Improved Launch and debug scripts
+## Credits
+
+All of the underlying game is the work of others; this fork only adds the changes listed below on top of it.
+
+- __[Westwood Studios](https://en.wikipedia.org/wiki/Westwood_Studios)__ for the original _Dune II_.
+- __David Wang ([wangds](https://github.com/wangds/))__ for creating _Dune Dynasty_.
+- The __[OpenDUNE](https://github.com/OpenDUNE/OpenDUNE)__ team, whose reverse-engineered engine _Dune Dynasty_ is built on.
+- __[codeflorist](https://github.com/codeflorist/)__ (gameflorist), maintainer of the upstream fork this one branches from, along with [neg3ntropy](https://github.com/neg3ntropy/), [kvr000](https://github.com/kvr000/) and [1oom-fork](https://github.com/1oom-fork/) for the fixes and features merged there.
+- See [Acknowledgements](#acknowledgements) and [Authors](#authors) below for everyone else.
+- The launch/debug tooling and the command-line mission start were written with the help of [Claude Code](https://claude.com/claude-code).
+
+## Features of this fork
+
+__Gameplay / AI__
+
+- Harvesters are no longer given for free with a refinery
+- Brutal AI is less spammy and not so brutal, and is discouraged from building endless refineries
+- Sandworms have less HP, move slower, prioritise harvesters when there are more than 3 on the map, and respawn elsewhere on the map when killed
+- Sandworms are nicer to AI opponents
+- When every sandworm is gone, one or two hunting worms come back at random after two to three minutes (never in the first three missions, and not when the worm threat is high, as worms then arrive up to one per harvester). Between meals, a worm now waits 10 seconds (`--test-worm-respawn` tests the respawn with a 10 second wait)
+- Sandworms are always on hunt, whatever the scenario says (the scenario's worms used to ambush, and the insatiable sandworms option made them area guard)
+- Sandworms move a little faster again (speed factor 7, up from 6), and carry straight on after a meal, with no rest or cooldown (it used to be almost three minutes), so they keep eating; they eat anything within a tile and a half (not only a unit exactly under them, which fast units like trikes and quads never allow a slow worm to be), and only hunt harvesters that are on the map and on sand (`--test-worm` runs an automated test and writes `worm_test.log`)
+- AI houses replace guards that were killed at their post: a factory builds the same unit type and sends it to take over guard duty there (not saved in savegames)
+- Death Hand rebalanced: 50 damage per blast instead of 200, over twice the radius, plus a toxic cloud, coloured by the house that fired the missile, that lingers for 10 seconds and damages ground units inside it every 2 seconds, and a tighter launch scatter (about 4 tiles off on average instead of 5.5); infantry caught in the blast or the cloud die instantly, and buildings take blast damage by distance like units do (`--test-deathhand` and `--test-deathhand-cy` run automated tests of it on units and on the construction yard, and write `deathhand_test.log`)
+- AI harvesters go for the spice nearest to one of their refineries, and keep away from spice within 14 tiles of the player's base unless nothing else is left (`--test-spice` plays a few minutes of a mission and writes the choices to `spice_test.log`)
+- A human player can only have one palace: it disappears from the construction yard's build list while you have one (placed or being built), and comes back if it is destroyed. AI houses are not limited.
+- Replica hard mode (the old Brutal AI) is always on: the settings option is a ticked, locked checkbox
+- AI production is 10% faster than the player's, and AI units cost about 91% of the normal price (instead of 80%)
+- Sandworms that can't reach their target (no movement for 12 seconds while not next to it) give up on it for a minute and pick another
+- When a player attacks an AI harvester, the nearest guards (up to 4) escort it until it reaches a refinery or is picked up by a carryall, then attack the base of the attacker; their posts are refilled by the guard replacement above
+- AI houses hold their attack for the first 3 minutes of a mission: units they build stay home on area guard and attack teams wait, then everything is released together
+- Harvester counter and worm threat level in the top bar, next to the credits; the harvester count turns red above 3, and the worm threat shows `None`, `Low`, or `High` when worms are hunting your harvesters because you have too many
+- Fixed the sandworm harvester count, which iterated with the wrong search state
+
+__Custom house colour__
+
+- Recolour your own house with any RGB colour. The game always starts with the default house colours; the custom colour is remembered as `house_colour=RRGGBB` under `[game]` in `dunedynasty.cfg` and is switched on with the `Custom` House Color option, or with `--colour RRGGBB` on the command line
+- A colour picker on the last page of the in-game Game Controls menu, under the House Color option: Red, Green and Blue sliders, a live preview swatch and eight preset colour boxes recolour your house instantly, and the result is saved to `house_colour` in `dunedynasty.cfg`
+- A new `Custom` entry in the in-game House colour option (after `Default`) switches back to it; without a configured colour it uses orange (`FF8000`)
+- The colour is applied as a brightness-preserving recolour of the house ramp, so shading on units, structures and the sidebar is kept
+
+__Unit panel__
+
+- A "Unit Stats" section below the command buttons shows the selected unit's damage, range, sight, speed and cost, in the style of the structure info boxes (only the rows that fit are drawn)
+- For an enemy unit, a "Target" button under the stats shows what it is aiming at (a red line and target marker) or, if it has nothing to shoot at, where it is moving to (yellow); it stays on while the unit is selected, and the button then reads "Hide". `--test-panel` takes screenshots of the panel
+
+__Controls__
+
+- WASD pans the camera (hold Shift to pan faster), at the configured scroll speed
+- While enabled, W/A/S/D are no longer unit or structure hotkeys during play (use the sidebar buttons instead); set `wasd_scroll=0` under `[controls]` in `dunedynasty.cfg` to get the original hotkeys back
+
+__Developer tooling__
+
+- Improved build and debug scripts
+- [.vscode/launch.json](.vscode/launch.json) with five configurations: `UCRT64 Build`, `Debug`, `Build + Debug`, `Debug: Mission 5 Atreides` and `Build + Debug: Mission 5 Atreides`
+- [.vscode/tasks.json](.vscode/tasks.json) with the `UCRT64 Build` task used as the `preLaunchTask` of the `Build + Debug` configurations
+- Command-line options to skip the menus and start straight into a Dune II mission (see below)
+
+### Screenshots of this fork
+
+__Death Hand toxic cloud__, coloured by the house that fired the missile (Harkonnen, Atreides and Ordos):
+
+![Death Hand cloud, Harkonnen](/docs/fork-deathhand-harkonnen.png)
+![Death Hand cloud, Atreides](/docs/fork-deathhand-atreides.png)
+![Death Hand cloud, Ordos](/docs/fork-deathhand-ordos.png)
+
+__Custom house colour__: the last (fifth) page of the in-game Game Controls menu has the House Color option and the colour picker, with Red/Green/Blue sliders, a preview swatch and eight preset colour boxes (the current one is outlined in white):
+
+![Game Controls menu, colour picker page](/docs/fork-colour-picker-menu.png)
+
+The same colour can be given on the command line: `--colour 00E5E5` (aqua) and `--colour F4F4F4` (white) here. The player's house is recoloured with all the shading kept (sidebar frame, units and minimap):
+
+![Custom house colour, aqua](/docs/fork-custom-house-colour-aqua.png)
+![Custom house colour, white](/docs/fork-custom-house-colour-white.png)
+
+__Unit panel__: the new "Unit Stats" section, and the worm threat and harvester counters in the top bar:
+
+![Unit stats panel](/docs/fork-unit-stats.png)
+
+__Enemy unit panel__: the "Target" button shows what the selected enemy unit is aiming at, here a red line to a target marker on the construction yard:
+
+![Enemy unit target line](/docs/fork-enemy-target.png)
+
+### Starting directly into a mission
+
+```txt
+dunedynasty.exe --house <atreides|ordos|harkonnen> --mission <1-9> [--region <0-2>]
+```
+
+- `--house` and `--mission` must both be given; the menus are skipped and the mission starts immediately.
+- `--region` picks which of the three map variants of the mission is used (default `0`).
+- Unrecognised or missing values are ignored and the game starts normally.
 
 # Dune Dynasty
 

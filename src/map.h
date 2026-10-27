@@ -87,6 +87,7 @@ extern bool Map_InRangeY(int y);
 extern int Map_Clamp(int x);
 
 extern void Map_MoveDirection(int dx, int dy);
+extern uint16 Map_SearchSpiceForAIHarvester(const struct Unit *harvester);
 extern void Map_CentreViewport(int x, int y);
 extern void Map_SetSelection(uint16 packed);
 extern void Map_SetSelectionSize(uint16 layout);
