@@ -7552,5 +7552,72 @@ const FileInfo g_table_fileInfo[FILEINFO_MAX] = {
 		/* isLoaded             */ false,
 		/* inPAKFile            */ true,
 		},
+	},
+
+	/* The US v1.07 release names these voices without the Z prefix. */
+	{ /* 686 */
+		/* filename             */ "AFFIRM.VOC",
+		/* fileSize             */ 0,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 4,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 687 */
+		/* filename             */ "REPORT1.VOC",
+		/* fileSize             */ 0,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 4,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 688 */
+		/* filename             */ "REPORT2.VOC",
+		/* fileSize             */ 0,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 4,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 689 */
+		/* filename             */ "REPORT3.VOC",
+		/* fileSize             */ 0,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 4,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 690 */
+		/* filename             */ "OVEROUT.VOC",
+		/* fileSize             */ 0,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 4,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inPAKFile            */ true,
+		},
+	},
+
+	{ /* 691 */
+		/* filename             */ "MOVEOUT.VOC",
+		/* fileSize             */ 0,
+		/* filePosition         */ 0,
+		/* parentIndex          */ 4,
+		{ /* flags */
+		/* isLoaded             */ false,
+		/* inPAKFile            */ true,
+		},
 	}
 };
