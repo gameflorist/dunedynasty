@@ -41,7 +41,6 @@ set(DUNEDYNASTY_SRC_FILES
 	src/mods/skirmish.c
 	src/net/client.c
 	src/net/message.c
-	src/net/net_enet.c
 	src/net/server.c
 	src/newui/actionpanel.c
 	src/newui/chatbox.c
@@ -131,6 +130,14 @@ else()
     set(DUNEDYNASTY_SRC_FILES
 	${DUNEDYNASTY_SRC_FILES} src/audio/midi_none.c)
 endif()
+
+if(WITH_ENET)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES} src/net/net_enet.c)
+else(WITH_ENET)
+    set(DUNEDYNASTY_SRC_FILES
+	${DUNEDYNASTY_SRC_FILES} src/net/net_none.c)
+endif(WITH_ENET)
 
 if(WITH_FLUIDSYNTH)
     set(DUNEDYNASTY_SRC_FILES
