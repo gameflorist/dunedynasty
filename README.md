@@ -381,6 +381,10 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
   Show trajectory lines and target of selected units (like in C&C: Tiberian Sun). The lines and target icon are red for attack/harvest orders and gray for any other orders.  
   (Disabled by default.)
 
+- __Compact two-column build list:__  
+  Shows the build list as two columns of small icons, as many rows as fit in the sidebar (like _Command & Conquer_), instead of one large icon with its name per row. Costs, shortcuts, queue counts, READY, build progress and pause are drawn on the icons. Useful on short screens, where the normal list has room for only one item. On the last page of the in-game controls, under the scale settings.  
+  (Disabled by default.)
+
 ## Saved games
 
 Saved games are located in the `save` directory next to wherever `dunedynasty.cfg` resides (see [Configuration](#configuration)).

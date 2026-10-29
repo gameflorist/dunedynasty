@@ -1656,6 +1656,7 @@ GUI_String_Get_ByIndex(int16 stringID)
 		case -51: return (g_gameConfig.holdControlToZoom) ? "Scroll sidebar" : "Zoom viewport";
 		case -52: return (g_gameConfig.scrollAlongScreenEdge) ? "Screen" : "Viewport";
 		case -53: onoff = g_gameConfig.autoScroll; break;
+		case -58: onoff = enhancement_compact_build_list; break;
 
 		case -70:
 			if (enhancement_draw_health_bars == HEALTH_BAR_ALL_UNITS)

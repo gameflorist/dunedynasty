@@ -551,7 +551,7 @@ MenuBar_ClickRadioButton(Widget *radio)
 		  -1
 		},
 		{ 35, 90, 91, 92, 93,
-		  45, 55, 115, 46, 56, 116, 47, 57, 117,
+		  45, 55, 115, 46, 56, 116, 47, 57, 117, 48, 58,
 		  -1
 		},
 	};
@@ -706,6 +706,7 @@ MenuBar_CreateGameControls(void)
 	 * 45, 55, 115  -- menubar scale label, slider.
 	 * 46, 56, 116  -- sidebar scale label, slider.
 	 * 47, 57, 117  -- viewport scale label, slider.
+	 * 48, 58       -- compact build list label, off/on.
 	 *
 	 * 60, 70   -- health bars label, off/on/always on.
 	 * 61, 71   -- hi-res overlays label, off/on.
@@ -750,6 +751,7 @@ MenuBar_CreateGameControls(void)
 		{ 45, 0, "Menubar Scale" },
 		{ 46, 1, "Sidebar Scale" },
 		{ 47, 2, "Viewport Scale" },
+		{ 48, 3, "Compact build list" },
 		{ 60, 0, "Health bars" },
 		{ 61, 1, "Hi-res overlays" },
 		{ 62, 2, "Smooth unit animation" },
@@ -780,6 +782,7 @@ MenuBar_CreateGameControls(void)
 		{ 51, 1, 104 }, /* Mouse wheel. */
 		{ 52, 2, 104 }, /* Scrolling edge. */
 		{ 53, 3,  46 }, /* Auto scroll. */
+		{ 58, 3,  46 }, /* Compact build list. */
 		{ 70, 0,  64 }, /* Health bars. */
 		{ 71, 1,  64 }, /* Hi-res vector graphics. */
 		{ 72, 2,  64 }, /* Smooth unit animation. */
@@ -1003,6 +1006,11 @@ MenuBar_TickGameControls(void)
 		case 0x8000 | 51: g_gameConfig.holdControlToZoom ^= 0x1; break;
 		case 0x8000 | 52: g_gameConfig.scrollAlongScreenEdge ^= 0x1; break;
 		case 0x8000 | 53: g_gameConfig.autoScroll ^= 0x1; break;
+
+		case 0x8000 | 58: /* Compact build list: the build widget's width changes. */
+			enhancement_compact_build_list ^= 0x1;
+			GameLoop_TweakWidgetDimensions();
+			break;
 
 		case 0x8000 | 70: /* Health bars. */
 			w = GUI_Widget_Get_ByIndex(g_widgetLinkedListTail, 70);

@@ -109,6 +109,7 @@ true_game_speed=1
 infantry_squad_death_anim=1
 insatiable_sandworms=0
 attack_dir_consistency=0
+compact_build_list=0
 skip_introduction=0
 raise_unit_cap=0
 raise_structure_cap=0

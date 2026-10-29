@@ -253,6 +253,14 @@ bool enhancement_true_unit_movement_speed = false;
 bool enhancement_attack_dir_consistency = false;
 
 /**
+ * Compact build list: two columns of small icons, as many rows as fit,
+ * like Command & Conquer's sidebar.  Shows several items at once on
+ * short screens (one at 320x240 otherwise).  Names are left out; costs,
+ * shortcuts and queue counts are drawn on the icons.
+ */
+bool enhancement_compact_build_list = false;
+
+/**
  * Skip introduction video
  */
 bool enhancement_skip_introduction = false;
