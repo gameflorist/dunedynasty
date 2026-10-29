@@ -414,6 +414,55 @@ Audio_GetSamplePrefix(enum SampleSet setID)
 	return 'Z';
 }
 
+/* The VOC.PAK samples whose DC offset Tiddalick's normalized VOC.PAK
+ * removes, with the US v1.07 names of the six voices.
+ */
+static const char * const s_dc_offset_samples[] = {
+	"BUTTON.VOC", "CRUMBLE.VOC", "DROPEQ2P.VOC", "EXCANNON.VOC",
+	"EXDUD.VOC", "EXGAS.VOC", "EXLARGE.VOC", "EXMED.VOC", "EXSAND.VOC",
+	"EXSMALL.VOC", "EXTINY.VOC", "GUN.VOC", "GUNMULTI.VOC",
+	"MISLTINP.VOC", "POPPA.VOC", "ROCKET.VOC", "SANDBUG.VOC",
+	"SQUISH2.VOC", "STATICP.VOC", "VSCREAM1.VOC", "VSCREAM2.VOC",
+	"VSCREAM3.VOC", "VSCREAM4.VOC", "VSCREAM5.VOC", "WORMET3P.VOC",
+	"ZAFFIRM.VOC", "ZMOVEOUT.VOC", "ZOVEROUT.VOC", "ZREPORT1.VOC",
+	"ZREPORT2.VOC", "ZREPORT3.VOC",
+	"AFFIRM.VOC", "MOVEOUT.VOC", "OVEROUT.VOC", "REPORT1.VOC",
+	"REPORT2.VOC", "REPORT3.VOC",
+};
+
+static bool
+Audio_HasDCOffset(const char *filename)
+{
+	for (unsigned int i = 0; i < lengthof(s_dc_offset_samples); i++) {
+		if (strcasecmp(filename, s_dc_offset_samples[i]) == 0)
+			return true;
+	}
+
+	return false;
+}
+
+/* Shift unsigned 8-bit samples so their mean lies at 127.x, as
+ * Tiddalick's normalized VOC.PAK does, clipping at 0 and 255.  Samples
+ * whose mean is already there are not changed.
+ */
+void
+Audio_RemoveDCOffset(uint8 *data, uint32 len)
+{
+	if (len == 0)
+		return;
+
+	uint64_t sum = 0;
+	for (uint32 i = 0; i < len; i++)
+		sum += data[i];
+
+	const int shift = 127 - (int)(sum / len);
+	if (shift == 0)
+		return;
+
+	for (uint32 i = 0; i < len; i++)
+		data[i] = clamp(0, data[i] + shift, 255);
+}
+
 static void
 Audio_LoadSample(const char *filename, enum SampleID sampleID)
 {
@@ -422,8 +471,9 @@ Audio_LoadSample(const char *filename, enum SampleID sampleID)
 
 	const uint8 file_index = File_Open(filename, FILE_MODE_READ);
 	const uint32 file_size = File_GetSize(file_index);
+	const bool remove_dc_offset = enhancement_fix_sound_dc_offset && Audio_HasDCOffset(filename);
 
-	AudioA5_StoreSample(sampleID, file_index, file_size);
+	AudioA5_StoreSample(sampleID, file_index, file_size, remove_dc_offset);
 	File_Close(file_index);
 }
 

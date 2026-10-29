@@ -48,6 +48,7 @@ extern void Audio_StopMusicUnlessMenu(void);
 extern void Audio_AdjustMusicVolume(float delta, bool adjust_current_track_only);
 extern void Audio_PlayEffect(enum SoundID effectID);
 extern void Audio_LoadSampleSet(enum SampleSet setID);
+extern void Audio_RemoveDCOffset(uint8 *data, uint32 len);
 extern void Audio_PlaySample(enum SampleID sampleID, int volume, float pan);
 extern void Audio_PlaySoundAtTile(enum SoundID soundID, tile32 position);
 extern void Audio_PlaySound(enum SoundID soundID);

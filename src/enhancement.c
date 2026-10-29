@@ -185,6 +185,14 @@ bool enhancement_raise_structure_cap = false;
 bool enhancement_repeat_reinforcements = true;
 
 /**
+ * Many of the sound effects in VOC.PAK have a DC offset, which makes them
+ * pop and click, most of all when several play together.  Remove it when
+ * the samples are loaded, for the samples Tiddalick's normalized VOC.PAK
+ * corrects.  Samples that are already corrected are left alone.
+ */
+bool enhancement_fix_sound_dc_offset = true;
+
+/**
  * Enable the security question, pre-answer the question (default),
  * or skip it entirely.
  */

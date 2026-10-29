@@ -711,7 +711,7 @@ AudioA5_PlaySoundEffect(enum SoundID effectID)
 }
 
 void
-AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size)
+AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size, bool remove_dc_offset)
 {
 	char header[0x1A];
 	char ignore1;
@@ -726,6 +726,9 @@ AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size)
 	File_Read(file_index, &rate, 1);
 	File_Read(file_index, &ignore2, 1);
 	File_Read(file_index, data, file_size - 32);
+
+	if (remove_dc_offset && size >= 2 && size - 2 <= file_size - 32)
+		Audio_RemoveDCOffset(data, size - 2);
 
 	unsigned int freq = 1000000 / (256 - rate);
 	ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_UINT8;
