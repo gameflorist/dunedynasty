@@ -435,6 +435,12 @@ GameLoop_ProcessGUITimer(void)
 	}
 }
 
+/* Ticks the game may fall behind before skipping ahead (at 60 Hz). */
+#define GAMELOOP_MAX_CATCH_UP   8
+
+/* Draw at least this often (GUI ticks), even when ticks are queued. */
+#define GAMELOOP_MAX_DRAW_GAP   6
+
 static void
 GameLoop_ProcessGameTimer(void)
 {
@@ -445,7 +451,17 @@ GameLoop_ProcessGameTimer(void)
 			|| (g_host_type != HOSTTYPE_NONE)) {
 		const int64_t curr_ticks = Timer_GameTicks();
 
-		if (g_timerGame != curr_ticks) {
+		/* ENHANCEMENT -- Originally game time jumped to the timer, so
+		 * when a frame took longer than a tick the ticks in between were
+		 * lost and the game slowed down with the frame rate.  Run one
+		 * step per tick instead, catching up on queued ticks; only when
+		 * far behind (after a pause or loading) skip ahead. */
+		if (g_timerGame < curr_ticks) {
+			if (curr_ticks - g_timerGame > GAMELOOP_MAX_CATCH_UP)
+				g_timerGame = curr_ticks - 1;
+
+			g_timerGame++;
+		} else if (g_timerGame != curr_ticks) {
 			g_timerGame = curr_ticks;
 		} else {
 			return;
@@ -508,6 +524,8 @@ GameLoop_Loop(void)
 	g_inGame = true;
 	g_isEnteringChat = false;
 
+	int64_t last_draw = Timer_GetTicks();
+
 	while (g_gameMode == GM_NORMAL) {
 		const enum TimerType source = Timer_WaitForEvent();
 		const enum NetEvent e = Client_RecvMessages();
@@ -525,8 +543,12 @@ GameLoop_Loop(void)
 
 		Server_SendMessages();
 
-		if (redraw && Timer_QueueIsEmpty()) {
+		/* Draw once the queued ticks are done, or at least every
+		 * GAMELOOP_MAX_DRAW_GAP ticks when they never are (a machine
+		 * too slow for the game speed would otherwise never draw). */
+		if (redraw && (Timer_QueueIsEmpty() || Timer_GetTicks() - last_draw >= GAMELOOP_MAX_DRAW_GAP)) {
 			redraw = false;
+			last_draw = Timer_GetTicks();
 			GUI_PaletteAnimate();
 			GameLoop_Client_Draw();
 		}
