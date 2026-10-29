@@ -780,6 +780,10 @@ MusicOptions_Initialize(void)
 	si->d.checkbox = &g_disable_attack_music;
 	snprintf(si->text, sizeof(si->text), "Disable attack music");
 
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_fix_sound_pops;
+	snprintf(si->text, sizeof(si->text), "Fix sound effect pops");
+
 	// List available music sets with checkboxes to enable them for random play.	
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
 	snprintf(si->text, sizeof(si->text), "%s", "Availabe Music Sets");
