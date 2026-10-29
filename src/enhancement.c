@@ -88,6 +88,20 @@ bool enhancement_show_outpost_unit_info = false;
 bool enhancement_instant_walls = false;
 
 /**
+ * In the original game, a unit standing on a tile prevents concrete
+ * from being placed there.  Concrete only changes the ground, so let it
+ * be placed under units.
+ */
+bool enhancement_concrete_under_units = false;
+
+/**
+ * In the original game, an MCV cannot deploy if any tile of the
+ * construction yard would be on concrete.  Allow it on concrete, partly
+ * or fully.
+ */
+bool enhancement_mcv_deploy_on_concrete = false;
+
+/**
  * In the original game, fog is drawn underneath units, at the same
  * time as other overlays, making units suddenly appear and disappear.
  */

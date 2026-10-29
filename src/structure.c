@@ -906,8 +906,13 @@ Structure_IsValidBuildLandscape(uint16 packed, enum StructureType type)
 			}
 
 			if (si->o.flags.notOnConcrete) {
+				/* ENHANCEMENT -- Let an MCV deploy on concrete. */
+				const bool onConcreteOK = (enhancement_mcv_deploy_on_concrete
+						&& type == STRUCTURE_CONSTRUCTION_YARD && lst == LST_CONCRETE_SLAB);
+
 				if (g_validateStrictIfZero == 0
-						&& !g_table_landscapeInfo[lst].isValidForStructure2) {
+						&& !g_table_landscapeInfo[lst].isValidForStructure2
+						&& !onConcreteOK) {
 					isValid = false;
 					break;
 				}
@@ -921,7 +926,15 @@ Structure_IsValidBuildLandscape(uint16 packed, enum StructureType type)
 			}
 		}
 
-		if (Object_GetByPackedTile(curPos) != NULL) {
+		/* ENHANCEMENT -- Concrete only changes the ground, so units on
+		 * the tile don't block it. */
+		const bool isSlab = (type == STRUCTURE_SLAB_1x1 || type == STRUCTURE_SLAB_2x2);
+		if (enhancement_concrete_under_units && isSlab) {
+			if (Structure_Get_ByPackedTile(curPos) != NULL) {
+				isValid = false;
+				break;
+			}
+		} else if (Object_GetByPackedTile(curPos) != NULL) {
 			isValid = false;
 			break;
 		}
