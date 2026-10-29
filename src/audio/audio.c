@@ -417,7 +417,7 @@ Audio_GetSamplePrefix(enum SampleSet setID)
 /* The VOC.PAK samples whose DC offset Tiddalick's normalized VOC.PAK
  * removes, with the US v1.07 names of the six voices.
  */
-static const char * const s_dc_offset_samples[] = {
+static const char * const s_pop_samples[] = {
 	"BUTTON.VOC", "CRUMBLE.VOC", "DROPEQ2P.VOC", "EXCANNON.VOC",
 	"EXDUD.VOC", "EXGAS.VOC", "EXLARGE.VOC", "EXMED.VOC", "EXSAND.VOC",
 	"EXSMALL.VOC", "EXTINY.VOC", "GUN.VOC", "GUNMULTI.VOC",
@@ -431,22 +431,24 @@ static const char * const s_dc_offset_samples[] = {
 };
 
 static bool
-Audio_HasDCOffset(const char *filename)
+Audio_SamplePops(const char *filename)
 {
-	for (unsigned int i = 0; i < lengthof(s_dc_offset_samples); i++) {
-		if (strcasecmp(filename, s_dc_offset_samples[i]) == 0)
+	for (unsigned int i = 0; i < lengthof(s_pop_samples); i++) {
+		if (strcasecmp(filename, s_pop_samples[i]) == 0)
 			return true;
 	}
 
 	return false;
 }
 
-/* Shift unsigned 8-bit samples so their mean lies at 127.x, as
- * Tiddalick's normalized VOC.PAK does, clipping at 0 and 255.  Samples
- * whose mean is already there are not changed.
+/* Remove the pops from unsigned 8-bit samples: shift them so their mean
+ * lies at 127.x, as Tiddalick's normalized VOC.PAK does, clipping at 0
+ * and 255 (samples whose mean is already there are not shifted); then
+ * fade the first and last 5 ms in and out, so the sample starts and ends
+ * at silence even where its level drifts.
  */
 void
-Audio_RemoveDCOffset(uint8 *data, uint32 len)
+Audio_FixSamplePops(uint8 *data, uint32 len, uint32 freq)
 {
 	if (len == 0)
 		return;
@@ -456,11 +458,16 @@ Audio_RemoveDCOffset(uint8 *data, uint32 len)
 		sum += data[i];
 
 	const int shift = 127 - (int)(sum / len);
-	if (shift == 0)
-		return;
+	if (shift != 0) {
+		for (uint32 i = 0; i < len; i++)
+			data[i] = clamp(0, data[i] + shift, 255);
+	}
 
-	for (uint32 i = 0; i < len; i++)
-		data[i] = clamp(0, data[i] + shift, 255);
+	const uint32 fade = min(max(1, freq * 5 / 1000), len / 2);
+	for (uint32 i = 0; i < fade; i++) {
+		data[i]           = 128 + ((int)data[i] - 128) * (int)i / (int)fade;
+		data[len - 1 - i] = 128 + ((int)data[len - 1 - i] - 128) * (int)i / (int)fade;
+	}
 }
 
 static void
@@ -471,9 +478,9 @@ Audio_LoadSample(const char *filename, enum SampleID sampleID)
 
 	const uint8 file_index = File_Open(filename, FILE_MODE_READ);
 	const uint32 file_size = File_GetSize(file_index);
-	const bool remove_dc_offset = enhancement_fix_sound_dc_offset && Audio_HasDCOffset(filename);
+	const bool fix_pops = enhancement_fix_sound_pops && Audio_SamplePops(filename);
 
-	AudioA5_StoreSample(sampleID, file_index, file_size, remove_dc_offset);
+	AudioA5_StoreSample(sampleID, file_index, file_size, fix_pops);
 	File_Close(file_index);
 }
 

@@ -185,7 +185,7 @@ The data-files can be placed at one of the following locations:
 
 Many sound effects in _Dune II_ were built with an DC offset. This leads to distortions when playing a lot of sounds together, such as pops and clicks. A fixed version of the affected `VOC.PAK` file was made by _Tiddalick_ and can be downloaded on [ModDB](https://www.moddb.com/games/dune-ii-the-building-of-a-dynasty/addons/vocpak-normalized).
 
-Dune Dynasty now makes the same correction itself when it loads these sounds (`fix_sound_dc_offset=1` in the `[enhancement]` section of `dunedynasty.cfg`, on by default), so the mod is no longer needed. Installing it does no harm: sounds that are already corrected are left alone.
+Dune Dynasty now makes the same correction itself when it loads these sounds, and also fades each one in and out over 5 ms, which removes the clicks that remain at the start and end of some of them (`fix_sound_pops=1` in the `[enhancement]` section of `dunedynasty.cfg`, on by default). So the mod is no longer needed, and installing it does no harm: sounds that are already corrected are not shifted again.
 
 ## Configuration
 

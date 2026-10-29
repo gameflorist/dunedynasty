@@ -711,7 +711,7 @@ AudioA5_PlaySoundEffect(enum SoundID effectID)
 }
 
 void
-AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size, bool remove_dc_offset)
+AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size, bool fix_pops)
 {
 	char header[0x1A];
 	char ignore1;
@@ -727,10 +727,11 @@ AudioA5_StoreSample(enum SampleID sampleID, uint8 file_index, uint32 file_size, 
 	File_Read(file_index, &ignore2, 1);
 	File_Read(file_index, data, file_size - 32);
 
-	if (remove_dc_offset && size >= 2 && size - 2 <= file_size - 32)
-		Audio_RemoveDCOffset(data, size - 2);
-
 	unsigned int freq = 1000000 / (256 - rate);
+
+	if (fix_pops && size >= 2 && size - 2 <= file_size - 32)
+		Audio_FixSamplePops(data, size - 2, freq);
+
 	ALLEGRO_AUDIO_DEPTH depth = ALLEGRO_AUDIO_DEPTH_UINT8;
 	ALLEGRO_CHANNEL_CONF chan_conf = ALLEGRO_CHANNEL_CONF_1;
 
