@@ -780,6 +780,10 @@ MusicOptions_Initialize(void)
 	si->d.checkbox = &g_disable_attack_music;
 	snprintf(si->text, sizeof(si->text), "Disable attack music");
 
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_fix_sound_pops;
+	snprintf(si->text, sizeof(si->text), "Fix sound effect pops");
+
 	// List available music sets with checkboxes to enable them for random play.	
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CATEGORY);
 	snprintf(si->text, sizeof(si->text), "%s", "Availabe Music Sets");
@@ -889,6 +893,14 @@ GameplayOptions_Initialize(void)
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_instant_walls;
 	snprintf(si->text, sizeof(si->text), "Instant wall construction");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_concrete_under_units;
+	snprintf(si->text, sizeof(si->text), "Place concrete under units");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_mcv_deploy_on_concrete;
+	snprintf(si->text, sizeof(si->text), "Deploy MCV on concrete");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_extend_sight_range;

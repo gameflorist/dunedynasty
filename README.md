@@ -77,6 +77,8 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Start level selection
   - Consistent directional damage
   - Instant wall construction
+  - Place concrete under units
+  - Deploy MCV on concrete
   - Extend light vehicle sight range
   - Extend spice sensor range
 - __[Support for Custom campaigns](#custom-campaigns):__
@@ -119,7 +121,7 @@ The most current Windows, macOS and Linux binaries and source code can be downlo
 
 ## Installation
 
-You will need the `\*.PAK` data files from the EU v1.07 release of _Dune II_. See the file [data/FILELIST.TXT](/static/general/data/FILELIST.TXT) for a complete list of needed files.
+You will need the `\*.PAK` data files from the EU v1.07 release of _Dune II_. The US v1.07 release also works for English; French and German need the EU release. See the file [data/FILELIST.TXT](/static/general/data/FILELIST.TXT) for a complete list of needed files.
 
 The location to put the files depends on the OS / release bundle (see below).
 
@@ -184,6 +186,8 @@ The data-files can be placed at one of the following locations:
 ### Normalized VOC.PAK
 
 Many sound effects in _Dune II_ were built with an DC offset. This leads to distortions when playing a lot of sounds together, such as pops and clicks. A fixed version of the affected `VOC.PAK` file was made by _Tiddalick_ and can be downloaded on [ModDB](https://www.moddb.com/games/dune-ii-the-building-of-a-dynasty/addons/vocpak-normalized).
+
+Dune Dynasty now makes the same correction itself when it loads these sounds, and also fades each one in and out over 5 ms, which removes the clicks that remain at the start and end of some of them (on by default: "Fix sound effect pops" in the Music options, or `fix_sound_pops` in the `[enhancement]` section of `dunedynasty.cfg`). So the mod is no longer needed, and installing it does no harm: sounds that are already corrected are not shifted again.
 
 ## Configuration
 
@@ -343,6 +347,14 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
 - __Instant wall construction:__  
   Reduces build time of walls to 0.
 
+- __Place concrete under units:__  
+  In the original game, a unit standing on a tile prevents concrete from being placed there. This allows placing concrete under units.  
+  (Disabled by default.)
+
+- __Deploy MCV on concrete:__  
+  In the original game, an MCV can't deploy if any part of the Construction Yard would be on concrete. This allows deploying on concrete, partly or fully.  
+  (Disabled by default.)
+
 - __Extend light vehicle sight range:__  
   Increases fog uncover radius of trikes and quads from 2 to 4 tiles.
 
@@ -379,6 +391,10 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
 
 - __Unit target lines:__  
   Show trajectory lines and target of selected units (like in C&C: Tiberian Sun). The lines and target icon are red for attack/harvest orders and gray for any other orders.  
+  (Disabled by default.)
+
+- __Compact two-column build list:__  
+  Shows the build list as two columns of small icons, as many rows as fit in the sidebar (like _Command & Conquer_), instead of one large icon with its name per row. Costs, shortcuts, queue counts, READY, build progress and pause are drawn on the icons. Useful on short screens, where the normal list has room for only one item. On the last page of the in-game controls, under the scale settings.  
   (Disabled by default.)
 
 ## Saved games

@@ -88,6 +88,20 @@ bool enhancement_show_outpost_unit_info = false;
 bool enhancement_instant_walls = false;
 
 /**
+ * In the original game, a unit standing on a tile prevents concrete
+ * from being placed there.  Concrete only changes the ground, so let it
+ * be placed under units.
+ */
+bool enhancement_concrete_under_units = false;
+
+/**
+ * In the original game, an MCV cannot deploy if any tile of the
+ * construction yard would be on concrete.  Allow it on concrete, partly
+ * or fully.
+ */
+bool enhancement_mcv_deploy_on_concrete = false;
+
+/**
  * In the original game, fog is drawn underneath units, at the same
  * time as other overlays, making units suddenly appear and disappear.
  */
@@ -185,6 +199,15 @@ bool enhancement_raise_structure_cap = false;
 bool enhancement_repeat_reinforcements = true;
 
 /**
+ * Many of the sound effects in VOC.PAK have a DC offset, which makes them
+ * pop and click, most of all when several play together.  When loading
+ * the samples Tiddalick's normalized VOC.PAK corrects, remove the offset
+ * as that file does, and fade the first and last 5 ms in and out, which
+ * removes the clicks the offset alone does not.
+ */
+bool enhancement_fix_sound_pops = true;
+
+/**
  * Enable the security question, pre-answer the question (default),
  * or skip it entirely.
  */
@@ -251,6 +274,14 @@ bool enhancement_true_unit_movement_speed = false;
  * 
  */
 bool enhancement_attack_dir_consistency = false;
+
+/**
+ * Compact build list: two columns of small icons, as many rows as fit,
+ * like Command & Conquer's sidebar.  Shows several items at once on
+ * short screens (one at 320x240 otherwise).  Names are left out; costs,
+ * shortcuts and queue counts are drawn on the icons.
+ */
+bool enhancement_compact_build_list = false;
 
 /**
  * Skip introduction video

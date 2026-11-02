@@ -53,7 +53,12 @@ enum FactoryPanelLayout {
 	FACTORYPANEL_LARGE_ICON_FLAG    = 0x01,
 	FACTORYPANEL_SCROLL_FLAG        = 0x02,
 	FACTORYPANEL_STARPORT_FLAG      = 0x04,
+	FACTORYPANEL_GRID_FLAG          = 0x08,     /* Two columns of small icons. */
 };
+
+/* Compact build list: gap between the two columns (icons touch, as in
+ * Command & Conquer; the widget is just two icons wide). */
+#define GRID_COLUMN_GAP     0
 
 FactoryWindowItem g_factoryWindowItems[MAX_FACTORY_WINDOW_ITEMS];
 int g_factoryWindowTotal;
@@ -65,6 +70,13 @@ static enum FactoryPanelLayout s_factory_panel_layout;
 static void
 ActionPanel_CalculateOptimalLayout(const Widget *widget, bool is_starport)
 {
+	if (enhancement_compact_build_list) {
+		s_factory_panel_layout
+			= (is_starport ? FACTORYPANEL_STARPORT_FLAG : 0)
+			| FACTORYPANEL_SCROLL_FLAG | FACTORYPANEL_GRID_FLAG;
+		return;
+	}
+
 	const int h = widget->height
 		- 1 /* top margin. */
 		- 1 /* bottom margin. */
@@ -324,9 +336,26 @@ ActionPanel_DrawMissileCountdown(uint8 fg, int count)
 
 /*--------------------------------------------------------------*/
 
+/* Rows of the compact build list that fit. */
+static int
+ActionPanel_GridRows(const Widget *widget)
+{
+	return max(1, ActionPanel_ProductionListHeight(widget) / SMALL_PRODUCTION_ICON_HEIGHT);
+}
+
+/**
+ * @return the distance between rows (one item per row, or two in the
+ *   compact build list); ret_items_per_screen: items that fit.
+ */
 static int
 ActionPanel_ProductionButtonStride(const Widget *widget, int *ret_items_per_screen)
 {
+	if (s_factory_panel_layout & FACTORYPANEL_GRID_FLAG) {
+		if (ret_items_per_screen != NULL)
+			*ret_items_per_screen = 2 * ActionPanel_GridRows(widget);
+		return SMALL_PRODUCTION_ICON_HEIGHT;
+	}
+
 	const int h = ActionPanel_ProductionListHeight(widget);
 	const int min_item_height = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? LARGE_PRODUCTION_ICON_MIN_STRIDE : SMALL_PRODUCTION_ICON_MIN_STRIDE;
 	const int max_item_height = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? LARGE_PRODUCTION_ICON_MAX_STRIDE : SMALL_PRODUCTION_ICON_MAX_STRIDE;
@@ -349,6 +378,24 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 {
 	int items_per_screen;
 	const int stride = ActionPanel_ProductionButtonStride(widget, &items_per_screen);
+
+	/* The palace's single icon keeps the normal layout. */
+	if ((s_factory_panel_layout & FACTORYPANEL_GRID_FLAG) && s->o.type != STRUCTURE_PALACE) {
+		const int rows = items_per_screen / 2;
+		const int left = widget->offsetX + (widget->width - (2 * SMALL_PRODUCTION_ICON_WIDTH + GRID_COLUMN_GAP)) / 2;
+		const int x = left + (item & 1) * (SMALL_PRODUCTION_ICON_WIDTH + GRID_COLUMN_GAP);
+		const int y = widget->offsetY + 1 + s->factoryOffsetY + stride * (item >> 1)
+			+ (ActionPanel_ProductionListHeight(widget) - rows * stride) / 2;
+
+		if (x1 != NULL) *x1 = x;
+		if (y1 != NULL) *y1 = y;
+		if (x2 != NULL) *x2 = x + SMALL_PRODUCTION_ICON_WIDTH - 1;
+		if (y2 != NULL) *y2 = y + SMALL_PRODUCTION_ICON_HEIGHT - 1;
+		if (w != NULL) *w = SMALL_PRODUCTION_ICON_WIDTH;
+		if (h != NULL) *h = SMALL_PRODUCTION_ICON_HEIGHT;
+		return;
+	}
+
 	const int width  = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? LARGE_PRODUCTION_ICON_WIDTH  : SMALL_PRODUCTION_ICON_WIDTH;
 	const int height = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? LARGE_PRODUCTION_ICON_HEIGHT : SMALL_PRODUCTION_ICON_HEIGHT;
 	const int x = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) ? (widget->offsetX + 4) : (widget->offsetX + 2);
@@ -368,6 +415,18 @@ ActionPanel_ProductionButtonDimensions(const Widget *widget, const Structure *s,
 	if (y2 != NULL) *y2 = y + height - 1;
 	if (w != NULL) *w = width;
 	if (h != NULL) *h = height;
+}
+
+/* Compact build list: a row cut off at the bottom is not shown (or
+ * clickable) when at least one whole row fits. */
+static bool
+ActionPanel_GridItemHidden(const Widget *widget, int y1)
+{
+	const int list_h = ActionPanel_ProductionListHeight(widget);
+
+	return (s_factory_panel_layout & FACTORYPANEL_GRID_FLAG)
+		&& list_h >= SMALL_PRODUCTION_ICON_HEIGHT
+		&& y1 + SMALL_PRODUCTION_ICON_HEIGHT > widget->offsetY + 1 + list_h;
 }
 
 static void
@@ -402,6 +461,18 @@ ActionPanel_ClampFactoryScrollOffset(const Widget *widget, Structure *s)
 {
 	int items_per_screen;
 	const int stride = ActionPanel_ProductionButtonStride(widget, &items_per_screen);
+
+	if (s_factory_panel_layout & FACTORYPANEL_GRID_FLAG) {
+		/* Scroll by rows; the last row may be half full. */
+		const int last_first_row = max(0, (g_factoryWindowTotal + 1) / 2 - items_per_screen / 2);
+
+		if (s->factoryOffsetY < -stride * last_first_row)
+			s->factoryOffsetY = -stride * last_first_row;
+		if (s->factoryOffsetY > 0)
+			s->factoryOffsetY = 0;
+		return;
+	}
+
 	const int first_item = g_factoryWindowTotal - (items_per_screen <= 1 ? 1 : items_per_screen);
 	int y1;
 
@@ -495,7 +566,7 @@ ActionPanel_ClickFactory(const Widget *widget, Structure *s, uint16 scancode)
 			int x1, y1, x2, y2;
 
 			ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
-			if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
+			if (!ActionPanel_GridItemHidden(widget, y1) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 				break;
 		}
 	}
@@ -642,7 +713,7 @@ ActionPanel_ClickStarport(const Widget *widget, Structure *s, uint16 scancode)
 
 		for (item = 0; item < g_factoryWindowTotal; item++) {
 			ActionPanel_ProductionButtonDimensions(widget, s, item, &x1, &y1, &x2, &y2, NULL, NULL);
-			if (Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
+			if (!ActionPanel_GridItemHidden(widget, y1) && Mouse_InRegion_Div(widget->div, x1, y1, x2, y2))
 				break;
 		}
 	}
@@ -690,10 +761,36 @@ ActionPanel_ClickPalace(const Widget *widget, Structure *s, uint16 scancode)
 	return false;
 }
 
+/* Compact build list: a ready item says "READY" on its own icon, as in
+ * Command & Conquer, instead of a "PLACE IT" / "COMPLETED" strip across
+ * both columns; an item on hold gets a pause sign. */
+static void
+ActionPanel_DrawReadyLabel(int x1, int y1, int w, int h)
+{
+	/* Middle of three rows: shortcut above, cost and queue below. */
+	const int y = y1 + h / 2 - 3;
+
+	Prim_FillRect_RGBA(x1 + 1.0f, y, x1 + w - 1.0f, y + 7.0f, 0x00, 0x00, 0x00, 0x80);
+	GUI_DrawText_Wrapper("READY", x1 + w / 2, y, 0xF, 0, 0x121);
+}
+
+static void
+ActionPanel_DrawPauseSign(int x1, int y1, int w, int h)
+{
+	const int x = x1 + w / 2;
+	const int y = y1 + h / 2;
+
+	Prim_FillRect_i(x - 5, y - 6, x - 1, y + 6, 12);
+	Prim_FillRect_i(x + 1, y - 6, x + 5, y + 6, 12);
+	Prim_FillRect_i(x - 4, y - 5, x - 2, y + 5, 15);
+	Prim_FillRect_i(x + 2, y - 5, x + 4, y + 5, 15);
+}
+
 static void
 ActionPanel_DrawStructureLayout(enum StructureType s, int x1, int y1)
 {
-	if (!(s_factory_panel_layout))
+	/* Drawn beside the icon: no room in the compact build list. */
+	if (!(s_factory_panel_layout) || (s_factory_panel_layout & FACTORYPANEL_GRID_FLAG))
 		return;
 
 	const StructureInfo *si = &g_table_structureInfo[s];
@@ -879,7 +976,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 		if (y1 > widget->offsetY + itemlist_height)
 			break;
 
-		if (y1 < widget->offsetY)
+		if (y1 < widget->offsetY || ActionPanel_GridItemHidden(widget, y1))
 			continue;
 
 		if (s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
@@ -912,7 +1009,15 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			}
 		} else if (s->objectType == object_type) {
 			/* Production icon is 32x24, or stretched up to 52x39. */
-			if (g_productionStringID != STR_BUILD_IT) {
+			const bool grid = (s_factory_panel_layout & FACTORYPANEL_GRID_FLAG);
+			const bool grid_ready = grid
+				&& (g_productionStringID == STR_PLACE_IT || g_productionStringID == STR_COMPLETED);
+
+			if (grid_ready) {
+				if (g_productionStringID == STR_PLACE_IT)
+					ActionPanel_HighlightIcon(g_playerHouseID, x1, y1, false);
+				ActionPanel_DrawReadyLabel(x1, y1, w, h);
+			} else if (g_productionStringID != STR_BUILD_IT) {
 				const bool large_icon = (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG);
 				float x1f = x1 + (float)w/32.0f;
 				float x2f = x1 + w - (float)w/32.0f;
@@ -936,7 +1041,8 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 						y1f = y1 + 1.0f;
 						y2f = y1 + 23.0f;
 					} else {
-						/* For long strings, grey strip spans the widget width. */
+						/* For long strings, grey strip spans the widget width
+						 * (both columns, in the compact build list). */
 						if ((g_productionStringID == STR_COMPLETED) || (g_productionStringID == STR_PLACE_IT)) {
 							x1f = widget->offsetX + 1.0f;
 							x2f = widget->offsetX + widget->width - 1.0f;
@@ -964,7 +1070,9 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 				const int timeLeft = buildTime - (s->countDown + 255) / 256;
 				const int percentDone = 100 * timeLeft / buildTime;
 
-				if ((g_productionStringID == STR_D_DONE) || !(s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG)) {
+				if (grid && g_productionStringID == STR_ON_HOLD) {
+					ActionPanel_DrawPauseSign(x1, y1, w, h);
+				} else if ((g_productionStringID == STR_D_DONE) || !(s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG)) {
 					GUI_DrawText_Wrapper("%d%%", x1 + w / 2, y1 + (h - 10) / 2, fg, 0, 0x121, percentDone);
 				} else {
 					GUI_DrawText_Wrapper("%d%%", xcentre, y1 + 10, fg, 0, 0x121, percentDone);
@@ -972,7 +1080,7 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 				}
 
 				Prim_Rect(x1 + 1.0f, y1 + 1.0f, x1 + w - 1.0f, y1 + h - 1.0f, 0xFF, 2.0f);
-			} else if (g_productionStringID != STR_BUILD_IT) {
+			} else if (g_productionStringID != STR_BUILD_IT && !grid_ready) {
 				GUI_DrawText_Wrapper(String_Get_ByIndex(g_productionStringID), widget->offsetX + widget->width / 2, y1 + (h - 10) / 2, fg, 0, 0x121);
 			}
 		} else if (g_factoryWindowItems[item].available < 0) {
@@ -993,12 +1101,12 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			fg = 5;
 		}
 
-		/* Draw abbreviated name. */
-		if (y1 - 8 >= widget->offsetY + 2)
+		/* Draw abbreviated name (no room in the compact build list). */
+		if (!(s_factory_panel_layout & FACTORYPANEL_GRID_FLAG) && y1 - 8 >= widget->offsetY + 2)
 			GUI_DrawText_Wrapper(name, xcentre, y1 - 9, 5, 0, 0x161);
 
 		/* Draw credits. */
-		if ((s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) || s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
+		if ((s_factory_panel_layout & (FACTORYPANEL_LARGE_ICON_FLAG | FACTORYPANEL_GRID_FLAG)) || s->o.type == STRUCTURE_CONSTRUCTION_YARD) {
 			GUI_DrawText_Wrapper("%d", x1 + 1, y1 + h - 8, fg, 0, 0x31, g_factoryWindowItems[item].credits);			
 		} else if ((s->objectType != object_type) || (g_productionStringID != STR_PLACE_IT)) {
 			GUI_DrawText_Wrapper("%d", widget->offsetX + widget->width - 3, y1 + 2, fg, 0, 0x231, g_factoryWindowItems[item].credits);
@@ -1019,7 +1127,9 @@ ActionPanel_DrawFactory(const Widget *widget, Structure *s)
 			if ((s->objectType == object_type) && (s->o.linkedID != 0xFF))
 				count++;
 
-			if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
+			if (s_factory_panel_layout & FACTORYPANEL_GRID_FLAG) {
+				GUI_DrawText_Wrapper("x%d", x1 + w - 1, y1 + h - 10, 15, 0, 0x232, count);
+			} else if (s_factory_panel_layout & FACTORYPANEL_LARGE_ICON_FLAG) {
 				GUI_DrawText_Wrapper("x%d", widget->offsetX + widget->width - 5, y1 + h - 10, 15, 0, 0x232, count);
 			} else {
 				GUI_DrawText_Wrapper("x%d", widget->offsetX + widget->width - 3, y1 + h - 10, 15, 0, 0x232, count);
