@@ -177,6 +177,7 @@ static const GameOption s_game_option[] = {
 	{ "enhancement",    "mcv_deploy_on_concrete",	CONFIG_BOOL,.d._bool = &enhancement_mcv_deploy_on_concrete },
 	{ "enhancement",    "extend_sight_range",		CONFIG_BOOL,.d._bool = &enhancement_extend_sight_range },
 	{ "enhancement",    "repeat_reinforcements",    CONFIG_BOOL,.d._bool = &enhancement_repeat_reinforcements },
+	{ "enhancement",    "fix_sound_pops",           CONFIG_BOOL,.d._bool = &enhancement_fix_sound_pops },
 	{ "enhancement",    "smooth_unit_animation",    CONFIG_SMOOTH_ANIM, .d._smooth_anim = &enhancement_smooth_unit_animation },
 	{ "enhancement",    "subtitle_override",        CONFIG_SUBTITLE,.d._subtitle = &enhancement_subtitle_override },	
 	{ "enhancement",    "target_lines", 			CONFIG_BOOL,.d._bool = &enhancement_draw_target_lines },
