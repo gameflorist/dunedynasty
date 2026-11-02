@@ -447,6 +447,11 @@ Audio_LoadSampleFromSet(enum SampleSet setID, enum SampleID sampleID)
 				char prefix = Audio_GetSamplePrefix(SAMPLESET_INVALID);
 				snprintf(buf, sizeof(buf), s->string + 1, prefix);
 				filename = buf;
+
+				/* The US v1.07 release names the English voices without
+				 * the Z prefix: AFFIRM.VOC for ZAFFIRM.VOC. */
+				if (prefix == 'Z' && !File_Exists(filename))
+					filename = buf + 1;
 			}
 			break;
 
