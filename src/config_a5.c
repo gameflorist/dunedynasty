@@ -167,6 +167,7 @@ static const GameOption s_game_option[] = {
 	{ "enhancement",    "infantry_squad_death_anim",CONFIG_BOOL,.d._bool = &enhancement_infantry_squad_death_animations },
 	{ "enhancement",    "insatiable_sandworms",     CONFIG_BOOL,.d._bool = &enhancement_insatiable_sandworms },
 	{ "enhancement",    "attack_dir_consistency",   CONFIG_BOOL,.d._bool = &enhancement_attack_dir_consistency },
+	{ "enhancement",    "compact_build_list",       CONFIG_BOOL,.d._bool = &enhancement_compact_build_list },
 	{ "enhancement",    "skip_introduction",   		CONFIG_BOOL,.d._bool = &enhancement_skip_introduction },
 	{ "enhancement",    "raise_unit_cap",			CONFIG_BOOL,.d._bool = &enhancement_raise_unit_cap },
 	{ "enhancement",    "raise_structure_cap",  	CONFIG_BOOL,.d._bool = &enhancement_raise_structure_cap },
