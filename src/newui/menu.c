@@ -1540,6 +1540,10 @@ Menu_Run(void)
 
 			case MENU_EXTRAS:
 				res = Extras_Loop(&g_mentat_state);
+
+				/* Save options on leaving, not only on a clean exit. */
+				if ((res & 0xFF) != MENU_EXTRAS)
+					GameOptions_Save();
 				break;
 
 			case MENU_PLAY_CUTSCENE:
