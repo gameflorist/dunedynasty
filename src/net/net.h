@@ -70,6 +70,7 @@ extern bool Net_HasAllPlayersAssigned(void);
 extern bool Net_HasAtLeastTwoTeams(void);
 extern bool Net_HasClientRole(void);
 extern bool Net_HasServerRole(void);
+extern bool Net_IsAvailable(void);
 extern void Net_Synchronise(void);
 
 extern void Net_Send_Chat(const char *buf);

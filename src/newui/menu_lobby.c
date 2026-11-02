@@ -104,6 +104,10 @@ PickLobby_InitWidgets(void)
 	w->flags.buttonFilterRight = 4;
 	pick_lobby_widgets = GUI_Widget_Link(pick_lobby_widgets, w);
 
+	/* Multiplayer needs a network transport (built without ENet). */
+	if (!Net_IsAvailable())
+		return;
+
 	/* Host. */
 	w = GUI_Widget_Allocate(20, 0, 266, 128, 0xFFFE, STR_HOST);
 	w->width  = 37;
@@ -958,7 +962,12 @@ PickLobby_Draw(void)
 	/* Multiplayer. */
 	Prim_DrawBorder(120, 86, 189, 83, 1, false, false, 3);
 	GUI_DrawText("Multiplayer", 186, 96, 0xF, 0);
-	GUI_DrawText_Wrapper("Address", 127, 119, 0xF, 0, 0x21);
+
+	if (Net_IsAvailable()) {
+		GUI_DrawText_Wrapper("Address", 127, 119, 0xF, 0, 0x21);
+	} else {
+		GUI_DrawText_Wrapper("Not available in this build", 214, 128, 0xF, 0, 0x121);
+	}
 
 	GUI_Widget_DrawAll(pick_lobby_widgets);
 
@@ -980,7 +989,11 @@ PickLobby_Loop(void)
 
 	Audio_PlayMusicIfSilent(MUSIC_MAIN_MENU);
 
-	if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 21))->state.selected) {
+	/* Without a network transport there are no address edit boxes. */
+	if (!Net_IsAvailable()) {
+		w = NULL;
+		widgetID = GUI_Widget_HandleEvents(pick_lobby_widgets);
+	} else if ((w = GUI_Widget_Get_ByIndex(pick_lobby_widgets, 21))->state.selected) {
 		editbox = GUI_EditBox(g_host_addr, sizeof(g_host_addr), w, EDITBOX_ADDRESS);
 
 		if (editbox == SCANCODE_ENTER)

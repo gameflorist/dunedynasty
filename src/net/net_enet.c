@@ -344,6 +344,12 @@ Net_HasClientRole(void)
 }
 
 bool
+Net_IsAvailable(void)
+{
+	return true;
+}
+
+bool
 Net_HasServerRole(void)
 {
 	return (g_host_type == HOSTTYPE_DEDICATED_SERVER || g_host_type == HOSTTYPE_CLIENT_SERVER);
