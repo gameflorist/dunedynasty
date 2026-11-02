@@ -71,7 +71,10 @@ if [ "$(cat "$OUT/VERSIONS" 2>/dev/null)" != "$VERSIONS" ]; then
 	# libmad picks its fixed-point maths from CMAKE_SYSTEM_PROCESSOR,
 	# which is the 64-bit host's (AMD64) here, so it would fall back to
 	# the less accurate generic version. Use the x86 one, as configure
-	# chooses for MSYS2's libmad 0.15.1b.
+	# chooses for MSYS2's libmad 0.15.1b. A fix for libmad's detection
+	# was declined (https://codeberg.org/tenacityteam/libmad/pulls/41),
+	# so keep this override and its check until a libmad release
+	# detects 32-bit x86 on a 64-bit Windows host itself.
 	build "$SRC/libmad" -DEXAMPLE=OFF -DFPM_INTEL=ON -DFPM_DEFAULT=OFF
 	grep -q '^#define FPM_INTEL' "$SRC/libmad/build/mad.h" ||
 		{ echo "libmad was not built with FPM_INTEL" >&2; exit 1; }
