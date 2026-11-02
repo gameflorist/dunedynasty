@@ -891,6 +891,14 @@ GameplayOptions_Initialize(void)
 	snprintf(si->text, sizeof(si->text), "Instant wall construction");
 
 	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_concrete_under_units;
+	snprintf(si->text, sizeof(si->text), "Place concrete under units");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
+	si->d.checkbox = &enhancement_mcv_deploy_on_concrete;
+	snprintf(si->text, sizeof(si->text), "Deploy MCV on concrete");
+
+	si = Scrollbar_AllocItem(w, SCROLLBAR_CHECKBOX);
 	si->d.checkbox = &enhancement_extend_sight_range;
 	snprintf(si->text, sizeof(si->text), "Double light vehicle sight range");
 

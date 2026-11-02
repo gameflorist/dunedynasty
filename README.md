@@ -77,6 +77,8 @@ _Dune Dynasty_ features these modern enhancements for _Dune II_:
   - Start level selection
   - Consistent directional damage
   - Instant wall construction
+  - Place concrete under units
+  - Deploy MCV on concrete
   - Extend light vehicle sight range
   - Extend spice sensor range
 - __[Support for Custom campaigns](#custom-campaigns):__
@@ -342,6 +344,14 @@ Here is an explanation of all optional enhancements, that can be enabled in-game
 
 - __Instant wall construction:__  
   Reduces build time of walls to 0.
+
+- __Place concrete under units:__  
+  In the original game, a unit standing on a tile prevents concrete from being placed there. This allows placing concrete under units.  
+  (Disabled by default.)
+
+- __Deploy MCV on concrete:__  
+  In the original game, an MCV can't deploy if any part of the Construction Yard would be on concrete. This allows deploying on concrete, partly or fully.  
+  (Disabled by default.)
 
 - __Extend light vehicle sight range:__  
   Increases fog uncover radius of trikes and quads from 2 to 4 tiles.
