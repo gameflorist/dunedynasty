@@ -352,7 +352,6 @@ GameLoop_Client_ProcessInput(void)
 		uint16 key = 0;
 
 		Input_Tick(false);
-		A5_InitTransform(false);
 
 		if (Input_IsInputAvailable()) {
 			key = Input_GetNextKey();
