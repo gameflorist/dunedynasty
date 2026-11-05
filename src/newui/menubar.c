@@ -266,7 +266,7 @@ MenuBar_DrawModalMessage(void)
 
 	WidgetProperties *w = &g_widgetProperties[WINDOWID_MODAL_MESSAGE];
 	const int old_x = w->xBase;
-	w->xBase = ((viewport->scalex * viewport->width) / div->scalex - w->width) / 2;
+	w->xBase = (viewport->scalex * viewport->width/2 - div->x) / div->scalex - w->width/2;
 
 	GUI_Widget_DrawBorder(WINDOWID_MODAL_MESSAGE, 1, 1);
 	GUI_DrawText_Wrapper(NULL, 0, 0, 0, 0, 0x22);
