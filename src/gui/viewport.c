@@ -95,11 +95,17 @@ void GUI_Widget_Viewport_Draw(void)
 	}
 
 	if ((g_viewportMessageCounter & 1) != 0 && g_viewportMessageText != NULL) {
+		/* Use SCREENDIV_MENU transform to scale message text with UI. */
 		const enum ScreenDivID old_div = A5_SaveTransform();
 		A5_UseTransform(SCREENDIV_MENU);
 
 		const WidgetInfo *wi = &g_table_gameWidgetInfo[GAME_WIDGET_VIEWPORT];
-		const int xcentre = (wi->width * g_screenDiv[SCREENDIV_VIEWPORT].scalex) / (2 * g_screenDiv[SCREENDIV_MENU].scalex);
+		/* Find centre of viewport (in pixels),
+		 * subtract the SCREENDIV_MENU offset,
+		 * and convert to its coordinate system.
+		 */
+		const int xcentre = ((wi->width * g_screenDiv[SCREENDIV_VIEWPORT].scalex / 2)
+			- g_screenDiv[SCREENDIV_MENU].x) / g_screenDiv[SCREENDIV_MENU].scalex;
 		const int ymessage = SCREEN_HEIGHT - 61;
 
 		GUI_DrawText_Wrapper(g_viewportMessageText, xcentre, ymessage, 15, 0, 0x132);
